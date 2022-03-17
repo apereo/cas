@@ -24,7 +24,7 @@ async function cleanUp(samlSpDir) {
         url += `?providerId=${entityId}&token=${token}`;
 
         console.log(`Navigating to ${url}`);
-        await page.goto(url);
+        await cas.goto(page, url);
         await page.waitForTimeout(5000)
 
         let resultUrl = await page.url()
@@ -32,7 +32,7 @@ async function cleanUp(samlSpDir) {
         assert(resultUrl === "https://localhost:9876/sp/")
         await cas.assertInnerText(page, "#principal", "casuser")
 
-        await page.goto("https://localhost:8443/cas/login");
+        await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.assertTicketGrantingCookie(page);
         await cas.assertInnerText(page, '#content div h2', "Log In Successful");
         await page.waitForTimeout(1000);

@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,9 +31,8 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
     @BeforeEach
     public void init() {
         authenticator = new OAuth20RefreshTokenAuthenticator(servicesManager, serviceFactory,
-            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()), ticketRegistry,
-            new OAuth20RegisteredServiceCipherExecutor(),
-            defaultPrincipalResolver, oauthRequestParameterResolver);
+            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()),
+            ticketRegistry, defaultPrincipalResolver, oauthRequestParameterResolver, oauth20ClientSecretValidator);
     }
 
     @RetryingTest(3)

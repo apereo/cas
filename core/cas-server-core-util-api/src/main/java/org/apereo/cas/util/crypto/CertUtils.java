@@ -1,8 +1,8 @@
 package org.apereo.cas.util.crypto;
 
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -97,8 +97,7 @@ public class CertUtils {
      *
      * @return X509 certificate factory.
      */
-    @SneakyThrows
     public static CertificateFactory getCertificateFactory() {
-        return CertificateFactory.getInstance(X509_CERTIFICATE_TYPE);
+        return FunctionUtils.doUnchecked(() -> CertificateFactory.getInstance(X509_CERTIFICATE_TYPE));
     }
 }

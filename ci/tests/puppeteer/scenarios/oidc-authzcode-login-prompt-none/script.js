@@ -6,7 +6,7 @@ const state = "40W6nJCYWnnPplmAo13Icy";
 const nonce = "yYxIingpZy";
 
 async function login(page, redirectUrl, params) {
-    await page.goto("https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     let authzUrl = "https://localhost:8443/cas/oidc/authorize?";
     authzUrl += "response_type=code&client_id=client&scope=openid";
@@ -16,7 +16,7 @@ async function login(page, redirectUrl, params) {
         authzUrl += `&${params}`;
     }
     console.log(`Navigating to ${authzUrl}`);
-    await page.goto(authzUrl);
+    await cas.goto(page, authzUrl);
 }
 
 (async () => {

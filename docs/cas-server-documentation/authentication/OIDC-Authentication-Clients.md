@@ -33,6 +33,7 @@ The following fields are specifically available for OpenID connect services:
 |-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `clientId`                          | Required. The identifier for this client application.                                                                                                                                                                         |
 | `clientSecret`                      | Required. The secret for this client application.                                                                                                                                                                             |
+| `clientSecretExpiration`            | Optional. Time, measured in UTC epoch, at which the `client_secret` will expire or 0 if it will not expire.                                                                                                                   |
 | `serviceId`                         | Required. The authorized redirect URI for this OIDC client.                                                                                                                                                                   |
 | `supportedGrantTypes`               | Optional. Collection of supported grant types for this service.                                                                                                                                                               |
 | `supportedResponseTypes`            | Optional. Collection of supported response types for this service.                                                                                                                                                            |
@@ -81,25 +82,3 @@ Client applications may dynamically be registered with CAS for authentication. B
 in a `PROTECTED` mode where the registration endpoint requires user authentication. This behavior may be relaxed via 
 CAS settings to allow CAS to operate in an `OPEN` mode.
 
-## Pairwise Identifiers
-
-When `pairwise` subject type is used, CAS will calculate a unique `sub` value for each sector identifier. This identifier
-should not be reversible by any party other than CAS and is somewhat akin to CAS generating persistent anonymous user
-identifiers. Each value provided to every relying party is different so as not
-to enable clients to correlate the user's activities without permission.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.OidcRegisteredService",
-  "clientId": "client",
-  "clientSecret": "secret",
-  "serviceId" : "^<https://the-redirect-uri>",
-  "usernameAttributeProvider" : {
-    "@class" : "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider",
-    "persistentIdGenerator" : {
-      "@class" : "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
-      "salt" : "aGVsbG93b3JsZA=="
-    }
-  }
-}
-```

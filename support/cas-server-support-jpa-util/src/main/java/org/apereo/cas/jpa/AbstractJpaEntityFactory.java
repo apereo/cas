@@ -1,9 +1,10 @@
 package org.apereo.cas.jpa;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 /**
  * This is {@link AbstractJpaEntityFactory}.
@@ -29,9 +30,8 @@ public abstract class AbstractJpaEntityFactory<T> {
      *
      * @return the document
      */
-    @SneakyThrows
     public T newInstance() {
-        return (T) getType().getDeclaredConstructor().newInstance();
+        return FunctionUtils.doUnchecked(() -> getType().getDeclaredConstructor().newInstance());
     }
 
     /**

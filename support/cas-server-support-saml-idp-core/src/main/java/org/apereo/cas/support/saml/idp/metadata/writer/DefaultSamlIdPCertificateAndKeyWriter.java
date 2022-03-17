@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.writer;
 
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -62,11 +63,12 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
         }
     }
 
-    @SneakyThrows
     private KeyPair generateKeyPair() {
-        val generator = KeyPairGenerator.getInstance(keyType);
-        generator.initialize(keySize);
-        return generator.generateKeyPair();
+        return FunctionUtils.doUnchecked(() -> {
+            val generator = KeyPairGenerator.getInstance(keyType);
+            generator.initialize(keySize);
+            return generator.generateKeyPair();
+        });
     }
 
     @SuppressWarnings("JavaUtilDate")

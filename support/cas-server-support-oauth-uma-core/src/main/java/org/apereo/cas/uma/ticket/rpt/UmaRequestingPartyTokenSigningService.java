@@ -18,7 +18,7 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link UmaRequestingPartyTokenSigningService}.
@@ -58,7 +58,7 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
     }
 
     @Override
-    public List<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
+    public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
         return JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE;
     }
 }

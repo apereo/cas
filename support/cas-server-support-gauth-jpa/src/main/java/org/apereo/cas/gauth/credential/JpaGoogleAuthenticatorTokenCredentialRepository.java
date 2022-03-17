@@ -5,7 +5,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -83,7 +82,6 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     }
 
     @Override
-    @SneakyThrows
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val ac = entityManager.find(JpaGoogleAuthenticatorAccount.class, account.getId());
         if (ac != null) {

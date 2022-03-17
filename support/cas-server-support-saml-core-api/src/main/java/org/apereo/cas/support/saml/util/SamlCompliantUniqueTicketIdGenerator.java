@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.util;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -61,10 +62,11 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      * We ignore prefixes for SAML compliance.
      */
     @Override
-    @SneakyThrows
     public String getNewTicketId(final String prefix) {
-        val artifact = getSAMLArtifactType();
-        return prefix + SEPARATOR + artifact.base64Encode();
+        return FunctionUtils.doUnchecked(() -> {
+            val artifact = getSAMLArtifactType();
+            return prefix + SEPARATOR + artifact.base64Encode();
+        });
     }
 
     private AbstractSAMLArtifact getSAMLArtifactType() {

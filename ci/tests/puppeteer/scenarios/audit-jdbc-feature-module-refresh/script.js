@@ -12,7 +12,7 @@ const YAML = require("yaml");
     
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "unknown", "Mellon");
 
     await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
@@ -31,7 +31,7 @@ const YAML = require("yaml");
     let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
     console.log(response)
 
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "unknown", "Mellon");
 
     try {

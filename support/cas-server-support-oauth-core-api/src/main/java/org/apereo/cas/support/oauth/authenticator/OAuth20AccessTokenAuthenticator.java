@@ -6,7 +6,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
@@ -37,7 +36,6 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
             .decode(tokenCredentials.getToken());
     }
 
-    @SneakyThrows
     @Override
     public void validate(final Credentials credentials, final WebContext webContext, final SessionStore sessionStore) {
         val tokenCredentials = (TokenCredentials) credentials;

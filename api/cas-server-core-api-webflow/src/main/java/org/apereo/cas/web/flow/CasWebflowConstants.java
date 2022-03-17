@@ -370,16 +370,6 @@ public interface CasWebflowConstants {
     String STATE_ID_FINISHED_INTERRUPT = "finishedInterrupt";
 
     /**
-     * The state id 'inquireInterruptAction'.
-     */
-    String STATE_ID_INQUIRE_INTERRUPT_ACTION = "inquireInterruptAction";
-
-    /**
-     * The state id 'finalizeInterruptFlowAction'.
-     */
-    String STATE_ID_FINALIZE_INTERRUPT_ACTION = "finalizeInterruptFlowAction";
-
-    /**
      * The state id 'prepareRegisterTrustedDevice'.
      */
     String STATE_ID_PREPARE_REGISTER_TRUSTED_DEVICE = "prepareRegisterTrustedDevice";
@@ -784,6 +774,21 @@ public interface CasWebflowConstants {
      * The state id 'spnego'.
      */
     String STATE_ID_SPNEGO = "spnego";
+
+    /**
+     * The state id 'finalizeInterruptFlow'.
+     */
+    String STATE_ID_INQUIRE_INTERRUPT = "inquireInterrupt";
+
+    /**
+     * The state id 'finalizeInterruptFlow'.
+     */
+    String STATE_ID_REDIRECT_INTERRUPT_LINK = "redirectToInterruptLink";
+
+    /**
+     * The state id 'finalizeInterruptFlow'.
+     */
+    String STATE_ID_FINALIZE_INTERRUPT = "finalizeInterruptFlow";
 
     /**
      * The state id 'interruptView'.
@@ -1475,13 +1480,14 @@ public interface CasWebflowConstants {
      * Action id 'mfaAvailableAction'.
      */
     String ACTION_ID_MFA_CHECK_AVAILABLE = "mfaAvailableAction";
+
     /**
      * Action id 'mfaBypassAction'.
      */
     String ACTION_ID_MFA_CHECK_BYPASS = "mfaBypassAction";
+    
     /**
      * Action id 'mfaFailureAction'.
      */
     String ACTION_ID_MFA_CHECK_FAILURE = "mfaFailureAction";
-
 }

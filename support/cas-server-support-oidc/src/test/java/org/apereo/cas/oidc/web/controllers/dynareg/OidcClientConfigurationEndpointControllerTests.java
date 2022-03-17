@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,7 +45,10 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
-        servicesManager.save(getOidcRegisteredService(clientId));
+        val service = getOidcRegisteredService(clientId);
+        service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(
+            ZonedDateTime.now(Clock.systemUTC()).toString()));
+        servicesManager.save(service);
         assertEquals(HttpStatus.SC_OK,
             controller.handleRequestInternal(clientId, request, response).getStatusCodeValue());
     }

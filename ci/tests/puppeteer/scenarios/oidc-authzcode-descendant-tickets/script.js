@@ -8,7 +8,7 @@ async function fetchCode(page) {
     let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}`;
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await page.waitForTimeout(1000)
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
@@ -105,7 +105,7 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
 
 
     await cas.logg("Logging out, removing all tokens...")
-    await page.goto("https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
     try {
         await exchangeCode(page, code, "client");
         throw `Request should not pass; ${code} is expired`

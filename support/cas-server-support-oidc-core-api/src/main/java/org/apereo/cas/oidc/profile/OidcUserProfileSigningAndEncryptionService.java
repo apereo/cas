@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.token.BaseOidcJsonWebKeyTokenSigningAndEncryptionService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link OidcUserProfileSigningAndEncryptionService}.
@@ -88,7 +89,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     }
 
     @Override
-    public List<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
+    public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
         return this.discoverySettings.getUserInfoSigningAlgValuesSupported();
     }
 
@@ -98,11 +99,16 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
         if (service instanceof OidcRegisteredService) {
             val svc = OidcRegisteredService.class.cast(service);
             val jsonWebKey = getJsonWebKeyForEncryption(svc);
-            return encryptToken(svc.getUserInfoEncryptedResponseAlg(),
-                svc.getUserInfoEncryptedResponseEncoding(),
-                jsonWebKey.getKeyId(),
-                jsonWebKey.getPublicKey(),
-                innerJwt);
+
+            return JsonWebTokenEncryptor.builder()
+                .key(jsonWebKey.getPublicKey())
+                .keyId(jsonWebKey.getKeyId())
+                .algorithm(svc.getIdTokenEncryptionAlg())
+                .encryptionMethod(svc.getIdTokenEncryptionEncoding())
+                .allowedAlgorithms(discoverySettings.getUserInfoEncryptionAlgValuesSupported())
+                .allowedContentEncryptionAlgorithms(discoverySettings.getUserInfoEncryptionEncodingValuesSupported())
+                .build()
+                .encrypt(innerJwt);
         }
         return innerJwt;
     }

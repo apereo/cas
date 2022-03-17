@@ -10,7 +10,7 @@ const assert = require('assert');
     let url = `https://localhost:8443/cas/oidc/oidcAuthorize?client_id=client&redirect_uri=${redirectUrl}&scope=openid&state=gKK1AT6qfk&nonce=gzpjHPGJpu&response_type=code&claims=%7B%22userinfo%22:%7B%22name%22:%7B%22essential%22:true%7D%7D%7D`;
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.click(page, "#allow");
     await page.waitForNavigation();

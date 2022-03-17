@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -11,7 +13,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import de.cronn.reflection.util.PropertyUtils;
 import de.cronn.reflection.util.TypedPropertyGetter;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.beans.factory.config.YamlProcessor;
@@ -72,21 +73,22 @@ public final class CasCoreConfigurationUtils {
      * @param filterProvider the filter provider
      * @return the map
      */
-    @SneakyThrows
     public static Map<String, Object> asMap(final Serializable properties,
                                             final FilterProvider filterProvider) {
-        try (val writer = new StringWriter()) {
-            val mapper = new YAMLMapper();
-            mapper.setFilterProvider(filterProvider);
-            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            mapper.setPropertyNamingStrategy(PropertyNamingStrategy.KEBAB_CASE);
-            val module = new SimpleModule();
-            module.addSerializer(Resource.class, new ResourceSerializer());
-            mapper.registerModule(module);
-            mapper.writeValue(writer, properties);
-            val resource = new ByteArrayResource(writer.toString().getBytes(StandardCharsets.UTF_8));
-            return CasCoreConfigurationUtils.loadYamlProperties(resource);
-        }
+        return FunctionUtils.doUnchecked(() -> {
+            try (val writer = new StringWriter()) {
+                val mapper = new YAMLMapper();
+                mapper.setFilterProvider(filterProvider);
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                mapper.setPropertyNamingStrategy(PropertyNamingStrategy.KEBAB_CASE);
+                val module = new SimpleModule();
+                module.addSerializer(Resource.class, new ResourceSerializer());
+                mapper.registerModule(module);
+                mapper.writeValue(writer, properties);
+                val resource = new ByteArrayResource(writer.toString().getBytes(StandardCharsets.UTF_8));
+                return CasCoreConfigurationUtils.loadYamlProperties(resource);
+            }
+        });
     }
 
     /**

@@ -6,10 +6,10 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon")
 
-    await page.goto("https://localhost:8443/cas/login?service=https://example.org");
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://example.org");
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
     await cas.assertTextContent(page, "#appTitle", "The following attributes will be released to [https://example.org]:")
     await cas.assertTextContent(page, "#first-name", "first-name");
@@ -42,7 +42,7 @@ const cas = require('../../cas.js');
     assert(opt != null);
     const url = "https://localhost:8443/cas/actuator/attributeConsent/casuser"
     console.log(`Trying ${url}`)
-    const response = await page.goto(url);
+    const response = await cas.goto(page, url);
     console.log(`${response.status()} ${response.statusText()}`)
     assert(response.ok())
 

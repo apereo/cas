@@ -6,7 +6,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await page.waitForTimeout(1000)
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)

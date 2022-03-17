@@ -14,7 +14,7 @@ const assert = require("assert");
     const url = `https://localhost:8443/cas/oidc/authorize?request=${request}&scope=openid`;
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await cas.loginWith(page, "casuser", "Mellon");
 
     if (await cas.isVisible(page, "#allow")) {

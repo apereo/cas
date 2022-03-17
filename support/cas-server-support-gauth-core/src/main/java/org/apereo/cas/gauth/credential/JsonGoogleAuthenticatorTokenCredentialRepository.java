@@ -3,6 +3,7 @@ package org.apereo.cas.gauth.credential;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 
@@ -186,20 +187,21 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         }
     }
 
-    @SneakyThrows
     private Map<String, List<OneTimeTokenAccount>> readAccountsFromJsonRepository() {
-        val file = location.getFile();
-        LOGGER.debug("Ensuring JSON repository file exists at [{}]", file);
-        val result = file != null && file.createNewFile();
-        if (result) {
-            LOGGER.debug("Created JSON repository file at [{}]", file);
-        }
-        if (file != null && file.length() > 0) {
-            LOGGER.debug("Reading JSON repository file at [{}]", file);
-            val accounts = this.serializer.from(file);
-            LOGGER.debug("Read [{}] accounts from JSON repository file at [{}]", accounts.size(), file);
-            return accounts;
-        }
-        return new HashMap<>(0);
+        return FunctionUtils.doUnchecked(() -> {
+            val file = location.getFile();
+            LOGGER.debug("Ensuring JSON repository file exists at [{}]", file);
+            val result = file != null && file.createNewFile();
+            if (result) {
+                LOGGER.debug("Created JSON repository file at [{}]", file);
+            }
+            if (file != null && file.length() > 0) {
+                LOGGER.debug("Reading JSON repository file at [{}]", file);
+                val accounts = this.serializer.from(file);
+                LOGGER.debug("Read [{}] accounts from JSON repository file at [{}]", accounts.size(), file);
+                return accounts;
+            }
+            return new HashMap<>(0);
+        });
     }
 }

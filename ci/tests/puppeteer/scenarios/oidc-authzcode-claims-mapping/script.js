@@ -9,7 +9,7 @@ const assert = require('assert');
         + "&client_id=client&scope=openid%20profile%20email"
         + "&redirect_uri=https://apereo.github.io"
 
-    await page.goto(url);
+    await cas.goto(page, url);
     console.log(`Page URL: ${page.url()}`);
     await page.waitForTimeout(1000)
     await cas.loginWith(page, "casuser", "Mellon");
@@ -24,7 +24,7 @@ const assert = require('assert');
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
         + `&client_id=client&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
 
-    await page.goto(accessTokenUrl);
+    await cas.goto(page, accessTokenUrl);
     await page.waitForTimeout(1000)
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);

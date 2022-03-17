@@ -9,12 +9,10 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.RandomUtils;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
@@ -106,7 +104,7 @@ public class OAuth20UtilsTests extends AbstractOAuth20Tests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
-        request.addParameter("scope", "s1", "s2");
+        request.addParameter("scope", "openid", "profile");
         assertFalse(oauthRequestParameterResolver.resolveRequestedScopes(context).isEmpty());
         assertTrue(oauthRequestParameterResolver.resolveRequestedScopes(new JEEContext(new MockHttpServletRequest(), response)).isEmpty());
     }
@@ -145,17 +143,7 @@ public class OAuth20UtilsTests extends AbstractOAuth20Tests {
         assertFalse(OAuth20Utils.checkCallbackValid(registeredService, "http://test2.org/cas"));
     }
 
-    @Test
-    public void verifyClientSecretCheck() {
-        val cipher = new OAuth20RegisteredServiceCipherExecutor();
-        val secret = RandomUtils.randomAlphanumeric(12);
-        val encodedSecret = cipher.encode(secret);
-        val registeredService = new OAuthRegisteredService();
-        registeredService.setClientId("clientid");
-        registeredService.setClientSecret(encodedSecret);
-        val result = OAuth20Utils.checkClientSecret(registeredService, secret, cipher);
-        assertTrue(result);
-    }
+    
 
     @Test
     public void verifyServiceHeader() {
@@ -181,16 +169,6 @@ public class OAuth20UtilsTests extends AbstractOAuth20Tests {
         assertFalse(OAuth20Utils.parseUserInfoRequestClaims(token).isEmpty());
     }
 
-    @Test
-    public void verifyClientSecretCheckWithoutCipher() {
-        val cipher = new OAuth20RegisteredServiceCipherExecutor();
-        val secret = RandomUtils.randomAlphanumeric(12);
-        val registeredService = new OAuthRegisteredService();
-        registeredService.setClientId("clientid");
-        registeredService.setClientSecret(secret);
-        val result = OAuth20Utils.checkClientSecret(registeredService, secret, cipher);
-        assertTrue(result);
-    }
 
     @Test
     public void verifyIsAuthorizedResponseTypeForService() {

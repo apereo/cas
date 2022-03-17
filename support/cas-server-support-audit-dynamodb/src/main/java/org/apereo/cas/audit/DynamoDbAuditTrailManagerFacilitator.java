@@ -4,10 +4,10 @@ import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperti
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -71,18 +71,19 @@ public class DynamoDbAuditTrailManagerFacilitator {
      *
      * @param deleteTables the delete tables
      */
-    @SneakyThrows
     public void createTable(final boolean deleteTables) {
-        val attributes = List.of(AttributeDefinition.builder()
-            .attributeName(ColumnNames.PRINCIPAL.getColumnName())
-            .attributeType(ScalarAttributeType.S)
-            .build());
-        val schema = List.of(KeySchemaElement.builder()
-            .attributeName(ColumnNames.PRINCIPAL.getColumnName())
-            .keyType(KeyType.HASH)
-            .build());
-        DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-            dynamoDbProperties.getTableName(), deleteTables, attributes, schema);
+        FunctionUtils.doUnchecked(param -> {
+            val attributes = List.of(AttributeDefinition.builder()
+                .attributeName(ColumnNames.PRINCIPAL.getColumnName())
+                .attributeType(ScalarAttributeType.S)
+                .build());
+            val schema = List.of(KeySchemaElement.builder()
+                .attributeName(ColumnNames.PRINCIPAL.getColumnName())
+                .keyType(KeyType.HASH)
+                .build());
+            DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+                dynamoDbProperties.getTableName(), deleteTables, attributes, schema);
+        });
     }
 
     /**

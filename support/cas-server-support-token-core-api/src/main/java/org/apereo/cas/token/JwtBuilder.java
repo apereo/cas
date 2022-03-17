@@ -1,6 +1,7 @@
 package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -19,7 +20,6 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +49,8 @@ public class JwtBuilder {
     private final ServicesManager servicesManager;
 
     private final RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
+
+    private final CasConfigurationProperties casProperties;
 
     /**
      * Parse jwt.
@@ -92,33 +94,34 @@ public class JwtBuilder {
      * @param jwtJson the jwt json
      * @return the string
      */
-    @SneakyThrows
     public JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
-        service.ifPresent(svc -> {
-            LOGGER.trace("Located service [{}] in service registry", svc);
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(svc);
-        });
+        return FunctionUtils.doUnchecked(() -> {
+            service.ifPresent(svc -> {
+                LOGGER.trace("Located service [{}] in service registry", svc);
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(svc);
+            });
 
-        val jwt = JWTParser.parse(jwtJson);
-        if (jwt instanceof SignedJWT) {
-            if (service.isPresent()) {
-                val registeredService = service.get();
-                LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());
-                if (registeredServiceCipherExecutor.supports(registeredService)) {
-                    LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
-                    return parse(registeredServiceCipherExecutor.decode(jwtJson, Optional.of(registeredService)));
+            val jwt = JWTParser.parse(jwtJson);
+            if (jwt instanceof SignedJWT) {
+                if (service.isPresent()) {
+                    val registeredService = service.get();
+                    LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());
+                    if (registeredServiceCipherExecutor.supports(registeredService)) {
+                        LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+                        return parse(registeredServiceCipherExecutor.decode(jwtJson, Optional.of(registeredService)));
+                    }
                 }
-            }
 
-            return FunctionUtils.doIf(defaultTokenCipherExecutor.isEnabled(),
-                () -> {
-                    LOGGER.trace("Decoding JWT based on default global keys");
-                    return parse(defaultTokenCipherExecutor.decode(jwtJson));
-                }, () -> {
-                    throw new IllegalArgumentException("Unable to validate JWT signature");
-                }).get();
-        }
-        return parse(jwtJson);
+                return FunctionUtils.doIf(defaultTokenCipherExecutor.isEnabled(),
+                    () -> {
+                        LOGGER.trace("Decoding JWT based on default global keys");
+                        return parse(defaultTokenCipherExecutor.decode(jwtJson));
+                    }, () -> {
+                        throw new IllegalArgumentException("Unable to validate JWT signature");
+                    }).get();
+            }
+            return parse(jwtJson);
+        });
     }
 
     /**
