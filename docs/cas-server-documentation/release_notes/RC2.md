@@ -72,4 +72,5 @@ The collection of end-to-end browser tests based on Puppeteer are now split into
 - TextMagic
 - Apache Tomcat
 - Nimbus
+- Hibernate
 - Spring Data Azure

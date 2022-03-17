@@ -6,13 +6,13 @@ import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboLoginSearchResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboPushAuthenticateResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpMethod;
@@ -165,15 +165,16 @@ public class InweboService {
      * @param url the url
      * @return the json node
      */
-    @SneakyThrows
     protected JsonNode call(final String url) {
-        val conn = (HttpURLConnection) new URL(url).openConnection();
-        if (conn instanceof HttpsURLConnection) {
-            HttpsURLConnection.class.cast(conn)
-                .setSSLSocketFactory(this.context.getSocketFactory());
-        }
-        conn.setRequestMethod(HttpMethod.GET.name());
-        return MAPPER.readTree(conn.getInputStream());
+        return FunctionUtils.doUnchecked(() -> {
+            val conn = (HttpURLConnection) new URL(url).openConnection();
+            if (conn instanceof HttpsURLConnection) {
+                HttpsURLConnection.class.cast(conn)
+                    .setSSLSocketFactory(this.context.getSocketFactory());
+            }
+            conn.setRequestMethod(HttpMethod.GET.name());
+            return MAPPER.readTree(conn.getInputStream());
+        });
     }
 
     /**

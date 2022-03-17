@@ -2,9 +2,9 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.SneakyThrows;
 import lombok.val;
 
 import java.io.Serializable;
@@ -37,13 +37,14 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    @SneakyThrows
     public List<U2FDeviceRegistration> getRegisteredDevices(final String username) {
-        val values = userStorage.get(username);
-        if (values == null) {
-            return new ArrayList<>(0);
-        }
-        return values;
+        return FunctionUtils.doUnchecked(() -> {
+            val values = userStorage.get(username);
+            if (values == null) {
+                return new ArrayList<>(0);
+            }
+            return values;
+        });
     }
 
     @Override

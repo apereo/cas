@@ -69,6 +69,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private boolean dynamicallyRegistered;
 
+    private long clientSecretExpiration;
+    
     @JsonIgnore
     @Deprecated(since = "6.2.0")
     @Transient

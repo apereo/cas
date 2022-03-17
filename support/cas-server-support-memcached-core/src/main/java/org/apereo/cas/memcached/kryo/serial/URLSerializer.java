@@ -1,10 +1,11 @@
 package org.apereo.cas.memcached.kryo.serial;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import lombok.SneakyThrows;
 import lombok.val;
 
 import java.net.URL;
@@ -17,10 +18,11 @@ import java.net.URL;
  */
 public class URLSerializer extends Serializer<URL> {
     @Override
-    @SneakyThrows
     public URL read(final Kryo kryo, final Input input, final Class<? extends URL> aClass) {
-        val url = kryo.readObject(input, String.class);
-        return new URL(url);
+        return FunctionUtils.doUnchecked(() -> {
+            val url = kryo.readObject(input, String.class);
+            return new URL(url);
+        });
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -78,7 +77,6 @@ public class CouchDbConsentDecision extends ConsentDecision {
      * @param other decision to copy details from.
      * @return CouchDb capable consent decision.
      */
-    @SneakyThrows
     public CouchDbConsentDecision copyDetailsFrom(final ConsentDecision other) {
         setAttributes(other.getAttributes());
         setPrincipal(other.getPrincipal());

@@ -39,10 +39,13 @@ const assert = require('assert');
     assert(entity.registration_client_uri !== null);
     assert(entity.contacts.length === 2)
 
+    console.log("Fetching client configuration...")
+    console.log("==================================")
+    
     await cas.doGet(entity.registration_client_uri,
         res => {
             console.log(`Registered entity: ${JSON.stringify(res.data)}`);
-            assert(res.data.client_secret_expires_at === 0)
+            assert(res.data.client_secret_expires_at > 0)
             assert(res.data.client_name === "My Example")
             assert(res.data.client_id === entity.client_id)
             assert(res.data.client_secret === entity.client_secret)
