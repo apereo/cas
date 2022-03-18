@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
@@ -23,6 +24,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,7 +91,19 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
 
         if (result != null && !result.isEmpty()) {
             return CollectionUtils.firstElement(result)
-                .map(value -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(value.toString(), this.applicationContext))
+                .map(Event.class::cast)
+                .map(event -> {
+                    val provider = CollectionUtils.firstElement(providers, MultifactorAuthenticationProvider.class).orElseThrow();
+                    if (provider instanceof ChainingMultifactorAuthenticationProvider && provider.getId().equals(event.getId())) {
+                        val chain = (ChainingMultifactorAuthenticationProvider) provider;
+                        val matched = chain.getMultifactorAuthenticationProviders()
+                            .stream()
+                            .map(p -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(p.getId(), applicationContext))
+                            .allMatch(Optional::isPresent);
+                        return matched ? Optional.of(provider) : unmatchedMultifactorAuthenticationTrigger(principal, registeredService);
+                    }
+                    return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(event.getId(), applicationContext);
+                })
                 .orElseGet(() -> unmatchedMultifactorAuthenticationTrigger(principal, registeredService));
         }
 
