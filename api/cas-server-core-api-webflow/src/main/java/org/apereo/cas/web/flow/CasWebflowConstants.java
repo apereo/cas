@@ -761,6 +761,11 @@ public interface CasWebflowConstants {
     String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
 
     /**
+     * The state id 'finalizeInterruptFlow'.
+     */
+    String STATE_ID_REDIRECT_INTERRUPT_LINK = "redirectToInterruptLink";
+
+    /**
      * The view state 'showAuthenticationWarningMessages'.
      */
     String STATE_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
