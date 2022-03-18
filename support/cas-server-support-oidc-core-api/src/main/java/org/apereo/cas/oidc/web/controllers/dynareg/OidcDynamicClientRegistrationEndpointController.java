@@ -2,37 +2,22 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
-import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
-import org.apereo.cas.services.DefaultRegisteredServiceContact;
-import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.OidcSubjectTypes;
-import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.hjson.JsonValue;
 import org.pac4j.core.context.JEEContext;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,14 +26,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link OidcDynamicClientRegistrationEndpointController}.
@@ -58,36 +38,8 @@ import java.util.Objects;
  */
 @Slf4j
 public class OidcDynamicClientRegistrationEndpointController extends BaseOidcController {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
-
-    private static final int GENERATED_CLIENT_NAME_LENGTH = 8;
-
     public OidcDynamicClientRegistrationEndpointController(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
-    }
-
-    private static void validate(final OidcClientRegistrationRequest registrationRequest,
-                                 final OidcRegisteredService registeredService) throws Exception {
-        if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
-            HttpResponse sectorResponse = null;
-            try {
-                val exec = HttpUtils.HttpExecutionRequest.builder()
-                    .method(HttpMethod.GET)
-                    .url(registeredService.getSectorIdentifierUri())
-                    .build();
-                sectorResponse = HttpUtils.execute(exec);
-                if (sectorResponse != null && sectorResponse.getStatusLine().getStatusCode() == org.apache.http.HttpStatus.SC_OK) {
-                    val result = IOUtils.toString(sectorResponse.getEntity().getContent(), StandardCharsets.UTF_8);
-                    val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
-                    if (!urls.equals(registrationRequest.getRedirectUris())) {
-                        throw new IllegalArgumentException("Invalid sector identifier uri");
-                    }
-                }
-            } finally {
-                HttpUtils.close(sectorResponse);
-            }
-        }
     }
 
     /**
@@ -116,137 +68,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                 .getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
-
-            val containsFragment = registrationRequest.getRedirectUris()
-                .stream()
-                .anyMatch(uri -> uri.contains("#"));
-            if (containsFragment) {
-                throw new IllegalArgumentException("Redirect URI cannot contain a fragment");
-            }
-
-            val servicesManager = getConfigurationContext().getServicesManager();
-            val registeredService = registrationRequest.getRedirectUris()
-                .stream()
-                .map(uri -> (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(servicesManager, uri))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseGet(OidcRegisteredService::new);
-
-            if (StringUtils.isNotBlank(registrationRequest.getClientName())) {
-                registeredService.setName(registrationRequest.getClientName());
-            } else if (StringUtils.isBlank(registeredService.getName())) {
-                registeredService.setName(RandomUtils.randomAlphabetic(GENERATED_CLIENT_NAME_LENGTH));
-            }
-
-            val serviceId = String.join("|", registrationRequest.getRedirectUris());
-            registeredService.setServiceId(serviceId);
-
-            registeredService.setSectorIdentifierUri(registrationRequest.getSectorIdentifierUri());
-            registeredService.setSubjectType(registrationRequest.getSubjectType());
-            if (StringUtils.equalsIgnoreCase(OidcSubjectTypes.PAIRWISE.getType(), registeredService.getSubjectType())) {
-                registeredService.setUsernameAttributeProvider(new PairwiseOidcRegisteredServiceUsernameAttributeProvider());
-            }
-
-            if (StringUtils.isNotBlank(registrationRequest.getJwksUri())) {
-                registeredService.setJwks(registrationRequest.getJwksUri());
-            } else {
-                val jwks = registrationRequest.getJwks();
-                if (jwks != null && !jwks.getJsonWebKeys().isEmpty()) {
-                    jwks.getJsonWebKeys().stream()
-                        .filter(key -> StringUtils.isBlank(key.getKeyId()))
-                        .forEach(key -> key.setKeyId(RandomUtils.randomAlphabetic(6)));
-                    registeredService.setJwks(jwks.toJson());
-                }
-            }
-            if (StringUtils.isNotBlank(registrationRequest.getTokenEndpointAuthMethod())) {
-                registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod());
-            }
-
-            registeredService.setClientId(getConfigurationContext().getClientIdGenerator().getNewString());
-            registeredService.setClientSecret(getConfigurationContext().getClientSecretGenerator().getNewString());
-            registeredService.setEvaluationOrder(0);
-            val urls = org.springframework.util.StringUtils.collectionToCommaDelimitedString(registrationRequest.getPostLogoutRedirectUris());
-            registeredService.setLogoutUrl(urls);
-
-            if (StringUtils.isNotBlank(registrationRequest.getLogo())) {
-                registeredService.setLogo(registrationRequest.getLogo());
-            }
-            if (StringUtils.isNotBlank(registrationRequest.getPolicyUri())) {
-                registeredService.setInformationUrl(registrationRequest.getPolicyUri());
-            }
-            if (StringUtils.isNotBlank(registrationRequest.getTermsOfUseUri())) {
-                registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri());
-            }
-
-            if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedReponseAlg())) {
-                registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());
-            }
-            registeredService.setUserInfoEncryptedResponseAlg(registrationRequest.getUserInfoEncryptedResponseAlg());
-
-            if (StringUtils.isNotBlank(registeredService.getUserInfoEncryptedResponseAlg())) {
-                if (StringUtils.isBlank(registrationRequest.getUserInfoEncryptedResponseEncoding())) {
-                    registeredService.setUserInfoEncryptedResponseEncoding(
-                        OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
-                } else {
-                    registeredService.setUserInfoEncryptedResponseEncoding(registrationRequest.getUserInfoEncryptedResponseEncoding());
-                }
-            }
-
-            val properties = getConfigurationContext().getCasProperties();
-            val supportedScopes = new HashSet<>(properties.getAuthn().getOidc().getDiscovery().getScopes());
-            val prefix = properties.getServer().getPrefix();
-
-            registeredService.setScopes(supportedScopes);
-            val processedScopes = new LinkedHashSet<>(supportedScopes);
-            registeredService.setScopes(processedScopes);
-
-            if (!registrationRequest.getDefaultAcrValues().isEmpty()) {
-                val multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
-                multifactorPolicy.setMultifactorAuthenticationProviders(new HashSet<>(registrationRequest.getDefaultAcrValues()));
-                registeredService.setMultifactorPolicy(multifactorPolicy);
-            }
-
-            if (StringUtils.isNotBlank(registrationRequest.getIdTokenSignedResponseAlg())) {
-                registeredService.setIdTokenSigningAlg(registrationRequest.getIdTokenSignedResponseAlg());
-                registeredService.setSignIdToken(true);
-            }
-
-            if (StringUtils.isNotBlank(registrationRequest.getIdTokenEncryptedResponseAlg())) {
-                registeredService.setIdTokenEncryptionAlg(registrationRequest.getIdTokenEncryptedResponseAlg());
-                registeredService.setEncryptIdToken(true);
-            }
-
-            if (StringUtils.isNotBlank(registrationRequest.getIdTokenEncryptedResponseEncoding())) {
-                registeredService.setIdTokenEncryptionEncoding(registrationRequest.getIdTokenEncryptedResponseEncoding());
-                registeredService.setEncryptIdToken(true);
-            }
-
-            registeredService.getContacts().clear();
-            registrationRequest.getContacts().forEach(c -> {
-                val contact = new DefaultRegisteredServiceContact();
-                if (c.contains("@")) {
-                    contact.setEmail(c);
-                    contact.setName(c.substring(0, c.indexOf('@')));
-                } else {
-                    contact.setName(c);
-                }
-                registeredService.getContacts().add(contact);
-            });
-            val clientSecretExp = Beans.newDuration(getConfigurationContext().getCasProperties()
-                .getAuthn().getOidc().getRegistration().getClientSecretExpiration()).toSeconds();
-            if (clientSecretExp > 0) {
-                val expirationDate = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(clientSecretExp);
-                LOGGER.debug("Client secret shall expire at [{}]", expirationDate);
-                registeredService.setClientSecretExpiration(expirationDate.toEpochSecond());
-            }
-            
-            registeredService.setDescription("Registered service ".concat(registeredService.getName()));
-            registeredService.setDynamicallyRegistered(true);
-
-            validate(registrationRequest, registeredService);
+            val registeredService = new OidcClientRegistrationRequestTranslator(getConfigurationContext())
+                .translate(registrationRequest, Optional.empty());
             val savedService = (OidcRegisteredService) getConfigurationContext().getServicesManager().save(registeredService);
-            val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(registeredService, prefix);
-
+            val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(savedService,
+                getConfigurationContext().getCasProperties().getServer().getPrefix());
             val accessToken = generateRegistrationAccessToken(request, response, savedService, registrationRequest);
             val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
                 .accessToken(accessToken)
@@ -257,6 +83,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
                 .build()
                 .encode();
             clientResponse.setRegistrationAccessToken(encodedAccessToken);
+            registeredService.setDynamicallyRegistered(true);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
