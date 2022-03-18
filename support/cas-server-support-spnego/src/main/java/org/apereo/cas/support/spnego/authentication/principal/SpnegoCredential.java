@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 
@@ -45,12 +46,14 @@ public class SpnegoCredential implements Credential {
      * The SPNEGO Init Token.
      */
     @ToString.Exclude
+    @JsonIgnore
     private byte[] initToken;
 
     /**
      * The SPNEGO Next Token.
      */
     @ToString.Exclude
+    @JsonIgnore
     private byte[] nextToken;
 
     /**
