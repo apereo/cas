@@ -196,6 +196,8 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             map.forEach(this::registerAttributeDefinition);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
+        } finally {
+            LOGGER.debug("Loaded [{}] attribute definition(s).", attributeDefinitions.size());
         }
     }
 }
