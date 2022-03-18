@@ -5,14 +5,16 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login?authn_method=mfa-simple");
+    await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-simple");
     await cas.loginWith(page, "casuser", "Mellon");
-
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
+    await cas.screenshot(page);
     await cas.assertVisibility(page, '#token')
 
     console.log("Attempting to resend ticket...")
     await cas.click(page, "#resendButton");
+    await page.waitForTimeout(1000)
+    await cas.screenshot(page);
     await page.waitForSelector("#token", {visible: true});
 
     const page2 = await browser.newPage();

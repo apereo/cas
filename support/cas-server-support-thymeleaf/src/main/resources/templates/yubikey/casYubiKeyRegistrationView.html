@@ -29,7 +29,7 @@
                                    type="password"
                                    name="token"
                                    id="token"
-                                   size="25"
+                                   size="50"
                                    autocomplete="off" required/>
                             <span class="mdc-notched-outline">
                                 <span class="mdc-notched-outline__leading"></span>
@@ -38,17 +38,14 @@
                                 </span>
                                 <span class="mdc-notched-outline__trailing"></span>
                             </span>
-                            <input class="mdc-text-field__input form-control pwd" type="password" name="token" id="token" size="25"
-                                autocomplete="off" required />
+                            <button
+                                    class="reveal-password align-self-end mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
+                                    tabindex="-1" type="button">
+                                <i class="mdi mdi-eye reveal-password-icon fas fa-eye"></i>
+                                <span class="visually-hidden">Toggle Password</span>
+                            </button>
                         </label>
                     </div>
-                    <button
-                        class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
-                        tabindex="-1"
-                        type="button">
-                        <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
-                        <span class="visually-hidden">Toggle Password</span>
-                    </button>
                 </div>
                 <div class="mdc-text-field-helper-line caps-warn">
                     <p

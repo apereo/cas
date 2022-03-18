@@ -7,7 +7,7 @@ const path = require('path');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
 
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
@@ -17,7 +17,7 @@ const path = require('path');
         "response_type=code&" +
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
-    await page.goto(url);
+    await cas.goto(page, url);
 
     await cas.assertVisibility(page, 'li #SAML2Client')
     await cas.click(page, "li #SAML2Client")

@@ -10,7 +10,7 @@
   "supportedResponseTypes": [ "java.util.HashSet", [ "id_token" ] ],
   "signIdToken": true,
   "encryptIdToken": true,
-  "jwks": "file://${#environmentVars['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVars['SCENARIO']}/services/Sample-1.jwks",
+  "jwks": "file:${#environmentVars['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVars['SCENARIO']}/services/Sample-1.jwks",
   "idTokenEncryptionAlg": "RSA-OAEP-256",
   "idTokenEncryptionEncoding": "A128CBC-HS256"
 }

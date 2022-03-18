@@ -59,7 +59,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("grouperFacade")
         final GrouperFacade grouperFacade,
-        @Qualifier("multifactorAuthenticationProviderResolver")
+        @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME)
         final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver) {
         return BeanSupplier.of(MultifactorAuthenticationTrigger.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))

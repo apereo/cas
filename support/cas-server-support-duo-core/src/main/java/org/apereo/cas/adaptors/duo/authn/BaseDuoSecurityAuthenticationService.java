@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -19,7 +20,6 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -266,7 +266,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @param id      the id
      * @return the http
      */
-    @SneakyThrows
     protected Http signHttpAuthRequest(final Http request, final String id) {
         return signHttpAuthRequest(request, Map.of("username", id, "factor", "auto", "device", "auto"));
     }
@@ -282,13 +281,14 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @param request the request
      * @return the http
      */
-    @SneakyThrows
     protected Http signHttpUserPreAuthRequest(final Http request) {
-        val resolver = SpringExpressionLanguageValueResolver.getInstance();
-        request.signRequest(
-            resolver.resolve(properties.getDuoIntegrationKey()),
-            resolver.resolve(properties.getDuoSecretKey()));
-        return request;
+        return FunctionUtils.doUnchecked(() -> {
+            val resolver = SpringExpressionLanguageValueResolver.getInstance();
+            request.signRequest(
+                resolver.resolve(properties.getDuoIntegrationKey()),
+                resolver.resolve(properties.getDuoSecretKey()));
+            return request;
+        });
     }
 
     /**

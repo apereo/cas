@@ -14,6 +14,7 @@ import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -218,6 +219,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
         val authzRequest = registeredBuilders
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .sorted(OrderComparator.INSTANCE)
             .map(builder -> toAuthorizationRequest(registeredService, context, service, authentication, builder))
             .filter(Objects::nonNull)
@@ -233,6 +235,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
         return registeredBuilders
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .sorted(OrderComparator.INSTANCE)
             .filter(b -> b.supports(authzRequest))
             .findFirst()
@@ -281,8 +284,12 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
+
+        val challengeMethodsSupported = getConfigurationContext().getCasProperties().getAuthn().getOidc().getDiscovery().getCodeChallengeMethodsSupported();
         val codeChallengeMethod = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE_METHOD)
-            .map(String::valueOf).orElse(StringUtils.EMPTY)
+            .map(String::valueOf)
+            .filter(challengeMethodsSupported::contains)
+            .orElse(StringUtils.EMPTY)
             .toUpperCase();
 
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());

@@ -25,6 +25,7 @@ public class RegisteredServiceConsentPolicyTests {
         assertTrue(input.getStatus().isUndefined());
         assertTrue(input.getExcludedAttributes().isEmpty());
         assertTrue(input.getIncludeOnlyAttributes().isEmpty());
+        assertNull(input.getExcludedServices());
     }
 
 }

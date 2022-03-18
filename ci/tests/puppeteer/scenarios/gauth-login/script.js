@@ -4,11 +4,10 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login?authn_method=mfa-gauth");
+    await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-gauth");
     await cas.loginWith(page, "casuser", "Mellon");
-
-    // await page.waitForTimeout(5000)
-
+    await page.waitForTimeout(3000)
+    await cas.screenshot(page)
     await cas.assertVisibility(page, '#form-1')
     await cas.assertVisibility(page, '#name-RecordName')
     await cas.assertVisibility(page, '#id-1')

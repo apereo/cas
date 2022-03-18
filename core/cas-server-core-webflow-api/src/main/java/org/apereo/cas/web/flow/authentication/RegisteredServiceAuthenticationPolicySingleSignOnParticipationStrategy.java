@@ -11,9 +11,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.BaseSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Optional;
@@ -44,7 +44,6 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
     }
 
     @Override
-    @SneakyThrows
     public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
         val registeredService = getRegisteredService(ssoRequest);
         if (registeredService == null) {
@@ -75,11 +74,13 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
                     .collect(Collectors.toSet());
                 LOGGER.debug("Asserted authentication handlers are [{}]", assertedHandlers);
                 val criteria = authenticationPolicy.getCriteria();
-                if (criteria != null) {
-                    val policy = criteria.toAuthenticationPolicy(registeredService);
-                    val result = policy.isSatisfiedBy(authentication, assertedHandlers, applicationContext, Optional.empty());
-                    return result.isSuccess();
-                }
+                return Optional.ofNullable(criteria)
+                    .map(Unchecked.function(c -> {
+                        val policy = criteria.toAuthenticationPolicy(registeredService);
+                        val result = policy.isSatisfiedBy(authentication, assertedHandlers,
+                            applicationContext, Optional.empty());
+                        return result.isSuccess();
+                    })).orElse(true);
             }
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);

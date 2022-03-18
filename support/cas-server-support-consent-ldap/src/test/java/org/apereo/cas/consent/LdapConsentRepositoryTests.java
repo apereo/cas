@@ -1,11 +1,11 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,12 +54,13 @@ public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     }
 
     @Override
-    @SneakyThrows
     public LDAPConnection getConnection() {
-        val ldap = casProperties.getConsent().getLdap();
-        return new LDAPConnection("localhost", LDAP_PORT,
-            ldap.getBindDn(),
-            ldap.getBindCredential());
+        return FunctionUtils.doUnchecked(() -> {
+            val ldap = casProperties.getConsent().getLdap();
+            return new LDAPConnection("localhost", LDAP_PORT,
+                ldap.getBindDn(),
+                ldap.getBindCredential());
+        });
     }
 
     @Test

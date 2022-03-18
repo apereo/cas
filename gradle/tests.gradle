@@ -103,11 +103,20 @@ if (rootProject.tasks.findByName("testCategories") == null) {
 if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
     rootProject.tasks.create(name: "puppeteerScenarios", description: "Display all available puppeteer scenarios") {
         doLast {
-            def scenarios = new TreeSet<String>()
+            def scenarios = []
             def scenarioMatchPattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
             rootProject.file("ci/tests/puppeteer/scenarios").eachDirMatch(~scenarioMatchPattern) {
                 scenarios += it.getName()
             }
+            Collections.sort(scenarios)
+            if (project.hasProperty("puppeteerScenariosFrom") && project.hasProperty("puppeteerScenariosTo")) {
+                def start = Integer.parseInt(project.puppeteerScenariosFrom)
+                def to = Integer.parseInt(project.puppeteerScenariosTo)
+                if (to > scenarios.size())
+                    to = scenarios.size()
+                scenarios = scenarios.subList(start, to)
+            }
+//            println scenarios.size()
             println(groovy.json.JsonOutput.toJson(scenarios))
         }
     }

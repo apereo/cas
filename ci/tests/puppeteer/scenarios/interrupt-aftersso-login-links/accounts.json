@@ -1,0 +1,16 @@
+{
+  "casuser" : {
+    "message" : "We interrupted your login",
+    "links" : {
+      "Go to Google" : "https://www.google.com",
+      "Go to Yahoo" : "https://www.yahoo.com",
+      "CAS Application" : "https://localhost:8443/cas/login?service=https://apereo.github.io"
+    },
+    "ssoEnabled" : true,
+    "interrupt" : true,
+    "data" : {
+      "field1" : [ "value1", "value2" ],
+      "field2" : [ "value3", "value4" ]
+    }
+  }
+}

@@ -3,17 +3,16 @@ const path = require('path');
 const cas = require('../../cas.js');
 const assert = require("assert");
 
-async function cleanUp(exec) {
+async function cleanUp(samlSpDir) {
     console.log("Killing SAML2 SP process...");
-    exec.kill();
+    await cas.stopSamlSp(samlSpDir);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
-    await cas.removeDirectory(path.join(__dirname, '/saml-sp'));
 }
 
 (async () => {
     let samlSpDir = path.join(__dirname, '/saml-sp');
     let idpMetadataPath = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    let exec = await cas.launchSamlSp(idpMetadataPath, samlSpDir);
+    await cas.launchSamlSp(idpMetadataPath, samlSpDir);
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
@@ -25,7 +24,7 @@ async function cleanUp(exec) {
         url += `?providerId=${entityId}&token=${token}`;
 
         console.log(`Navigating to ${url}`);
-        await page.goto(url);
+        await cas.goto(page, url);
         await page.waitForTimeout(5000)
 
         let resultUrl = await page.url()
@@ -33,15 +32,15 @@ async function cleanUp(exec) {
         assert(resultUrl === "https://localhost:9876/sp/")
         await cas.assertInnerText(page, "#principal", "casuser")
 
-        await page.goto("https://localhost:8443/cas/login");
+        await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.assertTicketGrantingCookie(page);
         await cas.assertInnerText(page, '#content div h2', "Log In Successful");
         await page.waitForTimeout(1000);
         
         await browser.close();
-        await cleanUp(exec);
+        await cleanUp(samlSpDir);
     }, async error => {
-        await cleanUp(exec);
+        await cleanUp(samlSpDir);
         console.log(error);
         throw error;
     })

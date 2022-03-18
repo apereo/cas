@@ -21,7 +21,8 @@ public class DefaultUserAuthenticationResourceEntityResponseFactory implements U
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Override
-    public ResponseEntity<String> build(final AuthenticationResult result, final HttpServletRequest request) throws Exception {
+    public ResponseEntity<String> build(final AuthenticationResult result,
+                                        final HttpServletRequest request) throws Exception {
         return new ResponseEntity<>(MAPPER.writeValueAsString(result), HttpStatus.OK);
     }
 }

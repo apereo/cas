@@ -1,5 +1,8 @@
 {
   "dependencies": "pac4j-webflow",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",

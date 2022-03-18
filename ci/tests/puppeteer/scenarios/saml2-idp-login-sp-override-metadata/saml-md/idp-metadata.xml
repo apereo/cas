@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="https://cas.apereo.org/saml/idp">
+    <IDPSSODescriptor errorURL="https://localhost:8443/cas/idp/error" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol urn:mace:shibboleth:1.0">
+        <Extensions>
+            <shibmd:Scope regexp="false">example.net</shibmd:Scope>
+
+            <!--
+            <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+                <mdui:DisplayName xml:lang="en">CAS</mdui:DisplayName>
+                <mdui:Description xml:lang="en">Apereo CAS</mdui:Description>
+                <mdui:InformationURL xml:lang="en">https://apereo.org/projects/cas</mdui:InformationURL>
+                <mdui:PrivacyStatementURL xml:lang="en">https://apereo.org/projects/cas</mdui:PrivacyStatementURL>
+                <mdui:Logo height="60" width="1119" xml:lang="en">https://apereo.github.io/cas/images/cas_logo.png</mdui:Logo>
+            </mdui:UIInfo>
+            -->
+            
+        </Extensions>
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo>
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIDBjCCAe6gAwIBAgIVAIbSdyzrOQ27XJU5Ws/wkTXZ9It+MA0GCSqGSIb3DQEB
+CwUAMBQxEjAQBgNVBAMMCWxvY2FsaG9zdDAeFw0yMjAzMTExMzMxMDRaFw00MjAz
+MTExMzMxMDRaMBQxEjAQBgNVBAMMCWxvY2FsaG9zdDCCASIwDQYJKoZIhvcNAQEB
+BQADggEPADCCAQoCggEBAJlOJmIN+awslLiL2+qS//8SpYdEBny/7ENQwFN+0TeU
+YnBQoYBk6bbH/amjK8RcM6l+WjP4q8tebyJWydKFm6CFc6vJiZpV/k776eL+GBuR
+/YfQTReqAdtYjfhTh2KksOhPHnaiuaBtJ2r1cSwMfIJY7gOA1Uqokm1ThWzFkf0W
+/QEczGFXR3o7yECBu2FTJmE9M1iD+Ebiji6DphVHJQRnIzbjJ95j7pbMJ14+xp6P
+Fc9SzmAQwlVFospYCBd9mJVyk1bugqQltmAgrLU+XCEMksx3jUTCe1Y+x3QOkQp2
+EQJmfJAn6YmChO2O0TCkQTirsPMh+pGZEHn9I4WIwAkCAwEAAaNPME0wHQYDVR0O
+BBYEFHbOsNdy2d7c3A+Lmoyk7/O34hmzMCwGA1UdEQQlMCOCCWxvY2FsaG9zdIYW
+bG9jYWxob3N0L2lkcC9tZXRhZGF0YTANBgkqhkiG9w0BAQsFAAOCAQEAZcuD96lm
+/mtF6cXldRGVfcdnYxpsDyvKtleeUeCWlBr6tl/tfQLLeSh605sLUohKFROjWGEv
+3D1Cd540+ZhtYkxq/lR08DAoiqL9dcgu5QBEaUjD8ECcJhpdVJ1b5+t/rmkktRNQ
+kPR21KnbGDzMAxd4e9EWCHKqqjp4QXzgee3ijr9bxGpCUFA5DK2lfHOBrx2ij+yx
+CTrxJbY+WqyRSGzusTSlD8QgAlwh19AuuRrvPaGnpIduS5ro61NbgDMaCUaize+Y
+4ema8sk/iPGaEIWWQhx8z8vA7Q9K7MdQMW/u/B05eGhDbfbFiEZJsKoR5PpeFgCI
+TsA31MJS9MhvGA==</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <KeyDescriptor use="encryption">
+            <ds:KeyInfo>
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIDBTCCAe2gAwIBAgIUPYGo22QXUt2f1WMK0a+bymu5SBYwDQYJKoZIhvcNAQEL
+BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIyMDMxMTEzMzEwNVoXDTQyMDMx
+MTEzMzEwNVowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEAgpQo+y0vS6mM8CSdJOs9E48/altWSQ/Y5bjXu0wXpAY3
+PvcVVJNwJdiWwUoHiU0N4zzeuIUpxtVxTTSfRZFH5H+1NCiv6FXcnQgbRdULLQly
+AnIScD7/TdPZJofPPLypxNgrUCu5pabr6cR3bLZX968Ai1b3nKzi8wsptM96/dnF
+qIzJq9zMK6QIX6qAgRcB+OXIkM6pZdFwIAiKJXzOSzY0BLz0rfZoJijocSW7Srd8
+jzG4kjfnzLyTgSNL/csOUx9cohBCv60lUl5rqWogEZZUjrxZWYojYqtA4gAD+aSp
++ux1QrL9vFREhMRpZO73wXVw/P29I48CE1doQIaHawIDAQABo08wTTAdBgNVHQ4E
+FgQURVSKqV4FJ21R/VqseuFRNHecbbQwLAYDVR0RBCUwI4IJbG9jYWxob3N0hhZs
+b2NhbGhvc3QvaWRwL21ldGFkYXRhMA0GCSqGSIb3DQEBCwUAA4IBAQBvTt6ewV6K
+GS/c1vx9Koi/rQI5VccGv3vpjkLaN9+/QxeEWf/r5f56bHMYWWbDNWnmQJeb2i9w
+pdO/Dx1iSYhr2IVdjEJLpvGEyRGoTX6GxM2HiUby5TbaMifg7b4H79ChymXEApeX
+yFAS/4mi1VZCXp3fipZdeWlSHP+LkS8DpOgg9H0Dqk65mdDcXTX2X48pmWt7E3+k
+FDiwqSiexgYOI8bC3f0zQz4LVubBrBv89b0TsLJ4f0/IR4zLCl8JMo4GDfFNYvBC
+XvAtpLG6hPDIiMvbilMIeVVep6JYVSTRVOC7Lb31GHT2YHtdxpBACimUEcvHPBLc
+1RRV79ChDcX0</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+
+        <!--
+        <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" 
+                                   Location="https://localhost:8443/cas/idp/profile/SAML1/SOAP/ArtifactResolution" index="1"/>
+        -->
+
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                             Location="https://localhost:8443/cas/idp/profile/SAML2/POST/SLO"/>
+
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                             Location="https://localhost:8443/cas/idp/profile/SAML2/Redirect/SLO" />
+
+        <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                             Location="https://localhost:8443/cas/idp/profile/SAML2/POST/SSO"/>
+
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                             Location="https://localhost:8443/cas/idp/profile/SAML2/POST-SimpleSign/SSO"/>
+
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                             Location="https://localhost:8443/cas/idp/profile/SAML2/Redirect/SSO"/>
+
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                             Location="https://localhost:8443/cas/idp/profile/SAML2/SOAP/ECP"/>
+
+    </IDPSSODescriptor>
+
+    <!--
+    <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+        <Extensions>
+            <shibmd:Scope regexp="false">example.net</shibmd:Scope>
+        </Extensions>
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo>
+                <ds:X509Data>
+                    <ds:X509Certificate>${context.SigningKey}</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="https://localhost:8443/cas/idp/profile/SAML1/SOAP/AttributeQuery"/>
+        <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://localhost:8443/cas/idp/profile/SAML2/SOAP/AttributeQuery"/>
+    </AttributeAuthorityDescriptor>
+    -->
+    
+    <!--
+    <Organization>
+        <OrganizationName xml:lang="en">Institution Name</OrganizationName>
+        <OrganizationDisplayName xml:lang="en">Institution DisplayName</OrganizationDisplayName>
+        <OrganizationURL xml:lang="en">URL</OrganizationURL>
+    </Organization>
+    <ContactPerson contactType="administrative">
+        <GivenName>John Smith</GivenName>
+        <EmailAddress>jsmith@example.org</EmailAddress>
+    </ContactPerson>
+    <ContactPerson contactType="technical">
+        <GivenName>John Smith</GivenName>
+        <EmailAddress>jsmith@example.org</EmailAddress>
+    </ContactPerson>
+    <ContactPerson contactType="support">
+        <GivenName>IT Services Support</GivenName>
+        <EmailAddress>support@example.org</EmailAddress>
+    </ContactPerson>
+    -->
+</EntityDescriptor>

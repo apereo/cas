@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.DecryptionException;
+import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 
 import lombok.experimental.UtilityClass;
@@ -436,8 +437,12 @@ public class EncodingUtils {
      * @return the string
      */
     public static String encryptValueAsJwtDirectAes128Sha256(final Key key, final Serializable value) {
-        return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT,
-            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, new HashMap<>(0));
+        return JsonWebTokenEncryptor.builder()
+            .key(key)
+            .algorithm(KeyManagementAlgorithmIdentifiers.DIRECT)
+            .encryptionMethod(CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM)
+            .build()
+            .encrypt(value);
     }
 
     /**
@@ -448,66 +453,12 @@ public class EncodingUtils {
      * @return the string
      */
     public static String encryptValueAsJwtRsaOeap256Aes256Sha512(final Key key, final Serializable value) {
-        return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
-            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, new HashMap<>(0));
-    }
-
-    /**
-     * Encrypt value as jwt string.
-     *
-     * @param secretKeyEncryptionKey          the secret key encryption key
-     * @param value                           the value
-     * @param algorithmHeaderValue            the algorithm header value
-     * @param encryptionMethodHeaderParameter the encryption method header parameter
-     * @param customHeaders                   the custom headers
-     * @return the string
-     */
-    public static String encryptValueAsJwt(final Key secretKeyEncryptionKey,
-                                           final Serializable value,
-                                           final String algorithmHeaderValue,
-                                           final String encryptionMethodHeaderParameter,
-                                           final Map<String, Object> customHeaders) {
-        return encryptValueAsJwt(secretKeyEncryptionKey, value, algorithmHeaderValue,
-            encryptionMethodHeaderParameter, null, customHeaders);
-    }
-
-    /**
-     * Encrypt the value based on the seed array whose length was given,
-     * and the key and content encryption ids.
-     *
-     * @param secretKeyEncryptionKey          the secret key encryption key
-     * @param value                           the value
-     * @param algorithmHeaderValue            the algorithm header value
-     * @param encryptionMethodHeaderParameter the content encryption algorithm identifier
-     * @param keyIdHeaderValue                the key id header value
-     * @param customHeaders                   the custom headers
-     * @return the encoded value
-     */
-    public static String encryptValueAsJwt(final Key secretKeyEncryptionKey,
-                                           final Serializable value,
-                                           final String algorithmHeaderValue,
-                                           final String encryptionMethodHeaderParameter,
-                                           final String keyIdHeaderValue,
-                                           final Map<String, Object> customHeaders) {
-        try {
-            val jwe = new JsonWebEncryption();
-            jwe.setPayload(value.toString());
-            jwe.enableDefaultCompression();
-            jwe.setAlgorithmHeaderValue(algorithmHeaderValue);
-            jwe.setEncryptionMethodHeaderParameter(encryptionMethodHeaderParameter);
-            jwe.setKey(secretKeyEncryptionKey);
-            jwe.setContentTypeHeaderValue("JWT");
-            jwe.setHeader("typ", "JWT");
-
-            customHeaders.forEach((k, v) -> jwe.setHeader(k, v.toString()));
-            if (StringUtils.isNotBlank(keyIdHeaderValue)) {
-                jwe.setKeyIdHeaderValue(keyIdHeaderValue);
-            }
-            LOGGER.trace("Encrypting via [{}]", encryptionMethodHeaderParameter);
-            return jwe.getCompactSerialization();
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        return JsonWebTokenEncryptor.builder()
+            .key(key)
+            .algorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256)
+            .encryptionMethod(CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM)
+            .build()
+            .encrypt(value);
     }
 
     /**

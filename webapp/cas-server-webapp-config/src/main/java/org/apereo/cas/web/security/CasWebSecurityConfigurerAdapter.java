@@ -11,7 +11,6 @@ import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -275,7 +274,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         requests.requestMatchers(endpoint).permitAll();
     }
 
-    @SneakyThrows
     private void configureEndpointAccessToDenyAll(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                   final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests.requestMatchers(endpoint).denyAll();

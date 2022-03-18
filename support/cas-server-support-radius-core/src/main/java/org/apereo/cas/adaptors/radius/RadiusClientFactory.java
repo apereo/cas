@@ -2,9 +2,9 @@ package org.apereo.cas.adaptors.radius;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Builder;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
@@ -55,18 +55,19 @@ public class RadiusClientFactory implements Serializable {
      *
      * @return the radius client
      */
-    @SneakyThrows
     public RadiusClient newInstance() {
-        if (sslContext != null && this.transportType == RadiusClientProperties.RadiusClientTransportTypes.RADSEC) {
-            val transport = new RadSecClientTransport(sslContext.getKeyManagers(), sslContext.getTrustManagers());
-            transport.setRemoteInetAddress(InetAddress.getByName(this.inetAddress));
-            transport.setSharedSecret(sharedSecret);
-            transport.setAuthPort(this.authenticationPort);
-            transport.setAcctPort(this.accountingPort);
-            transport.setSocketTimeout(this.socketTimeout);
-            return new RadiusClient(transport);
-        }
-        return new RadiusClient(InetAddress.getByName(this.inetAddress), this.sharedSecret,
-            this.authenticationPort, this.accountingPort, this.socketTimeout);
+        return FunctionUtils.doUnchecked(() -> {
+            if (sslContext != null && this.transportType == RadiusClientProperties.RadiusClientTransportTypes.RADSEC) {
+                val transport = new RadSecClientTransport(sslContext.getKeyManagers(), sslContext.getTrustManagers());
+                transport.setRemoteInetAddress(InetAddress.getByName(this.inetAddress));
+                transport.setSharedSecret(sharedSecret);
+                transport.setAuthPort(this.authenticationPort);
+                transport.setAcctPort(this.accountingPort);
+                transport.setSocketTimeout(this.socketTimeout);
+                return new RadiusClient(transport);
+            }
+            return new RadiusClient(InetAddress.getByName(this.inetAddress), this.sharedSecret,
+                this.authenticationPort, this.accountingPort, this.socketTimeout);
+        });
     }
 }

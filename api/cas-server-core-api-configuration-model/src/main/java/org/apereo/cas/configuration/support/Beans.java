@@ -89,7 +89,7 @@ public class Beans {
      * @return the duration
      */
     public static Duration newDuration(final String value) {
-        if ("0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value)) {
+        if ("0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value) || !StringUtils.hasText(value)) {
             return Duration.ZERO;
         }
         if ("-1".equalsIgnoreCase(value) || !StringUtils.hasText(value) || "INFINITE".equalsIgnoreCase(value)) {

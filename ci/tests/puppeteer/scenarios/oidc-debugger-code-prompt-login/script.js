@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
     console.log(`First attempt: navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
 
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
 
     url = `${url}&prompt=login`;
     console.log(`Second attempt: navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
     

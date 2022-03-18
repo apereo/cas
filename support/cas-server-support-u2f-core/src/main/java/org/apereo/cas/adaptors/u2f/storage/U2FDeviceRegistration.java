@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -75,13 +77,14 @@ public class U2FDeviceRegistration implements Serializable, Cloneable {
      * @param device the device
      * @return true/false
      */
-    @SneakyThrows
     public boolean matches(final U2FDeviceRegistration device) {
-        if (device.getUsername().equals(getUsername())) {
-            val requested = DeviceRegistration.fromJson(device.getRecord());
-            val current = DeviceRegistration.fromJson(getRecord());
-            return requested.equals(current);
-        }
-        return false;
+        return FunctionUtils.doUnchecked(() -> {
+            if (device.getUsername().equals(getUsername())) {
+                val requested = DeviceRegistration.fromJson(device.getRecord());
+                val current = DeviceRegistration.fromJson(getRecord());
+                return requested.equals(current);
+            }
+            return false;
+        });
     }
 }

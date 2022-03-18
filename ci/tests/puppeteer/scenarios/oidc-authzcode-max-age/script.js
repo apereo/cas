@@ -10,14 +10,16 @@ async function fetchIdToken(page, maxAge, successHandler) {
     }
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
+    await page.waitForTimeout(2000)
     await cas.loginWith(page, "casuser", "Mellon");
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
     }
-
+    await page.waitForTimeout(2000)
+    await cas.screenshot(page);
     let code = await cas.assertParameter(page, "code");
     console.log(`OAuth code ${code}`);
 

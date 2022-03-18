@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -66,6 +67,9 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
@@ -85,7 +89,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyAccessTokenCanBeAdded() throws Exception {
         val code = createOAuthCode();
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
-            servicesManager, RegisteredServiceCipherExecutor.noOp());
+            servicesManager, RegisteredServiceCipherExecutor.noOp(), casProperties);
         val token = new OAuth20DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),

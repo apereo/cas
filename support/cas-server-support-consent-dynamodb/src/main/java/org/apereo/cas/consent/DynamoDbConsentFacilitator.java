@@ -259,7 +259,6 @@ public class DynamoDbConsentFacilitator {
         private final String columnName;
     }
 
-    @SneakyThrows
     private Stream<ConsentDecision> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient,
             dynamoDbProperties.getTableName(),

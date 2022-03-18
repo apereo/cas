@@ -79,7 +79,7 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CasOAuthUmaConfiguration", proxyBeanMethods = false)
 public class CasOAuthUmaConfiguration {
-    
+
     @Configuration(value = "CasOAuthUmaTokenConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaTokenConfiguration {
@@ -151,7 +151,7 @@ public class CasOAuthUmaConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier("umaResourceSetRepository")
             final ResourceSetRepository umaResourceSetRepository,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
 
             return UmaConfigurationContext.builder()
                 .applicationContext(applicationContext)
@@ -175,12 +175,11 @@ public class CasOAuthUmaConfiguration {
     @Configuration(value = "CasOAuthUmaInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaInterceptorConfiguration {
-
-
-        private static SecurityInterceptor getSecurityInterceptor(final Authenticator authenticator,
-                                                                  final String clientName,
-                                                                  final SessionStore oauthDistributedSessionStore,
-                                                                  final CasConfigurationProperties casProperties) {
+        private static SecurityInterceptor getSecurityInterceptor(
+            final Authenticator authenticator,
+            final String clientName,
+            final SessionStore oauthDistributedSessionStore,
+            final CasConfigurationProperties casProperties) {
             val headerClient = new HeaderClient(HttpHeaders.AUTHORIZATION,
                 OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
             headerClient.setName(clientName);

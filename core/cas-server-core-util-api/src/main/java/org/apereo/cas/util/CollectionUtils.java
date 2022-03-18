@@ -1,8 +1,9 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -59,15 +60,16 @@ public class CollectionUtils {
      * @param clazz the clazz
      * @return the t
      */
-    @SneakyThrows
     public static <T extends Collection> T toCollection(final Object obj, final Class<T> clazz) {
-        val results = toCollection(obj);
-        if (clazz.isInterface()) {
-            throw new IllegalArgumentException("Cannot accept an interface " + clazz.getSimpleName() + " to create a new object instance");
-        }
-        val col = clazz.getDeclaredConstructor().newInstance();
-        col.addAll(results);
-        return col;
+        return FunctionUtils.doUnchecked(() -> {
+            val results = toCollection(obj);
+            if (clazz.isInterface()) {
+                throw new IllegalArgumentException("Cannot accept an interface " + clazz.getSimpleName() + " to create a new object instance");
+            }
+            val col = clazz.getDeclaredConstructor().newInstance();
+            col.addAll(results);
+            return col;
+        });
     }
 
     /**

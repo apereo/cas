@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await page.setExtraHTTPHeaders({
         'Authorization': 'Negotiate unknown-token'
     })
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(3000)

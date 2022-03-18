@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -19,7 +20,6 @@ import com.mongodb.connection.ConnectionPoolSettings;
 import com.mongodb.connection.ServerSettings;
 import com.mongodb.connection.SocketSettings;
 import com.mongodb.connection.SslSettings;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -331,14 +331,15 @@ public class MongoDbConnectionFactory {
         return initialEntitySet;
     }
 
-    @SneakyThrows
     private Set<Class<?>> findAndLoadComponents(final String basePackage,
                                                 final ClassPathScanningCandidateComponentProvider componentProvider) {
-        val initialEntitySet = new HashSet<Class<?>>();
-        for (val candidate : componentProvider.findCandidateComponents(basePackage)) {
-            val beanClassName = Objects.requireNonNull(candidate.getBeanClassName());
-            initialEntitySet.add(ClassUtils.forName(beanClassName, getClass().getClassLoader()));
-        }
-        return initialEntitySet;
+        return FunctionUtils.doUnchecked(() -> {
+            val initialEntitySet = new HashSet<Class<?>>();
+            for (val candidate : componentProvider.findCandidateComponents(basePackage)) {
+                val beanClassName = Objects.requireNonNull(candidate.getBeanClassName());
+                initialEntitySet.add(ClassUtils.forName(beanClassName, getClass().getClassLoader()));
+            }
+            return initialEntitySet;
+        });
     }
 }

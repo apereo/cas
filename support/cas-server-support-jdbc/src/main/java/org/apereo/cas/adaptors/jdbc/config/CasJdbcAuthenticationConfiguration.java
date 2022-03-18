@@ -89,11 +89,12 @@ public class CasJdbcAuthenticationConfiguration {
         return h;
     }
 
-    private static AuthenticationHandler queryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties b,
-                                                                            final PasswordPolicyContext config,
-                                                                            final ConfigurableApplicationContext applicationContext,
-                                                                            final PrincipalFactory jdbcPrincipalFactory,
-                                                                            final ServicesManager servicesManager) {
+    private static AuthenticationHandler queryDatabaseAuthenticationHandler(
+        final QueryJdbcAuthenticationProperties b,
+        final PasswordPolicyContext config,
+        final ConfigurableApplicationContext applicationContext,
+        final PrincipalFactory jdbcPrincipalFactory,
+        final ServicesManager servicesManager) {
         val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
         LOGGER.trace("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getName());
         val h = new QueryDatabaseAuthenticationHandler(b, servicesManager, jdbcPrincipalFactory,
@@ -102,11 +103,12 @@ public class CasJdbcAuthenticationConfiguration {
         return h;
     }
 
-    private static AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final BindJdbcAuthenticationProperties b,
-                                                                                     final PasswordPolicyContext config,
-                                                                                     final ConfigurableApplicationContext applicationContext,
-                                                                                     final PrincipalFactory jdbcPrincipalFactory,
-                                                                                     final ServicesManager servicesManager) {
+    private static AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(
+        final BindJdbcAuthenticationProperties b,
+        final PasswordPolicyContext config,
+        final ConfigurableApplicationContext applicationContext,
+        final PrincipalFactory jdbcPrincipalFactory,
+        final ServicesManager servicesManager) {
         val h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
             jdbcPrincipalFactory, b.getOrder(), JpaBeans.newDataSource(b));
         configureJdbcAuthenticationHandler(h, config, b, applicationContext);

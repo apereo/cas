@@ -18,7 +18,7 @@
     "--cas.authn.oidc.discovery.claims=sub,name,cn,given-name,given:name,family_name",
 
     "--cas.authn.oidc.core.user-defined-scopes.MyCustomScope=cn,given:name,name,family_name",
-    "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
     "--cas.authn.oidc.core.claims-map.cn=common-name",
     "--cas.authn.oidc.core.claims-map.name=identity-name",

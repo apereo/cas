@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -110,8 +110,8 @@ public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTes
     @Test
     public void verifyNoneSupported() {
         val discovery = new OidcServerDiscoverySettings(casProperties.getAuthn().getOidc().getCore().getIssuer());
-        discovery.setIdTokenSigningAlgValuesSupported(List.of(AlgorithmIdentifiers.NONE));
-        discovery.setIdTokenEncryptionAlgValuesSupported(List.of(AlgorithmIdentifiers.NONE));
+        discovery.setIdTokenSigningAlgValuesSupported(Set.of(AlgorithmIdentifiers.NONE));
+        discovery.setIdTokenEncryptionAlgValuesSupported(Set.of(AlgorithmIdentifiers.NONE));
         val service = new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
             oidcServiceJsonWebKeystoreCache,
             new OidcDefaultIssuerService(casProperties.getAuthn().getOidc()),

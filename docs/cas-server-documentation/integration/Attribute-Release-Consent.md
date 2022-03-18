@@ -39,11 +39,12 @@ may define a consent policy that indicates a criteria by which attribute selecti
 
 The policy assigned to each service includes the following features:
 
-| Field                   | Description                                                                                    |
-|-------------------------|------------------------------------------------------------------------------------------------|
-| `excludedAttributes`    | Exclude the indicated attributes from consent.                                                 |
-| `includeOnlyAttributes` | Force-include the indicated attributes in consent, provided attributes are resolved.           |
-| `status`                | Controls whether consent for this service should be activated. See below for activation rules. |
+| Field                   | Description                                                                                                                                                                                                                                               |
+|-------------------------|--------------------------------------------------------------------------|
+| `excludedAttributes`    | Optional. Exclude the indicated attributes from consent.                                                                                                                                                                                                  |
+| `includeOnlyAttributes` | Optional. Force-include the indicated attributes in consent, provided attributes are resolved.                                                                                                                                                            |
+| `excludedServices`      | Optional. Set of service identifiers, defined as a regular expression, for which consent should be skipped. Particularly useful if the service definition is treated as an aggregate of many other applications, allowing this to act as an inner filter. |
+| `status`                | Controls whether consent for this service should be activated. See below for activation rules.                                                                                                                                                            |
 
 A sample definition follows:
 
@@ -60,6 +61,7 @@ A sample definition follows:
       "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
       "excludedAttributes": ["java.util.LinkedHashSet", ["test"]],
       "includeOnlyAttributes": ["java.util.LinkedHashSet", ["test"]],
+      "excludedServices": ["java.util.LinkedHashSet", ["https://example.*"]],
       "status": "FALSE"
     }
   }
@@ -77,7 +79,7 @@ User consent decisions may be stored and remembered using one of the following o
 | Storage          | Description                                         
 |--------------------------------------------------------------------------------------
 | CouchDb          | [See this guide](Attribute-Release-Consent-Storage-CouchDb.html).
-| Custom           | [See this guide](Attribute-Release-Consent-Storage-Custom.html).
+| DynamoDb         | [See this guide](Attribute-Release-Consent-Storage-DynamoDb.html).
 | Groovy           | [See this guide](Attribute-Release-Consent-Storage-Groovy.html).
 | JDBC             | [See this guide](Attribute-Release-Consent-Storage-JDBC.html).
 | JSON             | [See this guide](Attribute-Release-Consent-Storage-JSON.html).
@@ -85,3 +87,4 @@ User consent decisions may be stored and remembered using one of the following o
 | MongoDb          | [See this guide](Attribute-Release-Consent-Storage-MongoDb.html).
 | Redis            | [See this guide](Attribute-Release-Consent-Storage-Redis.html).
 | REST             | [See this guide](Attribute-Release-Consent-Storage-REST.html).
+| Custom           | [See this guide](Attribute-Release-Consent-Storage-Custom.html).

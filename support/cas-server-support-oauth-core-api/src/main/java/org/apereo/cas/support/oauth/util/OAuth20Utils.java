@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
@@ -31,7 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -178,11 +176,25 @@ public class OAuth20Utils {
      * @param responseType      the response type
      * @return true/false
      */
-    public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService, final OAuth20ResponseModeTypes responseType) {
+    public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService,
+                                                     final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FORM_POST
                || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
     }
 
+    /**
+     * Is response mode type fragment?.
+     *
+     * @param registeredService the registered service
+     * @param responseType      the response type
+     * @return the boolean
+     */
+    public static boolean isResponseModeTypeFragment(final OAuthRegisteredService registeredService,
+                                                     final OAuth20ResponseModeTypes responseType) {
+        return responseType == OAuth20ResponseModeTypes.FRAGMENT
+               || (registeredService != null && StringUtils.equalsIgnoreCase(
+            OAuth20ResponseModeTypes.FRAGMENT.getType(), registeredService.getResponseType()));
+    }
 
     /**
      * Check the grant type against an expected grant type.
@@ -218,8 +230,6 @@ public class OAuth20Utils {
     }
 
 
-
-
     /**
      * Gets service request header if any.
      *
@@ -252,29 +262,6 @@ public class OAuth20Utils {
         return true;
     }
 
-    /**
-     * Check the client secret.
-     *
-     * @param registeredService the registered service
-     * @param clientSecret      the client secret
-     * @param cipherExecutor    the cipher executor
-     * @return whether the secret is valid
-     */
-    public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret,
-                                            final CipherExecutor<Serializable, String> cipherExecutor) {
-        LOGGER.debug("Found: [{}] in secret check", registeredService);
-        var definedSecret = registeredService.getClientSecret();
-        if (StringUtils.isBlank(definedSecret)) {
-            LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
-            return true;
-        }
-        definedSecret = cipherExecutor.decode(definedSecret, new Object[]{registeredService});
-        if (!StringUtils.equals(definedSecret, clientSecret)) {
-            LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
-            return false;
-        }
-        return true;
-    }
 
     /**
      * Check the response type against expected response types.

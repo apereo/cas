@@ -155,7 +155,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
     private boolean isDynamicClientRegistrationRequestProtected() {
         val oidc = casProperties.getAuthn().getOidc();
         return OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
-            oidc.getCore().getDynamicClientRegistrationMode(),
+            oidc.getRegistration().getDynamicClientRegistrationMode(),
             OidcConstants.DynamicClientRegistrationMode.PROTECTED.name())).isProtected();
     }
 }

@@ -1,11 +1,13 @@
 const cas = require('../../cas.js');
 const assert = require('assert');
 const fs = require('fs');
+const os = require("os");
 
 (async () => {
     let kid = (Math.random() + 1).toString(36).substring(4);
+    const tempDir = os.tmpdir();
     console.log(`Generated kid ${kid}`)
-    let configFilePath = "/tmp/keystore.jwks";
+    let configFilePath = tempDir + "/keystore.jwks";
     let config = JSON.parse(fs.readFileSync(configFilePath));
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",
         res => {
