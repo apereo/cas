@@ -27,6 +27,7 @@ public class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tes
         registeredService.setClientSecret(encodedSecret);
         val result = oauth20ClientSecretValidator.validate(registeredService, secret);
         assertTrue(result);
+        assertFalse(oauth20ClientSecretValidator.isClientSecretExpired(registeredService));
     }
 
     @Test
