@@ -52,6 +52,7 @@ import org.apereo.cas.oidc.web.OidcAuthenticationAuthorizeSecurityLogic;
 import org.apereo.cas.oidc.web.OidcAuthorizationModelAndViewBuilder;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
+import org.apereo.cas.oidc.web.OidcClientSecretValidator;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryListener;
@@ -63,6 +64,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientPro
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
+import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -81,11 +83,7 @@ import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
-import org.apereo.cas.ticket.code.OAuth20CodeFactory;
-import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
-import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
@@ -164,6 +162,14 @@ public class OidcConfiguration {
     public static class OidcWebConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20ClientSecretValidator oauth20ClientSecretValidator(
+            @Qualifier("oauthRegisteredServiceCipherExecutor")
+            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
+            return new OidcClientSecretValidator(oauthRegisteredServiceCipherExecutor);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityLogic oidcAuthorizationSecurityLogic(
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
@@ -198,7 +204,7 @@ public class OidcConfiguration {
         public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService(
             @Qualifier("oidcWebFingerUserInfoRepository")
             final OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository,
-            @Qualifier("oidcServerDiscoverySettingsFactory")
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory) throws Exception {
             return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository, oidcServerDiscoverySettingsFactory.getObject());
         }
@@ -351,7 +357,7 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
         public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService(
-            @Qualifier("oidcServerDiscoverySettingsFactory")
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
             @Qualifier("oidcServiceJsonWebKeystoreCache")
             final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcServiceJsonWebKeystoreCache,
@@ -369,7 +375,7 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcUserProfileSigningAndEncryptionService")
         public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService(
-            @Qualifier("oidcServerDiscoverySettingsFactory")
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
             @Qualifier("oidcServiceJsonWebKeystoreCache")
             final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcServiceJsonWebKeystoreCache,
@@ -515,16 +521,16 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcAccessTokenJwtBuilder")
         public JwtBuilder accessTokenJwtBuilder(
+            final CasConfigurationProperties casProperties,
             @Qualifier("oidcAccessTokenJwtCipherExecutor")
             final CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor,
             @Qualifier("oidcRegisteredServiceJwtAccessTokenCipherExecutor")
             final RegisteredServiceCipherExecutor oidcRegisteredServiceJwtAccessTokenCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20JwtBuilder(oidcAccessTokenJwtCipherExecutor, servicesManager, oidcRegisteredServiceJwtAccessTokenCipherExecutor);
+            return new OAuth20JwtBuilder(oidcAccessTokenJwtCipherExecutor, servicesManager,
+                oidcRegisteredServiceJwtAccessTokenCipherExecutor, casProperties);
         }
-
-
     }
 
     @Configuration(value = "OidcContextConfiguration", proxyBeanMethods = false)
@@ -535,6 +541,8 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcConfigurationContext oidcConfigurationContext(
+            @Qualifier("oauth20ClientSecretValidator")
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
             @Qualifier("oidcIdTokenGenerator")
             final IdTokenGeneratorService oidcIdTokenGenerator,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY)
@@ -564,24 +572,16 @@ public class OidcConfiguration {
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthRequestValidators,
             @Qualifier("oauthRegisteredServiceCipherExecutor")
             final CipherExecutor oauthRegisteredServiceCipherExecutor,
-            @Qualifier("defaultDeviceTokenFactory")
-            final OAuth20DeviceTokenFactory defaultDeviceTokenFactory,
             @Qualifier("consentApprovalViewResolver")
             final ConsentApprovalViewResolver consentApprovalViewResolver,
             @Qualifier("oidcAttributeToScopeClaimMapper")
             final OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper,
-            @Qualifier("defaultAccessTokenFactory")
-            final OAuth20AccessTokenFactory defaultAccessTokenFactory,
-            @Qualifier("defaultOAuthCodeFactory")
-            final OAuth20CodeFactory defaultOAuthCodeFactory,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier("deviceTokenExpirationPolicy")
             final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
-            @Qualifier("defaultDeviceUserCodeFactory")
-            final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory,
             final ObjectProvider<List<OAuth20AuthorizationResponseBuilder>> oidcAuthorizationResponseBuilders,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
@@ -609,7 +609,7 @@ public class OidcConfiguration {
             @Qualifier("oidcPrincipalFactory")
             final PrincipalFactory oidcPrincipalFactory,
             final CasConfigurationProperties casProperties,
-            @Qualifier("oidcServerDiscoverySettingsFactory")
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final OidcServerDiscoverySettings oidcServerDiscoverySettings,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
@@ -658,6 +658,7 @@ public class OidcConfiguration {
                 .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
                 .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
                 .accessTokenJwtBuilder(accessTokenJwtBuilder)
+                .clientSecretValidator(oauth20ClientSecretValidator)
                 .build();
         }
     }
@@ -759,7 +760,7 @@ public class OidcConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "oidcServerDiscoverySettingsFactory")
+        @ConditionalOnMissingBean(name = OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory(
             @Qualifier(OidcIssuerService.BEAN_NAME)

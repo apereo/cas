@@ -7,7 +7,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.ticket.code.OAuth20DefaultCode;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DigestUtils;
@@ -43,8 +42,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     public void init() {
         authenticator = new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager, serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()), ticketRegistry,
-            new OAuth20RegisteredServiceCipherExecutor(),
-            defaultPrincipalResolver, oauthRequestParameterResolver);
+            defaultPrincipalResolver, oauthRequestParameterResolver, oauth20ClientSecretValidator);
     }
 
     @Test

@@ -1,5 +1,8 @@
 {
   "dependencies": "pac4j-webflow",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
 

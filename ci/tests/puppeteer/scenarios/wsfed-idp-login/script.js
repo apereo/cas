@@ -2,21 +2,20 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const cas = require('../../cas.js');
 
-async function cleanUp(exec) {
-    console.log("Killing SP process...");
-    exec.kill();
-    await cas.removeDirectory(path.join(__dirname, '/wsfed-sp'));
+async function cleanUp(spDir) {
+    await cas.logg("Stopping SP process...");
+    await cas.stopSamlSp(spDir);
 }
 
 (async () => {
     let spDir = path.join(__dirname, '/wsfed-sp');
-    let exec = await cas.launchWsFedSp(spDir);
+    await cas.launchWsFedSp(spDir);
     await cas.waitFor('https://localhost:9876/fediz', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
 
         console.log("Trying without an exising SSO session...")
-        page.goto("https://localhost:9876/fediz")
+        cas.goto(page, "https://localhost:9876/fediz")
         await page.waitForTimeout(2000)
         await page.waitForSelector('#logincas', {visible: true});
         await cas.click(page, "#logincas")
@@ -34,11 +33,11 @@ async function cleanUp(exec) {
         await cas.assertInnerText(page, "#claim2", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress:CAS@example.org")
 
         console.log("Trying with an exising SSO session...")
-        await page.goto("https://localhost:8443/cas/logout");
-        await page.goto("https://localhost:8443/cas/login");
+        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, "casuser", "Mellon");
         await cas.assertTicketGrantingCookie(page);
-        page.goto("https://localhost:9876/fediz")
+        cas.goto(page, "https://localhost:9876/fediz")
         await page.waitForTimeout(2000)
         await page.waitForSelector('#logincas', {visible: true});
         await cas.click(page, "#logincas")
@@ -52,10 +51,10 @@ async function cleanUp(exec) {
         await cas.assertInnerText(page, "#claim2", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress:CAS@example.org")
 
         await browser.close();
-        await cleanUp(exec);
+        await cleanUp(spDir);
     }, async error => {
-        await cleanUp(exec);
-        console.log(error);
+        await cleanUp(spDir);
+        await cas.logg(error);
         throw error;
     })
 })();

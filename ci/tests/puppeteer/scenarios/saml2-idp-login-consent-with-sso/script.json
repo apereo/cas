@@ -1,5 +1,8 @@
 {
   "dependencies": "saml-idp,consent-webflow",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",
@@ -8,7 +11,7 @@
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
     "--cas.authn.attribute-repository.stub.attributes.displayName=CAS",
 
-    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
 
     "--cas.server.name=https://localhost:8443",
@@ -25,5 +28,6 @@
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
 }

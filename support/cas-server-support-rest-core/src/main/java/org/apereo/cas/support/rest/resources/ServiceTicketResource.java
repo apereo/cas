@@ -82,9 +82,12 @@ public class ServiceTicketResource {
             MediaType.TEXT_HTML_VALUE,
             MediaType.TEXT_PLAIN_VALUE
         })
-    public ResponseEntity<String> createServiceTicket(final HttpServletRequest httpServletRequest,
-                                                      @RequestBody(required = false) final MultiValueMap<String, String> requestBody,
-                                                      @PathVariable("tgtId") final String tgtId) {
+    public ResponseEntity<String> createServiceTicket(
+        final HttpServletRequest httpServletRequest,
+        @RequestBody(required = false)
+        final MultiValueMap<String, String> requestBody,
+        @PathVariable("tgtId")
+        final String tgtId) {
         try {
             val authn = this.ticketRegistrySupport.getAuthenticationFrom(StringEscapeUtils.escapeHtml4(tgtId));
             if (authn == null) {

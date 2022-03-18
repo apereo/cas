@@ -1,5 +1,8 @@
 {
   "dependencies": "x509-webflow,ldap,json-service-registry",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--logging.level.org.apereo.cas=debug",
 
@@ -35,7 +38,7 @@
     "--cas.authn.attribute-repository.ldap[0].follow-referrals=false",
     "--cas.authn.attribute-repository.ldap[0].search-filter=(sAMAccountName={username})",
     "--cas.authn.attribute-repository.ldap[0].min-pool-size=0",
-    "--cas.authn.attribute-repository.ldap[0].trust-store=file:/tmp/adcacerts.jks",
+    "--cas.authn.attribute-repository.ldap[0].trust-store=file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks",
     "--cas.authn.attribute-repository.ldap[0].trust-store-type=JKS",
     "--cas.authn.attribute-repository.ldap[0].trust-store-password=changeit",
     "--cas.authn.attribute-repository.ldap[0].hostname-verifier=ANY",

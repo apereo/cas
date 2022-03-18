@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -162,15 +162,16 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
      * @param resource the resource
      * @return the attribute definition store
      */
-    @SneakyThrows
     public AttributeDefinitionStore to(final File resource) {
-        val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);
-        LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
-        try (val writer = Files.newBufferedWriter(resource.toPath(), StandardCharsets.UTF_8)) {
-            writer.write(json);
-            writer.flush();
-        }
-        return this;
+        return FunctionUtils.doUnchecked(() -> {
+            val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);
+            LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
+            try (val writer = Files.newBufferedWriter(resource.toPath(), StandardCharsets.UTF_8)) {
+                writer.write(json);
+                writer.flush();
+            }
+            return this;
+        });
     }
 
     @Override
@@ -195,6 +196,8 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             map.forEach(this::registerAttributeDefinition);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
+        } finally {
+            LOGGER.debug("Loaded [{}] attribute definition(s).", attributeDefinitions.size());
         }
     }
 }

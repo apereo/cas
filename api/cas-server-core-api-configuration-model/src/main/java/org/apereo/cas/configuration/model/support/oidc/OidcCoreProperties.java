@@ -43,11 +43,6 @@ public class OidcCoreProperties implements Serializable {
     private String skew = "PT5M";
 
     /**
-     * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.
-     */
-    private String dynamicClientRegistrationMode;
-
-    /**
      * Mapping of user-defined scopes. Key is the new scope name
      * and value is a comma-separated list of claims mapped to the scope.
      */

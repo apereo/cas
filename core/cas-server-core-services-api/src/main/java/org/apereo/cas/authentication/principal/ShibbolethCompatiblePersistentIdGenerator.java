@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -124,15 +123,16 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
      * @param service   the service
      * @return the message digest
      */
-    @SneakyThrows
     protected static MessageDigest prepareMessageDigest(final String principal, final String service) {
-        val md = MessageDigest.getInstance("SHA");
-        if (StringUtils.isNotBlank(service)) {
-            md.update(service.getBytes(StandardCharsets.UTF_8));
+        return FunctionUtils.doUnchecked(() -> {
+            val md = MessageDigest.getInstance("SHA");
+            if (StringUtils.isNotBlank(service)) {
+                md.update(service.getBytes(StandardCharsets.UTF_8));
+                md.update(CONST_SEPARATOR);
+            }
+            md.update(principal.getBytes(StandardCharsets.UTF_8));
             md.update(CONST_SEPARATOR);
-        }
-        md.update(principal.getBytes(StandardCharsets.UTF_8));
-        md.update(CONST_SEPARATOR);
-        return md;
+            return md;
+        });
     }
 }

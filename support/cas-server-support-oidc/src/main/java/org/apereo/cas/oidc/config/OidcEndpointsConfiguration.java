@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
@@ -59,6 +60,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.springframework.web.SecurityInterceptor;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -103,12 +105,14 @@ public class OidcEndpointsConfiguration {
         public MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger(
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier("multifactorAuthenticationProviderResolver")
+            @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME)
             final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
+            final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver,
-                applicationContext, oauthRequestParameterResolver);
+                applicationContext, oauthRequestParameterResolver, oidcServerDiscoverySettingsFactory);
         }
 
     }

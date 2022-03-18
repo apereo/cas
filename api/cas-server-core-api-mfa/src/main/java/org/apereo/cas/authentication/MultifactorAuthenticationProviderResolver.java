@@ -23,6 +23,11 @@ import java.util.function.BiPredicate;
  * @since 5.1.0
  */
 public interface MultifactorAuthenticationProviderResolver {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "multifactorAuthenticationProviderResolver";
+
     Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationProviderResolver.class);
 
     /**

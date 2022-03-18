@@ -14,7 +14,7 @@ const assert = require('assert');
     let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone&redirect_uri=${redirectUrl}&code_challenge=${codeChallenge}&code_challenge_method=S256&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.click(page, "#allow");
     await page.waitForNavigation();

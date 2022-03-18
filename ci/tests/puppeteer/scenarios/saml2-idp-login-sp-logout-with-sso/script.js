@@ -7,21 +7,23 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const service = "https://example.com";
-    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
+    await page.waitForTimeout(3000)
+    await cas.screenshot(page);
     let ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
     assert(body === "yes\ncasuser\n")
 
-    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/idp-metadata.xml'));
-    await page.goto("https://samltest.id/start-idp-test/");
-    await cas.type(page,'input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");
-    await cas.click(page, "input[type='submit']")
-    await page.waitForNavigation();
-    await page.waitForSelector('div.entry-content p', { visible: true });
-    await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
+    await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
+    await page.waitForTimeout(3000)
+    await page.waitForSelector('#table_with_attributes', {visible: true});
+    await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
+    await cas.assertVisibility(page, "#table_with_attributes");
+    let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
+    console.log(authData);
 
-    await page.goto(`https://localhost:8443/cas/logout`);
+    await cas.goto(page, `https://localhost:8443/cas/logout`);
     await page.waitForTimeout(2000);
     const content = await page.content();
     assert(content.includes('id="service1"'));

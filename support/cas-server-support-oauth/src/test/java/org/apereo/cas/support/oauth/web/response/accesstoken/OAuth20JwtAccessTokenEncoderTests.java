@@ -162,7 +162,8 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
         return new OAuth20JwtBuilder(
             CipherExecutor.noOp(),
             servicesManager,
-            RegisteredServiceCipherExecutor.noOp());
+            RegisteredServiceCipherExecutor.noOp(),
+            casProperties);
     }
 
     private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithoutKeys(final OAuth20AccessToken accessToken) {
@@ -176,7 +177,7 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
         return new OAuth20JwtBuilder(
             new OAuth20JwtAccessTokenCipherExecutor(true, true),
             servicesManager,
-            new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
+            new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor(), casProperties);
     }
 
     private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithKeys(final OAuth20AccessToken accessToken) {

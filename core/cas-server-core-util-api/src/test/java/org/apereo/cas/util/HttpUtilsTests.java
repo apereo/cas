@@ -1,11 +1,13 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -61,4 +63,15 @@ public class HttpUtilsTests {
         });
     }
 
+    @Test
+    public void verifyBadSSLLogging() {
+        val exec = HttpUtils.HttpExecutionRequest.builder()
+            .method(HttpMethod.GET)
+            .url("https://untrusted-root.badssl.com/endpoint?secret=sensitiveinfo")
+            .build();
+        val response = HttpUtils.execute(exec);
+        assertNotNull(response);
+        assertTrue(HttpStatus.resolve(response.getStatusLine().getStatusCode()).is5xxServerError());
+        assertTrue(response.getStatusLine().getReasonPhrase().contains("https://untrusted-root.badssl.com/endpoint"));
+    }
 }

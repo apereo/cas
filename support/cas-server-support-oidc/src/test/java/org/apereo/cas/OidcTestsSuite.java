@@ -63,6 +63,7 @@ import org.apereo.cas.oidc.web.OidcAuthorizationModelAndViewBuilderTests;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolverTests;
 import org.apereo.cas.oidc.web.OidcCasCallbackUrlResolverTests;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilderTests;
+import org.apereo.cas.oidc.web.OidcClientSecretValidatorTests;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolverTests;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapterTests;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests;
@@ -175,6 +176,7 @@ import org.junit.platform.suite.api.Suite;
     OidcCasWebflowLoginContextProviderTests.class,
     DefaultOAuth20RequestParameterResolverTests.class,
     OidcCasCallbackUrlResolverTests.class,
+    OidcClientSecretValidatorTests.class,
     OidcPushedAuthorizationRequestTests.class,
     OidcDefaultJsonWebKeyStoreListenerTests.class,
     OidcAuthenticationAuthorizeSecurityLogicTests.class,

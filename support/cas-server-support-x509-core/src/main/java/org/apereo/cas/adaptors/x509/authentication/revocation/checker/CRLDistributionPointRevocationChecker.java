@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationP
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -209,16 +210,17 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     }
 
     @Override
-    @SneakyThrows
     protected boolean addCRL(final Object id, final X509CRL crl) {
-        var uri = (URI) id;
-        if (crl == null) {
-            LOGGER.debug("No CRL was passed. Removing [{}] from cache...", id);
-            this.crlCache.remove(uri);
-            return false;
-        }
+        return FunctionUtils.doUnchecked(() -> {
+            var uri = (URI) id;
+            if (crl == null) {
+                LOGGER.debug("No CRL was passed. Removing [{}] from cache...", id);
+                this.crlCache.remove(uri);
+                return false;
+            }
 
-        this.crlCache.put(uri, crl.getEncoded());
-        return this.crlCache.containsKey(uri);
+            this.crlCache.put(uri, crl.getEncoded());
+            return this.crlCache.containsKey(uri);
+        });
     }
 }

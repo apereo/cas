@@ -1,13 +1,17 @@
 #!/bin/bash
+SCENARIO_FOLDER=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+BRANCH=${SAMLSP_BRANCH:-master}
+GROUP=${SAMLSP_GROUP:-apereo}
 echo -e "Removing previous SAML metadata directory"
-rm -Rf "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md"
-rm -Rf ${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-sp
+rm -Rf "${SCENARIO_FOLDER}/saml-md"
+rm -Rf ${SCENARIO_FOLDER}/saml-sp
 echo -e "Installing SAML2 SP..."
-wget https://github.com/apereo/saml2-sample-java-webapp/archive/refs/heads/master.zip \
-  -P "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}" &> /dev/null \
-  && unzip "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/master.zip" -d "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}" &> /dev/null \
-  && mv "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml2-sample-java-webapp-master" "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-sp" \
-  && chmod +x "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-sp/gradlew" \
+echo "${SCENARIO_FOLDER}/${BRANCH}.zip"
+curl -L https://github.com/$GROUP/saml2-sample-java-webapp/archive/refs/heads/${BRANCH}.zip \
+  -o "${SCENARIO_FOLDER}/${BRANCH}.zip" \
+  && unzip "${SCENARIO_FOLDER}/${BRANCH}.zip" -d "${SCENARIO_FOLDER}" \
+  && mv "${SCENARIO_FOLDER}/saml2-sample-java-webapp-${BRANCH}" "${SCENARIO_FOLDER}/saml-sp" \
+  && chmod +x "${SCENARIO_FOLDER}/saml-sp/gradlew" \
   && [ -f ./gradlew ] \
   && echo "Cloned SAML2 SP project." \
-  && rm "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/master.zip"
+  && rm "${SCENARIO_FOLDER}/${BRANCH}.zip"

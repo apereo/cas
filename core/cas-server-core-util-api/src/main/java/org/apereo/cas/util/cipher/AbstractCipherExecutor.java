@@ -5,13 +5,13 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -58,15 +58,16 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @param signingSecretKey the signing secret key
      * @return the private key
      */
-    @SneakyThrows
     public static PrivateKey extractPrivateKeyFromResource(final String signingSecretKey) {
-        LOGGER.debug("Attempting to extract private key...");
-        val resource = ResourceUtils.getResourceFrom(signingSecretKey);
-        val factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
-        factory.setLocation(resource);
-        factory.setSingleton(false);
-        return factory.getObject();
+        return FunctionUtils.doUnchecked(() -> {
+            LOGGER.debug("Attempting to extract private key...");
+            val resource = ResourceUtils.getResourceFrom(signingSecretKey);
+            val factory = new PrivateKeyFactoryBean();
+            factory.setAlgorithm(RsaKeyUtil.RSA);
+            factory.setLocation(resource);
+            factory.setSingleton(false);
+            return factory.getObject();
+        });
     }
 
     /**
@@ -75,13 +76,14 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @param secretKeyToUse the secret key to use
      * @return the public key
      */
-    @SneakyThrows
     public static PublicKey extractPublicKeyFromResource(final String secretKeyToUse) {
-        LOGGER.debug("Attempting to extract public key from [{}]...", secretKeyToUse);
-        val resource = ResourceUtils.getResourceFrom(secretKeyToUse);
-        val factory = new PublicKeyFactoryBean(resource, RsaKeyUtil.RSA);
-        factory.setSingleton(false);
-        return factory.getObject();
+        return FunctionUtils.doUnchecked(() -> {
+            LOGGER.debug("Attempting to extract public key from [{}]...", secretKeyToUse);
+            val resource = ResourceUtils.getResourceFrom(secretKeyToUse);
+            val factory = new PublicKeyFactoryBean(resource, RsaKeyUtil.RSA);
+            factory.setSingleton(false);
+            return factory.getObject();
+        });
     }
 
     @Override

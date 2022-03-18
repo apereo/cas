@@ -45,7 +45,7 @@ const path = require("path");
 async function sendRequest(page, entityIds) {
     let count = 0;
     for (const entityId of entityIds) {
-        await page.goto("https://localhost:8443/cas/logout");
+        await cas.goto(page, "https://localhost:8443/cas/logout");
 
         let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
         url += `?providerId=${entityId}`;
@@ -53,7 +53,7 @@ async function sendRequest(page, entityIds) {
 
         console.log(`Navigating to ${url}`);
         let s = performance.now();
-        await page.goto(url);
+        await cas.goto(page, url);
         let e = performance.now();
         let duration = (e - s) / 1000;
         console.log(`Request took ${duration} seconds.`)

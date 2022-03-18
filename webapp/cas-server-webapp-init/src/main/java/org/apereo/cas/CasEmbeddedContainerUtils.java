@@ -1,11 +1,11 @@
 package org.apereo.cas;
 
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.logging.LoggingInitialization;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -37,17 +37,18 @@ public class CasEmbeddedContainerUtils {
      *
      * @return the logging initialization
      */
-    @SneakyThrows
     public static Optional<LoggingInitialization> getLoggingInitialization() {
-        val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-        val reflections = new Reflections(new ConfigurationBuilder()
-            .filterInputsBy(new FilterBuilder().includePackage(packageName))
-            .setUrls(ClasspathHelper.forPackage(packageName)));
-        
-        val subTypes = reflections.getSubTypesOf(LoggingInitialization.class);
-        return subTypes.isEmpty()
-            ? Optional.empty()
-            : Optional.of(subTypes.iterator().next().getDeclaredConstructor().newInstance());
+        return FunctionUtils.doUnchecked(() -> {
+            val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
+            val reflections = new Reflections(new ConfigurationBuilder()
+                .filterInputsBy(new FilterBuilder().includePackage(packageName))
+                .setUrls(ClasspathHelper.forPackage(packageName)));
+
+            val subTypes = reflections.getSubTypesOf(LoggingInitialization.class);
+            return subTypes.isEmpty()
+                ? Optional.empty()
+                : Optional.of(subTypes.iterator().next().getDeclaredConstructor().newInstance());
+        });
     }
 
     /**

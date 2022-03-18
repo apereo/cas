@@ -12,6 +12,7 @@ const { Buffer } = require('buffer');
 const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 const ps = require("ps-node");
 const NodeStaticAuth = require("node-static-auth");
+const operativeSystemModule = require("os");
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -35,14 +36,19 @@ exports.logg = async(text) => {
 }
 
 exports.removeDirectory = async (directory) => {
-    await this.logg(`Removing directory ${directory}`)
-    fs.rmdir(directory, {recursive: true}, () => {
-    });
+    await this.logg(`Removing directory ${directory}`);
+    await fs.rmSync(directory, {recursive: true});
+    await this.logg(`Removed directory ${directory}`);
+    if (fs.existsSync(directory)) {
+        await this.logg(`Directory still there... ${directory}`);
+    }
 }
 
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
-        document.querySelector(button).click();
+        let buttonNode = document.querySelector(button);
+        console.log(`Clicking element ${button} with link ${buttonNode.href}`);
+        buttonNode.click();
     }, button);
 }
 
@@ -51,6 +57,12 @@ exports.clickLast = async (page, button) => {
         let buttons = document.querySelectorAll(button);
         buttons[buttons.length - 1].click();
     }, button);
+}
+
+exports.innerHTML = async (page, selector) => {
+    let text = await page.$eval(selector, el => el.innerHTML.trim());
+    console.log(`HTML for selector [${selector}] is: [${text}]`);
+    return text;
 }
 
 exports.innerText = async (page, selector) => {
@@ -76,10 +88,14 @@ exports.inputValue = async (page, selector) => {
 exports.uploadImage = async (imagePath) => {
     let clientId = process.env.IMGUR_CLIENT_ID;
     if (clientId !== null && clientId !== undefined) {
-        console.log(`Uploading image ${imagePath}`);
         const client = new ImgurClient({clientId: clientId});
-        const response = await client.upload(imagePath);
-        await this.logg(response.data.link);
+        console.log(`Uploading image ${colors.green(imagePath)}`);
+        client.on('uploadProgress', (progress) => console.log(progress));
+        const response = await client.upload({
+            image: fs.createReadStream(imagePath),
+            type: 'stream',
+        });
+        console.log(`Uploaded image is at ${colors.green(response.data.link)}`);
     }
 }
 
@@ -87,8 +103,12 @@ exports.loginWith = async (page, user, password,
                            usernameField = "#username",
                            passwordField = "#password") => {
     console.log(`Logging in with ${user} and ${password}`);
+    await page.waitForSelector(usernameField, {visible: true});
     await this.type(page, usernameField, user);
+
+    await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password);
+    
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 }
@@ -103,8 +123,9 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 }
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
-    console.log(`Checking visibility for ${selector} while on page ${page.url()}`);
-    return (element != null && await element.boundingBox() != null);
+    let result = (element != null && await element.boundingBox() != null);
+    console.log(`Checking visibility for ${selector} while on page ${page.url()}: ${result}`);
+    return result;
 }
 
 exports.assertVisibility = async (page, selector) => {
@@ -137,7 +158,7 @@ exports.assertNoTicketGrantingCookie = async (page) => {
         console.log(`Checking cookie ${value.name}`)
         return value.name === "TGC"
     });
-    console.log(`Asserting no ticket-granting cookie: ${tgc}`);
+    console.log("Asserting no ticket-granting cookie: " + JSON.stringify(tgc) );
     assert(tgc.length === 0);
 }
 
@@ -197,8 +218,8 @@ exports.assertTicketParameter = async (page) => {
     return ticket;
 }
 
-exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, requestBody = undefined) => {
-    return new Promise((resolve, reject) => {
+exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, requestBody = undefined) =>
+    new Promise((resolve, reject) => {
         let options = {
             method: method,
             rejectUnauthorized: false,
@@ -217,17 +238,12 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
         };
 
         if (requestBody !== undefined) {
-            let request = https.request(url, options, res => {
-                handler(res);
-            }).on("error", reject);
+            let request = https.request(url, options, res => handler(res)).on("error", reject);
             request.write(requestBody);
         } else {
-            https.get(url, options, res => {
-                handler(res);
-            }).on("error", reject);
+            https.get(url, options, res => handler(res)).on("error", reject);
         }
-    });
-}
+    })
 
 exports.doGet = async (url, successHandler, failureHandler, headers = {}, responseType = undefined) => {
     const instance = axios.create({
@@ -288,43 +304,65 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         });
 }
 
-exports.launchWsFedSp = async (spDir, opts = []) => {
-    let args = ['-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
-    args = args.concat(opts);
-    console.log(`Launching WSFED SP in ${spDir} with ${args}`);
-    const exec = spawn('./gradlew', args, {cwd: spDir});
-
+exports.runGradle = async(workdir, opts = [], exitFunc) => {
+    let gradleCmd = './gradlew';
+    if (operativeSystemModule.type() === 'Windows_NT') {
+        gradleCmd = 'gradlew.bat';
+    }
+    const exec = spawn(gradleCmd, opts, {cwd: workdir});
+    await this.logg(`Spawned ${gradleCmd} process ID: ${exec.pid}`);
     exec.stdout.on('data', (data) => {
         console.log(data.toString());
     });
     exec.stderr.on('data', (data) => {
         console.error(data.toString());
     });
-    exec.on('exit', (code) => {
-        console.log(`Child process exited with code ${code}`);
-    });
+    exec.on('exit', exitFunc)
     return exec;
 }
 
+exports.launchWsFedSp = async (spDir, opts = []) => {
+    let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
+    args = args.concat(opts);
+    await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
+    return this.runGradle(spDir, args, (code) => {
+        console.log(`WSFED SP Child process exited with code ${code}`);
+    });
+}
+
+exports.stopSamlSp = async (gradleDir, deleteDir= true) => {
+    let args = ['appStop', '-q', '--no-daemon'];
+    await this.logg(`Stopping samlsp gretty process in ${gradleDir} with ${args}`);
+    return this.runGradle(gradleDir, args, (code) => {
+        console.log(`Stopped child process exited with code ${code}`);
+        if (deleteDir) {
+            this.sleep(30000);
+            this.removeDirectory(gradleDir);
+        }
+    });
+}
+
 exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts = []) => {
-    let args = ['-q', '-x', 'test', '--no-daemon',
+    let keystorePath = path.normalize(process.env.CAS_KEYSTORE);
+    let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon',
         '-DidpMetadataType=idpMetadataFile',
         `-DidpMetadata=${idpMetadataPath}`,
-        `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
+        `-Dsp.sslKeystorePath=${keystorePath}`];
     args = args.concat(samlOpts);
-    console.log(`Launching SAML2 SP in ${samlSpDir} with ${args}`);
-    const exec = spawn('./gradlew', args, {cwd: samlSpDir});
-
-    exec.stdout.on('data', (data) => {
-        console.log(data.toString());
-    });
-    exec.stderr.on('data', (data) => {
-        console.error(data.toString());
-    });
-    exec.on('exit', (code) => {
+    await this.logg(`Launching SAML2 SP in ${samlSpDir} with ${args}`);
+    return this.runGradle(samlSpDir, args, (code) => {
         console.log(`Child process exited with code ${code}`);
     });
-    return exec;
+}
+
+exports.shutdownCas = async (baseUrl) => {
+    await this.logg(`Stopping CAS via shutdown actuator`);
+    const response = await this.doRequest(`${baseUrl}/actuator/shutdown`,
+        "POST", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        });
+    return JSON.parse(response)
 }
 
 exports.assertInnerTextStartsWith = async (page, selector, value) => {
@@ -380,19 +418,6 @@ exports.decodeJwt = async (token, complete = false) => {
     return decoded;
 }
 
-exports.uploadSamlMetadata = async (page, metadata) => {
-    await page.goto("https://samltest.id/upload.php");
-    console.log(`Uploading metadata file ${metadata} to ${await page.url()}`);
-    await page.waitForTimeout(1000)
-    const fileElement = await page.$("input[type=file]");
-    console.log(`Metadata file: ${metadata}`);
-    await fileElement.uploadFile(metadata);
-    await page.waitForTimeout(1000)
-    await this.click(page, "input[name='submit']")
-    await page.waitForNavigation();
-    await page.waitForTimeout(2000)
-}
-
 exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
     console.log(`Fetching Bypass codes from Duo Security for ${user}...`);
     const response = await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=${user}`,
@@ -403,9 +428,7 @@ exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
     return JSON.parse(response)["mfa-duo"];
 }
 
-exports.fetchDuoSecurityBypassCode = async (user = "casuser") => {
-    return await this.fetchDuoSecurityBypassCode(user)[0];
-}
+exports.fetchDuoSecurityBypassCode = async (user = "casuser") => await this.fetchDuoSecurityBypassCode(user)[0]
 
 exports.base64Decode = async(data) => {
     let buff = Buffer.from(data, 'base64');
@@ -413,11 +436,15 @@ exports.base64Decode = async(data) => {
 }
 
 exports.screenshot = async (page) => {
-    let index = Math.floor(Math.random() * 10000);
+    let index = Math.floor(Math.random() * 90000);
     let filePath = path.join(__dirname, `/screenshot${index}.png`)
     try {
-        await page.screenshot({path: filePath, fullPage: true});
-        await this.logg(`Screenshot saved at ${filePath}`);
+        let url = await page.url()
+        console.log(`Page URL when capturing screenshot: ${url}`)
+        console.log(`Attempting to take a screenshot and save at ${filePath}`)
+        await page.setViewport({width: 1920, height: 1080});
+        await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
+        console.log(`Screenshot saved at ${colors.green(filePath)}`);
         await this.uploadImage(filePath);
     } catch (e)  {
         console.log(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
@@ -483,6 +510,25 @@ exports.killProcess = async(command, arguments) => {
             }
         });
     });
+}
+
+exports.goto = async (page, url, retryCount = 5) => {
+    let response = null;
+    let attempts = 0;
+    const timeout = 2000;
+
+    while(response === null && attempts < retryCount) {
+        attempts += 1;
+        try {
+            response = await page.goto(url);
+            assert (await page.evaluate(() => document.title) !== null);
+        } catch (err) {
+            console.log(colors.red(`#${attempts}: Failed to goto to ${url}.`));
+            console.log(colors.red(err.message));
+            await this.sleep(timeout);
+        }
+    }
+    return response;
 }
 
 exports.loginDuoSecurityBypassCode = async (page, type) => {

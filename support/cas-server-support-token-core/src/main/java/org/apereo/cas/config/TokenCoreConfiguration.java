@@ -94,11 +94,13 @@ public class TokenCoreConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "tokenTicketJwtBuilder")
         public JwtBuilder tokenTicketJwtBuilder(
+            final CasConfigurationProperties casProperties,
             @Qualifier("tokenCipherExecutor")
             final CipherExecutor tokenCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new JwtBuilder(tokenCipherExecutor, servicesManager, new RegisteredServiceJwtTicketCipherExecutor());
+            return new JwtBuilder(tokenCipherExecutor, servicesManager,
+                new RegisteredServiceJwtTicketCipherExecutor(), casProperties);
         }
     }
 

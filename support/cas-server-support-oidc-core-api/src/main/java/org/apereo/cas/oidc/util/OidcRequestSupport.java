@@ -53,13 +53,12 @@ public class OidcRequestSupport {
      * @param url the url
      * @return the oidc prompt from authorization request
      */
-    @SneakyThrows
     public static Set<String> getOidcPromptFromAuthorizationRequest(final @NonNull String url) {
-        return new URIBuilder(url).getQueryParams().stream()
+        return FunctionUtils.doUnchecked(() -> new URIBuilder(url).getQueryParams().stream()
             .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
             .map(param -> param.getValue().split(" "))
             .flatMap(Arrays::stream)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toSet()));
     }
 
     /**
@@ -78,20 +77,21 @@ public class OidcRequestSupport {
      * @param context the context
      * @return the oidc max age from authorization request
      */
-    @SneakyThrows
     public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
-        val builderContext = new URIBuilder(context.getFullRequestURL());
-        return builderContext.getQueryParams()
-            .stream()
-            .filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
-            .map(p -> Optional.of(p.getValue()))
-            .findFirst()
-            .orElseGet(() -> context.getRequestParameter(OidcConstants.MAX_AGE))
-            .map(param -> {
-                val maxAge = NumberUtils.toLong(param, -1);
-                return Optional.of(maxAge);
-            })
-            .orElseGet(Optional::empty);
+        return FunctionUtils.doUnchecked(() -> {
+            val builderContext = new URIBuilder(context.getFullRequestURL());
+            return builderContext.getQueryParams()
+                .stream()
+                .filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
+                .map(p -> Optional.of(p.getValue()))
+                .findFirst()
+                .orElseGet(() -> context.getRequestParameter(OidcConstants.MAX_AGE))
+                .map(param -> {
+                    val maxAge = NumberUtils.toLong(param, -1);
+                    return Optional.of(maxAge);
+                })
+                .orElseGet(Optional::empty);
+        });
     }
 
     /**

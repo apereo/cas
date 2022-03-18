@@ -1,5 +1,8 @@
 {
   "dependencies": "ldap,pm-ldap,pm-webflow",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.authn.ldap[0].type=AUTHENTICATED",
     "--cas.authn.ldap[0].bind-dn=Administrator@cas.example.org",
@@ -13,7 +16,7 @@
     "--cas.authn.ldap[0].enhance-with-entry-resolver=true",
     "--cas.authn.ldap[0].search-filter=(sAMAccountName={user})",
     "--cas.authn.ldap[0].min-pool-size=0",
-    "--cas.authn.ldap[0].trust-store=file:/tmp/adcacerts.jks",
+    "--cas.authn.ldap[0].trust-store=file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks",
     "--cas.authn.ldap[0].trust-store-type=JKS",
     "--cas.authn.ldap[0].trust-store-password=changeit",
     "--cas.authn.ldap[0].hostname-verifier=ANY",
@@ -31,7 +34,7 @@
     "--cas.authn.pm.ldap[0].follow-referrals=false",
     "--cas.authn.pm.ldap[0].search-filter=(sAMAccountName={user})",
     "--cas.authn.pm.ldap[0].min-pool-size=0",
-    "--cas.authn.pm.ldap[0].trust-store=file:/tmp/adcacerts.jks",
+    "--cas.authn.pm.ldap[0].trust-store=file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks",
     "--cas.authn.pm.ldap[0].trust-store-type=JKS",
     "--cas.authn.pm.ldap[0].trust-store-password=changeit",
     "--cas.authn.pm.ldap[0].hostname-verifier=ANY",

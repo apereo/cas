@@ -10,20 +10,22 @@ async function cleanUp(exec) {
     await cas.removeDirectory(path.join(__dirname, '/saml-sp'));
 }
 
+
 (async () => {
     let samlSpDir = path.join(__dirname, '/saml-sp');
     let idpMetadataPath = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    let exec = await cas.launchSamlSp(idpMetadataPath, samlSpDir, ['-DacsUrl=https://httpbin.org/post', '-DsignAuthnRequests=true']);
+    await cas.launchSamlSp(idpMetadataPath, samlSpDir, ['-DacsUrl=https://httpbin.org/post', '-DsignAuthnRequests=true']);
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
 
         console.log("Trying without an exising SSO session...")
-        page.goto("https://localhost:9876/sp")
+        await cas.goto(page, "https://localhost:9876/sp")
         await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
         await page.waitForTimeout(2000)
+
         await page.waitForSelector('#username', {visible: true});
         await cas.loginWith(page, "casuser", "Mellon");
         await page.waitForResponse(response => response.status() === 200)
@@ -34,13 +36,12 @@ async function cleanUp(exec) {
         let payload = JSON.parse(content);
         console.log(payload);
         assert(payload.form.SAMLResponse !== null);
-        
         console.log("Trying with an exising SSO session...")
-        await page.goto("https://localhost:8443/cas/logout");
-        await page.goto("https://localhost:8443/cas/login");
+        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, "casuser", "Mellon");
         await cas.assertTicketGrantingCookie(page);
-        page.goto("https://localhost:9876/sp")
+        cas.goto(page, "https://localhost:9876/sp")
         await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");

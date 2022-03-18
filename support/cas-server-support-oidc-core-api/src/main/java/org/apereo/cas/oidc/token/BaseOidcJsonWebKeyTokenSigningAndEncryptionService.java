@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.nimbusds.jwt.EncryptedJWT;
@@ -15,7 +16,6 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -53,15 +53,15 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     protected final OidcIssuerService issuerService;
 
     @Override
-    @SneakyThrows
     public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
-        LOGGER.trace("Attempting to produce token generated for service [{}] with claims [{}]", service, claims.toJson());
-        var innerJwt = signTokenIfNecessary(claims, service);
-        if (shouldEncryptToken(service)) {
-            innerJwt = encryptToken(service, innerJwt);
-        }
-
-        return innerJwt;
+        return FunctionUtils.doUnchecked(() -> {
+            LOGGER.trace("Attempting to produce token generated for service [{}] with claims [{}]", service, claims.toJson());
+            var innerJwt = signTokenIfNecessary(claims, service);
+            if (shouldEncryptToken(service)) {
+                innerJwt = encryptToken(service, innerJwt);
+            }
+            return innerJwt;
+        });
     }
 
     @Override

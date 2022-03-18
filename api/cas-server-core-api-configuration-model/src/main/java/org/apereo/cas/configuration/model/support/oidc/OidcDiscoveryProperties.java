@@ -59,13 +59,15 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * List of supported scopes.
      */
-    private List<String> scopes = Stream.of("openid", "profile", "email", "address", "phone", "offline_access")
+    private List<String> scopes = Stream.of("openid", "profile", "email",
+            "address", "phone", "offline_access",
+            "uma_authorization", "uma_protection")
         .collect(Collectors.toList());
 
     /**
      * List of supported claims.
      */
-    private List<String> claims = Stream.of("sub", "name", "preferred_username", "family_name",
+    private List<String> claims = Stream.of("sub", "acr", "name", "preferred_username", "family_name",
         "given_name", "middle_name", "given_name", "profile", "picture", "nickname", "website",
         "zoneinfo", "locale", "updated_at", "birthdate", "email", "email_verified", "phone_number",
         "phone_number_verified", "address", "gender").collect(Collectors.toList());
@@ -77,8 +79,18 @@ public class OidcDiscoveryProperties implements Serializable {
 
     /**
      * Supported response types.
+     * The Response Mode request parameter response_mode informs the Authorization Server
+     * of the mechanism to be used for returning Authorization Response parameters
+     * from the Authorization Endpoint. Each Response Type value also defines a
+     * default Response Mode mechanism to be used, if no Response Mode is specified using the request parameter.
      */
-    private List<String> responseTypesSupported = Stream.of("code", "token", "id_token token").collect(Collectors.toList());
+    private List<String> responseTypesSupported = Stream.of("code", "token", "id_token", "id_token token", "device_code")
+        .collect(Collectors.toList());
+
+    /**
+     * Supported response modes.
+     */
+    private List<String> responseModesSupported = Stream.of("query", "fragment", "form_post").collect(Collectors.toList());
 
     /**
      * Supported authentication methods for introspection.
@@ -93,7 +105,8 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * Supported grant types.
      */
-    private List<String> grantTypesSupported = Stream.of("authorization_code", "password", "client_credentials", "refresh_token").collect(Collectors.toList());
+    private List<String> grantTypesSupported = Stream.of("authorization_code", "password",
+        "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:uma-ticket").collect(Collectors.toList());
 
     /**
      * Supported algorithms for id token signing.

@@ -27,8 +27,6 @@ for reloads. CAS should be smart enough to reload the appropriate configuration,
 ends up using that setting. All is fair game, as the entire CAS web application inclusive of all modules and all
 relevant settings may be completely and utterly reloadable. If you find an instance where this statement does not hold, please speak up.</p></div>
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Management-Clustered.html).
-
 ## Reload Strategy
 
 CAS uses [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) to manage the internal state of the configuration. The configuration server that

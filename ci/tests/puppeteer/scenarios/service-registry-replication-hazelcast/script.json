@@ -22,7 +22,7 @@
   },
   "instance2": {
     "properties": [
-      "--cas.service-registry.json.location=file://${TMPDIR}/cas-services",
+      "--cas.service-registry.json.location=file:${TMPDIR}/cas-services",
       "--cas.service-registry.stream.core.replication-mode=PASSIVE"
     ]
   }

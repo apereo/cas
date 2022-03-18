@@ -8,7 +8,7 @@ const path = require("path");
 
     let page = await cas.newPage(browser);
     const service = "https://example.com";
-    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
 
@@ -32,7 +32,7 @@ const path = require("path");
         request.continue(data);
     });
 
-    await page.goto('https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
+    await cas.goto(page, 'https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
     const content = await page.content();
     assert(content.includes('value="Go to https://samltest.id/Shibboleth.sso/SLO/Redirect?SAMLResponse='));
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));

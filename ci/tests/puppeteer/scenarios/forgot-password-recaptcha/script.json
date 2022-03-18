@@ -1,5 +1,8 @@
 {
   "dependencies": "pm-webflow",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.authn.pm.core.enabled=true",
 

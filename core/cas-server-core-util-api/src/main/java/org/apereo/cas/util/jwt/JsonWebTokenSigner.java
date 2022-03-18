@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -33,7 +32,7 @@ public class JsonWebTokenSigner {
     /**
      * Allow all algorithms except none.
      */
-    public static final List<String> ALGORITHM_ALL_EXCEPT_NONE = List.of("*");
+    public static final Set<String> ALGORITHM_ALL_EXCEPT_NONE = Set.of("*");
 
     @Builder.Default
     private final String keyId = UUID.randomUUID().toString();

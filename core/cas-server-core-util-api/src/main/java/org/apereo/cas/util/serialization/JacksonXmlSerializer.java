@@ -1,8 +1,9 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.Getter;
-import lombok.SneakyThrows;
 
 /**
  * This is {@link JacksonXmlSerializer}.
@@ -36,8 +37,7 @@ public class JacksonXmlSerializer {
      * @param value the value
      * @return the string
      */
-    @SneakyThrows
     public String writeValueAsString(final Object value) {
-        return mapper.writeValueAsString(value);
+        return FunctionUtils.doUnchecked(() -> mapper.writeValueAsString(value));
     }
 }

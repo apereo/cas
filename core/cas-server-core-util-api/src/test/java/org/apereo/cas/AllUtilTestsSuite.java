@@ -17,6 +17,7 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBeanTests;
 import org.apereo.cas.util.io.FileWatcherServiceTests;
 import org.apereo.cas.util.io.PathWatcherServiceTests;
 import org.apereo.cas.util.io.TemporaryFileSystemResourceTests;
+import org.apereo.cas.util.jwt.JsonWebTokenEncryptorTests;
 import org.apereo.cas.util.jwt.JsonWebTokenSignerTests;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManagerTests;
 import org.apereo.cas.util.scripting.GroovyShellScriptTests;
@@ -80,6 +81,7 @@ import org.junit.platform.suite.api.Suite;
     HttpRequestUtilsTests.class,
     BeanSupplierTests.class,
     BeanConditionTests.class,
+    JsonWebTokenEncryptorTests.class,
     JsonWebTokenSignerTests.class,
     CasFeatureEnabledConditionTests.class,
     DefaultMessageDescriptorTests.class,

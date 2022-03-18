@@ -50,7 +50,7 @@ public class InweboServiceTests {
         val clientCertificate = new ClientCertificateProperties();
         clientCertificate.setCertificate(certificate);
         clientCertificate.setPassphrase("password");
-        
+
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         inwebo.setClientCertificate(clientCertificate);
         inwebo.setServiceApiUrl("http://localhost:8282");

@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
 
         const service1 = "https://httpbin.org/get";
         console.log(`Logging into ${service1} without renew to create SSO`);
-        await page.goto(`https://localhost:8443/cas/login?service=${service1}`);
+        await cas.goto(page, `https://localhost:8443/cas/login?service=${service1}`);
         await cas.loginWith(page, "casuser", "Mellon");
 
         let ticket = await cas.assertTicketParameter(page);
@@ -26,7 +26,7 @@ const cas = require('../../cas.js');
 
         const service2 = "https://httpbin.org/get";
         console.log(`Logging into ${service2} to validate with renew=true and existing SSO`);
-        await page.goto(`https://localhost:8443/cas/login?service=${service2}`);
+        await cas.goto(page, `https://localhost:8443/cas/login?service=${service2}`);
         ticket = await cas.assertTicketParameter(page);
         body = await validate(endpoint, service2, ticket, true);
 
