@@ -124,6 +124,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                 urns.put(defn.getKey(), defn.getUrn());
             });
 
+        LOGGER.debug("Attributes to process for SAML2 attribute statement are [{}]", attributes);
         for (val entry : attributes.entrySet()) {
             var attributeValue = entry.getValue();
             if (attributeValue instanceof Collection<?> && ((Collection<?>) attributeValue).isEmpty()) {
