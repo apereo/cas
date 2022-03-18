@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -11,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -20,12 +23,13 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -51,50 +55,6 @@ public class HttpUtils {
 
     private static final int SOCKET_TIMEOUT_IN_MILLISECONDS = 10 * 1000;
 
-    @SuperBuilder
-    @Getter
-    public static class HttpExecutionRequest {
-        @NonNull
-        private final HttpMethod method;
-        
-        @NonNull
-        private final String url;
-
-        private final String basicAuthUsername;
-
-        private final String basicAuthPassword;
-
-        private final String entity;
-
-        private final String proxyUrl;
-
-        private final String bearerToken;
-
-        @Builder.Default
-        private final Map<String, Object> parameters = new LinkedHashMap<>();
-
-        @Builder.Default
-        private final Map<String, Object> headers = new LinkedHashMap<>();
-
-        /**
-         * Is basic authentication?
-         *
-         * @return the boolean
-         */
-        private boolean isBasicAuthentication() {
-            return StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword);
-        }
-
-        /**
-         * Is bearer authentication?
-         *
-         * @return the boolean
-         */
-        private boolean isBearerAuthentication() {
-            return StringUtils.isNotBlank(bearerToken);
-        }
-    }
-    
     /**
      * Execute http request and produce a response.
      *
@@ -102,9 +62,9 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse execute(final HttpExecutionRequest execution) {
+        val uri = buildHttpUri(execution.getUrl().trim(), execution.getParameters());
+        val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase().trim(), execution.getEntity(), uri);
         try {
-            val uri = buildHttpUri(execution.getUrl().trim(), execution.getParameters());
-            val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase().trim(), execution.getEntity(), uri);
             execution.getHeaders().forEach((k, v) -> request.addHeader(k, v.toString()));
             prepareHttpRequest(request, execution);
             val builder = getHttpClientBuilder();
@@ -114,13 +74,13 @@ public class HttpUtils {
                 builder.setProxy(proxy);
             }
             val client = builder.build();
-
             return client.execute(request);
-        } catch(final SSLHandshakeException e) {
-            val url = execution.getUrl();
-            val paramPos = url.indexOf("?");
-            val sanitizedUrl = paramPos > 0 ? url.substring(0, paramPos) : url;
-            LoggingUtils.error(LOGGER, "SSL error accessing: [" + sanitizedUrl + "]", e);
+        } catch (final SSLHandshakeException e) {
+            val sanitizedUrl = FunctionUtils.doUnchecked(
+                () -> new URIBuilder(execution.getUrl()).removeQuery().clearParameters().build().toASCIIString());
+            LoggingUtils.error(LOGGER, "SSL error accessing: [" + sanitizedUrl + ']', e);
+            return new BasicHttpResponse(new BasicStatusLine(request.getProtocolVersion(),
+                HttpStatus.SC_INTERNAL_SERVER_ERROR, sanitizedUrl));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -197,8 +157,8 @@ public class HttpUtils {
      * in cases where the URL endpoint does not actually produce the header
      * on its own.
      *
-     * @param request             the request
-     * @param execution           the execution request
+     * @param request   the request
+     * @param execution the execution request
      */
     private static void prepareHttpRequest(final HttpUriRequest request,
                                            final HttpExecutionRequest execution) {
@@ -211,10 +171,12 @@ public class HttpUtils {
         }
     }
 
-    private static URI buildHttpUri(final String url, final Map<String, Object> parameters) throws URISyntaxException {
-        val uriBuilder = new URIBuilder(url);
-        parameters.forEach((k, v) -> uriBuilder.addParameter(k, v.toString()));
-        return uriBuilder.build();
+    private static URI buildHttpUri(final String url, final Map<String, Object> parameters) {
+        return FunctionUtils.doUnchecked(() -> {
+            val uriBuilder = new URIBuilder(url);
+            parameters.forEach((k, v) -> uriBuilder.addParameter(k, v.toString()));
+            return uriBuilder.build();
+        });
     }
 
     private HttpClientBuilder getHttpClientBuilder() {
@@ -229,5 +191,49 @@ public class HttpUtils {
             .setMaxConnTotal(MAX_CONNECTIONS)
             .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE)
             .setDefaultRequestConfig(requestConfig.build());
+    }
+
+    @SuperBuilder
+    @Getter
+    public static class HttpExecutionRequest {
+        @NonNull
+        private final HttpMethod method;
+
+        @NonNull
+        private final String url;
+
+        private final String basicAuthUsername;
+
+        private final String basicAuthPassword;
+
+        private final String entity;
+
+        private final String proxyUrl;
+
+        private final String bearerToken;
+
+        @Builder.Default
+        private final Map<String, Object> parameters = new LinkedHashMap<>();
+
+        @Builder.Default
+        private final Map<String, Object> headers = new LinkedHashMap<>();
+
+        /**
+         * Is basic authentication?
+         *
+         * @return the boolean
+         */
+        private boolean isBasicAuthentication() {
+            return StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword);
+        }
+
+        /**
+         * Is bearer authentication?
+         *
+         * @return the boolean
+         */
+        private boolean isBearerAuthentication() {
+            return StringUtils.isNotBlank(bearerToken);
+        }
     }
 }

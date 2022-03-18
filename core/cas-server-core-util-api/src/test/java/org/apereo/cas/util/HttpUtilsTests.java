@@ -1,14 +1,13 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.springframework.boot.test.system.CapturedOutput;
-import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -22,7 +21,6 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-@ExtendWith(OutputCaptureExtension.class)
 public class HttpUtilsTests {
 
     @Test
@@ -66,14 +64,14 @@ public class HttpUtilsTests {
     }
 
     @Test
-    public void verifyBadSSLLogging(final CapturedOutput capturedOutput) {
+    public void verifyBadSSLLogging() {
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .method(HttpMethod.GET)
             .url("https://untrusted-root.badssl.com/endpoint?secret=sensitiveinfo")
             .build();
-        assertNull(HttpUtils.execute(exec));
-        val output = capturedOutput.getAll();
-        assertTrue(output.contains("https://untrusted-root.badssl.com/endpoint"));
-        assertFalse(output.contains("sensitiveinfo"));
+        val response = HttpUtils.execute(exec);
+        assertNotNull(response);
+        assertTrue(HttpStatus.resolve(response.getStatusLine().getStatusCode()).is5xxServerError());
+        assertTrue(response.getStatusLine().getReasonPhrase().contains("https://untrusted-root.badssl.com/endpoint"));
     }
 }
