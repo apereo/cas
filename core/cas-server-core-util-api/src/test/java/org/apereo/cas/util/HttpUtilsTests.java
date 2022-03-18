@@ -68,9 +68,9 @@ public class HttpUtilsTests {
     @Test
     public void verifyBadSSLLogging(final CapturedOutput capturedOutput) {
         val exec = HttpUtils.HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
-                .url("https://untrusted-root.badssl.com/endpoint?secret=sensitiveinfo")
-                .build();
+            .method(HttpMethod.GET)
+            .url("https://untrusted-root.badssl.com/endpoint?secret=sensitiveinfo")
+            .build();
         assertNull(HttpUtils.execute(exec));
         val output = capturedOutput.getAll();
         assertTrue(output.contains("https://untrusted-root.badssl.com/endpoint"));
