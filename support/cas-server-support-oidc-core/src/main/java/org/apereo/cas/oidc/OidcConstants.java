@@ -12,10 +12,6 @@ import org.apache.commons.text.WordUtils;
 public interface OidcConstants {
 
     /**
-     * The token.
-     */
-    String TOKEN = "token";
-    /**
      * ACR passed in the id token.
      */
     String ACR = "acr";
@@ -130,7 +126,7 @@ public interface OidcConstants {
      * Oidc pushed authorization request url path segment url.
      */
     String PUSHED_AUTHORIZE_URL = "oidcPushAuthorize";
-    
+
     /**
      * JWKS Endpoint url.
      */
