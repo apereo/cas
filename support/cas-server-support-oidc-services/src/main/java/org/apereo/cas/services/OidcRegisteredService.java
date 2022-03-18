@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Transient;
 
@@ -36,7 +37,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String jwks;
 
     private String jwksKeyId;
-    
+
     private long jwksCacheDuration;
 
     private String jwksCacheTimeUnit;
@@ -62,7 +63,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String idTokenIssuer;
 
     private String sectorIdentifierUri;
-    
+
     private String applicationType = "web";
 
     private String subjectType = OidcSubjectTypes.PUBLIC.getType();
@@ -70,7 +71,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private boolean dynamicallyRegistered;
 
     private long clientSecretExpiration;
-    
+
     @JsonIgnore
     @Deprecated(since = "6.2.0")
     @Transient
@@ -130,9 +131,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Override
     public void initialize() {
         super.initialize();
-        if (this.scopes == null) {
-            this.scopes = new HashSet<>(0);
-        }
+        this.scopes = ObjectUtils.defaultIfNull(this.scopes, new HashSet<>(0));
     }
 
     @JsonIgnore

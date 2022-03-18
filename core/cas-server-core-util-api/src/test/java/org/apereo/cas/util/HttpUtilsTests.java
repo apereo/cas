@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Tag;
