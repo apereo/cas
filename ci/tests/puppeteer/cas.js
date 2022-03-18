@@ -35,6 +35,10 @@ exports.logg = async(text) => {
     console.log(colors.green(text));
 }
 
+exports.logr = async(text) => {
+    console.log(colors.red(text));
+}
+
 exports.removeDirectory = async (directory) => {
     await this.logg(`Removing directory ${directory}`);
     await fs.rmSync(directory, {recursive: true});

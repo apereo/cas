@@ -178,7 +178,7 @@ public interface OidcConstants {
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.
      */
-    String CLIENT_REGISTRATION_SCOPE = "ClientRegistrationScope";
+    String CLIENT_REGISTRATION_SCOPE = "client_registration_scope";
 
     /**
      * Parameter used to look up clients by their id.

@@ -38,6 +38,11 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
         return true;
     }
 
+    @Override
+    public boolean isClientSecretExpired(final OAuthRegisteredService registeredService) {
+        return false;
+    }
+
     /**
      * Is client secret defined for boolean.
      *
