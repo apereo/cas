@@ -98,12 +98,13 @@ public class MultifactorAuthenticationUtils {
      * @param predicate      the predicate
      * @return the set
      */
-    public static Set<Event> resolveEventViaMultivaluedAttribute(final Principal principal,
-                                                                 final Object attributeValue,
-                                                                 final RegisteredService service,
-                                                                 final Optional<RequestContext> context,
-                                                                 final MultifactorAuthenticationProvider provider,
-                                                                 final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
+    public static Set<Event> resolveEventViaMultivaluedAttribute(
+        final Principal principal,
+        final Object attributeValue,
+        final RegisteredService service,
+        final Optional<RequestContext> context,
+        final MultifactorAuthenticationProvider provider,
+        final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
 
         if (attributeValue instanceof Collection) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
@@ -136,8 +137,9 @@ public class MultifactorAuthenticationUtils {
      * @param requestMfaMethod the request mfa method
      * @return the optional
      */
-    public static Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                              final Collection<String> requestMfaMethod) {
+    public static Optional<MultifactorAuthenticationProvider> resolveProvider(
+        final Map<String, MultifactorAuthenticationProvider> providers,
+        final Collection<String> requestMfaMethod) {
         return providers.values()
             .stream()
             .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
@@ -151,8 +153,9 @@ public class MultifactorAuthenticationUtils {
      * @param requestMfaMethod the request mfa method
      * @return the optional
      */
-    public static Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                              final String requestMfaMethod) {
+    public static Optional<MultifactorAuthenticationProvider> resolveProvider(
+        final Map<String, MultifactorAuthenticationProvider> providers,
+        final String requestMfaMethod) {
         return resolveProvider(providers, Stream.of(requestMfaMethod).collect(Collectors.toList()));
     }
 
@@ -168,12 +171,13 @@ public class MultifactorAuthenticationUtils {
      * @param predicate              the predicate
      * @return the set
      */
-    public static Set<Event> resolveEventViaSingleAttribute(final Principal principal,
-                                                            final Object providedAttributeValue,
-                                                            final RegisteredService service,
-                                                            final Optional<RequestContext> context,
-                                                            final MultifactorAuthenticationProvider provider,
-                                                            final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
+    public static Set<Event> resolveEventViaSingleAttribute(
+        final Principal principal,
+        final Object providedAttributeValue,
+        final RegisteredService service,
+        final Optional<RequestContext> context,
+        final MultifactorAuthenticationProvider provider,
+        final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
         return FunctionUtils.doUnchecked(() -> {
             val processSingleValue = !(providedAttributeValue instanceof Collection) || CollectionUtils.toCollection(providedAttributeValue).size() == 1;
             if (processSingleValue) {
@@ -189,8 +193,7 @@ public class MultifactorAuthenticationUtils {
             return null;
         });
     }
-
-
+    
     /**
      * Gets authentication provider for service.
      *
@@ -198,8 +201,9 @@ public class MultifactorAuthenticationUtils {
      * @param applicationContext the application context
      * @return the authentication provider for service
      */
-    public Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderForService(final RegisteredService service,
-                                                                                                        final ApplicationContext applicationContext) {
+    public Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderForService(
+        final RegisteredService service,
+        final ApplicationContext applicationContext) {
         val policy = service.getMultifactorPolicy();
         if (policy != null) {
             return policy.getMultifactorAuthenticationProviders().stream()
@@ -218,7 +222,8 @@ public class MultifactorAuthenticationUtils {
      * @param providerId the provider id
      * @return the registered service multifactor authentication provider
      */
-    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId) {
+    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(
+        final String providerId) {
         return getMultifactorAuthenticationProviderFromApplicationContext(providerId, ApplicationContextProvider.getApplicationContext());
     }
 
@@ -229,8 +234,9 @@ public class MultifactorAuthenticationUtils {
      * @param applicationContext the application context
      * @return the multifactor authentication provider from application context
      */
-    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId,
-                                                                                                                         final ApplicationContext applicationContext) {
+    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(
+        final String providerId,
+        final ApplicationContext applicationContext) {
         LOGGER.trace("Locating bean definition for [{}]", providerId);
         return getAvailableMultifactorAuthenticationProviders(applicationContext).values().stream()
             .filter(p -> p.matches(providerId))
@@ -274,7 +280,7 @@ public class MultifactorAuthenticationUtils {
             return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class);
         } catch (final Exception e) {
             LOGGER.trace("No beans of type [{}] are available in the application context. "
-                    + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",
+                         + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",
                 MultifactorAuthenticationProvider.class);
         }
         return new HashMap<>(0);
@@ -288,8 +294,9 @@ public class MultifactorAuthenticationUtils {
      * @param context    - ApplicationContext
      * @return - Optional
      */
-    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderById(final String providerId,
-                                                                                                       final ApplicationContext context) {
+    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderById(
+        final String providerId,
+        final ApplicationContext context) {
         return getAvailableMultifactorAuthenticationProviders(context)
             .values()
             .stream()
