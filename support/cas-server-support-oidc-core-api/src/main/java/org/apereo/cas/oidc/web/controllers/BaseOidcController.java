@@ -30,6 +30,6 @@ public abstract class BaseOidcController extends BaseOAuth20Controller<OidcConfi
      */
     protected boolean isIssuerValidForEndpoint(final HttpServletRequest request, final HttpServletResponse response, final String endpoint) {
         val webContext = new JEEContext(request, response);
-        return getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, endpoint);
+        return getConfigurationContext().getIssuerService().validateIssuer(webContext, endpoint);
     }
 }

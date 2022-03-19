@@ -39,8 +39,8 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.ACCESS_TOKEN_URL)
-            && !getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.TOKEN_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.ACCESS_TOKEN_URL)
+            && !getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.TOKEN_URL)) {
             return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.NOT_FOUND);
         }
         return super.handleRequest(request, response);

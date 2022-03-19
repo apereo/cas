@@ -230,24 +230,4 @@ public class OidcRequestSupport {
         }
         return Optional.empty();
     }
-
-
-    /**
-     * Is valid issuer for endpoint.
-     *
-     * @param webContext the web context
-     * @param endpoint   the endpoint
-     * @return true /false
-     */
-    public boolean isValidIssuerForEndpoint(final WebContext webContext, final String endpoint) {
-        val requestUrl = webContext.getRequestURL();
-        val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
-        val definedIssuer = oidcIssuerService.determineIssuer(Optional.empty());
-
-        val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");
-        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl) || issuerFromRequestUrl.startsWith(definedIssuerWithSlash);
-        FunctionUtils.doIf(!result, o -> LOGGER.trace("Configured issuer [{}] defined does not match the request issuer [{}]",
-            o, issuerFromRequestUrl)).accept(definedIssuer);
-        return result;
-    }
 }

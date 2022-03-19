@@ -32,6 +32,16 @@ public class OidcCoreProperties implements Serializable {
 
     /**
      * OIDC issuer.
+     * All OpenID Connect servers such as CAS are uniquely identified by a URL known as the issuer.
+     * This URL serves as the prefix of a service discovery endpoint as specified
+     * in the OpenID Connect Discovery standard.
+     * <p>
+     * This URL must be using the https scheme with no query or fragment component that
+     * the identity provider (CAS) asserts as its Issuer Identifier. This also MUST be
+     * identical to the {@code iss} claim value in ID Tokens issued from this issuer,
+     * unless overridden in very special circumtances as a last resort.
+     *
+     * CAS primarily supports a single issuer per deployment/host.
      */
     @RequiredProperty
     private String issuer = "http://localhost:8080/cas/oidc";

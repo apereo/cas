@@ -50,8 +50,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         final HttpServletRequest request,
         final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport()
-            .isValidIssuerForEndpoint(webContext, OidcConstants.INTROSPECTION_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.INTROSPECTION_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return super.handleRequest(request, response);

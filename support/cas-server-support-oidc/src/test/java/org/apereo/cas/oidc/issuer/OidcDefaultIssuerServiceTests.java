@@ -1,10 +1,14 @@
 package org.apereo.cas.oidc.issuer;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.JEEContext;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Optional;
 
@@ -21,6 +25,19 @@ public class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() {
         assertNotNull(oidcIssuerService.determineIssuer(Optional.empty()));
+    }
+
+    @Test
+    public void verifyEchoingOperation() throws Exception {
+        val svc = getOidcRegisteredService();
+        val oidcService = OidcIssuerService.echoing("https://custom.issuer/");
+        assertEquals("https://custom.issuer/", oidcService.determineIssuer(Optional.empty()));
+        assertEquals("https://custom.issuer/", oidcService.determineIssuer(Optional.of(svc)));
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+        assertTrue(oidcService.validateIssuer(context, OidcConstants.CLIENT_CONFIGURATION_URL));
     }
 
     @Test
