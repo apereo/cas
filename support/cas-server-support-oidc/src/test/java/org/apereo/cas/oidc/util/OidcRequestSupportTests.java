@@ -99,7 +99,7 @@ public class OidcRequestSupportTests {
         when(builder.retrieveCookieValue(any())).thenReturn(UUID.randomUUID().toString());
         val registrySupport = mock(TicketRegistrySupport.class);
         when(registrySupport.getAuthenticationFrom(anyString())).thenReturn(authn);
-        val support = new OidcRequestSupport(builder, registrySupport, mock(OidcIssuerService.class));
+        val support = new OidcRequestSupport(builder, registrySupport);
         assertTrue(support.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context));
     }
 

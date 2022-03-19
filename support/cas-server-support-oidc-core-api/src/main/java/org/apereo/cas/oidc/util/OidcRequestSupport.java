@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.util;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -44,8 +43,6 @@ public class OidcRequestSupport {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final TicketRegistrySupport ticketRegistrySupport;
-
-    private final OidcIssuerService oidcIssuerService;
 
     /**
      * Gets oidc prompt from authorization request.

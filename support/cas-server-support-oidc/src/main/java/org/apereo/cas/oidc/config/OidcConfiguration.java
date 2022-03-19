@@ -293,11 +293,9 @@ public class OidcConfiguration {
         public OidcRequestSupport oidcRequestSupport(
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(OidcIssuerService.BEAN_NAME)
-            final OidcIssuerService oidcIssuerService,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport) {
-            return new OidcRequestSupport(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, oidcIssuerService);
+            return new OidcRequestSupport(ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
         }
 
 
