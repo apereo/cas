@@ -71,7 +71,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.LOGOUT_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.LOGOUT_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         

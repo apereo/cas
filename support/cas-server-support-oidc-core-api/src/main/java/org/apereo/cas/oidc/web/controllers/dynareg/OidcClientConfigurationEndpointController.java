@@ -56,7 +56,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         final HttpServletRequest request, final HttpServletResponse response) {
 
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.CLIENT_CONFIGURATION_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.CLIENT_CONFIGURATION_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -90,7 +90,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         final String jsonInput,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.CLIENT_CONFIGURATION_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.CLIENT_CONFIGURATION_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         var service = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(

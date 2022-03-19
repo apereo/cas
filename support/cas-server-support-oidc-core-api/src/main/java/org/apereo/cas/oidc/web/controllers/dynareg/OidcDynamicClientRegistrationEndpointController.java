@@ -61,7 +61,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
         final HttpServletResponse response) {
 
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.REGISTRATION_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.REGISTRATION_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         try {

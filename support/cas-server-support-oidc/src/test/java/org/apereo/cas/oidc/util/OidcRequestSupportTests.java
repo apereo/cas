@@ -2,7 +2,9 @@ package org.apereo.cas.oidc.util;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -146,47 +148,43 @@ public class OidcRequestSupportTests {
 
     @Test
     public void validateStaticIssuer() {
-        val issuerService = mock(OidcIssuerService.class);
         val staticIssuer = "https://sso.example.org:8443/cas/oidc";
-        when(issuerService.determineIssuer(any())).thenReturn(staticIssuer);
-        val support = new OidcRequestSupport(mock(CasCookieBuilder.class),
-            mock(TicketRegistrySupport.class), issuerService);
-        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("authorize"), "authorize"));
-        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("profile"), "profile"));
-        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("logout"), "logout"));
-        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("realms/authorize"), "authorize"));
+        val properties = new CasConfigurationProperties().getAuthn().getOidc();
+        properties.getCore().setIssuer(staticIssuer);
+        val issuerService = new OidcDefaultIssuerService(properties);
+        assertTrue(issuerService.validateIssuer(getContextForEndpoint("authorize"), "authorize"));
+        assertTrue(issuerService.validateIssuer(getContextForEndpoint("profile"), "profile"));
+        assertTrue(issuerService.validateIssuer(getContextForEndpoint("logout"), "logout"));
+        assertTrue(issuerService.validateIssuer(getContextForEndpoint("realms/authorize"), "authorize"));
     }
 
     @Test
     public void validateDynamicIssuer() {
-        val issuerService = mock(OidcIssuerService.class);
         val staticIssuer = "https://sso.example.org:8443/cas/oidc/custom/fawnoos/issuer";
-        when(issuerService.determineIssuer(any())).thenReturn(staticIssuer);
-        val support = new OidcRequestSupport(mock(CasCookieBuilder.class),
-            mock(TicketRegistrySupport.class), issuerService);
-        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer/authorize"), "authorize"));
-        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer/profile"), "profile"));
-        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer/oidcAuthorize"), "oidcAuthorize"));
-        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer"), "unknown"));
+        val properties = new CasConfigurationProperties().getAuthn().getOidc();
+        properties.getCore().setIssuer(staticIssuer);
+        val issuerService = new OidcDefaultIssuerService(properties);
+        assertTrue(issuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer/authorize"), "authorize"));
+        assertTrue(issuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer/profile"), "profile"));
+        assertTrue(issuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer/oidcAuthorize"), "oidcAuthorize"));
+        assertTrue(issuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer"), "unknown"));
     }
 
     @Test
     public void validateDynamicIssuerForLogout() {
-        val issuerService = mock(OidcIssuerService.class);
         val staticIssuer = "https://sso.example.org:8443/cas/oidc";
-        when(issuerService.determineIssuer(any())).thenReturn(staticIssuer);
-        val support = new OidcRequestSupport(mock(CasCookieBuilder.class),
-            mock(TicketRegistrySupport.class), issuerService);
-        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("logout"), "oidcLogout"));
+        val properties = new CasConfigurationProperties().getAuthn().getOidc();
+        properties.getCore().setIssuer(staticIssuer);
+        val issuerService = new OidcDefaultIssuerService(properties);
+        assertTrue(issuerService.validateIssuer(getContextForEndpoint("logout"), "oidcLogout"));
     }
 
     @Test
     public void validateIssuerMismatch() {
-        val issuerService = mock(OidcIssuerService.class);
         val staticIssuer = "https://sso.example.org:8443/cas/openid-connect";
-        when(issuerService.determineIssuer(any())).thenReturn(staticIssuer);
-        val support = new OidcRequestSupport(mock(CasCookieBuilder.class),
-            mock(TicketRegistrySupport.class), issuerService);
-        assertFalse(support.isValidIssuerForEndpoint(getContextForEndpoint("logout"), "oidcLogout"));
+        val properties = new CasConfigurationProperties().getAuthn().getOidc();
+        properties.getCore().setIssuer(staticIssuer);
+        val issuerService = new OidcDefaultIssuerService(properties);
+        assertFalse(issuerService.validateIssuer(getContextForEndpoint("logout"), "oidcLogout"));
     }
 }

@@ -66,7 +66,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
                                                         @RequestParam(value = "state", required = false)
                                                         final String state) {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.JWKS_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.JWKS_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 

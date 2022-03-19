@@ -36,7 +36,7 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
     public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
                                                    final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.PROFILE_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PROFILE_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return super.handleGetRequest(request, response);

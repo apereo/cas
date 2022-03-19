@@ -36,7 +36,7 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
     @PostMapping(value = "/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.PUSHED_AUTHORIZE_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PUSHED_AUTHORIZE_URL)) {
             return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.NOT_FOUND);
         }
         return super.handleRequest(request, response);
