@@ -13,7 +13,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OAuth20IntrospectionAccessTokenResponse {
-
+    private String token;
+    
     private boolean active;
 
     private String sub;

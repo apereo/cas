@@ -7,7 +7,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -132,15 +132,16 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
                     request.getParameter(OAuth20Constants.ACCESS_TOKEN));
 
                 LOGGER.debug("Located access token [{}] in the request", accessToken);
-                var ticket = (OAuth20AccessToken) null;
+                OAuth20Token ticket = null;
                 try {
                     val token = extractAccessTokenFrom(accessToken);
-                    ticket = getConfigurationContext().getCentralAuthenticationService().getTicket(token, OAuth20AccessToken.class);
+                    ticket = getConfigurationContext().getCentralAuthenticationService().getTicket(token, OAuth20Token.class);
                 } catch (final InvalidTicketException e) {
                     LOGGER.trace(e.getMessage(), e);
                     LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
                 }
                 val introspect = createIntrospectionValidResponse(ticket);
+                introspect.setToken(accessToken);
                 result = new ResponseEntity<>(introspect, HttpStatus.OK);
             }
         } catch (final Exception e) {
@@ -149,14 +150,8 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         }
         return result;
     }
-
-    /**
-     * Create introspection response OAuth introspection access token response.
-     *
-     * @param ticket the ticket
-     * @return the OAuth introspection access token response
-     */
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20AccessToken ticket) {
+    
+    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20Token ticket) {
         val introspect = new OAuth20IntrospectionAccessTokenResponse();
         introspect.setScope("CAS");
 
