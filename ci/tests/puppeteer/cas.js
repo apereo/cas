@@ -41,10 +41,12 @@ exports.logr = async(text) => {
 
 exports.removeDirectory = async (directory) => {
     await this.logg(`Removing directory ${directory}`);
-    await fs.rmSync(directory, {recursive: true});
+    if (fs.existsSync(directory)) {
+        await fs.rmSync(directory, {recursive: true});
+    }
     await this.logg(`Removed directory ${directory}`);
     if (fs.existsSync(directory)) {
-        await this.logg(`Directory still there... ${directory}`);
+        await this.logr(`Removed directory still present at: ${directory}`);
     }
 }
 
@@ -205,12 +207,11 @@ exports.assertMissingParameter = async (page, param) => {
     assert(result.searchParams.has(param) === false);
 }
 
-exports.sleep = async (ms) => {
-    return new Promise((resolve) => {
+exports.sleep = async (ms) =>
+    new Promise((resolve) => {
         this.logg(`Waiting for ${ms / 1000} second(s)...`)
         setTimeout(resolve, ms);
-    });
-}
+    })
 
 exports.assertTicketParameter = async (page) => {
     console.log(`Page URL: ${page.url()}`);
@@ -336,11 +337,11 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
 
 exports.stopSamlSp = async (gradleDir, deleteDir= true) => {
     let args = ['appStop', '-q', '--no-daemon'];
-    await this.logg(`Stopping samlsp gretty process in ${gradleDir} with ${args}`);
+    await this.logg(`Stopping SAML SP process in ${gradleDir} with ${args}`);
     return this.runGradle(gradleDir, args, (code) => {
         console.log(`Stopped child process exited with code ${code}`);
         if (deleteDir) {
-            this.sleep(30000);
+            this.sleep(3000);
             this.removeDirectory(gradleDir);
         }
     });
@@ -531,6 +532,9 @@ exports.goto = async (page, url, retryCount = 5) => {
             console.log(colors.red(err.message));
             await this.sleep(timeout);
         }
+    }
+    if (response != null) {
+        console.log(`Response status: ${colors.green(await response.status())}`);
     }
     return response;
 }
