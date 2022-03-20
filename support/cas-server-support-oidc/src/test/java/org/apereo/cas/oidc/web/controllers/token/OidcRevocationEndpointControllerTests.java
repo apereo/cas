@@ -41,7 +41,7 @@ public class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
         val mv = oidcRevocationEndpointController.handleRequest(request, response);
-        assertEquals(HttpStatus.NOT_FOUND, mv.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
     }
 
 }

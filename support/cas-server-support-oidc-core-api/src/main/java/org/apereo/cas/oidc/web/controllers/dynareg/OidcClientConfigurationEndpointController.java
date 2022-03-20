@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,8 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
 
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.CLIENT_CONFIGURATION_URL)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
@@ -91,7 +93,8 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.CLIENT_CONFIGURATION_URL)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
         var service = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(
             getConfigurationContext().getServicesManager(), clientId);

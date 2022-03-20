@@ -72,7 +72,7 @@ public class OidcAuthorizeEndpointControllerTests {
             request.setRequestURI("unknown/issuer");
             val response = new MockHttpServletResponse();
             val mv = oidcAuthorizeEndpointController.handleRequest(request, response);
-            assertEquals(HttpStatus.NOT_FOUND, mv.getStatus());
+            assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
         }
 
         @Test

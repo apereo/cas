@@ -47,7 +47,7 @@ public class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
         val mv = oidcUserProfileEndpointController.handlePostRequest(request, response);
-        assertEquals(HttpStatus.NOT_FOUND, mv.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatusCode());
     }
 
     @Test

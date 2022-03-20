@@ -7,6 +7,8 @@ import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -67,9 +69,9 @@ public class OidcJwksEndpointController extends BaseOidcController {
                                                         final String state) {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.JWKS_URL)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
-
         try {
             val resource = oidcJsonWebKeystoreGeneratorService.generate();
             val jsonJwks = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);

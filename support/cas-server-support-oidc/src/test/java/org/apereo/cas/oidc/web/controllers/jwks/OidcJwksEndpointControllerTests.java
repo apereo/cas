@@ -46,7 +46,7 @@ public class OidcJwksEndpointControllerTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val mv = oidcJwksEndpointController.handleRequestInternal(request, response,
             OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase());
-        assertEquals(HttpStatus.NOT_FOUND, mv.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatusCode());
     }
 
     @Test

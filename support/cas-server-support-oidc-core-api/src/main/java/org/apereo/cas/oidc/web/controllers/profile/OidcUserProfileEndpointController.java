@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web.controllers.profile;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 
 import lombok.val;
@@ -37,7 +38,8 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
                                                    final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PROFILE_URL)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
         return super.handleGetRequest(request, response);
     }

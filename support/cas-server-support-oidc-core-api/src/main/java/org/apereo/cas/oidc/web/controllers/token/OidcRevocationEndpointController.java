@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointContr
 
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,7 +37,7 @@ public class OidcRevocationEndpointController extends OAuth20RevocationEndpointC
                                       final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.REVOCATION_URL)) {
-            return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.NOT_FOUND);
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }
         return super.handleRequest(request, response);
     }

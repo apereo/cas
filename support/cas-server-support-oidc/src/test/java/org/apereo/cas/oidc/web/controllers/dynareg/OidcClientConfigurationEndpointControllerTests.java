@@ -41,10 +41,10 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
         var mv = controller.handleRequestInternal(StringUtils.EMPTY, request, response);
-        assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, mv.getStatusCode());
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST, mv.getStatusCode());
 
         mv = controller.handleUpdates(UUID.randomUUID().toString(), StringUtils.EMPTY, request, response);
-        assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, mv.getStatusCode());
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST, mv.getStatusCode());
     }
 
     @Test

@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.issuer;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -43,9 +44,10 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
         val requestUrl = webContext.getRequestURL();
         val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
         val definedIssuer = determineIssuer(Optional.empty());
-
         val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");
-        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl) || issuerFromRequestUrl.startsWith(definedIssuerWithSlash);
+        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl)
+                     || issuerFromRequestUrl.startsWith(definedIssuerWithSlash)
+                     || RegexUtils.find(properties.getCore().getAcceptedIssuersPattern(), issuerFromRequestUrl);
         FunctionUtils.doIf(!result, o -> LOGGER.trace("Configured issuer [{}] defined does not match the request issuer [{}]",
             o, issuerFromRequestUrl)).accept(definedIssuer);
         return result;

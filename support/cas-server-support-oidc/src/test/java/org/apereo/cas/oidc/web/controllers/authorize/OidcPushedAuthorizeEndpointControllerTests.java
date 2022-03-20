@@ -49,7 +49,7 @@ public class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTest
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED, oidcPushedAuthorizeController.handleRequest(request, response).getStatus());
 
         request.setMethod(HttpMethod.POST.name());
-        assertEquals(HttpStatus.NOT_FOUND, oidcPushedAuthorizeController.handleRequestPost(request, response).getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, oidcPushedAuthorizeController.handleRequestPost(request, response).getStatus());
     }
 
     @Test
