@@ -2,6 +2,8 @@ package org.apereo.cas.oidc.web.controllers.introspection;
 
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.OAuth20Token;
@@ -51,7 +53,8 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.INTROSPECTION_URL)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
         }
         return super.handleRequest(request, response);
     }

@@ -64,7 +64,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         '/' + OidcConstants.BASE_OIDC_URL + "/logout",
         "/**/" + OidcConstants.LOGOUT_URL
     })
-    public ResponseEntity<HttpStatus> handleRequestInternal(
+    public ResponseEntity handleRequestInternal(
         @RequestParam(value = "post_logout_redirect_uri", required = false) final String postLogoutRedirectUrl,
         @RequestParam(value = "state", required = false) final String state,
         @RequestParam(value = "id_token_hint", required = false) final String idToken,
@@ -72,7 +72,8 @@ public class OidcLogoutEndpointController extends BaseOidcController {
 
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.LOGOUT_URL)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
         
         String clientId = null;
