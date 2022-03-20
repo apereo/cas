@@ -37,11 +37,11 @@ on:
       - 'pr-*'
   schedule:
     - cron: '30 5 * * 5'
-  pull_request:
-    types: [ labeled ]
-    branches:
-      - master
-      - '!**.**.**'
+#  pull_request:
+#    types: [ labeled ]
+#    branches:
+#      - master
+#      - '!**.**.**'
 
 ##########################################################################
 

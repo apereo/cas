@@ -3,9 +3,9 @@ const path = require('path');
 const cas = require('../../cas.js');
 const assert = require("assert");
 
-async function cleanUp(exec) {
+async function cleanUp(samlSpDir) {
     console.log("Killing SAML2 SP process...");
-    exec.kill();
+    await cas.stopSamlSp(samlSpDir);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await cas.removeDirectory(path.join(__dirname, '/saml-sp'));
 }
@@ -14,7 +14,8 @@ async function cleanUp(exec) {
 (async () => {
     let samlSpDir = path.join(__dirname, '/saml-sp');
     let idpMetadataPath = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    await cas.launchSamlSp(idpMetadataPath, samlSpDir, ['-DacsUrl=https://httpbin.org/post', '-DsignAuthnRequests=true']);
+    await cas.launchSamlSp(idpMetadataPath, samlSpDir,
+        ['-DacsUrl=https://httpbin.org/post', '-DsignAuthnRequests=true']);
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
@@ -41,7 +42,7 @@ async function cleanUp(exec) {
         await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, "casuser", "Mellon");
         await cas.assertTicketGrantingCookie(page);
-        cas.goto(page, "https://localhost:9876/sp")
+        await cas.goto(page, "https://localhost:9876/sp")
         await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
@@ -54,9 +55,10 @@ async function cleanUp(exec) {
         assert(payload.form.SAMLResponse !== null);
 
         await browser.close();
-        await cleanUp(exec);
+        await cleanUp(samlSpDir);
+        process.exit()
     }, async error => {
-        await cleanUp(exec);
+        await cleanUp(samlSpDir);
         console.log(error);
         throw error;
     })

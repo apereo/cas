@@ -56,6 +56,10 @@ SAML2 integration tests managed by [Puppeteer](../developer/Test-Process.html) h
 
 The collection of algorithms specified in the CAS configuration for signing and encryption operations of ID tokens are now taken into account when CAS responses are produced for ID token and user profile requests. Furthermore, settings and values declared in CAS configuration for OpenID Connect discovery are now taken into account when responding or validating requests. These include supported scopes when building attribute release policies for each OpenID Connect scope, supported ACR values, response modes, response types and grant types.
 
+### OpenID Connect Issuer Aliases
+
+CAS configuration for [OpenID Connect](../protocol/OIDC-Protocol.html) is now extended to support issuer aliases. Essentially, endpoint validation for OpenID Connect can now be be reached via alternative URLs that are trusted and registered in CAS as aliases of the issuer.
+
 ### OpenID Connect Client Registration
 
 [Dynamic Client Registration](../authentication/OIDC-Authentication-Clients.html) is now able to support an expiration date for client secrets and registration requests. Authentication requests from clients with an expired client secret blocked until the application renews its client secret. Furthermore, the client configuration endpoint is now able to accept `PATCH` requests to update existing application records, or it may also be used to renew the client secret, if and when expired.
@@ -67,6 +71,8 @@ The collection of end-to-end browser tests based on Puppeteer are now split into
 ## Other Stuff
       
 - Minor UI improvements to ensure "Reveal Password" buttons line up correctly in input fields.
+- The SAML2 attribute definition catalog is extended to support a few *known* attributes such as `title`, `eduPersonNickname`, etc.
+- Using "Provider Selection" in combination of a multifactor authentication policy for a service that triggers on principal attributes is now supported.
 - Links displayed as part of an [interrupt notification](../webflow/Webflow-Customization-Interrupt.html) can now take advantage of single sign-on sessions.
 
 ## Library Upgrades
