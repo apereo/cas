@@ -38,7 +38,6 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
         return StringUtils.removeEnd(issuer, "/");
     }
 
-
     @Override
     public boolean validateIssuer(final WebContext webContext, final String endpoint) {
         val requestUrl = webContext.getRequestURL();
