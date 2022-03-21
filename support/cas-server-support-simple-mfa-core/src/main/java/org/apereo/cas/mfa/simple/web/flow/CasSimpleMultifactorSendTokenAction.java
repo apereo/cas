@@ -1,6 +1,7 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
@@ -121,7 +122,8 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val result = bucketConsumer.consume();
+        val authentication = WebUtils.getInProgressAuthentication();
+        val result = bucketConsumer.consume(getThrottledRequestKeyFor(authentication));
         result.getHeaders().forEach(response::addHeader);
         return result.isConsumed() ? super.doPreExecute(requestContext) : error();
     }
@@ -193,5 +195,10 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                 LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
                 return token;
             });
+    }
+
+    private String getThrottledRequestKeyFor(final Authentication authentication) {
+        val principal = resolvePrincipal(authentication.getPrincipal());
+        return principal.getId();
     }
 }
