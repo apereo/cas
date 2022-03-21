@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
-import org.apereo.cas.bucket4j.producer.BucketProducer;
+import org.apereo.cas.bucket4j.consumer.DefaultBucketConsumer;
+import org.apereo.cas.bucket4j.producer.BucketStore;
+import org.apereo.cas.bucket4j.producer.InMemoryBucketStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
@@ -30,8 +32,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Throttling, module = "bucket4j")
 public class CasBucket4jThrottlingConfiguration {
-    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.throttle.bucket4j.enabled").isTrue().evenIfMissing();
-    
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.throttle.bucket4j.enabled")
+        .isTrue().evenIfMissing();
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThrottledRequestExecutor throttledRequestExecutor(
@@ -45,19 +48,37 @@ public class CasBucket4jThrottlingConfiguration {
             .get();
     }
 
+    @ConditionalOnMissingBean(name = "bucket4jThrottledRequestStore")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public BucketStore bucket4jThrottledRequestStore(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        return BeanSupplier.of(BucketStore.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val throttle = casProperties.getAuthn().getThrottle();
+                return new InMemoryBucketStore(throttle.getBucket4j());
+            })
+            .otherwiseProxy()
+            .get();
+    }
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "bucket4jThrottledRequestConsumer")
     public BucketConsumer bucket4jThrottledRequestConsumer(
+        @Qualifier("bucket4jThrottledRequestStore")
+        final BucketStore bucket4jThrottledRequestStore,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(BucketConsumer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val throttle = casProperties.getAuthn().getThrottle();
-                return BucketProducer.builder().properties(throttle.getBucket4j()).build().produce();
+                return new DefaultBucketConsumer(bucket4jThrottledRequestStore, throttle.getBucket4j());
             })
-            .otherwiseProxy()
+            .otherwise(BucketConsumer::permitAll)
             .get();
     }
 }

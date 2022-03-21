@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.bucket4j.producer.BucketProducer;
+import org.apereo.cas.bucket4j.producer.BucketStore;
+import org.apereo.cas.bucket4j.producer.InMemoryBucketStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
@@ -85,9 +87,25 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketConsumer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BucketConsumer mfaSimpleMultifactorBucketConsumer(final CasConfigurationProperties casProperties) {
+        public BucketConsumer mfaSimpleMultifactorBucketConsumer(
+            @Qualifier("mfaSimpleMultifactorBucketStore")
+            final BucketStore mfaSimpleMultifactorBucketStore,
+            final CasConfigurationProperties casProperties) {
             val simple = casProperties.getAuthn().getMfa().getSimple();
-            return BucketProducer.builder().properties(simple.getBucket4j()).build().produce();
+            return BucketProducer.builder()
+                .properties(simple.getBucket4j())
+                .bucketStore(mfaSimpleMultifactorBucketStore)
+                .build()
+                .produce();
+        }
+
+        @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketConsumer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public BucketStore mfaSimpleMultifactorBucketStore(
+            final CasConfigurationProperties casProperties) {
+            val simple = casProperties.getAuthn().getMfa().getSimple();
+            return new InMemoryBucketStore(simple.getBucket4j());
         }
     }
 

@@ -1,36 +1,40 @@
 package org.apereo.cas.bucket4j.producer;
 
-import org.apereo.cas.bucket4j.consumer.BucketConsumer;
-import org.apereo.cas.bucket4j.consumer.DefaultBucketConsumer;
 import org.apereo.cas.configuration.model.support.bucket4j.BaseBucket4jProperties;
-import org.apereo.cas.configuration.model.support.bucket4j.Bucket4jBandwidthLimitProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.function.FunctionUtils;
 
 import io.github.bucket4j.AbstractBucket;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 import io.github.bucket4j.local.LocalBucketBuilder;
-import lombok.experimental.SuperBuilder;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This is {@link BucketProducer}.
+ * This is {@link InMemoryBucketStore}.
  *
  * @author Misagh Moayyed
- * @since 6.5.0
+ * @since 6.6.0
  */
-@SuperBuilder
-public class BucketProducer {
+@RequiredArgsConstructor
+public class InMemoryBucketStore implements BucketStore {
+    private final Map<String, AbstractBucket> store = new ConcurrentHashMap<>();
 
     private final BaseBucket4jProperties properties;
 
-    private static LocalBucketBuilder getBucketLimits(final List<Bucket4jBandwidthLimitProperties> bandwidths) {
+    @Override
+    public AbstractBucket obtainBucket(final String key) {
+        return store.computeIfAbsent(key, k -> (AbstractBucket) getBucketLimits().build());
+    }
+
+    private LocalBucketBuilder getBucketLimits() {
         val builder = Bucket.builder().withNanosecondPrecision();
-        bandwidths.stream()
+        properties.getBandwidth()
+            .stream()
             .map(bandwidth -> {
                 var limit = (Bandwidth) null;
                 switch (bandwidth.getRefillStrategy()) {
@@ -50,18 +54,5 @@ public class BucketProducer {
             })
             .forEach(builder::addLimit);
         return builder;
-    }
-
-    /**
-     * Produce bucket.
-     *
-     * @return the abstract bucket
-     */
-    public BucketConsumer produce() {
-        return FunctionUtils.doAndReturn(properties.isEnabled(),
-            () -> {
-                val bucket = (AbstractBucket) getBucketLimits(properties.getBandwidth()).build();
-                return new DefaultBucketConsumer(bucket, properties);
-            }, BucketConsumer::permitAll);
     }
 }

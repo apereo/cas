@@ -48,17 +48,21 @@ cas.version=6.6.0-RC2
 
 The following items are new improvements and enhancements presented in this release.
  
-### SAML2 Integration Tests
-
-SAML2 integration tests managed by [Puppeteer](../developer/Test-Process.html) have switched to using simpleSAMLphp Docker containers for easier management and maintenance.
-
 ### OpenID Connect Compliance
 
 The collection of algorithms specified in the CAS configuration for signing and encryption operations of ID tokens are now taken into account when CAS responses are produced for ID token and user profile requests. Furthermore, settings and values declared in CAS configuration for OpenID Connect discovery are now taken into account when responding or validating requests. These include supported scopes when building attribute release policies for each OpenID Connect scope, supported ACR values, response modes, response types and grant types.
 
+### SAML2 Integration Tests
+
+SAML2 integration tests managed by [Puppeteer](../developer/Test-Process.html) have switched to using simpleSAMLphp Docker containers for easier management and maintenance.
+
 ### OpenID Connect Issuer Aliases
 
 CAS configuration for [OpenID Connect](../protocol/OIDC-Protocol.html) is now extended to support issuer aliases. Essentially, endpoint validation for OpenID Connect can now be be reached via alternative URLs that are trusted and registered in CAS as aliases of the issuer.
+
+### Bucket4j Capacity Planning
+
+Integrations with Bucket4j such as those that [throttle authentication attempts](authentication/Configuring-Authentication-Throttling.html) or request [simple multifactor authentication](mfa/Simple-Multifactor-Authentication.html) tokens are now able to construct and allocate buckets for individual requests as opposed to preparing a global bucket for the entire server instance. The allocation strategy is specific to the client IP address.
 
 ### OpenID Connect Client Registration
 

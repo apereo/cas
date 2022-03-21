@@ -1,15 +1,16 @@
 package org.apereo.cas.bucket4j.consumer;
 
+import org.apereo.cas.bucket4j.producer.InMemoryBucketStore;
+import org.apereo.cas.configuration.model.support.bucket4j.Bucket4jBandwidthLimitProperties;
 import org.apereo.cas.configuration.model.support.throttle.Bucket4jThrottleProperties;
 
-import io.github.bucket4j.AbstractBucket;
-import io.github.bucket4j.ConsumptionProbe;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultBucketConsumerTests}.
@@ -17,22 +18,19 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Tag("Simple")
+@Tag("AuthenticationThrottling")
 public class DefaultBucketConsumerTests {
 
     @Test
-    public void verifyFailure() {
-        val bucket = mock(AbstractBucket.class);
-        when(bucket.getAvailableTokens()).thenReturn(1L);
-        when(bucket.tryConsume(anyLong())).thenThrow(new RuntimeException());
-
-        val probe = mock(ConsumptionProbe.class);
-        when(probe.getNanosToWaitForRefill()).thenReturn(100L);
-        when(bucket.tryConsumeAndReturnRemaining(anyLong())).thenReturn(probe);
-
-        val producer = new DefaultBucketConsumer(bucket, new Bucket4jThrottleProperties());
-        val result = producer.consume();
-        assertNotNull(result);
+    public void verifyFailureAsync() {
+        val props = new Bucket4jThrottleProperties();
+        props.setBlocking(false);
+        props.getBandwidth().add(new Bucket4jBandwidthLimitProperties().setCapacity(1).setRefillDuration("PT1S"));
+        val producer = new DefaultBucketConsumer(new InMemoryBucketStore(props), props);
+        val key = UUID.randomUUID().toString();
+        var result = producer.consume(key);
+        assertTrue(result.isConsumed());
+        result = producer.consume(key);
         assertFalse(result.isConsumed());
     }
 }
