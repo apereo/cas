@@ -12,6 +12,7 @@ import org.springframework.core.env.Environment;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Formatter;
+import java.util.ServiceLoader;
 
 /**
  * This is {@link AbstractCasBanner}.
@@ -28,7 +29,8 @@ public abstract class AbstractCasBanner implements Banner {
     /**
      * Line separator string.
      */
-    protected static final String LINE_SEPARATOR = String.join(StringUtils.EMPTY, Collections.nCopies(SEPARATOR_REPEAT_COUNT, SEPARATOR_CHAR));
+    protected static final String LINE_SEPARATOR = String.join(StringUtils.EMPTY,
+        Collections.nCopies(SEPARATOR_REPEAT_COUNT, SEPARATOR_CHAR));
 
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
@@ -74,10 +76,12 @@ public abstract class AbstractCasBanner implements Banner {
             });
             formatter.format("%s%n", LINE_SEPARATOR);
             injectEnvironmentInfoIntoBanner(formatter, environment, sourceClass);
+            ServiceLoader.load(BannerContributor.class).stream()
+                .forEach(c -> c.get().contribute(formatter, environment));
+            formatter.format("%s%n", LINE_SEPARATOR);
             return formatter.toString();
         }
     }
-
 
     /**
      * Inject environment info into banner.
