@@ -68,6 +68,8 @@ Integrations with Bucket4j such as those that [throttle authentication attempts]
 
 [Dynamic Client Registration](../authentication/OIDC-Authentication-Clients.html) is now able to support an expiration date for client secrets and registration requests. Authentication requests from clients with an expired client secret blocked until the application renews its client secret. Furthermore, the client configuration endpoint is now able to accept `PATCH` requests to update existing application records, or it may also be used to renew the client secret, if and when expired.
 
+Also in a situation where the CAS is supporting open Client registration, it will now check to see if the `logo_uri` and `policy_uri` have the same host as the hosts defined in the array of `redirect_uris`.
+
 ### Puppeteer Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `256` jobs. At the moment, total number of jobs stands at approximately `263` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.

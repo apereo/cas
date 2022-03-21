@@ -12,6 +12,7 @@ import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributePro
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,9 +22,11 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -32,6 +35,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcClientRegistrationRequestTranslator}.
@@ -41,36 +45,13 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Slf4j
-class OidcClientRegistrationRequestTranslator {
+public class OidcClientRegistrationRequestTranslator {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final int GENERATED_CLIENT_NAME_LENGTH = 8;
 
     private final OidcConfigurationContext context;
-
-    private static void validate(final OidcClientRegistrationRequest registrationRequest,
-                                 final OidcRegisteredService registeredService) throws Exception {
-        if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
-            HttpResponse sectorResponse = null;
-            try {
-                val exec = HttpUtils.HttpExecutionRequest.builder()
-                    .method(HttpMethod.GET)
-                    .url(registeredService.getSectorIdentifierUri())
-                    .build();
-                sectorResponse = HttpUtils.execute(exec);
-                if (sectorResponse != null && sectorResponse.getStatusLine().getStatusCode() == org.apache.http.HttpStatus.SC_OK) {
-                    val result = IOUtils.toString(sectorResponse.getEntity().getContent(), StandardCharsets.UTF_8);
-                    val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
-                    if (!urls.equals(registrationRequest.getRedirectUris())) {
-                        throw new IllegalArgumentException("Invalid sector identifier uri");
-                    }
-                }
-            } finally {
-                HttpUtils.close(sectorResponse);
-            }
-        }
-    }
 
     /**
      * Translate request into a response and store the service.
@@ -214,6 +195,51 @@ class OidcClientRegistrationRequestTranslator {
         registeredService.setDescription("Registered service ".concat(registeredService.getName()));
         validate(registrationRequest, registeredService);
         return registeredService;
+    }
+
+    private void validate(final OidcClientRegistrationRequest registrationRequest,
+                          final OidcRegisteredService registeredService) throws Exception {
+        if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
+            HttpResponse sectorResponse = null;
+            try {
+                val exec = HttpUtils.HttpExecutionRequest.builder()
+                    .method(HttpMethod.GET)
+                    .url(registeredService.getSectorIdentifierUri())
+                    .build();
+                sectorResponse = HttpUtils.execute(exec);
+                if (sectorResponse != null && sectorResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    val result = IOUtils.toString(sectorResponse.getEntity().getContent(), StandardCharsets.UTF_8);
+                    val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
+                    if (!urls.equals(registrationRequest.getRedirectUris())) {
+                        throw new IllegalArgumentException("Invalid sector identifier uri");
+                    }
+                }
+            } finally {
+                HttpUtils.close(sectorResponse);
+            }
+        }
+
+        val oidc = context.getCasProperties().getAuthn().getOidc();
+        if (!oidc.getRegistration().getDynamicClientRegistrationMode().isProtected()
+            && (StringUtils.isNotBlank(registrationRequest.getPolicyUri()) || StringUtils.isNotBlank(registrationRequest.getLogo()))) {
+            val hosts = registrationRequest.getRedirectUris()
+                .stream()
+                .map(uri -> FunctionUtils.doUnchecked(() -> new URI(uri).getHost()))
+                .collect(Collectors.toList());
+            if (StringUtils.isNotBlank(registrationRequest.getLogo())) {
+                val logo = new URI(registrationRequest.getLogo()).getHost();
+                if (!hosts.contains(logo)) {
+                    throw new IllegalArgumentException("Invalid logo uri from an unknown host");
+                }
+            }
+
+            if (StringUtils.isNotBlank(registrationRequest.getPolicyUri())) {
+                val policy = new URI(registrationRequest.getPolicyUri()).getHost();
+                if (!hosts.contains(policy)) {
+                    throw new IllegalArgumentException("Invalid policy uri from an unknown host");
+                }
+            }
+        }
     }
 
 }

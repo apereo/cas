@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.jose4j.jwk.JsonWebKeySet;
 
@@ -23,6 +24,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
 @Getter
+@Setter
 @NoArgsConstructor
 public class OidcClientRegistrationRequest implements Serializable {
 
