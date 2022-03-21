@@ -525,6 +525,7 @@ exports.goto = async (page, url, retryCount = 5) => {
     while(response === null && attempts < retryCount) {
         attempts += 1;
         try {
+            console.log(`Navigating: ${colors.green(url)}`)
             response = await page.goto(url);
             assert (await page.evaluate(() => document.title) !== null);
         } catch (err) {
