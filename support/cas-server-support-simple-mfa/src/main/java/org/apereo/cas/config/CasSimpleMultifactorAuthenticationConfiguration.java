@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
-import org.apereo.cas.bucket4j.producer.BucketProducer;
+import org.apereo.cas.bucket4j.consumer.DefaultBucketConsumer;
 import org.apereo.cas.bucket4j.producer.BucketStore;
 import org.apereo.cas.bucket4j.producer.InMemoryBucketStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -92,11 +92,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             final BucketStore mfaSimpleMultifactorBucketStore,
             final CasConfigurationProperties casProperties) {
             val simple = casProperties.getAuthn().getMfa().getSimple();
-            return BucketProducer.builder()
-                .properties(simple.getBucket4j())
-                .bucketStore(mfaSimpleMultifactorBucketStore)
-                .build()
-                .produce();
+            return new DefaultBucketConsumer(mfaSimpleMultifactorBucketStore, simple.getBucket4j());
         }
 
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketConsumer")
