@@ -28,7 +28,7 @@ public class OidcClientRegistrationProperties implements Serializable {
     /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.
      */
-    private String dynamicClientRegistrationMode;
+    private DynamicClientRegistrationModes dynamicClientRegistrationMode = DynamicClientRegistrationModes.PROTECTED;
 
     /**
      * When client secret is issued by CAS, this is the period
@@ -40,4 +40,31 @@ public class OidcClientRegistrationProperties implements Serializable {
      */
     @DurationCapable
     private String clientSecretExpiration = "0";
+
+    /**
+     * Dynamic client registration mode.
+     */
+    public enum DynamicClientRegistrationModes {
+
+        /**
+         * Registration is open to all.
+         * In a situation where CAS is supporting open Client registration,
+         * it will check to see if the {@code logo_uri} and {@code policy_uri} have the same host
+         * as the hosts defined in the array of {@code redirect_uris}.
+         */
+        OPEN,
+        /**
+         * registration is protected for all.
+         */
+        PROTECTED;
+
+        /**
+         * Is protected?
+         *
+         * @return the boolean
+         */
+        public boolean isProtected() {
+            return this == DynamicClientRegistrationModes.PROTECTED;
+        }
+    }
 }

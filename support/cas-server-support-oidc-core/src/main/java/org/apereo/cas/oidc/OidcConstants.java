@@ -204,30 +204,6 @@ public interface OidcConstants {
     String CONTENT_TYPE_JWT = "application/jwt";
 
     /**
-     * Dynamic client registration mode.
-     */
-    enum DynamicClientRegistrationMode {
-
-        /**
-         * Registration is open to all.
-         */
-        OPEN,
-        /**
-         * registration is protected for all.
-         */
-        PROTECTED;
-
-        /**
-         * Is protected?
-         *
-         * @return the boolean
-         */
-        public boolean isProtected() {
-            return this == OidcConstants.DynamicClientRegistrationMode.PROTECTED;
-        }
-    }
-
-    /**
      * Standard openid connect scopes.
      */
     @Getter
