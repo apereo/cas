@@ -5,6 +5,7 @@ import org.apereo.cas.web.flow.DefaultLoginWebflowConfigurerRememberMeTests;
 import org.apereo.cas.web.flow.DefaultLoginWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DefaultLogoutWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategyTests;
+import org.apereo.cas.web.flow.MyAccountProfileWebflowConfigurerTests;
 import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerActionTests;
 import org.apereo.cas.web.flow.actions.CasDefaultFlowUrlHandlerTests;
 import org.apereo.cas.web.flow.actions.CheckWebAuthenticationRequestActionTests;
@@ -44,6 +45,7 @@ import org.junit.platform.suite.api.Suite;
     ClearWebflowCredentialActionTests.class,
     CasWebflowConfigurerTests.class,
     WebflowCipherBeanTests.class,
+    MyAccountProfileWebflowConfigurerTests.class,
     GroovyCasWebflowAuthenticationExceptionHandlerTests.class,
     RenewAuthenticationRequestCheckActionTests.class,
     DefaultCasWebflowAbstractTicketExceptionHandlerTests.class,

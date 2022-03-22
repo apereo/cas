@@ -47,14 +47,14 @@
                         <i id="notifications-count" class="notifications-count count">2</i>
                     </button>
 
-                    <!--                <a id="cas-user-account"-->
-                    <!--                   th:href="@{/account}"-->
-                    <!--                   th:if="${ticketGrantingTicketId != null}"-->
-                    <!--                   class="mdc-icon-button mdc-top-app-bar__action-item"-->
-                    <!--                   aria-label="User Account">-->
-                    <!--                    <span class="mdi mdi-account-group"></span>-->
-                    <!--                    <span class="visually-hidden">user account</span>-->
-                    <!--                </a>-->
+                    <a id="cas-user-account"
+                       th:href="@{/account}"
+                       th:if="${ticketGrantingTicketId != null}"
+                       class="mdc-icon-button mdc-top-app-bar__action-item"
+                       aria-label="User Account">
+                        <span class="mdi mdi-account-group"></span>
+                        <span class="visually-hidden">user account</span>
+                    </a>
                 </section>
             </div>
         </nav>
@@ -112,21 +112,21 @@
 
     <script type="text/javascript">
 
-        (function (material) {
-            var header = {
-                init: function () {
+        (material => {
+            let header = {
+                init: () => {
                     header.attachTopbar();
                     material.autoInit();
                 },
-                attachDrawer: function () {
+                attachDrawer: () => {
                     var elm = document.getElementById('app-drawer');
                     if (elm != null) {
                         var drawer = material.drawer.MDCDrawer.attachTo(elm);
-                        var closeDrawer = function (evt) {
+                        var closeDrawer = evt => {
                             drawer.open = false;
                         };
                         drawer.foundation.handleScrimClick = closeDrawer;
-                        document.onkeydown = function (evt) {
+                        document.onkeydown = evt => {
                             evt = evt || window.event;
                             if (evt.keyCode == 27) {
                                 closeDrawer();
@@ -137,10 +137,10 @@
                     }
                     return undefined;
                 },
-                attachTopbar: function (drawer) {
+                attachTopbar: drawer => {
 
-                    var drawer = header.attachDrawer();
-                    var dialog = header.attachNotificationDialog();
+                    drawer = header.attachDrawer();
+                    let dialog = header.attachNotificationDialog();
 
                     if (drawer != undefined) {
                         header.attachDrawerToggle(drawer);
@@ -149,50 +149,51 @@
                         header.attachNotificationToggle(dialog);
                     }
                 },
-                checkCaps: function (ev) {
-                    var s = String.fromCharCode(ev.which);
+                checkCaps: ev => {
+                    let s = String.fromCharCode(ev.which);
                     if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
                         ev.target.parentElement.classList.add('caps-on');
                     } else {
                         ev.target.parentElement.classList.remove('caps-on');
                     }
                 },
-                attachDrawerToggle: function (drawer) {
+                attachDrawerToggle: drawer => {
                     let appBar = document.getElementById('app-bar');
                     if (appBar != null) {
                         let topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
                         topAppBar.setScrollTarget(document.getElementById('main-content'));
-                        topAppBar.listen('MDCTopAppBar:nav', function () {
+                        topAppBar.listen('MDCTopAppBar:nav', () => {
                             drawer.open = !drawer.open;
                         });
                         return topAppBar;
                     }
                     return undefined;
                 },
-                attachNotificationDialog: function () {
-                    var element = document.getElementById('cas-notification-dialog');
+                attachNotificationDialog: () => {
+                    let element = document.getElementById('cas-notification-dialog');
                     if (element != null) {
                         return material.dialog.MDCDialog.attachTo(element);
                     }
                     return undefined;
                 },
-                attachNotificationToggle: function (dialog) {
-                    var btn = document.getElementById('cas-notifications-menu');
+                attachNotificationToggle: dialog => {
+                    let btn = document.getElementById('cas-notifications-menu');
                     if (btn != null) {
-                        btn.addEventListener('click', function () {
+                        btn.addEventListener('click', () => {
                             dialog.open();
                         });
                     }
                 }
             }
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', () => {
                 if (material) {
                     header.init();
                 }
-                if (countMessages == 0) {
+                if (countMessages === 0) {
                     window.jQuery('#notifications-count').remove();
+                    window.jQuery('#cas-notifications-menu').remove();
                 } else {
-                    window.jQuery('#notifications-count').text("(" + countMessages + ")")
+                    window.jQuery('#notifications-count').text(`(${countMessages})`)
                 }
             });
         })(typeof mdc !== 'undefined' && mdc);

@@ -445,6 +445,9 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_SELECT_SURROGATE = "selectSurrogate";
 
+    /**
+     * The state 'myAccountProfile'.
+     */
     String STATE_ID_MY_ACCOUNT_PROFILE_VIEW = "myAccountProfile";
 
     /**
