@@ -1,6 +1,9 @@
-package org.apereo.cas.pm;
+package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.RequiredArgsConstructor;

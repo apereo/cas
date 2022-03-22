@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategy;
@@ -189,9 +190,12 @@ public class PasswordManagementWebflowConfiguration {
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             @Qualifier(TicketFactory.BEAN_NAME)
-            final TicketFactory ticketFactory) {
+            final TicketFactory ticketFactory,
+            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
+            final PasswordResetUrlBuilder passwordResetUrlBuilder) {
             return new SendPasswordResetInstructionsAction(casProperties, communicationsManager,
-                passwordManagementService, ticketRegistry, ticketFactory, defaultPrincipalResolver);
+                passwordManagementService, ticketRegistry, ticketFactory,
+                defaultPrincipalResolver, passwordResetUrlBuilder);
         }
 
         @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")

@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -14,16 +13,11 @@ import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
-import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -33,13 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.web.util.UriUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
+import java.net.URL;
 import java.util.Optional;
 
 /**
@@ -89,47 +81,21 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     protected final PrincipalResolver principalResolver;
 
     /**
+     * Build the reset URL for the user.
+     */
+    protected final PasswordResetUrlBuilder passwordResetUrlBuilder;
+
+    /**
      * Utility method to generate a password reset URL.
      *
-     * @param username                  username
-     * @param passwordManagementService passwordManagementService
-     * @param casProperties             casProperties
-     * @param service                   service from the flow scope
+     * @param username username
+     * @param service  service from the flow scope
      * @return URL a user can use to start the password reset process
      * @throws Exception the exception
      */
-    protected String buildPasswordResetUrl(final String username,
-                                           final PasswordManagementService passwordManagementService,
-                                           final CasConfigurationProperties casProperties,
-                                           final WebApplicationService service) throws Exception {
-
-        val query = PasswordManagementQuery.builder().username(username).build();
-        val token = passwordManagementService.createToken(query);
-        if (StringUtils.isNotBlank(token)) {
-            val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-            val pm = casProperties.getAuthn().getPm();
-            val seconds = Beans.newDuration(pm.getReset().getExpiration()).toSeconds();
-            val properties = CollectionUtils.<String, Serializable>wrap(
-                PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token,
-                ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(seconds).build());
-            val ticket = transientFactory.create(service, properties);
-            ticketRegistry.addTicket(ticket);
-
-            val resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
-                .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
-                .append(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN).append('=').append(ticket.getId());
-
-            if (service != null) {
-                val encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);
-                resetUrl.append('&').append(CasProtocolConstants.PARAMETER_SERVICE).append('=').append(encodeServiceUrl);
-            }
-
-            val url = resetUrl.toString();
-            LOGGER.debug("Final password reset URL designed for [{}] is [{}]", username, url);
-            return url;
-        }
-        LOGGER.error("Could not create password reset url since no reset token could be generated");
-        return null;
+    protected URL buildPasswordResetUrl(final String username,
+                                        final WebApplicationService service) throws Exception {
+        return passwordResetUrlBuilder.build(username, service);
     }
 
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
@@ -156,8 +122,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         }
 
         val service = WebUtils.getService(requestContext);
-        val url = buildPasswordResetUrl(query.getUsername(), passwordManagementService, casProperties, service);
-        if (StringUtils.isNotBlank(url)) {
+        val url = buildPasswordResetUrl(query.getUsername(), service);
+        if (url != null) {
             val pm = casProperties.getAuthn().getPm();
             val duration = Beans.newDuration(pm.getReset().getExpiration());
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, duration);
@@ -191,11 +157,11 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
      * @param url the url
      * @return true/false
      */
-    protected boolean sendPasswordResetSmsToAccount(final String to, final String url) {
+    protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) {
         if (StringUtils.isNotBlank(to)) {
-            LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url, to);
+            LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url.toExternalForm(), to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
-            val message = reset.getFormattedText(url);
+            val message = reset.getFormattedText(url.toExternalForm());
             return communicationsManager.sms(reset.getFrom(), to, message);
         }
         return false;
@@ -211,10 +177,10 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
      * @return true /false
      */
     protected EmailCommunicationResult sendPasswordResetEmailToAccount(final String username, final String to,
-                                                                       final String url,
+                                                                       final URL url,
                                                                        final RequestContext requestContext) {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();
-        val parameters = CollectionUtils.<String, Object>wrap("url", url);
+        val parameters = CollectionUtils.<String, Object>wrap("url", url.toExternalForm());
         if (StringUtils.isNotBlank(to)) {
             val credential = new BasicIdentifiableCredential();
             credential.setId(username);

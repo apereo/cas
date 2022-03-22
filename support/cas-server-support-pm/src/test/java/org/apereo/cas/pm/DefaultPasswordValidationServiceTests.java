@@ -43,7 +43,7 @@ public class DefaultPasswordValidationServiceTests {
     private PasswordValidationService passwordValidationService;
 
     @Autowired
-    @Qualifier("passwordHistoryService")
+    @Qualifier(PasswordHistoryService.BEAN_NAME)
     private PasswordHistoryService passwordHistoryService;
 
     @Test

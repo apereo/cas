@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 public class GroovyPasswordHistoryServiceTests {
     @Autowired
-    @Qualifier("passwordHistoryService")
+    @Qualifier(PasswordHistoryService.BEAN_NAME)
     private PasswordHistoryService passwordHistoryService;
 
     @Test

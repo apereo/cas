@@ -16,6 +16,16 @@ import java.util.Map;
 public interface PasswordManagementService {
 
     /**
+     * Param name for the token.
+     */
+    String PARAMETER_PASSWORD_RESET_TOKEN = "pswdrst";
+
+    /**
+     * Flowscope param name for token.
+     */
+    String PARAMETER_TOKEN = "token";
+
+    /**
      * Default bean name for implementation.
      */
     String DEFAULT_BEAN_NAME = "passwordChangeService";
