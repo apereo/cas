@@ -88,9 +88,11 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
                 attributeValue != null && RegexUtils.matches(Pattern.compile(policy.getPrincipalAttributeValueToMatch()), attributeValue));
 
         if (result != null && !result.isEmpty()) {
-            return CollectionUtils.firstElement(result)
-                .map(value -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(value.toString(), this.applicationContext))
-                .orElseGet(() -> unmatchedMultifactorAuthenticationTrigger(principal, registeredService));
+            val provider = multifactorAuthenticationProviderSelector.resolve(providers, registeredService, principal);
+            if (provider != null) {
+                LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);
+                return Optional.of(provider);
+            }
         }
 
         return unmatchedMultifactorAuthenticationTrigger(principal, registeredService);
