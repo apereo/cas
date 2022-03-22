@@ -124,7 +124,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         final PasswordlessUserAccountStore passwordlessUserAccountStore,
         @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
         final PasswordlessTokenRepository passwordlessTokenRepository) {
-        return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository, passwordlessUserAccountStore, communicationsManager,
+        return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository,
+            passwordlessUserAccountStore, communicationsManager,
             casProperties.getAuthn().getPasswordless());
     }
 
@@ -146,7 +147,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
-        return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "passwordlessCasWebflowExecutionPlanConfigurer")

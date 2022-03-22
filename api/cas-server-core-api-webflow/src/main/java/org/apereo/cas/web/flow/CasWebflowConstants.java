@@ -445,6 +445,8 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_SELECT_SURROGATE = "selectSurrogate";
 
+    String STATE_ID_MY_ACCOUNT_PROFILE_VIEW = "myAccountProfile";
+
     /**
      * The state 'duoUniversalPromptPrepareValidate'.
      */
@@ -1173,9 +1175,18 @@ public interface CasWebflowConstants {
     String ACTION_ID_VERIFY_REQUIRED_SERVICE = "verifyRequiredServiceAction";
 
     /**
+     * Action id 'fetchTicketGrantingTicketAction'.
+     */
+    String ACTION_ID_FETCH_TICKET_GRANTING_TICKET = "fetchTicketGrantingTicketAction";
+
+    /**
      * Action id 'ticketGrantingTicketCheckAction'.
      */
     String ACTION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheckAction";
+    /**
+     * Action id 'prepareAccountProfileViewAction'.
+     */
+    String ACTION_ID_PREPARE_ACCOUNT_PROFILE = "prepareAccountProfileViewAction";
 
     /**
      * Action id 'initialAuthenticationRequestValidationAction'.

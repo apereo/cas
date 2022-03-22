@@ -563,8 +563,8 @@ button.close {
 /* IE flex fix */
 
 #main-content {
-    margin-right: inherit;
-    margin-left: inherit;
+    margin-right: 10px;
+    margin-left: 10px;
 }
 
 /* oddly, the auto right and left margins caused the login form to not be centered in IE */
