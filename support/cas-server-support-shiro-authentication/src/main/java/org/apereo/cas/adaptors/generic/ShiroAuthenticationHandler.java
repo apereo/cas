@@ -41,8 +41,10 @@ import java.util.Set;
  *
  * @author Misagh Moayyed
  * @since 4.2
+ * @deprecated This component is deprecated as of 6.6.0 and is scheduled to be removed.
  */
 @Slf4j
+@Deprecated(since = "6.6.0")
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private final Set<String> requiredRoles;

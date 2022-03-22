@@ -93,7 +93,7 @@ layout: null
         *   [Trusted](/cas/{{ version }}/authentication/Trusted-Authentication.html)
         *   [Apache Cassandra](/cas/{{ version }}/authentication/Cassandra-Authentication.html)
         *   [Apache Fortress](/cas/{{ version }}/authentication/Configuring-Fortress-Authentication.html)
-        *   [Apache Shiro](/cas/{{ version }}/authentication/Shiro-Authentication.html)
+        *   [~~Apache Shiro~~](/cas/{{ version }}/authentication/Shiro-Authentication.html)
         *   [Apache Syncope](/cas/{{ version }}/authentication/Syncope-Authentication.html)
         *   [JWT](#jwtauthn)
             *   [Overview](/cas/{{ version }}/authentication/JWT-Authentication.html)
@@ -577,7 +577,7 @@ layout: null
 
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/cas/{{ version }}/integration/Configuring-SAML-SP-Integrations.html)
-        *   [Google Apps](/cas/{{ version }}/integration/Google-Apps-Integration.html)
+        *   [~~Google Apps~~](/cas/{{ version }}/integration/Google-Apps-Integration.html)
     *   [Google reCAPTCHA](/cas/{{ version }}/integration/Configuring-Google-reCAPTCHA.html)
     *   [Google Analytics](/cas/{{ version }}/integration/Configuring-Google-Analytics.html)
     *   [SCIM Provisioning](/cas/{{ version }}/integration/SCIM-Integration.html)

@@ -9,6 +9,10 @@ category: Authentication
 
 CAS support handling the authentication event via [Apache Shiro](http://shiro.apache.org/).
 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong>
+</div>
+
 ## Components
 
 Support is enabled by including the following dependency in the WAR overlay:

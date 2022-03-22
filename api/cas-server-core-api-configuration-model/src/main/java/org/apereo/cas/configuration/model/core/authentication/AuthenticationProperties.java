@@ -267,8 +267,10 @@ public class AuthenticationProperties implements Serializable {
 
     /**
      * Shiro-based authentication.
+     * @deprecated This component is deprecated as of 6.6.0 and is scheduled to be removed.
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "6.6.0")
     private ShiroAuthenticationProperties shiro = new ShiroAuthenticationProperties();
 
     /**

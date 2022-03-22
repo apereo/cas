@@ -19,12 +19,14 @@ import java.util.Set;
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
+ * @deprecated This component is deprecated as of 6.6.0 and is scheduled to be removed.
  */
 @RequiresModule(name = "cas-server-support-shiro-authentication")
 @Getter
 @Setter
 @Accessors(chain = true)
 @NoArgsConstructor
+@Deprecated(since = "6.6.0")
 public class ShiroAuthenticationProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = 8997401036330472417L;
