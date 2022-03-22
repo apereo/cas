@@ -80,6 +80,7 @@ The collection of end-to-end browser tests based on Puppeteer are now split into
 - The SAML2 attribute definition catalog is extended to support a few *known* attributes such as `title`, `eduPersonNickname`, etc.
 - Using "Provider Selection" in combination of a multifactor authentication policy for a service that triggers on principal attributes is now supported.
 - Links displayed as part of an [interrupt notification](../webflow/Webflow-Customization-Interrupt.html) can now take advantage of single sign-on sessions.
+- Support for [Apache Shiro](../authentication/Shiro-Authentication.html) is now deprecated; this feature is scheduled to be removed.
 
 ## Library Upgrades
       
@@ -89,12 +90,17 @@ The collection of end-to-end browser tests based on Puppeteer are now split into
 - Apache Tomcat
 - Nimbus
 - Hibernate
-- Spring Data Azure
-- Hazelcast
+- Spring Data
 - Spring
+- Spring WS
+- Spring Kafka
+- Hazelcast
 - InfluxDb
 - Micrometer
 - Oshi
 - Okta
 - Jose4j
 - Lettuce
+- Apache Shiro
+- Joda Time
+- Font Awesome

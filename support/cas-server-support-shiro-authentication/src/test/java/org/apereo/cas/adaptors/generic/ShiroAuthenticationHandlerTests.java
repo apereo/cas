@@ -31,8 +31,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 4.2
+ * @deprecated This component is deprecated as of 6.6.0 and is scheduled to be removed.
  */
 @Tag("AuthenticationHandler")
+@Deprecated(since = "6.6.0")
 public class ShiroAuthenticationHandlerTests {
 
     @SneakyThrows
