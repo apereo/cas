@@ -78,6 +78,7 @@ function resourceLoadedSuccessfully() {
             ev.preventDefault();
         });
 
+        console.log(`JQuery Ready: ${typeof (jqueryReady)}`);
         if (typeof (jqueryReady) == 'function') {
             jqueryReady();
         }

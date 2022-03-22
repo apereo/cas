@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
-
 /**
  * This is {@link InitialAuthenticationAction},
  * which serves as a placeholder for now to control
