@@ -95,7 +95,7 @@ public abstract class BaseJdbcPasswordManagementServiceTests {
     protected DataSource jdbcPasswordManagementDataSource;
 
     @Autowired
-    @Qualifier("passwordHistoryService")
+    @Qualifier(PasswordHistoryService.BEAN_NAME)
     protected PasswordHistoryService passwordHistoryService;
 
     @Autowired

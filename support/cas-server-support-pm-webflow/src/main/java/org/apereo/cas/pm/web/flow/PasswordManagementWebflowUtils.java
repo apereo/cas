@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
+import org.apereo.cas.pm.PasswordManagementService;
+
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
@@ -15,16 +17,6 @@ import java.util.List;
 @UtilityClass
 public class PasswordManagementWebflowUtils {
     /**
-     * Param name for the token.
-     */
-    public static final String REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN = "pswdrst";
-
-    /**
-     * Flowscope param name for token.
-     */
-    public static final String FLOWSCOPE_PARAMETER_NAME_TOKEN = "token";
-
-    /**
      * Put password reset token.
      *
      * @param requestContext the request context
@@ -32,7 +24,7 @@ public class PasswordManagementWebflowUtils {
      */
     public void putPasswordResetToken(final RequestContext requestContext, final String token) {
         val flowScope = requestContext.getFlowScope();
-        flowScope.put(FLOWSCOPE_PARAMETER_NAME_TOKEN, token);
+        flowScope.put(PasswordManagementService.PARAMETER_TOKEN, token);
     }
 
     /**
@@ -109,6 +101,6 @@ public class PasswordManagementWebflowUtils {
      */
     public static String getPasswordResetToken(final RequestContext requestContext) {
         val flowScope = requestContext.getFlowScope();
-        return flowScope.getString(FLOWSCOPE_PARAMETER_NAME_TOKEN);
+        return flowScope.getString(PasswordManagementService.PARAMETER_TOKEN);
     }
 }

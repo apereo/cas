@@ -48,7 +48,7 @@ public class RestPasswordManagementConfiguration {
                                                            final CasConfigurationProperties casProperties,
                                                            @Qualifier("passwordManagementCipherExecutor")
                                                            final CipherExecutor passwordManagementCipherExecutor,
-                                                           @Qualifier("passwordHistoryService")
+                                                           @Qualifier(PasswordHistoryService.BEAN_NAME)
                                                            final PasswordHistoryService passwordHistoryService) {
         var pm = casProperties.getAuthn().getPm();
         return new RestPasswordManagementService(passwordManagementCipherExecutor,

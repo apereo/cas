@@ -1,4 +1,4 @@
-package org.apereo.cas.pm;
+package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
@@ -6,6 +6,11 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.pm.InvalidPasswordException;
+import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.PasswordManagementQuery;
+import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 

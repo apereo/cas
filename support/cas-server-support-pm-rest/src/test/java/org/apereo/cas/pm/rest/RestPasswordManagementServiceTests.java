@@ -105,7 +105,7 @@ public class RestPasswordManagementServiceTests {
         private CipherExecutor passwordManagementCipherExecutor;
 
         @Autowired
-        @Qualifier("passwordHistoryService")
+        @Qualifier(PasswordHistoryService.BEAN_NAME)
         private PasswordHistoryService passwordHistoryService;
 
         @Test

@@ -54,7 +54,7 @@ public class JdbcPasswordManagementConfiguration {
             final TransactionOperations jdbcPasswordManagementTransactionTemplate,
             @Qualifier("passwordManagementCipherExecutor")
             final CipherExecutor passwordManagementCipherExecutor,
-            @Qualifier("passwordHistoryService")
+            @Qualifier(PasswordHistoryService.BEAN_NAME)
             final PasswordHistoryService passwordHistoryService) {
             val encoder = PasswordEncoderUtils.newPasswordEncoder(
                 casProperties.getAuthn().getPm().getJdbc().getPasswordEncoder(), applicationContext);

@@ -40,7 +40,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val transientTicket = request.getParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
+        val transientTicket = request.getParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
 
         if (StringUtils.isBlank(transientTicket)) {
             LOGGER.error("Password reset token is missing");
@@ -52,7 +52,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             passwordResetTicket = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
             passwordResetTicket.update();
 
-            val token = passwordResetTicket.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
+            val token = passwordResetTicket.getProperties().get(PasswordManagementService.PARAMETER_TOKEN).toString();
             val username = passwordManagementService.parseToken(token);
 
             val query = PasswordManagementQuery.builder().username(username).build();

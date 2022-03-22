@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -32,7 +33,7 @@ public class PasswordManagementSingleSignOnParticipationStrategy extends BaseSin
 
     @Override
     public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
-        val token = ssoRequest.getRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
+        val token = ssoRequest.getRequestParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
         try {
             if (token.isPresent() && StringUtils.isNotBlank(token.get())) {
                 val ticket = centralAuthenticationService.getTicket(token.get(), TransientSessionTicket.class);
@@ -47,7 +48,7 @@ public class PasswordManagementSingleSignOnParticipationStrategy extends BaseSin
 
     @Override
     public boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
-        val token = ssoRequest.getRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
+        val token = ssoRequest.getRequestParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
         return token.isPresent() && StringUtils.isNotBlank(token.get());
     }
 }
