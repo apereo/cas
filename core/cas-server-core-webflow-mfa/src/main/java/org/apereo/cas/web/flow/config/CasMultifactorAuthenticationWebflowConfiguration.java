@@ -289,9 +289,14 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         public MultifactorAuthenticationTrigger restEndpointMultifactorAuthenticationTrigger(
             @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME)
             final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
+            final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            return new RestEndpointMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver, applicationContext);
+            return new RestEndpointMultifactorAuthenticationTrigger(
+                    casProperties,
+                    multifactorAuthenticationProviderResolver,
+                    multifactorAuthenticationProviderSelector,
+                    applicationContext);
         }
 
 
