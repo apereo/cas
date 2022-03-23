@@ -68,6 +68,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "identityProviderDiscoveryFeedController")
     public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController(
         @Qualifier("samlIdentityProviderEntityParser")
         final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, final CasConfigurationProperties casProperties,
