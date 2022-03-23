@@ -12,6 +12,7 @@ import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategy;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.pm.web.flow.actions.AccountProfilePasswordChangeRequestAction;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetAction;
@@ -336,6 +337,22 @@ public class PasswordManagementWebflowConfiguration {
                 .supply(() -> plan -> plan.registerWebflowConfigurer(cfg))
                 .otherwiseProxy()
                 .get();
+        }
+    }
+
+    @Configuration(value = "PasswordManagementAccountProfileConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    public static class PasswordManagementAccountProfileConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "accountProfilePasswordChangeRequestAction")
+        public Action accountProfilePasswordChangeRequestAction(
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
+            final PasswordResetUrlBuilder passwordResetUrlBuilder) {
+            return new AccountProfilePasswordChangeRequestAction(centralAuthenticationService, passwordResetUrlBuilder);
         }
     }
 }

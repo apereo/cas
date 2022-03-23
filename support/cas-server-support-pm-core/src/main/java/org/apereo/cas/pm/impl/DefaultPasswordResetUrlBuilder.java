@@ -58,11 +58,15 @@ public class DefaultPasswordResetUrlBuilder implements PasswordResetUrlBuilder {
     @Override
     public URL build(final String username, final WebApplicationService service) throws Exception {
         val query = PasswordManagementQuery.builder().username(username).build();
+        LOGGER.debug("Creating password reset URL designed for [{}]", username);
+
         val token = passwordManagementService.createToken(query);
         if (StringUtils.isNotBlank(token)) {
             val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
             val pm = casProperties.getAuthn().getPm();
             val seconds = Beans.newDuration(pm.getReset().getExpiration()).toSeconds();
+            LOGGER.debug("Password reset URL shall expire in [{}] second(s)", seconds);
+            
             val properties = CollectionUtils.<String, Serializable>wrap(
                 PasswordManagementService.PARAMETER_TOKEN, token,
                 ExpirationPolicy.class.getName(),

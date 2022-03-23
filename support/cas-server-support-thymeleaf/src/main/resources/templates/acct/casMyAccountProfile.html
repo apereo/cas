@@ -15,13 +15,14 @@
                 $('#attributesTable').DataTable();
                 $('#applicationsTable').DataTable();
             }
+
             function showPanel(element) {
                 $('div.profile-content').hide();
                 $(element).show();
             }
         </script>
-        
-        <div class="mdc-card card w-lg-100 p-4" style="min-height: 310px">
+
+        <div class="mdc-card card w-lg-100 p-4" style="min-height: 360px">
             <table>
                 <tr>
                     <td style="position: fixed;">
@@ -57,12 +58,19 @@
                                         <span class="mdc-list-item__text">Applications</span>
                                     </a>
                                     <hr align="left" width="85%">
-                                    <a class="mdc-list-item list-group-item list-group-item-action"
-                                       th:if="${passwordManagementEnabled != null && passwordManagementEnabled}"
-                                       href="#">
-                                        <i class="mdi mdi-form-textbox-password fa fa-key"></i>&nbsp;
-                                        <span class="mdc-list-item__text">Change Password</span>
-                                    </a>
+                                    <form method="post" id="fmChangePsw" name="fmChangePsw">
+                                        <a class="mdc-list-item list-group-item list-group-item-action"
+                                           th:if="${passwordManagementEnabled != null && passwordManagementEnabled}"
+                                           aria-describedby="tooltip-logout"
+                                           onclick="document.forms.fmChangePsw.submit()"
+                                           href="#">
+                                            <i class="mdi mdi-form-textbox-password fa fa-key"></i>&nbsp;
+                                            <span class="mdc-list-item__text">Change Password</span>
+                                        </a>
+                                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                                        <input type="hidden" name="_eventId" value="resetPassword"/>
+                                    </form>
+
                                     <a class="mdc-list-item list-group-item list-group-item-action" th:href="@{/logout}">
                                         <i class="mdi mdi-logout-variant fa fa-key"></i>&nbsp;
                                         <span class="mdc-list-item__text">Logout</span>
@@ -99,13 +107,13 @@
 
                                 <tr th:each="service : ${authorizedServices}" class="mdc-data-table__row">
                                     <td class="mdc-data-table__cell">
-                                        <a th:id="${'service' + service.id}" th:title="${service.name}" th:alt="${service.description}" th:utext="${service.name}" />
+                                        <a th:id="${'service' + service.id}" th:title="${service.name}" th:alt="${service.description}" th:utext="${service.name}"/>
 
                                         <script th:inline="javascript">
                                             /*<![CDATA[*/
-                                            let serviceId = /*[[${service.serviceId}]]*/ ;
+                                            let serviceId = /*[[${service.serviceId}]]*/;
                                             if (isValidURL(serviceId)) {
-                                                let id = /*[[${'service' + service.id}]]*/ ;
+                                                let id = /*[[${'service' + service.id}]]*/;
                                                 $(`a#${id}`).attr("href", serviceId);
                                             }
                                             /*]]>*/
@@ -151,6 +159,12 @@
             </table>
         </div>
 
+        <div id="tooltip-logout" class="mdc-tooltip" role="tooltip" aria-hidden="true">
+            <div class="mdc-tooltip__surface mdc-tooltip__surface-animation" th:text="#{screen.account.tooltip.logout}">
+                This operation forces a logout.
+            </div>
+        </div>
+        
     </div>
 </main>
 </body>
