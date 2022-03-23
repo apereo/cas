@@ -25,6 +25,8 @@
                 });
                 $('#source').val(select.value);
             }
+
+            new mdc.tooltip.MDCTooltip(document.querySelector('.mdc-tooltip'));
         },
         checkCaps: ev => {
             let s = String.fromCharCode(ev.which);

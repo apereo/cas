@@ -962,6 +962,16 @@ public class WebUtils {
     }
 
     /**
+     * Gets service redirect url.
+     *
+     * @param requestContext the request context
+     * @return the service redirect url
+     */
+    public static String getServiceRedirectUrl(final RequestContext requestContext) {
+        return requestContext.getRequestScope().get("url", String.class);
+    }
+
+    /**
      * Put service response into request scope.
      *
      * @param requestContext the request context

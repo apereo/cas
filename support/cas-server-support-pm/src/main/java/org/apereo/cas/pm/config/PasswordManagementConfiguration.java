@@ -185,7 +185,8 @@ public class PasswordManagementConfiguration {
                 LOGGER.debug("Password management is disabled. To enable the password management functionality, "
                              + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
             }
-            return new NoOpPasswordManagementService(passwordManagementCipherExecutor, casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm());
+            return new NoOpPasswordManagementService(passwordManagementCipherExecutor,
+                casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm());
         }
 
         @Bean

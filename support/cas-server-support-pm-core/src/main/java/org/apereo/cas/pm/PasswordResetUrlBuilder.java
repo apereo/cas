@@ -27,4 +27,15 @@ public interface PasswordResetUrlBuilder {
      * @throws Exception the exception
      */
     URL build(String username, WebApplicationService service) throws Exception;
+
+    /**
+     * Build url without service.
+     *
+     * @param username the username
+     * @return the url
+     * @throws Exception the exception
+     */
+    default URL build(final String username) throws Exception {
+        return build(username, null);
+    }
 }
