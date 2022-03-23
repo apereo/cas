@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
+import org.apereo.cas.services.DefaultSamlIdentityProviderDiscoveryFeedService;
+import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
@@ -65,12 +67,14 @@ public class SamlIdentityProviderDiscoveryConfiguration {
         final CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer) {
         return plan -> plan.registerWebflowConfigurer(identityProviderDiscoveryWebflowConfigurer);
     }
-
+    
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController(
+    @ConditionalOnMissingBean(name = "identityProviderDiscoveryFeedService")
+    public SamlIdentityProviderDiscoveryFeedService identityProviderDiscoveryFeedService(
         @Qualifier("samlIdentityProviderEntityParser")
-        final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, final CasConfigurationProperties casProperties,
+        final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, 
+        final CasConfigurationProperties casProperties,
         @Qualifier("builtClients")
         final Clients builtClients,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -79,8 +83,17 @@ public class SamlIdentityProviderDiscoveryConfiguration {
         final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
         @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor) {
-        return new SamlIdentityProviderDiscoveryFeedController(casProperties, samlIdentityProviderEntityParser.get(), builtClients,
+        return new DefaultSamlIdentityProviderDiscoveryFeedService(casProperties, samlIdentityProviderEntityParser.get(), builtClients,
             new DelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer), argumentExtractor);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("identityProviderDiscoveryFeedService")
+        final Supplier<SamlIdentityProviderDiscoveryFeedService> identityProviderDiscoveryFeedService) {
+        return new SamlIdentityProviderDiscoveryFeedController(casProperties, identityProviderDiscoveryFeedService.get());
     }
 
     @Bean
