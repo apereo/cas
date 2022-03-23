@@ -5,8 +5,10 @@
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.accept.name=STATIC",
-
     "--cas.tgc.pin-to-session=false",
+
+    "--logging.level.org.springframework.security=debug",
+    "--logging.level.org.apereo.cas=debug",
 
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
