@@ -230,7 +230,7 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
             rejectUnauthorized: false,
             headers: headers
         };
-        console.log(`Contacting ${url} via ${method}`)
+        console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`)
         const handler = (res) => {
             console.log(`Response status code: ${colors.green(res.statusCode)}`)
             if (statusCode > 0) {
