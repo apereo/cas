@@ -63,6 +63,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "identityProviderDiscoveryFeedController")
     public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController(
         @Qualifier("samlIdentityProviderEntityParser")
         final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, final CasConfigurationProperties casProperties,
