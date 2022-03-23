@@ -62,6 +62,7 @@ layout: null
     *   [Configuration Reloading](/cas/{{ version }}/configuration/Configuration-Management-Reload.html)
     *   [Configuration Discovery](/cas/{{ version }}/configuration/Configuration-Discovery.html)
     *   [Configuration Expressions](/cas/{{ version }}/configuration/Configuration-Spring-Expressions.html)
+    *   [Feature Toggles](/cas/{{ version }}/configuration/Configuration-Feature-Toggles.html)
     *   [Clustered Deployments](/cas/{{ version }}/configuration/Configuration-Management-Clustered.html)
 
 * [Authentication](#casauthentication)

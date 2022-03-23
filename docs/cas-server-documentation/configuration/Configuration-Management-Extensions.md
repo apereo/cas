@@ -90,49 +90,11 @@ need to study the CAS codebase to find the correct configuration classes and bea
 
 ### Feature Toggles
 
-You can control the list of auto-configuration classes to exclude them in the `cas.properties` file:
-
-```properties
-spring.autoconfigure.exclude=org.apereo.cas.custom.config.SomethingConfigurationClass
-```
-     
-While the above allows control over individual auto-configuration classes, in some cases it may be desirable
-to entirely disable a feature altogether by excluding all applicable auto-configuration classes without having to
-identify all of them. This can be done using the following feature toggles:
-
-<table>
-    <thead>
-    
-    <th>Feature</th>
-    <th>Property</th>
-    </thead>
-    <tbody>
-        {% for module in site.data[siteDataVersion]["features"] %}
-            {% assign moduleEntry = module[1] | sort: "feature" %}
-            {% for cfg in moduleEntry %}
-                <tr>
-                    <td><code data-bs-toggle="tooltip" 
-                        data-bs-placment="top" data-bs-html="true" 
-                        title="{{ cfg.type }}">{{ cfg.feature }}</code>
-                    </td>
-                    <td><code>{{ cfg.property }}</code></td>
-                </tr>
-            {% endfor %}
-        {% endfor %}
-    </tbody>
-</table>
-
-<div class="alert alert-info mt-3"><strong>Usage</strong><p>Note that not every single CAS feature may be registered in the <i>Feature Catalog</i> and as such regarded as a standalone feature. The catalog continues to grow throughout the CAS release lifecycle to recognize more modules as grouped distinct features, allowing for a one-shop store to disable or enable a given CAS feature.</p></div>
-
-Note that the above setting enforces conditional access to the auto-configuration class where a whole suite of `@Bean`s would be included or excluded in the application context upon initialization and startup. Conditional inclusion or exclusion of beans generally has consequences when it comes to `@RefreshScope` and [supporting refreshable beans](Configuration-Management-Reload.html). Note that feature modules are *not refreshable* at this point; they are processed on startup and will either be included in the assembled application context or skipped entirely, depending on the result of the enforced condition.
+[Please see this guide](Configuration-Feature-Toggles.html) to learn more.
 
 ## CAS Properties
 
-The collection of CAS-provided settings are all encapsulated 
-inside a `CasConfigurationProperties` component. This is a parent class that brings all elements of the 
-entire CAS platform together and binds values to the relevant fields inside in a 
-very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is 
-typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
+The collection of CAS-provided settings are all encapsulated inside a `CasConfigurationProperties` component. This is a parent class that brings all elements of the entire CAS platform together and binds values to the relevant fields inside in a very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
 
 <div class="alert alert-info"><strong>Prefix Notation</strong><p>Note that all CAS-provided settings 
 exclusively begin with the prefix <code>cas</code>. Other frameworks and packages upon which CAS
