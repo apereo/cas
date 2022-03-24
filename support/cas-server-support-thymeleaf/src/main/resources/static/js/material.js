@@ -25,8 +25,15 @@
                 });
                 $('#source').val(select.value);
             }
-            new mdc.tooltip.MDCTooltip(document.querySelector('.mdc-tooltip'));
-            new mdc.banner.MDCBanner(document.querySelector('.mdc-banner'));
+
+            let tooltips = document.querySelector('.mdc-tooltip')
+            if (tooltips != null) {
+                new mdc.tooltip.MDCTooltip(entries);
+            }
+            let banners = document.querySelector('.mdc-banner')
+            if (banners != null) {
+                new mdc.banner.MDCBanner(banners);
+            }
         },
         checkCaps: ev => {
             let s = String.fromCharCode(ev.which);
