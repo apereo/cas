@@ -59,7 +59,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
             val pm = casProperties.getAuthn().getPm();
             if (pm.getReset().isSecurityQuestionsEnabled()) {
-                val questions = canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(query));
+                val questions = PasswordManagementService.canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(query));
                 if (questions.isEmpty()) {
                     LOGGER.warn("No security questions could be found for [{}]", username);
                     return error();

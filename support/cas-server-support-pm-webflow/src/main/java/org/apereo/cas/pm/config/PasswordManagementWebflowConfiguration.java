@@ -9,10 +9,13 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.pm.PasswordValidationService;
+import org.apereo.cas.pm.web.flow.PasswordManagementAccountProfileWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategy;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.AccountProfilePasswordChangeRequestAction;
+import org.apereo.cas.pm.web.flow.actions.AccountProfilePreparePasswordManagementAction;
+import org.apereo.cas.pm.web.flow.actions.AccountProfileUpdateSecurityQuestionsAction;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetAction;
@@ -50,6 +53,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -344,6 +348,17 @@ public class PasswordManagementWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     public static class PasswordManagementAccountProfileConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "accountProfilePasswordChangeRequestAction")
+        public Action accountProfileUpdateSecurityQuestionsAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService) {
+            return new AccountProfileUpdateSecurityQuestionsAction(passwordManagementService, casProperties);
+        }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "accountProfilePasswordChangeRequestAction")
@@ -353,6 +368,40 @@ public class PasswordManagementWebflowConfiguration {
             @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
             final PasswordResetUrlBuilder passwordResetUrlBuilder) {
             return new AccountProfilePasswordChangeRequestAction(centralAuthenticationService, passwordResetUrlBuilder);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "prepareAccountProfilePasswordMgmtAction")
+        public Action prepareAccountProfilePasswordMgmtAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService) {
+            return new AccountProfilePreparePasswordManagementAction(passwordManagementService, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "passwordManagementAccountProfileWebflowConfigurer")
+        @DependsOn("accountProfileWebflowConfigurer")
+        public CasWebflowConfigurer passwordManagementAccountProfileWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("accountProfileFlowRegistry")
+            final FlowDefinitionRegistry accountProfileFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new PasswordManagementAccountProfileWebflowConfigurer(flowBuilderServices,
+                accountProfileFlowRegistry, applicationContext, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "passwordManagementAccountProfileWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer passwordManagementAccountProfileWebflowExecutionPlanConfigurer(
+            @Qualifier("passwordManagementAccountProfileWebflowConfigurer")
+            final CasWebflowConfigurer passwordManagementAccountProfileWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(passwordManagementAccountProfileWebflowConfigurer);
         }
     }
 }

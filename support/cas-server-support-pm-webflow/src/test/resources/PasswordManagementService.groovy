@@ -48,3 +48,9 @@ def findUsername(Object[] args) {
     }
     return "casuser"
 }
+
+def updateSecurityQuestions(Object[] args) {
+    def query = args[0] as PasswordManagementQuery
+    def logger = args[1]
+    // Execute update...
+}

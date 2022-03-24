@@ -11,7 +11,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.configurer.acct.MyAccountProfileWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.acct.AccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
 
 import lombok.val;
@@ -54,7 +54,7 @@ public class CasWebflowAccountProfileConfiguration {
         final FlowDefinitionRegistry accountProfileFlowRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
-        return new MyAccountProfileWebflowConfigurer(flowBuilderServices,
+        return new AccountProfileWebflowConfigurer(flowBuilderServices,
             accountProfileFlowRegistry, applicationContext, casProperties);
     }
 
@@ -89,7 +89,7 @@ public class CasWebflowAccountProfileConfiguration {
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
         final FlowBuilder flowBuilder) {
         val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-        builder.addFlowBuilder(flowBuilder, MyAccountProfileWebflowConfigurer.FLOW_ID);
+        builder.addFlowBuilder(flowBuilder, CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         return builder.build();
     }
 
@@ -98,7 +98,7 @@ public class CasWebflowAccountProfileConfiguration {
     public HandlerAdapter accountProfileWebflowHandlerAdapter(
         @Qualifier("accountProfileFlowExecutor")
         final FlowExecutor accountProfileFlowExecutor) {
-        val handler = new CasFlowHandlerAdapter(MyAccountProfileWebflowConfigurer.FLOW_ID);
+        val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         handler.setFlowExecutor(accountProfileFlowExecutor);
         handler.setFlowUrlHandler(new CasDefaultFlowUrlHandler());
         return handler;

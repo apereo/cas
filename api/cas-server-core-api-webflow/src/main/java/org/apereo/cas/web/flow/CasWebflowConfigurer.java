@@ -31,6 +31,15 @@ import java.util.Map;
  * @since 5.0.0
  */
 public interface CasWebflowConfigurer extends Ordered {
+    /**
+     * Flow id for password reset.
+     */
+    String FLOW_ID_PASSWORD_RESET = "pswdreset";
+
+    /**
+     * Flow id for account profiles.
+     */
+    String FLOW_ID_ACCOUNT = "account";
 
     /**
      * Main login flow id.

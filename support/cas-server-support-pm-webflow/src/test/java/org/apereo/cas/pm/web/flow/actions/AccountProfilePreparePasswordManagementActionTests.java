@@ -1,8 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,21 +21,28 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link AccountProfilePasswordChangeRequestActionTests}.
+ * This is {@link AccountProfilePreparePasswordManagementActionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
  */
 @Tag("WebflowActions")
-@TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
+@TestPropertySource(properties = {
+    "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
+    "cas.authn.pm.core.enabled=true",
+    "cas.authn.pm.reset.security-questions-enabled=true",
+    "CasFeatureModule.AccountManagement.enabled=true"
+})
 @Import(CasWebflowAccountProfileConfiguration.class)
-public class AccountProfilePasswordChangeRequestActionTests extends BasePasswordManagementActionTests {
+public class AccountProfilePreparePasswordManagementActionTests extends BasePasswordManagementActionTests {
     @Autowired
-    @Qualifier("accountProfilePasswordChangeRequestAction")
-    private Action accountProfilePasswordChangeRequestAction;
+    @Qualifier("prepareAccountProfilePasswordMgmtAction")
+    private Action prepareAccountProfilePasswordMgmtAction;
 
     @Test
     public void verifyOperation() throws Exception {
@@ -51,10 +57,9 @@ public class AccountProfilePasswordChangeRequestActionTests extends BasePassword
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putTicketGrantingTicket(context, tgt);
         centralAuthenticationService.addTicket(tgt);
-
-        val result = accountProfilePasswordChangeRequestAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-        assertNotNull(WebUtils.getServiceRedirectUrl(context));
-        assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(tgt.getId()));
+        val result = prepareAccountProfilePasswordMgmtAction.execute(context);
+        assertNull(result);
+        assertTrue(WebUtils.isPasswordManagementEnabled(context));
+        assertNotNull(PasswordManagementWebflowUtils.getPasswordResetQuestions(context, Map.class));
     }
 }

@@ -7,6 +7,7 @@ import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link PasswordManagementWebflowUtils}.
@@ -39,14 +40,28 @@ public class PasswordManagementWebflowUtils {
     }
 
     /**
-     * Gets password reset questions.
+     * Put password reset security questions.
      *
      * @param requestContext the request context
+     * @param value          the value
+     */
+    public void putPasswordResetSecurityQuestions(final RequestContext requestContext, final Map<String, String> value) {
+        val flowScope = requestContext.getFlowScope();
+        flowScope.put("questions", value);
+    }
+
+    /**
+     * Gets password reset questions.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
      * @return the password reset questions
      */
-    public static List<String> getPasswordResetQuestions(final RequestContext requestContext) {
+    public static <T> T getPasswordResetQuestions(final RequestContext requestContext,
+                                                  final Class<T> clazz) {
         val flowScope = requestContext.getFlowScope();
-        return flowScope.get("questions", List.class);
+        return flowScope.get("questions", clazz);
     }
 
     /**
