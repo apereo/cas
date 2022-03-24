@@ -45,5 +45,5 @@ public interface DelegatedClientAuthenticationRequestCustomizer extends Ordered 
      * @param currentService the current service
      * @return true/false
      */
-    boolean isAuthorized(JEEContext webContext, IndirectClient client, WebApplicationService currentService);
+    boolean isAuthorized(WebContext webContext, IndirectClient client, WebApplicationService currentService);
 }

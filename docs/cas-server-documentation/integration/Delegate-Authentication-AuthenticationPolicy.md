@@ -95,7 +95,8 @@ def run(Object[] args) {
     def service = args[1]
     def registeredService = args[2]
     def provider = args[3] as DelegatedClientIdentityProviderConfiguration
-    def logger = args[4]
+    def applicationContext = args[4]
+    def logger = args[5]
     logger.info("Checking ${provider.name}...")
     
     if (provider.name.equals("Twitter")) {
@@ -114,6 +115,7 @@ The following parameters are passed to the script:
 | `service`               | Reference to the application authentication request as `Service`, if any.
 | `registeredService`     | Reference to registered service definition, if any.
 | `provider`              | Reference to the identity provider configuration identified as `DelegatedClientIdentityProviderConfiguration`.
+| `applicationContext`    | Reference to the application context as `ApplicationContext`.
 | `logger`                | The object responsible for issuing log messages such as `logger.info(...)`.
 
 ### Identity Provider Custom Selection

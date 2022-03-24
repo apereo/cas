@@ -6,7 +6,8 @@ def run(Object[] args) {
     def service = args[1]
     def registeredService = args[2]
     def provider = args[3] as DelegatedClientIdentityProviderConfiguration
-    def logger = args[4]
+    def appContext = args[4]
+    def logger = args[5]
     logger.info("Checking ${provider.name}...")
     provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
     provider

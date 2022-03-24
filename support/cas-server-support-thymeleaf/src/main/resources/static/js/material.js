@@ -28,7 +28,7 @@
 
             let tooltips = document.querySelector('.mdc-tooltip')
             if (tooltips != null) {
-                new mdc.tooltip.MDCTooltip(entries);
+                new mdc.tooltip.MDCTooltip(tooltips);
             }
             let banners = document.querySelector('.mdc-banner')
             if (banners != null) {
