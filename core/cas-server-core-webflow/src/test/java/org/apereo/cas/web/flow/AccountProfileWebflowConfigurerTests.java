@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
-import org.apereo.cas.web.flow.configurer.acct.MyAccountProfileWebflowConfigurer;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +15,7 @@ import org.springframework.webflow.engine.Flow;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MyAccountProfileWebflowConfigurerTests}.
+ * This is {@link AccountProfileWebflowConfigurerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
@@ -24,14 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 @Import(CasWebflowAccountProfileConfiguration.class)
-public class MyAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+public class AccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("accountProfileFlowRegistry")
     protected FlowDefinitionRegistry accountProfileFlowRegistry;
 
     @Test
     public void verifyOperation() throws Exception {
-        val flow = (Flow) accountProfileFlowRegistry.getFlowDefinition(MyAccountProfileWebflowConfigurer.FLOW_ID);
+        val flow = (Flow) accountProfileFlowRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);
     }
 }

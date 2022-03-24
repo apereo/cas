@@ -139,11 +139,18 @@ button.close {
 }
 
 .banner {
-    padding: 0.1rem 0.5rem;
     border: 1px solid rgba(0, 0, 0, .2);
     border: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
     position: relative;
-    border-radius: 4px;
+    padding-left: 10px;
+    box-shadow:1px 1px 3px #888;
+    border-radius:.5em;
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
+.banner>span {
+    vertical-align: top;
 }
 
 .banner .banner-message {
@@ -172,9 +179,17 @@ button.close {
     color: var(--cas-theme-primary, #153e50);
 }
 
+.banner-danger:before {
+    content: "\F0027";
+    font-size: 24px;
+    font: normal normal normal 24px/1 "Material Design Icons";
+}
+
 .banner-danger {
     border-color: #b00020;
     border-color: var(--cas-theme-danger, #b00020);
+    color: #D8000C;
+    background-color: #FFD2D2;
 }
 
 .banner-danger .mdi {
@@ -194,10 +209,16 @@ button.close {
     color: var(--cas-theme-warning, #e6a210);
 }
 
+.banner-success:before {
+    content: "\F012D";
+    font-size: 24px;
+    font: normal normal normal 24px/1 "Material Design Icons";
+}
+
 .banner-success {
     border-color: var(--cas-theme-success);
-    color: #153e50;
     color: var(--cas-theme-primary, #153e50);
+    background-color: #b3e7f8;
 }
 
 .banner-dismissible {
@@ -396,6 +417,11 @@ button.close {
 
 .text-center {
     text-align: center;
+}
+
+.pad-0 {
+    padding-right: 0;
+    padding-left: 0;
 }
 
 .w-66 {

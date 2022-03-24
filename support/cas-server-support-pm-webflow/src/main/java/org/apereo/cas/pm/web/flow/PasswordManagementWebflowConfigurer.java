@@ -30,11 +30,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     /**
      * Flow id for password reset.
      */
-    public static final String FLOW_ID_PASSWORD_RESET = "pswdreset";
-
-    /**
-     * Flow id for password reset.
-     */
     public static final String FLOW_VAR_ID_PASSWORD = "password";
 
     /**

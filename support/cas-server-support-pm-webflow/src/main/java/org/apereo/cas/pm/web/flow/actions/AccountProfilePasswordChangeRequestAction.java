@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -23,9 +22,9 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Getter
 public class AccountProfilePasswordChangeRequestAction extends BaseCasWebflowAction {
-    protected final CentralAuthenticationService centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
 
-    protected final PasswordResetUrlBuilder passwordResetUrlBuilder;
+    private final PasswordResetUrlBuilder passwordResetUrlBuilder;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {

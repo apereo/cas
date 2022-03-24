@@ -787,13 +787,23 @@ public class WebUtils {
     }
 
     /**
-     * Put static authentication into flow scope.
+     * Put password management enabled flow scope.
      *
      * @param context the context
      * @param value   the value
      */
     public static void putPasswordManagementEnabled(final RequestContext context, final Boolean value) {
         context.getFlowScope().put("passwordManagementEnabled", value);
+    }
+
+    /**
+     * Put security questions enabled into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putSecurityQuestionsEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("securityQuestionsEnabled", value);
     }
 
     /**
@@ -1303,7 +1313,7 @@ public class WebUtils {
      */
     public static <T> T getAcceptableUsagePolicyTermsFromFlowScope(final RequestContext requestContext, final Class<T> clazz) {
         if (requestContext.getFlowScope().contains("aupPolicy")) {
-            return (T) requestContext.getFlowScope().put("aupPolicy", clazz);
+            return (T) requestContext.getFlowScope().get("aupPolicy", clazz);
         }
         return null;
     }

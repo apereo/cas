@@ -314,6 +314,12 @@ public interface CasWebflowConstants {
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+
+    /**
+     * Transition id 'updateSecurityQuestions'.
+     */
+    String TRANSITION_ID_UPDATE_SECURITY_QUESTIONS = "updateSecurityQuestions";
+
     /**
      * Transition id 'invalidPasswordResetToken'.
      */
@@ -900,6 +906,16 @@ public interface CasWebflowConstants {
     String STATE_ID_CHECK_ACCOUNT_REGISTRATION = "accountRegistrationCheck";
 
     /**
+     * State id 'passwordChangeRequest'.
+     */
+    String STATE_ID_PASSWORD_CHANGE_REQUEST = "passwordChangeRequest";
+
+    /**
+     * State id 'updateSecurityQuestions'.
+     */
+    String STATE_ID_UPDATE_SECURITY_QUESTIONS = "updateSecurityQuestions";
+
+    /**
      * State id 'viewRegistration'.
      */
     String STATE_ID_VIEW_REGISTRATION = "viewRegistration";
@@ -1190,6 +1206,11 @@ public interface CasWebflowConstants {
      * Action id 'prepareAccountProfileViewAction'.
      */
     String ACTION_ID_PREPARE_ACCOUNT_PROFILE = "prepareAccountProfileViewAction";
+
+    /**
+     * Action id 'prepareAccountProfilePasswordMgmtAction'.
+     */
+    String ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT = "prepareAccountProfilePasswordMgmtAction";
 
     /**
      * Action id 'initialAuthenticationRequestValidationAction'.

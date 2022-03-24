@@ -2,9 +2,12 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.Credential;
 
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -124,5 +127,17 @@ public interface PasswordManagementService {
     default boolean isValidSecurityQuestionAnswer(final PasswordManagementQuery query, final String question,
                                                   final String answer, final String input) {
         return StringUtils.isNotBlank(answer) && answer.equals(input);
+    }
+
+    /**
+     * Orders security questions consistently.
+     *
+     * @param questionMap A map of question/answer key/value pairs
+     * @return A list of questions in a consistent order
+     */
+    static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
+        val keys = new ArrayList<>(questionMap.keySet());
+        keys.sort(String.CASE_INSENSITIVE_ORDER);
+        return keys;
     }
 }

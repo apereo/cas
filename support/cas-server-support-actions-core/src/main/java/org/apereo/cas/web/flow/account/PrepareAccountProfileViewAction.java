@@ -16,6 +16,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -35,21 +36,27 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
-        val ticketGrantingTicket = centralAuthenticationService.getTicket(tgt, TicketGrantingTicket.class);
-        WebUtils.putAuthentication(ticketGrantingTicket.getAuthentication(), requestContext);
-        val service = WebUtils.getService(requestContext);
-        if (casProperties.getView().isAuthorizedServicesOnSuccessfulLogin()) {
-            val authzAttributes = (Map) CollectionUtils.merge(ticketGrantingTicket.getAuthentication().getAttributes(),
-                ticketGrantingTicket.getAuthentication().getPrincipal().getAttributes());
-            val authorizedServices = servicesManager.getAllServices()
-                .stream()
-                .filter(registeredService -> FunctionUtils.doAndHandle(
-                    () -> RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                        registeredService, ticketGrantingTicket.getAuthentication().getPrincipal().getId(), authzAttributes),
-                    throwable -> false).get())
-                .collect(Collectors.toList());
-            WebUtils.putAuthorizedServices(requestContext, authorizedServices);
-        }
+        val ticketGrantingTicket = FunctionUtils.doAndHandle(
+            () -> Optional.of(centralAuthenticationService.getTicket(tgt, TicketGrantingTicket.class)),
+            throwable -> Optional.<TicketGrantingTicket>empty()).get();
+
+        ticketGrantingTicket.ifPresent(ticket -> {
+            WebUtils.putAuthentication(ticket.getAuthentication(), requestContext);
+            val service = WebUtils.getService(requestContext);
+            if (casProperties.getView().isAuthorizedServicesOnSuccessfulLogin()) {
+                val authzAttributes = (Map) CollectionUtils.merge(ticket.getAuthentication().getAttributes(),
+                    ticket.getAuthentication().getPrincipal().getAttributes());
+                val authorizedServices = servicesManager.getAllServices()
+                    .stream()
+                    .filter(registeredService -> FunctionUtils.doAndHandle(
+                        () -> RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+                            registeredService, ticket.getAuthentication().getPrincipal().getId(), authzAttributes),
+                        throwable -> false).get())
+                    .collect(Collectors.toList());
+                WebUtils.putAuthorizedServices(requestContext, authorizedServices);
+            }
+        });
+
         return success();
     }
 }

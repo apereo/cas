@@ -25,8 +25,8 @@
                 });
                 $('#source').val(select.value);
             }
-
             new mdc.tooltip.MDCTooltip(document.querySelector('.mdc-tooltip'));
+            new mdc.banner.MDCBanner(document.querySelector('.mdc-banner'));
         },
         checkCaps: ev => {
             let s = String.fromCharCode(ev.which);
