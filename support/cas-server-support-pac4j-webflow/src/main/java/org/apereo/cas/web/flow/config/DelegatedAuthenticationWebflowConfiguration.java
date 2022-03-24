@@ -200,6 +200,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("delegatedAuthenticationCookieGenerator")
             final CasCookieBuilder delegatedAuthenticationCookieGenerator,
@@ -209,7 +210,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             val strategy = casProperties.getAuthn().getPac4j().getCore().getGroovyRedirectionStrategy();
             if (strategy.getLocation() != null) {
                 chain.addStrategy(new GroovyDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
-                    new WatchableGroovyScriptResource(strategy.getLocation())));
+                    new WatchableGroovyScriptResource(strategy.getLocation()), applicationContext));
             }
             chain.addStrategy(new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
                 delegatedAuthenticationCookieGenerator, casProperties));

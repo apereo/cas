@@ -62,7 +62,7 @@ CAS configuration for [OpenID Connect](../protocol/OIDC-Protocol.html) is now ex
 
 ### Bucket4j Capacity Planning
 
-Integrations with Bucket4j such as those that [throttle authentication attempts](authentication/Configuring-Authentication-Throttling.html) or request [simple multifactor authentication](mfa/Simple-Multifactor-Authentication.html) tokens are now able to construct and allocate buckets for individual requests as opposed to preparing a global bucket for the entire server instance. The allocation strategy is specific to the client IP address.
+Integrations with Bucket4j such as those that [throttle authentication attempts](../authentication/Configuring-Authentication-Throttling.html) or request [simple multifactor authentication](../mfa/Simple-Multifactor-Authentication.html) tokens are now able to construct and allocate buckets for individual requests as opposed to preparing a global bucket for the entire server instance. The allocation strategy is specific to the client IP address.
 
 ### OpenID Connect Client Registration
 

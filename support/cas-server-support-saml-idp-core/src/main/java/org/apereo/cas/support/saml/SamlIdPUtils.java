@@ -71,10 +71,11 @@ public class SamlIdPUtils {
      * @param clazz              the clazz
      * @return the request
      */
-    public static Optional<Pair<? extends RequestAbstractType, MessageContext>> retrieveSamlRequest(final WebContext context,
-                                                                                                    final SessionStore sessionStore,
-                                                                                                    final OpenSamlConfigBean openSamlConfigBean,
-                                                                                                    final Class<? extends RequestAbstractType> clazz) {
+    public static Optional<Pair<? extends RequestAbstractType, MessageContext>> retrieveSamlRequest(
+        final WebContext context,
+        final SessionStore sessionStore,
+        final OpenSamlConfigBean openSamlConfigBean,
+        final Class<? extends RequestAbstractType> clazz) {
         LOGGER.trace("Retrieving authentication request from scope");
         val authnContext = sessionStore
             .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)

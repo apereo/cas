@@ -13,7 +13,6 @@ import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
@@ -57,7 +56,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
     }
 
     @Override
-    public boolean isAuthorized(final JEEContext webContext, final IndirectClient client,
+    public boolean isAuthorized(final WebContext webContext, final IndirectClient client,
                                 final WebApplicationService currentService) {
         val result = SamlIdPUtils.retrieveSamlRequest(webContext,
             sessionStore, openSamlConfigBean, AuthnRequest.class);

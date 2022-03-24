@@ -63,6 +63,9 @@ public class GroovyDelegatedClientIdentityProviderRedirectionStrategyTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
         val provider = DelegatedClientIdentityProviderConfiguration.builder()
             .name("SomeClient")
             .type("CasClient")
@@ -71,7 +74,7 @@ public class GroovyDelegatedClientIdentityProviderRedirectionStrategyTests {
         val service = RegisteredServiceTestUtils.getService();
         val resource = new ClassPathResource("GroovyClientRedirectStrategy.groovy");
         val strategy = new GroovyDelegatedClientIdentityProviderRedirectionStrategy(this.servicesManager,
-            new WatchableGroovyScriptResource(resource));
+            new WatchableGroovyScriptResource(resource), appCtx);
         assertFalse(strategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider).isEmpty());
         assertEquals(0, strategy.getOrder());
     }

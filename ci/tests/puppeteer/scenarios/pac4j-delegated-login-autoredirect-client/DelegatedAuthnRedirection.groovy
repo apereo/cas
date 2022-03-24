@@ -7,7 +7,8 @@ def run(Object[] args) {
     def service = args[1]
     def registeredService = args[2]
     def provider = args[3] as DelegatedClientIdentityProviderConfiguration
-    def logger = args[4]
+    def appContext = args[4]
+    def logger = args[5]
     logger.info("Checking provider ${provider.name} for service ${service?.id}...")
      if (service != null && service.id.startsWith("https://github.com/apereo/cas")) {
          provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
