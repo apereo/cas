@@ -1,6 +1,7 @@
 package org.apereo.cas.hz;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
 
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
+@Tag("Hazelcast")
 public class HazelcastBannerContributorTests {
     @Test
     public void verifyOperation() throws Exception {
