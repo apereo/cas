@@ -72,7 +72,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
         val attributes = principal.getAttributes();
         LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
 
-        val code = getPolicyMessageBundleCode(requestContext);
+        val code = StringUtils.defaultString(getPolicyMessageBundleCode(requestContext));
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val appCtx = requestContext.getActiveFlow().getApplicationContext();
 
