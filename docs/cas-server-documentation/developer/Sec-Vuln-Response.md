@@ -27,10 +27,7 @@ To review the old archives of the application security working group, [please se
 
 ### Dependency Upgrades
 
-Given the amount of effort involved in planning and releasing a security patch and disclosing the issue, communicating descriptions, intent,
-attack window and fixes, etc it is generally best to keep security releases reserved for issues that actually can be reproduced based on
-a concrete use case or those that truly and in practice affect the inner workings of the CAS software in a real way. If you could have such a
-use case at some point, please be sure to supply details and steps to reproduce issues. Supposed *vulnerabilities* that are picked up and reported by security scanners, static code analyzers and such affecting a third party library used by CAS generally do not qualify, unless there is solid evidence provided by the reporter to indicate a real, practical issue affecting CAS daily ops. Such warnings often appear superficial in the context of a CAS deployment. Usually, the best course of action would be to make the upgrades either locally to the installation script or switch to a more recent CAS version that might remove such warnings.
+Given the amount of effort involved in planning and releasing a security patch and disclosing the issue, communicating descriptions, intent, attack window and fixes, etc it is generally best to keep security releases reserved for issues that actually can be reproduced based on a concrete use case or those that truly and in practice affect the inner workings of the CAS software in a real way. If you could have such a use case at some point, please be sure to supply details and steps to reproduce issues. Supposed *vulnerabilities* that are picked up and reported by security scanners, static code analyzers and such affecting a third party library used by CAS generally do not qualify, unless there is solid evidence provided by the reporter to indicate a real, practical issue affecting CAS daily ops. Such warnings often appear superficial in the context of a CAS deployment. Usually, the best course of action would be to make the upgrades either locally to the installation script or switch to a more recent CAS version that might remove such warnings.
 
 ### Security Bounty
 
@@ -49,9 +46,7 @@ report contains enough diagnostics data to expedite reviews and feedback:
 - Include an overlay project that can duplicate the issue in practice.
 - If possible, prepare and share unit/integration tests to recreate the issue.
 
-Before posting a possible security issue, please make sure the affected CAS release 
-line is still [under maintenance](/cas/developer/Maintenance-Policy.html). Releases
-that are considered EOL will not receive further updates and/or attention from designated project members.
+Before posting a possible security issue, please make sure the affected CAS release line is still [under maintenance(/cas/developer/Maintenance-Policy.html). Releases that are considered EOL will not receive further updates and/or attention from designated project members.
 
 ### Time to Fix
 
