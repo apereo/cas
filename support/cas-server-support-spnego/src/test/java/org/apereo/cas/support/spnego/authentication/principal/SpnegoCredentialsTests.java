@@ -1,5 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.val;
@@ -7,6 +9,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -41,5 +46,22 @@ public class SpnegoCredentialsTests {
         credential.setPrincipal(principal);
         val hash2 = credential.hashCode();
         assertNotEquals(hash1, hash2);
+    }
+
+    @Test
+    public void verifyToStringWithToken() {
+        val credentials = new SpnegoCredential(new byte[16]);
+        credentials.setNextToken(new byte[16]);
+        assertThat(credentials.toString(), not(containsString("initToken")));
+        assertThat(credentials.toString(), not(containsString("nextToken")));
+    }
+
+    @Test
+    public void verifyJsonWithToken() throws JsonProcessingException {
+        val credentials = new SpnegoCredential(new byte[16]);
+        credentials.setNextToken(new byte[16]);
+        ObjectMapper objectMapper = new ObjectMapper();
+        assertThat(objectMapper.writeValueAsString(credentials), not(containsString("initToken")));
+        assertThat(objectMapper.writeValueAsString(credentials), not(containsString("nextToken")));
     }
 }
