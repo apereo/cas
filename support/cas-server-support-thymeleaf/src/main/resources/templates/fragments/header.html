@@ -29,11 +29,18 @@
                 <section class="mdc-top-app-bar__section">
                     <span class="cas-brand mx-auto">
                         <span class="visually-hidden" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</span>
-                        <img id="cas-logo" class="cas-logo"
-                             th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
-                             th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}"
-                        />
+                        <a th:href="@{/}" aria-describedby="tooltip-logout">
+                            <img id="cas-logo" class="cas-logo"
+                                 th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
+                                 th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}"
+                            />
+                        </a>
                     </span>
+                    <div id="tooltip-logout" class="mdc-tooltip" role="tooltip" aria-hidden="true">
+                        <div class="mdc-tooltip__surface mdc-tooltip__surface-animation" th:text="#{screen.account.tooltip.logout}">
+                            This operation forces a logout.
+                        </div>
+                    </div>
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                     <button id="cas-notifications-menu"
