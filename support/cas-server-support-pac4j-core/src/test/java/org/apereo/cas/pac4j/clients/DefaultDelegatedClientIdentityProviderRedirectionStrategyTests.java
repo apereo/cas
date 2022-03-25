@@ -35,6 +35,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -98,7 +99,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         configureService(policy);
 
         val service = RegisteredServiceTestUtils.getService();
-        val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider);
+        val results = strategy.select(context, service, Set.of(provider));
         assertFalse(results.isEmpty());
         assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
         assertEquals(Ordered.LOWEST_PRECEDENCE, strategy.getOrder());
@@ -115,7 +116,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         configureService(policy);
 
         WebUtils.putDelegatedAuthenticationProviderPrimary(context, null);
-        val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, null, provider);
+        val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
         assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
     }
@@ -130,7 +131,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         configureService(policy);
 
         when(this.casCookieBuilder.retrieveCookieValue(any())).thenReturn("SomeClient");
-        val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, null, provider);
+        val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
         assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
     }

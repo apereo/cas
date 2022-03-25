@@ -89,20 +89,29 @@ whose path is defined via CAS settings. The Groovy script would have the followi
 
 ```groovy
 import org.apereo.cas.web.*
+import org.pac4j.core.context.*
+import org.apereo.cas.pac4j.*
+import org.apereo.cas.web.support.*
+import java.util.stream.*
+import java.util.*
+import org.apereo.cas.configuration.model.support.delegation.*
+
 
 def run(Object[] args) {
     def requestContext = args[0]
     def service = args[1]
     def registeredService = args[2]
-    def provider = args[3] as DelegatedClientIdentityProviderConfiguration
+    def providers = args[3] as Set<DelegatedClientIdentityProviderConfiguration>
     def applicationContext = args[4]
     def logger = args[5]
-    logger.info("Checking ${provider.name}...")
-    
-    if (provider.name.equals("Twitter")) {
-        provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
-        return provider
-    }
+
+    providers.forEach(provider -> {
+        logger.info("Checking ${provider.name}...")
+        if (provider.name.equals("Twitter")) {
+            provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
+            return provider
+        }
+    })
     return null
 }
 ```
@@ -114,7 +123,7 @@ The following parameters are passed to the script:
 | `requestContext`        | Reference to the Spring Webflow request context, as `RequestContext`.
 | `service`               | Reference to the application authentication request as `Service`, if any.
 | `registeredService`     | Reference to registered service definition, if any.
-| `provider`              | Reference to the identity provider configuration identified as `DelegatedClientIdentityProviderConfiguration`.
+| `providers`              | Reference to the set of identity provider configuration identified as `DelegatedClientIdentityProviderConfiguration`.
 | `applicationContext`    | Reference to the application context as `ApplicationContext`.
 | `logger`                | The object responsible for issuing log messages such as `logger.info(...)`.
 

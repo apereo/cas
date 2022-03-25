@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link DefaultDelegatedClientIdentityProviderRedirectionStrategy}.
@@ -41,35 +42,38 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    public Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(
+    public Optional<DelegatedClientIdentityProviderConfiguration> select(
         final RequestContext context,
         final WebApplicationService service,
-        final DelegatedClientIdentityProviderConfiguration provider) {
-        if (service != null) {
-            val registeredService = servicesManager.findServiceBy(service);
-            val delegatedPolicy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
-            if (delegatedPolicy.isExclusive() && delegatedPolicy.getAllowedProviders().size() == 1
-                && provider.getName().equalsIgnoreCase(delegatedPolicy.getAllowedProviders().iterator().next())) {
-                LOGGER.trace("Registered service [{}] is exclusively allowed to use provider [{}]", registeredService, provider);
-                provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
+        final Set<DelegatedClientIdentityProviderConfiguration> providers) {
+
+        for (val provider : providers) {
+            if (service != null) {
+                val registeredService = servicesManager.findServiceBy(service);
+                val delegatedPolicy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
+                if (delegatedPolicy.isExclusive() && delegatedPolicy.getAllowedProviders().size() == 1
+                    && provider.getName().equalsIgnoreCase(delegatedPolicy.getAllowedProviders().iterator().next())) {
+                    LOGGER.trace("Registered service [{}] is exclusively allowed to use provider [{}]", registeredService, provider);
+                    provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
+                    return Optional.of(provider);
+                }
+            }
+
+            if (WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
+                && provider.getAutoRedirectType() != DelegationAutoRedirectTypes.NONE) {
+                LOGGER.trace("Provider [{}] is configured to auto-redirect", provider);
                 return Optional.of(provider);
             }
-        }
 
-        if (WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
-            && provider.getAutoRedirectType() != DelegationAutoRedirectTypes.NONE) {
-            LOGGER.trace("Provider [{}] is configured to auto-redirect", provider);
-            return Optional.of(provider);
-        }
-
-        val cookieProps = casProperties.getAuthn().getPac4j().getCookie();
-        if (cookieProps.isEnabled()) {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            val cookieValue = delegatedAuthenticationCookieBuilder.retrieveCookieValue(request);
-            if (StringUtils.equalsIgnoreCase(cookieValue, provider.getName())) {
-                LOGGER.trace("Provider [{}] is chosen via cookie value preference as primary", provider);
-                provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
-                return Optional.of(provider);
+            val cookieProps = casProperties.getAuthn().getPac4j().getCookie();
+            if (cookieProps.isEnabled()) {
+                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+                val cookieValue = delegatedAuthenticationCookieBuilder.retrieveCookieValue(request);
+                if (StringUtils.equalsIgnoreCase(cookieValue, provider.getName())) {
+                    LOGGER.trace("Provider [{}] is chosen via cookie value preference as primary", provider);
+                    provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
+                    return Optional.of(provider);
+                }
             }
         }
         return Optional.empty();

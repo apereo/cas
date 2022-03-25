@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
@@ -24,10 +23,10 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultDelegatedClientIdentityProviderConfigurationProducer}.
@@ -61,24 +60,17 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
         LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
         val allClients = this.clients.findAllClients();
-        val providers = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
-        allClients
+        val providers = allClients
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service, request))
             .map(IndirectClient.class::cast)
-            .forEach(client -> {
-                try {
-                    val providerResult = produce(context, client);
-                    providerResult.ifPresent(provider -> {
-                        providers.add(provider);
-                        delegatedClientIdentityProviderRedirectionStrategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider)
-                            .ifPresent(p -> WebUtils.putDelegatedAuthenticationProviderPrimary(context, p));
-                    });
-                } catch (final Exception e) {
-                    LOGGER.error("Cannot process client [{}]", client);
-                    LoggingUtils.error(LOGGER, e);
-                }
-            });
+            .map(client -> produce(context, client))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toSet());
+
+        delegatedClientIdentityProviderRedirectionStrategy.select(context, service, providers)
+            .ifPresent(p -> WebUtils.putDelegatedAuthenticationProviderPrimary(context, p));
 
         if (!providers.isEmpty()) {
             val selectionType = casProperties.getAuthn().getPac4j().getCore().getDiscoverySelection().getSelectionType();
@@ -93,10 +85,10 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
                     WebUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.FALSE);
                     break;
             }
-            
+
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
             LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
-                + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers");
+                        + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers");
         }
         return providers;
     }

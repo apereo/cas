@@ -34,7 +34,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
                 this.watcherService = FunctionUtils.doUnchecked(
                     () -> new FileWatcherService(script.getFile(),
                         Unchecked.consumer(file -> {
-                            LOGGER.debug("Reloading script at [{}]", file);
+                            LOGGER.info("Reloading script at [{}]", file);
                             compileScriptResource(script);
                         })));
                 this.watcherService.start(script.getFilename());
