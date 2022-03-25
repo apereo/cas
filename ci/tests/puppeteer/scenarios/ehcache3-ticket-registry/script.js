@@ -34,7 +34,7 @@ const cas = require('../../cas.js');
         }, { 'Content-Type': "application/json" })
     await cas.doGet("https://localhost:8443/cas/actuator/metrics/cache.gets",
         res => {
-            assert(res.data.measurements[0].value === 5);
+            assert(res.data.measurements[0].value >= 3);
         }, error => {
             throw error;
         }, { 'Content-Type': "application/json" })
