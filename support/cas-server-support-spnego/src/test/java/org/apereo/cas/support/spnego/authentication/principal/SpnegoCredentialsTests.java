@@ -1,17 +1,16 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Spnego")
-public class SpnegoCredentialsTests {
-
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
+public class SpnegoCredentialsTests2 {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
     public void verifyToStringWithNoPrincipal() {
@@ -59,10 +58,11 @@ public class SpnegoCredentialsTests {
     }
 
     @Test
-    public void verifyJsonWithToken() throws JsonProcessingException {
+    public void verifyJsonWithToken() throws Exception {
         val credentials = new SpnegoCredential(new byte[16]);
         credentials.setNextToken(new byte[16]);
         assertThat(MAPPER.writeValueAsString(credentials), not(containsString("initToken")));
         assertThat(MAPPER.writeValueAsString(credentials), not(containsString("nextToken")));
     }
+
 }
