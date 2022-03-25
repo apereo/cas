@@ -16,6 +16,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,7 +47,7 @@ public class DelegatedClientIdentityProviderRedirectionStrategyTests {
             .type("CasClient")
             .redirectUrl("https://localhost:8443/redirect")
             .build();
-        val result = delegatedClientIdentityProviderRedirectionStrategy.select(context, null, provider);
+        val result = delegatedClientIdentityProviderRedirectionStrategy.select(context, null, Set.of(provider));
         assertTrue(result.isEmpty());
     }
 }
