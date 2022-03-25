@@ -45,7 +45,7 @@ public class DelegatedClientIdentityProviderRedirectionStrategyTests {
             .type("CasClient")
             .redirectUrl("https://localhost:8443/redirect")
             .build();
-        val result = delegatedClientIdentityProviderRedirectionStrategy.getPrimaryDelegatedAuthenticationProvider(context, null, provider);
+        val result = delegatedClientIdentityProviderRedirectionStrategy.select(context, null, provider);
         assertTrue(result.isEmpty());
     }
 }

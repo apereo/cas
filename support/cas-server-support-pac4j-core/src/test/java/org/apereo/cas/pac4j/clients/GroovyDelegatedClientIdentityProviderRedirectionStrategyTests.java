@@ -27,6 +27,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,7 +76,7 @@ public class GroovyDelegatedClientIdentityProviderRedirectionStrategyTests {
         val resource = new ClassPathResource("GroovyClientRedirectStrategy.groovy");
         val strategy = new GroovyDelegatedClientIdentityProviderRedirectionStrategy(this.servicesManager,
             new WatchableGroovyScriptResource(resource), appCtx);
-        assertFalse(strategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider).isEmpty());
+        assertFalse(strategy.select(context, service, Set.of(provider)).isEmpty());
         assertEquals(0, strategy.getOrder());
     }
 }
