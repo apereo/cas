@@ -119,6 +119,7 @@ layout: null
     *   [Delegation](#delegationauthn)
         *   [Overview](/cas/{{ version }}/integration/Delegate-Authentication.html)
         *   [Authentication Policy](/cas/{{ version }}/integration/Delegate-Authentication-AuthenticationPolicy.html)
+        *   [Auto Redirection](/cas/{{ version }}/integration/Delegate-Authentication-Redirection.html)
         *   [Discovery Selection](/cas/{{ version }}/integration/Delegate-Authentication-DiscoverySelection.html)
         *   [Provisioning](/cas/{{ version }}/integration/Delegate-Authentication-Provisioning.html)
         *   [Identity Providers](#identityproviders)

@@ -23,6 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -67,7 +68,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             .map(client -> produce(context, client))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
         delegatedClientIdentityProviderRedirectionStrategy.select(context, service, providers)
             .ifPresent(p -> WebUtils.putDelegatedAuthenticationProviderPrimary(context, p));
