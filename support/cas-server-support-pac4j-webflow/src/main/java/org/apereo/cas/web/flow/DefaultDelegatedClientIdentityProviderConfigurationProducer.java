@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
@@ -65,7 +66,15 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service, request))
             .map(IndirectClient.class::cast)
-            .map(client -> produce(context, client))
+            .map(client -> {
+                try {
+                    return produce(context, client);
+                } catch (final Exception e) {
+                    LOGGER.error("Cannot process client [{}]", client);
+                    LoggingUtils.error(LOGGER, e);
+                    return Optional.<DelegatedClientIdentityProviderConfiguration>empty();
+                }
+            })
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(Collectors.toCollection(LinkedHashSet::new));

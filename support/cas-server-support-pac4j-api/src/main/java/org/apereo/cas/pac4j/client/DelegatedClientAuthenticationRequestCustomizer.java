@@ -3,7 +3,6 @@ package org.apereo.cas.pac4j.client;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 

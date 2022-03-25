@@ -12,8 +12,8 @@
 <body>
     <main role="main" class="container mt-3 mb-3">
         <div id="content" layout:fragment="content"
-             class="banner banner-danger alert alert-danger mdc-card card p-4 m-auto w-lg-66 text-justify">
-            <div>
+             class="mdc-card card p-4 m-auto w-lg-66 text-justify">
+            <div class="banner banner-danger alert alert-danger">
                 <h2 th:utext="#{screen.pac4j.unauthz.heading}">Unauthorized Access</h2>
                 <p th:utext="#{screen.pac4j.unauthz.message}">Either the authentication request was rejected/cancelled,
                     or the authentication provider denied access due to permissions, etc. Review logs to find the root
@@ -27,7 +27,7 @@
                       Authentication response provided to CAS by the external identity provider cannot be accepted.</span>
                 </p>
                 
-                <div class="mdc-data-table table-responsive">
+                <div class="mdc-data-table table-responsive w-100">
                     <table id="errorTable" th:if="${error != null or reason != null or code != null or description != null}"
                         class="table table-striped w-100" aria-label="Error information">
                         <thead>

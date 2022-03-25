@@ -69,6 +69,13 @@ Integrations with Bucket4j such as those that [throttle authentication attempts]
 [Dynamic Client Registration](../authentication/OIDC-Authentication-Clients.html) is now able to support an expiration date for client secrets and registration requests. Authentication requests from clients with an expired client secret blocked until the application renews its client secret. Furthermore, the client configuration endpoint is now able to accept `PATCH` requests to update existing application records, or it may also be used to renew the client secret, if and when expired.
 
 Also in a situation where the CAS is supporting open Client registration, it will now check to see if the `logo_uri` and `policy_uri` have the same host as the hosts defined in the array of `redirect_uris`.
+ 
+### Delegation Redirection Strategy
+
+The Groovy [redirection strategy](../integration/Delegate-Authentication-Redirection.html) for delegated authentication
+is now modified to receive a list of all available providers upfront for better performance, in case the script needs to handle repeated tasks. 
+
+<div class="alert alert-warning"><strong>Breaking Change!</strong><p>You will need to examine the script you have today and rewrite certain parts of it to handle the signature change.</p></div>
 
 ### Puppeteer Testing Strategy
 
