@@ -24,6 +24,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -1013,6 +1014,7 @@ public class WebUtils {
     public static ModelAndView produceErrorView(final String view, final Exception e) {
         val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
         mv.setStatus(HttpStatus.BAD_REQUEST);
+        LoggingUtils.error(LOGGER, e);
         return mv;
     }
 
@@ -1026,7 +1028,7 @@ public class WebUtils {
     public static void produceErrorView(final HttpServletRequest request, final HttpStatus badRequest, final String message) {
         request.setAttribute("status", HttpStatus.BAD_REQUEST.value());
         request.setAttribute("error", HttpStatus.BAD_REQUEST.name());
-        request.setAttribute("message", "Unable to verify registration record");
+        request.setAttribute("message", message);
     }
 
     /**
