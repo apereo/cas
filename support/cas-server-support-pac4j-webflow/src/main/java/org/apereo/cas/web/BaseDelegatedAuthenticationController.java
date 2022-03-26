@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServicePropertyGroups;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
@@ -75,6 +76,7 @@ public abstract class BaseDelegatedAuthenticationController {
 
         configurationContext.getDelegatedClientAuthenticationRequestCustomizers()
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .filter(c -> c.supports(client, webContext))
             .forEach(c -> c.customize(client, webContext));

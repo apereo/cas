@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
@@ -116,7 +117,9 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
         client.init();
 
         if (delegatedClientAuthenticationRequestCustomizers.isEmpty()
-            || delegatedClientAuthenticationRequestCustomizers.stream().anyMatch(c -> c.isAuthorized(webContext, client, currentService))) {
+            || delegatedClientAuthenticationRequestCustomizers.stream()
+                .filter(BeanSupplier::isNotProxy)
+                .anyMatch(c -> c.isAuthorized(webContext, client, currentService))) {
             return DelegatedClientIdentityProviderConfigurationFactory.builder()
                 .client(client)
                 .webContext(webContext)
