@@ -41,8 +41,8 @@ public class WebAuthnStartRegistrationAction extends AbstractMultifactorAuthenti
         LOGGER.debug("Starting registration sequence for [{}]", principal);
         val flowScope = requestContext.getFlowScope();
         if (attributes.containsKey(webAuthn.getDisplayNameAttribute())) {
-            flowScope.put("displayName",
-                CollectionUtils.firstElement(attributes.get(webAuthn.getDisplayNameAttribute())));
+            CollectionUtils.firstElement(attributes.get(webAuthn.getDisplayNameAttribute()))
+                .ifPresent(value -> flowScope.put("displayName", value));
         } else {
             flowScope.put("displayName", principal.getId());
         }
