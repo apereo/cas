@@ -126,7 +126,7 @@ public class PullRequest {
     }
 
     public boolean isWorkInProgress() {
-        return isLabeledAs(CasLabels.LABEL_WIP) || this.title.startsWith("WIP -");
+        return isLabeledAs(CasLabels.LABEL_WIP) || this.title.startsWith("WIP ");
     }
 
 
