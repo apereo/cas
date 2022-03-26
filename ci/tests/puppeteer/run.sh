@@ -86,7 +86,7 @@ while (( "$#" )); do
     export HEADLESS="true"
     shift 1;
     ;;
-  --rerun|--resume|--z)
+  --rerun|--resume|--r)
     RERUN="true"
     shift 1;
     ;;
