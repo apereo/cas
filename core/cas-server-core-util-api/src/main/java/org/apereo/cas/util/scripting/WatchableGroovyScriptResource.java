@@ -64,10 +64,9 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
 
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
-        if (this.groovyScript != null) {
-            return ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError);
-        }
-        return null;
+        return groovyScript != null
+            ? ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError)
+            : null;
     }
 
     @Override
@@ -86,10 +85,9 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
      * @return the t
      */
     public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError, final Object... args) {
-        if (this.groovyScript != null) {
-            return ScriptingUtils.executeGroovyScript(this.groovyScript, methodName, args, clazz, failOnError);
-        }
-        return null;
+        return groovyScript != null
+            ? ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError)
+            : null;
     }
 
     @Override

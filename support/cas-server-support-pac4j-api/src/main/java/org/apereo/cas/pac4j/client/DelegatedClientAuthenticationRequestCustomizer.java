@@ -27,7 +27,7 @@ public interface DelegatedClientAuthenticationRequestCustomizer extends Ordered 
      *
      * @param client     the client
      * @param webContext the web context
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(IndirectClient client, WebContext webContext);
 

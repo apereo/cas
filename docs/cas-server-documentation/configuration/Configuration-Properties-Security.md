@@ -30,7 +30,13 @@ when attempting to decrypt settings.
    
 {% include_cached casproperties.html properties="cas.standalone.configuration-security" %}
 
-The above settings may be passed to CAS as either command-line or system properties.
+<div class="alert alert-info">
+<strong>Usage</strong><br/>The above settings may be passed to CAS at runtime using either OS 
+environment variables, system properties or normal command-line arguments. Placing them in a CAS-owned configuration file
+will likely result in a dysfunctional setup. The encryption/decryption facade is put together early in the bootstrapping 
+process before CAS has had a chance to load any configuration files. So bootstrapping the encryptor/decryptor components 
+must happen at runtime so CAS gets a chance to initialize the right set of components before any configuration file can be loaded.
+</div>
 
 ## Spring Cloud
 

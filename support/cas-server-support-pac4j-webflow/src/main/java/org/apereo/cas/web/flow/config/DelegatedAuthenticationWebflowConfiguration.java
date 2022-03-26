@@ -11,11 +11,14 @@ import org.apereo.cas.pac4j.client.ChainingDelegatedClientIdentityProviderRedire
 import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
+import org.apereo.cas.pac4j.client.GroovyDelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.GroovyDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationController;
@@ -68,6 +71,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DelegatedAuthenticationWebflowConfiguration}.
@@ -224,6 +228,24 @@ public class DelegatedAuthenticationWebflowConfiguration {
             val props = casProperties.getAuthn().getPac4j().getCookie();
             return new DelegatedAuthenticationCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
         }
+
+        @ConditionalOnMissingBean(name = "groovyDelegatedClientAuthenticationRequestCustomizer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DelegatedClientAuthenticationRequestCustomizer groovyDelegatedClientAuthenticationRequestCustomizer(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(DelegatedClientAuthenticationRequestCustomizer.class)
+                .when(BeanCondition.on("cas.authn.pac4j.core.groovy-authentication-request-customizer.location").exists()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val groovy = casProperties.getAuthn().getPac4j().getCore().getGroovyAuthenticationRequestCustomizer();
+                    val script = new WatchableGroovyScriptResource(groovy.getLocation());
+                    return new GroovyDelegatedClientAuthenticationRequestCustomizer(script, applicationContext);
+                })
+                .otherwiseProxy()
+                .get();
+        }
     }
 
     @Configuration(value = "DelegatedAuthenticationWebflowActionsConfiguration", proxyBeanMethods = false)
@@ -323,7 +345,10 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
             val helper = getDelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
             val customizers = Optional.ofNullable(delegatedClientAuthenticationRequestCustomizers.getIfAvailable())
-                .orElseGet(ArrayList::new);
+                .orElseGet(ArrayList::new)
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .collect(Collectors.toList());
 
             return DelegatedClientAuthenticationConfigurationContext.builder()
                 .initialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver)

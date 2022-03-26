@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.support.pac4j.RefreshableDelegatedClientsTests;
+import org.apereo.cas.support.pac4j.client.GroovyDelegatedClientAuthenticationRequestCustomizerTests;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationControllerTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderRedirectionStrategyTests;
 import org.apereo.cas.web.flow.DefaultDelegatedClientAuthenticationWebflowManagerTests;
@@ -30,6 +31,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     DelegatedClientIdentityProviderRedirectionStrategyTests.class,
     RefreshableDelegatedClientsTests.class,
+    GroovyDelegatedClientAuthenticationRequestCustomizerTests.class,
     DelegatedClientIdentityProviderConfigurationPostProcessorTests.class,
     DelegatedAuthenticationSAMLConfigurationTests.class,
     DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests.class,
