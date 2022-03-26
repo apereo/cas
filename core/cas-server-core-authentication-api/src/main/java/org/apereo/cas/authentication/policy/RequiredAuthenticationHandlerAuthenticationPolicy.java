@@ -49,7 +49,7 @@ public class RequiredAuthenticationHandlerAuthenticationPolicy extends BaseAuthe
                 .anyMatch(s -> getHandlerNames().contains(s));
 
             if (!credsOk) {
-                LOGGER.warn("Required authentication handler(s) [{}] is present in the list of successful authentications [{}]",
+                LOGGER.warn("Required authentication handler(s) [{}] is not present in the list of successful authentications [{}]",
                     getHandlerNames(), authn.getSuccesses().keySet());
                 return AuthenticationPolicyExecutionResult.failure();
             }

@@ -90,6 +90,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 val username = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
                 profile.setId(username);
             }
+            profile.addAttribute(OAuth20Constants.CLIENT_ID, id);
             LOGGER.debug("Created profile id [{}]", profile.getId());
             profile.addAttributes((Map) attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);

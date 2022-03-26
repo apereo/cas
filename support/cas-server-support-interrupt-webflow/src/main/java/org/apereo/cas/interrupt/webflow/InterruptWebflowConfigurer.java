@@ -9,6 +9,7 @@ import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EvaluateAction;
+import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -40,9 +41,17 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
             createTransitionStateToInterrupt(flow);
             createTransitionStateForMultifactorSubflows(flow);
             createTransitionStateForAuthenticationWarnings(flow);
+            createRedirectToInterruptLinkState(flow);
         }
     }
 
+    private void createRedirectToInterruptLinkState(final Flow flow) {
+        val endState = createEndState(flow, CasWebflowConstants.STATE_ID_REDIRECT_INTERRUPT_LINK);
+        endState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT));
+        val expression = createExpression("requestParameters.link");
+        endState.getEntryActionList().add(new ExternalRedirectAction(expression));
+    }
+    
     private void createTransitionStateForAuthenticationWarnings(final Flow flow) {
         val state = getState(flow, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS, ViewState.class);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED,
@@ -90,6 +99,8 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private void createInterruptView(final Flow flow) {
         val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_INTERRUPT_VIEW, "interrupt/casInterruptView");
         viewState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PREPARE_INTERRUPT_VIEW));
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_REDIRECT,
+            CasWebflowConstants.STATE_ID_REDIRECT_INTERRUPT_LINK);
         createStateDefaultTransition(viewState, CasWebflowConstants.STATE_ID_FINALIZE_INTERRUPT_ACTION);
 
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
