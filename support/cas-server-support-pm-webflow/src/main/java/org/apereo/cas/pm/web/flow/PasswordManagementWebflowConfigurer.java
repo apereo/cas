@@ -209,9 +209,11 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     }
 
     private void enablePasswordManagementForFlow(final Flow flow) {
-        flow.getStartActionList().add(
-            new ConsumerExecutionAction(context -> WebUtils.putPasswordManagementEnabled(context,
-                casProperties.getAuthn().getPm().getCore().isEnabled())));
+        val action = new ConsumerExecutionAction(context -> {
+            WebUtils.putAccountProfileManagementEnabled(context, applicationContext.containsBean(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY));
+            WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().getCore().isEnabled());
+        });
+        flow.getStartActionList().add(action);
     }
 
     private void configurePasswordResetFlow(final Flow flow, final String id, final String viewId) {

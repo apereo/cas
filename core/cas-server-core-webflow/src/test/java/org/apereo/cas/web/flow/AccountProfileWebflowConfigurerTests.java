@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasWebflowAccountProfileConfiguration.class)
 public class AccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier("accountProfileFlowRegistry")
+    @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry accountProfileFlowRegistry;
 
     @Test

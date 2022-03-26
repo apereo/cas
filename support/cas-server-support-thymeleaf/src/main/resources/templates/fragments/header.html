@@ -56,7 +56,9 @@
 
                     <a id="cas-user-account"
                        th:href="@{/account}"
-                       th:if="${ticketGrantingTicketId != null}"
+                       th:if="${accountProfileManagementEnabled != null
+                        && accountProfileManagementEnabled
+                        && ticketGrantingTicketId != null}"
                        class="mdc-icon-button mdc-top-app-bar__action-item"
                        aria-label="User Account">
                         <span class="mdi mdi-account-group"></span>

@@ -387,7 +387,7 @@ public class PasswordManagementWebflowConfiguration {
         public CasWebflowConfigurer passwordManagementAccountProfileWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("accountProfileFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry accountProfileFlowRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {

@@ -19,21 +19,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  */
 @Slf4j
 public class CasFeatureEnabledCondition extends SpringBootCondition {
-    /**
-     * Gets property name.
-     *
-     * @param feature the feature
-     * @param module  the module
-     * @return the property name
-     */
-    public static String getPropertyName(final CasFeatureModule.FeatureCatalog feature, final String module) {
-        var name = CasFeatureModule.class.getSimpleName() + '.' + feature.name();
-        if (StringUtils.isNotBlank(module)) {
-            name += '.' + module;
-        }
-        name += ".enabled";
-        return name;
-    }
 
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext context,
@@ -44,7 +29,7 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
         val enabledByDefault = BooleanUtils.toBoolean(attributes.get("enabledByDefault").toString());
 
         val feature = CasFeatureModule.FeatureCatalog.valueOf(name);
-        val property = getPropertyName(feature, module);
+        val property = feature.toProperty(module);
         LOGGER.trace("Checking for feature module capability via [{}]", property);
 
         if (!context.getEnvironment().containsProperty(property) && !enabledByDefault) {
