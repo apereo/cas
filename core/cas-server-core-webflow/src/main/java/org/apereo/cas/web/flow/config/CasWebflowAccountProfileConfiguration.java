@@ -50,7 +50,7 @@ public class CasWebflowAccountProfileConfiguration {
     public CasWebflowConfigurer accountProfileWebflowConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("accountProfileFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry accountProfileFlowRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
@@ -71,7 +71,7 @@ public class CasWebflowAccountProfileConfiguration {
     @Bean
     public FlowExecutor accountProfileFlowExecutor(
         final CasConfigurationProperties casProperties,
-        @Qualifier("accountProfileFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry accountProfileFlowRegistry,
         @Qualifier("webflowCipherExecutor")
         final CipherExecutor webflowCipherExecutor) {
@@ -109,7 +109,7 @@ public class CasWebflowAccountProfileConfiguration {
     public HandlerMapping accountProfileFlowHandlerMapping(
         @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
         final CasWebflowExecutionPlan webflowExecutionPlan,
-        @Qualifier("accountProfileFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry accountProfileFlowRegistry) {
         val handler = new CasFlowHandlerMapping();
         handler.setOrder(0);

@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 public class PasswordManagementAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier("accountProfileFlowRegistry")
+    @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     private FlowDefinitionRegistry accountProfileFlowRegistry;
 
     @Test

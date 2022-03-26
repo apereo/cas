@@ -798,6 +798,16 @@ public class WebUtils {
     }
 
     /**
+     * Put account profile management enabled.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putAccountProfileManagementEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("accountProfileManagementEnabled", value);
+    }
+
+    /**
      * Put security questions enabled into flow scope.
      *
      * @param context the context

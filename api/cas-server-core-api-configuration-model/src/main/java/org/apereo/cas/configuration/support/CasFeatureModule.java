@@ -229,6 +229,21 @@ public interface CasFeatureModule {
         /**
          * Reports.
          */
-        Reports
+        Reports;
+
+        /**
+         * To property name.
+         *
+         * @param module the module
+         * @return the string
+         */
+        public String toProperty(final String module) {
+            var propertyName = CasFeatureModule.class.getSimpleName() + '.' + name();
+            if (StringUtils.isNotBlank(module)) {
+                propertyName += '.' + module;
+            }
+            propertyName += ".enabled";
+            return propertyName;
+        }
     }
 }
