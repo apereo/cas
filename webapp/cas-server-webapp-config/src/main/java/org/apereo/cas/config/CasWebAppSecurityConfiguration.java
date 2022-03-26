@@ -47,7 +47,7 @@ public class CasWebAppSecurityConfiguration {
 
     @Bean
     public InitializingBean securityContextHolderInitialization() {
-        return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
+        return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_THREADLOCAL);
     }
 
     @Configuration(value = "CasWebappCoreSecurityConfiguration", proxyBeanMethods = false)
