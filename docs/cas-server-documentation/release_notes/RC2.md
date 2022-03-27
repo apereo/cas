@@ -88,6 +88,7 @@ The collection of end-to-end browser tests based on Puppeteer are now split into
 - Using "Provider Selection" in combination of a multifactor authentication policy for a service that triggers on principal attributes is now supported.
 - Links displayed as part of an [interrupt notification](../webflow/Webflow-Customization-Interrupt.html) can now take advantage of single sign-on sessions.
 - Support for [Apache Shiro](../authentication/Shiro-Authentication.html) is now deprecated; this feature is scheduled to be removed.
+- Minor bug fixes to correct the device registration flow for [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html). 
 
 ## Library Upgrades
       
