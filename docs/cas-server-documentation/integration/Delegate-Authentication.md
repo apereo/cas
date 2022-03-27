@@ -47,7 +47,7 @@ to be defined in the CAS configuration as well.
 
 Identity providers for delegated authentication can be registered with CAS using settings. 
 
-<table>
+<table class="cas-datatable">
   <thead>
     <tr><th>Provider</th><th>Reference</th></tr>
   </thead>

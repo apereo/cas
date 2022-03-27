@@ -6,7 +6,8 @@ connections and queries.
 
 {% assign jdbcProperties = "cas.jdbc." | split: "," %}
 
-<table>
+<table class="cas-datatable">
+    <thead><tr><th></th></tr></thead>
     <tbody>
     {% for prop in jdbcProperties %} 
         {% for module in site.data[siteDataVersion] %}

@@ -8,11 +8,7 @@ category: User Interface
 
 # Views
 
-The views are found inside the CAS web application in the `WEB-INF\lib\cas-server-support-thymeleaf-<cas.version>.jar` in the 
-templates folder. Add any views that require customization to the `src/main/resources/templates` folder in the CAS overlay project.  
-Any files found in that module can be overridden by putting them in the same location under
-`src/main/resources` in the CAS overlay project. The Gradle build script for the overlay has tasks that help get resources 
-from the CAS web application to the correct location in the CAS overlay. 
+The views are found inside the CAS web application in the `WEB-INF\lib\cas-server-support-thymeleaf-<cas.version>.jar` in the templates folder. Add any views that require customization to the `src/main/resources/templates` folder in the CAS overlay project.  Any files found in that module can be overridden by putting them in the same location under `src/main/resources` in the CAS overlay project. The Gradle build script for the overlay has tasks that help get resources from the CAS web application to the correct location in the CAS overlay. 
 
 ## Templates
 
@@ -68,9 +64,7 @@ Refer to the [Thymeleaf documentation](https://www.thymeleaf.org/) for more info
 
 ## Warning Before Accessing Application
 
-CAS has the ability to warn the user before being redirected to the service. This allows users to be made aware whenever an application uses CAS to log them in.
-(If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.)
-Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
+CAS has the ability to warn the user before being redirected to the service. This allows users to be made aware whenever an application uses CAS to log them in. (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.) Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
 
 ```html
 ...
@@ -86,8 +80,6 @@ Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't off
 
 ## Custom Fields
 
-CAS allows on the ability to dynamically extend the login form by including additional fields, to be populated by the user.
-Such fields are taught to CAS using settings and are then bound to the authentication flow and made available to all
-authentication handlers that wish to impose additional processes and rules using said fields.
+CAS allows on the ability to dynamically extend the login form by including additional fields, to be populated by the user. Such fields are taught to CAS using settings and are then bound to the authentication flow and made available to all authentication handlers that wish to impose additional processes and rules using said fields.
 
 {% include_cached casproperties.html properties="cas.view.custom-login-form-fields" %}

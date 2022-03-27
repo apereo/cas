@@ -4,7 +4,8 @@ The following settings may also need to be defined to describe the mail server s
 
 {% assign mailServerProperties = "spring.mail." | split: "," %}
 
-<table>
+<table class="cas-datatable">
+    <thead><tr><th></th></tr></thead>
     <tbody>
     {% for prop in mailServerProperties %} 
         {% for module in site.data[siteDataVersion] %}
