@@ -18,7 +18,7 @@ While the above allows control over individual auto-configuration classes, in so
 to entirely disable a feature altogether by excluding all applicable auto-configuration classes without having to
 identify all of them. This can be done using the following feature toggles:
 
-<table>
+<table class="cas-datatable">
     <thead>
     <th>Feature</th>
     <th>Property</th>
