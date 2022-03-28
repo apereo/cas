@@ -19,6 +19,7 @@ env:
   ADFS_RELYING_PARTY_ID: ${{ secrets.ADFS_RELYING_PARTY_ID }}
   ADFS_USERNAME: ${{ secrets.ADFS_USERNAME }}
   ADFS_PASSWORD: ${{ secrets.ADFS_PASSWORD }}
+  IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 11
   NODE_CURRENT: '16'
@@ -81,7 +82,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     outputs:
-      scenarios: ${{ steps.get-scenarios.outputs.scenarios }}
+      scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
+      scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
@@ -117,18 +119,20 @@ jobs:
           command: ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc --configure-on-demand --parallel --no-daemon -DcasModules="core" --no-watch-fs --max-workers=8
       - id: print-scenarios
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
-      - id: get-scenarios
-        run: echo "::set-output name=scenarios::$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios)]}"
+      - id: get-scenarios255
+        run: echo "::set-output name=scenarios255::$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)]}"
+      - id: get-scenarios511
+        run: echo "::set-output name=scenarios511::$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)]}"
 
   ##########################################################################
-  puppeteer-tests:
+  puppeteer-tests-255:
     runs-on: windows-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
-        scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios)}}
+        scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios255)}}
     name: ${{matrix.scenario}}
     timeout-minutes: 25
     steps:
@@ -158,6 +162,53 @@ jobs:
         run: chmod -R +x ./ci/**/*.sh
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
+      - name: Run Tests
+        shell: bash
+        run: |
+          export RUNNER_OS=${{ runner.os }}
+          echo systemProp.org.gradle.internal.http.connectionTimeout=60000 >> gradle.properties
+          echo systemProp.org.gradle.internal.http.socketTimeout=60000 >> gradle.properties
+          echo systemProp.org.gradle.internal.repository.max.retries=10 >> gradle.properties
+          echo systemProp.org.gradle.internal.repository.initial.backoff=500 >> gradle.properties
+          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+  ##########################################################################
+  puppeteer-tests-511:
+    runs-on: windows-latest
+    needs: [puppeteer-scenarios]
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
+    name: ${{matrix.scenario}}
+    timeout-minutes: 25
+    steps:
+      # Enable tmate debugging of manually-triggered workflows if the input option was provided
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
+          cache: 'gradle'
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Set up Nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_CURRENT }}
+          cache: 'npm'
+          cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: Initialize
+        run: chmod -R +x ./ci/**/*.sh
+      #      - name: Setup tmate session
+      #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
         shell: bash
         run: |
