@@ -77,6 +77,11 @@ is now modified to receive a list of all available providers upfront for better 
 
 <div class="alert alert-warning"><strong>Breaking Change!</strong><p>You will need to examine the script you have today and rewrite certain parts of it to handle the signature change.</p></div>
 
+### SAML2 Authentication Context Class
+
+Building a SAML2 authentication context class can now be done in more dynamic 
+ways using a [Groovy script](../installation/Configuring-SAML2-AuthnContextClass.html). 
+
 ### Puppeteer Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `256` jobs. At the moment, total number of jobs stands at approximately `263` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
