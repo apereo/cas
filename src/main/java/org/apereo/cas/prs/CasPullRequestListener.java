@@ -133,6 +133,16 @@ public class CasPullRequestListener implements PullRequestListener {
 
     @SneakyThrows
     private boolean processInvalidPullRequest(final PullRequest pr) {
+        if (pr.isTargetBranchOnHeroku()) {
+            log.info("Pull request {} is targeted at a Heroku branch", pr);
+            return true;
+        }
+
+        if (pr.isDraft() || pr.isWorkInProgress()) {
+            log.info("Pull request {} is a work-in-progress", pr);
+            return true;
+        }
+        
         val count = repository.getPullRequestFiles(pr).stream()
             .filter(file -> {
                 var fname = file.getFilename();
