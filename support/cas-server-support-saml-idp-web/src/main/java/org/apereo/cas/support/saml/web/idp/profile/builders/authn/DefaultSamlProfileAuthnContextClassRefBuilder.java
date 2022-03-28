@@ -3,6 +3,10 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,23 +21,40 @@ import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import java.util.List;
 
 /**
- * This is {@link DefaultAuthnContextClassRefBuilder}.
+ * This is {@link DefaultSamlProfileAuthnContextClassRefBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefBuilder {
+public class DefaultSamlProfileAuthnContextClassRefBuilder implements SamlProfileAuthnContextClassRefBuilder {
 
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public String build(final SamlProfileBuilderContext context) {
-        val requiredClass = context.getRegisteredService().getRequiredAuthenticationContextClass();
+    public String build(final SamlProfileBuilderContext context) throws Exception {
+        val requiredClass = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(context.getRegisteredService().getRequiredAuthenticationContextClass());
         if (StringUtils.isNotBlank(requiredClass)) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                 requiredClass, context.getRegisteredService().getName());
+            if (ResourceUtils.doesResourceExist(requiredClass)) {
+                LOGGER.debug("Executing groovy script [{}] to determine authentication context class for [{}]",
+                    requiredClass, context.getAdaptor().getEntityId());
+                return ApplicationContextProvider.getScriptResourceCacheManager()
+                    .map(cacheMgr -> {
+                        val script = cacheMgr.resolveScriptableResource(requiredClass,
+                            requiredClass, context.getAdaptor().getEntityId());
+                        return FunctionUtils.doIfNotNull(script, () -> {
+                            val args = CollectionUtils.wrap("context", context, "logger", LOGGER);
+                            script.setBinding(args);
+                            return script.execute(args.values().toArray(), String.class, true);
+                        }, () -> null)
+                            .get();
+                    })
+                    .orElseThrow();
+            }
             return requiredClass;
         }
 

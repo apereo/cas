@@ -5,17 +5,18 @@ category: Attributes
 ---
 {% include variables.html %}
 
-
 # SAML2 Attribute Value Types
 
-By default, attribute value blocks that are created in the final SAML2 
-response do not carry any type information in the encoded XML.
+By default, attribute value blocks that are created in the final SAML2 response do not carry any type information in the encoded XML.
 You can, if necessary, enforce a particular type for an attribute value per the requirements of the SAML2 service provider, if any.
 An example of an attribute that is encoded with specific type information would be:
 
 ```xml
-<saml2:Attribute FriendlyName="givenName" Name="givenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-    <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">HelloWorld</saml2:AttributeValue>
+<saml2:Attribute FriendlyName="givenName" 
+                 Name="givenName" 
+                 NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+    <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xsi:type="xsd:string">HelloWorld</saml2:AttributeValue>
 </saml2:Attribute>
 ```
 

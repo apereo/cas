@@ -550,6 +550,7 @@ layout: null
             *   [Attribute Value Types](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-ValueTypes.html)
             *   [Metadata Management](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata.html)
             *   [NameID Selection](/cas/{{ version }}/installation/Configuring-SAML2-NameID.html)
+            *   [Authentication Context](/cas/{{ version }}/installation/Configuring-SAML2-AuthnContextClass.html)
             *   [Attribute Query](/cas/{{ version }}/installation/Configuring-SAML2-AttributeQuery.html)
             *   [Security Configuration](/cas/{{ version }}/installation/Configuring-SAML2-Security.html)
     *   [REST](#casrestprotocol)
