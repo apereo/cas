@@ -20,16 +20,36 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link DefaultAuthnContextClassRefBuilderTests}.
+ * This is {@link DefaultSamlProfileAuthnContextClassRefBuilderTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("SAML2")
-public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigurationTests {
+public class DefaultSamlProfileAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigurationTests {
     @Test
-    public void verifyOperationByService() {
-        val builder = new DefaultAuthnContextClassRefBuilder(casProperties);
+    public void verifyGroovyOperationByService() throws Exception {
+        val builder = new DefaultSamlProfileAuthnContextClassRefBuilder(casProperties);
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setRequiredAuthenticationContextClass("classpath:SamlAuthnContext.groovy");
+        val authnRequest = getAuthnRequestFor(service);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor.get())
+            .build();
+
+        val result = builder.build(buildContext);
+        assertEquals("https://refeds.org/profile/mfa", result);
+    }
+
+    @Test
+    public void verifyOperationByService() throws Exception {
+        val builder = new DefaultSamlProfileAuthnContextClassRefBuilder(casProperties);
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredAuthenticationContextClass("some-context-class");
         val authnRequest = getAuthnRequestFor(service);
@@ -47,8 +67,8 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyOperationByAuthnRequest() {
-        val builder = new DefaultAuthnContextClassRefBuilder(casProperties);
+    public void verifyOperationByAuthnRequest() throws Exception {
+        val builder = new DefaultSamlProfileAuthnContextClassRefBuilder(casProperties);
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
         val context = mock(RequestedAuthnContext.class);
@@ -67,8 +87,8 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyOperationByAssertion() {
-        val builder = new DefaultAuthnContextClassRefBuilder(casProperties);
+    public void verifyOperationByAssertion() throws Exception {
+        val builder = new DefaultSamlProfileAuthnContextClassRefBuilder(casProperties);
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
 
@@ -90,12 +110,12 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyRefedsContext() {
+    public void verifyRefedsContext() throws Exception {
         val props = new CasConfigurationProperties();
         props.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings()
             .add(String.format("https://refeds.org/profile/mfa->%s", TestMultifactorAuthenticationProvider.ID));
 
-        val builder = new DefaultAuthnContextClassRefBuilder(props);
+        val builder = new DefaultSamlProfileAuthnContextClassRefBuilder(props);
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
 

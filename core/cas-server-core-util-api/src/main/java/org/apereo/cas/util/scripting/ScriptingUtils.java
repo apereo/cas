@@ -208,7 +208,7 @@ public class ScriptingUtils {
     }
 
     /**
-     * Execute groovy script t.
+     * Execute groovy script.
      *
      * @param <T>          the type parameter
      * @param groovyScript the groovy script
@@ -218,7 +218,6 @@ public class ScriptingUtils {
      * @param failOnError  the fail on error
      * @return the t
      */
-    @SneakyThrows
     public static <T> T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Object[] args,
