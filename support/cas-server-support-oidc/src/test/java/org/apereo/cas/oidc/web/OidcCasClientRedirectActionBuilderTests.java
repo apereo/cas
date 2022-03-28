@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.http.callback.CallbackUrlResolver;
 import org.pac4j.core.http.url.UrlResolver;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 

@@ -11,7 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
 
 import lombok.val;
-import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

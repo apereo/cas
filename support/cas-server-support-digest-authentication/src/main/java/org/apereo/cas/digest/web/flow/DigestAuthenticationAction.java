@@ -14,10 +14,10 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.http.credentials.DigestCredentials;
 import org.pac4j.http.credentials.extractor.DigestAuthExtractor;
+import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletResponse;

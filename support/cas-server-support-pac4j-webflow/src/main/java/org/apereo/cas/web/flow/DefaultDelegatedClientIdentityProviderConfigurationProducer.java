@@ -19,7 +19,7 @@ import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
