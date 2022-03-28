@@ -72,7 +72,7 @@ public class WsFederationRequestBuilder {
             clients.add(c);
 
             if (cfg.getAutoRedirectType() != DelegationAutoRedirectTypes.NONE) {
-                WebUtils.putDelegatedAuthenticationProviderPrimary(context, cfg);
+                WebUtils.putDelegatedAuthenticationProviderPrimary(context, c);
             }
         }));
         WebUtils.putWsFederationDelegatedClients(context, clients);
