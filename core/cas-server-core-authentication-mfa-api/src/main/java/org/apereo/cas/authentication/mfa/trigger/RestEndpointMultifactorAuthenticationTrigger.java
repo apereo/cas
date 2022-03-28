@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,7 +82,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
         }
 
         LOGGER.debug("Contacting [{}] to inquire about [{}]", restEndpoint, principal.getId());
-        val results = callRestEndpointForMultifactor(principal, service);
+        val results = FunctionUtils.doUnchecked(() -> callRestEndpointForMultifactor(principal, service));
         if (StringUtils.isNotBlank(results)) {
             return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(results, applicationContext);
         }
@@ -108,9 +109,10 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
      * @param principal       the principal
      * @param resolvedService the resolved service
      * @return return the rest response, typically the mfa id.
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected String callRestEndpointForMultifactor(final Principal principal, final Service resolvedService) {
+    protected String callRestEndpointForMultifactor(final Principal principal,
+                                                    final Service resolvedService) throws Exception {
         HttpResponse response = null;
         try {
             val rest = casProperties.getAuthn().getMfa().getTriggers().getRest();
