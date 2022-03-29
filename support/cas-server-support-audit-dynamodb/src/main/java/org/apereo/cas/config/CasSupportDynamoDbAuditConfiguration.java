@@ -4,7 +4,9 @@ import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.DynamoDbAuditTrailManager;
 import org.apereo.cas.audit.DynamoDbAuditTrailManagerFacilitator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -25,6 +27,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  */
 @Configuration(value = "CasSupportDynamoDbAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Audit, module = "dynamodb")
 public class CasSupportDynamoDbAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbAuditTrailManager")

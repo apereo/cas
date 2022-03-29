@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -67,4 +68,11 @@ public class CoreGoogleAuthenticatorMultifactorProperties implements Serializabl
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
+
+    /**
+     * Scratch code settings.
+     */
+    @NestedConfigurationProperty
+    private GoogleAuthenticatorMultifactorScratchCodeProperties scratchCodes =
+        new GoogleAuthenticatorMultifactorScratchCodeProperties();
 }

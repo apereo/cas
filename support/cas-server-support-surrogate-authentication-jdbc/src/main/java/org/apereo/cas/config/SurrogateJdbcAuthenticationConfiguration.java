@@ -3,8 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateJdbcAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,17 +28,20 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "SurrogateJdbcAuthenticationConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication, module = "jdbc")
 public class SurrogateJdbcAuthenticationConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public SurrogateAuthenticationService surrogateAuthenticationService(final CasConfigurationProperties casProperties,
-                                                                         @Qualifier("surrogateAuthenticationJdbcDataSource")
-                                                                         final DataSource surrogateAuthenticationJdbcDataSource,
-                                                                         @Qualifier(ServicesManager.BEAN_NAME)
-                                                                         final ServicesManager servicesManager) {
+    public SurrogateAuthenticationService surrogateAuthenticationService(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("surrogateAuthenticationJdbcDataSource")
+        final DataSource surrogateAuthenticationJdbcDataSource,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val su = casProperties.getAuthn().getSurrogate();
-        return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(), new JdbcTemplate(surrogateAuthenticationJdbcDataSource),
+        return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(), 
+            new JdbcTemplate(surrogateAuthenticationJdbcDataSource),
             su.getJdbc().getSurrogateAccountQuery(), servicesManager);
     }
 

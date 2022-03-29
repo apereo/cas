@@ -10,6 +10,7 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-services")
 
+    implementation libraries.jasypt
     implementation libraries.jose4j
     implementation libraries.pac4jcore
     implementation libraries.nimbus
