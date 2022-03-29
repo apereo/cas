@@ -3,6 +3,7 @@ package org.apereo.cas.otp.repository.credentials;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.google.common.base.Splitter;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -39,9 +40,9 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      * @return the one time token account
      */
     protected OneTimeTokenAccount encode(final OneTimeTokenAccount account) {
-        String toEncode = account.getSecretKey();
+        var toEncode = account.getSecretKey();
         if (encodeScratchCodes) {
-            for (final Integer code : account.getScratchCodes()) {
+            for (val code : account.getScratchCodes()) {
                 toEncode += SEPARATOR + code;
             }
             account.setScratchCodes(new ArrayList<>());
@@ -69,12 +70,12 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      */
     protected OneTimeTokenAccount decode(final OneTimeTokenAccount account) {
         val decoded = tokenCredentialCipher.decode(account.getSecretKey());
-        val parts = decoded.split(SEPARATOR);
+        val parts = Splitter.onPattern(SEPARATOR).splitToList(decoded);
         val newAccount = account.clone();
-        newAccount.setSecretKey(parts[0]);
+        newAccount.setSecretKey(parts.get(0));
         val scratchCodes = new ArrayList<Integer>();
-        for (int i = 1; i < parts.length; i++) {
-            scratchCodes.add(Integer.parseInt(parts[i]));
+        for (int i = 1; i < parts.size(); i++) {
+            scratchCodes.add(Integer.parseInt(parts.get(i)));
         }
         newAccount.setScratchCodes(scratchCodes);
         return newAccount;
