@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
+import org.bouncycastle.jcajce.provider.asymmetric.X509;
 import org.jooq.lambda.Unchecked;
 import org.reflections.ReflectionUtils;
 import org.springframework.util.ClassUtils;
@@ -62,6 +64,58 @@ public interface CasFeatureModule {
     }
 
     enum FeatureCatalog {
+        /**
+         * CAS configuration and Spring Cloud Config.
+         */
+        CasConfiguration,
+        /**
+         * Jetty Webapp configuration.
+         */
+        Jetty,
+        /**
+         * Undertow webapp configuration.
+         */
+        Undertow,
+        /**
+         * Spring Boot Admin Server.
+         */
+        SpringBootAdmin,
+        /**
+         * WebApp and web-related functionality.
+         */
+        WebApplication,
+        /**
+         * Apache Tomcat server configuration.
+         */
+        ApacheTomcat,
+        /**
+         * Notifications and messaging.
+         */
+        Notifications,
+        /**
+         * Protocol validation.
+         */
+        Validation,
+        /**
+         * Thymeleaf and view management.
+         */
+        Thymeleaf,
+        /**
+         * Token & JWT management.
+         */
+        Tokens,
+        /**
+         * WS-federation.
+         */
+        WsFederation,
+        /**
+         * SAML functionality.
+         */
+        Saml,
+        /**
+         * WS IdP and STS functionality.
+         */
+        WsFederationIdentityProvider,
         /**
          * Authentication and login.
          */
@@ -226,6 +280,14 @@ public interface CasFeatureModule {
          * REST Protocol.
          */
         RestProtocol,
+        /**
+         * Simple multifactor authentication.
+         */
+        SimpleMFA,
+        /**
+         * X509 authentication.
+         */
+        X509,
         /**
          * Reports.
          */

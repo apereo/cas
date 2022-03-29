@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandl
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.qr.QRAuthenticationConstants;
 import org.apereo.cas.qr.authentication.JsonResourceQRAuthenticationDeviceRepository;
 import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepository;
@@ -21,6 +22,7 @@ import org.apereo.cas.qr.web.flow.QRAuthenticationValidateTokenAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -56,6 +58,7 @@ import org.springframework.webflow.execution.Action;
 @EnableWebSocketMessageBroker
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "QRAuthenticationConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "qr")
 public class QRAuthenticationConfiguration {
 
     @Configuration(value = "QRAuthenticationServiceConfiguration", proxyBeanMethods = false)
