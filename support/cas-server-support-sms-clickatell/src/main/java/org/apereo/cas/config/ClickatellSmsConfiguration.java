@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.sms.ClickatellSmsSender;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "ClickatellSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Notifications, module = "clickatell")
 public class ClickatellSmsConfiguration {
 
     @Bean

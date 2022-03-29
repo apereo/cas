@@ -12,6 +12,7 @@ import org.apereo.cas.util.ScriptingUtilsTests;
 import org.apereo.cas.util.SystemUtilsTests;
 import org.apereo.cas.util.cipher.BinaryCipherExecutorTests;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutorTests;
+import org.apereo.cas.util.cipher.JasyptNumberCipherExecutorTests;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutorTests;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutorTests;
 import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutorTests;
@@ -56,6 +57,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultCasRuntimeModuleLoaderTests.class,
     HexRandomStringGeneratorTests.class,
     RegexUtilsTests.class,
+    JasyptNumberCipherExecutorTests.class,
     StringCipherExecutorTests.class,
     BinaryCipherExecutorTests.class,
     ResourceUtilsTests.class,
