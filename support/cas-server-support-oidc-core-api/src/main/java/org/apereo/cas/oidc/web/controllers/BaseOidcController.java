@@ -4,7 +4,7 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 
 import lombok.val;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

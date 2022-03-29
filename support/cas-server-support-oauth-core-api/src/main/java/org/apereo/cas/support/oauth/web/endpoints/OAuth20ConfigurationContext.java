@@ -42,8 +42,8 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 

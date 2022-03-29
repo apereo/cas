@@ -7,8 +7,8 @@ import org.apereo.cas.web.DefaultBrowserSessionStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.session.JEESessionStore;
 
 import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;

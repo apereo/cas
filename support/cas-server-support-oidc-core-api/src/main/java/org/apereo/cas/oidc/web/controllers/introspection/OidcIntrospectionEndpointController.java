@@ -10,7 +10,7 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

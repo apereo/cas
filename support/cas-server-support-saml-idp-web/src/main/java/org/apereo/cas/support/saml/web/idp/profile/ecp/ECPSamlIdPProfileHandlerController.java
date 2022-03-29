@@ -21,9 +21,9 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.soap.messaging.context.SOAP11Context;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 
