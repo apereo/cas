@@ -2,6 +2,7 @@ package org.apereo.cas.support.x509.rest.config;
 
 import org.apereo.cas.adaptors.x509.authentication.X509CertificateExtractor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.support.x509.rest.X509RestHttpRequestHeaderCredentialFactory;
@@ -9,6 +10,7 @@ import org.apereo.cas.support.x509.rest.X509RestMultipartBodyCredentialFactory;
 import org.apereo.cas.support.x509.rest.X509RestTlsClientCertCredentialFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,6 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "X509RestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.X509, module = "rest")
 public class X509RestConfiguration {
 
     @Configuration(value = "X509RestCredentialFactoryConfiguration", proxyBeanMethods = false)

@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.CasVersion;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,6 +23,7 @@ import java.util.Properties;
  */
 @Configuration(value = "CasPropertiesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 public class CasPropertiesConfiguration {
     @Bean
     public InitializingBean casPropertiesInitializingBean(final ConfigurableEnvironment environment) {

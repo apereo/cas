@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.CasWebApplicationReady;
 import org.apereo.cas.web.CasWebApplicationReadyListener;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -21,6 +23,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableAsync
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebApplication)
 public class CasWebApplicationConfiguration {
 
     @ConditionalOnMissingBean(name = "casWebApplicationReadyListener")

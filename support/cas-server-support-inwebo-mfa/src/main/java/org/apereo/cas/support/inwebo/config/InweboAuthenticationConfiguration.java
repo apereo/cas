@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderM
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.InweboMultifactorAuthenticationProvider;
 import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationDeviceMetadataPopulator;
@@ -19,6 +20,7 @@ import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationHandler;
 import org.apereo.cas.support.inwebo.authentication.InweboCredential;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,6 +39,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "InweboAuthenticationConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
 public class InweboAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "inweboPrincipalFactory")

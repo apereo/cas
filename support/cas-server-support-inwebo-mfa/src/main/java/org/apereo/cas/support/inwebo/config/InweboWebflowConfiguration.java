@@ -49,6 +49,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "InweboWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
 public class InweboWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 

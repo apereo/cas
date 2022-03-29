@@ -2,10 +2,12 @@ package org.apereo.cas.otp.config;
 
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.otp.repository.token.CachingOneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowEventResolver;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -34,6 +36,7 @@ import java.util.Collection;
 @Configuration(value = "OneTimeTokenAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "otp")
 public class OneTimeTokenAuthenticationConfiguration {
     private static final int EXPIRE_TOKENS_IN_SECONDS = 30;
 
