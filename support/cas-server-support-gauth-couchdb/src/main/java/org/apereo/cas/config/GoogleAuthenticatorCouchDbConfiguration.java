@@ -47,13 +47,15 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
+        final CasConfigurationProperties casProperties,
         @Qualifier("googleAuthenticatorInstance")
         final IGoogleAuthenticator googleAuthenticatorInstance,
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
         final CipherExecutor googleAuthenticatorAccountCipherExecutor,
         @Qualifier("couchDbOneTimeTokenAccountRepository")
         final GoogleAuthenticatorAccountCouchDbRepository couchDbRepository) {
-        return new CouchDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, couchDbRepository, googleAuthenticatorAccountCipherExecutor);
+        return new CouchDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, couchDbRepository, googleAuthenticatorAccountCipherExecutor,
+                casProperties.getAuthn().getMfa().getGauth().getCore().isEncodeScratchCodes());
     }
 
     @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAccountRepository")

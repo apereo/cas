@@ -34,6 +34,7 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
+        final CasConfigurationProperties casProperties,
         @Qualifier("googleAuthenticatorInstance")
         final IGoogleAuthenticator googleAuthenticatorInstance,
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
@@ -41,7 +42,8 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
         @Qualifier("googleAuthenticatorTokenCredentialRepositoryFacilitator")
         final DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator googleAuthenticatorTokenCredentialRepositoryFacilitator) {
         return new DynamoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor,
-            googleAuthenticatorTokenCredentialRepositoryFacilitator);
+                casProperties.getAuthn().getMfa().getGauth().getCore().isEncodeScratchCodes(),
+                googleAuthenticatorTokenCredentialRepositoryFacilitator);
     }
 
     @Bean

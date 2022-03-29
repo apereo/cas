@@ -24,8 +24,9 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
 
     public CouchDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
                                                                final GoogleAuthenticatorAccountCouchDbRepository couchDbRepository,
-                                                               final CipherExecutor<String, String> tokenCredentialCipher) {
-        super(tokenCredentialCipher, googleAuthenticator);
+                                                               final CipherExecutor<String, String> tokenCredentialCipher,
+                                                               final boolean encodeScratchCodes) {
+        super(tokenCredentialCipher, encodeScratchCodes, googleAuthenticator);
         this.couchDbRepository = couchDbRepository;
     }
 

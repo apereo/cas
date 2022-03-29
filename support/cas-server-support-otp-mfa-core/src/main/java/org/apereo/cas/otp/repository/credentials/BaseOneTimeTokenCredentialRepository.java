@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -18,10 +19,18 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTokenCredentialRepository {
+
+    private static final String SEPARATOR = ";";
+
     /**
      * The Token credential cipher.
      */
     private final CipherExecutor<String, String> tokenCredentialCipher;
+
+    /**
+     * Whether the scratch codes should be encoded (like the secret key).
+     */
+    private final boolean encodeScratchCodes;
 
     /**
      * Encode.
@@ -30,11 +39,17 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      * @return the one time token account
      */
     protected OneTimeTokenAccount encode(final OneTimeTokenAccount account) {
-        account.setSecretKey(tokenCredentialCipher.encode(account.getSecretKey()));
+        String toEncode = account.getSecretKey();
+        if (encodeScratchCodes) {
+            for (final Integer code : account.getScratchCodes()) {
+                toEncode += SEPARATOR + code;
+            }
+            account.setScratchCodes(new ArrayList<>());
+        }
+        account.setSecretKey(tokenCredentialCipher.encode(toEncode));
         account.setUsername(account.getUsername().trim().toLowerCase());
         return account;
     }
-
 
     /**
      * Decode collection.
@@ -53,9 +68,15 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      * @return the one time token account
      */
     protected OneTimeTokenAccount decode(final OneTimeTokenAccount account) {
-        val decodedSecret = tokenCredentialCipher.decode(account.getSecretKey());
+        val decoded = tokenCredentialCipher.decode(account.getSecretKey());
+        val parts = decoded.split(SEPARATOR);
         val newAccount = account.clone();
-        newAccount.setSecretKey(decodedSecret);
+        newAccount.setSecretKey(parts[0]);
+        val scratchCodes = new ArrayList<Integer>();
+        for (int i = 1; i < parts.length; i++) {
+            scratchCodes.add(Integer.parseInt(parts[i]));
+        }
+        newAccount.setScratchCodes(scratchCodes);
         return newAccount;
     }
 }

@@ -33,8 +33,9 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
                                                                final MongoOperations mongoTemplate,
                                                                final String collectionName,
-                                                               final CipherExecutor<String, String> tokenCredentialCipher) {
-        super(tokenCredentialCipher, googleAuthenticator);
+                                                               final CipherExecutor<String, String> tokenCredentialCipher,
+                                                               final boolean encodeScratchCodes) {
+        super(tokenCredentialCipher, encodeScratchCodes, googleAuthenticator);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }

@@ -67,4 +67,9 @@ public class CoreGoogleAuthenticatorMultifactorProperties implements Serializabl
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
+
+    /**
+     * Whether the scratch codes should be encoded (like the secret key).
+     */
+    private boolean encodeScratchCodes;
 }

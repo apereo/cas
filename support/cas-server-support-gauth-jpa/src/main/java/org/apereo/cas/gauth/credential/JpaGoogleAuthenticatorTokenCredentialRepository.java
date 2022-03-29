@@ -36,8 +36,8 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     private transient EntityManager entityManager;
 
     public JpaGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
-        final IGoogleAuthenticator googleAuthenticator) {
-        super(tokenCredentialCipher, googleAuthenticator);
+        final boolean encodeScratchCodes, final IGoogleAuthenticator googleAuthenticator) {
+        super(tokenCredentialCipher, encodeScratchCodes, googleAuthenticator);
     }
 
     @Override

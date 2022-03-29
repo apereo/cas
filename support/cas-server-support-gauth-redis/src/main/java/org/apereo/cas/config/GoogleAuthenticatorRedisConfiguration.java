@@ -96,10 +96,12 @@ public class GoogleAuthenticatorRedisConfiguration {
         return BeanSupplier.of(OneTimeTokenCredentialRepository.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
+                val gauth = casProperties.getAuthn().getMfa().getGauth();
                 return new RedisGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
                     redisGoogleAuthenticatorTemplate,
                     googleAuthenticatorAccountCipherExecutor,
-                    casProperties.getAuthn().getMfa().getGauth().getRedis().getScanCount());
+                    gauth.getCore().isEncodeScratchCodes(),
+                    gauth.getRedis().getScanCount());
             })
             .otherwiseProxy()
             .get();

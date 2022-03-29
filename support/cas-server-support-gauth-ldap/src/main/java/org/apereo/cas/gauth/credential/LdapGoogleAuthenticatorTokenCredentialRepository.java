@@ -50,10 +50,11 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     private final LdapGoogleAuthenticatorMultifactorProperties ldapProperties;
 
     public LdapGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
+                                                            final boolean encodeScratchCodes,
                                                             final IGoogleAuthenticator googleAuthenticator,
                                                             final ConnectionFactory connectionFactory,
                                                             final LdapGoogleAuthenticatorMultifactorProperties ldapProperties) {
-        super(tokenCredentialCipher, googleAuthenticator);
+        super(tokenCredentialCipher, encodeScratchCodes, googleAuthenticator);
         this.connectionFactory = connectionFactory;
         this.ldapProperties = ldapProperties;
     }

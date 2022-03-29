@@ -65,7 +65,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
         googleAuthenticator = new GoogleAuthenticator(builder.build());
         tokenRepository = new CachingOneTimeTokenRepository(Caffeine.newBuilder().initialCapacity(10).build(s -> null));
         tokenCredentialRepository = new InMemoryGoogleAuthenticatorTokenCredentialRepository(
-            CipherExecutor.noOpOfStringToString(), googleAuthenticator);
+            CipherExecutor.noOpOfStringToString(), false, googleAuthenticator);
         googleAuthenticator.setCredentialRepository(new DummyCredentialRepository());
         handler = new GoogleAuthenticatorAuthenticationHandler("GAuth",
             servicesManager,

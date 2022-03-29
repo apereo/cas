@@ -62,9 +62,9 @@ public class GoogleAuthenticatorMongoDbConfiguration {
         final CipherExecutor googleAuthenticatorAccountCipherExecutor, final CasConfigurationProperties casProperties,
         @Qualifier("mongoDbGoogleAuthenticatorTemplate")
         final MongoOperations mongoDbGoogleAuthenticatorTemplate) {
-        val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
-        return new MongoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, mongoDbGoogleAuthenticatorTemplate, mongo.getCollection(),
-            googleAuthenticatorAccountCipherExecutor);
+        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        return new MongoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, mongoDbGoogleAuthenticatorTemplate, gauth.getMongo().getCollection(),
+            googleAuthenticatorAccountCipherExecutor, gauth.getCore().isEncodeScratchCodes());
     }
 
     @Bean

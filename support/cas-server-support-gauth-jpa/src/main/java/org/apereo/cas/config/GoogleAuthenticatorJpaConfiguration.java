@@ -67,11 +67,13 @@ public class GoogleAuthenticatorJpaConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
         public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
+            final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorInstance")
             final IGoogleAuthenticator googleAuthenticatorInstance,
             @Qualifier("googleAuthenticatorAccountCipherExecutor")
             final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
-            return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
+            return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor,
+                    casProperties.getAuthn().getMfa().getGauth().getCore().isEncodeScratchCodes(), googleAuthenticatorInstance);
         }
 
         @Bean

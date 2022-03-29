@@ -26,7 +26,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests extends B
 
     @Override
     public OneTimeTokenCredentialRepository getRegistry() {
-        return new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), getGoogle());
+        return new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), false, getGoogle());
     }
 
     @Override

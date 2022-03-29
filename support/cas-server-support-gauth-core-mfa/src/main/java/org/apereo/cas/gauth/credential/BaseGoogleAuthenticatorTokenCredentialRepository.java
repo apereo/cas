@@ -25,8 +25,9 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
     protected final IGoogleAuthenticator googleAuthenticator;
 
     protected BaseGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
+                                                               final boolean encodeScratchCodes,
                                                                final IGoogleAuthenticator googleAuthenticator) {
-        super(tokenCredentialCipher);
+        super(tokenCredentialCipher, encodeScratchCodes);
         this.googleAuthenticator = googleAuthenticator;
     }
 

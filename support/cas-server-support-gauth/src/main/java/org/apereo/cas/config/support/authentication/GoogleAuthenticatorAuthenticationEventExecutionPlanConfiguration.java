@@ -249,16 +249,17 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("googleAuthenticatorAccountCipherExecutor")
             final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
             val gauth = casProperties.getAuthn().getMfa().getGauth();
+            val encodeScratchCodes = gauth.getCore().isEncodeScratchCodes();
             if (gauth.getJson().getLocation() != null) {
                 return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(),
-                    googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor);
+                    googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor, encodeScratchCodes);
             }
             if (StringUtils.isNotBlank(gauth.getRest().getUrl())) {
                 return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-                    gauth, googleAuthenticatorAccountCipherExecutor);
+                    gauth, googleAuthenticatorAccountCipherExecutor, encodeScratchCodes);
             }
             return new InMemoryGoogleAuthenticatorTokenCredentialRepository(
-                googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
+                googleAuthenticatorAccountCipherExecutor, encodeScratchCodes, googleAuthenticatorInstance);
         }
     }
 
