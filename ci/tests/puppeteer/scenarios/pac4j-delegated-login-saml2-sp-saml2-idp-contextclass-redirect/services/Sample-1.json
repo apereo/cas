@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://.+/saml-sp",
+  "name" : "Sample",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "requiredAuthenticationContextClass": "https://refeds.org/profile/mfa",
+  "metadataLocation" : "http://localhost:8076/sp/saml/metadata",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "email",
+    "canonicalizationMode" : "LOWER"
+  }
+}

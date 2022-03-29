@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +36,10 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void error(final Logger logger, final String msg, final Throwable throwable) {
-        logger.error(msg, throwable);
+        FunctionUtils.doIf(logger.isDebugEnabled(),
+                unused -> logger.error(msg, throwable),
+                unused -> logger.error(msg))
+            .accept(throwable);
     }
 
     /**
@@ -65,7 +70,10 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void warn(final Logger logger, final String message, final Throwable throwable) {
-        logger.warn(message, throwable);
+        FunctionUtils.doIf(logger.isDebugEnabled(),
+                unused -> logger.warn(message, throwable),
+                unused -> logger.warn(message))
+            .accept(throwable);
     }
 
     /**

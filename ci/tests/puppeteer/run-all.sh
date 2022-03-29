@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# semicolon list of paths not to mess with
+export MSYS2_ARG_CONV_EXCL=/keystore.jwks
+
 PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCENARIOS_FOLDER=${PUPPETEER_DIR}/scenarios
 echo $SCENARIOS_FOLDER
