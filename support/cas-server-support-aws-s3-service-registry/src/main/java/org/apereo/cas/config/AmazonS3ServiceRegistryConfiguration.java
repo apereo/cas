@@ -4,9 +4,11 @@ import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.aws.s3.services.AmazonS3ServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -30,6 +32,7 @@ import java.util.Optional;
  * @since 6.3.0
  */
 @Configuration(value = "AmazonS3ServiceRegistryConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "s3")
 public class AmazonS3ServiceRegistryConfiguration {
 
     @Bean

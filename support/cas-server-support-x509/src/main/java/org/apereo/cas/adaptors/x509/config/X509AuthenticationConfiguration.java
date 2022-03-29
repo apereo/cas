@@ -31,10 +31,12 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.model.Capacity;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -66,14 +68,16 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "X509AuthenticationConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.X509)
 public class X509AuthenticationConfiguration {
 
     private static final int HEX = 16;
 
-    private static X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(final CasConfigurationProperties casProperties,
-                                                                                          final IPersonAttributeDao attributeRepository,
-                                                                                          final X509AttributeExtractor x509AttributeExtractor,
-                                                                                          final PrincipalFactory x509PrincipalFactory) {
+    private static X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(
+        final CasConfigurationProperties casProperties,
+        final IPersonAttributeDao attributeRepository,
+        final X509AttributeExtractor x509AttributeExtractor,
+        final PrincipalFactory x509PrincipalFactory) {
         val x509 = casProperties.getAuthn().getX509();
         val serialNoProperties = x509.getSerialNo();
         val personDirectory = casProperties.getPersonDirectory();

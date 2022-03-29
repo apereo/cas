@@ -35,12 +35,12 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
     private static final long serialVersionUID = 8761566449790497226L;
 
-    private final transient AuthnContextClassRefBuilder authnContextClassRefBuilder;
+    private final transient SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder;
 
     private final CasConfigurationProperties casProperties;
 
     public SamlProfileSamlAuthNStatementBuilder(final OpenSamlConfigBean configBean,
-                                                final AuthnContextClassRefBuilder authnContextClassRefBuilder,
+                                                final SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder,
                                                 final CasConfigurationProperties casProperties) {
         super(configBean);
         this.authnContextClassRefBuilder = authnContextClassRefBuilder;
@@ -48,17 +48,10 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     @Override
-    public AuthnStatement build(final SamlProfileBuilderContext context) throws SamlException {
+    public AuthnStatement build(final SamlProfileBuilderContext context) throws Exception {
         return buildAuthnStatement(context);
     }
 
-    /**
-     * Build subject locality subject locality.
-     *
-     * @param context the context
-     * @return the subject locality
-     * @throws SamlException the saml exception
-     */
     protected SubjectLocality buildSubjectLocality(final SamlProfileBuilderContext context) throws SamlException {
         val subjectLocality = SamlUtils.newSamlObject(SubjectLocality.class);
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(context.getSamlRequest());
@@ -71,7 +64,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         return subjectLocality;
     }
 
-    private AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws SamlException {
+    private AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
         val authenticationMethod = authnContextClassRefBuilder.build(context);
         var id = context.getHttpRequest() != null ? CommonUtils.safeGetParameter(context.getHttpRequest(),
             CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;

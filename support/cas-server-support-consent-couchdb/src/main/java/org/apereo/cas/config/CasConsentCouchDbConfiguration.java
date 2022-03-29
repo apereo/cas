@@ -1,11 +1,13 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.CouchDbConsentRepository;
 import org.apereo.cas.couchdb.consent.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
@@ -25,6 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CouchDbConsentConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Consent, module = "couchdb")
 public class CasConsentCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "consentCouchDbFactory")

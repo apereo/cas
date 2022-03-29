@@ -1,8 +1,10 @@
 package org.apereo.cas.support.wsfederation.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "WsFederationAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WsFederation)
 public class WsFederationAuthenticationComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "wsFederationAuthenticationComponentSerializationPlanConfigurer")

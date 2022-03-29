@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.support.CouchDbThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
@@ -22,6 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CasCouchDbThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Throttling, module = "couchdb")
 public class CasCouchDbThrottlingConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbAuthenticationThrottle")

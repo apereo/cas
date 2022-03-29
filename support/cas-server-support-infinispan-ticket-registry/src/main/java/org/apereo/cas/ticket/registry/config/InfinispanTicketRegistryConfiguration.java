@@ -1,10 +1,12 @@
 package org.apereo.cas.ticket.registry.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.InfinispanTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "InfinispanTicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "infinispan")
 public class InfinispanTicketRegistryConfiguration {
 
     private static Cache<String, Ticket> getCache(final String cacheName,

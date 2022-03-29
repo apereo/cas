@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.GoogleFirebaseCloudMessagingNotificationSender;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -27,6 +29,7 @@ import java.io.FileInputStream;
  */
 @Configuration(value = "GoogleFirebaseCloudMessagingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Notifications, module = "fcm")
 public class GoogleFirebaseCloudMessagingConfiguration {
 
     @Bean
