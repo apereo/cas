@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;

@@ -21,7 +21,7 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;

@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 
-import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.jee.context.session.JEESessionStore;
 
 /**
  * This is {@link CouchDbAuthenticationHandler}.

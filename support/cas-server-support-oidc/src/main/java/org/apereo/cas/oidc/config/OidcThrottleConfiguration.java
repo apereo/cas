@@ -11,7 +11,7 @@ import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;

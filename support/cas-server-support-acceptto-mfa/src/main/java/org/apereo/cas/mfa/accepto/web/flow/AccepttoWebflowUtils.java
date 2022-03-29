@@ -5,8 +5,8 @@ import org.apereo.cas.authentication.Authentication;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;

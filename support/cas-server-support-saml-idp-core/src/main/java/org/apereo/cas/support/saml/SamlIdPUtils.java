@@ -40,9 +40,9 @@ import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.JEEContext;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;

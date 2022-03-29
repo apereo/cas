@@ -12,11 +12,11 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
+import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 

@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.impl.BasicSAMLArtifactMap;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.JEEContext;
 
 import java.io.IOException;
 import java.util.Objects;

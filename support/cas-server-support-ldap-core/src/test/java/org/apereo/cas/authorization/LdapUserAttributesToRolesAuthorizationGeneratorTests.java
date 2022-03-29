@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.ReturnAttributes;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jee.context.session.JEESessionStore;
 
 import java.util.List;
 
