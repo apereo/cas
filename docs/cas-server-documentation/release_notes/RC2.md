@@ -68,7 +68,7 @@ Integrations with Bucket4j such as those that [throttle authentication attempts]
 
 [Dynamic Client Registration](../authentication/OIDC-Authentication-Clients.html) is now able to support an expiration date for client secrets and registration requests. Authentication requests from clients with an expired client secret blocked until the application renews its client secret. Furthermore, the client configuration endpoint is now able to accept `PATCH` requests to update existing application records, or it may also be used to renew the client secret, if and when expired.
 
-Also in a situation where the CAS is supporting open Client registration, it will now check to see if the `logo_uri` and `policy_uri` have the same host as the hosts defined in the array of `redirect_uris`.
+Also in a situation where CAS is supporting open client registration, it will now check to see if the `logo_uri` and `policy_uri` have the same host as the hosts defined in the array of `redirect_uris`.
  
 ### Delegation Redirection Strategy
 
