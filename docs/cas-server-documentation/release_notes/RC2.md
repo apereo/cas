@@ -100,6 +100,8 @@ CAS may also allow individual end-users to update certain aspects of their accou
 - Links displayed as part of an [interrupt notification](../webflow/Webflow-Customization-Interrupt.html) can now take advantage of single sign-on sessions.
 - Support for [Apache Shiro](../authentication/Shiro-Authentication.html) is now deprecated; this feature is scheduled to be removed.
 - Minor bug fixes to correct the device registration flow for [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html). 
+- Documentation improvements to take advantage of [DataTables](https://www.datatables.net/) instead to show CAS configuration properties.
+- Support for graceful shutdowns for all *embedded* servlet containers such as Apache Tomcat.
 
 ## Library Upgrades
       
