@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -30,6 +32,7 @@ import java.time.Duration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportAutoConfiguration({MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @EnableMongoHttpSession
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SessionManagement, module = "mongo")
 public class MongoSessionConfiguration {
     private static final int DURATION_MINUTES = 15;
 

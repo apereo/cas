@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "SamlIdpTicketSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdP)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 public class SamlIdPTicketSerializationConfiguration {
 
     @Bean

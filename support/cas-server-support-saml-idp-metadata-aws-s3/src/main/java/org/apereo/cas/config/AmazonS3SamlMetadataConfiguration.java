@@ -23,7 +23,7 @@ import software.amazon.awssdk.services.s3.S3Client;
  */
 @Configuration(value = "AmazonS3SamlMetadataConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Saml, module = "aws-s3")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAML, module = "aws-s3")
 public class AmazonS3SamlMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "amazonS3Client")
