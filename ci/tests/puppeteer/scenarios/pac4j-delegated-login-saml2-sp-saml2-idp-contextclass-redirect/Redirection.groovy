@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.*
 import org.apache.commons.lang3.tuple.*
 import org.pac4j.core.context.*
 import org.apereo.cas.pac4j.*
+import org.pac4j.jee.context.*
 import org.apereo.cas.web.support.*
 import org.opensaml.core.xml.schema.*
 import java.util.stream.*

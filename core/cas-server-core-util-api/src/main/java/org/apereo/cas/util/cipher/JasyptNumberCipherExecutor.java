@@ -3,6 +3,7 @@ package org.apereo.cas.util.cipher;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
+import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.util.numeric.AES256IntegerNumberEncryptor;
 
@@ -15,7 +16,7 @@ import java.security.Security;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-public class JasyptNumberCipherExecutor implements CipherExecutor<BigInteger, BigInteger> {
+public class JasyptNumberCipherExecutor implements CipherExecutor<Number, Number> {
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -33,12 +34,14 @@ public class JasyptNumberCipherExecutor implements CipherExecutor<BigInteger, Bi
     }
 
     @Override
-    public BigInteger encode(final BigInteger value, final Object[] parameters) {
-        return this.jasyptInstance.encrypt(value);
+    public Number encode(final Number value, final Object[] parameters) {
+        val input = new BigInteger(value.toString());
+        return this.jasyptInstance.encrypt(input);
     }
 
     @Override
-    public BigInteger decode(final BigInteger value, final Object[] parameters) {
-        return this.jasyptInstance.decrypt(value);
+    public Number decode(final Number value, final Object[] parameters) {
+        val input = new BigInteger(value.toString());
+        return this.jasyptInstance.decrypt(input);
     }
 }

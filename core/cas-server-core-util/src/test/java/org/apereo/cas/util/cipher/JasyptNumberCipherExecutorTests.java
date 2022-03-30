@@ -21,11 +21,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JasyptNumberCipherExecutorTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyLongOperation() throws Exception {
         val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "My Cipher");
         assertEquals("My Cipher", cipher.getName());
         val randomNumber = RandomUtils.nextLong(0, 999999999);
         val encoded = cipher.encode(BigInteger.valueOf(randomNumber));
+        assertEquals(randomNumber, cipher.decode(encoded).intValue());
+    }
+
+    @Test
+    public void verifyIntOperation() throws Exception {
+        val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "My Cipher");
+        val randomNumber = RandomUtils.nextInt(0, 9999999);
+        val encoded = cipher.encode(randomNumber);
         assertEquals(randomNumber, cipher.decode(encoded).intValue());
     }
 }
