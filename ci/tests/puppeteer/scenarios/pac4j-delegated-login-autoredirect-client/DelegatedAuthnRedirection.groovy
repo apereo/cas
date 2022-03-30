@@ -1,3 +1,9 @@
+import org.apereo.cas.web.*
+import org.apereo.cas.web.support.*
+import org.apereo.cas.configuration.model.support.pac4j.*
+import org.apereo.cas.configuration.model.support.delegation.*
+import java.util.*
+
 def run(Object[] args) {
     def requestContext = args[0]
     def service = args[1]

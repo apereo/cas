@@ -9,7 +9,8 @@ def run(Object[] args) {
     def service = args[1]
     def registeredService = args[2]
     def providers = args[3] as Set<DelegatedClientIdentityProviderConfiguration>
-    def logger = args[4]
+    def appContext = args[4]
+    def logger = args[5]
 
     def request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext)
     def cname = request.getParameter("CName") as String
