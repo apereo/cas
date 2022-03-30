@@ -2,7 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ import java.util.Properties;
 @Configuration(value = "AmazonS3BucketsCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @Slf4j
 @Getter
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "aws-s3")
 public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements PropertySourceLocator {
     /**
      * Amazon S3 CAS configuration key prefix.

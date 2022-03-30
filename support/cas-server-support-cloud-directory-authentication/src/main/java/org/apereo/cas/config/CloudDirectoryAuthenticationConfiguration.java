@@ -13,7 +13,9 @@ import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.clouddirectory.AmazonCloudDirectoryRepository;
 import org.apereo.cas.clouddirectory.DefaultAmazonCloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +36,7 @@ import software.amazon.awssdk.services.clouddirectory.CloudDirectoryClient;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CloudDirectoryAuthenticationConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "cloud-directory")
 public class CloudDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "cloudDirectoryPrincipalFactory")
@@ -46,13 +49,15 @@ public class CloudDirectoryAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cloudDirectoryAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public AuthenticationHandler cloudDirectoryAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                     @Qualifier("cloudDirectoryPrincipalFactory")
-                                                                     final PrincipalFactory cloudDirectoryPrincipalFactory,
-                                                                     @Qualifier("cloudDirectoryRepository")
-                                                                     final AmazonCloudDirectoryRepository cloudDirectoryRepository,
-                                                                     @Qualifier(ServicesManager.BEAN_NAME)
-                                                                     final ServicesManager servicesManager) {
+    public AuthenticationHandler cloudDirectoryAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("cloudDirectoryPrincipalFactory")
+        final PrincipalFactory cloudDirectoryPrincipalFactory,
+        @Qualifier("cloudDirectoryRepository")
+        final AmazonCloudDirectoryRepository cloudDirectoryRepository,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val cloud = casProperties.getAuthn().getCloudDirectory();
         val handler = new AmazonCloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager, cloudDirectoryPrincipalFactory, cloudDirectoryRepository, cloud);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cloud.getPrincipalTransformation()));
@@ -77,7 +82,8 @@ public class CloudDirectoryAuthenticationConfiguration {
         val cloud = casProperties.getAuthn().getCloudDirectory();
         val builder = CloudDirectoryClient.builder();
         AmazonClientConfigurationBuilder.prepareClientBuilder(builder,
-            ChainingAWSCredentialsProvider.getInstance(cloud.getCredentialAccessKey(), cloud.getCredentialSecretKey(), cloud.getProfilePath(), cloud.getProfileName()), cloud);
+            ChainingAWSCredentialsProvider.getInstance(cloud.getCredentialAccessKey(),
+                cloud.getCredentialSecretKey(), cloud.getProfilePath(), cloud.getProfileName()), cloud);
         return builder.build();
     }
 
@@ -89,6 +95,7 @@ public class CloudDirectoryAuthenticationConfiguration {
         final AuthenticationHandler cloudDirectoryAuthenticationHandler,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cloudDirectoryAuthenticationHandler, defaultPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
+            cloudDirectoryAuthenticationHandler, defaultPrincipalResolver);
     }
 }

@@ -38,7 +38,8 @@ public class CheckMissingConditionalOnFeature {
             .forEach(file -> {
 //                System.out.println(file.toFile().getName());
                 var text = readFile(file);
-                if (text.contains("@Configuration") && pattern.matcher(text).find() && !text.contains("@ConditionalOnFeature")) {
+                if (text.contains("@Configuration") && pattern.matcher(text).find()
+                    && !text.contains("@ConditionalOnFeature") && !text.contains("@Deprecated")) {
                     print("- Missing @ConditionalOnFeature in %s%n", file.getFileName().toString());
                     failBuild.set(true);
                 }

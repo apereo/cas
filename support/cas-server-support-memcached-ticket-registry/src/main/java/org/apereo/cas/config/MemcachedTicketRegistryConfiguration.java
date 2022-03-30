@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;
@@ -9,6 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import net.spy.memcached.transcoders.Transcoder;
@@ -28,6 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "MemcachedConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "memcached")
 public class MemcachedTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "memcachedTicketRegistryTranscoder")
@@ -46,9 +49,10 @@ public class MemcachedTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "memcachedPooledClientConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MemcachedPooledClientConnectionFactory memcachedPooledClientConnectionFactory(final CasConfigurationProperties casProperties,
-                                                                                         @Qualifier("memcachedTicketRegistryTranscoder")
-                                                                                         final Transcoder memcachedTicketRegistryTranscoder) {
+    public MemcachedPooledClientConnectionFactory memcachedPooledClientConnectionFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("memcachedTicketRegistryTranscoder")
+        final Transcoder memcachedTicketRegistryTranscoder) {
         val memcached = casProperties.getTicket()
             .getRegistry()
             .getMemcached();
