@@ -30,7 +30,7 @@ import java.util.function.Function;
  */
 @Configuration(value = "CasSamlServiceProvidersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Saml)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAML)
 @Slf4j
 public class CasSamlServiceProvidersConfiguration {
 

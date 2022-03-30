@@ -2,8 +2,10 @@ package org.apereo.cas.support.geo.config;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.support.geo.maxmind.MaxmindDatabaseGeoLocationService;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.maxmind.db.CHMCache;
 import com.maxmind.db.Reader;
@@ -26,6 +28,7 @@ import java.io.IOException;
  */
 @Configuration(value = "CasGeoLocationMaxmindConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GeoLocation)
 public class CasGeoLocationMaxmindConfiguration {
 
     private static DatabaseReader readDatabase(final Resource maxmindDatabase) throws IOException {

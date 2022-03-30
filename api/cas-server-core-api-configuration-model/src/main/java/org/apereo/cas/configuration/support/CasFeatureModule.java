@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.inspektr.audit.annotation.Audit;
-import org.bouncycastle.jcajce.provider.asymmetric.X509;
 import org.jooq.lambda.Unchecked;
 import org.reflections.ReflectionUtils;
 import org.springframework.util.ClassUtils;
@@ -65,7 +63,23 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
-         * Monitoring and statistics.
+         * HTTP session management.
+         */
+        SessionManagement,
+        /**
+         * JDBC and RDBMS.
+         */
+        JDBC,
+        /**
+         * Geo and IP location mapping.
+         */
+        GeoLocation,
+        /**
+         * Metrics and statistics.
+         */
+        Metrics,
+        /**
+         * Monitoring.
          */
         Monitoring,
         /**
@@ -115,7 +129,7 @@ public interface CasFeatureModule {
         /**
          * SAML functionality.
          */
-        Saml,
+        SAML,
         /**
          * WS IdP and STS functionality.
          */
@@ -235,15 +249,15 @@ public interface CasFeatureModule {
         /**
          * SAML IDP.
          */
-        SamlIdP,
+        SAMLIdentityProvider,
         /**
          * SAML IDP metadata management.
          */
-        SamlIdPMetadata,
+        SAMLIdentityProviderMetadata,
         /**
          * SAML SP metadata management.
          */
-        SamlServiceProviderMetadata,
+        SAMLServiceProviderMetadata,
         /**
          * OAuth.
          */

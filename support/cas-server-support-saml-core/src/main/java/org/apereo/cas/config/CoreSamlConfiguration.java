@@ -41,7 +41,7 @@ import java.util.Properties;
  */
 @Configuration(value = "CoreSamlConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Saml)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAML)
 public class CoreSamlConfiguration {
 
     private static final int POOL_SIZE = 1_000;

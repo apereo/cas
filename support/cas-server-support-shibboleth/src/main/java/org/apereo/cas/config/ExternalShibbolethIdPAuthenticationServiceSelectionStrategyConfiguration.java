@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Saml)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAML)
 public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @ConditionalOnMissingBean(name = "shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")

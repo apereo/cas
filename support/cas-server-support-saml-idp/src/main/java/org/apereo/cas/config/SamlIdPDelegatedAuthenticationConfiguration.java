@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "SamlIdPDelegatedAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdP)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 public class SamlIdPDelegatedAuthenticationConfiguration {
 
