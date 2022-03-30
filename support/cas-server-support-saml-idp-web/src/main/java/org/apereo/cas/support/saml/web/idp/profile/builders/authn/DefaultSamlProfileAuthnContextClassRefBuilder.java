@@ -39,7 +39,7 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder implements SamlProfil
         if (StringUtils.isNotBlank(requiredClass)) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                 requiredClass, context.getRegisteredService().getName());
-            if (ResourceUtils.doesResourceExist(requiredClass)) {
+            if (!ResourceUtils.isUrl(requiredClass) && ResourceUtils.doesResourceExist(requiredClass)) {
                 LOGGER.debug("Executing groovy script [{}] to determine authentication context class for [{}]",
                     requiredClass, context.getAdaptor().getEntityId());
                 return ApplicationContextProvider.getScriptResourceCacheManager()
@@ -53,7 +53,7 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder implements SamlProfil
                         }, () -> null)
                             .get();
                     })
-                    .orElseThrow();
+                    .orElseThrow(() -> new RuntimeException("Unable to locate script cache manager"));
             }
             return requiredClass;
         }

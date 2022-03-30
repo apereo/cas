@@ -4,12 +4,14 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCouchDbAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCouchDbProfileAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultProfileCouchDbRepository;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.couchdb.surrogate.SurrogateAuthorizationCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.ektorp.CouchDbConnector;
@@ -31,14 +33,16 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "SamlIdPCouchDbMetadataConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication, module = "couchdb")
 public class SurrogateCouchDbAuthenticationServiceConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateCouchDbFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public CouchDbConnectorFactory surrogateCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                           @Qualifier("defaultObjectMapperFactory")
-                                                           final ObjectMapperFactory objectMapperFactory) {
+    public CouchDbConnectorFactory surrogateCouchDbFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("defaultObjectMapperFactory")
+        final ObjectMapperFactory objectMapperFactory) {
         return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getSurrogate().getCouchDb(), objectMapperFactory);
     }
 
@@ -63,9 +67,10 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     @ConditionalOnMissingBean(name = "surrogateAuthorizationCouchDbRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public SurrogateAuthorizationCouchDbRepository surrogateAuthorizationCouchDbRepository(final CasConfigurationProperties casProperties,
-                                                                                           @Qualifier("surrogateCouchDbFactory")
-                                                                                           final CouchDbConnectorFactory surrogateCouchDbFactory) {
+    public SurrogateAuthorizationCouchDbRepository surrogateAuthorizationCouchDbRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("surrogateCouchDbFactory")
+        final CouchDbConnectorFactory surrogateCouchDbFactory) {
         val couch = casProperties.getAuthn().getSurrogate().getCouchDb();
         return new SurrogateAuthorizationCouchDbRepository(surrogateCouchDbFactory.getCouchDbConnector(), couch.isCreateIfNotExists());
     }
@@ -73,9 +78,10 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     @ConditionalOnMissingBean(name = "surrogateAuthorizationProfileCouchDbRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ProfileCouchDbRepository surrogateAuthorizationProfileCouchDbRepository(final CasConfigurationProperties casProperties,
-                                                                                   @Qualifier("surrogateCouchDbFactory")
-                                                                                   final CouchDbConnectorFactory surrogateCouchDbFactory) {
+    public ProfileCouchDbRepository surrogateAuthorizationProfileCouchDbRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("surrogateCouchDbFactory")
+        final CouchDbConnectorFactory surrogateCouchDbFactory) {
         val couch = casProperties.getAuthn().getSurrogate().getCouchDb();
         return new DefaultProfileCouchDbRepository(surrogateCouchDbFactory.getCouchDbConnector(), couch.isCreateIfNotExists());
     }

@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.RestfulSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,14 +25,16 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "SamlIdPRestMetadataConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlServiceProviderMetadata, module = "rest")
 public class SamlIdPRestfulMetadataConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolver")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
-                                                                                           @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-                                                                                           final OpenSamlConfigBean openSamlConfigBean) {
+    public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+        final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new RestfulSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }

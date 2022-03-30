@@ -305,4 +305,14 @@ public class ResourceUtils {
         }
         return false;
     }
+
+    /**
+     * Is url boolean.
+     *
+     * @param resource the resource
+     * @return the boolean
+     */
+    public static boolean isUrl(final String resource) {
+        return StringUtils.isNotBlank(resource) && resource.startsWith("http");
+    }
 }

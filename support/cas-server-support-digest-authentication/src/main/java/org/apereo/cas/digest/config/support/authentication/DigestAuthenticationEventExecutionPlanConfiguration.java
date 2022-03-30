@@ -6,8 +6,10 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.digest.DigestAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "digest")
 @Configuration(value = "DigestAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class DigestAuthenticationEventExecutionPlanConfiguration {
 

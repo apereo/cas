@@ -1,8 +1,10 @@
 package org.apereo.cas.digest.config.support.authentication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.digest.DigestCredential;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "DigestAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "digest")
 public class DigestAuthenticationComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "digestAuthenticationComponentSerializationPlanConfigurer")

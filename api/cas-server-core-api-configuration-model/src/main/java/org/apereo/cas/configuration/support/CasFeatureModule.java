@@ -65,6 +65,10 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
+         * Monitoring and statistics.
+         */
+        Monitoring,
+        /**
          * CAS configuration and Spring Cloud Config.
          */
         CasConfiguration,

@@ -1,7 +1,9 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.monitor.HazelcastHealthIndicator;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.hazelcast.core.HazelcastInstance;
 import lombok.val;
@@ -23,6 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "HazelcastMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Monitoring, module = "hazelcast")
 public class HazelcastMonitorConfiguration {
 
     @Bean

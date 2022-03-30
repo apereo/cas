@@ -9,7 +9,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -39,6 +41,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CasRemoteAuthenticationConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "remote")
 public class CasRemoteAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "remoteAddressWebflowConfigurer")
@@ -62,7 +65,8 @@ public class CasRemoteAuthenticationConfiguration {
                                                                     @Qualifier(ServicesManager.BEAN_NAME)
                                                                     final ServicesManager servicesManager) {
         val remoteAddress = casProperties.getAuthn().getRemoteAddress();
-        val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(), servicesManager, remoteAddressPrincipalFactory, remoteAddress.getOrder());
+        val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
+            servicesManager, remoteAddressPrincipalFactory, remoteAddress.getOrder());
         bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());
         return bean;
     }
@@ -77,7 +81,8 @@ public class CasRemoteAuthenticationConfiguration {
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
     }
 
     @ConditionalOnMissingBean(name = "remoteAddressPrincipalFactory")
@@ -95,7 +100,8 @@ public class CasRemoteAuthenticationConfiguration {
         final AuthenticationHandler remoteAddressAuthenticationHandler,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler, defaultPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler,
+            defaultPrincipalResolver);
     }
 
     @Bean

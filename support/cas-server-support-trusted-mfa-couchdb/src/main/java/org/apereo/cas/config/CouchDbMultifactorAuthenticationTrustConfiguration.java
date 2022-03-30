@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.trusted.MultifactorAuthenticationTrustRecordCouchDbRepository;
@@ -8,6 +9,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.CouchDbMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,15 +28,18 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CouchDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "couchdb")
 public class CouchDbMultifactorAuthenticationTrustConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustCouchDbFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public CouchDbConnectorFactory mfaTrustCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                          @Qualifier("defaultObjectMapperFactory")
-                                                          final ObjectMapperFactory objectMapperFactory) {
-        return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory);
+    public CouchDbConnectorFactory mfaTrustCouchDbFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("defaultObjectMapperFactory")
+        final ObjectMapperFactory objectMapperFactory) {
+        return new DefaultCouchDbConnectorFactory(
+            casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "couchDbTrustRecordRepository")

@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.BasicAuthenticationAction;
 import org.apereo.cas.web.flow.BasicAuthenticationCasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.BasicAuthenticationWebflowConfigurer;
@@ -34,6 +36,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CasBasicAuthenticationConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "basic")
 public class CasBasicAuthenticationConfiguration {
 
     @Bean
@@ -46,7 +49,8 @@ public class CasBasicAuthenticationConfiguration {
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        return new BasicAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        return new BasicAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
+            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
     }
 
     @ConditionalOnMissingBean(name = "basicAuthenticationWebflowConfigurer")
