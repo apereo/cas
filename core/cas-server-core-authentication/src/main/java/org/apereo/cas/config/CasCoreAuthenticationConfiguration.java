@@ -13,7 +13,9 @@ import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,7 @@ import java.util.List;
 @Configuration(value = "CasCoreAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreAuthenticationConfiguration {
 

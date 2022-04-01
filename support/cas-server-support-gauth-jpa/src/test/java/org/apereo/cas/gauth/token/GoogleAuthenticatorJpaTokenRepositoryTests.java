@@ -82,8 +82,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreWebConfiguration.class
 }, properties = "cas.jdbc.show-sql=true"
 )
-@EnableTransactionManagement
-@EnableAspectJAutoProxy
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Getter
 @Tag("JDBC")

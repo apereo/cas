@@ -36,7 +36,7 @@ import javax.sql.DataSource;
  */
 @Configuration(value = "CasConsentJdbcConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Consent, module = "jdbc")
 public class CasConsentJdbcConfiguration {
 

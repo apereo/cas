@@ -64,6 +64,10 @@ CAS configuration for [OpenID Connect](../protocol/OIDC-Protocol.html) is now ex
 
 Integrations with Bucket4j such as those that [throttle authentication attempts](../authentication/Configuring-Authentication-Throttling.html) or request [simple multifactor authentication](../mfa/Simple-Multifactor-Authentication.html) tokens are now able to construct and allocate buckets for individual requests as opposed to preparing a global bucket for the entire server instance. The allocation strategy is specific to the client IP address.
 
+### Feature Toggles
+
+Support for [feature toggles](../configuration/Configuration-Management-Extensions.html) is now extended and handled by all CAS modules.
+
 ### OpenID Connect Client Registration
 
 [Dynamic Client Registration](../authentication/OIDC-Authentication-Clients.html) is now able to support an expiration date for client secrets and registration requests. Authentication requests from clients with an expired client secret blocked until the application renews its client secret. Furthermore, the client configuration endpoint is now able to accept `PATCH` requests to update existing application records, or it may also be used to renew the client secret, if and when expired.

@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
@@ -17,6 +19,7 @@ import org.springframework.shell.jline.PromptProvider;
  */
 @Configuration(value = "CasCommandLineShellConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Core, module = "shell")
 public class CasCommandLineShellConfiguration {
 
     @Bean

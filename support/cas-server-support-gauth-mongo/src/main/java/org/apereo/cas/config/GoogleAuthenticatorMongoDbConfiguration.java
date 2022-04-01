@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @EnableScheduling
 @Configuration(value = "GoogleAuthenticatorMongoDbConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator, module = "mongo")

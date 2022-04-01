@@ -1,11 +1,13 @@
 package org.apereo.cas.logging.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.logging.web.LoggingConfigurationEndpoint;
 import org.apereo.cas.logging.web.ThreadContextMDCServletFilter;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
@@ -37,6 +39,7 @@ import java.util.HashMap;
  */
 @Configuration(value = "CasLoggingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Core)
 public class CasLoggingConfiguration {
 
     @ConditionalOnBean(value = TicketRegistry.class)

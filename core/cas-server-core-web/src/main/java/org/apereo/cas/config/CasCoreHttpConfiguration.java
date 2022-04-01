@@ -4,9 +4,11 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.DefaultCasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +42,7 @@ import java.util.ArrayList;
 @Configuration(value = "CasCoreHttpConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Core)
 public class CasCoreHttpConfiguration {
 
     @Configuration(value = "CasCoreHttpSslFactoryConfiguration", proxyBeanMethods = false)

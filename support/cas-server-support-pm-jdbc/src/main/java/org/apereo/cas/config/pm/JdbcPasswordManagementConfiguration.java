@@ -33,7 +33,7 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "JdbcPasswordManagementConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "jdbc")

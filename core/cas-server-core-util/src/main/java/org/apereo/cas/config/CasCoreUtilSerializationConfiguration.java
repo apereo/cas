@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.serialization.DefaultComponentSerializationPlan;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +26,7 @@ import java.util.List;
  */
 @Configuration(value = "CasCoreUtilSerializationConfiguration", proxyBeanMethods = false)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Core)
 public class CasCoreUtilSerializationConfiguration {
 
     @ConditionalOnMissingBean(name = "componentSerializationPlan")

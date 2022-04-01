@@ -26,7 +26,7 @@ import java.util.Optional;
  * @since 6.0.0
  */
 @Slf4j
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = "umaTransactionManager")
 @ToString
 public class JpaResourceSetRepository extends BaseResourceSetRepository {

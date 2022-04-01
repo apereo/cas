@@ -38,7 +38,7 @@ import javax.sql.DataSource;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.YubiKey, module = "jpa")
 @Configuration(value = "JpaYubiKeyConfiguration", proxyBeanMethods = false)
 public class JpaYubiKeyConfiguration {

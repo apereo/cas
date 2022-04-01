@@ -1,9 +1,11 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
@@ -32,6 +34,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "CasCookieConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Core)
 public class CasCookieConfiguration {
 
     @Configuration(value = "CasCookieCoreConfiguration", proxyBeanMethods = false)

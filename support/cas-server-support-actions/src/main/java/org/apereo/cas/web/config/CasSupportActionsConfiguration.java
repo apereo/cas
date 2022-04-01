@@ -71,7 +71,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration(value = "CasSupportActionsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 public class CasSupportActionsConfiguration {
 
     @Configuration(value = "CasSupportActionsExceptionConfiguration", proxyBeanMethods = false)

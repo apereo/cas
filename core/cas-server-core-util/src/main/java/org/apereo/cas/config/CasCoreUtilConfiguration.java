@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.feature.DefaultCasRuntimeModuleLoader;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
@@ -10,6 +11,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -46,6 +48,7 @@ import java.time.ZonedDateTime;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Core)
 public class CasCoreUtilConfiguration {
 
     @Bean

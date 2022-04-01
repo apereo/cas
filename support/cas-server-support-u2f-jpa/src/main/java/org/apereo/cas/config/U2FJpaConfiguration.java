@@ -39,7 +39,7 @@ import javax.sql.DataSource;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F, module = "jpa")
 @Configuration(value = "U2fJpaConfiguration", proxyBeanMethods = false)
 public class U2FJpaConfiguration {

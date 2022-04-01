@@ -40,6 +40,7 @@ import org.springframework.webflow.executor.FlowExecutor;
  */
 @Configuration(value = "CasWebflowAccountProfileConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
 public class CasWebflowAccountProfileConfiguration {
     private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
