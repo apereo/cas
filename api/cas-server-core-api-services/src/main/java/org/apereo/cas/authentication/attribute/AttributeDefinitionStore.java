@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -165,4 +166,12 @@ public interface AttributeDefinitionStore {
      * @return true/false
      */
     boolean isEmpty();
+
+    /**
+     * Store the definitions in a resource.
+     *
+     * @param resource the resource
+     * @return the attribute definition store
+     */
+    AttributeDefinitionStore store(Resource resource);
 }

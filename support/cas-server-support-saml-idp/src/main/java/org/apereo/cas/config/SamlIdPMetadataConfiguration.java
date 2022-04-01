@@ -22,6 +22,7 @@ import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificate
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataHealthIndicator;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCacheKey;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceDefaultCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceMetadataResolverCacheLoader;
@@ -48,6 +49,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -283,7 +285,7 @@ public class SamlIdPMetadataConfiguration {
         @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader(
+        public CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> chainingMetadataResolverCacheLoader(
             @Qualifier("samlRegisteredServiceMetadataResolvers")
             final SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers,
             @Qualifier("httpClient")
@@ -305,7 +307,7 @@ public class SamlIdPMetadataConfiguration {
         public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("chainingMetadataResolverCacheLoader")
-            final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader,
+            final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> chainingMetadataResolverCacheLoader,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlRegisteredServiceDefaultCachingMetadataResolver(
