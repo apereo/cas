@@ -10,7 +10,7 @@ def run(Object[] args) {
     def appContext = args[4]
     def logger = args[5]
 
-    def provider =  providers.first()
+    def provider = providers.first()
     logger.info("Checking ${provider.name}...")
     provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
     provider
