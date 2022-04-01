@@ -310,7 +310,7 @@ public class DefaultAttributeDefinitionStoreTests {
         val store = new DefaultAttributeDefinitionStore(defn);
         store.setScope("example.org");
         val file = File.createTempFile("attr", "json");
-        store.to(file);
+        store.store(file);
         assertTrue(file.exists());
         val store2 = new DefaultAttributeDefinitionStore(new FileSystemResource(file));
         assertEquals(store2, store);

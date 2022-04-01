@@ -23,7 +23,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -156,17 +155,13 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         return attributeDefinitions.isEmpty();
     }
 
-    /**
-     * To.
-     *
-     * @param resource the resource
-     * @return the attribute definition store
-     */
-    public AttributeDefinitionStore to(final File resource) {
+
+    @Override
+    public AttributeDefinitionStore store(final Resource resource) {
         return FunctionUtils.doUnchecked(() -> {
             val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);
             LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
-            try (val writer = Files.newBufferedWriter(resource.toPath(), StandardCharsets.UTF_8)) {
+            try (val writer = Files.newBufferedWriter(resource.getFile().toPath(), StandardCharsets.UTF_8)) {
                 writer.write(json);
                 writer.flush();
             }
