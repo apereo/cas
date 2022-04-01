@@ -217,7 +217,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
                     new WatchableGroovyScriptResource(strategy.getLocation()), applicationContext));
             }
             chain.addStrategy(new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
-                delegatedAuthenticationCookieGenerator, casProperties));
+                delegatedAuthenticationCookieGenerator, casProperties, applicationContext));
             return chain;
         }
 

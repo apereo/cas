@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedir
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
@@ -69,7 +70,9 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
                 if (StringUtils.isNotBlank(delegatedPolicy.getSelectionStrategy())) {
                     return ApplicationContextProvider.getScriptResourceCacheManager()
                         .map(cacheMgr -> {
-                            val script = cacheMgr.resolveScriptableResource(delegatedPolicy.getSelectionStrategy(),
+                            val strategy = SpringExpressionLanguageValueResolver.getInstance()
+                                .resolve(delegatedPolicy.getSelectionStrategy());
+                            val script = cacheMgr.resolveScriptableResource(strategy,
                                 String.valueOf(registeredService.getId()), registeredService.getName());
                             val args = CollectionUtils.<String, Object>wrap("requestContext", context,
                                 "service", service, "registeredService", registeredService,
