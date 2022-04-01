@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
 import org.reflections.ReflectionUtils;
 import org.springframework.util.ClassUtils;
@@ -62,6 +63,24 @@ public interface CasFeatureModule {
     }
 
     enum FeatureCatalog {
+        /**
+         * Web flow, actions and event routing core functionality.
+         */
+        Webflow,
+        /**
+         * Logout and SLO functionality.
+         */
+        Logout,
+        /**
+         * Allow CAS to be discoverable/discovered,
+         * and/or integration with service discovery systems.
+         */
+        Discovery,
+        /**
+         * Core/baseline functionality
+         * that provides ground support for a particular integration.
+         */
+        Core,
         /**
          * HTTP session management.
          */

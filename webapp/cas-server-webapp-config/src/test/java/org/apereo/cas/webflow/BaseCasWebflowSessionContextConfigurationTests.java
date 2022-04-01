@@ -132,7 +132,7 @@ import static org.junit.jupiter.api.Assertions.*;
     WebMvcAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
     @SneakyThrows(IOException.class)
     protected static void assertResponseWrittenEquals(final String response, final MockRequestContext context) {

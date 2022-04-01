@@ -4,9 +4,11 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -26,8 +28,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
  */
 @Configuration(value = "CasCoreServicesAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableAsync
+@EnableAsync(proxyTargetClass = false)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
 public class CasCoreServicesAuthenticationConfiguration {
 
     @Bean

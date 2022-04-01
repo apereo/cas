@@ -5,6 +5,8 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.bypass.audit.MultifactorAuthenticationProviderBypassAuditResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,6 +24,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CasCoreMultifactorAuthenticationAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Audit)
 public class CasCoreMultifactorAuthenticationAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casCoreMfaAuditTrailRecordResolutionPlanConfigurer")

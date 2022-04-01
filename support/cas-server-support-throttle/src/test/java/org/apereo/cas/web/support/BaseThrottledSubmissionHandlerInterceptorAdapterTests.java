@@ -72,7 +72,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.throttle.failure.rangeSeconds=1",
         "cas.authn.throttle.failure.threshold=2"
     })
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Slf4j
 public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {

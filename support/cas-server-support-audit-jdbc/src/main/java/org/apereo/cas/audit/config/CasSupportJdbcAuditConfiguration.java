@@ -49,9 +49,9 @@ import javax.sql.DataSource;
  * @since 5.0.0
  */
 @Configuration(value = "CasJdbcAuditConfiguration", proxyBeanMethods = false)
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Audit, module = "jdbc")
 public class CasSupportJdbcAuditConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.audit.jdbc.url").evenIfMissing();

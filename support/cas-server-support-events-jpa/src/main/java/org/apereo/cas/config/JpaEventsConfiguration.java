@@ -41,7 +41,7 @@ import javax.sql.DataSource;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Configuration(value = "JpaEventsConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Events, module = "jpa")
 public class JpaEventsConfiguration {

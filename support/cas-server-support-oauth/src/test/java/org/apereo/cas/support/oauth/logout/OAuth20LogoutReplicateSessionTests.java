@@ -40,8 +40,8 @@ import static org.mockito.Mockito.*;
                 "spring.main.allow-bean-definition-overriding=true",
                 "cas.authn.oauth.replicate-sessions=true"
         })
-@EnableTransactionManagement
-@EnableAspectJAutoProxy
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @Tag("OAuth")
 public class OAuth20LogoutReplicateSessionTests {
 

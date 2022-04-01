@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=false",
     "cas.authn.saml-idp.metadata.jpa.ddl-auto=create-drop",

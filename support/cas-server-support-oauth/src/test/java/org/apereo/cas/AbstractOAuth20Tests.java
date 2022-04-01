@@ -158,8 +158,8 @@ import static org.mockito.Mockito.*;
         "spring.main.allow-bean-definition-overriding=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
-@EnableAspectJAutoProxy
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @Slf4j
 public abstract class AbstractOAuth20Tests {
 

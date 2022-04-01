@@ -97,7 +97,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableWebMvc
 @Tag("WebApp")
 public class WiringConfigurationTests {

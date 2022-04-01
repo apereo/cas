@@ -31,8 +31,8 @@ import software.amazon.awssdk.core.SdkSystemSetting;
         "cas.authn.mfa.gauth.dynamo-db.local-instance=true",
         "cas.authn.mfa.gauth.dynamo-db.region=us-east-1"
     })
-@EnableTransactionManagement
-@EnableAspectJAutoProxy
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Getter
 @EnabledIfPortOpen(port = 8000)

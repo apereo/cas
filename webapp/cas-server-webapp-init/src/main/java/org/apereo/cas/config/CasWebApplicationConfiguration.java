@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Configuration(value = "CasWebApplicationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-@EnableAsync
+@EnableAsync(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebApplication)
 public class CasWebApplicationConfiguration {
 

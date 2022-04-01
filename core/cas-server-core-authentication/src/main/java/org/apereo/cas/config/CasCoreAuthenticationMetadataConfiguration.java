@@ -11,10 +11,12 @@ import org.apereo.cas.authentication.metadata.CredentialCustomFieldsAttributeMet
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -37,6 +39,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "CasCoreAuthenticationMetadataConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication)
 public class CasCoreAuthenticationMetadataConfiguration {
     private static final BeanCondition CONDITION_CLEARPASS = BeanCondition.on("cas.clearpass.cache-credential").isTrue();
 

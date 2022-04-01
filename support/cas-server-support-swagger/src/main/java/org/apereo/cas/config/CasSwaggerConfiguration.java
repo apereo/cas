@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.CasVersion;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.2.0
  */
 @Configuration(value = "CasSwaggerConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Discovery)
 public class CasSwaggerConfiguration {
 
     @Bean

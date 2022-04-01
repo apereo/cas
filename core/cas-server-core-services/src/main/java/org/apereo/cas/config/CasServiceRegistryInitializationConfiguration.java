@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.DefaultServiceRegistryInitializer;
 import org.apereo.cas.services.DefaultServiceRegistryInitializerEventListener;
@@ -19,6 +20,7 @@ import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -64,8 +66,9 @@ import java.util.Optional;
 })
 @ConditionalOnBean(ServicesManager.class)
 @Slf4j
-@EnableAspectJAutoProxy
-@EnableAsync
+@EnableAspectJAutoProxy(proxyTargetClass = false)
+@EnableAsync(proxyTargetClass = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasServiceRegistryInitializationConfiguration {
 

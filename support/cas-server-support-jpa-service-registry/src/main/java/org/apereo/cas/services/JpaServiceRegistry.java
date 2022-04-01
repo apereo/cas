@@ -26,7 +26,7 @@ import java.util.stream.LongStream;
  * @author Dmitriy Kopylenko
  * @since 3.1
  */
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER)
 @ToString
 public class JpaServiceRegistry extends AbstractServiceRegistry {

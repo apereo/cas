@@ -27,7 +27,7 @@ import java.util.Optional;
  * @since 6.5.0
  */
 @RequiredArgsConstructor
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Transactional(transactionManager = "transactionManagerOidcJwks")
 public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {

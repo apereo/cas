@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
     RefreshAutoConfiguration.class
 },
     properties = "cas.jdbc.show-sql=false")
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @Getter
 @Tag("JDBC")
 public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
