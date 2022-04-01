@@ -71,7 +71,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryFeedService")
-    public SamlIdentityProviderDiscoveryFeedService identityProviderDiscoveryFeedService(
+    public Supplier<SamlIdentityProviderDiscoveryFeedService> identityProviderDiscoveryFeedService(
         @Qualifier("samlIdentityProviderEntityParser")
         final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, 
         final CasConfigurationProperties casProperties,
@@ -83,7 +83,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
         final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
         @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor) {
-        return new DefaultSamlIdentityProviderDiscoveryFeedService(casProperties, samlIdentityProviderEntityParser.get(), builtClients,
+        return () -> new DefaultSamlIdentityProviderDiscoveryFeedService(casProperties, samlIdentityProviderEntityParser.get(), builtClients,
             new DelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer), argumentExtractor);
     }
 
