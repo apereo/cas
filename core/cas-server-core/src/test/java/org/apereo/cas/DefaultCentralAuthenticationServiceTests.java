@@ -195,14 +195,26 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     }
 
     @Test
-    public void verifyDelegateTicketGrantingTicketWithProperParams() {
-        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
-        val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService(), ctx);
-        val ctx2 = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
-            RegisteredServiceTestUtils.getHttpBasedServiceCredentials());
-        val pgt = getCentralAuthenticationService().createProxyGrantingTicket(serviceTicketId.getId(), ctx2);
-        assertNotNull(pgt);
+    public void verifyDelegateTicketGrantingTicketWithProperParamsWithRemoteTicketRegistry() {
+        val cas = (DefaultCentralAuthenticationService) getCentralAuthenticationService();
+        val originalTicketRegistry = cas.getConfigurationContext().getTicketRegistry();
+        val newTicketRegistry = new SimulateRemoteTicketRegistry();
+        try {
+            cas.getConfigurationContext().setTicketRegistry(newTicketRegistry);
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
+            val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+            val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService(), ctx);
+            val ctx2 = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
+                    RegisteredServiceTestUtils.getHttpBasedServiceCredentials());
+            val pgt = getCentralAuthenticationService().createProxyGrantingTicket(serviceTicketId.getId(), ctx2);
+            assertNotNull(pgt);
+
+            val tgt = newTicketRegistry.getTicket(ticketId.getId(), TicketGrantingTicketImpl.class);
+            assertEquals(1, tgt.getProxyGrantingTickets().size());
+
+        } finally {
+            cas.getConfigurationContext().setTicketRegistry(originalTicketRegistry);
+        }
     }
 
     @Test

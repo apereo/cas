@@ -234,4 +234,13 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     public TicketFactory getTicketFactory() {
         return this.configurationContext.getTicketFactory();
     }
+
+    /**
+     * For tests purposes, get the configuration context.
+     *
+     * @return the configuration context
+     */
+    protected CentralAuthenticationServiceContext getConfigurationContext() {
+        return configurationContext;
+    }
 }
