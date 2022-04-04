@@ -14,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.regex.Pattern;
-
 /**
  * This is {@link DefaultAdaptiveAuthenticationPolicy}.
  *
