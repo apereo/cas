@@ -13,6 +13,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.lock.LockRepository;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -33,6 +34,7 @@ public class CentralAuthenticationServiceContext {
 
     private final PrincipalFactory principalFactory;
 
+    @Setter
     private TicketRegistry ticketRegistry;
 
     private final ServicesManager servicesManager;
@@ -46,13 +48,4 @@ public class CentralAuthenticationServiceContext {
     private final ServiceMatchingStrategy serviceMatchingStrategy;
 
     private final ConfigurableApplicationContext applicationContext;
-
-    /**
-     * For tests purposes, set the ricket registry.
-     *
-     * @param ticketRegistry the new ticket registry
-     */
-    protected void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
 }
