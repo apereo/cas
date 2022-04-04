@@ -108,7 +108,7 @@ while (( "$#" )); do
     RERUN="true"
     shift 1;
     ;;
-  --bogy)
+  --bogy|--boyd)
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     DRYRUN="true"

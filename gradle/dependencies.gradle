@@ -529,19 +529,6 @@ ext.libraries = [
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                 }
         ],
-        userinfogeocoding       : [
-                dependencies.create("io.userinfo:userinfo-java:$userInfoVersion") {
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.squareup.retrofit", module: "retrofit")
-                },
-                dependencies.create("com.squareup.retrofit:retrofit:$retrofit1Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.google.code.gson", module: "gson")
-                },
-                dependencies.create("com.google.code.gson:gson:$gsonVersion") {
-                }
-        ],
         googlegeocoding         : [
                 dependencies.create("com.google.maps:google-maps-services:$googleMapsGeoCodingVersion") {
                     exclude(group: "com.google.guava", module: "guava")

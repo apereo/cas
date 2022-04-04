@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.RegexUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -48,14 +49,14 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
 
     private static boolean checkUserAgentOrClientIp(final String clientIp, final String agent,
                                                     final String mfaMethod, final String pattern) {
-        if (StringUtils.isNotBlank(agent) && agent.matches(pattern)) {
+        if (StringUtils.isNotBlank(agent) && RegexUtils.find(pattern, agent)) {
             LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
                          + "adaptive authentication and is required to use [{}]",
                 agent, clientIp, pattern, mfaMethod);
             return true;
         }
 
-        if (StringUtils.isNotBlank(clientIp) && clientIp.matches(pattern)) {
+        if (StringUtils.isNotBlank(clientIp) && RegexUtils.find(pattern, clientIp)) {
             LOGGER.debug("Current client IP [{}] matches the provided pattern [{}] for "
                          + "adaptive authentication and is required to use [{}]",
                 clientIp, pattern, mfaMethod);
@@ -73,8 +74,8 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
 
         val multifactorMap = casProperties.getAuthn().getAdaptive().getPolicy().getRequireMultifactor();
 
-        if (service == null || authentication == null) {
-            LOGGER.trace("No service or authentication is available to determine event for principal");
+        if (authentication == null) {
+            LOGGER.trace("No authentication is available to determine event for principal");
             return Optional.empty();
         }
 
@@ -135,7 +136,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
         }
 
         val address = loc.build();
-        if (address.matches(pattern)) {
+        if (RegexUtils.find(pattern, address)) {
             LOGGER.debug("Current address [{}] at [{}] matches the provided pattern [{}] for "
                          + "adaptive authentication and is required to use [{}]",
                 address, clientIp, pattern, mfaMethod);
