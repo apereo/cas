@@ -11,7 +11,7 @@ const assert = require("assert");
     await cas.click(page, "#rememberMe")
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
-    let tgc = await cas.assertTicketGrantingCookie(page);
+    let tgc = await cas.assertCookie(page);
     let date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);
 
@@ -23,7 +23,7 @@ const assert = require("assert");
 
     page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    tgc = await cas.assertTicketGrantingCookie(page);
+    tgc = await cas.assertCookie(page);
     date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);
 

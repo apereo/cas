@@ -26,7 +26,7 @@ const assert = require("assert");
     console.log(url)
     assert(url.startsWith("https://localhost:8443/cas/login"))
     await page.waitForTimeout(1000)
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
 
     console.log("Checking for SSO availability of external CAS server...")
     await cas.goto(page, "https://localhost:8444/cas/login");
@@ -34,7 +34,7 @@ const assert = require("assert");
     console.log(url)
     assert(url.startsWith("https://localhost:8444/cas/login"))
     await page.waitForTimeout(1000)
-    await cas.assertTicketGrantingCookie(page, true, "TGCEXT");
+    await cas.assertCookie(page, true, "TGCEXT");
 
     console.log("Attempting to login based on existing SSO session")
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");

@@ -11,9 +11,9 @@ const assert = require('assert');
     let cookie3 = await buildCookie(page, "OtherCookie", "/cas/", "TestCookie")
     await page.setCookie(cookie0, cookie1, cookie2, cookie3);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.assertNoTicketGrantingCookie(page);
+    await cas.assertCookie(page, false);
     await cas.loginWith(page, "casuser", "Mellon");
-    let tgc = await cas.assertTicketGrantingCookie(page);
+    let tgc = await cas.assertCookie(page);
     assert(tgc.path === "/cas");
     await browser.close();
 
@@ -22,7 +22,7 @@ const assert = require('assert');
     tgc.path = "/cas/";
     await page.setCookie(tgc, cookie3);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await browser.close();
 })();

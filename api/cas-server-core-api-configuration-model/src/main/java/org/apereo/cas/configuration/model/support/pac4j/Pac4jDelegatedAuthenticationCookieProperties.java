@@ -29,7 +29,7 @@ public class Pac4jDelegatedAuthenticationCookieProperties extends CookieProperti
     
     /**
      * Determine whether cookie settings
-     * should be enabled to track delgated authentication
+     * should be enabled to track delegated authentication
      * choices and identity providers.
      */
     private boolean enabled;

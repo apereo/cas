@@ -8,6 +8,9 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.audit.engine.enabled=false",
 
+    "--cas.authn.pac4j.cookie.enabled=true",
+    "--cas.authn.pac4j.cookie.name=Pac4jCookie",
+    
     "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
     "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
     "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",

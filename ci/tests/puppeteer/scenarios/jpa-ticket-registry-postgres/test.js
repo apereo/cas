@@ -10,7 +10,7 @@ const assert = require("assert");
 
     await cas.loginWith(page, "casuser", "Mellon");
 
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
@@ -21,7 +21,7 @@ const assert = require("assert");
     assert(url === "https://localhost:8443/cas/logout")
 
     await page.waitForTimeout(1000)
-    await cas.assertNoTicketGrantingCookie(page);
+    await cas.assertCookie(page, false);
 
     await browser.close();
     console.log(colors.green(`Login test complete.`));

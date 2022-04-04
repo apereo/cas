@@ -32,7 +32,7 @@ const cas = require('../../cas.js');
     const url = await page.url()
     console.log(`Page url: ${url}`)
     assert(url.toString().startsWith("https://localhost:8443/cas/logout"))
-    await cas.assertNoTicketGrantingCookie(page);
+    await cas.assertCookie(page, false);
 
     await cas.assertVisibility(page, '#twitter-link')
     await cas.assertVisibility(page, '#youtube-link')

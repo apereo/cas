@@ -17,7 +17,7 @@ const cas = require('../../cas.js');
     console.log("Checking for SSO Session cookie...")
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
 
     await browser.close();
 })();

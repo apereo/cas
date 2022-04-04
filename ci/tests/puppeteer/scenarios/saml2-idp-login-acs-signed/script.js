@@ -41,7 +41,7 @@ async function cleanUp(samlSpDir) {
         await cas.goto(page, "https://localhost:8443/cas/logout");
         await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, "casuser", "Mellon");
-        await cas.assertTicketGrantingCookie(page);
+        await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp")
         await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
