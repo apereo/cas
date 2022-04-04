@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
     let body = {"configuredLevel": "WARN"};
     await ["org.apereo.cas", "org.apereo.cas.web", "org.apereo.cas.web.flow"].forEach(p => {
         cas.doRequest(`https://localhost:8443/cas/actuator/loggers/${p}`, "POST",
-            {'Content-Type': 'application/json'}, 204, JSON.stringify(body));
+            {'Content-Type': 'application/json'}, 204, JSON.stringify(body, undefined, 2));
     })
     const service = "https://apereo.github.io";
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(3000);
     let ticket = await cas.assertTicketParameter(page);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await page.waitForTimeout(3000);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     console.log(body)

@@ -32,7 +32,7 @@ const cas = require('../../cas.js');
     await cas.submitForm(page, "#registerform");
     await page2.waitForTimeout(1000);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
 
     await browser.close();
 })();

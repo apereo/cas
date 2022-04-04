@@ -83,7 +83,7 @@ is now modified to receive a list of all available providers upfront for better 
 
 ### CAS Initializr Projects
 
-[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now updated to produce and sync WAR overlay project for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management-SpringCloud.html). Furthermore, along with the `6.4.x` and `6.5.x` releases of the CAS Management web application, CAS Initializr has been updated to produce WAR overlays for those builds as well.
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now updated to produce and sync WAR overlay projects for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management-SpringCloud.html). Furthermore, along with the `6.4.x` and `6.5.x` releases of the CAS Management web application, CAS Initializr has been updated to produce WAR overlays for those builds as well.
 
 ### SAML2 Authentication Context Class
 
@@ -96,7 +96,7 @@ As part of routine dependency upgrades and library maintenance, the version of t
 
 ### Puppeteer Testing Strategy
 
-The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `271` jobs. At the moment, total number of jobs stands at approximately `263` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
+The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `255` jobs. At the moment, total number of jobs stands at approximately `271` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
 
 ### Password Management
 

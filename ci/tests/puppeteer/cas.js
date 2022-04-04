@@ -40,11 +40,11 @@ exports.logr = async(text) => {
 }
 
 exports.removeDirectory = async (directory) => {
-    await this.logg(`Removing directory ${directory}`);
+    console.log(`Removing directory ${colors.green(directory)}`);
     if (fs.existsSync(directory)) {
         await fs.rmSync(directory, {recursive: true});
     }
-    await this.logg(`Removed directory ${directory}`);
+    console.log(`Removed directory ${colors.green(directory)}`);
     if (fs.existsSync(directory)) {
         await this.logr(`Removed directory still present at: ${directory}`);
     }
@@ -144,28 +144,20 @@ exports.assertInvisibility = async (page, selector) => {
     assert(element == null || await element.boundingBox() == null);
 }
 
-exports.assertTicketGrantingCookie = async (page, present= true, cookieName = "TGC") => {
-    const tgc = (await page.cookies()).filter(value => {
+
+exports.assertCookie = async (page, present= true, cookieName = "TGC") => {
+    const theCookie = (await page.cookies()).filter(value => {
         console.log(`Checking cookie ${value.name}`)
         return value.name === cookieName
     });
     if (present) {
-        assert(tgc.length !== 0);
-        console.log(`Asserting ticket-granting cookie: ${tgc[0].value}`);
-        return tgc[0];
+        assert(theCookie.length !== 0);
+        console.log(`Asserting cookie:\n${colors.green(JSON.stringify(theCookie, undefined, 2))}`);
+        return theCookie[0];
     } else {
-        assert(tgc.length === 0);
-        console.log(`Ticket-granting cookie cannot be found`);
+        assert(theCookie.length === 0);
+        console.log(`Cookie ${cookieName} cannot be found`);
     }
-}
-
-exports.assertNoTicketGrantingCookie = async (page) => {
-    let tgc = (await page.cookies()).filter(value => {
-        console.log(`Checking cookie ${value.name}`)
-        return value.name === "TGC"
-    });
-    console.log("Asserting no ticket-granting cookie: " + JSON.stringify(tgc) );
-    assert(tgc.length === 0);
 }
 
 exports.submitForm = async (page, selector) => {

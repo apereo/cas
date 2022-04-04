@@ -12,7 +12,7 @@ const path = require('path');
     console.log("Attempting to login with default credentials...")
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "p@$$word");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
 
     let configFilePath = path.join(__dirname, 'config.yml');
     const file = fs.readFileSync(configFilePath, 'utf8')
@@ -31,7 +31,7 @@ const path = require('path');
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casrefresh", "p@$$word");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
 
     await updateConfig(configFile, configFilePath, users);
     await browser.close();

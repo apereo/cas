@@ -21,6 +21,6 @@ const cas = require('../../cas.js');
     await cas.type(page,'#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await browser.close();
 })();

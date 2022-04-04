@@ -52,6 +52,6 @@ async function startWithSamlSp(page) {
     console.log(authData);
     
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
 }

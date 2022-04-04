@@ -50,7 +50,7 @@ async function login() {
         const page = await cas.newPage(browser);
         await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, `casuser${i}`, "Mellon");
-        await cas.assertTicketGrantingCookie(page);
+        await cas.assertCookie(page);
         await browser.close();
     }
 }

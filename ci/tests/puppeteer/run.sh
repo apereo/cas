@@ -179,7 +179,7 @@ if [[ "${dockerRequired}" == "true" ]]; then
     exit 0
   fi
   if [[ $dockerInstalled -ne 0 ]] ; then
-    printred "Docker engine is not running. Skipping running test"
+    printred "Docker engine is not running. Skipping running test since the test requires Docker."
     exit 0
   fi
 fi

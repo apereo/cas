@@ -33,7 +33,7 @@ async function cleanUp(samlSpDir) {
         await cas.assertInnerText(page, "#principal", "casuser")
 
         await cas.goto(page, "https://localhost:8443/cas/login");
-        await cas.assertTicketGrantingCookie(page);
+        await cas.assertCookie(page);
         await cas.assertInnerText(page, '#content div h2', "Log In Successful");
         await page.waitForTimeout(1000);
         

@@ -29,7 +29,7 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(10000)
 
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     
     await browser.close();
 })();

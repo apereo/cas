@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
 
     await cas.goto(page, "https://localhost:8443/cas/login")
     await page.waitForTimeout(2000)
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     
     await browser.close();
 })();
