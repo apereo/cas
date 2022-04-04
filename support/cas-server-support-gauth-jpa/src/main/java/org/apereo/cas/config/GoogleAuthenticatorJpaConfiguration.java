@@ -41,7 +41,7 @@ import javax.sql.DataSource;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @EnableScheduling
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator, module = "jpa")
 @Configuration(value = "GoogleAuthentiacatorJpaConfiguration", proxyBeanMethods = false)

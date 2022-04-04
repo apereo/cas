@@ -30,8 +30,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     MongoDataAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableAspectJAutoProxy
-@EnableTransactionManagement
+@EnableAspectJAutoProxy(proxyTargetClass = false)
+@EnableTransactionManagement(proxyTargetClass = false)
 @EnableScheduling
 @NoArgsConstructor
 public class CasWebApplication {

@@ -101,7 +101,7 @@ import static org.mockito.Mockito.*;
     CasCoreValidationConfiguration.class,
     BaseCasWebflowMultifactorAuthenticationTests.GeoLocationServiceTestConfiguration.class
 })
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired

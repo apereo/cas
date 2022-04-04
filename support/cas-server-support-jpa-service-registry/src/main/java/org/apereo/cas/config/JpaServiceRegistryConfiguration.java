@@ -51,7 +51,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Configuration(value = "JpaServiceRegistryConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "jpa")
 public class JpaServiceRegistryConfiguration {

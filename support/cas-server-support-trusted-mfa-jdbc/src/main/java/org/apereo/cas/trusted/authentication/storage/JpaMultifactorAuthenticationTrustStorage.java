@@ -30,7 +30,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
 public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {

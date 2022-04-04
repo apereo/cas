@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = "transactionManagerEvents")
 @ToString
 public class JpaCasEventRepository extends AbstractCasEventRepository {

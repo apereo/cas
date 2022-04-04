@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.jmx.services.ServicesManagerManagedResource;
 import org.apereo.cas.jmx.ticket.TicketRegistryManagedResource;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,7 +24,8 @@ import org.springframework.context.annotation.EnableMBeanExport;
 @Configuration(value = "CasJmxConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableMBeanExport
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Core, module = "jmx")
 public class CasJmxConfiguration {
 
     @Bean

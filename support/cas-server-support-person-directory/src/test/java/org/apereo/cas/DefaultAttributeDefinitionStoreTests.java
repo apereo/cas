@@ -53,8 +53,8 @@ import static org.mockito.Mockito.*;
         "cas.authn.attribute-repository.stub.attributes.givenName=cas-given-name",
         "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
         "cas.authn.attribute-repository.stub.attributes.mismatchedAttributeKey=someValue",
-        "cas.server.scope=cas.org",
-        "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json"
+        "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json",
+        "cas.server.scope=cas.org"
     })
 @Tag("Attributes")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -310,7 +310,7 @@ public class DefaultAttributeDefinitionStoreTests {
         val store = new DefaultAttributeDefinitionStore(defn);
         store.setScope("example.org");
         val file = File.createTempFile("attr", "json");
-        store.to(file);
+        store.store(new FileSystemResource(file));
         assertTrue(file.exists());
         val store2 = new DefaultAttributeDefinitionStore(new FileSystemResource(file));
         assertEquals(store2, store);
@@ -376,9 +376,9 @@ public class DefaultAttributeDefinitionStoreTests {
         val store = new DefaultAttributeDefinitionStore();
         store.setScope("example.org");
         val defn = DefaultAttributeDefinition.builder()
-                .key("eduPersonPrincipalName")
-                .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
-                .build();
+            .key("eduPersonPrincipalName")
+            .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+            .build();
 
         store.registerAttributeDefinition(defn);
         assertNotNull(store.locateAttributeDefinition(defn.getKey()));

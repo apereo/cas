@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,14 +23,16 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CouchDbSamlIdPFactoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider, module = "couchdb")
 public class CouchDbSamlIdPFactoryConfiguration {
 
     @ConditionalOnMissingBean(name = "samlMetadataCouchDbFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public CouchDbConnectorFactory samlMetadataCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                              @Qualifier("defaultObjectMapperFactory")
-                                                              final ObjectMapperFactory objectMapperFactory) {
+    public CouchDbConnectorFactory samlMetadataCouchDbFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("defaultObjectMapperFactory")
+        final ObjectMapperFactory objectMapperFactory) {
         return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb(), objectMapperFactory);
     }
 }

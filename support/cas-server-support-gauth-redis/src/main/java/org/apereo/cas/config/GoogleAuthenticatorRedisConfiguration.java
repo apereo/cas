@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @EnableScheduling
 @Configuration(value = "GoogleAuthenticatorRedisConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator, module = "redis")

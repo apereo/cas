@@ -36,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
     JdbcMultifactorAuthnTrustConfiguration.class,
     CasHibernateJpaConfiguration.class
 })
-@EnableTransactionManagement
-@EnableAspectJAutoProxy
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Tag("JDBC")
 @Getter

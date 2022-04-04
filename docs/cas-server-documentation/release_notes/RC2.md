@@ -64,6 +64,10 @@ CAS configuration for [OpenID Connect](../protocol/OIDC-Protocol.html) is now ex
 
 Integrations with Bucket4j such as those that [throttle authentication attempts](../authentication/Configuring-Authentication-Throttling.html) or request [simple multifactor authentication](../mfa/Simple-Multifactor-Authentication.html) tokens are now able to construct and allocate buckets for individual requests as opposed to preparing a global bucket for the entire server instance. The allocation strategy is specific to the client IP address.
 
+### Feature Toggles
+
+Support for [feature toggles](../configuration/Configuration-Management-Extensions.html) is now extended and handled by all CAS modules.
+
 ### OpenID Connect Client Registration
 
 [Dynamic Client Registration](../authentication/OIDC-Authentication-Clients.html) is now able to support an expiration date for client secrets and registration requests. Authentication requests from clients with an expired client secret blocked until the application renews its client secret. Furthermore, the client configuration endpoint is now able to accept `PATCH` requests to update existing application records, or it may also be used to renew the client secret, if and when expired.
@@ -77,20 +81,28 @@ is now modified to receive a list of all available providers upfront for better 
 
 <div class="alert alert-warning"><strong>Breaking Change!</strong><p>You will need to examine the script you have today and rewrite certain parts of it to handle the signature change.</p></div>
 
+### CAS Initializr Projects
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now updated to produce and sync WAR overlay project for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management-SpringCloud.html). Furthermore, along with the `6.4.x` and `6.5.x` releases of the CAS Management web application, CAS Initializr has been updated to produce WAR overlays for those builds as well.
+
 ### SAML2 Authentication Context Class
 
 Building a SAML2 authentication context class can now be done in more dynamic 
 ways using a [Groovy script](../installation/Configuring-SAML2-AuthnContextClass.html). 
 
+### Spring Framework RCE
+
+As part of routine dependency upgrades and library maintenance, the version of the Spring Framework used by CAS is also bumped to remove the threat of the RCE vulnerability [discussed here](https://apereo.github.io/2022/03/31/spring-vuln/).
+
 ### Puppeteer Testing Strategy
 
-The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `256` jobs. At the moment, total number of jobs stands at approximately `263` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
+The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `271` jobs. At the moment, total number of jobs stands at approximately `263` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
 
 ### Password Management
 
 CAS may also allow individual end-users to update certain aspects of their account that relate to password management in a *mini portal* like setup, such as resetting the password or updating security questions, etc.
 
-<img width="939" alt="image" src="https://user-images.githubusercontent.com/1205228/160280056-ec2244f1-acb3-44fb-93cc-ee3ac5e541e6.png">
+<img width="100%" alt="image" src="https://user-images.githubusercontent.com/1205228/160280056-ec2244f1-acb3-44fb-93cc-ee3ac5e541e6.png">
 
 ## Other Stuff
       
@@ -100,8 +112,9 @@ CAS may also allow individual end-users to update certain aspects of their accou
 - Links displayed as part of an [interrupt notification](../webflow/Webflow-Customization-Interrupt.html) can now take advantage of single sign-on sessions.
 - Support for [Apache Shiro](../authentication/Shiro-Authentication.html) is now deprecated; this feature is scheduled to be removed.
 - Minor bug fixes to correct the device registration flow for [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html). 
-- Documentation improvements to take advantage of [DataTables](https://www.datatables.net/) instead to show CAS configuration properties.
+- Documentation improvements to take advantage of [DataTables](https://www.datatables.net/) instead to show and paginate CAS configuration properties.
 - Support for graceful shutdowns for all *embedded* servlet containers such as Apache Tomcat.
+- OAuth and OpenID Connect userinfo/profile endpoints are now able to accept `application/jwt` as a supported content type.
 
 ## Library Upgrades
       
@@ -120,6 +133,7 @@ CAS may also allow individual end-users to update certain aspects of their accou
 - Hazelcast
 - InfluxDb
 - Micrometer
+- Hibernate
 - MariaDb
 - Oshi
 - Okta

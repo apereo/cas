@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
@@ -39,16 +40,17 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     private static final int MAX_CACHE_SIZE = 10_000;
 
-    private final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
+    private final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> chainingMetadataResolverCacheLoader;
 
     private final LoadingCache<SamlRegisteredServiceCacheKey, MetadataResolver> cache;
 
     @Getter
     private final OpenSamlConfigBean openSamlConfigBean;
 
-    public SamlRegisteredServiceDefaultCachingMetadataResolver(final Duration metadataCacheExpiration,
-                                                               final SamlRegisteredServiceMetadataResolverCacheLoader loader,
-                                                               final OpenSamlConfigBean openSamlConfigBean) {
+    public SamlRegisteredServiceDefaultCachingMetadataResolver(
+        final Duration metadataCacheExpiration,
+        final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> loader,
+        final OpenSamlConfigBean openSamlConfigBean) {
         this.openSamlConfigBean = openSamlConfigBean;
         this.chainingMetadataResolverCacheLoader = loader;
         this.cache = Caffeine.newBuilder()
@@ -80,11 +82,11 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                     invalidate(service, criteriaSet);
                 }
                 LOGGER.warn("SAML metadata resolver [{}] obtained from the cache is "
-                        + "unable to produce/resolve valid metadata for [{}]. Metadata resolver cache entry with key [{}] "
-                        + "has been invalidated. Retry attempt: [{}]",
+                            + "unable to produce/resolve valid metadata for [{}]. Metadata resolver cache entry with key [{}] "
+                            + "has been invalidated. Retry attempt: [{}]",
                     resolver.getId(), service.getMetadataLocation(), cacheKey.getId(), retryContext.getRetryCount());
                 throw new SamlException("Unable to locate a valid SAML metadata resolver for "
-                    + service.getMetadataLocation() + " to locate " + criteriaSet);
+                                        + service.getMetadataLocation() + " to locate " + criteriaSet);
             }
             return resolver;
         });
