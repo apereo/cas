@@ -17,7 +17,7 @@ import org.springframework.core.io.Resource;
 @RequiredArgsConstructor
 @Slf4j
 public class GroovyUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyUniqueTicketIdGenerator(final Resource groovyResource) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyResource);

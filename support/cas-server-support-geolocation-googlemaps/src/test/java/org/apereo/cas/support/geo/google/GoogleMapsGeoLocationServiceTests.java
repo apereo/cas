@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     GoogleMapsGeoCodingConfiguration.class
-}, properties = "cas.google-maps.api-key=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
+}, properties = "cas.geo-location.google-maps.api-key=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
 @Tag("Simple")
 public class GoogleMapsGeoLocationServiceTests {
     @Autowired

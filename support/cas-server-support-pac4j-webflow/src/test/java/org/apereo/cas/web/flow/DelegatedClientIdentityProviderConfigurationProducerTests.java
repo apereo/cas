@@ -49,8 +49,11 @@ public class DelegatedClientIdentityProviderConfigurationProducerTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        accessStrategy.setDelegatedAuthenticationPolicy(
-            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(List.of("SAML2Client"), false, false));
+        val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        policy.setAllowedProviders(List.of("SAML2Client"));
+        policy.setPermitUndefined(false);
+
+        accessStrategy.setDelegatedAuthenticationPolicy(policy);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://delegated2.example.org");
         registeredService.setAccessStrategy(accessStrategy);
         servicesManager.save(registeredService);
@@ -68,8 +71,10 @@ public class DelegatedClientIdentityProviderConfigurationProducerTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        accessStrategy.setDelegatedAuthenticationPolicy(
-            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(List.of("CasClient"), false, true));
+        val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        policy.setAllowedProviders(List.of("CasClient"));
+        policy.setPermitUndefined(false);
+        accessStrategy.setDelegatedAuthenticationPolicy(policy);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://delegated.example.org");
         registeredService.setAccessStrategy(accessStrategy);
         servicesManager.save(registeredService);

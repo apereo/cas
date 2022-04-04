@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
+import org.apereo.cas.util.RegexUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,9 +52,9 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
             && StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getPolicy().getRejectCountries())) {
             val loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
-                LOGGER.debug("Determined geolocation to be [{}]", loc);
+                LOGGER.debug("Determined geolocation for [{}] to be [{}]", clientIp, loc);
                 if (isGeoLocationCountryRejected(loc)) {
-                    LOGGER.warn("Client [{}] is rejected for authentication", clientIp);
+                    LOGGER.warn("Client [{}] is rejected for authentication based on country location", clientIp);
                     return false;
                 }
             } else {
@@ -67,19 +68,19 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     private boolean isGeoLocationCountryRejected(final GeoLocationResponse finalLoc) {
         val rejectCountries = this.adaptiveAuthenticationProperties.getPolicy().getRejectCountries();
         return StringUtils.isNotBlank(rejectCountries)
-            && Pattern.compile(rejectCountries).matcher(finalLoc.build()).find();
+               && RegexUtils.find(rejectCountries, finalLoc.build());
     }
 
     private boolean isUserAgentRejected(final String userAgent) {
         val rejectBrowsers = this.adaptiveAuthenticationProperties.getPolicy().getRejectBrowsers();
         return StringUtils.isNotBlank(rejectBrowsers)
-            && Pattern.compile(rejectBrowsers).matcher(userAgent).find();
+               && RegexUtils.find(rejectBrowsers, userAgent);
     }
 
     private boolean isIpAddressRejected(final RequestContext requestContext, final String clientIp) {
         LOGGER.trace("Located client IP address as [{}]", clientIp);
         val ipResult = ipAddressIntelligenceService.examine(requestContext, clientIp);
-        if (ipResult.isBanned()) {
+        if (ipResult == null || ipResult.isBanned()) {
             LOGGER.warn("Client IP [{}] is banned", clientIp);
             return true;
         }
