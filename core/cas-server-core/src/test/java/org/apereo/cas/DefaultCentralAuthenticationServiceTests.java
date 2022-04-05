@@ -200,7 +200,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService(), ctx);
         val ctx2 = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
-                RegisteredServiceTestUtils.getHttpBasedServiceCredentials());
+            RegisteredServiceTestUtils.getHttpBasedServiceCredentials());
         val pgt = getCentralAuthenticationService().createProxyGrantingTicket(serviceTicketId.getId(), ctx2);
         assertNotNull(pgt);
     }
