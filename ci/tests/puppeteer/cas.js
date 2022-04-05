@@ -327,31 +327,6 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     });
 }
 
-exports.stopSamlSp = async (gradleDir, deleteDir= true) => {
-    let args = ['appStop', '-q', '--no-daemon'];
-    await this.logg(`Stopping SAML SP process in ${gradleDir} with ${args}`);
-    return this.runGradle(gradleDir, args, (code) => {
-        console.log(`Stopped child process exited with code ${code}`);
-        if (deleteDir) {
-            this.sleep(3000);
-            this.removeDirectory(gradleDir);
-        }
-    });
-}
-
-exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts = []) => {
-    let keystorePath = path.normalize(process.env.CAS_KEYSTORE);
-    let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon',
-        '-DidpMetadataType=idpMetadataFile',
-        `-DidpMetadata=${idpMetadataPath}`,
-        `-Dsp.sslKeystorePath=${keystorePath}`];
-    args = args.concat(samlOpts);
-    await this.logg(`Launching SAML2 SP in ${samlSpDir} with ${args}`);
-    return this.runGradle(samlSpDir, args, (code) => {
-        console.log(`Child process exited with code ${code}`);
-    });
-}
-
 exports.shutdownCas = async (baseUrl) => {
     await this.logg(`Stopping CAS via shutdown actuator`);
     const response = await this.doRequest(`${baseUrl}/actuator/shutdown`,

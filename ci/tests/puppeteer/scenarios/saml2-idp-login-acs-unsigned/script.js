@@ -2,16 +2,11 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const cas = require('../../cas.js');
 
-async function cleanUp(samlSpDir) {
-    console.log("Killing SAML2 SP process...");
-    await cas.stopSamlSp(samlSpDir);
+async function cleanUp() {
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
 }
 
 (async () => {
-    let samlSpDir = path.join(__dirname, '/saml-sp');
-    let idpMetadataPath = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    await cas.launchSamlSp(idpMetadataPath, samlSpDir, ['-DacsUrl=https://httpbin.org/post']);
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
@@ -37,9 +32,9 @@ async function cleanUp(samlSpDir) {
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS")
 
         await browser.close();
-        await cleanUp(samlSpDir);
+        await cleanUp();
     }, async error => {
-        await cleanUp(samlSpDir);
+        await cleanUp();
         console.log(error);
         throw error;
     })
