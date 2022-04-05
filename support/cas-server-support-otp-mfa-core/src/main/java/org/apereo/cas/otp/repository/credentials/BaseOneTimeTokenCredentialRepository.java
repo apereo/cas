@@ -24,6 +24,11 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
     private final CipherExecutor<String, String> tokenCredentialCipher;
 
     /**
+     * The scratch codes cipher.
+     */
+    private final CipherExecutor<Number, Number> scratchCodesCipher;
+
+    /**
      * Encode.
      *
      * @param account the account
@@ -31,6 +36,7 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      */
     protected OneTimeTokenAccount encode(final OneTimeTokenAccount account) {
         account.setSecretKey(tokenCredentialCipher.encode(account.getSecretKey()));
+        account.setScratchCodes(account.getScratchCodes().stream().map(code -> scratchCodesCipher.encode(code)).collect(Collectors.toList()));
         account.setUsername(account.getUsername().trim().toLowerCase());
         return account;
     }
@@ -54,8 +60,10 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      */
     protected OneTimeTokenAccount decode(final OneTimeTokenAccount account) {
         val decodedSecret = tokenCredentialCipher.decode(account.getSecretKey());
+        val decodedScratchCodes = account.getScratchCodes().stream().map(code -> scratchCodesCipher.decode(code)).collect(Collectors.toList());
         val newAccount = account.clone();
         newAccount.setSecretKey(decodedSecret);
+        newAccount.setScratchCodes(decodedScratchCodes);
         return newAccount;
     }
 }

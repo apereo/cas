@@ -41,10 +41,12 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
         final IGoogleAuthenticator googleAuthenticatorInstance,
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
         final CipherExecutor googleAuthenticatorAccountCipherExecutor,
+        @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")
+        final CipherExecutor googleAuthenticatorScratchCodesCipherExecutor,
         @Qualifier("googleAuthenticatorTokenCredentialRepositoryFacilitator")
         final DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator googleAuthenticatorTokenCredentialRepositoryFacilitator) {
         return new DynamoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor,
-            googleAuthenticatorTokenCredentialRepositoryFacilitator);
+                googleAuthenticatorScratchCodesCipherExecutor, googleAuthenticatorTokenCredentialRepositoryFacilitator);
     }
 
     @Bean

@@ -39,8 +39,9 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
         final IGoogleAuthenticator googleAuthenticator,
         final CasRedisTemplate<String, List<? extends OneTimeTokenAccount>> template,
         final CipherExecutor<String, String> tokenCredentialCipher,
+        final CipherExecutor<Number, Number> scratchCodesCipher,
         final long scanCount) {
-        super(tokenCredentialCipher, googleAuthenticator);
+        super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.template = template;
         this.scanCount = scanCount;
     }

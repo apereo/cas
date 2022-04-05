@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.val;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseGoogleAuthenticatorTokenCredentialRepository}.
@@ -25,8 +26,9 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
     protected final IGoogleAuthenticator googleAuthenticator;
 
     protected BaseGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
+                                                               final CipherExecutor<Number, Number> scratchCodesCipher,
                                                                final IGoogleAuthenticator googleAuthenticator) {
-        super(tokenCredentialCipher);
+        super(tokenCredentialCipher, scratchCodesCipher);
         this.googleAuthenticator = googleAuthenticator;
     }
 
@@ -37,7 +39,7 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
             .username(username)
             .secretKey(key.getKey())
             .validationCode(key.getVerificationCode())
-            .scratchCodes(key.getScratchCodes())
+            .scratchCodes(key.getScratchCodes().stream().map(c -> c.intValue()).collect(Collectors.toList()))
             .name(UUID.randomUUID().toString())
             .build();
     }

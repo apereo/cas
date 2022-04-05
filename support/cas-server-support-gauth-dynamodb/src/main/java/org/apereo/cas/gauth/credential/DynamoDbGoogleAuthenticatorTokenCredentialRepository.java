@@ -21,8 +21,9 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     public DynamoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
                                                                 final CipherExecutor<String, String> tokenCredentialCipher,
+                                                                final CipherExecutor<Number, Number> scratchCodesCipher,
                                                                 final DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator facilitator) {
-        super(tokenCredentialCipher, googleAuthenticator);
+        super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.facilitator = facilitator;
     }
 

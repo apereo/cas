@@ -36,4 +36,13 @@ public class JasyptNumberCipherExecutorTests {
         val encoded = cipher.encode(randomNumber);
         assertEquals(randomNumber, cipher.decode(encoded).intValue());
     }
+
+    @Test
+    public void verifyDecodeTwice() throws Exception {
+        val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "My Cipher");
+        val randomNumber = RandomUtils.nextInt(0, 9999999);
+        val encoded = cipher.encode(randomNumber);
+        val decoded = cipher.decode(cipher.decode(encoded));
+        assertEquals(randomNumber, decoded.intValue());
+    }
 }
