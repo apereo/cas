@@ -17,10 +17,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This is {@link InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests}.
+ * This is {@link InMemoryGoogleAuthenticatorTokenCredentialRepositoryEncodingTests}.
  *
- * @author Misagh Moayyed
- * @since 5.3.0
+ * @author Jerome LELEU
+ * @since 6.6.0
  */
 @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
