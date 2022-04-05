@@ -20,7 +20,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.Synchronized;
@@ -57,7 +56,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * Configuration context.
      */
-    @Getter
     protected final CentralAuthenticationServiceContext configurationContext;
 
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)

@@ -13,7 +13,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.lock.LockRepository;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -34,8 +33,7 @@ public class CentralAuthenticationServiceContext {
 
     private final PrincipalFactory principalFactory;
 
-    @Setter
-    private TicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
 
     private final ServicesManager servicesManager;
 
