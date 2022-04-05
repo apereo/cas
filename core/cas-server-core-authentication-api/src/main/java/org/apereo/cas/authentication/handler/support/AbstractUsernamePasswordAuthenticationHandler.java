@@ -76,19 +76,16 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) {
-        return FunctionUtils.doUnchecked(() -> {
-            val originalUserPass = (UsernamePasswordCredential) credential;
-            val userPass = (UsernamePasswordCredential) credential.getClass().getDeclaredConstructor().newInstance();
-
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+        val originalUserPass = (UsernamePasswordCredential) credential;
+        val userPass = FunctionUtils.doUnchecked(() -> (UsernamePasswordCredential) credential.getClass().getDeclaredConstructor().newInstance());
+        FunctionUtils.doUnchecked(u -> {
             BeanUtils.copyProperties(userPass, originalUserPass);
-
             transformUsername(userPass);
             transformPassword(userPass);
-
-            LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
-            return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
         });
+        LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
+        return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
     }
 
     /**
