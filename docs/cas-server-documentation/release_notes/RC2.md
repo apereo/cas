@@ -96,13 +96,17 @@ As part of routine dependency upgrades and library maintenance, the version of t
 
 ### Puppeteer Testing Strategy
 
-The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `255` jobs. At the moment, total number of jobs stands at approximately `271` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
+The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `255` jobs. At the moment, total number of jobs stands at approximately `274` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
 
 ### Password Management
 
 CAS may also allow individual end-users to update certain aspects of their account that relate to password management in a *mini portal* like setup, such as resetting the password or updating security questions, etc.
 
 <img width="100%" alt="image" src="https://user-images.githubusercontent.com/1205228/160280056-ec2244f1-acb3-44fb-93cc-ee3ac5e541e6.png">
+
+### Groovy GeoLocation
+
+Authentication requests can be mapped and geo-tracked to [physical locations](authentication/GeoTracking-Authentication-Requests.html) using Groovy scripts. 
 
 ## Other Stuff
       

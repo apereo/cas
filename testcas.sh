@@ -219,6 +219,9 @@ while (( "$#" )); do
             config|casconfig|ccfg|cfg|cas-config|casconfiguration)
                 task+="testCasConfiguration "
                 ;;
+            geolocation|geo)
+                task+="testGeoLocation"
+                ;;
             groovy|script)
                 task+="testGroovy "
                 ;;
