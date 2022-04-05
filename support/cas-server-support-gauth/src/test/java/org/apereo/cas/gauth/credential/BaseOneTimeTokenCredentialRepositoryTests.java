@@ -166,8 +166,8 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(acct2.getUsername(), acct3.getUsername());
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
         assertEquals(acct2.getSecretKey(), acct3.getSecretKey());
-        assertEquals(acct2.getScratchCodes().stream().sorted().collect(Collectors.toList()),
-            acct3.getScratchCodes().stream().sorted().collect(Collectors.toList()));
+        assertEquals(acct2.getScratchCodes().stream().sorted().map(n -> n.intValue()).collect(Collectors.toList()),
+            acct3.getScratchCodes().stream().sorted().map(n -> n.intValue()).collect(Collectors.toList()));
         repo.delete(acct3.getId());
     }
 

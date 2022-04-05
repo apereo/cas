@@ -73,8 +73,11 @@ public class GoogleAuthenticatorJpaConfiguration {
             @Qualifier("googleAuthenticatorInstance")
             final IGoogleAuthenticator googleAuthenticatorInstance,
             @Qualifier("googleAuthenticatorAccountCipherExecutor")
-            final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
-            return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
+            final CipherExecutor googleAuthenticatorAccountCipherExecutor,
+            @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")
+            final CipherExecutor googleAuthenticatorScratchCodesCipherExecutor) {
+            return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor,
+                    googleAuthenticatorScratchCodesCipherExecutor, googleAuthenticatorInstance);
         }
 
         @Bean

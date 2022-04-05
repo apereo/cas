@@ -52,7 +52,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     public void verifyFails() throws Exception {
         val resource = mock(Resource.class);
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(resource,
-            googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString());
+            googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         assertTrue(repo.load().isEmpty());
         assertNull(repo.update(OneTimeTokenAccount.builder().build()));
         assertEquals(0, repo.count());
@@ -69,7 +69,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     @Test
     public void verifyNotExists() {
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new ClassPathResource("acct-bad.json"),
-            googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString());
+            googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         assertTrue(repo.get("casuser").isEmpty());
     }
 
@@ -78,7 +78,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
         val file = File.createTempFile("account", ".json");
         FileUtils.writeStringToFile(file, "{}", StandardCharsets.UTF_8);
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new FileSystemResource(file),
-            googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString());
+            googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         assertTrue(repo.get("casuser").isEmpty());
         repo.deleteAll();
         assertTrue(repo.load().isEmpty());
@@ -96,7 +96,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     @Test
     public void verifyBadResource() throws Exception {
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new UrlResource(new URL("https://httpbin.org/get")),
-            googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString());
+            googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         assertTrue(repo.get("casuser").isEmpty());
     }
 }

@@ -90,6 +90,8 @@ public class GoogleAuthenticatorRedisConfiguration {
         final IGoogleAuthenticator googleAuthenticatorInstance,
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
         final CipherExecutor googleAuthenticatorAccountCipherExecutor,
+        @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")
+        final CipherExecutor googleAuthenticatorScratchCodesCipherExecutor,
         @Qualifier("redisGoogleAuthenticatorTemplate")
         final CasRedisTemplate redisGoogleAuthenticatorTemplate,
         final CasConfigurationProperties casProperties) throws Exception {
@@ -99,6 +101,7 @@ public class GoogleAuthenticatorRedisConfiguration {
                 return new RedisGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
                     redisGoogleAuthenticatorTemplate,
                     googleAuthenticatorAccountCipherExecutor,
+                    googleAuthenticatorScratchCodesCipherExecutor,
                     casProperties.getAuthn().getMfa().getGauth().getRedis().getScanCount());
             })
             .otherwiseProxy()
