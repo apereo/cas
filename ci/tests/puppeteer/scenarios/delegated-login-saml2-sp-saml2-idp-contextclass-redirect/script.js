@@ -2,17 +2,12 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const cas = require('../../cas.js');
 
-async function cleanUp(samlSpDir) {
-    console.log("Killing SAML2 SP process...");
-    await cas.stopSamlSp(samlSpDir);
+async function cleanUp() {
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     console.log('Cleanup done');
 }
 
 (async () => {
-    let samlSpDir = path.join(__dirname, '/saml-sp');
-    let idpMetadataPath = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    await cas.launchSamlSp(idpMetadataPath, samlSpDir, ['-DauthnContext=https://refeds.org/profile/mfa']);
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         try {
@@ -32,10 +27,10 @@ async function cleanUp(samlSpDir) {
             await cas.assertInnerText(page, "#authnContextClass", "https://refeds.org/profile/mfa")
         } finally {
             await browser.close();
-            await cleanUp(samlSpDir);
+            await cleanUp();
         }
     }, async error => {
-        await cleanUp(samlSpDir);
+        await cleanUp();
         console.log(error);
         throw error;
     })
