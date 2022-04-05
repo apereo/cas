@@ -146,8 +146,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                         return new JasyptNumberCipherExecutor(key, "googleAuthenticatorScratchCodesCipherExecutor");
                     })
                     .otherwise(() -> {
-                        LOGGER.warn("Google Authenticator scratch codes encryption/signing is turned off. "
-                                + "Consider turning on encryption, signing to securely and safely store scratch codes.");
+                        LOGGER.warn("Google Authenticator scratch codes encryption key is not defined. "
+                                + "Consider defining the encryption key to securely and safely store scratch codes.");
                         return CipherExecutor.noOp();
                     })
                     .get();
