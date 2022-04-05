@@ -3,6 +3,7 @@ package org.apereo.cas.cosmosdb;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.cosmosdb.BaseCosmosDbProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.azure.cosmos.ConsistencyLevel;
@@ -17,7 +18,6 @@ import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.ThroughputProperties;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.util.ReflectionUtils;
@@ -34,7 +34,6 @@ public class CosmosDbObjectFactory {
 
     private final CosmosClient client;
 
-    @SneakyThrows
     public CosmosDbObjectFactory(final BaseCosmosDbProperties properties,
                                  final CasSSLContext casSSLContext) {
         this.properties = properties;
@@ -55,17 +54,19 @@ public class CosmosDbObjectFactory {
             .endpointDiscoveryEnabled(properties.isEndpointDiscoveryEnabled())
             .directMode();
         LOGGER.debug("Building CosmosDb client for [{}]", uri);
-        val sslContext = SslContextBuilder
-            .forClient()
-            .sslProvider(SslProvider.JDK)
-            .trustManager(casSSLContext.getTrustManagerFactory())
-            .build();
-        val configsMethod = ReflectionUtils.findRequiredMethod(builder.getClass(), "configs");
-        configsMethod.trySetAccessible();
-        val configs = (Configs) configsMethod.invoke(builder);
-        val sslContextField = ReflectionUtils.findRequiredField(configs.getClass(), "sslContext");
-        sslContextField.trySetAccessible();
-        sslContextField.set(configs, sslContext);
+        FunctionUtils.doUnchecked(unused -> {
+            val sslContext = SslContextBuilder
+                .forClient()
+                .sslProvider(SslProvider.JDK)
+                .trustManager(casSSLContext.getTrustManagerFactory())
+                .build();
+            val configsMethod = ReflectionUtils.findRequiredMethod(builder.getClass(), "configs");
+            configsMethod.trySetAccessible();
+            val configs = (Configs) configsMethod.invoke(builder);
+            val sslContextField = ReflectionUtils.findRequiredField(configs.getClass(), "sslContext");
+            sslContextField.trySetAccessible();
+            sslContextField.set(configs, sslContext);
+        });
         this.client = builder.buildClient();
     }
 

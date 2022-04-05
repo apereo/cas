@@ -5,11 +5,11 @@ import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import software.amazon.awssdk.core.SdkBytes;
@@ -135,18 +135,19 @@ public class DynamoDbServiceRegistryFacilitator {
      *
      * @param deleteTables the delete tables
      */
-    @SneakyThrows
     public void createServicesTable(final boolean deleteTables) {
-        DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-            dynamoDbProperties.getTableName(), deleteTables,
-            List.of(AttributeDefinition.builder()
-                .attributeName(ColumnNames.ID.getColumnName())
-                .attributeType(ScalarAttributeType.S)
-                .build()),
-            List.of(KeySchemaElement.builder()
-                .attributeName(ColumnNames.ID.getColumnName())
-                .keyType(KeyType.HASH)
-                .build()));
+        FunctionUtils.doUnchecked(unused -> {
+            DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+                    dynamoDbProperties.getTableName(), deleteTables,
+                    List.of(AttributeDefinition.builder()
+                        .attributeName(ColumnNames.ID.getColumnName())
+                        .attributeType(ScalarAttributeType.S)
+                        .build()),
+                    List.of(KeySchemaElement.builder()
+                        .attributeName(ColumnNames.ID.getColumnName())
+                        .keyType(KeyType.HASH)
+                        .build()));
+        });
     }
 
     /**

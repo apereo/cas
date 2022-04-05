@@ -10,12 +10,12 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -148,7 +148,6 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @param context           the context
      * @return the logout request
      */
-    @SneakyThrows
     protected SingleLogoutRequestContext createLogoutRequest(final String ticketId,
                                                              final WebApplicationService selectedService,
                                                              final RegisteredService registeredService,
@@ -157,7 +156,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .ticketId(ticketId)
             .service(selectedService)
-            .logoutUrl(new URL(logoutUrl.getUrl()))
+            .logoutUrl(FunctionUtils.doUnchecked(() -> new URL(logoutUrl.getUrl())))
             .logoutType(logoutUrl.getLogoutType())
             .registeredService(registeredService)
             .executionRequest(context)

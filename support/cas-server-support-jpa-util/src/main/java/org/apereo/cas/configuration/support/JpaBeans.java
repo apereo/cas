@@ -7,7 +7,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -73,7 +72,6 @@ public class JpaBeans {
      * @param jpaProperties the jpa properties
      * @return the data source
      */
-    @SneakyThrows
     public static CloseableDataSource newDataSource(final AbstractJpaProperties jpaProperties) {
         val dataSourceName = jpaProperties.getDataSourceName();
 
@@ -96,10 +94,10 @@ public class JpaBeans {
         bean.setJdbcUrl(url);
         bean.setUsername(jpaProperties.getUser());
         bean.setPassword(jpaProperties.getPassword());
-        bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).getSeconds());
+        FunctionUtils.doUnchecked(u -> bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).getSeconds()));
         bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
         bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
-        bean.setIdleTimeout((int) Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
+        bean.setIdleTimeout(Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
         bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
         bean.setInitializationFailTimeout(jpaProperties.getFailFastTimeout());
         bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());

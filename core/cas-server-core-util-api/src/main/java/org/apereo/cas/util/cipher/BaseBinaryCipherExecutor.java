@@ -2,6 +2,7 @@ package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 
 import lombok.Getter;
@@ -73,12 +74,13 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     }
 
     @Override
-    @SneakyThrows
     public byte[] encode(final byte[] value, final Object[] parameters) {
-        val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
-        aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey, this.parameterSpec);
-        val result = aesCipher.doFinal(value);
-        return sign(result, getSigningKey());
+        return FunctionUtils.doUnchecked(() -> {
+            val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey, this.parameterSpec);
+            val result = aesCipher.doFinal(value);
+            return sign(result, getSigningKey());
+        });
     }
 
     @Override

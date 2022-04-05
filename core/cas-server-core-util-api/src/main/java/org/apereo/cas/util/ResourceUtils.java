@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -151,7 +153,6 @@ public class ResourceUtils {
      * @param resource        the resource
      * @return the resource
      */
-    @SneakyThrows
     public static Resource exportClasspathResourceToFile(final File parentDirectory, final Resource resource) {
         LOGGER.trace("Preparing classpath resource [{}]", resource);
         if (resource == null) {
@@ -162,13 +163,15 @@ public class ResourceUtils {
             LOGGER.warn("Unable to create folder [{}]", parentDirectory);
         }
         val destination = new File(parentDirectory, Objects.requireNonNull(resource.getFilename()));
-        if (destination.exists()) {
-            LOGGER.trace("Deleting resource directory [{}]", destination);
-            FileUtils.forceDelete(destination);
-        }
-        try (val out = new FileOutputStream(destination)) {
-            resource.getInputStream().transferTo(out);
-        }
+        FunctionUtils.doUnchecked(unused -> {
+            if (destination.exists()) {
+                LOGGER.trace("Deleting resource directory [{}]", destination);
+                FileUtils.forceDelete(destination);
+            }
+            try (val out = new FileOutputStream(destination)) {
+                resource.getInputStream().transferTo(out);
+            }
+        });
         return new FileSystemResource(destination);
     }
 

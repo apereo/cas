@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -46,14 +47,15 @@ public class CasConfigurationMetadataCatalog {
      * @param destination the destination
      * @param data        the data
      */
-    @SneakyThrows
     public static void export(final File destination, final Object data) {
-        val mapper = new ObjectMapper(new YAMLFactory())
-            .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
-            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-            .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
-            .configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.writeValue(destination, data);
+        FunctionUtils.doUnchecked(unused -> {
+            val mapper = new ObjectMapper(new YAMLFactory())
+                .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
+                .configure(SerializationFeature.INDENT_OUTPUT, true);
+            mapper.writeValue(destination, data);
+        });
     }
 
     /**
@@ -166,14 +168,15 @@ public class CasConfigurationMetadataCatalog {
         return builder.build();
     }
 
-    @SneakyThrows
     private static String determinePropertySourceType(final ConfigurationMetadataProperty property) {
-        val method = ReflectionUtils.findMethod(property.getClass(), "getSourceType");
-        if (method == null) {
-            return null;
-        }
-        method.setAccessible(true);
-        return (String) method.invoke(property);
+        return FunctionUtils.doUnchecked(() -> {
+            val method = ReflectionUtils.findMethod(property.getClass(), "getSourceType");
+            if (method == null) {
+                return null;
+            }
+            method.setAccessible(true);
+            return (String) method.invoke(property);
+        });
     }
 
     /**

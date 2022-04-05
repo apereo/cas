@@ -2,8 +2,8 @@ package org.apereo.cas.aws;
 
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -36,13 +36,12 @@ public class AmazonClientConfigurationBuilder {
      * @param props               the props
      * @return the aws sync client builder
      */
-    @SneakyThrows
     public static AwsSyncClientBuilder prepareClientBuilder(final AwsSyncClientBuilder builder,
                                                             final AwsCredentialsProvider credentialsProvider,
                                                             final BaseAmazonWebServicesProperties props) {
         val proxyConfig = ProxyConfiguration.builder();
         if (StringUtils.isNotBlank(props.getProxyHost())) {
-            proxyConfig.endpoint(new URI(props.getProxyHost()))
+            proxyConfig.endpoint(FunctionUtils.doUnchecked(() -> new URI(props.getProxyHost())))
                 .password(props.getProxyPassword())
                 .username(props.getProxyUsername());
         }
@@ -59,7 +58,7 @@ public class AmazonClientConfigurationBuilder {
 
         if (StringUtils.isNotBlank(props.getLocalAddress())) {
             LOGGER.trace("Creating DynamoDb client local address [{}]", props.getLocalAddress());
-            httpClientBuilder.localAddress(InetAddress.getByName(props.getLocalAddress()));
+            httpClientBuilder.localAddress(FunctionUtils.doUnchecked(() -> InetAddress.getByName(props.getLocalAddress())));
         }
 
         val clientBuilder = builder.httpClientBuilder(httpClientBuilder);
@@ -76,7 +75,7 @@ public class AmazonClientConfigurationBuilder {
 
             val endpoint = props.getEndpoint();
             if (StringUtils.isNotBlank(endpoint)) {
-                awsClientBuilder.endpointOverride(new URI(endpoint));
+                awsClientBuilder.endpointOverride(FunctionUtils.doUnchecked(() -> new URI(endpoint)));
             }
         }
         return builder;

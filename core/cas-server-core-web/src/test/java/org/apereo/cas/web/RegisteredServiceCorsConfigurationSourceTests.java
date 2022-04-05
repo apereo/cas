@@ -60,13 +60,13 @@ public class RegisteredServiceCorsConfigurationSourceTests {
         val config = source.getCorsConfiguration(request);
 
         val cors = casProperties.getHttpWebRequest().getCors();
-        assertEquals(cors.getMaxAge(), config.getMaxAge().intValue());
+        assertEquals(cors.getMaxAge(), config.getMaxAge());
         assertEquals(cors.getAllowHeaders(), config.getAllowedHeaders());
         assertEquals(cors.getAllowOrigins(), config.getAllowedOrigins());
         assertEquals(cors.getAllowOriginPatterns(), config.getAllowedOriginPatterns());
         assertEquals(cors.getAllowMethods(), config.getAllowedMethods());
         assertEquals(cors.getExposedHeaders(), config.getExposedHeaders());
-        assertTrue(config.getAllowCredentials().booleanValue());
+        assertTrue(config.getAllowCredentials());
     }
 
     @Test

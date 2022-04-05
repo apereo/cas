@@ -70,6 +70,7 @@ public class CasHibernateJpaBeanFactoryTests {
     @Entity
     @Getter
     @NoArgsConstructor
+    @SuppressWarnings("UnusedMethod")
     private static class SampleEntity {
         @Id
         private long id;

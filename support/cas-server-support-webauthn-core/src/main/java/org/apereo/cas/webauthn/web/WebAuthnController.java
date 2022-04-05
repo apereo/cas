@@ -178,6 +178,7 @@ public class WebAuthnController {
 
     @RequiredArgsConstructor
     @Getter
+    @SuppressWarnings("UnusedMethod")
     private static class StartAuthenticationResponse {
         private final boolean success = true;
 
@@ -188,6 +189,7 @@ public class WebAuthnController {
 
     @RequiredArgsConstructor
     @Getter
+    @SuppressWarnings("UnusedMethod")
     private static class StartRegistrationResponse {
         private final boolean success = true;
 
@@ -197,11 +199,13 @@ public class WebAuthnController {
     }
 
     @Getter
+    @SuppressWarnings("UnusedMethod")
     private static class StartRegistrationActions {
         private final String finish = BASE_ENDPOINT_WEBAUTHN.substring(1) + WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH;
     }
 
     @Getter
+    @SuppressWarnings("UnusedMethod")
     private static class StartAuthenticationActions {
         private final String finish = BASE_ENDPOINT_WEBAUTHN.substring(1) + WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH;
     }

@@ -14,7 +14,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -114,6 +113,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Data
+    @SuppressWarnings("UnusedMethod")
     private static class JsonBackedAccount implements Serializable {
         private static final long serialVersionUID = -8522936598053838986L;
 
@@ -134,12 +134,13 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         });
     }
 
-    @SneakyThrows
     private void readAccountsFromJsonResource() {
-        try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-            val personList = new TypeReference<Map<String, JsonBackedAccount>>() {
-            };
-            this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-        }
+        FunctionUtils.doUnchecked(u -> {
+            try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+                val personList = new TypeReference<Map<String, JsonBackedAccount>>() {
+                };
+                this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+            }
+        });
     }
 }

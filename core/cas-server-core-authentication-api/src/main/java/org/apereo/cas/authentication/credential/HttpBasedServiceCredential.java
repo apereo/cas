@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.credential;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,7 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 
 import java.net.URL;
 
@@ -43,10 +43,12 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     private RegisteredService service;
 
     @JsonCreator
-    @SneakyThrows
-    public HttpBasedServiceCredential(@JsonProperty("callbackUrl") final String callbackUrl,
-                                      @JsonProperty("service") final RegisteredService service) {
-        this.callbackUrl = new URL(callbackUrl);
+    public HttpBasedServiceCredential(
+        @JsonProperty("callbackUrl")
+        final String callbackUrl,
+        @JsonProperty("service")
+        final RegisteredService service) {
+        this.callbackUrl = FunctionUtils.doUnchecked(() -> new URL(callbackUrl));
         this.service = service;
     }
 
