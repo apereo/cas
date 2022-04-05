@@ -21,6 +21,7 @@ enum TestCategories {
     ExpirationPolicy,
     Events,
     FileSystem,
+    GeoLocation,
     Groovy,
     Grouper,
     Hazelcast,
