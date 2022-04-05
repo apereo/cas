@@ -4,6 +4,7 @@ import org.apereo.cas.util.crypto.DecryptionException;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jooq.lambda.UncheckedException;
 import org.jose4j.lang.JoseException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,9 @@ public class BinaryCipherExecutorTests {
     public void checkEncodingDecodingBadKeys() {
         val cc = new TestBinaryCipherExecutor("0000", "1234", 512, 16) {
         };
-        assertThrows(InvalidAlgorithmParameterException.class,
+        assertThrowsWithRootCause(DecryptionException.class, JoseException.class,
+            () -> cc.decode(TEST_VALUE.getBytes(StandardCharsets.UTF_8)));
+        assertThrowsWithRootCause(UncheckedException.class, InvalidAlgorithmParameterException.class,
             () -> cc.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY));
     }
 
