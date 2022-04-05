@@ -5,7 +5,6 @@ import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
@@ -46,7 +45,6 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    @SneakyThrows
     public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
         val query = String.format("%s = '%s'", couchbaseProperties.getUsernameAttribute(), uid);
         val result = couchbase.select(query);

@@ -9,10 +9,10 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
@@ -75,19 +75,20 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         return result;
     }
 
-    @SneakyThrows
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) {
-        val originalUserPass = (UsernamePasswordCredential) credential;
-        val userPass = (UsernamePasswordCredential) credential.getClass().getDeclaredConstructor().newInstance();
+        return FunctionUtils.doUnchecked(() -> {
+            val originalUserPass = (UsernamePasswordCredential) credential;
+            val userPass = (UsernamePasswordCredential) credential.getClass().getDeclaredConstructor().newInstance();
 
-        BeanUtils.copyProperties(userPass, originalUserPass);
+            BeanUtils.copyProperties(userPass, originalUserPass);
 
-        transformUsername(userPass);
-        transformPassword(userPass);
+            transformUsername(userPass);
+            transformPassword(userPass);
 
-        LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
-        return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
+            LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
+            return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
+        });
     }
 
     /**

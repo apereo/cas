@@ -2,7 +2,6 @@ package org.apereo.cas.util.scripting;
 
 import groovy.lang.Script;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -19,7 +18,6 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     private final transient Script groovyScript;
     private final String script;
 
-    @SneakyThrows
     public GroovyShellScript(final String script) {
         this.script = script;
         this.groovyScript = ScriptingUtils.parseGroovyShellScript(script);

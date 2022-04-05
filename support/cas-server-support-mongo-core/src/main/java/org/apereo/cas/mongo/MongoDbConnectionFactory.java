@@ -266,7 +266,7 @@ public class MongoDbConnectionFactory {
                 })
                 .applyToServerSettings(builder -> {
                     val server = ServerSettings.builder()
-                        .heartbeatFrequency((int) Beans.newDuration(mongo.getTimeout()).toMillis(), TimeUnit.MILLISECONDS)
+                        .heartbeatFrequency(Beans.newDuration(mongo.getTimeout()).toMillis(), TimeUnit.MILLISECONDS)
                         .build();
                     builder.applySettings(server);
                 })

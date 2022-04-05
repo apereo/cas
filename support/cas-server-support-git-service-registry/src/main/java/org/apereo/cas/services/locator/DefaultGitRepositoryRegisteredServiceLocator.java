@@ -3,9 +3,9 @@ package org.apereo.cas.services.locator;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 
 import java.io.File;
@@ -25,11 +25,12 @@ public class DefaultGitRepositoryRegisteredServiceLocator implements GitReposito
     private final GitServiceRegistryProperties properties;
 
     @Override
-    @SneakyThrows
     public File determine(final RegisteredService service, final String extension) {
-        val fileName = resourceNamingStrategy.build(service, extension);
-        val parentDirectory = GitRepositoryRegisteredServiceLocator.normalizeParentDirectory(
-            repositoryDirectory, properties.getRootDirectory());
-        return new File(parentDirectory, fileName);
+        return FunctionUtils.doUnchecked(() -> {
+            val fileName = resourceNamingStrategy.build(service, extension);
+            val parentDirectory = GitRepositoryRegisteredServiceLocator.normalizeParentDirectory(
+                repositoryDirectory, properties.getRootDirectory());
+            return new File(parentDirectory, fileName);
+        });
     }
 }

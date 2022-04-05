@@ -371,6 +371,7 @@ public class CasConfigurationProperties implements Serializable {
 
     @RequiredArgsConstructor
     @Getter
+    @SuppressWarnings("UnusedMethod")
     private static class Holder implements Serializable {
         private static final long serialVersionUID = -3129941286238115568L;
 

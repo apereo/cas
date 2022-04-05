@@ -4,12 +4,12 @@ import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastPropert
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastDockerSwarmDiscoveryProperties;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +31,6 @@ import java.util.Properties;
 @Slf4j
 public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
-    @SneakyThrows
     private static Optional<DiscoveryStrategyConfig> getDiscoveryStrategyConfigViaDnsProvider(final NetworkConfig networkConfig,
                                                                                               final HazelcastDockerSwarmDiscoveryProperties.DnsRProvider dnsProvider) {
         networkConfig.setPortAutoIncrement(false);
@@ -42,7 +41,7 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
         props.put("serviceName", dnsProvider.getServiceName());
         props.put("servicePort",
             Integer.toString(dnsProvider.getServicePort()));
-        memberAddressProviderConfig.setImplementation(new DockerDNSRRMemberAddressProvider(props));
+        memberAddressProviderConfig.setImplementation(FunctionUtils.doUnchecked(() -> new DockerDNSRRMemberAddressProvider(props)));
 
         val properties = new HashMap<String, Comparable>();
         if (StringUtils.isNotBlank(dnsProvider.getPeerServices())) {

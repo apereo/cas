@@ -69,6 +69,7 @@ public class RandomUtils {
      * @param endExclusive   the end exclusive
      * @return the long
      */
+    @SuppressWarnings("LongDoubleConversion")
     public static long nextLong(final long startInclusive, final long endExclusive) {
         Validate.isTrue(endExclusive >= startInclusive,
             "Start value must be smaller or equal to end value.");
@@ -77,8 +78,7 @@ public class RandomUtils {
         if (startInclusive == endExclusive) {
             return startInclusive;
         }
-
-        return (long) nextDouble(startInclusive, endExclusive);
+        return Double.valueOf(nextDouble(startInclusive, endExclusive)).longValue();
     }
 
     /**

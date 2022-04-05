@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +25,6 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilder implements SingleLogout
     private final List<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilders;
 
     @Override
-    @SneakyThrows
     public Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService,
                                                           final WebApplicationService singleLogoutService,
                                                           final Optional<HttpServletRequest> httpRequest) {

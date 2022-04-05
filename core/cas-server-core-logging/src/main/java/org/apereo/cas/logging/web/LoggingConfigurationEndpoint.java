@@ -2,12 +2,12 @@ package org.apereo.cas.logging.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -79,7 +79,6 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
         return LoggerFactory.getILoggerFactory();
     }
 
-    @SneakyThrows
     private static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment,
                                                                               final ResourceLoader resourceLoader) {
         val logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
@@ -88,7 +87,7 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
         if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
             val logConfigurationFile = resourceLoader.getResource(logFile);
             LOGGER.trace("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
-            val loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
+            val loggerContext = FunctionUtils.doUnchecked(() -> Configurator.initialize("CAS", null, logConfigurationFile.getURI()));
             LOGGER.trace("Installing log configuration listener to detect changes and update");
             loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
             return Optional.of(Pair.of(logConfigurationFile, loggerContext));

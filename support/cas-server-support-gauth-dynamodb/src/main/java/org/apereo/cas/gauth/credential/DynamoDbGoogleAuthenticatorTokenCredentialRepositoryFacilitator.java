@@ -6,10 +6,10 @@ import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -60,7 +60,6 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
             .build();
     }
 
-    @SneakyThrows
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final OneTimeTokenAccount record) {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.NAME.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getName())).build());
@@ -242,16 +241,17 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
      *
      * @param deleteTables delete existing tables
      */
-    @SneakyThrows
     public void createTable(final boolean deleteTables) {
-        DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-            dynamoDbProperties.getTableName(), deleteTables,
-            List.of(AttributeDefinition.builder()
-                .attributeName(ColumnNames.ID.getColumnName())
-                .attributeType(ScalarAttributeType.N).build()),
-            List.of(KeySchemaElement.builder()
-                .attributeName(ColumnNames.ID.getColumnName())
-                .keyType(KeyType.HASH).build()));
+        FunctionUtils.doUnchecked(unused -> {
+            DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+                dynamoDbProperties.getTableName(), deleteTables,
+                List.of(AttributeDefinition.builder()
+                    .attributeName(ColumnNames.ID.getColumnName())
+                    .attributeType(ScalarAttributeType.N).build()),
+                List.of(KeySchemaElement.builder()
+                    .attributeName(ColumnNames.ID.getColumnName())
+                    .keyType(KeyType.HASH).build()));
+        });
     }
 
     /**
@@ -294,7 +294,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
 
     private Collection<? extends OneTimeTokenAccount> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient, dynamoDbProperties.getTableName(),
-            queries, DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator::extractAttributeValuesFrom)
+                queries, DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator::extractAttributeValuesFrom)
             .collect(Collectors.toSet());
     }
 }

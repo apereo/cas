@@ -2,8 +2,8 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -63,7 +63,6 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
      * @param registeredService the registered service
      * @return a byte[] that contains the encrypted result
      */
-    @SneakyThrows
     protected static byte[] encodeInternal(final String data, final RegisteredService registeredService) {
         val publicKey = registeredService.getPublicKey();
         if (publicKey == null) {
@@ -74,7 +73,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
         val cipher = publicKey.toCipher();
         if (cipher != null) {
             LOGGER.trace("Initialized cipher successfully. Proceeding to finalize...");
-            return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+            return FunctionUtils.doUnchecked(() -> cipher.doFinal(data.getBytes(StandardCharsets.UTF_8)));
         }
         return null;
     }

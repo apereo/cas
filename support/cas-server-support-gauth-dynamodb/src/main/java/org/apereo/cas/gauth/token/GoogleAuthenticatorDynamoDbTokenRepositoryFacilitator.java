@@ -5,13 +5,13 @@ import org.apereo.cas.configuration.model.support.mfa.gauth.DynamoDbGoogleAuthen
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -49,7 +49,6 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
 
     private final DynamoDbClient amazonDynamoDBClient;
 
-    @SneakyThrows
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final OneTimeToken record) {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
@@ -57,15 +56,16 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         values.put(ColumnNames.TOKEN.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getToken()).toLowerCase()).build());
         val time = record.getIssuedDateTime().toEpochSecond(ZoneOffset.UTC);
         values.put(ColumnNames.CREATION_TIME.getColumnName(), AttributeValue.builder().n(String.valueOf(time)).build());
-        values.put(ColumnNames.BODY.getColumnName(), AttributeValue.builder().s(MAPPER.writeValueAsString(record)).build());
+        values.put(ColumnNames.BODY.getColumnName(),
+            FunctionUtils.doUnchecked(() -> AttributeValue.builder().s(MAPPER.writeValueAsString(record)).build()));
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
         return values;
     }
 
-    @SneakyThrows
     private static GoogleAuthenticatorToken extractAttributeValuesFrom(final Map<String, AttributeValue> item) {
-        return MAPPER.readValue(item.get(ColumnNames.BODY.getColumnName()).s(), new TypeReference<>() {
-        });
+        return FunctionUtils.doUnchecked(() ->
+            MAPPER.readValue(item.get(ColumnNames.BODY.getColumnName()).s(), new TypeReference<>() {
+            }));
     }
 
     /**
@@ -73,16 +73,17 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
      *
      * @param deleteTables delete existing tables
      */
-    @SneakyThrows
     public void createTable(final boolean deleteTables) {
-        DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-            dynamoDbProperties.getTokenTableName(), deleteTables,
-            List.of(AttributeDefinition.builder()
-                .attributeName(ColumnNames.ID.getColumnName())
-                .attributeType(ScalarAttributeType.N).build()),
-            List.of(KeySchemaElement.builder()
-                .attributeName(ColumnNames.ID.getColumnName())
-                .keyType(KeyType.HASH).build()));
+        FunctionUtils.doUnchecked(unused -> {
+            DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+                dynamoDbProperties.getTokenTableName(), deleteTables,
+                List.of(AttributeDefinition.builder()
+                    .attributeName(ColumnNames.ID.getColumnName())
+                    .attributeType(ScalarAttributeType.N).build()),
+                List.of(KeySchemaElement.builder()
+                    .attributeName(ColumnNames.ID.getColumnName())
+                    .keyType(KeyType.HASH).build()));
+        });
     }
 
     /**

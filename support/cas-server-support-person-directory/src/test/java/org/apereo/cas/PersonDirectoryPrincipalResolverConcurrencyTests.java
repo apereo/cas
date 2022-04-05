@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -121,22 +123,18 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
      */
     @Test
     public void validatePersonDirConcurrency() throws Exception {
-        val userList = new ArrayList<String>();
-        for (var i = 0; i < NUM_USERS; i++) {
-            userList.add("user_" + i);
-        }
+        val userList = IntStream.range(0, NUM_USERS).mapToObj(i -> "user_" + i)
+            .collect(Collectors.toCollection(ArrayList::new));
 
-        val runnables = new ArrayList<Runnable>();
-        for (val user : userList) {
-            val personAttrGetter = new PersonAttrGetter(personDirectoryResolver, user);
-            runnables.add(personAttrGetter);
-        }
+        val runnables = userList.stream().map(user -> new PersonAttrGetter(personDirectoryResolver, user))
+            .collect(Collectors.toCollection(() -> new ArrayList<Runnable>()));
         assertConcurrent("Getting persons", runnables, 600);
     }
 
     @Getter
     @Slf4j
     @RequiredArgsConstructor
+    @SuppressWarnings("UnusedMethod")
     private static class PersonAttrGetter implements Runnable {
 
         private final PrincipalResolver personDirectoryResolver;

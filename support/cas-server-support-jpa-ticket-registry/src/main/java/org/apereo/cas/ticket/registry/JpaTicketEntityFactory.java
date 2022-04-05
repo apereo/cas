@@ -11,9 +11,9 @@ import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
 import org.apereo.cas.ticket.registry.mysql.MySQLJpaTicketEntity;
 import org.apereo.cas.ticket.registry.postgres.PostgresJpaTicketEntity;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
@@ -58,7 +58,6 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
      * @param ticket the ticket
      * @return the jpa ticket entity
      */
-    @SneakyThrows
     public BaseTicketEntity fromTicket(final Ticket ticket) {
         val jsonBody = getTicketSerializationManager().serializeTicket(ticket);
         val authentication = ticket instanceof AuthenticationAwareTicket
@@ -69,7 +68,7 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
             ? ((TicketGrantingTicketAwareTicket) ticket).getTicketGrantingTicket()
             : null;
 
-        val entity = getEntityClass().getDeclaredConstructor().newInstance();
+        val entity = FunctionUtils.doUnchecked(() -> getEntityClass().getDeclaredConstructor().newInstance());
         return entity
             .setId(ticket.getId())
             .setParentId(Optional.ofNullable(parentTicket).map(Ticket::getId).orElse(null))
