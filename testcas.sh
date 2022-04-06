@@ -167,6 +167,9 @@ while (( "$#" )); do
             shell)
                 task+="testSHELL "
                 ;;
+            cipher)
+                task+="testCipher "
+                ;;
             web)
                 task+="testWeb "
                 ;;

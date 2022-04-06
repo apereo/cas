@@ -44,7 +44,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 public class SamlIdPRedisIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition
         .on("cas.authn.saml-idp.metadata.redis.idp-metadata-enabled").isTrue()
-        .and("cas.authn.saml-idp.metadata.redis.enabled").isTrue();
+        .and("cas.authn.saml-idp.metadata.redis.enabled").isTrue().evenIfMissing();
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
