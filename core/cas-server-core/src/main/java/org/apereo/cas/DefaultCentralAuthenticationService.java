@@ -229,6 +229,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     val proxyGrantingTicket = factory.create(serviceTicket, authentication, ProxyGrantingTicket.class);
                     LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
                     configurationContext.getTicketRegistry().addTicket(proxyGrantingTicket);
+                    configurationContext.getTicketRegistry().updateTicket(serviceTicket.getTicketGrantingTicket());
                     doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, proxyGrantingTicket));
                     return proxyGrantingTicket;
                 }))
