@@ -3,6 +3,7 @@ package org.apereo.cas.util.cipher;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JasyptNumberCipherExecutorTests {
 
     @Test
-    public void verifyLongOperation() throws Exception {
+    public void verifyLongOperation() {
         val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "My Cipher");
         assertEquals("My Cipher", cipher.getName());
         val randomNumber = RandomUtils.nextLong(0, 999999999);
@@ -30,7 +31,7 @@ public class JasyptNumberCipherExecutorTests {
     }
 
     @Test
-    public void verifyIntOperation() throws Exception {
+    public void verifyIntOperation() {
         val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "My Cipher");
         val randomNumber = RandomUtils.nextInt(0, 9999999);
         val encoded = cipher.encode(randomNumber);
@@ -38,11 +39,10 @@ public class JasyptNumberCipherExecutorTests {
     }
 
     @Test
-    public void verifyDecodeTwice() throws Exception {
+    public void verifyDecodeTwice() {
         val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "My Cipher");
         val randomNumber = RandomUtils.nextInt(0, 9999999);
         val encoded = cipher.encode(randomNumber);
-        val decoded = cipher.decode(cipher.decode(encoded));
-        assertEquals(randomNumber, decoded.intValue());
+        assertThrows(EncryptionOperationNotPossibleException.class, () -> cipher.decode(cipher.decode(encoded)));
     }
 }

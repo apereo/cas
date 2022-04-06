@@ -15,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link JpaGoogleAuthenticatorAccount}.
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Table(name = "GoogleAuthenticatorRegistrationRecord",
-    uniqueConstraints = @UniqueConstraint(columnNames = { "username", "name" }))
+    uniqueConstraints = @UniqueConstraint(columnNames = {"username", "name"}))
 @Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
@@ -51,7 +50,7 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
             .username(acct.getUsername().trim().toLowerCase())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
-                .scratchCodes(acct.getScratchCodes().stream().map(c -> c.intValue()).collect(Collectors.toList()))
+            .scratchCodes(acct.getScratchCodes())
             .registrationDate(acct.getRegistrationDate())
             .name(acct.getName())
             .build();
