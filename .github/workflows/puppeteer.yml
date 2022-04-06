@@ -22,8 +22,8 @@ env:
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 11
-  NODE_CURRENT: '16'
-  SCENARIO_REGEX: "token-login-saml.*" # Use this to limit which tests run
+  NODE_CURRENT: '17'
+  SCENARIO_REGEX: ".*" # Use this to limit which tests run
 
 on:
   push:
@@ -74,7 +74,7 @@ jobs:
   puppeteer-scenarios:
     needs: [initialize]
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     outputs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
       scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
