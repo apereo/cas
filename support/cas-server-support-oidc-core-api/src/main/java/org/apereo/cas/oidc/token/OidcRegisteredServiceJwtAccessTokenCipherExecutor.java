@@ -168,6 +168,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
     @Setter
     @Getter
+    @SuppressWarnings("UnusedMethod")
     private class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecutor {
         private JsonWebKey signingWebKey;
 

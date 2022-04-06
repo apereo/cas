@@ -107,11 +107,11 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
 import org.pac4j.core.engine.SecurityLogic;
-import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
+import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -293,11 +293,9 @@ public class OidcConfiguration {
         public OidcRequestSupport oidcRequestSupport(
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(OidcIssuerService.BEAN_NAME)
-            final OidcIssuerService oidcIssuerService,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport) {
-            return new OidcRequestSupport(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, oidcIssuerService);
+            return new OidcRequestSupport(ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
         }
 
 

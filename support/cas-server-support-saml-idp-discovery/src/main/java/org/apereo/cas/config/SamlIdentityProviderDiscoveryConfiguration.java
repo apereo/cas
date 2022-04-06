@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  */
 @Configuration(value = "SamlIdentityProviderDiscoveryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdP)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 public class SamlIdentityProviderDiscoveryConfiguration {
 
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")

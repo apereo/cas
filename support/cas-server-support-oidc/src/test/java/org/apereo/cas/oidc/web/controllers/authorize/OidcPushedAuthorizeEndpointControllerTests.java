@@ -13,8 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.util.Pac4jConstants;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
@@ -49,7 +49,7 @@ public class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTest
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED, oidcPushedAuthorizeController.handleRequest(request, response).getStatus());
 
         request.setMethod(HttpMethod.POST.name());
-        assertEquals(HttpStatus.NOT_FOUND, oidcPushedAuthorizeController.handleRequestPost(request, response).getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, oidcPushedAuthorizeController.handleRequestPost(request, response).getStatus());
     }
 
     @Test

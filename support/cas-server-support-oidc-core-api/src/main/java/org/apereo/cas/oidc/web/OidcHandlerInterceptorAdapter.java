@@ -74,7 +74,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
             LOGGER.trace("OIDC pushed authorization request is protected at [{}]", request.getRequestURI());
             return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);
         }
-        
+
         if (!super.preHandle(request, response, handler)) {
             LOGGER.trace("Unable to pre-handle OIDC request at [{}]", request.getRequestURI());
             return false;
@@ -154,8 +154,6 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
      */
     private boolean isDynamicClientRegistrationRequestProtected() {
         val oidc = casProperties.getAuthn().getOidc();
-        return OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
-            oidc.getRegistration().getDynamicClientRegistrationMode(),
-            OidcConstants.DynamicClientRegistrationMode.PROTECTED.name())).isProtected();
+        return oidc.getRegistration().getDynamicClientRegistrationMode().isProtected();
     }
 }

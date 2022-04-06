@@ -3,7 +3,6 @@ package org.apereo.cas.pac4j.client;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 
@@ -28,7 +27,7 @@ public interface DelegatedClientAuthenticationRequestCustomizer extends Ordered 
      *
      * @param client     the client
      * @param webContext the web context
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(IndirectClient client, WebContext webContext);
 
@@ -45,5 +44,5 @@ public interface DelegatedClientAuthenticationRequestCustomizer extends Ordered 
      * @param currentService the current service
      * @return true/false
      */
-    boolean isAuthorized(JEEContext webContext, IndirectClient client, WebApplicationService currentService);
+    boolean isAuthorized(WebContext webContext, IndirectClient client, WebApplicationService currentService);
 }

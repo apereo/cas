@@ -2,8 +2,11 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
-import org.apereo.cas.bucket4j.producer.BucketProducer;
+import org.apereo.cas.bucket4j.consumer.DefaultBucketConsumer;
+import org.apereo.cas.bucket4j.producer.BucketStore;
+import org.apereo.cas.bucket4j.producer.InMemoryBucketStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder;
@@ -22,6 +25,9 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -54,8 +60,12 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "CasSimpleMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
 public class CasSimpleMultifactorAuthenticationConfiguration {
+
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
+
+    private static final BeanCondition CONDITION_BUCKET4J_ENABLED = BeanCondition.on("cas.authn.mfa.simple.bucket4j.enabled");
 
     @Configuration(value = "CasSimpleMultifactorAuthenticationActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -85,9 +95,35 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketConsumer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BucketConsumer mfaSimpleMultifactorBucketConsumer(final CasConfigurationProperties casProperties) {
-            val simple = casProperties.getAuthn().getMfa().getSimple();
-            return BucketProducer.builder().properties(simple.getBucket4j()).build().produce();
+        public BucketConsumer mfaSimpleMultifactorBucketConsumer(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("mfaSimpleMultifactorBucketStore")
+            final BucketStore mfaSimpleMultifactorBucketStore,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(BucketConsumer.class)
+                .when(CONDITION_BUCKET4J_ENABLED.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val simple = casProperties.getAuthn().getMfa().getSimple();
+                    return new DefaultBucketConsumer(mfaSimpleMultifactorBucketStore, simple.getBucket4j());
+                })
+                .otherwise(BucketConsumer::permitAll)
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketStore")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public BucketStore mfaSimpleMultifactorBucketStore(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(BucketStore.class)
+                .when(CONDITION_BUCKET4J_ENABLED.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val simple = casProperties.getAuthn().getMfa().getSimple();
+                    return new InMemoryBucketStore(simple.getBucket4j());
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 

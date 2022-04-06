@@ -2,7 +2,6 @@ package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
-import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -26,7 +25,7 @@ public class NoOpPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) throws InvalidPasswordException {
-        LOGGER.warn("Using no-op password change impl. Appropriate password management service is not configured.");
+        LOGGER.warn("Using no-op password change implementation. Appropriate password management service is not configured.");
         return false;
     }
 }

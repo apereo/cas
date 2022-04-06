@@ -56,7 +56,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @since 6.0.0
  */
 @SpringBootTest(classes = BaseCasCoreTests.SharedTestConfiguration.class)
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseCasCoreTests {

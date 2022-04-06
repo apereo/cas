@@ -5,12 +5,12 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.collect.Iterables;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -39,16 +39,17 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     private static final int MAX_CACHE_SIZE = 10_000;
 
-    private final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
+    private final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> chainingMetadataResolverCacheLoader;
 
     private final LoadingCache<SamlRegisteredServiceCacheKey, MetadataResolver> cache;
 
     @Getter
     private final OpenSamlConfigBean openSamlConfigBean;
 
-    public SamlRegisteredServiceDefaultCachingMetadataResolver(final Duration metadataCacheExpiration,
-                                                               final SamlRegisteredServiceMetadataResolverCacheLoader loader,
-                                                               final OpenSamlConfigBean openSamlConfigBean) {
+    public SamlRegisteredServiceDefaultCachingMetadataResolver(
+        final Duration metadataCacheExpiration,
+        final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> loader,
+        final OpenSamlConfigBean openSamlConfigBean) {
         this.openSamlConfigBean = openSamlConfigBean;
         this.chainingMetadataResolverCacheLoader = loader;
         this.cache = Caffeine.newBuilder()
@@ -58,10 +59,11 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
             .build(this.chainingMetadataResolverCacheLoader);
     }
 
-    @SneakyThrows
     private static long countResolvableEntityDescriptors(final MetadataResolver resolver) {
-        val criteria = new EvaluableEntityRoleEntityDescriptorCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-        return Iterables.size(resolver.resolve(new CriteriaSet(criteria)));
+        return FunctionUtils.doUnchecked(() -> {
+            val criteria = new EvaluableEntityRoleEntityDescriptorCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+            return Iterables.size(resolver.resolve(new CriteriaSet(criteria)));
+        });
     }
 
     @Override
@@ -80,11 +82,11 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                     invalidate(service, criteriaSet);
                 }
                 LOGGER.warn("SAML metadata resolver [{}] obtained from the cache is "
-                        + "unable to produce/resolve valid metadata for [{}]. Metadata resolver cache entry with key [{}] "
-                        + "has been invalidated. Retry attempt: [{}]",
+                            + "unable to produce/resolve valid metadata for [{}]. Metadata resolver cache entry with key [{}] "
+                            + "has been invalidated. Retry attempt: [{}]",
                     resolver.getId(), service.getMetadataLocation(), cacheKey.getId(), retryContext.getRetryCount());
                 throw new SamlException("Unable to locate a valid SAML metadata resolver for "
-                    + service.getMetadataLocation() + " to locate " + criteriaSet);
+                                        + service.getMetadataLocation() + " to locate " + criteriaSet);
             }
             return resolver;
         });
@@ -110,7 +112,6 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
      * @param criteriaSet      the criteria set
      * @return true/false
      */
-    @SneakyThrows
     protected MetadataResolutionResult isMetadataResolverAcceptable(final MetadataResolver metadataResolver,
                                                                     final CriteriaSet criteriaSet) {
         if (criteriaSet.contains(SatisfyAnyCriterion.class)) {
@@ -119,7 +120,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                 .valid(true)
                 .build();
         }
-        val md = metadataResolver.resolveSingle(criteriaSet);
+        val md = FunctionUtils.doUnchecked(() -> metadataResolver.resolveSingle(criteriaSet));
         return MetadataResolutionResult.builder()
             .valid(md != null && md.isValid())
             .entityDescriptor(Optional.ofNullable(md))
@@ -144,6 +145,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     @SuperBuilder
     @Getter
+    @SuppressWarnings("UnusedMethod")
     private static class MetadataResolutionResult {
         private final boolean valid;
 

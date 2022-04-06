@@ -259,6 +259,10 @@ public abstract class AbstractOidcTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier(OidcConfigurationContext.BEAN_NAME)
+    protected OidcConfigurationContext oidcConfigurationContext;
+
+    @Autowired
     @Qualifier("oidcDefaultJsonWebKeystoreCache")
     protected LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache;
 

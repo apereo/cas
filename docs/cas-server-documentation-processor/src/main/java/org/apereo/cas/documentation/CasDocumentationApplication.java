@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
-import org.apereo.cas.util.spring.boot.CasFeatureEnabledCondition;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.cli.DefaultParser;
@@ -72,7 +71,7 @@ public class CasDocumentationApplication {
 
     public static void main(final String[] args) throws Exception {
         var options = new Options();
-        
+
         var dt = new Option("d", "data", true, "Data directory");
         dt.setRequired(true);
         options.addOption(dt);
@@ -198,7 +197,7 @@ public class CasDocumentationApplication {
         subTypes.forEach(clazz -> {
             var features = clazz.getAnnotationsByType(ConditionalOnFeature.class);
             Arrays.stream(features).forEach(feature -> {
-                var propName = CasFeatureEnabledCondition.getPropertyName(feature.feature(), feature.module());
+                var propName = feature.feature().toProperty(feature.module());
                 if (!allToggleProps.contains(propName)) {
                     allToggleProps.add(propName);
 
@@ -208,7 +207,7 @@ public class CasDocumentationApplication {
                     if (StringUtils.isNotBlank(feature.module())) {
                         map.put("module", feature.module());
                     }
-                    
+
                     map.put("property", propName);
                     properties.add(map);
                 }

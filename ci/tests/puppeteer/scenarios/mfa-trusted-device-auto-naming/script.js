@@ -19,7 +19,7 @@ const cas = require("../../cas.js");
 
 
 
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     let response = await cas.doRequest("https://localhost:8443/cas/actuator/multifactorTrustedDevices");
     let record = JSON.parse(response)[0];
     assert(record.id !== null);

@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.util;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -18,12 +17,12 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.pac4j.jee.context.JEEContext;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -44,8 +43,6 @@ public class OidcRequestSupport {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final TicketRegistrySupport ticketRegistrySupport;
-
-    private final OidcIssuerService oidcIssuerService;
 
     /**
      * Gets oidc prompt from authorization request.
@@ -229,25 +226,5 @@ public class OidcRequestSupport {
             }
         }
         return Optional.empty();
-    }
-
-
-    /**
-     * Is valid issuer for endpoint.
-     *
-     * @param webContext the web context
-     * @param endpoint   the endpoint
-     * @return true /false
-     */
-    public boolean isValidIssuerForEndpoint(final WebContext webContext, final String endpoint) {
-        val requestUrl = webContext.getRequestURL();
-        val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
-        val definedIssuer = oidcIssuerService.determineIssuer(Optional.empty());
-
-        val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");
-        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl) || issuerFromRequestUrl.startsWith(definedIssuerWithSlash);
-        FunctionUtils.doIf(!result, o -> LOGGER.trace("Configured issuer [{}] defined does not match the request issuer [{}]",
-            o, issuerFromRequestUrl)).accept(definedIssuer);
-        return result;
     }
 }

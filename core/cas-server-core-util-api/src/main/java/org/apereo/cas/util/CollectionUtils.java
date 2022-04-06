@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
@@ -50,6 +51,21 @@ public class CollectionUtils {
             return Optional.empty();
         }
         return Optional.of(object.iterator().next());
+    }
+
+    /**
+     * Converts the provided object into a collection
+     * and return the first element, or empty.
+     *
+     * @param <T>   the type parameter
+     * @param obj   the obj
+     * @param clazz the clazz
+     * @return the optional
+     */
+    public static <T> Optional<T> firstElement(final Object obj, final Class<T> clazz) {
+        var result = (Optional<T>) firstElement(obj);
+        result.ifPresent(value -> Assert.isTrue(clazz.isAssignableFrom(value.getClass()), () -> "Invalid element subtype"));
+        return result;
     }
 
     /**

@@ -69,7 +69,7 @@ const path = require('path');
 
 async function update(service, description, jsonFile) {
     service.description = description;
-    const newConfig = JSON.stringify(service);
+    const newConfig = JSON.stringify(service, undefined, 2);
     console.log(`Updated service configuration:\n${newConfig}`);
     await fs.writeFileSync(jsonFile, newConfig);
     console.log(`Wrote changes to ${jsonFile}`);

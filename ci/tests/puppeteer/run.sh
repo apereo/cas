@@ -108,7 +108,7 @@ while (( "$#" )); do
     RERUN="true"
     shift 1;
     ;;
-  --bogy)
+  --bogy|--boyd)
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     DRYRUN="true"
@@ -168,18 +168,18 @@ if [[ ! -z ${requiredEnvVars} ]]; then
   done
 fi
 
-docker --version > /dev/null 2>&1
+docker info > /dev/null 2>&1
 dockerInstalled=$?
 
 dockerRequired=$(jq -j '.conditions.docker // empty' "${config}")
 if [[ "${dockerRequired}" == "true" ]]; then
   echo "Checking if Docker is available..."
   if [[ "$CI" == "true" && "${RUNNER_OS}" != "Linux" ]]; then
-    printyellow "Not running test in CI that requires docker, because non-linux GitHub runner can't run Docker."
+    printyellow "Not running test in CI that requires Docker, because non-linux GitHub runner can't run Docker."
     exit 0
   fi
   if [[ $dockerInstalled -ne 0 ]] ; then
-    printred "Not running test because test scenario configuration requires Docker"
+    printred "Docker engine is not running. Skipping running test since the test requires Docker."
     exit 0
   fi
 fi
@@ -351,7 +351,7 @@ if [[ "${RERUN}" != "true" ]]; then
       chmod +x "${script}"
       eval "${script}"
       if [[ $? -ne 0 ]]; then
-        echo "Initialization script [${script}] failed."
+        printred "Initialization script [${script}] failed."
         exit 1
       fi
     done

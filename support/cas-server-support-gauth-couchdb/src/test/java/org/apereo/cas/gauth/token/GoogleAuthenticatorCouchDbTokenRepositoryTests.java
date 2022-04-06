@@ -92,7 +92,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "cas.authn.mfa.gauth.couch-db.username=cas",
         "cas.authn.mfa.gauth.couch-db.password=password"
     })
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Getter
 @EnabledIfPortOpen(port = 5984)

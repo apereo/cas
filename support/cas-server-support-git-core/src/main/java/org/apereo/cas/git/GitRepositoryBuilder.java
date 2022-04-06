@@ -5,13 +5,13 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import lombok.Builder;
-import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -81,7 +81,6 @@ public class GitRepositoryBuilder {
      * @param props the registry
      * @return the git repository builder
      */
-    @SneakyThrows
     public static GitRepositoryBuilder newInstance(final BaseGitProperties props) {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
         val builder = GitRepositoryBuilder.builder()
@@ -105,7 +104,7 @@ public class GitRepositoryBuilder {
         if (props.getPrivateKey().getLocation() != null) {
             val resource = ResourceUtils.prepareClasspathResourceIfNeeded(props.getPrivateKey().getLocation());
             if (resource != null && resource.exists()) {
-                builder.privateKeyPath(resource.getFile().getCanonicalPath());
+                FunctionUtils.doUnchecked(unused -> builder.privateKeyPath(resource.getFile().getCanonicalPath()));
             }
         }
         return builder.build();

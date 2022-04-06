@@ -3,7 +3,7 @@ package org.apereo.cas.oidc.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.util.OidcRequestSupport;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
@@ -11,7 +11,7 @@ import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -94,13 +94,13 @@ public class OidcThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oidcThrottledRequestFilter")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ThrottledRequestFilter oidcThrottledRequestFilter(
-            @Qualifier("oidcRequestSupport")
-            final OidcRequestSupport oidcRequestSupport) {
+            @Qualifier(OidcIssuerService.BEAN_NAME)
+            final OidcIssuerService oidcIssuerService) {
             return (request, response) -> {
                 val webContext = new JEEContext(request, response);
                 return THROTTLED_ENDPOINTS
                     .stream()
-                    .anyMatch(endpoint -> oidcRequestSupport.isValidIssuerForEndpoint(webContext, endpoint));
+                    .anyMatch(endpoint -> oidcIssuerService.validateIssuer(webContext, endpoint));
             };
         }
     }

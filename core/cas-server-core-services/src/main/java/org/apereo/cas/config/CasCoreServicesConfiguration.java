@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuil
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
@@ -44,6 +45,7 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.UrlValidator;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -87,8 +89,9 @@ import java.util.stream.Collectors;
 @Configuration(value = "CasCoreServicesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@EnableAsync
+@EnableAsync(proxyTargetClass = false)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
 public class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesResponseLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -238,7 +241,7 @@ public class CasCoreServicesConfiguration {
             val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
             val chainingRegistry = new DefaultChainingServiceRegistry(applicationContext);
             if (serviceRegistryExecutionPlan.find(filter).isEmpty()) {
-                LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
+                LOGGER.info("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
                             + "Changes that are made to service definitions during runtime WILL be LOST when the CAS server is restarted. "
                             + "Ideally for production, you should choose a storage option (JSON, JDBC, MongoDb, etc) to track service definitions.");
                 val services = getInMemoryRegisteredServices(applicationContext).orElseGet(ArrayList::new);

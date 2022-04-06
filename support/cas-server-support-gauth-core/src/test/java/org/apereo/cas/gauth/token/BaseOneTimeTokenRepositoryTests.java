@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -58,7 +59,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         googleAuthenticatorTokenRepositoryCleaner.clean();
     }
 
-    @Test
+    @RetryingTest(3)
     public void verifyCaseInsensitiveUser() {
         val otp = getRandomOtp();
         val token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase());

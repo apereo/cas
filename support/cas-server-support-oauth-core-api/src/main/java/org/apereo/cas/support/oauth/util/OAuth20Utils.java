@@ -11,12 +11,12 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -58,11 +58,39 @@ public class OAuth20Utils {
      * @return json -backed view.
      */
     public static ModelAndView writeError(final HttpServletResponse response, final String error) {
-        val model = CollectionUtils.wrap(OAuth20Constants.ERROR, error);
+        return writeError(response, error, null);
+    }
+
+    /**
+     * Write error model and view.
+     *
+     * @param response    the response
+     * @param error       the error
+     * @param description the description
+     * @return the model and view
+     */
+    public static ModelAndView writeError(final HttpServletResponse response,
+                                          final String error, final String description) {
+        val model = getErrorResponseBody(error, description);
         val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), (Map) model);
         mv.setStatus(HttpStatus.BAD_REQUEST);
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         return mv;
+    }
+
+    /**
+     * Gets error response body.
+     *
+     * @param error       the error
+     * @param description the description
+     * @return the error response body
+     */
+    public static Map<Object, Object> getErrorResponseBody(final String error, final String description) {
+        val model = CollectionUtils.wrap(OAuth20Constants.ERROR, error);
+        if (StringUtils.isNotBlank(description)) {
+            model.put(OAuth20Constants.ERROR_DESCRIPTION, description);
+        }
+        return model;
     }
 
     /**
@@ -164,9 +192,8 @@ public class OAuth20Utils {
      * @param value the map
      * @return the string
      */
-    @SneakyThrows
     public static String toJson(final Object value) {
-        return MAPPER.writeValueAsString(value);
+        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(value));
     }
 
     /**

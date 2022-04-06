@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
+import org.apereo.cas.services.OidcRegisteredService;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -12,8 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.Clock;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -26,22 +29,35 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
+@TestPropertySource(properties = "cas.authn.oidc.registration.client-secret-expiration=PT1H")
 public class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcClientConfigurationEndpointController")
     protected OidcClientConfigurationEndpointController controller;
 
     @Test
-    public void verifyBadEndpointRequest() {
+    public void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
-        val mv = controller.handleRequestInternal(StringUtils.EMPTY, request, response);
-        assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, mv.getStatusCode());
+        var mv = controller.handleRequestInternal(StringUtils.EMPTY, request, response);
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST, mv.getStatusCode());
+
+        mv = controller.handleUpdates(UUID.randomUUID().toString(), StringUtils.EMPTY, request, response);
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST, mv.getStatusCode());
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyServiceNotFoundForUpdate() throws Exception {
+        val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
+        val response = new MockHttpServletResponse();
+        val clientId = UUID.randomUUID().toString();
+        assertEquals(HttpStatus.SC_BAD_REQUEST,
+            controller.handleUpdates(clientId, null, request, response).getStatusCodeValue());
+    }
+
+    @Test
+    public void verifyGetOperation() {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
@@ -51,6 +67,29 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         servicesManager.save(service);
         assertEquals(HttpStatus.SC_OK,
             controller.handleRequestInternal(clientId, request, response).getStatusCodeValue());
+    }
+
+    @Test
+    public void verifyUpdateOperation() throws Exception {
+        val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
+        val response = new MockHttpServletResponse();
+        val clientId = UUID.randomUUID().toString();
+        var service = getOidcRegisteredService(clientId);
+        val clientSecretExpiration = ZonedDateTime.now(ZoneOffset.UTC).minusDays(1).toEpochSecond();
+        service.setClientSecretExpiration(clientSecretExpiration);
+        servicesManager.save(service);
+
+        val jsonBody = '{'
+                       + "\"redirect_uris\": [\"https://apereo.github.io\"],\n"
+                       + "\"client_name\": \"Apereo Blog\",\n"
+                       + "\"contacts\": [\"cas@example.org\"],\n"
+                       + "\"grant_types\": [\"client_credentials\"],\n"
+                       + '}';
+        val responseEntity = controller.handleUpdates(clientId, jsonBody, request, response);
+        assertEquals(HttpStatus.SC_OK, responseEntity.getStatusCodeValue());
+        assertNotNull(responseEntity.getBody());
+        service = servicesManager.findServiceBy(service.getId(), OidcRegisteredService.class);
+        assertNotEquals(service.getClientSecretExpiration(), clientSecretExpiration);
     }
 
     @Test

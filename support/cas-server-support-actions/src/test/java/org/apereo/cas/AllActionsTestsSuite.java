@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.web.flow.AuthenticationViaFormActionTests;
 import org.apereo.cas.web.flow.ConfirmLogoutActionTests;
 import org.apereo.cas.web.flow.CreateTicketGrantingTicketActionTests;
+import org.apereo.cas.web.flow.FetchTicketGrantingTicketActionTests;
 import org.apereo.cas.web.flow.FinishLogoutActionTests;
 import org.apereo.cas.web.flow.FlowExecutionExceptionResolverTests;
 import org.apereo.cas.web.flow.FrontChannelLogoutActionTests;
@@ -27,6 +28,7 @@ import org.apereo.cas.web.flow.TerminateSessionActionTests;
 import org.apereo.cas.web.flow.TerminateSessionConfirmingActionTests;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckActionTests;
 import org.apereo.cas.web.flow.VerifyRequiredServiceActionTests;
+import org.apereo.cas.web.flow.account.PrepareAccountProfileViewActionTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -57,6 +59,8 @@ import org.junit.platform.suite.api.Suite;
     CreateTicketGrantingTicketActionTests.class,
     TicketGrantingTicketCheckActionTests.class,
     ServiceWarningActionTests.class,
+    FetchTicketGrantingTicketActionTests.class,
+    PrepareAccountProfileViewActionTests.class,
     ConfirmLogoutActionTests.class,
     LogoutViewSetupActionTests.class,
     TerminateSessionActionTests.class,

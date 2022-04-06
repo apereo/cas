@@ -17,20 +17,21 @@ be considered to achieve suitable security.
 <div class="alert alert-info"><strong>Reporting Issues</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
 
 ## Announcements
-
-- [December 11 2021 Vulnerability Disclosure](https://apereo.github.io/2021/12/11/log4j-vuln/)
-- [October 18 2021 Vulnerability Disclosure](https://apereo.github.io/2021/10/18/restvuln/)
-- [Feb 13 2021 Vulnerability Disclosure](https://apereo.github.io/2021/02/13/gauthvuln/)
-- [Oct 14 2020 Vulnerability Disclosure](https://apereo.github.io/2020/10/14/gauthvuln/)
-- [July 24 2020 Vulnerability Disclosure](https://apereo.github.io/2020/07/24/credvuln/)
-- [Feb 8 2020 Vulnerability Disclosure](https://apereo.github.io/2020/02/08/webflowcrypto/)
-- [Dec 20 2019 Vulnerability Disclosure](https://apereo.github.io/2019/12/20/surrogatevuln/)
-- [Nov 21 2019 Vulnerability Disclosure](https://apereo.github.io/2019/11/24/smfavuln/)
-- [Sep 27 2019 Vulnerability Disclosure](https://apereo.github.io/2019/09/27/numvulndisc/)
-- [Sep 26 2018 Vulnerability Disclosure](https://apereo.github.io/2018/09/26/mfavulndisc/)
-- [Mar 6 2017 Vulnerability Disclosure](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)
-- [Oct 24 2016 Vulnerability Disclosure](https://apereo.github.io/2016/10/24/servlvulndisc/)
-- [Apr 8 2016 Vulnerability Disclosure](https://apereo.github.io/2016/04/08/commonsvulndisc/)
+     
+- [March 6 2022](https://apereo.github.io/2022/03/06/oidc-vuln/)
+- [December 11 2021](https://apereo.github.io/2021/12/11/log4j-vuln/)
+- [October 18 2021](https://apereo.github.io/2021/10/18/restvuln/)
+- [Feb 13 2021](https://apereo.github.io/2021/02/13/gauthvuln/)
+- [Oct 14 2020](https://apereo.github.io/2020/10/14/gauthvuln/)
+- [July 24 2020](https://apereo.github.io/2020/07/24/credvuln/)
+- [Feb 8 2020](https://apereo.github.io/2020/02/08/webflowcrypto/)
+- [Dec 20 2019](https://apereo.github.io/2019/12/20/surrogatevuln/)
+- [Nov 21 2019](https://apereo.github.io/2019/11/24/smfavuln/)
+- [Sep 27 2019](https://apereo.github.io/2019/09/27/numvulndisc/)
+- [Sep 26 2018](https://apereo.github.io/2018/09/26/mfavulndisc/)
+- [Mar 6 2017](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)
+- [Oct 24 2016](https://apereo.github.io/2016/10/24/servlvulndisc/)
+- [Apr 8 2016](https://apereo.github.io/2016/04/08/commonsvulndisc/)
 
 ## System Security Considerations
 

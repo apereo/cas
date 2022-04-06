@@ -24,6 +24,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -787,13 +788,33 @@ public class WebUtils {
     }
 
     /**
-     * Put static authentication into flow scope.
+     * Put password management enabled flow scope.
      *
      * @param context the context
      * @param value   the value
      */
     public static void putPasswordManagementEnabled(final RequestContext context, final Boolean value) {
         context.getFlowScope().put("passwordManagementEnabled", value);
+    }
+
+    /**
+     * Put account profile management enabled.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putAccountProfileManagementEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("accountProfileManagementEnabled", value);
+    }
+
+    /**
+     * Put security questions enabled into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putSecurityQuestionsEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("securityQuestionsEnabled", value);
     }
 
     /**
@@ -962,6 +983,16 @@ public class WebUtils {
     }
 
     /**
+     * Gets service redirect url.
+     *
+     * @param requestContext the request context
+     * @return the service redirect url
+     */
+    public static String getServiceRedirectUrl(final RequestContext requestContext) {
+        return requestContext.getRequestScope().get("url", String.class);
+    }
+
+    /**
      * Put service response into request scope.
      *
      * @param requestContext the request context
@@ -1013,6 +1044,7 @@ public class WebUtils {
     public static ModelAndView produceErrorView(final String view, final Throwable e) {
         val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
         mv.setStatus(HttpStatus.BAD_REQUEST);
+        LoggingUtils.error(LOGGER, e);
         return mv;
     }
 
@@ -1026,7 +1058,7 @@ public class WebUtils {
     public static void produceErrorView(final HttpServletRequest request, final HttpStatus badRequest, final String message) {
         request.setAttribute("status", HttpStatus.BAD_REQUEST.value());
         request.setAttribute("error", HttpStatus.BAD_REQUEST.name());
-        request.setAttribute("message", "Unable to verify registration record");
+        request.setAttribute("message", message);
     }
 
     /**
@@ -1293,7 +1325,7 @@ public class WebUtils {
      */
     public static <T> T getAcceptableUsagePolicyTermsFromFlowScope(final RequestContext requestContext, final Class<T> clazz) {
         if (requestContext.getFlowScope().contains("aupPolicy")) {
-            return (T) requestContext.getFlowScope().put("aupPolicy", clazz);
+            return (T) requestContext.getFlowScope().get("aupPolicy", clazz);
         }
         return null;
     }

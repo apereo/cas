@@ -2,10 +2,11 @@ package org.apereo.cas.oidc.web.controllers.authorize;
 
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
 import lombok.val;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +37,8 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
     @PostMapping(value = "/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.PUSHED_AUTHORIZE_URL)) {
-            return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.NOT_FOUND);
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PUSHED_AUTHORIZE_URL)) {
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }
         return super.handleRequest(request, response);
     }

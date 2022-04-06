@@ -2,7 +2,7 @@ import java.util.*
 import org.apereo.cas.support.saml.services.*
 import org.apereo.cas.support.saml.*
 
-def Map<String, Object> run(final Object... args) {
+def run(final Object... args) {
     def attributes = args[0]
     def service = args[1]
     def resolver = args[2]

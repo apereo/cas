@@ -35,8 +35,8 @@ const path = require("path");
     let configFilePath = path.join(__dirname, '/attribute-repository.json')
     let config = JSON.parse(fs.readFileSync(configFilePath));
     config.casuser.firstName[0] = newFirstName;
-    await cas.logg(`Writing configuration ${JSON.stringify(config)}`)
-    await fs.writeFileSync(configFilePath, JSON.stringify(config));
+    await cas.logg(`Writing configuration ${JSON.stringify(config, undefined, 2)}`)
+    await fs.writeFileSync(configFilePath, JSON.stringify(config, undefined, 2));
     await cas.sleep(1000)
 
     for (let i = 1; i <= 3; i++) {

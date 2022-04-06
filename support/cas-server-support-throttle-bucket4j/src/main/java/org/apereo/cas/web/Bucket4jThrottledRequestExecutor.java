@@ -5,6 +5,7 @@ import org.apereo.cas.throttle.ThrottledRequestExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,9 +21,15 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
     private final BucketConsumer bucketConsumer;
 
     @Override
-    public boolean throttle(final HttpServletRequest request, final HttpServletResponse response) {
-        val result = bucketConsumer.consume();
-        result.getHeaders().forEach(response::addHeader);
-        return result.isConsumed();
+    public boolean throttle(final HttpServletRequest request,
+                            final HttpServletResponse response) {
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        if (clientInfo != null) {
+            val remoteAddress = clientInfo.getClientIpAddress();
+            val result = bucketConsumer.consume(remoteAddress);
+            result.getHeaders().forEach(response::addHeader);
+            return result.isConsumed();
+        }
+        return false;
     }
 }

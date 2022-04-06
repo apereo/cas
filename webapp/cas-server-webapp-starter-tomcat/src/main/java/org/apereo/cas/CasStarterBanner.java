@@ -18,6 +18,5 @@ public class CasStarterBanner extends AbstractCasBanner {
     protected void injectEnvironmentInfoIntoBanner(final Formatter formatter, final Environment environment,
                                                    final Class<?> sourceClass) {
         formatter.format("CAS Starter Apache Tomcat Version: %s%n", ServerInfo.getServerInfo());
-        formatter.format("%s%n", LINE_SEPARATOR);
     }
 }

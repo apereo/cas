@@ -26,7 +26,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = "transactionManagerSamlMetadataIdP")
 public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator implements InitializingBean {
     private final TransactionOperations transactionTemplate;

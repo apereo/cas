@@ -8,6 +8,7 @@ import org.apereo.cas.shell.commands.jasypt.JasyptEncryptPropertyCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptListAlgorithmsCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptListProvidersCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptTestAlgorithmsCommandTests;
+import org.apereo.cas.shell.commands.oidc.GenerateOidcJsonWebKeystoreCommandTests;
 import org.apereo.cas.shell.commands.properties.AddPropertiesToConfigurationCommandTests;
 import org.apereo.cas.shell.commands.properties.ExportPropertiesCommandTests;
 import org.apereo.cas.shell.commands.properties.FindPropertiesCommandTests;
@@ -40,6 +41,7 @@ import org.junit.platform.suite.api.Suite;
     GenerateSamlIdPMetadataCommandTests.class,
     JasyptTestAlgorithmsCommandTests.class,
     ValidateEndpointCommandTests.class,
+    GenerateOidcJsonWebKeystoreCommandTests.class,
     ValidateLdapConnectionCommandTests.class,
     JasyptListProvidersCommandTests.class,
     JasyptListAlgorithmsCommandTests.class,

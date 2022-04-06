@@ -17,9 +17,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-azuread-authentication" %}
 
-
-{% include_cached casproperties.html 
-properties="cas.authn.azure-active-directory" %}
+{% include_cached casproperties.html properties="cas.authn.azure-active-directory" %}
 
 ## Principal Attributes
 

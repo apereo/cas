@@ -17,7 +17,7 @@ const cas = require('../../cas.js');
     await cas.assertTicketParameter(page);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
     await browser.close();
 })();

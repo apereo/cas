@@ -3,8 +3,8 @@ package org.apereo.cas.dynamodb;
 import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import software.amazon.awssdk.regions.Region;
@@ -27,13 +27,12 @@ public class AmazonDynamoDbClientFactory {
      * @param props the dynamo db properties
      * @return the amazon dynamo db
      */
-    @SneakyThrows
     public DynamoDbClient createAmazonDynamoDb(final AbstractDynamoDbProperties props) {
         if (props.isLocalInstance()) {
             LOGGER.debug("Creating DynamoDb standard client with endpoint [{}] and region [{}]",
                 props.getEndpoint(), props.getRegion());
             return DynamoDbClient.builder()
-                .endpointOverride(new URI(props.getEndpoint()))
+                .endpointOverride(FunctionUtils.doUnchecked(() -> new URI(props.getEndpoint())))
                 .region(Region.of(props.getRegion()))
                 .build();
         }

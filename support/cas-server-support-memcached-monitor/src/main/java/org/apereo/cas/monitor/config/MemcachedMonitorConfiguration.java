@@ -1,10 +1,12 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.monitor.MemcachedHealthIndicator;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
@@ -29,6 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "MemcachedMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Monitoring, module = "memcached")
 public class MemcachedMonitorConfiguration {
 
     @Bean

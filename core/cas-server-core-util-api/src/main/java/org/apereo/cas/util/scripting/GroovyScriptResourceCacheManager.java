@@ -89,7 +89,14 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
                     val resource = ResourceUtils.getResourceFrom(scriptPath);
                     script = new WatchableGroovyScriptResource(resource);
                 } else {
-                    script = new GroovyShellScript(scriptResource);
+                    var resourceToUse = scriptResource;
+                    if (ScriptingUtils.isInlineGroovyScript(resourceToUse)) {
+                        val matcher = ScriptingUtils.getMatcherForInlineGroovyScript(resourceToUse);
+                        if (matcher.find()) {
+                            resourceToUse = matcher.group(1);
+                        }
+                    }
+                    script = new GroovyShellScript(resourceToUse);
                 }
                 LOGGER.trace("Groovy script [{}] for key [{}] is not cached", scriptResource, cacheKey);
                 put(cacheKey, script);

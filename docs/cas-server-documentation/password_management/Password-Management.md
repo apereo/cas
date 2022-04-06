@@ -30,6 +30,10 @@ Support is enabled by including the following dependency in the WAR overlay:
 <div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this module
 in your configuration and overlays. This is just to teach you that it exists.</p></div>
 
+## Account Management
+
+CAS may also allow individual end-users to update certain aspects of their account that relate to password management in a *mini portal* like setup, such as resetting the password or updating security questions, etc. This capability can be enabled using the `AccountManagement` feature toggle, as [described here](../configuration/Configuration-Feature-Toggles.html).
+
 ## Configuration
 
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 

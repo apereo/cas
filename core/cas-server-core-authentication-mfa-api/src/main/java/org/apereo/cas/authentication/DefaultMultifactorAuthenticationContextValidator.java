@@ -62,7 +62,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         val contexts = CollectionUtils.toCollection(ctxAttr);
         LOGGER.trace("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        LOGGER.trace("Available MFA providers are [{}]", providerMap.values());
+        LOGGER.trace("Available multifactor providers are [{}]", providerMap.values());
         val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
         if (requestedProvider.isEmpty()) {
             LOGGER.debug("Requested authentication provider cannot be recognized.");
@@ -96,7 +96,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
                     .success(true).provider(requestedProvider).build();
             }
         }
-        LOGGER.warn("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
+        LOGGER.info("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
         return MultifactorAuthenticationContextValidationResult.builder().success(false).provider(requestedProvider).build();
     }
 

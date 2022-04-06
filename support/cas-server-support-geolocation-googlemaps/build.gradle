@@ -7,6 +7,5 @@ dependencies {
     api project(":api:cas-server-core-api-authentication")
 
     implementation libraries.googlegeocoding
-    implementation libraries.userinfogeocoding
     implementation libraries.okhttp
 }

@@ -41,8 +41,8 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.jdbc.show-sql=false"
 )
-@EnableTransactionManagement
-@EnableAspectJAutoProxy
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @Tag("JDBC")
 @Getter
 public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {

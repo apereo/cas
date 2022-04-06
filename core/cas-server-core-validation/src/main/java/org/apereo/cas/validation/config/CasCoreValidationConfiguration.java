@@ -2,6 +2,7 @@ package org.apereo.cas.validation.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
@@ -10,6 +11,7 @@ import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.AuthenticationPolicyAwareServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.Cas10ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20ProtocolValidationSpecification;
@@ -44,6 +46,7 @@ import java.util.List;
 @Configuration(value = "CasCoreValidationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Validation)
 public class CasCoreValidationConfiguration {
     private static final BeanCondition CONDITION_PROXY_AUTHN = BeanCondition.on("cas.sso.proxy-authn-enabled").isTrue().evenIfMissing();
     

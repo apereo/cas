@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,13 +27,13 @@ public class InetAddressUtils {
      * @return the by name
      */
     public static InetAddress getByName(final String urlAddr) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val url = new URL(urlAddr);
             return InetAddress.getByName(url.getHost());
-        } catch (final Exception e) {
+        }, e -> {
             LOGGER.trace("Host name could not be determined automatically.", e);
-        }
-        return null;
+            return null;
+        }).get();
     }
 
 
@@ -41,14 +43,14 @@ public class InetAddressUtils {
      * @return the cas server host name
      */
     public static String getCasServerHostName() {
-        return Unchecked.supplier(() -> {
+        return FunctionUtils.doAndHandle(() -> {
             val hostName = InetAddress.getLocalHost().getHostName();
             val index = hostName.indexOf('.');
             if (index > 0) {
                 return hostName.substring(0, index);
             }
             return hostName;
-        }).get();
+        }, throwable -> "unknown").get();
     }
 
     /**
@@ -60,11 +62,7 @@ public class InetAddressUtils {
     public static String getCasServerHostAddress(final String name) {
         return Unchecked.supplier(() -> {
             val host = getByName(name);
-            
-            if (host != null) {
-                return host.getHostAddress();
-            }
-            return null;
+            return host != null ? host.getHostAddress() : null;
         }).get();
     }
 }

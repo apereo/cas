@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -22,6 +24,8 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.JDBC)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SessionManagement)
 @Configuration(value = "CasJdbcSessionConfiguration", proxyBeanMethods = false)
 @EnableJdbcHttpSession
 @EnableConfigurationProperties({CasConfigurationProperties.class, JdbcSessionProperties.class})

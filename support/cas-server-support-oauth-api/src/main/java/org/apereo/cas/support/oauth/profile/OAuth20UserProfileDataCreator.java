@@ -2,7 +2,7 @@ package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 
 import java.util.Map;
 

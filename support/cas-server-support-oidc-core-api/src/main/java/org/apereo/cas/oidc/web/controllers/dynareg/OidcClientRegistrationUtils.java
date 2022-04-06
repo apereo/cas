@@ -92,6 +92,8 @@ public class OidcClientRegistrationUtils {
             clientResponse.setRegistrationClientUri(clientConfigUri);
         });
         clientResponse.setClientSecretExpiresAt(registeredService.getClientSecretExpiration());
+        FunctionUtils.doIfNotNull(registeredService.getDynamicRegistrationDateTime(),
+            dt -> clientResponse.setClientIdIssuedAt(dt.toEpochSecond()));
         return clientResponse;
     }
 

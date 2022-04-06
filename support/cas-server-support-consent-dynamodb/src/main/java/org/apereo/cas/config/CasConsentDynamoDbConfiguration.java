@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.DynamoDbConsentFacilitator;
 import org.apereo.cas.consent.DynamoDbConsentRepository;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,6 +26,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CasConsentDynamoDbConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Consent, module = "dynamodb")
 public class CasConsentDynamoDbConfiguration {
 
     @Bean

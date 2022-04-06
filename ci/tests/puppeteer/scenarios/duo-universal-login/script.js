@@ -9,6 +9,6 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(5000)
     await cas.screenshot(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await browser.close();
 })();

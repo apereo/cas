@@ -12,10 +12,6 @@ import org.apache.commons.text.WordUtils;
 public interface OidcConstants {
 
     /**
-     * The token.
-     */
-    String TOKEN = "token";
-    /**
      * ACR passed in the id token.
      */
     String ACR = "acr";
@@ -130,7 +126,7 @@ public interface OidcConstants {
      * Oidc pushed authorization request url path segment url.
      */
     String PUSHED_AUTHORIZE_URL = "oidcPushAuthorize";
-    
+
     /**
      * JWKS Endpoint url.
      */
@@ -178,7 +174,7 @@ public interface OidcConstants {
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.
      */
-    String CLIENT_REGISTRATION_SCOPE = "ClientRegistrationScope";
+    String CLIENT_REGISTRATION_SCOPE = "client_registration_scope";
 
     /**
      * Parameter used to look up clients by their id.
@@ -206,30 +202,6 @@ public interface OidcConstants {
      * JWT content type.
      */
     String CONTENT_TYPE_JWT = "application/jwt";
-
-    /**
-     * Dynamic client registration mode.
-     */
-    enum DynamicClientRegistrationMode {
-
-        /**
-         * Registration is open to all.
-         */
-        OPEN,
-        /**
-         * registration is protected for all.
-         */
-        PROTECTED;
-
-        /**
-         * Is protected?
-         *
-         * @return the boolean
-         */
-        public boolean isProtected() {
-            return this == OidcConstants.DynamicClientRegistrationMode.PROTECTED;
-        }
-    }
 
     /**
      * Standard openid connect scopes.

@@ -28,14 +28,43 @@ public class OidcClientRegistrationProperties implements Serializable {
     /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.
      */
-    private String dynamicClientRegistrationMode;
+    private DynamicClientRegistrationModes dynamicClientRegistrationMode = DynamicClientRegistrationModes.PROTECTED;
 
     /**
-     * When client secret is issued by CAS, this is the time at which the client secret
-     * will expire or 0 (blank or undefined work just as wel) if
-     * it will not expire. The time is represented as the
-     * number of seconds from 1970-01-01T0:0:0Z as measured in UTC until the date/time.
+     * When client secret is issued by CAS, this is the period
+     * that gets added to the current time measured in UTC to determine
+     * the client secret's expiration date. An example value would be {@code P14D}
+     * forcing client applications to expire their client secret in 2 weeks after the
+     * registration date. Expired client secrets can be updated using the client configuration
+     * endpoint. A value of {@code 0} indicates that client secrets would never expire.
      */
     @DurationCapable
     private String clientSecretExpiration = "0";
+
+    /**
+     * Dynamic client registration mode.
+     */
+    public enum DynamicClientRegistrationModes {
+
+        /**
+         * Registration is open to all.
+         * In a situation where CAS is supporting open Client registration,
+         * it will check to see if the {@code logo_uri} and {@code policy_uri} have the same host
+         * as the hosts defined in the array of {@code redirect_uris}.
+         */
+        OPEN,
+        /**
+         * registration is protected for all.
+         */
+        PROTECTED;
+
+        /**
+         * Is protected?
+         *
+         * @return the boolean
+         */
+        public boolean isProtected() {
+            return this == DynamicClientRegistrationModes.PROTECTED;
+        }
+    }
 }

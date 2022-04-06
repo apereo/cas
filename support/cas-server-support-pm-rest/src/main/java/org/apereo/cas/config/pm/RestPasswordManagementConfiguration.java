@@ -1,10 +1,12 @@
 package org.apereo.cas.config.pm;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.rest.RestPasswordManagementService;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration(value = "RestPasswordManagementConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "rest")
 @Slf4j
 public class RestPasswordManagementConfiguration {
 
@@ -48,7 +51,7 @@ public class RestPasswordManagementConfiguration {
                                                            final CasConfigurationProperties casProperties,
                                                            @Qualifier("passwordManagementCipherExecutor")
                                                            final CipherExecutor passwordManagementCipherExecutor,
-                                                           @Qualifier("passwordHistoryService")
+                                                           @Qualifier(PasswordHistoryService.BEAN_NAME)
                                                            final PasswordHistoryService passwordHistoryService) {
         var pm = casProperties.getAuthn().getPm();
         return new RestPasswordManagementService(passwordManagementCipherExecutor,

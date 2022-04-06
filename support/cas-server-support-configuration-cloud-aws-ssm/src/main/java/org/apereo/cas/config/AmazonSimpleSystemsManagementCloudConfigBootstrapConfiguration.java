@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ import java.util.Properties;
 @Configuration(value = "AmazonSecretsManagerCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @Slf4j
 @Getter
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "aws-ssm")
 public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration implements PropertySourceLocator {
     /**
      * Configuration prefix for amazon secrets manager.

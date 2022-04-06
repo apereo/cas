@@ -20,7 +20,6 @@ import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -242,7 +241,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
     @Override
-    @SneakyThrows
     public Collection<RegisteredService> load(final File file) {
         val fileName = file.getName();
         if (!file.canRead()) {
@@ -274,7 +272,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 fileName, this.serviceFileNamePattern.pattern());
         }
 
-        LOGGER.debug("Attempting to read and parse [{}]", file.getCanonicalFile());
+        LOGGER.debug("Attempting to read and parse [{}]", file.getAbsoluteFile());
         try (val in = Files.newBufferedReader(file.toPath())) {
             return this.registeredServiceSerializers
                 .stream()
@@ -390,7 +388,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @return file in service registry directory.
      * @throws IllegalArgumentException if file name is invalid
      */
-    @SneakyThrows
     protected File getRegisteredServiceFileName(final RegisteredService service) {
         val fileName = resourceNamingStrategy.build(service, getExtensions()[0]);
         val svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);

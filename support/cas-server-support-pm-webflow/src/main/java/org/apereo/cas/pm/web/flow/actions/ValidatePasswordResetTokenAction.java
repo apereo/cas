@@ -2,7 +2,6 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -33,10 +32,10 @@ public class ValidatePasswordResetTokenAction extends BaseCasWebflowAction {
     protected Event doExecute(final RequestContext requestContext) {
         try {
             val transientTicket = requestContext.getRequestParameters()
-                .get(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
+                .get(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
             if (StringUtils.isNotBlank(transientTicket)) {
                 val tst = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
-                val token = tst.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
+                val token = tst.getProperties().get(PasswordManagementService.PARAMETER_TOKEN).toString();
                 val username = passwordManagementService.parseToken(token);
                 if (StringUtils.isBlank(username)) {
                     throw new IllegalArgumentException("Password reset token could not be verified to determine username");

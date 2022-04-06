@@ -78,6 +78,13 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
     @NestedConfigurationProperty
     private SpringResourceProperties groovyProviderPostProcessor = new SpringResourceProperties();
 
+    /**
+     * Path to a groovy script to customize the authentication request
+     * and the configuration responsible for it before the
+     * request is handed off to the identity provider.
+     */
+    @NestedConfigurationProperty
+    private SpringResourceProperties groovyAuthenticationRequestCustomizer = new SpringResourceProperties();
 
     /**
      * Discovery selection settings.

@@ -8,17 +8,21 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
-import org.apereo.cas.pm.DefaultPasswordValidationService;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
+import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.pm.PasswordValidationService;
+import org.apereo.cas.pm.impl.DefaultPasswordResetUrlBuilder;
+import org.apereo.cas.pm.impl.DefaultPasswordValidationService;
 import org.apereo.cas.pm.impl.GroovyResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.pm.impl.history.AmnesiacPasswordHistoryService;
 import org.apereo.cas.pm.impl.history.GroovyPasswordHistoryService;
 import org.apereo.cas.pm.impl.history.InMemoryPasswordHistoryService;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
@@ -59,7 +63,7 @@ public class PasswordManagementConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public PasswordValidationService passwordValidationService(final CasConfigurationProperties casProperties,
-                                                                   @Qualifier("passwordHistoryService")
+                                                                   @Qualifier(PasswordHistoryService.BEAN_NAME)
                                                                    final PasswordHistoryService passwordHistoryService) {
             val policyPattern = casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern();
             return new DefaultPasswordValidationService(policyPattern, passwordHistoryService);
@@ -69,7 +73,7 @@ public class PasswordManagementConfiguration {
     @Configuration(value = "PasswordManagementHistoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class PasswordManagementHistoryConfiguration {
-        @ConditionalOnMissingBean(name = "passwordHistoryService")
+        @ConditionalOnMissingBean(name = PasswordHistoryService.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public PasswordHistoryService passwordHistoryService(final CasConfigurationProperties casProperties) {
@@ -133,6 +137,21 @@ public class PasswordManagementConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class PasswordManagementCoreConfiguration {
 
+        @ConditionalOnMissingBean(name = PasswordResetUrlBuilder.BEAN_NAME)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public PasswordResetUrlBuilder passwordResetUrlBuilder(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("passwordChangeService")
+            final PasswordManagementService passwordChangeService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory) {
+            return new DefaultPasswordResetUrlBuilder(passwordChangeService,
+                ticketRegistry, ticketFactory, casProperties);
+        }
+
         @ConditionalOnMissingBean(name = PasswordManagementService.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -140,7 +159,7 @@ public class PasswordManagementConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("passwordManagementCipherExecutor")
             final CipherExecutor passwordManagementCipherExecutor,
-            @Qualifier("passwordHistoryService")
+            @Qualifier(PasswordHistoryService.BEAN_NAME)
             final PasswordHistoryService passwordHistoryService) {
             val pm = casProperties.getAuthn().getPm();
             if (pm.getCore().isEnabled()) {
@@ -166,7 +185,8 @@ public class PasswordManagementConfiguration {
                 LOGGER.debug("Password management is disabled. To enable the password management functionality, "
                              + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
             }
-            return new NoOpPasswordManagementService(passwordManagementCipherExecutor, casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm());
+            return new NoOpPasswordManagementService(passwordManagementCipherExecutor,
+                casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm());
         }
 
         @Bean

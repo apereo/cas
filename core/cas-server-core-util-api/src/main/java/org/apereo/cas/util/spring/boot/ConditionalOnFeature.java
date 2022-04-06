@@ -37,6 +37,13 @@ public @interface ConditionalOnFeature {
      * @return the string
      */
     String module() default StringUtils.EMPTY;
+
+    /**
+     * Indicate if this feature should be enabled by default
+     * if not explicitly enabled.
+     * @return true/false
+     */
+    boolean enabledByDefault() default true;
 }
 
 

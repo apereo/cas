@@ -1,9 +1,9 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -71,11 +71,6 @@ public class SpnegoCredential implements Credential {
         this.isNtlm = isTokenNtlm(this.initToken);
     }
 
-    @Override
-    public String getId() {
-        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
-    }
-
     /**
      * Checks if is token ntlm.
      *
@@ -84,7 +79,7 @@ public class SpnegoCredential implements Credential {
      */
     private static boolean isTokenNtlm(final byte[] token) {
         return token != null && token.length >= NTLM_TOKEN_MAX_LENGTH
-            && IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
+               && IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
     }
 
     /**
@@ -99,5 +94,10 @@ public class SpnegoCredential implements Credential {
             return null;
         }
         return source.read();
+    }
+
+    @Override
+    public String getId() {
+        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
     }
 }

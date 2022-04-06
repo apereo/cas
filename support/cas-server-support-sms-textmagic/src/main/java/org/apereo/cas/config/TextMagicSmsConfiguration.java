@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.sms.TextMagicSmsSender;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +25,7 @@ import java.util.Optional;
  */
 @Configuration(value = "TextMagicSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Notifications, module = "textmagic")
 public class TextMagicSmsConfiguration {
 
     @Bean

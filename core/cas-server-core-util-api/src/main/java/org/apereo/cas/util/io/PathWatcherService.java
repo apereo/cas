@@ -1,7 +1,8 @@
 package org.apereo.cas.util.io;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.sun.nio.file.SensitivityWatchEventModifier;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -49,18 +50,17 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
             });
     }
 
-    @SneakyThrows
     public PathWatcherService(final Path watchablePath, final Consumer<File> onCreate,
                               final Consumer<File> onModify, final Consumer<File> onDelete) {
         LOGGER.info("Watching directory path at [{}]", watchablePath);
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
-        this.watcher = watchablePath.getFileSystem().newWatchService();
+        this.watcher = FunctionUtils.doUnchecked(() -> watchablePath.getFileSystem().newWatchService());
         LOGGER.trace("Created watcher for events of type [{}]", Arrays.stream(KINDS)
             .map(WatchEvent.Kind::name)
             .collect(Collectors.joining(",")));
-        watchablePath.register(this.watcher, KINDS, SensitivityWatchEventModifier.HIGH);
+        FunctionUtils.doUnchecked(unused -> watchablePath.register(this.watcher, KINDS, SensitivityWatchEventModifier.HIGH));
     }
 
     @Override

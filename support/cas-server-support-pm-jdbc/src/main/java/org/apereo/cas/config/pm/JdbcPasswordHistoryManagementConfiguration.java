@@ -37,7 +37,7 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagementHistory, module = "jdbc")
 @Configuration(value = "JdbcPasswordHistoryManagementConfiguration", proxyBeanMethods = false)

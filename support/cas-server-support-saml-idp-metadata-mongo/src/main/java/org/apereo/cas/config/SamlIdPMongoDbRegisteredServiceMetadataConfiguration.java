@@ -2,11 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.MongoDbSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,9 +28,11 @@ import org.springframework.data.mongodb.core.MongoOperations;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "SamlIdPMongoDbRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLServiceProviderMetadata, module = "mongo")
 public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(name = "mongoDbSamlRegisteredServiceMetadataResolver")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver(
         final CasConfigurationProperties casProperties,

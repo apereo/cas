@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = "transactionManagerWebAuthn", propagation = Propagation.REQUIRED)
 public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepository {
     private static final String UPDATE_QUERY = String.format("UPDATE %s r ", JpaWebAuthnCredentialRegistration.ENTITY_NAME);

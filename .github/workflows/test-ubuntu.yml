@@ -50,8 +50,8 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
@@ -72,8 +72,8 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v3
@@ -104,8 +104,8 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - id: print-categories
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
@@ -134,8 +134,8 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
         shell: bash
@@ -150,7 +150,7 @@ jobs:
       - name: Run Tests
         run: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v2"
+        uses: "codecov/codecov-action@v3"
         with:
           files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
           flags: ${{ matrix.category }}
@@ -179,8 +179,8 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: "Download coverage files"
         uses: "actions/download-artifact@v2"
         with:

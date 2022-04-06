@@ -1,8 +1,9 @@
 package org.apereo.cas.util.http;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.ConnectionReuseStrategy;
@@ -236,7 +237,6 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
      *
      * @return the built HTTP client
      */
-    @SneakyThrows
     @SuppressWarnings("java:S2095")
     private CloseableHttpClient buildHttpClient() {
         val plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
@@ -250,7 +250,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
         connectionManager.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
         connectionManager.setValidateAfterInactivity(DEFAULT_TIMEOUT);
 
-        val httpHost = new HttpHost(InetAddress.getLocalHost());
+        val httpHost = FunctionUtils.doUnchecked(() -> new HttpHost(InetAddress.getLocalHost()));
         val httpRoute = new HttpRoute(httpHost);
         connectionManager.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
 

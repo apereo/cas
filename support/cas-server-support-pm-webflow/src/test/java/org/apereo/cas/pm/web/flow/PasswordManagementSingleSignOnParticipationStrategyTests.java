@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.pm.PasswordManagementQuery;
+import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.actions.BasePasswordManagementActionTests;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -45,7 +46,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
     @Test
     public void verifyStrategyWithAnInvalidPmRequest() {
         val ctx = new MockRequestContext();
-        ctx.putRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, "invalidResetToken");
+        ctx.putRequestParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, "invalidResetToken");
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
@@ -61,10 +62,10 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
         val serverPrefix = casProperties.getServer().getPrefix();
         val service = webApplicationServiceFactory.createService(serverPrefix);
-        val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token);
+        val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementService.PARAMETER_TOKEN, token);
         val ticket = transientFactory.create(service, properties);
         ticketRegistry.addTicket(ticket);
-        ctx.putRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, ticket.getId());
+        ctx.putRequestParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, ticket.getId());
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())

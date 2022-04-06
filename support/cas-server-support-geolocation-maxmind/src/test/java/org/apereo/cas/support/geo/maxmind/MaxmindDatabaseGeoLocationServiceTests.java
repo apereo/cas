@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("GeoLocation")
 public class MaxmindDatabaseGeoLocationServiceTests {
 
     @Test

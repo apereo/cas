@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
@@ -26,11 +27,6 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    /**
-     * Flow id for password reset.
-     */
-    public static final String FLOW_ID_PASSWORD_RESET = "pswdreset";
-
     /**
      * Flow id for password reset.
      */
@@ -130,10 +126,11 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             createTgt.getEntryActionList().add(
                 createEvaluateAction(String.join(DO_CHANGE_PASSWORD_PARAMETER, "flowScope.", " = requestParameters.", " != null")));
 
-            createDecisionState(flow, CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, "requestParameters."
-                + PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN
+            createDecisionState(flow, CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION,
+                "requestParameters."
+                + PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN
                 + " != null", CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW, originalTargetState);
-            
+
             createTransitionForState(initializeLoginFormState,
                 CasWebflowConstants.STATE_ID_SUCCESS,
                 CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, true);
@@ -212,9 +209,11 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     }
 
     private void enablePasswordManagementForFlow(final Flow flow) {
-        flow.getStartActionList().add(
-            new ConsumerExecutionAction(context -> WebUtils.putPasswordManagementEnabled(context,
-                casProperties.getAuthn().getPm().getCore().isEnabled())));
+        val action = new ConsumerExecutionAction(context -> {
+            WebUtils.putAccountProfileManagementEnabled(context, applicationContext.containsBean(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY));
+            WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().getCore().isEnabled());
+        });
+        flow.getStartActionList().add(action);
     }
 
     private void configurePasswordResetFlow(final Flow flow, final String id, final String viewId) {

@@ -1,12 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.saml.SamlMetadataDocumentCouchDbRepository;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.CouchDbSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,14 +27,16 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "SamlIdPCouchDbRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLServiceProviderMetadata, module = "couchdb")
 public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "samlMetadataDocumentCouchDbRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository(final CasConfigurationProperties casProperties,
-                                                                                       @Qualifier("samlMetadataCouchDbFactory")
-                                                                                       final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
+    public SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("samlMetadataCouchDbFactory")
+        final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
         val couch = casProperties.getAuthn()
             .getSamlIdp()
             .getMetadata()
@@ -43,11 +47,12 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
     @ConditionalOnMissingBean(name = "couchDbSamlRegisteredServiceMetadataResolver")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public SamlRegisteredServiceMetadataResolver couchDbSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
-                                                                                              @Qualifier("samlMetadataDocumentCouchDbRepository")
-                                                                                              final SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository,
-                                                                                              @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-                                                                                              final OpenSamlConfigBean openSamlConfigBean) {
+    public SamlRegisteredServiceMetadataResolver couchDbSamlRegisteredServiceMetadataResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("samlMetadataDocumentCouchDbRepository")
+        final SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository,
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+        final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new CouchDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, samlMetadataDocumentCouchDbRepository);
     }

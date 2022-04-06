@@ -2,8 +2,8 @@ package org.apereo.cas.authorization;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.LdapEntry;
@@ -49,12 +49,11 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
     }
 
     @Override
-    @SneakyThrows
     protected Optional<UserProfile> generateAuthorizationForLdapEntry(final UserProfile profile, final LdapEntry userEntry) {
         LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
-        val response = this.groupSearchOperation.execute(
-            LdapUtils.newLdaptiveSearchFilter(this.groupSearchOperation.getTemplate().getFilter(),
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn())));
+        val response = FunctionUtils.doUnchecked(() -> groupSearchOperation.execute(
+            LdapUtils.newLdaptiveSearchFilter(groupSearchOperation.getTemplate().getFilter(),
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn()))));
         LOGGER.debug("LDAP role search response: [{}]", response);
         for (val entry : response.getEntries()) {
             val groupAttribute = entry.getAttribute(this.groupAttributeName);

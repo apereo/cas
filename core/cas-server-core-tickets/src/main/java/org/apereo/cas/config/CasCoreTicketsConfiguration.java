@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
@@ -45,6 +46,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -78,9 +80,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Configuration(value = "CasCoreTicketsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@EnableAsync
-@EnableAspectJAutoProxy
+@EnableAsync(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
 public class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketsBaseConfiguration", proxyBeanMethods = false)
@@ -128,7 +131,7 @@ public class CasCoreTicketsConfiguration {
             @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
             final ObjectProvider<LogoutManager> logoutManager,
             final CasConfigurationProperties casProperties) {
-            LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
+            LOGGER.info("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                         + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
             val mem = casProperties.getTicket().getRegistry().getInMemory();
             val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");
@@ -436,7 +439,7 @@ public class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @EnableTransactionManagement
+    @EnableTransactionManagement(proxyTargetClass = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasCoreTicketTransactionConfiguration {
         @ConditionalOnMissingBean(name = "ticketTransactionManager")

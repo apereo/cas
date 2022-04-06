@@ -9,8 +9,8 @@ const assert = require('assert');
         "redirect_uris": ["https://apereo.github.io", "https://github.com/apereo/cas"],
         "client_name": "My Example",
         "client_name#ja-Japan-JP": "Japanese",
-        "logo_uri": "https://client.example.org/logo.png",
-        "policy_uri": "https://client.example.org/policy",
+        "logo_uri": "https://apereo.github.io/logo.png",
+        "policy_uri": "https://github.com/apereo/cas",
         "tos_uri": "https://client.example.org/tos",
         "subject_type": "pairwise",
         "token_endpoint_auth_method": "client_secret_basic",
@@ -23,7 +23,7 @@ const assert = require('assert');
         "contacts": ["sample@example.org", "user@example.org"]
     }
 
-    let body = JSON.stringify(service);
+    let body = JSON.stringify(service, undefined, 2);
     console.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {

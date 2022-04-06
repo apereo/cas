@@ -1,0 +1,93 @@
+package org.apereo.cas.pm.impl;
+
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.pm.PasswordManagementQuery;
+import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordResetUrlBuilder;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.util.UriUtils;
+
+import java.io.Serializable;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
+/**
+ * This is {@link DefaultPasswordResetUrlBuilder}.
+ *
+ * @author Misagh Moayyed
+ * @since 6.6.0
+ */
+@RequiredArgsConstructor
+@Slf4j
+public class DefaultPasswordResetUrlBuilder implements PasswordResetUrlBuilder {
+    /**
+     * The password management service.
+     */
+    protected final PasswordManagementService passwordManagementService;
+
+    /**
+     * Ticket registry instance to hold onto the token.
+     */
+    protected final TicketRegistry ticketRegistry;
+
+    /**
+     * Ticket factory instance.
+     */
+    protected final TicketFactory ticketFactory;
+
+    /**
+     * The CAS configuration properties.
+     */
+    protected final CasConfigurationProperties casProperties;
+
+    @Override
+    public URL build(final String username, final WebApplicationService service) throws Exception {
+        val query = PasswordManagementQuery.builder().username(username).build();
+        LOGGER.debug("Creating password reset URL designed for [{}]", username);
+
+        val token = passwordManagementService.createToken(query);
+        if (StringUtils.isNotBlank(token)) {
+            val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+            val pm = casProperties.getAuthn().getPm();
+            val seconds = Beans.newDuration(pm.getReset().getExpiration()).toSeconds();
+            LOGGER.debug("Password reset URL shall expire in [{}] second(s)", seconds);
+            
+            val properties = CollectionUtils.<String, Serializable>wrap(
+                PasswordManagementService.PARAMETER_TOKEN, token,
+                ExpirationPolicy.class.getName(),
+                HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(seconds).build());
+            val ticket = transientFactory.create(service, properties);
+            ticketRegistry.addTicket(ticket);
+
+            val resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
+                .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
+                .append(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN).append('=').append(ticket.getId());
+
+            if (service != null) {
+                val encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);
+                resetUrl.append('&').append(CasProtocolConstants.PARAMETER_SERVICE).append('=').append(encodeServiceUrl);
+            }
+
+            val url = resetUrl.toString();
+            LOGGER.debug("Final password reset URL designed for [{}] is [{}]", username, url);
+            return new URL(url);
+        }
+        LOGGER.error("Could not create password reset url since no reset token could be generated");
+        return null;
+    }
+}
