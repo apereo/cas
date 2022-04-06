@@ -1,11 +1,15 @@
 package org.apereo.cas;
 
 import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurerTests;
+import org.apereo.cas.pm.web.flow.PasswordManagementAccountProfileWebflowConfigurerTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurerTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategyTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurerDisabledTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurerEnabledTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtilsTests;
+import org.apereo.cas.pm.web.flow.actions.AccountProfilePasswordChangeRequestActionTests;
+import org.apereo.cas.pm.web.flow.actions.AccountProfilePreparePasswordManagementActionTests;
+import org.apereo.cas.pm.web.flow.actions.AccountProfileUpdateSecurityQuestionsActionTests;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesActionTests;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeActionTests;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetActionTests;
@@ -34,6 +38,10 @@ import org.junit.platform.suite.api.Suite;
     PasswordManagementWebflowUtilsTests.class,
     SendForgotUsernameInstructionsActionTests.class,
     PasswordChangeActionTests.class,
+    AccountProfileUpdateSecurityQuestionsActionTests.class,
+    PasswordManagementAccountProfileWebflowConfigurerTests.class,
+    AccountProfilePreparePasswordManagementActionTests.class,
+    AccountProfilePasswordChangeRequestActionTests.class,
     ForgotUsernameCaptchaWebflowConfigurerTests.class,
     ValidatePasswordResetTokenActionTests.class,
     SendForgotUsernameInstructionsActionEmailMessageBodyTests.class,

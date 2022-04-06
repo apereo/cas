@@ -7,6 +7,7 @@ import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link DelegatedClientIdentityProviderRedirectionStrategy}.
@@ -24,10 +25,10 @@ public interface DelegatedClientIdentityProviderRedirectionStrategy extends Orde
      * @param provider the provider
      * @return the primary delegated authentication provider
      */
-    Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(
+    Optional<DelegatedClientIdentityProviderConfiguration> select(
         RequestContext context,
         WebApplicationService service,
-        DelegatedClientIdentityProviderConfiguration provider);
+        Set<DelegatedClientIdentityProviderConfiguration> provider);
 
     @Override
     default int getOrder() {

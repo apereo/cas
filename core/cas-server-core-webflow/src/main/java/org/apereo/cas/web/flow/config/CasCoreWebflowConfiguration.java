@@ -20,6 +20,7 @@ import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -30,6 +31,7 @@ import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategy;
@@ -85,6 +87,7 @@ import java.util.List;
 @Configuration(value = "CasCoreWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreWebflowConfiguration {
 

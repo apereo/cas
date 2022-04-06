@@ -9,11 +9,13 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultProfileCouchDbRepository;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -37,6 +39,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CouchDbAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "couchdb")
 @Slf4j
 public class CouchDbAuthenticationConfiguration {
 

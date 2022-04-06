@@ -8,11 +8,9 @@ dependencies {
     
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
-
-    implementation project(":core:cas-server-core-audit")
+    
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-registry")
-    implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-api")
@@ -28,6 +26,7 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-services")
 
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
@@ -35,14 +34,12 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-web")
-    
+    testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-cookie")
-    
 
-    
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

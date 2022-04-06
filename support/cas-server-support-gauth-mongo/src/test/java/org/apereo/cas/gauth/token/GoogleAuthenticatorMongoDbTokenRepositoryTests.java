@@ -90,8 +90,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         "cas.authn.mfa.gauth.mongo.database-name=gauth-token",
         "cas.authn.mfa.gauth.crypto.enabled=false"
     })
-@EnableTransactionManagement
-@EnableAspectJAutoProxy
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Getter
 @EnabledIfPortOpen(port = 27017)

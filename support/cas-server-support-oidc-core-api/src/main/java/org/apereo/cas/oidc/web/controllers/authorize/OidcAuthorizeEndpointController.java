@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointContro
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,9 +37,9 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.AUTHORIZE_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.AUTHORIZE_URL)) {
             LOGGER.warn("CAS cannot accept the authorization request given the issuer is invalid.");
-            return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.NOT_FOUND);
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }
 
         if (getConfigurationContext().getDiscoverySettings().isRequirePushedAuthorizationRequests()

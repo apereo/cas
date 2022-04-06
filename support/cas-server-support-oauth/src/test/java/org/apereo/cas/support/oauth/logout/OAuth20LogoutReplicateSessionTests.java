@@ -7,8 +7,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,8 +40,8 @@ import static org.mockito.Mockito.*;
                 "spring.main.allow-bean-definition-overriding=true",
                 "cas.authn.oauth.replicate-sessions=true"
         })
-@EnableTransactionManagement
-@EnableAspectJAutoProxy
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @Tag("OAuth")
 public class OAuth20LogoutReplicateSessionTests {
 

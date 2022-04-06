@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.UniqueTicketIdGeneratorConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -24,6 +26,7 @@ import java.util.Map;
  */
 @Configuration(value = "CasCoreTicketIdGeneratorsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
 public class CasCoreTicketIdGeneratorsConfiguration {
 
     @Bean

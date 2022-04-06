@@ -19,8 +19,8 @@ const os = require("os");
         })
 
     config.keys[0]["kid"] = kid;
-    console.log(`Updated configuration:\n${JSON.stringify(config)}`);
-    await fs.writeFileSync(configFilePath, JSON.stringify(config));
+    console.log(`Updated configuration:\n${JSON.stringify(config, undefined, 2)}`);
+    await fs.writeFileSync(configFilePath, JSON.stringify(config, undefined, 2));
     await cas.sleep(1000)
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",
         res => {

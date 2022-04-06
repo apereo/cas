@@ -21,7 +21,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  */
 @SpringBootApplication(exclude = GroovyTemplateAutoConfiguration.class, proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableAsync
+@EnableAsync(proxyTargetClass = false)
 @NoArgsConstructor
 public class CasCommandLineShellApplication {
 

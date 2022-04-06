@@ -28,24 +28,19 @@ public class OidcClientSecretValidator extends DefaultOAuth20ClientSecretValidat
 
     @Override
     public boolean validate(final OAuthRegisteredService registeredService, final String clientSecret) {
-        return super.validate(registeredService, clientSecret) && !clientSecretHasExpired(registeredService);
+        return super.validate(registeredService, clientSecret) && !isClientSecretExpired(registeredService);
     }
 
-    /**
-     * Client secret has expired.
-     *
-     * @param registeredService the registered service
-     * @return true/false
-     */
-    protected boolean clientSecretHasExpired(final OAuthRegisteredService registeredService) {
+    @Override
+    public boolean isClientSecretExpired(final OAuthRegisteredService registeredService) {
         if (registeredService instanceof OidcRegisteredService) {
             val oidcService = (OidcRegisteredService) registeredService;
             if (oidcService.getClientSecretExpiration() > 0) {
                 val expirationTime = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochSecond(oidcService.getClientSecretExpiration()));
                 val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
-                LOGGER.debug("Client secret is set to expire at [{}], while now is [{}]", expirationTime, currentTime);
-                if (expirationTime.isAfter(currentTime)) {
-                    LOGGER.debug("Client secret for service [{}] has expired at [{}] and must be renewed",
+                OidcClientSecretValidator.LOGGER.debug("Client secret is set to expire at [{}], while now is [{}]", expirationTime, currentTime);
+                if (currentTime.isAfter(expirationTime)) {
+                    OidcClientSecretValidator.LOGGER.debug("Client secret for service [{}] has expired at [{}] and must be renewed",
                         oidcService.getName(), expirationTime);
                     return true;
                 }

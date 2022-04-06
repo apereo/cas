@@ -20,8 +20,10 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -44,6 +46,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "TrustedAuthenticationConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "trusted")
 public class TrustedAuthenticationConfiguration {
 
     @Configuration(value = "TrustedAuthenticationHandlerConfiguration", proxyBeanMethods = false)

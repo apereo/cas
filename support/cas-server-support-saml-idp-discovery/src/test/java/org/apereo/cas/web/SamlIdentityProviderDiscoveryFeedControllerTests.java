@@ -56,8 +56,10 @@ public class SamlIdentityProviderDiscoveryFeedControllerTests {
             request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://service.example");
 
             val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-            accessStrategy.setDelegatedAuthenticationPolicy(
-                new DefaultRegisteredServiceDelegatedAuthenticationPolicy(List.of("OtherClient"), false, false));
+            val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+            policy.setAllowedProviders(List.of("OtherClient"));
+            policy.setPermitUndefined(false);
+            accessStrategy.setDelegatedAuthenticationPolicy(policy);
             val service = RegisteredServiceTestUtils.getRegisteredService("https://service.example");
             service.setAccessStrategy(accessStrategy);
             servicesManager.save(service);

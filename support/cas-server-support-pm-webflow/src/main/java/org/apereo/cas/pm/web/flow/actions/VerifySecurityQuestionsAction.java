@@ -31,7 +31,7 @@ public class VerifySecurityQuestionsAction extends BasePasswordManagementAction 
 
         val query = PasswordManagementQuery.builder().username(username).build();
         val questions = passwordManagementService.getSecurityQuestions(query);
-        val canonicalQuestions = canonicalizeSecurityQuestions(questions);
+        val canonicalQuestions = PasswordManagementService.canonicalizeSecurityQuestions(questions);
         LOGGER.debug("Canonical security questions are [{}]", canonicalQuestions);
 
         val index = new AtomicInteger(0);

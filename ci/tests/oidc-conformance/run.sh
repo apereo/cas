@@ -87,7 +87,7 @@ export DISABLE_SSL_VERIFY=true
 #"$PWD"/ci/tests/oidc-conformance/conformance-suite/scripts/run-test-plan.py \
 #  oidcc-basic-certification-test-plan\[server_metadata=discovery\]\[client_registration=static_client\] \
 #  "$PWD"/ci/tests/oidc-conformance/test-plan-basic-certification.json
-#
+
 echo -e "\nKilling CAS process ${pid} ..."
 kill -9 $pid
 echo -e "\nKilling OIDC Conformance Suite process ${$poidc} ..."

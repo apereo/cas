@@ -25,6 +25,15 @@
                 });
                 $('#source').val(select.value);
             }
+
+            let tooltips = document.querySelector('.mdc-tooltip')
+            if (tooltips != null) {
+                new mdc.tooltip.MDCTooltip(tooltips);
+            }
+            let banners = document.querySelector('.mdc-banner')
+            if (banners != null) {
+                new mdc.banner.MDCBanner(banners);
+            }
         },
         checkCaps: ev => {
             let s = String.fromCharCode(ev.which);
@@ -78,6 +87,7 @@ function resourceLoadedSuccessfully() {
             ev.preventDefault();
         });
 
+        console.log(`JQuery Ready: ${typeof (jqueryReady)}`);
         if (typeof (jqueryReady) == 'function') {
             jqueryReady();
         }

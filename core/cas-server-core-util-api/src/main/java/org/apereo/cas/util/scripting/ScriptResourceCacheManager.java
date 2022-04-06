@@ -2,7 +2,6 @@ package org.apereo.cas.util.scripting;
 
 import org.apereo.cas.util.DigestUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -78,7 +77,6 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      *
      * @return the groovy script resource cache manager
      */
-    @SneakyThrows
     default ScriptResourceCacheManager<K, V> clear() {
         close();
         return this;

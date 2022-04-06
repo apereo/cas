@@ -47,7 +47,7 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val mv = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
             StringUtils.EMPTY, request, response);
-        assertEquals(HttpStatus.NOT_FOUND, mv.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatusCode());
     }
 
     @Test

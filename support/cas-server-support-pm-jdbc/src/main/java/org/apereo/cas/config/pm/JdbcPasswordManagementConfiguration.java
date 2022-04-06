@@ -33,7 +33,7 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "JdbcPasswordManagementConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "jdbc")
@@ -54,7 +54,7 @@ public class JdbcPasswordManagementConfiguration {
             final TransactionOperations jdbcPasswordManagementTransactionTemplate,
             @Qualifier("passwordManagementCipherExecutor")
             final CipherExecutor passwordManagementCipherExecutor,
-            @Qualifier("passwordHistoryService")
+            @Qualifier(PasswordHistoryService.BEAN_NAME)
             final PasswordHistoryService passwordHistoryService) {
             val encoder = PasswordEncoderUtils.newPasswordEncoder(
                 casProperties.getAuthn().getPm().getJdbc().getPasswordEncoder(), applicationContext);

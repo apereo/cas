@@ -28,9 +28,11 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated This component is deprecated as of 6.6.0 and is scheduled to be removed.
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Deprecated(since = "6.6.0")
 @Configuration(value = "ShiroAuthenticationConfiguration", proxyBeanMethods = false)
 public class ShiroAuthenticationConfiguration {
 

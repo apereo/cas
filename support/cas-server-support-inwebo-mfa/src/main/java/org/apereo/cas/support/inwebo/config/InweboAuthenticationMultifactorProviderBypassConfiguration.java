@@ -11,6 +11,8 @@ import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenti
 import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "InweboMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
 public class InweboAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "inweboBypassEvaluator")

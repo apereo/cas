@@ -155,14 +155,23 @@
                     </div>
                 </div>
             </div>
+            
+            <script type="text/javascript" th:inline="javascript">
+                /*<![CDATA[*/
 
-            <script>
+                let primaryUrl = /*[[${delegatedAuthenticationProviderPrimary?.redirectUrl}]]*/;
                 const redirectTo = $("a[autoRedirectType=client]").attr("href");
-                if (redirectTo !== null && redirectTo !== undefined) {
+                if (primaryUrl != null) {
+                    console.log(`Navigating to primary provider URL ${primaryUrl}`)
+                    window.location.href = primaryUrl;
+                }
+                else if (redirectTo !== null && redirectTo !== undefined) {
+                    console.log(`Navigating to provider URL ${redirectTo}`)
                     window.location.href = redirectTo;
                 } else {
                     console.log("Unable to locate provider with auto-redirect");
                 }
+                /*]]>*/
             </script>
         </div>
 

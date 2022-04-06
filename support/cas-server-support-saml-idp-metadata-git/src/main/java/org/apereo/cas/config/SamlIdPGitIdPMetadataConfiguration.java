@@ -38,7 +38,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Configuration(value = "SamlIdPGitIdPMetadataConfiguration", proxyBeanMethods = false)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdPMetadata, module = "git")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "git")
 public class SamlIdPGitIdPMetadataConfiguration {
     private static final BeanCondition CONDITION_ENABLED = BeanCondition.on("cas.authn.saml-idp.metadata.git.idp-metadata-enabled").isTrue();
 

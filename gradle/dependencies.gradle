@@ -529,19 +529,6 @@ ext.libraries = [
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                 }
         ],
-        userinfogeocoding       : [
-                dependencies.create("io.userinfo:userinfo-java:$userInfoVersion") {
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.squareup.retrofit", module: "retrofit")
-                },
-                dependencies.create("com.squareup.retrofit:retrofit:$retrofit1Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.google.code.gson", module: "gson")
-                },
-                dependencies.create("com.google.code.gson:gson:$gsonVersion") {
-                }
-        ],
         googlegeocoding         : [
                 dependencies.create("com.google.maps:google-maps-services:$googleMapsGeoCodingVersion") {
                     exclude(group: "com.google.guava", module: "guava")
@@ -1087,7 +1074,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
 
                 },
-                dependencies.create("org.messaginghub:pooled-jms:2.0.4") {
+                dependencies.create("org.messaginghub:pooled-jms:2.0.5") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.apache.commons", module: "commons-pool2")
@@ -2042,7 +2029,7 @@ ext.libraries = [
                     exclude(group: "org.cryptacular", module: "cryptacular")
 
                 },
-                dependencies.create("org.pac4j:pac4j-jee:$pac4jVersion") {
+                dependencies.create("org.pac4j:pac4j-javaee:$pac4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "commons-codec", module: "commons-codec")
@@ -2051,9 +2038,17 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "com.zaxxer", module: "HikariCP")
-
                 },
                 dependencies.create("org.pac4j:pac4j-http:$pac4jVersion") {
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                },
+                dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "joda-time", module: "joda-time")
@@ -2200,7 +2195,6 @@ ext.libraries = [
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-
                 }
         ],
         nimbus                  : [

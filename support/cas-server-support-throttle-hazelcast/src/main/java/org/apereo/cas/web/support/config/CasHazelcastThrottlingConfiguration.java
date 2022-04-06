@@ -2,7 +2,9 @@ package org.apereo.cas.web.support.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.support.HazelcastMapThrottledSubmissionsStore;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 
@@ -27,6 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "CasHazelcastThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Throttling, module = "hazelcast")
 public class CasHazelcastThrottlingConfiguration {
 
     private static final String MAP_KEY = "ipMap";

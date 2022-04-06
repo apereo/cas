@@ -1,12 +1,13 @@
 package org.apereo.cas.bucket4j.consumer;
 
+import org.apereo.cas.bucket4j.producer.BucketStore;
 import org.apereo.cas.configuration.model.support.bucket4j.BaseBucket4jProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import io.github.bucket4j.AbstractBucket;
 import io.github.bucket4j.BlockingStrategy;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -22,13 +23,19 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultBucketConsumer implements BucketConsumer {
-    private final AbstractBucket bucket;
+    private final BucketStore bucketStore;
 
     private final BaseBucket4jProperties properties;
 
     @Override
-    public BucketConsumptionResult consume() {
-        val availableTokens = this.bucket.getAvailableTokens();
+    @Synchronized
+    public BucketConsumptionResult consume(final String key) {
+        val bucket = bucketStore.obtainBucket(key);
+        if (bucket == null) {
+            LOGGER.warn("Unable to obtain a bucket for [{}]", key);
+            return BucketConsumptionResult.builder().consumed(false).build();
+        }
+
         val canProceed = FunctionUtils.doAndHandle(() -> {
             if (properties.isBlocking()) {
                 LOGGER.trace("Attempting to consume a token for the authentication attempt");
@@ -42,8 +49,9 @@ public class DefaultBucketConsumer implements BucketConsumer {
         }).get();
 
         val headers = new LinkedHashMap<String, String>();
+        val availableTokens = bucket.getAvailableTokens();
         if (!canProceed) {
-            val probe = this.bucket.tryConsumeAndReturnRemaining(1);
+            val probe = bucket.tryConsumeAndReturnRemaining(1);
             val seconds = TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill());
             headers.put(HEADER_NAME_X_RATE_LIMIT_RETRY_AFTER_SECONDS, Long.toString(seconds));
             LOGGER.warn("The request is throttled as capacity is entirely consumed. Available tokens are [{}]", availableTokens);

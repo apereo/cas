@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated This component is deprecated as of 6.6.0 and is scheduled to be removed.
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 })
 @Tag("CasConfiguration")
+@Deprecated(since = "6.6.0")
 public class ShiroAuthenticationConfigurationTests {
     @Autowired
     @Qualifier("shiroAuthenticationHandler")

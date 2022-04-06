@@ -12,7 +12,7 @@ import org.apereo.cas.web.UrlValidator;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;

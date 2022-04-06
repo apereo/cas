@@ -25,7 +25,7 @@ import org.springframework.core.Ordered;
 @Configuration(value = "SamlIdPTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdP)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 public class SamlIdPTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
 
     @Override

@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
@@ -18,7 +19,7 @@ import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -28,6 +29,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultDelegatedClientIdentityProviderConfigurationProducer}.
@@ -61,24 +63,17 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
         LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
         val allClients = this.clients.findAllClients();
-        val providers = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
-        allClients
+        val providers = allClients
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service, request))
             .map(IndirectClient.class::cast)
-            .forEach(client -> {
-                try {
-                    val providerResult = produce(context, client);
-                    providerResult.ifPresent(provider -> {
-                        providers.add(provider);
-                        delegatedClientIdentityProviderRedirectionStrategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider)
-                            .ifPresent(p -> WebUtils.putDelegatedAuthenticationProviderPrimary(context, p));
-                    });
-                } catch (final Exception e) {
-                    LOGGER.error("Cannot process client [{}]", client);
-                    LoggingUtils.error(LOGGER, e);
-                }
-            });
+            .map(client -> produce(context, client))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        delegatedClientIdentityProviderRedirectionStrategy.select(context, service, providers)
+            .ifPresent(p -> WebUtils.putDelegatedAuthenticationProviderPrimary(context, p));
 
         if (!providers.isEmpty()) {
             val selectionType = casProperties.getAuthn().getPac4j().getCore().getDiscoverySelection().getSelectionType();
@@ -93,10 +88,10 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
                     WebUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.FALSE);
                     break;
             }
-            
+
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
             LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
-                + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers");
+                        + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers");
         }
         return providers;
     }
@@ -104,24 +99,31 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
     @Override
     public Optional<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext requestContext,
                                                                           final IndirectClient client) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val webContext = new JEEContext(request, response);
+        try {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val webContext = new JEEContext(request, response);
 
-        val currentService = WebUtils.getService(requestContext);
-        LOGGER.debug("Initializing client [{}] with request parameters [{}] and service [{}]",
-            client, requestContext.getRequestParameters(), currentService);
-        client.init();
+            val currentService = WebUtils.getService(requestContext);
+            LOGGER.debug("Initializing client [{}] with request parameters [{}] and service [{}]",
+                client, requestContext.getRequestParameters(), currentService);
+            client.init();
 
-        if (delegatedClientAuthenticationRequestCustomizers.isEmpty()
-            || delegatedClientAuthenticationRequestCustomizers.stream().anyMatch(c -> c.isAuthorized(webContext, client, currentService))) {
-            return DelegatedClientIdentityProviderConfigurationFactory.builder()
-                .client(client)
-                .webContext(webContext)
-                .service(currentService)
-                .casProperties(casProperties)
-                .build()
-                .resolve();
+            if (delegatedClientAuthenticationRequestCustomizers.isEmpty()
+                || delegatedClientAuthenticationRequestCustomizers.stream()
+                    .filter(BeanSupplier::isNotProxy)
+                    .anyMatch(c -> c.isAuthorized(webContext, client, currentService))) {
+                return DelegatedClientIdentityProviderConfigurationFactory.builder()
+                    .client(client)
+                    .webContext(webContext)
+                    .service(currentService)
+                    .casProperties(casProperties)
+                    .build()
+                    .resolve();
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Cannot process client [{}]", client);
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }

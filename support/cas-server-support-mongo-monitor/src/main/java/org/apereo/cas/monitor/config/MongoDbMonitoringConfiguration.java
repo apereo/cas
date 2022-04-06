@@ -2,11 +2,13 @@ package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.mongo.CasMongoOperations;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.monitor.CompositeHealthIndicator;
 import org.apereo.cas.monitor.MongoDbHealthIndicator;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "MongoDbMonitoringConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Monitoring, module = "mongo")
 public class MongoDbMonitoringConfiguration {
 
     @Bean

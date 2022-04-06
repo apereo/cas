@@ -8,13 +8,13 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
 
     await cas.goto(page, "https://localhost:8443/cas");
-    await cas.assertNoTicketGrantingCookie(page);
+    await cas.assertCookie(page, false);
     
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com&renew=true");
     await cas.loginWith(page, "casuser", "Mellon");
 
     await cas.goto(page, "https://localhost:8443/cas");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
 
     await browser.close();
 })();

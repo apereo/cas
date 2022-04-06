@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  * @author Marvin S. Addison
  * @since 3.2.1
  */
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER)
 @Slf4j
 @RequiredArgsConstructor

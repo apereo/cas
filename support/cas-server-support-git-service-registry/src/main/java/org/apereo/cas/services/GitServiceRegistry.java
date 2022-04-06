@@ -8,7 +8,6 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
-import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -89,14 +88,15 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         }).get();
     }
 
-    @SneakyThrows
     @Override
     public boolean delete(final RegisteredService registeredService) {
         val file = locateExistingRegisteredServiceFile(registeredService);
         if (file.isPresent()) {
             val message = "Deleted registered service " + registeredService.getName();
-            FileUtils.forceDelete(file.get());
-            commitAndPush(message);
+            FunctionUtils.doUnchecked(unused -> {
+                FileUtils.forceDelete(file.get());
+                commitAndPush(message);
+            });
             load();
             return true;
         }

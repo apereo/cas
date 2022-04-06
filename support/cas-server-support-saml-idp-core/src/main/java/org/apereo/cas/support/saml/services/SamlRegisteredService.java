@@ -54,6 +54,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
      */
     private long metadataMaxValidity;
 
+    @ExpressionLanguageCapable
     private String requiredAuthenticationContextClass;
 
     private String metadataCriteriaDirection;

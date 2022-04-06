@@ -32,7 +32,6 @@ public class StandaloneConfigurationSecurityProperties implements Serializable {
     /**
      * Security provider to use when deciphering settings.
      * Leave blank for Java, {@code BC} for BouncyCastle.
-     * This property can be set as a Java system property: {@code cas.standalone.configuration-security.provider}.
      */
     private String provider;
 
@@ -44,7 +43,6 @@ public class StandaloneConfigurationSecurityProperties implements Serializable {
 
     /**
      * Secret key/password to use when deciphering settings.
-     * This property can be set as a Java system property: {@code cas.standalone.configuration-security.psw}.
      */
     private String psw;
 

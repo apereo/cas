@@ -8,7 +8,7 @@
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
     "--cas.audit.engine.enabled=false",
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

@@ -43,6 +43,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration(value = "SwivelConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "swivel")
 public class SwivelConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 

@@ -3,7 +3,12 @@ package org.apereo.cas.pm;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
 import lombok.val;
@@ -29,6 +34,11 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordManagementConfiguration.class,
     MailSenderAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreWebConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
@@ -43,7 +53,7 @@ public class DefaultPasswordValidationServiceTests {
     private PasswordValidationService passwordValidationService;
 
     @Autowired
-    @Qualifier("passwordHistoryService")
+    @Qualifier(PasswordHistoryService.BEAN_NAME)
     private PasswordHistoryService passwordHistoryService;
 
     @Test

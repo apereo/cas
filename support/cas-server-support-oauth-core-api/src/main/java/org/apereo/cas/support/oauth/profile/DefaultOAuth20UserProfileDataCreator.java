@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 
 import java.util.HashMap;
 import java.util.Map;

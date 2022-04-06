@@ -9,6 +9,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link ChainingDelegatedClientIdentityProviderRedirectionStrategy}.
@@ -30,13 +31,13 @@ public class ChainingDelegatedClientIdentityProviderRedirectionStrategy implemen
     }
 
     @Override
-    public Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(
+    public Optional<DelegatedClientIdentityProviderConfiguration> select(
         final RequestContext context,
         final WebApplicationService service,
-        final DelegatedClientIdentityProviderConfiguration provider) {
+        final Set<DelegatedClientIdentityProviderConfiguration> providers) {
         return strategies
             .stream()
-            .map(strategy -> strategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider))
+            .map(strategy -> strategy.select(context, service, providers))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .findFirst();

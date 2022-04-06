@@ -41,7 +41,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureBefore(CasOAuthUmaConfiguration.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 @Configuration(value = "CasOAuthUmaJpaConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.UMA, module = "jpa")
 public class CasOAuthUmaJpaConfiguration {

@@ -14,7 +14,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,15 +64,16 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         '/' + OidcConstants.BASE_OIDC_URL + "/logout",
         "/**/" + OidcConstants.LOGOUT_URL
     })
-    public ResponseEntity<HttpStatus> handleRequestInternal(
+    public ResponseEntity handleRequestInternal(
         @RequestParam(value = "post_logout_redirect_uri", required = false) final String postLogoutRedirectUrl,
         @RequestParam(value = "state", required = false) final String state,
         @RequestParam(value = "id_token_hint", required = false) final String idToken,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.LOGOUT_URL)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.LOGOUT_URL)) {
+            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
         
         String clientId = null;

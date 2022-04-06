@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 })
 @Tag("JDBC")
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = false)
 public class CasHibernateJpaBeanFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -70,6 +70,7 @@ public class CasHibernateJpaBeanFactoryTests {
     @Entity
     @Getter
     @NoArgsConstructor
+    @SuppressWarnings("UnusedMethod")
     private static class SampleEntity {
         @Id
         private long id;

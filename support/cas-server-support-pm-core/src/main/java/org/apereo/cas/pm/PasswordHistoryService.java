@@ -13,6 +13,10 @@ import java.util.Collection;
  * @since 6.1.0
  */
 public interface PasswordHistoryService extends Ordered {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "passwordHistoryService";
 
     @Override
     default int getOrder() {

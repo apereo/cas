@@ -25,6 +25,10 @@ or override log42.component.properties to turn off async
         <!-- -Dlog.stacktraceappender=null to disable stacktrace log -->
         <Property name="log.stacktraceappender">casStackTraceFile</Property>
         <Property name="log.include.location">false</Property>
+
+        <Property name="logPattern">
+            %highlight{%d{HH:mm:ss}{GMT-7} %p [%-20.80c{1.}] - &lt;%m&gt;}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue}%n
+        </Property>
     </Properties>
     <Appenders>
         <Null name="null" />
@@ -36,7 +40,7 @@ or override log42.component.properties to turn off async
         <RollingFile name="file" fileName="${sys:baseDir}/cas.log" append="true"
                      filePattern="${sys:baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log"
                      immediateFlush="false">
-            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}"
+            <PatternLayout pattern="${logPattern}"
                            alwaysWriteExceptions="${sys:log.file.stacktraces}" />
             <Policies>
                 <OnStartupTriggeringPolicy />

@@ -24,8 +24,8 @@ import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMap;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.assertion.SamlProfileSamlAssertionBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlAttributeStatementBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.authn.AuthnContextClassRefBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultAuthnContextClassRefBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultSamlProfileAuthnContextClassRefBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileAuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSamlAuthNStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.DefaultSamlIdPObjectSigner;
@@ -88,7 +88,7 @@ import java.time.Duration;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "SamlIdPConfiguration", proxyBeanMethods = false)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdP)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 public class SamlIdPConfiguration {
 
     @Configuration(value = "SamlIdPProfileBuilderConfiguration", proxyBeanMethods = false)
@@ -437,8 +437,9 @@ public class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "defaultAuthnContextClassRefBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder(final CasConfigurationProperties casProperties) {
-            return new DefaultAuthnContextClassRefBuilder(casProperties);
+        public SamlProfileAuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder(
+            final CasConfigurationProperties casProperties) {
+            return new DefaultSamlProfileAuthnContextClassRefBuilder(casProperties);
         }
 
         @ConditionalOnMissingBean(name = "samlProfileSamlAssertionBuilder")
@@ -470,7 +471,7 @@ public class SamlIdPConfiguration {
         public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("defaultAuthnContextClassRefBuilder")
-            final AuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder,
+            final SamlProfileAuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean, defaultAuthnContextClassRefBuilder, casProperties);

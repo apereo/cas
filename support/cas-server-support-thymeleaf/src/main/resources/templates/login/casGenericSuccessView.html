@@ -11,6 +11,11 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" class="row">
+        <script>
+            function jqueryReady() {
+                $('table').DataTable();
+            }
+        </script>
         <div class="w-100 m-auto mdc-card card p-4 text-justify">
             <h2>
                 <i class="mdi mdi-door-open fas fa-door-open"></i>
@@ -93,7 +98,6 @@
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
-                            
                             </tr>
                             </thead>
                             <tbody class="mdc-data-table__content">

@@ -26,18 +26,19 @@ public interface BucketConsumer {
     long MAX_WAIT_NANOS = TimeUnit.HOURS.toNanos(1);
 
     /**
-     * Consume bucket and return consumption result.
-     *
-     * @return the bucket consumption result
-     */
-    BucketConsumptionResult consume();
-
-    /**
      * Permit all bucket consumer.
      *
      * @return the bucket consumer
      */
     static BucketConsumer permitAll() {
-        return () -> BucketConsumptionResult.builder().consumed(true).build();
+        return key -> BucketConsumptionResult.builder().consumed(true).build();
     }
+
+    /**
+     * Consume bucket and return consumption result.
+     *
+     * @param key the key
+     * @return the bucket consumption result
+     */
+    BucketConsumptionResult consume(String key);
 }

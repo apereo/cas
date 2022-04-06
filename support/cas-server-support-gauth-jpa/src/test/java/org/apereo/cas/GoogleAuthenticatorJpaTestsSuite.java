@@ -4,6 +4,7 @@ import org.apereo.cas.gauth.credential.JpaGoogleAuthenticatorTokenCredentialRepo
 import org.apereo.cas.gauth.credential.MariaDbJpaGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.gauth.credential.MySQLJpaGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.gauth.credential.OracleJpaGoogleAuthenticatorTokenCredentialRepositoryTests;
+import org.apereo.cas.gauth.credential.PostgresJpaGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorJpaTokenRepositoryTests;
 import org.apereo.cas.gauth.token.MariaDbGoogleAuthenticatorJpaTokenRepositoryTests;
 import org.apereo.cas.gauth.token.MySQLGoogleAuthenticatorJpaTokenRepositoryTests;
@@ -24,6 +25,7 @@ import org.junit.platform.suite.api.Suite;
     MariaDbJpaGoogleAuthenticatorTokenCredentialRepositoryTests.class,
     OracleJpaGoogleAuthenticatorTokenCredentialRepositoryTests.class,
     GoogleAuthenticatorJpaTokenRepositoryTests.class,
+    PostgresJpaGoogleAuthenticatorTokenCredentialRepositoryTests.class,
     MySQLJpaGoogleAuthenticatorTokenCredentialRepositoryTests.class,
     MySQLGoogleAuthenticatorJpaTokenRepositoryTests.class,
     OracleGoogleAuthenticatorJpaTokenRepositoryTests.class

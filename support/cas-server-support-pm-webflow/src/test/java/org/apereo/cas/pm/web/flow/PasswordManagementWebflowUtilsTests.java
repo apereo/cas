@@ -35,7 +35,7 @@ public class PasswordManagementWebflowUtilsTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         PasswordManagementWebflowUtils.putPasswordResetSecurityQuestions(context, List.of("Q1", "Q2"));
         WebUtils.putPasswordPolicyPattern(context, ".*");
-        assertFalse(PasswordManagementWebflowUtils.getPasswordResetQuestions(context).isEmpty());
+        assertFalse(PasswordManagementWebflowUtils.getPasswordResetQuestions(context, List.class).isEmpty());
     }
 
 }

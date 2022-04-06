@@ -14,6 +14,10 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * Bean name for account profile flow registry.
+     */
+    String BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY = "accountProfileFlowRegistry";
+    /**
      * Bean name for login flow registry.
      */
     String BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY = "loginFlowRegistry";
@@ -314,6 +318,12 @@ public interface CasWebflowConstants {
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+
+    /**
+     * Transition id 'updateSecurityQuestions'.
+     */
+    String TRANSITION_ID_UPDATE_SECURITY_QUESTIONS = "updateSecurityQuestions";
+
     /**
      * Transition id 'invalidPasswordResetToken'.
      */
@@ -444,6 +454,11 @@ public interface CasWebflowConstants {
      * The state 'selectSurrogate'.
      */
     String STATE_ID_SELECT_SURROGATE = "selectSurrogate";
+
+    /**
+     * The state 'myAccountProfile'.
+     */
+    String STATE_ID_MY_ACCOUNT_PROFILE_VIEW = "myAccountProfile";
 
     /**
      * The state 'duoUniversalPromptPrepareValidate'.
@@ -895,6 +910,16 @@ public interface CasWebflowConstants {
     String STATE_ID_CHECK_ACCOUNT_REGISTRATION = "accountRegistrationCheck";
 
     /**
+     * State id 'passwordChangeRequest'.
+     */
+    String STATE_ID_PASSWORD_CHANGE_REQUEST = "passwordChangeRequest";
+
+    /**
+     * State id 'updateSecurityQuestions'.
+     */
+    String STATE_ID_UPDATE_SECURITY_QUESTIONS = "updateSecurityQuestions";
+
+    /**
      * State id 'viewRegistration'.
      */
     String STATE_ID_VIEW_REGISTRATION = "viewRegistration";
@@ -1173,9 +1198,23 @@ public interface CasWebflowConstants {
     String ACTION_ID_VERIFY_REQUIRED_SERVICE = "verifyRequiredServiceAction";
 
     /**
+     * Action id 'fetchTicketGrantingTicketAction'.
+     */
+    String ACTION_ID_FETCH_TICKET_GRANTING_TICKET = "fetchTicketGrantingTicketAction";
+
+    /**
      * Action id 'ticketGrantingTicketCheckAction'.
      */
     String ACTION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheckAction";
+    /**
+     * Action id 'prepareAccountProfileViewAction'.
+     */
+    String ACTION_ID_PREPARE_ACCOUNT_PROFILE = "prepareAccountProfileViewAction";
+
+    /**
+     * Action id 'prepareAccountProfilePasswordMgmtAction'.
+     */
+    String ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT = "prepareAccountProfilePasswordMgmtAction";
 
     /**
      * Action id 'initialAuthenticationRequestValidationAction'.

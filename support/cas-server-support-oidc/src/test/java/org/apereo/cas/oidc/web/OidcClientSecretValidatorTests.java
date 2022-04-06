@@ -28,22 +28,22 @@ public class OidcClientSecretValidatorTests extends AbstractOidcTests {
     private OAuth20ClientSecretValidator oauth20ClientSecretValidator;
 
     @Test
-    public void verifyExpired() {
+    public void verifyNotExpired() {
         val secret = UUID.randomUUID().toString();
         val service = getOidcRegisteredService();
         service.setClientSecret(secret);
         service.setClientSecretExpiration(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(1).toEpochSecond());
         val results = oauth20ClientSecretValidator.validate(service, secret);
-        assertFalse(results);
+        assertTrue(results);
     }
 
     @Test
-    public void verifyNotExpired() {
+    public void verifyExpired() {
         val secret = UUID.randomUUID().toString();
         val service = getOidcRegisteredService();
         service.setClientSecret(secret);
         service.setClientSecretExpiration(ZonedDateTime.now(ZoneOffset.UTC).minusHours(1).toEpochSecond());
         val results = oauth20ClientSecretValidator.validate(service, secret);
-        assertTrue(results);
+        assertFalse(results);
     }
 }

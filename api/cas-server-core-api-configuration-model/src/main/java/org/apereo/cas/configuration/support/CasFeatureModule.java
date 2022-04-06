@@ -63,6 +63,96 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
+         * Web flow, actions and event routing core functionality.
+         */
+        Webflow,
+        /**
+         * Logout and SLO functionality.
+         */
+        Logout,
+        /**
+         * Allow CAS to be discoverable/discovered,
+         * and/or integration with service discovery systems.
+         */
+        Discovery,
+        /**
+         * Core/baseline functionality
+         * that provides ground support for a particular integration.
+         */
+        Core,
+        /**
+         * HTTP session management.
+         */
+        SessionManagement,
+        /**
+         * JDBC and RDBMS.
+         */
+        JDBC,
+        /**
+         * Geo and IP location mapping.
+         */
+        GeoLocation,
+        /**
+         * Metrics and statistics.
+         */
+        Metrics,
+        /**
+         * Monitoring.
+         */
+        Monitoring,
+        /**
+         * CAS configuration and Spring Cloud Config.
+         */
+        CasConfiguration,
+        /**
+         * Jetty Webapp configuration.
+         */
+        Jetty,
+        /**
+         * Undertow webapp configuration.
+         */
+        Undertow,
+        /**
+         * Spring Boot Admin Server.
+         */
+        SpringBootAdmin,
+        /**
+         * WebApp and web-related functionality.
+         */
+        WebApplication,
+        /**
+         * Apache Tomcat server configuration.
+         */
+        ApacheTomcat,
+        /**
+         * Notifications and messaging.
+         */
+        Notifications,
+        /**
+         * Protocol validation.
+         */
+        Validation,
+        /**
+         * Thymeleaf and view management.
+         */
+        Thymeleaf,
+        /**
+         * Token & JWT management.
+         */
+        Tokens,
+        /**
+         * WS-federation.
+         */
+        WsFederation,
+        /**
+         * SAML functionality.
+         */
+        SAML,
+        /**
+         * WS IdP and STS functionality.
+         */
+        WsFederationIdentityProvider,
+        /**
          * Authentication and login.
          */
         Authentication,
@@ -177,15 +267,15 @@ public interface CasFeatureModule {
         /**
          * SAML IDP.
          */
-        SamlIdP,
+        SAMLIdentityProvider,
         /**
          * SAML IDP metadata management.
          */
-        SamlIdPMetadata,
+        SAMLIdentityProviderMetadata,
         /**
          * SAML SP metadata management.
          */
-        SamlServiceProviderMetadata,
+        SAMLServiceProviderMetadata,
         /**
          * OAuth.
          */
@@ -227,8 +317,31 @@ public interface CasFeatureModule {
          */
         RestProtocol,
         /**
+         * Simple multifactor authentication.
+         */
+        SimpleMFA,
+        /**
+         * X509 authentication.
+         */
+        X509,
+        /**
          * Reports.
          */
-        Reports
+        Reports;
+
+        /**
+         * To property name.
+         *
+         * @param module the module
+         * @return the string
+         */
+        public String toProperty(final String module) {
+            var propertyName = CasFeatureModule.class.getSimpleName() + '.' + name();
+            if (StringUtils.isNotBlank(module)) {
+                propertyName += '.' + module;
+            }
+            propertyName += ".enabled";
+            return propertyName;
+        }
     }
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
 import org.apereo.cas.logout.DefaultLogoutRedirectionStrategy;
@@ -29,6 +30,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
@@ -59,6 +61,7 @@ import java.util.stream.Collectors;
 @Configuration(value = "CasCoreLogoutConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Logout)
 public class CasCoreLogoutConfiguration {
 
     @Configuration(value = "CasCoreLogoutUrlBuilderConfiguration", proxyBeanMethods = false)

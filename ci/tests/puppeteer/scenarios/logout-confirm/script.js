@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
 
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
 
     await cas.goto(page, "https://localhost:8443/cas/logout");
 
@@ -27,7 +27,7 @@ const cas = require('../../cas.js');
     assert(url === "https://localhost:8443/cas/logout")
 
     await page.waitForTimeout(1000)
-    await cas.assertNoTicketGrantingCookie(page);
+    await cas.assertCookie(page, false);
 
     console.log("Logout with redirect...")
     await cas.goto(page, "https://localhost:8443/cas/logout?url=https://github.com/apereo/cas");

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("RegisteredService")
+@Tag("Cipher")
 public class RegisteredServicePublicKeyCipherExecutorTests {
 
     @Test

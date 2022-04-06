@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -33,18 +34,19 @@ public class SystemUtils {
         GIT_PROPERTIES = new GitProperties(loadGitProperties());
     }
 
-    @SneakyThrows
     private static Properties loadGitProperties() {
         var properties = new Properties();
-        val resource = new ClassPathResource("git.properties");
-        if (ResourceUtils.doesResourceExist(resource)) {
-            val loaded = PropertiesLoaderUtils.loadProperties(resource);
-            for (val key : loaded.stringPropertyNames()) {
-                if (key.startsWith("git.")) {
-                    properties.put(key.substring("git.".length()), loaded.get(key));
+        FunctionUtils.doUnchecked(unused -> {
+            val resource = new ClassPathResource("git.properties");
+            if (ResourceUtils.doesResourceExist(resource)) {
+                val loaded = PropertiesLoaderUtils.loadProperties(resource);
+                for (val key : loaded.stringPropertyNames()) {
+                    if (key.startsWith("git.")) {
+                        properties.put(key.substring("git.".length()), loaded.get(key));
+                    }
                 }
             }
-        }
+        });
         return properties;
     }
 
@@ -59,7 +61,7 @@ public class SystemUtils {
         val info = new LinkedHashMap<String, Object>(SYSTEM_INFO_DEFAULT_SIZE);
 
         info.put("CAS Version", StringUtils.defaultString(CasVersion.getVersion(), "Not Available"));
-        info.put("CAS Branch", StringUtils.defaultString(GIT_PROPERTIES.getBranch(), "Not Available"));
+        info.put("CAS Branch", StringUtils.defaultString(GIT_PROPERTIES.getBranch(), "master"));
         info.put("CAS Commit Id", StringUtils.defaultString(GIT_PROPERTIES.getCommitId(), "Not Available"));
         info.put("CAS Build Date/Time", CasVersion.getDateTime());
         info.put("Spring Boot Version", SpringBootVersion.getVersion());

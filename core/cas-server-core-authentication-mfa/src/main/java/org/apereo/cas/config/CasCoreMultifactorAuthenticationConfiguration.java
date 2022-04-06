@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.val;
@@ -30,6 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "CasCoreMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication)
 public class CasCoreMultifactorAuthenticationConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationContextConfiguration", proxyBeanMethods = false)

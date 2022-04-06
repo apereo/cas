@@ -26,6 +26,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class CasFeatureEnabledConditionTests {
 
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy,
+        module = "feature3", enabledByDefault = false)
+    @TestConfiguration(value = "CasFeatureModuleDisabledByDefaultTestConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasFeatureModuleDisabledByDefaultTestConfiguration {
+        @Bean
+        public String bean1() {
+            return "Bean1";
+        }
+    }
+
     @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature1")
     @TestConfiguration(value = "CasFeatureModuleTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -85,4 +96,22 @@ public class CasFeatureEnabledConditionTests {
             assertTrue(applicationContext.containsBean("bean1"));
         }
     }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @SpringBootTest(classes = {
+        RefreshAutoConfiguration.class,
+        CasFeatureModuleDisabledByDefaultTestConfiguration.class
+    })
+    public class Feature3DisabledByDefaultTests {
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+
+        @Test
+        public void verifyOperation() {
+            assertFalse(applicationContext.containsBean("bean1"));
+        }
+    }
+
+
 }

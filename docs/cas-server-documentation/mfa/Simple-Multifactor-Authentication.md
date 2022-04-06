@@ -8,10 +8,8 @@ category: Multifactor Authentication
 
 # Simple Multifactor Authentication
 
-Allow CAS to act as a multifactor authentication provider on its own, issuing tokens 
-and sending them to end-users via pre-defined communication channels such as email 
-or text messages. Tokens issued by CAS are tracked using
-the [ticket registry](../ticketing/Configuring-Ticketing-Components.html)
+Allow CAS to act as a multifactor authentication provider on its own, issuing tokens and sending them to end-users via pre-defined communication channels such as email 
+or text messages. Tokens issued by CAS are tracked using the [ticket registry](../ticketing/Configuring-Ticketing-Components.html)
 and are assigned a configurable expiration policy controlled via CAS settings.
 
 ## Configuration
@@ -53,6 +51,7 @@ means that token requests that reach a certain configurable capacity within
 a time window may either be blocked or _throttled_ to slow down. This is done to
 protect the system from overloading, allowing you to introduce a scenario to allow
 CAS `120` token requests per minute with a refill rate of `10` requests per
-second that would continually increase in the capacity bucket.
+second that would continually increase in the capacity bucket. Please note that the bucket allocation 
+strategy is specific to the client IP address.
 
 {% include_cached casproperties.html properties="cas.authn.mfa.simple.bucket4j" %}

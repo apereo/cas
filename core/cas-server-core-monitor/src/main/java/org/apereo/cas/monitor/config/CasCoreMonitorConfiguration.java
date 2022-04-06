@@ -1,10 +1,12 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.monitor.MemoryMonitorHealthIndicator;
 import org.apereo.cas.monitor.SystemMonitorHealthIndicator;
 import org.apereo.cas.monitor.TicketRegistryHealthIndicator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,6 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "CasCoreMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Monitoring)
 public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "memoryHealthIndicator")
     @Bean

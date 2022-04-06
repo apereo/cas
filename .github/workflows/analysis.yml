@@ -179,6 +179,7 @@ jobs:
           - CheckMixingSpringBeanWithDependencyInjection
           - CheckMissingPuppeteerConfig
           - CheckSpringConfigurationConditionals
+          - CheckMissingConditionalOnFeature
     name: ${{ matrix.check }}
     steps:
       - uses: actions/checkout@v3

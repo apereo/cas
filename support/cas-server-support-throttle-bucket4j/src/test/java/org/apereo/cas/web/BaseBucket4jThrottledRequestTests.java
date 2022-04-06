@@ -5,6 +5,9 @@ import org.apereo.cas.config.CasBucket4jThrottlingConfiguration;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +32,14 @@ public abstract class BaseBucket4jThrottledRequestTests {
     @Autowired
     @Qualifier(ThrottledRequestExecutor.DEFAULT_BEAN_NAME)
     protected ThrottledRequestExecutor throttledRequestExecutor;
+
+    @BeforeEach
+    public void onSetUp() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("223.456.789.100");
+        request.setLocalAddr("223.456.789.200");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+    }
 
     @Test
     public void verifyOperation() {

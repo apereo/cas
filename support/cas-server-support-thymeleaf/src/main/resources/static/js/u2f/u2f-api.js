@@ -477,7 +477,7 @@ u2f.WrappedIosPort_ = function() {};
  * @param {Object} message
  */
 u2f.WrappedIosPort_.prototype.postMessage = function(message) {
-    var str = JSON.stringify(message);
+    var str = JSON.stringify(message, undefined, 2);
     var url = "u2f://auth?" + encodeURI(str);
     location.replace(url);
 };

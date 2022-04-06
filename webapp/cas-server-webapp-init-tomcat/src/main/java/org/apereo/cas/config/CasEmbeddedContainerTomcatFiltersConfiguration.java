@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apache.catalina.filters.CsrfPreventionFilter;
@@ -25,6 +27,7 @@ import org.springframework.http.HttpStatus;
 @Configuration(value = "CasEmbeddedContainerTomcatFiltersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportAutoConfiguration(CasEmbeddedContainerTomcatConfiguration.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ApacheTomcat)
 public class CasEmbeddedContainerTomcatFiltersConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

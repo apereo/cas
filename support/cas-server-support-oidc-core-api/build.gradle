@@ -4,8 +4,7 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-protocol")
-    
-    implementation project(":support:cas-server-support-oauth-webflow")
+
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-token-core-api")
@@ -37,6 +36,7 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.nimbus
 
+    testImplementation project(":support:cas-server-support-oauth-webflow")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core")

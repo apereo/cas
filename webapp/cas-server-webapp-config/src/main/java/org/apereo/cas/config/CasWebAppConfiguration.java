@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +42,7 @@ import java.util.Optional;
  */
 @Configuration(value = "CasWebAppConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebApplication)
 public class CasWebAppConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean

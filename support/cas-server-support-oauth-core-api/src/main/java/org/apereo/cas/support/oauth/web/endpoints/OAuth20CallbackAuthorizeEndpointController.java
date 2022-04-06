@@ -6,13 +6,13 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.engine.DefaultCallbackLogic;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 

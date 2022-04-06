@@ -14,6 +14,9 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
@@ -35,6 +38,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -87,6 +91,23 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
+    public void verifyDiscoveryStrategy() {
+
+        val strategy = getStrategy();
+        val context = getMockRequestContext();
+        val provider = getProviderConfiguration("SomeClient");
+
+        val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        policy.setSelectionStrategy("groovy { return providers.first() }");
+        configureService(policy);
+
+        val service = RegisteredServiceTestUtils.getService();
+        val results = strategy.select(context, service, Set.of(provider));
+        assertFalse(results.isEmpty());
+        assertEquals(results.get().getName(), provider.getName());
+    }
+
+    @Test
     public void verifyExclusiveRedirect() {
         val strategy = getStrategy();
         val context = getMockRequestContext();
@@ -98,7 +119,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         configureService(policy);
 
         val service = RegisteredServiceTestUtils.getService();
-        val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider);
+        val results = strategy.select(context, service, Set.of(provider));
         assertFalse(results.isEmpty());
         assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
         assertEquals(Ordered.LOWEST_PRECEDENCE, strategy.getOrder());
@@ -115,7 +136,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         configureService(policy);
 
         WebUtils.putDelegatedAuthenticationProviderPrimary(context, null);
-        val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, null, provider);
+        val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
         assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
     }
@@ -130,7 +151,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         configureService(policy);
 
         when(this.casCookieBuilder.retrieveCookieValue(any())).thenReturn("SomeClient");
-        val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, null, provider);
+        val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
         assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
     }
@@ -144,8 +165,14 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     private DelegatedClientIdentityProviderRedirectionStrategy getStrategy() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
+        applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+
         var props = new CasConfigurationProperties();
         props.getAuthn().getPac4j().getCookie().setEnabled(true);
-        return new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager, casCookieBuilder, props);
+        return new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
+            casCookieBuilder, props, applicationContext);
     }
 }

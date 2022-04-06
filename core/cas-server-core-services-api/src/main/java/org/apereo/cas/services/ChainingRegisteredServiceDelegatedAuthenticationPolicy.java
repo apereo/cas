@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,6 +50,16 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
             .map(RegisteredServiceDelegatedAuthenticationPolicy::getAllowedProviders)
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
+    }
+
+    @Override
+    @JsonIgnore
+    public String getSelectionStrategy() {
+        return strategies.stream()
+            .map(RegisteredServiceDelegatedAuthenticationPolicy::getSelectionStrategy)
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .orElse(StringUtils.EMPTY);
     }
 
     @Override

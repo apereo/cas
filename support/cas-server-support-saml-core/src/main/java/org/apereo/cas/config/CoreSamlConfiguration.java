@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
@@ -39,6 +41,7 @@ import java.util.Properties;
  */
 @Configuration(value = "CoreSamlConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAML)
 public class CoreSamlConfiguration {
 
     private static final int POOL_SIZE = 1_000;

@@ -43,7 +43,7 @@ public class LdapPasswordManagementConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("passwordManagementCipherExecutor")
         final CipherExecutor passwordManagementCipherExecutor,
-        @Qualifier("passwordHistoryService")
+        @Qualifier(PasswordHistoryService.BEAN_NAME)
         final PasswordHistoryService passwordHistoryService) {
         return BeanSupplier.of(PasswordManagementService.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))

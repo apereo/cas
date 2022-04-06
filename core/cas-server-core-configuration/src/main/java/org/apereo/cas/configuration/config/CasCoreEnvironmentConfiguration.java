@@ -7,7 +7,9 @@ import org.apereo.cas.configuration.StandaloneConfigurationFilePropertiesSourceL
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,6 +30,7 @@ import java.util.List;
  * @since 5.1.0
  */
 @Configuration(value = "CasCoreEnvironmentConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 public class CasCoreEnvironmentConfiguration {
 
     @Configuration(value = "CasCoreEnvironmentManagerConfiguration", proxyBeanMethods = false)

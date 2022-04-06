@@ -38,7 +38,7 @@
             <form method="POST" id="fmAccepttoQRCode">
                 <script type="text/javascript" th:inline="javascript">
                     /*<![CDATA[*/
-                    $(function () {
+                    $(() => {
                         var invitationToken = /*[[${accepttoInvitationToken}]]*/;
                         var hashCode = /*[[${accepttoInvitationTokenQRCodeHash}]]*/;
                         var src = "https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=" + hashCode + "&chld=H|0";

@@ -5,7 +5,7 @@ category: Protocols
 ---
 {% include variables.html %}
 
-# Client Registration - OpenID Connect Authentication
+# Clients - OpenID Connect Authentication
 
 Clients can be registered with CAS in the following ways.
 
@@ -78,7 +78,5 @@ immediately to avoid surprises in the future.</p></div>
 
 ## Dynamic Registration
 
-Client applications may dynamically be registered with CAS for authentication. By default, CAS operates 
-in a `PROTECTED` mode where the registration endpoint requires user authentication. This behavior may be relaxed via 
-CAS settings to allow CAS to operate in an `OPEN` mode.
-
+Client applications may dynamically be registered with CAS
+for authentication. [See this guide](OIDC-Authentication-Dynamic-Registration.html) for more info.

@@ -19,9 +19,11 @@ import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolic
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -44,6 +46,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "CasCoreAuthenticationSupportConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication)
 public class CasCoreAuthenticationSupportConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationPrincipalCacheConfiguration", proxyBeanMethods = false)

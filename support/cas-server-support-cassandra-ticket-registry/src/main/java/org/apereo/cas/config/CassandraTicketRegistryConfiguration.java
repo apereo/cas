@@ -4,11 +4,13 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.cassandra.DefaultCassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CassandraTicketRegistryConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "cassandra")
 public class CassandraTicketRegistryConfiguration {
 
     @Bean

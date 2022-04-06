@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.assertTicketParameter(page);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
 
     console.log("Service has force-execution for interrupt; every attempt must force interrupt")
     for (let i = 1; i <= 3; i++) {
@@ -22,7 +22,7 @@ const cas = require('../../cas.js');
         await cas.submitForm(page, "#fm1");
         await cas.assertTicketParameter(page);
         await cas.goto(page, "https://localhost:8443/cas/login");
-        await cas.assertTicketGrantingCookie(page);
+        await cas.assertCookie(page);
     }
     await browser.close();
 })();

@@ -5,8 +5,10 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.DynamoDbYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.dao.DynamoDbYubiKeyFacilitator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,13 +28,15 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "DynamoDbYubiKeyConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.YubiKey, module = "dynamodb")
 public class DynamoDbYubiKeyConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public DynamoDbYubiKeyFacilitator yubikeyDynamoDbFacilitator(final CasConfigurationProperties casProperties,
-                                                                 @Qualifier("yubikeyDynamoDbClient")
-                                                                 final DynamoDbClient yubikeyDynamoDbClient) {
+    public DynamoDbYubiKeyFacilitator yubikeyDynamoDbFacilitator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yubikeyDynamoDbClient")
+        final DynamoDbClient yubikeyDynamoDbClient) {
         val db = casProperties.getAuthn().getMfa().getYubikey().getDynamoDb();
         val f = new DynamoDbYubiKeyFacilitator(db, yubikeyDynamoDbClient);
         if (!db.isPreventTableCreationOnStartup()) {

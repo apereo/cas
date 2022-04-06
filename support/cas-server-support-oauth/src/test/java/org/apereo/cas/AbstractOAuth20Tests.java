@@ -103,8 +103,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -158,8 +158,8 @@ import static org.mockito.Mockito.*;
         "spring.main.allow-bean-definition-overriding=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
-@EnableAspectJAutoProxy
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @Slf4j
 public abstract class AbstractOAuth20Tests {
 

@@ -8,9 +8,11 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link GroovyDelegatedClientIdentityProviderRedirectionStrategy}.
@@ -21,20 +23,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class GroovyDelegatedClientIdentityProviderRedirectionStrategy implements DelegatedClientIdentityProviderRedirectionStrategy {
-    /**
-     * The Services manager.
-     */
     private final ServicesManager servicesManager;
 
     private final WatchableGroovyScriptResource watchableScript;
 
+    private final ApplicationContext applicationContext;
+
     @Override
-    public Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(
+    public Optional<DelegatedClientIdentityProviderConfiguration> select(
         final RequestContext context,
         final WebApplicationService service,
-        final DelegatedClientIdentityProviderConfiguration provider) {
+        final Set<DelegatedClientIdentityProviderConfiguration> providers) {
         val registeredService = servicesManager.findServiceBy(service);
-        val args = new Object[]{context, service, registeredService, provider, LOGGER};
+        val args = new Object[]{context, service, registeredService, providers, applicationContext, LOGGER};
         return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class));
     }
 

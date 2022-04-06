@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body id="cas">
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <script type="text/javascript">
+            function jqueryReady() {
+                $('#attributesTable').DataTable();
+                $('#applicationsTable').DataTable();
+
+                if (window.location.hash) {
+                    console.log(`Fragment ${window.location.hash}`)
+                    showPanel(window.location.hash);
+                } else {
+                    showPanel("#divOverview");
+                }
+            }
+
+            function addSecurityQuestionRow(element) {
+                // let lastRow = $('#securityQuestionsTable tr:last');
+                let currentRow = $(element).parent().parent();
+                let newRow = currentRow.clone();
+                newRow.insertAfter(currentRow);
+            }
+
+            function removeSecurityQuestionRow(element) {
+                console.log("Removing row");
+                if ($("#securityQuestionsTable tr").length > 1) {
+                    $(element).parent().parent().remove();
+                }
+            }
+
+            function showPanel(element) {
+                $('div.profile-content').hide();
+                $(element).show();
+            }
+        </script>
+
+        <div class="mdc-card card w-lg-100 p-4" style="min-height: 360px">
+            <table>
+                <tr>
+                    <td style="position: fixed;">
+                        <div>
+                            <div class="mdc-drawer__header">
+                                <h3 class="mdc-drawer__title" th:text="${authentication.principal.id}">Username</h3>
+                                <code class="mdc-drawer__subtitle"
+                                      th:if="${authentication.principal.attributes['displayName'] != null}"
+                                      th:text="${authentication.principal.attributes['displayName'][0]}">Display Name</code>
+                                <kbd class="mdc-drawer__subtitle"
+                                     th:if="${authentication.principal.attributes['email'] != null}"
+                                     th:text="${authentication.principal.attributes['email'][0]}">Display Name</kbd>
+                            </div>
+                            <div class="mdc-drawer__content">
+                                <nav class="mdc-list">
+                                    <a class="mdc-list-item list-group-item list-group-item-action"
+                                       onclick="showPanel('#divOverview');"
+                                       href="#divOverview">
+                                        <i class="mdi mdi-form-textbox-password fa fa-key"></i>&nbsp;
+                                        <span class="mdc-list-item__text">Overview</span>
+                                    </a>
+                                    <a class="mdc-list-item list-group-item list-group-item-action"
+                                       onclick="showPanel('#divAttributes');"
+                                       href="#divAttributes">
+                                        <i class="mdi mdi-account-details fa fa-key"></i>&nbsp;
+                                        <span class="mdc-list-item__text">Attributes</span>
+                                    </a>
+                                    <a class="mdc-list-item list-group-item list-group-item-action"
+                                       th:if="${authorizedServices}"
+                                       onclick="showPanel('#divApplications');"
+                                       href="#divApplications">
+                                        <i class="mdi mdi-apps fa fa-key"></i>&nbsp;
+                                        <span class="mdc-list-item__text">Applications</span>
+                                    </a>
+                                    <hr align="left" width="85%">
+                                    <form method="post" id="fmChangePsw" name="fmChangePsw">
+                                        <a class="mdc-list-item list-group-item list-group-item-action"
+                                           th:if="${passwordManagementEnabled != null && passwordManagementEnabled}"
+                                           aria-describedby="tooltip-logout"
+                                           onclick="document.forms.fmChangePsw.submit()"
+                                           href="javascript:void(0);">
+                                            <i class="mdi mdi-form-textbox-password fa fa-key"></i>&nbsp;
+                                            <span class="mdc-list-item__text">Change Password</span>
+                                        </a>
+                                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                                        <input type="hidden" name="_eventId" value="resetPassword"/>
+                                    </form>
+                                    <a class="mdc-list-item list-group-item list-group-item-action"
+                                       th:if="${securityQuestionsEnabled}"
+                                       onclick="showPanel('#divSecurityQuestions');"
+                                       href="#divSecurityQuestions">
+                                        <i class="mdi mdi-security fa fa-key"></i>&nbsp;
+                                        <span class="mdc-list-item__text">Security Questions</span>
+                                    </a>
+                                    <a class="mdc-list-item list-group-item list-group-item-action" th:href="@{/logout}">
+                                        <i class="mdi mdi-logout-variant fa fa-key"></i>&nbsp;
+                                        <span class="mdc-list-item__text">Logout</span>
+                                    </a>
+                                </nav>
+                            </div>
+                        </div>
+                    </td>
+                    <td width="75%">
+
+                        <div id="divOverview"
+                             class="profile-content p-1 text-justify"
+                             style="display: none;">
+                            <h2>
+                                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                                <span>Hello, <span th:text="${authentication.principal.id}"></span>!</span>
+                            </h2>
+                            <p th:utext="#{screen.account.success(${authentication.principal.id})}">You,
+                                <strong>username</strong>, have successfully logged into the Central Authentication Service.</p>
+                            <p th:utext="#{screen.account.security}">
+                                When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
+                            </p>
+                        </div>
+
+                        <div id="divSecurityQuestions"
+                             class="profile-content w-100"
+                             style="display: none;">
+                            
+                            <h2>
+                                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                                <span th:utext="#{screen.account.securityquestions.title}">>Security Questions</span>
+                            </h2>
+                            <p th:utext="#{screen.account.securityquestions.subtitle}">
+                                You can review and update your security questions here.</p>
+
+                            <span th:remove="tag"
+                                  th:if="${flowRequestContext.messageContext.allMessages.length > 0}">
+                                <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                                    <h2 th:utext="#{screen.account.failure}">Failure</h2>
+                                    <span th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                                          th:if="${message.severity.name() == 'ERROR'}"
+                                           th:utext="${message.text}">Message Text</span>
+                                </div>
+                                <div class="banner banner-success my-2"
+                                     th:unless="${flowRequestContext.messageContext.hasErrorMessages()}">
+                                    <span th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                                          th:utext="${message.text}">Message Text</span>
+                                </div>
+                            </span>
+
+                            <div class="mdc-data-table table-responsive p-2 w-100 noborder">
+                                <form method="post" id="updateQuestionsForm">
+                                    <table id="securityQuestionsTable" class="table table-striped w-100">
+                                        <tbody class="mdc-data-table__content">
+                                        <tr th:each="entry,iterStat : ${questions}" class="mdc-data-table__header-row py-1">
+                                            <td class="mdc-data-table__cell pad-0">
+                                                <a href="#divSecurityQuestions" onclick="addSecurityQuestionRow(this)"/>
+                                                <i class="mdi mdi-account-multiple-plus-outline fas fa-add"></i>
+                                            </td>
+                                            <td class="mdc-data-table__cell pad-0">
+                                                <a href="#divSecurityQuestions" onclick="removeSecurityQuestionRow(this)"/>
+                                                <i class="mdi mdi-delete fas fa-delete"></i>
+                                            </td>
+
+                                            <td class="mdc-data-table__cell w-50 pad-0">
+                                                <div class="cas-field form-group my-3">
+                                                    <label class="mdc-text-field mdc-text-field--outlined control-label">
+                                                        <span class="mdc-notched-outline">
+                                                            <span class="mdc-notched-outline__leading"></span>
+                                                            <span class="mdc-notched-outline__notch">
+                                                                <span class="mdc-floating-label"
+                                                                      th:utext="#{screen.pm.reset.question(${iterStat.count})}">Question</span>
+                                                            </span>
+                                                            <span class="mdc-notched-outline__trailing"></span>
+                                                        </span>
+                                                        <input class="mdc-text-field__input form-control"
+                                                               type="text"
+                                                               th:name="questions"
+                                                               th:value="${entry.key}"
+                                                               autocomplete="off" required/>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td class="mdc-data-table__cell pad-0">
+                                                <div class="cas-field form-group my-3">
+                                                    <label class="mdc-text-field mdc-text-field--outlined control-label">
+                                                        <span class="mdc-notched-outline">
+                                                            <span class="mdc-notched-outline__leading"></span>
+                                                            <span class="mdc-notched-outline__notch">
+                                                                <span class="mdc-floating-label"
+                                                                      th:utext="#{screen.pm.reset.answer(${iterStat.count})}">Answer</span>
+                                                            </span>
+                                                            <span class="mdc-notched-outline__trailing"></span>
+                                                        </span>
+                                                        <input class="mdc-text-field__input form-control"
+                                                               type="text"
+                                                               th:value="${entry.value}"
+                                                               th:name="answers"
+                                                               autocomplete="off" required/>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div>
+                                        <p/>
+                                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                                        <input type="hidden" name="_eventId" value="updateSecurityQuestions"/>
+                                        <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="l" type="submit">
+                                            <span class="mdc-button__label" th:utext="#{cas.screen.acct.button.update}">Submit</span>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                        <div class="profile-content w-100 mdc-data-table table-responsive"
+                             style="display: none; border-width: 0px;"
+                             id="divApplications">
+
+                            <h2>
+                                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                                <span>Hello, <span th:utext="${authentication.principal.id}"></span>!</span>
+
+                            </h2>
+                            <div class="text-justify">
+                                <p th:utext="#{screen.account.applications}">Applications</p>
+                            </div>
+
+                            <table id="applicationsTable" class="mdc-data-table__table table table-striped noborder">
+                                <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody class="mdc-data-table__content">
+
+                                <tr th:each="service : ${authorizedServices}" class="mdc-data-table__row">
+                                    <td class="mdc-data-table__cell">
+                                        <a th:id="${'service' + service.id}" th:title="${service.name}" th:alt="${service.description}" th:utext="${service.name}"/>
+
+                                        <script th:inline="javascript">
+                                            /*<![CDATA[*/
+                                            let serviceId = /*[[${service.serviceId}]]*/;
+                                            if (isValidURL(serviceId)) {
+                                                let id = /*[[${'service' + service.id}]]*/;
+                                                $(`a#${id}`).attr("href", serviceId);
+                                            }
+                                            /*]]>*/
+                                        </script>
+                                    </td>
+                                    <td class="mdc-data-table__cell">
+                                        <span th:utext="${service.description}"/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="profile-content w-100 mdc-data-table table-responsive noborder"
+                             id="divAttributes">
+                            <h2>
+                                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                                <span>Hello, <span th:utext="${authentication.principal.id}"></span>!</span>
+
+                            </h2>
+                            <div class="text-justify">
+                                <p th:utext="#{screen.account.attributes}">Attributes</p>
+                            </div>
+                            
+                            <table id="attributesTable" class="table table-striped" style="white-space: unset">
+                                <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                                </tr>
+                                </thead>
+                                <tbody class="mdc-data-table__content">
+                                <tr th:each="attribute : ${authentication.principal.attributes}" class="mdc-data-table__row">
+                                    <td class="mdc-data-table__cell"><code><kbd th:utext="${attribute.key}"/></code></td>
+                                    <td class="mdc-data-table__cell">
+                                        <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
+                                    </td>
+                                </tr>
+                                <tr th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
+                                    <td class="mdc-data-table__cell"><code><kbd th:utext="${attribute.key}"/></code></td>
+                                    <td class="mdc-data-table__cell">
+                                        <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="tooltip-logout" class="mdc-tooltip" role="tooltip" aria-hidden="true">
+            <div class="mdc-tooltip__surface mdc-tooltip__surface-animation" th:text="#{screen.account.tooltip.logout}">
+                This operation forces a logout.
+            </div>
+        </div>
+
+    </div>
+</main>
+</body>
+</html>

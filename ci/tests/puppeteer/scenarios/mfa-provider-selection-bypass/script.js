@@ -13,7 +13,7 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, '#mfa-yubikey');
     await cas.assertTicketParameter(page);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     
     await browser.close();
 })();

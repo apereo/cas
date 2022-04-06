@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OAuth")
+@Tag("Cipher")
 public class OAuth20RegisteredServiceCipherExecutorTests {
     @Test
     public void verifyOperation() {
