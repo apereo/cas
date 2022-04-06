@@ -69,7 +69,8 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     @Override
     public Resource generate() throws Exception {
         val resource = determineJsonWebKeystoreResource();
-        if (ResourceUtils.isFile(resource) && isWatcherEnabled()) {
+        val isWatcherEnabled = oidcProperties.getJwks().getFileSystem().isWatcherEnabled();
+        if (ResourceUtils.isFile(resource) && isWatcherEnabled) {
             if (resourceWatcherService == null) {
                 resourceWatcherService = new FileWatcherService(resource.getFile(),
                     file -> new Consumer<File>() {
@@ -108,9 +109,6 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         return file;
     }
 
-    private boolean isWatcherEnabled() {
-        return oidcProperties.getJwks().getFileSystem().isWatcherEnabled();
-    }
 
     private AbstractResource determineJsonWebKeystoreResource() throws Exception {
         val resolve = SpringExpressionLanguageValueResolver.getInstance()
