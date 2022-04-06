@@ -9,7 +9,7 @@ const assert = require('assert');
 
     await cas.loginWith(page, "casscimuser", "Mellon");
 
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 

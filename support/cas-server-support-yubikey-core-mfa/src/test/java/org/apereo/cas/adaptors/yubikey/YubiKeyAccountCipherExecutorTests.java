@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFAProvider")
+@Tag("Cipher")
 public class YubiKeyAccountCipherExecutorTests {
     @Test
     public void verifyAction() {

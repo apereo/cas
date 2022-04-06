@@ -33,15 +33,17 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      */
     private final Set<String> users;
 
-    public RejectUsersAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public RejectUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                            final PrincipalFactory principalFactory,
                                             final Set<String> rejectedUsers) {
         super(name, servicesManager, principalFactory, null);
         this.users = rejectedUsers;
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
+        final String originalPassword) throws GeneralSecurityException {
 
         val username = credential.getUsername();
         if (this.users.contains(username)) {

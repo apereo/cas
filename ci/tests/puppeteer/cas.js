@@ -40,11 +40,11 @@ exports.logr = async(text) => {
 }
 
 exports.removeDirectory = async (directory) => {
-    await this.logg(`Removing directory ${directory}`);
+    console.log(`Removing directory ${colors.green(directory)}`);
     if (fs.existsSync(directory)) {
         await fs.rmSync(directory, {recursive: true});
     }
-    await this.logg(`Removed directory ${directory}`);
+    console.log(`Removed directory ${colors.green(directory)}`);
     if (fs.existsSync(directory)) {
         await this.logr(`Removed directory still present at: ${directory}`);
     }
@@ -144,28 +144,20 @@ exports.assertInvisibility = async (page, selector) => {
     assert(element == null || await element.boundingBox() == null);
 }
 
-exports.assertTicketGrantingCookie = async (page, present= true, cookieName = "TGC") => {
-    const tgc = (await page.cookies()).filter(value => {
+
+exports.assertCookie = async (page, present= true, cookieName = "TGC") => {
+    const theCookie = (await page.cookies()).filter(value => {
         console.log(`Checking cookie ${value.name}`)
         return value.name === cookieName
     });
     if (present) {
-        assert(tgc.length !== 0);
-        console.log(`Asserting ticket-granting cookie: ${tgc[0].value}`);
-        return tgc[0];
+        assert(theCookie.length !== 0);
+        console.log(`Asserting cookie:\n${colors.green(JSON.stringify(theCookie, undefined, 2))}`);
+        return theCookie[0];
     } else {
-        assert(tgc.length === 0);
-        console.log(`Ticket-granting cookie cannot be found`);
+        assert(theCookie.length === 0);
+        console.log(`Cookie ${cookieName} cannot be found`);
     }
-}
-
-exports.assertNoTicketGrantingCookie = async (page) => {
-    let tgc = (await page.cookies()).filter(value => {
-        console.log(`Checking cookie ${value.name}`)
-        return value.name === "TGC"
-    });
-    console.log("Asserting no ticket-granting cookie: " + JSON.stringify(tgc) );
-    assert(tgc.length === 0);
 }
 
 exports.submitForm = async (page, selector) => {
@@ -332,31 +324,6 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
     return this.runGradle(spDir, args, (code) => {
         console.log(`WSFED SP Child process exited with code ${code}`);
-    });
-}
-
-exports.stopSamlSp = async (gradleDir, deleteDir= true) => {
-    let args = ['appStop', '-q', '--no-daemon'];
-    await this.logg(`Stopping SAML SP process in ${gradleDir} with ${args}`);
-    return this.runGradle(gradleDir, args, (code) => {
-        console.log(`Stopped child process exited with code ${code}`);
-        if (deleteDir) {
-            this.sleep(3000);
-            this.removeDirectory(gradleDir);
-        }
-    });
-}
-
-exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts = []) => {
-    let keystorePath = path.normalize(process.env.CAS_KEYSTORE);
-    let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon',
-        '-DidpMetadataType=idpMetadataFile',
-        `-DidpMetadata=${idpMetadataPath}`,
-        `-Dsp.sslKeystorePath=${keystorePath}`];
-    args = args.concat(samlOpts);
-    await this.logg(`Launching SAML2 SP in ${samlSpDir} with ${args}`);
-    return this.runGradle(samlSpDir, args, (code) => {
-        console.log(`Child process exited with code ${code}`);
     });
 }
 

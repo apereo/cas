@@ -9,7 +9,6 @@ import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
@@ -180,12 +179,13 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         }
     }
 
-    @SneakyThrows
     private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
-        LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
-        if (location.getFile() != null) {
-            serializer.to(location.getFile(), accounts);
-        }
+        FunctionUtils.doUnchecked(unused -> {
+            if (location.getFile() != null) {
+                LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
+                serializer.to(location.getFile(), accounts);
+            }
+        });
     }
 
     private Map<String, List<OneTimeTokenAccount>> readAccountsFromJsonRepository() {

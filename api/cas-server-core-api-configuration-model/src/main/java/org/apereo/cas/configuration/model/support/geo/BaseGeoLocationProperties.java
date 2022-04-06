@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@RequiresModule(name = "cas-server-support-geolocation-googlemaps")
+@RequiresModule(name = "cas-server-support-geolocation")
 public abstract class BaseGeoLocationProperties implements Serializable {
     private static final long serialVersionUID = 4548572400079087989L;
 }

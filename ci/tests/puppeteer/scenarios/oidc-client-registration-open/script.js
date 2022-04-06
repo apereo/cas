@@ -23,7 +23,7 @@ const assert = require('assert');
         "contacts": ["sample@example.org", "user@example.org"]
     }
 
-    let body = JSON.stringify(service);
+    let body = JSON.stringify(service, undefined, 2);
     console.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {

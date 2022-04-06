@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 @Slf4j
 @UtilityClass
 public class FunctionUtils {
-
+    
     /**
      * Do if function.
      *

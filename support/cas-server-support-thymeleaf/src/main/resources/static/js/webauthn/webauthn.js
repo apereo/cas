@@ -529,7 +529,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         executeRequest: executeAuthenticateRequest,
     }).then(data => {
         $('#divDeviceInfo').show();
-        console.log("Received: " + JSON.stringify(data));
+        console.log("Received: " + JSON.stringify(data, undefined, 2));
         if (data.registrations) {
 
             data.registrations.forEach(reg => {

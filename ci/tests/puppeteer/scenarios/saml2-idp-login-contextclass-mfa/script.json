@@ -1,5 +1,8 @@
 {
   "dependencies": "saml-idp,gauth",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
     "--cas.authn.saml-idp.core.authentication-context-class-mappings=https://refeds.org/profile/mfa->mfa-gauth",
@@ -24,7 +27,8 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
 }
 
 

@@ -9,7 +9,7 @@ const request = require('request');
     let page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "aburr", "P@ssw0rd");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     const attributesldap = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
     assert(attributesldap.includes("aburr"))

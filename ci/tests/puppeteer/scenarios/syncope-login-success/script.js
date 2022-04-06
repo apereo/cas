@@ -30,7 +30,7 @@ async function doLogin(page, uid, psw, email) {
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page,uid, psw);
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await page.waitForTimeout(1000)

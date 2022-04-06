@@ -21,7 +21,6 @@ import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.query.QueryScanConsistency;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -64,7 +63,6 @@ public class DefaultCouchbaseClientFactory implements CouchbaseClientFactory {
      * task if not completed.
      */
     @Override
-    @SneakyThrows
     public void shutdown() {
         if (this.cluster != null) {
             LOGGER.debug("Disconnecting from Couchbase cluster");

@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "zookeeper", "p@SSword");
     await cas.assertTicketParameter(page);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.goto(page, "https://localhost:8443/cas/logout");

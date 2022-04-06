@@ -90,6 +90,32 @@ The following parameters are passed to the script:
 | `applicationContext`    | Reference to the application context as `ApplicationContext`.
 | `logger`                | The object responsible for issuing log messages such as `logger.info(...)`.
 
+## Identity Provider Selection Per Service
+
+The auto-redirection strategy of a given identity provider may also be decided dynamically via a Groovy resource
+whose path specified directly in the service definition as part of the authentication policy's provider selection strategy:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "delegatedAuthenticationPolicy" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+      "selectionStrategy": "file:/path/to/script.groovy"
+    }
+  }
+}
+```
+
+<div class="alert alert-info mt-3"><strong>Usage</strong><p>
+If you wish, you may also use a <i>Groovy Inline</i> syntax using the <code>groovy {...}</code> construct.</p></div>
+
+The collection of parameters and the script body are identical to the *Identity Provider Groovy Selection* option above.
+
 ## Identity Provider Custom Selection
 
 If you wish to create your own redirection strategy, you will need to

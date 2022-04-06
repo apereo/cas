@@ -30,7 +30,6 @@ public class RejectUsersAuthenticationHandlerTests {
         users.add("scott");
         users.add("dima");
         users.add("bill");
-
         this.authenticationHandler = new RejectUsersAuthenticationHandler(StringUtils.EMPTY, null, null, users);
     }
 

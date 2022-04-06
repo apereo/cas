@@ -4,7 +4,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -54,17 +53,16 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
         this(jwksKeystore, keyId, null);
     }
 
-    @SneakyThrows
     public JsonWebKeySetStringCipherExecutor(final File jwksKeystore, final Optional<String> keyId,
                                              final String httpsJwksEndpointUrl) {
 
-        val json = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
+        val json = FunctionUtils.doUnchecked(() -> FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8));
         keystorePatchWatcherService = new FileWatcherService(jwksKeystore, Unchecked.consumer(file -> {
             val reloadedJson = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
             this.webKeySet = new JsonWebKeySet(reloadedJson);
         }));
 
-        this.webKeySet = new JsonWebKeySet(json);
+        this.webKeySet = FunctionUtils.doUnchecked(() -> new JsonWebKeySet(json));
         this.keyIdToUse = keyId;
         this.httpsJkws = StringUtils.isNotBlank(httpsJwksEndpointUrl)
             ? Optional.of(new HttpsJwks(httpsJwksEndpointUrl)) : Optional.empty();

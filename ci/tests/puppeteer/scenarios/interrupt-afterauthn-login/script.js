@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await cas.screenshot(page);
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt")
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
-    await cas.assertNoTicketGrantingCookie(page);
+    await cas.assertCookie(page, false);
     await cas.assertTextContent(page, "#interruptMessage", "We interrupted your login");
     await cas.assertVisibility(page, '#interruptLinks')
     await cas.assertVisibility(page, '#attributesTable')
@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
     let cancel = await page.$('#cancel');
     assert(cancel == null);
     await cas.submitForm(page, "#fm1");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertCookie(page);
     await page.waitForTimeout(1000)
     await browser.close();
 })();

@@ -108,7 +108,7 @@ while (( "$#" )); do
     RERUN="true"
     shift 1;
     ;;
-  --bogy)
+  --bogy|--boyd)
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     DRYRUN="true"
@@ -179,7 +179,7 @@ if [[ "${dockerRequired}" == "true" ]]; then
     exit 0
   fi
   if [[ $dockerInstalled -ne 0 ]] ; then
-    printred "Docker engine is not running. Skipping running test"
+    printred "Docker engine is not running. Skipping running test since the test requires Docker."
     exit 0
   fi
 fi
