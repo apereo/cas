@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.configurer;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
