@@ -10,7 +10,7 @@ category: Webflow Management
 
 The objective of this guide is to better describe how CAS utilizes Spring Webflow to accommodate various authentication flows. Please
 remember that this is **NOT** to teach one how Spring Webflow itself works internally. If you want to learn more about Spring Webflow and
-understand the internals of actions, states, decisions and scopes please [see this guide](http://projects.spring.io/spring-webflow/).
+understand the internals of actions, states, decisions and scopes please [see this guide](https://github.com/apereo/spring-webflow/).
 
 CAS by default operates on the following core webflow configuration files:
 
@@ -31,7 +31,7 @@ files to add or override the desired behavior. Again, think very carefully befor
 environment. Avoid making ad-hoc changes to the webflow as much as possible and consider how the change you have in mind might be more
 suitable as a direct contribution to the CAS project itself so you can just take advantage of its configuration and *NOT* its maintenance.
 
-To learn how to introduce new actions and state into a Spring Webflow, please [see this guide](http://projects.spring.io/spring-webflow/).
+To learn how to introduce new actions and state into a Spring Webflow, please [see this guide](https://github.com/apereo/spring-webflow/).
 
 <div class="alert alert-info"><strong>Speak Up</strong><p>If you find something that is broken where the 
 webflow auto-configuration strategy fails to deliver as advertised, discuss that with the project community 
