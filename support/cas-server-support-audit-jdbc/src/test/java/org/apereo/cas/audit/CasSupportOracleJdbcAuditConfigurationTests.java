@@ -1,6 +1,6 @@
 package org.apereo.cas.audit;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -22,7 +22,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.jdbc.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.Oracle12cDialect"
 })
-@EnabledIfPortOpen(port = 1521)
+@EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")
 public class CasSupportOracleJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
 }

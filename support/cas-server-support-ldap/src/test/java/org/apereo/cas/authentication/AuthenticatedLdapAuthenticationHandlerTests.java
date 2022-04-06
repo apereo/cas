@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.UncheckedException;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.ldap[0].collect-dn-attribute=true",
     "cas.authn.ldap[0].principal-attribute-list=description,cn"
 })
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 @Tag("Ldap")
 public class AuthenticatedLdapAuthenticationHandlerTests {
     @Nested

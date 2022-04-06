@@ -2,7 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.config.CasRedisThrottlingConfiguration;
 import org.apereo.cas.config.CasSupportRedisAuditConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.audit.redis.asynchronous=false"
     })
 @Getter
-@EnabledIfPortOpen(port = 6379)
+@EnabledIfListeningOnPort(port = 6379)
 public class RedisThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired

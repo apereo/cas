@@ -5,7 +5,7 @@ import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FCouchDbConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.u2f.couch-db.password=password"
     })
 @Getter
-@EnabledIfPortOpen(port = 5984)
+@EnabledIfListeningOnPort(port = 5984)
 public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fCouchDbFactory")

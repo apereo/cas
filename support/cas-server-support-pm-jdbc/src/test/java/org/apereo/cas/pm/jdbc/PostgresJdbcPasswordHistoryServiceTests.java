@@ -1,6 +1,6 @@
 package org.apereo.cas.pm.jdbc;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.PostgreSQL10Dialect",
     "cas.authn.pm.history.core.enabled=true"
 })
-@EnabledIfPortOpen(port = 5432)
+@EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 public class PostgresJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
 

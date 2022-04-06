@@ -11,7 +11,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * This is {@link EnabledIfPortOpen}.
+ * This is {@link EnabledIfListeningOnPort}.
  *
  * @author Timur Duehr
  * @since 6.1.0
@@ -19,7 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, TYPE, ANNOTATION_TYPE})
 @Retention(RUNTIME)
 @ExtendWith(EnabledIfPortOpenCondition.class)
-public @interface EnabledIfPortOpen {
+public @interface EnabledIfListeningOnPort {
     /**
      * Ports to check for listener.
      *

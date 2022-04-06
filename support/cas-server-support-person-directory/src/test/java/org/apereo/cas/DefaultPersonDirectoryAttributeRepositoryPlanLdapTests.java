@@ -4,7 +4,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.ldap[0].attributes.mail=mail"
     })
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 public class DefaultPersonDirectoryAttributeRepositoryPlanLdapTests {
     private static final String CN = RandomUtils.randomAlphabetic(6);
 

@@ -2,7 +2,7 @@ package org.apereo.cas.zookeeper;
 
 import org.apereo.cas.config.HazelcastZooKeeperConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.lock.LockRepository;
 
 import lombok.SneakyThrows;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("ZooKeeper")
-@EnabledIfPortOpen(port = 2181)
+@EnabledIfListeningOnPort(port = 2181)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     HazelcastZooKeeperConfiguration.class

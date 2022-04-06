@@ -18,7 +18,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.oauth.device-token.storage-name=test-oauthDeviceTokensCache",
         "cas.authn.oauth.device-user-code.storage-name=test-oauthDeviceUserCodesCache"
     })
-@EnabledIfPortOpen(port = 8000)
+@EnabledIfListeningOnPort(port = 8000)
 @Getter
 public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     static {

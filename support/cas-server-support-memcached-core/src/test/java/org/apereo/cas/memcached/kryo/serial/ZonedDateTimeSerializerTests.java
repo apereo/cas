@@ -1,7 +1,7 @@
 package org.apereo.cas.memcached.kryo.serial;
 
 import org.apereo.cas.memcached.kryo.CasKryoPool;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import lombok.val;
@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
  * @since 5.2.0
  */
 @Tag("Memcached")
-@EnabledIfPortOpen(port = 11211)
+@EnabledIfListeningOnPort(port = 11211)
 public class ZonedDateTimeSerializerTests {
 
     @Test

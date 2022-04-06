@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events;
 
 import org.apereo.cas.config.CasEventsDynamoDbRepositoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
         "cas.events.dynamo-db.region=us-east-1"
     })
 @Getter
-@EnabledIfPortOpen(port = 8000)
+@EnabledIfListeningOnPort(port = 8000)
 public class DynamoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

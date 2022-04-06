@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.gua.ldap.bind-dn=cn=Directory Manager",
         "cas.authn.gua.ldap.bind-credential=password"
     })
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapUserGraphicalAuthenticationRepositoryTests {
 

@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.scim.password=changeit"
 })
 @Tag("SCIM")
-@EnabledIfPortOpen(port = 9666)
+@EnabledIfListeningOnPort(port = 9666)
 public class PrincipalScimV2ProvisionerActionWithScimServerTests extends BaseScimProvisionerActionTests {
     @Test
     public void verifyAction() throws Exception {

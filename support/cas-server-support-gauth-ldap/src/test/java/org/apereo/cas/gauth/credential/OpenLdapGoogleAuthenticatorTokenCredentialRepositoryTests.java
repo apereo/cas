@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets;
     })
 @EnableScheduling
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 11636)
+@EnabledIfListeningOnPort(port = 11636)
 public class OpenLdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Override

@@ -3,7 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.config.AmazonSecretsManagerCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.spring.cloud.aws.secrets-manager.credential-secret-key=" + AmazonSecretsManagerCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnabledIfPortOpen(port = 4566)
+@EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @Slf4j
 public class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {

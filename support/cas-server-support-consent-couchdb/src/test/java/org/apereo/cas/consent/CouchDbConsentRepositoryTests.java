@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasConsentCouchDbConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.couchdb.consent.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("CouchDb")
 @Getter
-@EnabledIfPortOpen(port = 5984)
+@EnabledIfListeningOnPort(port = 5984)
 public class CouchDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

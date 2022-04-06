@@ -7,7 +7,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.MethodOrderer;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.service-registry.couch-db.password=password"
     })
 @Tag("CouchDb")
-@EnabledIfPortOpen(port = 5984)
+@EnabledIfListeningOnPort(port = 5984)
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {

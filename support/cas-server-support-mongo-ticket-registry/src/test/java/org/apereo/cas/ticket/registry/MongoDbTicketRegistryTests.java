@@ -31,7 +31,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -94,7 +94,7 @@ import static org.mockito.Mockito.*;
     "cas.ticket.registry.mongo.password=secret"
 })
 @EnableScheduling
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Getter
 public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 

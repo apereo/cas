@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasWebAppSecurityConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -77,7 +77,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 public class CasWebSecurityConfigurerAdapterTests {
     @Test
     public void verifyOperation() {

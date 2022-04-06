@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.config.SamlIdPRedisIdPMetadataConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true",
     "cas.authn.saml-idp.metadata.redis.enabled=false"
 })
+@EnabledIfListeningOnPort(port = 6379)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ConditionalOnExpressionNegativeTests {
     @Autowired

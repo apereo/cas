@@ -2,7 +2,7 @@ package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.config.GoogleAuthenticatorDynamoDbConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Getter
-@EnabledIfPortOpen(port = 8000)
+@EnabledIfListeningOnPort(port = 8000)
 @Tag("DynamoDb")
 public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     static {

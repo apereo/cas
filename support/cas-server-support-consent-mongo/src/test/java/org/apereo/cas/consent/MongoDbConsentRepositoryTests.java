@@ -1,7 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.config.CasConsentMongoDbConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     })
 @Tag("MongoDb")
 @Getter
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 public class MongoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

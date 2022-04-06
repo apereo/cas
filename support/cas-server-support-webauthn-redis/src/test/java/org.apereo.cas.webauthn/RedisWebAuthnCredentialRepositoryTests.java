@@ -1,7 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.config.RedisWebAuthnConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
 
 import lombok.Getter;
@@ -22,7 +22,7 @@ import org.springframework.test.context.TestPropertySource;
     })
 @Tag("Redis")
 @Getter
-@EnabledIfPortOpen(port = 6379)
+@EnabledIfListeningOnPort(port = 6379)
 @Import(RedisWebAuthnConfiguration.class)
 public class RedisWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 }

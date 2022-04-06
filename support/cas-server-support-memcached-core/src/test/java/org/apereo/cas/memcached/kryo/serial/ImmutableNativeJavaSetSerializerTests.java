@@ -1,7 +1,7 @@
 package org.apereo.cas.memcached.kryo.serial;
 
 import org.apereo.cas.memcached.kryo.CasKryoPool;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.esotericsoftware.kryo.io.Input;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Memcached")
-@EnabledIfPortOpen(port = 11211)
+@EnabledIfListeningOnPort(port = 11211)
 public class ImmutableNativeJavaSetSerializerTests {
     @Test
     public void verifyTranscoderWorks() {
