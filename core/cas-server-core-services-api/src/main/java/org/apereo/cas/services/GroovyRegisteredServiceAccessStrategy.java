@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -10,7 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.val;
 
@@ -95,10 +95,12 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
         return this.groovyStrategyInstance.getRequiredAttributes();
     }
 
-    @SneakyThrows
     private void buildGroovyAccessStrategyInstanceIfNeeded() {
         if (this.groovyStrategyInstance == null) {
-            val groovyResource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
+            val groovyResource = FunctionUtils.doUnchecked(() -> {
+                val location = SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript);
+                return ResourceUtils.getResourceFrom(location);
+            });
             this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceAccessStrategy.class);
         }
     }

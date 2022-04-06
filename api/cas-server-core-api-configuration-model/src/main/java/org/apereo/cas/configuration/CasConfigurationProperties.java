@@ -35,8 +35,7 @@ import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookiePro
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.model.support.custom.CasCustomProperties;
 import org.apereo.cas.configuration.model.support.firebase.GoogleFirebaseCloudMessagingProperties;
-import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
-import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
+import org.apereo.cas.configuration.model.support.geo.GeoLocationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
@@ -271,22 +270,16 @@ public class CasConfigurationProperties implements Serializable {
     private WarningCookieProperties warningCookie = new WarningCookieProperties();
 
     /**
+     * GeoLocation settings.
+     */
+    @NestedConfigurationProperty
+    private GeoLocationProperties geoLocation = new GeoLocationProperties();
+
+    /**
      * SAML SP integration settings.
      */
     @NestedConfigurationProperty
     private SamlServiceProviderProperties samlSp = new SamlServiceProviderProperties();
-
-    /**
-     * MaxMind settings.
-     */
-    @NestedConfigurationProperty
-    private MaxmindProperties maxmind = new MaxmindProperties();
-
-    /**
-     * Google Maps settings.
-     */
-    @NestedConfigurationProperty
-    private GoogleMapsProperties googleMaps = new GoogleMapsProperties();
 
     /**
      * General database and hibernate settings.
@@ -378,6 +371,7 @@ public class CasConfigurationProperties implements Serializable {
 
     @RequiredArgsConstructor
     @Getter
+    @SuppressWarnings("UnusedMethod")
     private static class Holder implements Serializable {
         private static final long serialVersionUID = -3129941286238115568L;
 

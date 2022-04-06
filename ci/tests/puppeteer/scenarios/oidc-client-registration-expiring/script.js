@@ -8,7 +8,7 @@ const assert = require('assert');
         "contacts": ["cas@example.org"],
         "grant_types": ["client_credentials"],
     }
-    let body = JSON.stringify(service);
+    let body = JSON.stringify(service, undefined, 2);
     console.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
@@ -35,7 +35,7 @@ const assert = require('assert');
         "contacts": ["cas@example.org", "new@example.org"],
         "grant_types": ["client_credentials"],
     }
-    body = JSON.stringify(service);
+    body = JSON.stringify(service, undefined, 2);
     console.log(`Sending ${body}`);
 
     result = await cas.doRequest(entity.registration_client_uri, "PATCH", {

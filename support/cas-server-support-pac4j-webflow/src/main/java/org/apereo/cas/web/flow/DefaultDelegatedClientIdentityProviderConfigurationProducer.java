@@ -67,15 +67,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service, request))
             .map(IndirectClient.class::cast)
-            .map(client -> {
-                try {
-                    return produce(context, client);
-                } catch (final Exception e) {
-                    LOGGER.error("Cannot process client [{}]", client);
-                    LoggingUtils.error(LOGGER, e);
-                    return Optional.<DelegatedClientIdentityProviderConfiguration>empty();
-                }
-            })
+            .map(client -> produce(context, client))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -107,26 +99,31 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
     @Override
     public Optional<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext requestContext,
                                                                           final IndirectClient client) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val webContext = new JEEContext(request, response);
+        try {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val webContext = new JEEContext(request, response);
 
-        val currentService = WebUtils.getService(requestContext);
-        LOGGER.debug("Initializing client [{}] with request parameters [{}] and service [{}]",
-            client, requestContext.getRequestParameters(), currentService);
-        client.init();
+            val currentService = WebUtils.getService(requestContext);
+            LOGGER.debug("Initializing client [{}] with request parameters [{}] and service [{}]",
+                client, requestContext.getRequestParameters(), currentService);
+            client.init();
 
-        if (delegatedClientAuthenticationRequestCustomizers.isEmpty()
-            || delegatedClientAuthenticationRequestCustomizers.stream()
-                .filter(BeanSupplier::isNotProxy)
-                .anyMatch(c -> c.isAuthorized(webContext, client, currentService))) {
-            return DelegatedClientIdentityProviderConfigurationFactory.builder()
-                .client(client)
-                .webContext(webContext)
-                .service(currentService)
-                .casProperties(casProperties)
-                .build()
-                .resolve();
+            if (delegatedClientAuthenticationRequestCustomizers.isEmpty()
+                || delegatedClientAuthenticationRequestCustomizers.stream()
+                    .filter(BeanSupplier::isNotProxy)
+                    .anyMatch(c -> c.isAuthorized(webContext, client, currentService))) {
+                return DelegatedClientIdentityProviderConfigurationFactory.builder()
+                    .client(client)
+                    .webContext(webContext)
+                    .service(currentService)
+                    .casProperties(casProperties)
+                    .build()
+                    .resolve();
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Cannot process client [{}]", client);
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }

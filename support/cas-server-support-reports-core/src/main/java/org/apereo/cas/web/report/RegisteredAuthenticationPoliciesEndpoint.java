@@ -75,6 +75,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
 
     @SuperBuilder
     @Getter
+    @SuppressWarnings("UnusedMethod")
     private static class AuthenticationPolicyDetails implements Serializable {
         private static final long serialVersionUID = 6755362844006190415L;
 

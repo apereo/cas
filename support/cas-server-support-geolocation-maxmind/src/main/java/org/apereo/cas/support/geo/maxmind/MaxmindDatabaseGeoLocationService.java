@@ -63,16 +63,6 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
     }
 
     @Override
-    public GeoLocationResponse locate(final String address) {
-        try {
-            return locate(InetAddress.getByName(address));
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
-    }
-
-    @Override
     public GeoLocationResponse locate(final Double latitude, final Double longitude) {
         LOGGER.warn("Geo-locating an address by latitude/longitude [{}]/[{}] is not supported", latitude, longitude);
         return null;

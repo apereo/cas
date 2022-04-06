@@ -26,6 +26,7 @@ public class CasFeatureModuleTests {
 
     @Getter
     @Setter
+    @SuppressWarnings("UnusedMethod")
     private static class CasFeatureModuleUnderTest implements CasFeatureModule {
         @RequiredProperty
         private final String name = "value";

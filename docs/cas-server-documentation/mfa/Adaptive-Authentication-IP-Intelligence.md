@@ -50,7 +50,7 @@ def run(Object[] args) {
     if (ipAddressIsRejected())
         return IPAddressIntelligenceResponse.banned()
     
-    return IPAddressIntelligenceResponse.allows()
+    return IPAddressIntelligenceResponse.allowed()
 }
 ```
 

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("Simple")
+@Tag("Cipher")
 public class JasyptNumberCipherExecutorTests {
 
     @Test

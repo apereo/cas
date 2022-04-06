@@ -6,7 +6,6 @@ import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.query.QueryResult;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
@@ -110,7 +109,6 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         return null;
     }
 
-    @SneakyThrows
     @Override
     public void destroy() {
         this.couchbase.shutdown();

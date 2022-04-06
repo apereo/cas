@@ -15,7 +15,7 @@ async function cleanUp(spDir) {
         const page = await cas.newPage(browser);
 
         console.log("Trying without an exising SSO session...")
-        cas.goto(page, "https://localhost:9876/fediz")
+        await cas.goto(page, "https://localhost:9876/fediz")
         await page.waitForTimeout(2000)
         await page.waitForSelector('#logincas', {visible: true});
         await cas.click(page, "#logincas")
@@ -36,8 +36,8 @@ async function cleanUp(spDir) {
         await cas.goto(page, "https://localhost:8443/cas/logout");
         await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, "casuser", "Mellon");
-        await cas.assertTicketGrantingCookie(page);
-        cas.goto(page, "https://localhost:9876/fediz")
+        await cas.assertCookie(page);
+        await cas.goto(page, "https://localhost:9876/fediz")
         await page.waitForTimeout(2000)
         await page.waitForSelector('#logincas', {visible: true});
         await cas.click(page, "#logincas")

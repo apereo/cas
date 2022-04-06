@@ -23,16 +23,16 @@ echo -e "Running SAML2 IdP with SP entity id ${SP_ENTITY_ID} and SP ACS service 
 
 echo "Creating private key and certificate for SP metadata"
 openssl req -newkey rsa:3072 -new -x509 -days 365 \
-  -nodes -out ${PWD}/saml.crt -keyout ${PWD}/saml.pem \
+  -nodes -out ${TMPDIR}/saml.crt -keyout ${TMPDIR}/saml.pem \
   -subj "/C=PE/ST=Lima/L=Lima/O=Acme Inc. /OU=IT Department/CN=acme.com"
 
 echo "SP certificate..."
-chmod 777 ${PWD}/saml.crt
-cat ${PWD}/saml.crt
+chmod 777 ${TMPDIR}/saml.crt
+cat ${TMPDIR}/saml.crt
 
 echo "SP private key..."
-chmod 777 ${PWD}/saml.pem
-cat ${PWD}/saml.pem
+chmod 777 ${TMPDIR}/saml.pem
+cat ${TMPDIR}/saml.pem
 
 if [[ -z "${IDP_ENTITYID}" ]]; then
   export IDP_ENTITYID="https://cas.apereo.org/saml/idp"
@@ -47,8 +47,8 @@ docker run --name=simplesamlphp-idp -p 9443:8080 \
   -e IDP_ENCRYPTION_CERTIFICATE="${IDP_ENCRYPTION_CERTIFICATE}" \
   -e IDP_SIGNING_CERTIFICATE="${IDP_SIGNING_CERTIFICATE}" \
   -e IDP_ENTITYID="${IDP_ENTITYID}" \
-  -v $PWD/saml.crt:/var/www/simplesamlphp/cert/saml.crt \
-  -v $PWD/saml.pem:/var/www/simplesamlphp/cert/saml.pem \
+  -v $TMPDIR/saml.crt:/var/www/simplesamlphp/cert/saml.crt \
+  -v $TMPDIR/saml.pem:/var/www/simplesamlphp/cert/saml.pem \
   -v $PWD/ci/tests/saml2/saml20-idp-remote.php:/var/www/simplesamlphp/metadata/saml20-idp-remote.php \
   -v $PWD/ci/tests/saml2/authsources.php:/var/www/simplesamlphp/config/authsources.php \
   -v $PWD/ci/tests/saml2/config.php:/var/www/simplesamlphp/config/config.php \

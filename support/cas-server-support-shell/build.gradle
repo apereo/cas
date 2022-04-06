@@ -20,6 +20,7 @@ dependencies {
     implementation project(":support:cas-server-support-jpa-hibernate")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oidc-services")
+    implementation project(":support:cas-server-support-oidc-core-api")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-idp-core")

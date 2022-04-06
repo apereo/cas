@@ -3,9 +3,9 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.ValidationResponseType;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +61,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         return newService;
     }
 
-    @SneakyThrows
     private static void populateAttributes(final AbstractWebApplicationService service, final HttpServletRequest request) {
         val attributes = request.getParameterMap()
             .entrySet()
@@ -73,8 +72,8 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         LOGGER.trace("Collected request parameters [{}] as service attributes", attributes);
         val validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
         if (validator.isValid(service.getOriginalUrl())) {
-            new URIBuilder(service.getOriginalUrl()).getQueryParams()
-                .forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
+            val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(service.getOriginalUrl()).getQueryParams());
+            queryParams.forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
         }
 
         LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());

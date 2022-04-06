@@ -1,6 +1,6 @@
 function resourceLoadedSuccessfully() {
 
-    $(document).ready(function () {
+    $(document).ready(() => {
 
         if (trackGeoLocation) {
             requestGeoPosition();

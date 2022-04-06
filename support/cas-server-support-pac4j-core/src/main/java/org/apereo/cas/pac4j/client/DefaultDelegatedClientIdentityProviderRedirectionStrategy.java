@@ -4,6 +4,9 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
@@ -12,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
@@ -41,6 +45,11 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
      */
     protected final CasConfigurationProperties casProperties;
 
+    /**
+     * Application context.
+     */
+    protected final ConfigurableApplicationContext applicationContext;
+
     @Override
     public Optional<DelegatedClientIdentityProviderConfiguration> select(
         final RequestContext context,
@@ -56,6 +65,24 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
                     LOGGER.trace("Registered service [{}] is exclusively allowed to use provider [{}]", registeredService, provider);
                     provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
                     return Optional.of(provider);
+                }
+
+                if (StringUtils.isNotBlank(delegatedPolicy.getSelectionStrategy())) {
+                    return ApplicationContextProvider.getScriptResourceCacheManager()
+                        .map(cacheMgr -> {
+                            val strategy = SpringExpressionLanguageValueResolver.getInstance()
+                                .resolve(delegatedPolicy.getSelectionStrategy());
+                            val script = cacheMgr.resolveScriptableResource(strategy,
+                                String.valueOf(registeredService.getId()), registeredService.getName());
+                            val args = CollectionUtils.<String, Object>wrap("requestContext", context,
+                                "service", service, "registeredService", registeredService,
+                                "providers", providers, "applicationContext", applicationContext,
+                                "logger", LOGGER);
+                            script.setBinding(args);
+                            val result = script.execute(args.values().toArray(), DelegatedClientIdentityProviderConfiguration.class, false);
+                            return Optional.ofNullable(result);
+                        })
+                        .orElseThrow(() -> new RuntimeException("No groovy script cache manager"));
                 }
             }
 

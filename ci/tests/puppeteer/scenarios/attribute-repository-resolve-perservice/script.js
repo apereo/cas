@@ -36,7 +36,7 @@ const path = require("path");
     let configFilePath = path.join(__dirname, '/attribute-repository.json')
     let config = JSON.parse(fs.readFileSync(configFilePath));
     config.casuser.firstName[0] = newFirstName;
-    await fs.writeFileSync(configFilePath, JSON.stringify(config));
+    await fs.writeFileSync(configFilePath, JSON.stringify(config, undefined, 2));
     await cas.sleep(2000)
 
     console.log("Validating again to get attribute updates...")
