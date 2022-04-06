@@ -107,7 +107,7 @@ Please see [this guide](../installation/Configuring-SAML2-AttributeQuery.html) f
 
 For Java-based applications, the following frameworks may be used to integrate your application with CAS acting as a SAML2 identity provider:
 
-- [Spring Security SAML](http://projects.spring.io/spring-security-saml/)
+- [Spring Security SAML](https://spring.io/projects/spring-security-saml)
 - [Pac4j](http://www.pac4j.org/docs/clients/saml.html)
 
 ## Sample Client Applications
