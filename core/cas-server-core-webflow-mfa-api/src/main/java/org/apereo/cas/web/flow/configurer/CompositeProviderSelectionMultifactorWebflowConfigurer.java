@@ -31,7 +31,11 @@ public class CompositeProviderSelectionMultifactorWebflowConfigurer extends Abst
         if (flow != null) {
             val realSubmit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
             createTransitionForState(realSubmit, CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE, CasWebflowConstants.STATE_ID_MFA_COMPOSITE);
-
+            
+            val delegation = getState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
+            FunctionUtils.doIfNotNull(delegation, u -> createTransitionForState(delegation,
+                CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE, CasWebflowConstants.STATE_ID_MFA_COMPOSITE));
+            
             val initialAuthn = getState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
             createTransitionForState(initialAuthn, CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE, CasWebflowConstants.STATE_ID_MFA_COMPOSITE);
 
