@@ -180,8 +180,10 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
         FunctionUtils.doUnchecked(unused -> {
-            LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
-            serializer.to(location.getFile(), accounts);
+            if (location.getFile() != null) {
+                LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
+                serializer.to(location.getFile(), accounts);
+            }
         });
     }
 

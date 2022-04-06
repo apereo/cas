@@ -11,6 +11,7 @@ enum TestCategories {
     CAS,
     CasConfiguration,
     Cassandra,
+    Cipher,
     Cookie,
     CosmosDb,
     Couchbase,
