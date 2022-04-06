@@ -1,6 +1,6 @@
 package org.apereo.cas.kafka;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Kafka")
-@EnabledIfPortOpen(port = 9092)
+@EnabledIfListeningOnPort(port = 9092)
 public class KafkaObjectFactoryTests {
     @Test
     public void verifyOperation() {

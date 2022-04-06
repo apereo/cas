@@ -1,6 +1,6 @@
 package org.apereo.cas.gauth.token;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.gauth.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.MariaDB106Dialect"
 })
-@EnabledIfPortOpen(port = 3306)
+@EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")
 public class MariaDbGoogleAuthenticatorJpaTokenRepositoryTests extends GoogleAuthenticatorJpaTokenRepositoryTests {
 }

@@ -4,7 +4,7 @@ import org.apereo.cas.config.CassandraTicketRegistryConfiguration;
 import org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.RepeatedTest;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.cassandra.drop-tables-on-startup=true"
 })
 @Tag("Cassandra")
-@EnabledIfPortOpen(port = 9042)
+@EnabledIfListeningOnPort(port = 9042)
 @Getter
 public class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired

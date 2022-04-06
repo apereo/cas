@@ -2,7 +2,7 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].trust-manager=ANY",
     "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber"
 })
-@EnabledIfPortOpen(port = 11389)
+@EnabledIfListeningOnPort(port = 11389)
 public class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 11389;
 

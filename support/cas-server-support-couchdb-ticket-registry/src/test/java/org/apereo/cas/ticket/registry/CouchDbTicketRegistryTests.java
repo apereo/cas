@@ -5,7 +5,7 @@ import org.apereo.cas.config.CouchDbTicketRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.ektorp.DbAccessException;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
         "cas.ticket.registry.couch-db.password=password"
     })
 @Tag("CouchDb")
-@EnabledIfPortOpen(port = 5984)
+@EnabledIfListeningOnPort(port = 5984)
 public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

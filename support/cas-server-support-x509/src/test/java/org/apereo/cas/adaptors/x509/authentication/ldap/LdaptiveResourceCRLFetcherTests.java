@@ -7,7 +7,7 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevoca
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapTestUtils;
 import org.apereo.cas.util.crypto.CertUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1
  */
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 public class LdaptiveResourceCRLFetcherTests {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";

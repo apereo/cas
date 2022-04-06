@@ -4,7 +4,7 @@ import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.config.CasScimConfiguration;
 import org.apereo.cas.config.Pac4jAuthenticationProvisioningConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("SCIM")
-@EnabledIfPortOpen(port = 9666)
+@EnabledIfListeningOnPort(port = 9666)
 @Import({
     CasScimConfiguration.class,
     Pac4jAuthenticationProvisioningConfiguration.class

@@ -2,7 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.config.Ehcache3TicketRegistryConfiguration;
 import org.apereo.cas.config.Ehcache3TicketRegistryTicketCatalogConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 }, properties =
     "cas.ticket.registry.ehcache3.terracotta.terracotta-cluster-uri=terracotta://localhost:9410/cas-application")
-@EnabledIfPortOpen(port = 9410)
+@EnabledIfListeningOnPort(port = 9410)
 @Tag("Ehcache")
 @Getter
 public class EhCache3TerracottaTicketRegistryTests extends BaseTicketRegistryTests {

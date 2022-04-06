@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAutoConfiguration
 @EnableScheduling
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {

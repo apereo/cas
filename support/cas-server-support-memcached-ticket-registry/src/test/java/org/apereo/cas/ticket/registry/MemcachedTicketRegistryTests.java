@@ -22,7 +22,7 @@ import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
@@ -68,7 +68,7 @@ import static org.mockito.Mockito.*;
         "cas.ticket.registry.memcached.hash-algorithm=FNV1A_64_HASH",
         "cas.ticket.registry.memcached.kryo-registration-required=true"
     })
-@EnabledIfPortOpen(port = 11211)
+@EnabledIfListeningOnPort(port = 11211)
 @Tag("Memcached")
 @Getter
 public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {

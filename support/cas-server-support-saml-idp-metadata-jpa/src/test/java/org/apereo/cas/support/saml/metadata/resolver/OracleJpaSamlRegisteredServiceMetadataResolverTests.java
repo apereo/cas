@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.saml-idp.metadata.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
     "cas.authn.saml-idp.metadata.jpa.dialect=org.hibernate.dialect.Oracle12cDialect"
 })
-@EnabledIfPortOpen(port = 1521)
+@EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")
 public class OracleJpaSamlRegisteredServiceMetadataResolverTests extends JpaSamlRegisteredServiceMetadataResolverTests {
 }

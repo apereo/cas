@@ -22,7 +22,7 @@ public class EnabledIfPortOpenCondition implements ExecutionCondition {
 
     private static final String IGNORE_PORT_CHECK = "IGNORE_PORT_CHECK";
 
-    private static ConditionEvaluationResult enableIfOpen(final EnabledIfPortOpen annotation, final AnnotatedElement element) {
+    private static ConditionEvaluationResult enableIfOpen(final EnabledIfListeningOnPort annotation, final AnnotatedElement element) {
         val ports = annotation.port();
         if (ports.length == 0) {
             throw new IllegalArgumentException("At least one port must be defined");
@@ -57,7 +57,7 @@ public class EnabledIfPortOpenCondition implements ExecutionCondition {
         val element = extensionContext
             .getElement()
             .orElseThrow(IllegalStateException::new);
-        return AnnotationSupport.findAnnotation(element, EnabledIfPortOpen.class)
+        return AnnotationSupport.findAnnotation(element, EnabledIfListeningOnPort.class)
             .map(annotation -> enableIfOpen(annotation, element))
             .orElse(ENABLED_BY_DEFAULT);
     }

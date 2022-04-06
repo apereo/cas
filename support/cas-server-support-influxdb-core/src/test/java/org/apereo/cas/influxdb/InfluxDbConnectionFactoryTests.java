@@ -1,7 +1,7 @@
 package org.apereo.cas.influxdb;
 
 import org.apereo.cas.configuration.model.core.events.InfluxDbEventsProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("InfluxDb")
-@EnabledIfPortOpen(port = 8086)
+@EnabledIfListeningOnPort(port = 8086)
 public class InfluxDbConnectionFactoryTests {
     private InfluxDbConnectionFactory factory;
 

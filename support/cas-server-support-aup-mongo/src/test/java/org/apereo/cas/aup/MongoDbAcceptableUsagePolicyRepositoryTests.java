@@ -2,7 +2,7 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyMongoDbConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("MongoDb")
 @Import(CasAcceptableUsagePolicyMongoDbConfiguration.class)
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.mongo.host=localhost",
     "cas.acceptable-usage-policy.mongo.port=27017",
