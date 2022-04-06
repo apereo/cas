@@ -16,6 +16,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -90,6 +91,22 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Override
     protected boolean isIterableRegistry() {
         return false;
+    }
+
+    @RepeatedTest(1)
+    public void verifyCreatePgt() throws Exception {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        newTicketRegistry.addTicket(tgt);
+        val service = RegisteredServiceTestUtils.getService();
+        val st = new MockServiceTicket(serviceTicketId, service, tgt);
+        newTicketRegistry.addTicket(st);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(new HashMap());
+        servicesManager.save(registeredService);
+
+        centralAuthenticationService.createProxyGrantingTicket(st.getId(), CoreAuthenticationTestUtils.getAuthenticationResult(service));
+        assertEquals(0, tgt.getProxyGrantingTickets().size());
+        val tgt2 = newTicketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
+        assertEquals(1, tgt2.getProxyGrantingTickets().size());
     }
 
     @RepeatedTest(2)
