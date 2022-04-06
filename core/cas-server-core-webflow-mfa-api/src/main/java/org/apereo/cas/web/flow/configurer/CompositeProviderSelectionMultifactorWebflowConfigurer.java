@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -24,6 +25,7 @@ public class CompositeProviderSelectionMultifactorWebflowConfigurer extends Abst
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        setOrder(Ordered.LOWEST_PRECEDENCE);
     }
 
     @Override
