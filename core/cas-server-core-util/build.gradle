@@ -13,6 +13,7 @@ dependencies {
     implementation libraries.zxingbarcode
     implementation libraries.bouncycastle
     implementation libraries.semver
+    implementation libraries.jasypt
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
