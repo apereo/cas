@@ -45,6 +45,6 @@ public class GoogleAuthenticatorLdapConfiguration {
         val ldap = casProperties.getAuthn().getMfa().getGauth().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         return new LdapGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor,
-                googleAuthenticatorScratchCodesCipherExecutor, googleAuthenticatorInstance, connectionFactory, ldap);
+            googleAuthenticatorScratchCodesCipherExecutor, googleAuthenticatorInstance, connectionFactory, ldap);
     }
 }

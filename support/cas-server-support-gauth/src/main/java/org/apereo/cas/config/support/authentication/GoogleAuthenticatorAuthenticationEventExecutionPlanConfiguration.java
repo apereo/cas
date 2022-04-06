@@ -105,7 +105,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration {
 
-        static final BeanCondition SCRATCH_CODES_ENCRYPTION_KEY_EXISTS =
+        private static final BeanCondition CONDITION_SCRATCH_CODE =
                 BeanCondition.on("cas.authn.mfa.gauth.core.scratch-codes.encryption.key").exists();
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -140,7 +140,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         public CipherExecutor googleAuthenticatorScratchCodesCipherExecutor(final ApplicationContext applicationContext,
                                                                             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(CipherExecutor.class)
-                    .when(SCRATCH_CODES_ENCRYPTION_KEY_EXISTS.given(applicationContext.getEnvironment()))
+                    .when(CONDITION_SCRATCH_CODE.given(applicationContext.getEnvironment()))
                     .supply(() -> {
                         val key = casProperties.getAuthn().getMfa().getGauth().getCore().getScratchCodes().getEncryption().getKey();
                         return new JasyptNumberCipherExecutor(key, "googleAuthenticatorScratchCodesCipherExecutor");

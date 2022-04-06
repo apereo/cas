@@ -110,21 +110,17 @@ Authentication requests can be mapped and geo-tracked to [physical locations](au
 
 ### Google Authenticator Scratch Codes
 
-CAS now allows to encrypt the Google Authenticator scratch codes to protect their values.
+CAS now allows to encrypt the Google Authenticator scratch codes to protect their values. This is enabled when the following key is set: `cas.authn.mfa.gauth.core.scratch-codes.encryption.key`. You must notice that while the encrypted scratch codes are still numbers, they are in fact encrypted forms of the same scratch code encoded as large numbers. Note that previous, existing scratch codes will continue to work as they did before.
 
-This is enabled when the following key is set: `cas.authn.mfa.gauth.core.scratch-codes.encryption.key`.
+<div class="alert alert-warning"><strong>Breaking Change!</strong><p>You may need to massag the underlying data model to account for this change. See notes below on how to handle this forr relational databases.</p></div>
 
-You must notice that while the encrypted scratch codes are still numbers, they are bigger ones.
-
-So the `scratch_codes` column in the `scratch_codes` table in the database needs to be updated.
-
-For example for PostgreSQL, you must run this SQL command to alter the column from an `int4` to a `numeric`:
+In case you are managing device registration records in a database, the `scratch_codes` column in the `scratch_codes` table in the database needs to be updated. For example for PostgreSQL, you must run this SQL command to alter the column from an `int4` to a `numeric`:
 
 ```sql
 ALTER TABLE scratch_codes ALTER COLUMN scratch_codes TYPE numeric USING scratch_codes::numeric;
 ```
 
-This should be very similar for other databases: you need to migrate the column type from "integer" to "numeric".
+This should be very similar for other databases: you need to migrate the column type from `integer` to `numeric`.
 
 ## Other Stuff
       
@@ -136,6 +132,7 @@ This should be very similar for other databases: you need to migrate the column 
 - Minor bug fixes to correct the device registration flow for [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html). 
 - Documentation improvements to take advantage of [DataTables](https://www.datatables.net/) instead to show and paginate CAS configuration properties.
 - Support for graceful shutdowns for all *embedded* servlet containers such as Apache Tomcat.
+- Multifactor provider selection can now function in [delegated authentication](../integration/Delegate-Authentication.html) flows when required.
 - OAuth and OpenID Connect userinfo/profile endpoints are now able to accept `application/jwt` as a supported content type.
 
 ## Library Upgrades
@@ -164,3 +161,4 @@ This should be very similar for other databases: you need to migrate the column 
 - Apache Shiro
 - Joda Time
 - Font Awesome
+- Pac4j
