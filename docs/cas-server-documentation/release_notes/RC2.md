@@ -106,7 +106,7 @@ CAS may also allow individual end-users to update certain aspects of their accou
 
 ### Groovy GeoLocation
 
-Authentication requests can be mapped and geo-tracked to [physical locations](authentication/GeoTracking-Authentication-Requests.html) using Groovy scripts. 
+Authentication requests can be mapped and geo-tracked to [physical locations](../authentication/GeoTracking-Authentication-Requests.html) using Groovy scripts. 
 
 ### Google Authenticator Scratch Codes
 
