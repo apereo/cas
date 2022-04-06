@@ -104,6 +104,24 @@ CAS may also allow individual end-users to update certain aspects of their accou
 
 <img width="100%" alt="image" src="https://user-images.githubusercontent.com/1205228/160280056-ec2244f1-acb3-44fb-93cc-ee3ac5e541e6.png">
 
+### Google Authenticator Scratch Codes
+
+CAS now allows to encrypt the Google Authenticator scratch codes to protect their values.
+
+This is enabled when the following key is set: `cas.authn.mfa.gauth.core.scratch-codes.encryption.key`.
+
+You must notice that while the encrypted scratch codes are still numbers, they are bigger ones.
+
+So the `scratch_codes` column in the `scratch_codes` table in the database needs to be updated.
+
+For example for PostgreSQL, you must run this SQL command to alter the column from an `int4` to a `numeric`:
+
+```sql
+ALTER TABLE scratch_codes ALTER COLUMN scratch_codes TYPE numeric USING scratch_codes::numeric;
+```
+
+This should be very similar for other databases: you need to migrate the column type from "integer" to "numeric".
+
 ## Other Stuff
       
 - Minor UI improvements to ensure "Reveal Password" buttons line up correctly in input fields.
