@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -86,7 +87,10 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         val ac = entityManager.find(JpaGoogleAuthenticatorAccount.class, account.getId());
         if (ac != null) {
             ac.setValidationCode(account.getValidationCode());
-            ac.setScratchCodes(account.getScratchCodes());
+            ac.setScratchCodes(account.getScratchCodes()
+                .stream()
+                .map(c -> BigInteger.valueOf(c.longValue()))
+                .collect(Collectors.toList()));
             ac.setSecretKey(account.getSecretKey());
             val encoded = encode(ac);
             return entityManager.merge(encoded);

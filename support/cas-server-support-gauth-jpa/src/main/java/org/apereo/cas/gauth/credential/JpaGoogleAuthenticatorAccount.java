@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.math.BigInteger;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link JpaGoogleAuthenticatorAccount}.
@@ -50,7 +52,10 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
             .username(acct.getUsername().trim().toLowerCase())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
-            .scratchCodes(acct.getScratchCodes())
+            .scratchCodes(acct.getScratchCodes()
+                .stream()
+                .map(c -> BigInteger.valueOf(c.longValue()))
+                .collect(Collectors.toList()))
             .registrationDate(acct.getRegistrationDate())
             .name(acct.getName())
             .build();
