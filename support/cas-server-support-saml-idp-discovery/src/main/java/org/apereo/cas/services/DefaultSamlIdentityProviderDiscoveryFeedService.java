@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIdentityProviderDiscoveryFeedService {
 
-	private final CasConfigurationProperties casProperties;
-	
+    private final CasConfigurationProperties casProperties;
+
     private final List<SamlIdentityProviderEntityParser> parsers;
 
     private final Clients clients;
