@@ -96,7 +96,7 @@ As part of routine dependency upgrades and library maintenance, the version of t
 
 ### Puppeteer Testing Strategy
 
-The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `255` jobs. At the moment, total number of jobs stands at approximately `274` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
+The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `255` jobs. At the moment, total number of jobs stands at approximately `277` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
 
 ### Password Management
 
