@@ -8,7 +8,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -161,7 +160,6 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     }
 
     @Override
-    @SneakyThrows
     protected List<X509CRL> getCRLs(final X509Certificate cert) {
         val urls = getDistributionPoints(cert);
         LOGGER.debug("Distribution points for [{}]: [{}].", CertUtils.toString(cert), CollectionUtils.wrap(urls));
@@ -174,7 +172,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
 
             if (item != null) {
                 LOGGER.debug("Found CRL in cache for [{}]", CertUtils.toString(cert));
-                val crlFetched = this.fetcher.fetch(new ByteArrayResource(item));
+                val crlFetched = FunctionUtils.doUnchecked(() -> this.fetcher.fetch(new ByteArrayResource(item)));
 
                 if (crlFetched != null) {
                     listOfLocations.add(crlFetched);

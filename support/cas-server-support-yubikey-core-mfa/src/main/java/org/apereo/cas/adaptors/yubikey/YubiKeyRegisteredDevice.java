@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -8,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
@@ -62,8 +63,7 @@ public class YubiKeyRegisteredDevice implements Serializable, Cloneable {
     private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     @Override
-    @SneakyThrows
     public YubiKeyRegisteredDevice clone() {
-        return (YubiKeyRegisteredDevice) super.clone();
+        return FunctionUtils.doUnchecked(() -> (YubiKeyRegisteredDevice) super.clone());
     }
 }

@@ -8,7 +8,6 @@ import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -97,7 +96,6 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
     }
 
     @Override
-    @SneakyThrows
     protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
         if (givenRecords.isEmpty()) {
             LOGGER.debug("No records are provided for [{}] so entry will be removed", username);

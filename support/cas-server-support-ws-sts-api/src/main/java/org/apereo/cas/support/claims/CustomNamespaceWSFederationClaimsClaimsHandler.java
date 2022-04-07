@@ -4,7 +4,6 @@ import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +54,6 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
         }
     }
 
-    @SneakyThrows
     @Override
     protected String createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
         val tokenType = parameters.getTokenRequirements().getTokenType();

@@ -52,9 +52,7 @@ public class ResponseHeadersEnforcementFilterTests {
         servletRequest.setSecure(true);
         val servletResponse = new MockHttpServletResponse();
         assertThrows(RuntimeException.class, () -> filter.doFilter(servletRequest, servletResponse, null));
-        assertDoesNotThrow(() -> {
-            filter.doFilter(servletRequest, servletResponse, new MockFilterChain());
-        });
+        assertDoesNotThrow(() -> filter.doFilter(servletRequest, servletResponse, new MockFilterChain()));
         filter.destroy();
         assertNotNull(servletResponse.getHeaderValue("Cache-Control"));
         assertNotNull(servletResponse.getHeaderValue("Pragma"));
