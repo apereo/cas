@@ -13,10 +13,10 @@ const assert = require("assert");
 
     console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(3000)
     await cas.loginWith(page, "casuser", "Mellon");
     console.log(await page.url())
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(3000)
     const content = JSON.parse(await cas.innerText(page, "body"));
     console.log(content)
     assert(content.form.SAMLResponse != null)
