@@ -64,5 +64,5 @@ public class SpnegoCredentialsTests {
         assertThat(MAPPER.writeValueAsString(credentials), not(containsString("initToken")));
         assertThat(MAPPER.writeValueAsString(credentials), not(containsString("nextToken")));
     }
-
 }
+
