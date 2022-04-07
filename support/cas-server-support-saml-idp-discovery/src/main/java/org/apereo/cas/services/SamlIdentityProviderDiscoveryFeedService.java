@@ -18,12 +18,12 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
  */
 public interface SamlIdentityProviderDiscoveryFeedService {
 
-	Collection<SamlIdentityProviderEntity> getDiscoveryFeed();
+    Collection<SamlIdentityProviderEntity> getDiscoveryFeed();
 
-	Collection<String> getEntityIds();
-	
-	DelegatedClientIdentityProviderConfiguration getProvider(final String entityID,
-			final HttpServletRequest httpServletRequest,
-			final HttpServletResponse httpServletResponse);
+    Collection<String> getEntityIds();
+
+    DelegatedClientIdentityProviderConfiguration getProvider(final String entityID,
+            final HttpServletRequest httpServletRequest,
+            final HttpServletResponse httpServletResponse);
 
 }
