@@ -1,6 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 
@@ -84,7 +85,7 @@ public class SpnegoCredential implements Credential {
      */
     private static boolean isTokenNtlm(final byte[] token) {
         return token != null && token.length >= NTLM_TOKEN_MAX_LENGTH
-            && IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
+               && IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
     }
 
     /**
