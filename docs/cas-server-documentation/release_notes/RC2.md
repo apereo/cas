@@ -112,7 +112,7 @@ Authentication requests can be mapped and geo-tracked to [physical locations](..
 
 CAS now allows to encrypt the Google Authenticator scratch codes to protect their values. This is enabled when the following key is set: `cas.authn.mfa.gauth.core.scratch-codes.encryption.key`. You must notice that while the encrypted scratch codes are still numbers, they are in fact encrypted forms of the same scratch code encoded as large numbers. Note that previous, existing scratch codes will continue to work as they did before.
 
-<div class="alert alert-warning"><strong>Breaking Change!</strong><p>You may need to massag the underlying data model to account for this change. See notes below on how to handle this forr relational databases.</p></div>
+<div class="alert alert-warning"><strong>Breaking Change!</strong><p>You may need to massage the underlying data model to account for this change. See notes below on how to handle this for relational databases.</p></div>
 
 In case you are managing device registration records in a database, the `scratch_codes` column in the `scratch_codes` table in the database needs to be updated. For example for PostgreSQL, you must run this SQL command to alter the column from an `int4` to a `numeric`:
 

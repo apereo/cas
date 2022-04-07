@@ -52,7 +52,7 @@ The following items are new improvements and enhancements presented in this rele
   
 ### Refresh Requests
 
-The construction of Spring beans (as defined by the `@Bean` annotation) managed via auto-configuration classes has been enhanced to support [*configurtion refresh* requests](../configuration/Configuration-Management-Reload.html) specially when beans are activated conditionally using a property value via the likes of `@ConditionalOnProperty`. This allows a bean to remain in a disabled state using a JDK dynamic proxy so that it can later on be replaced with a real implementation when/if configuration is refreshed. 
+The construction of Spring beans (as defined by the `@Bean` annotation) managed via auto-configuration classes has been enhanced to support [*configuration refresh* requests](../configuration/Configuration-Management-Reload.html) specially when beans are activated conditionally using a property value via the likes of `@ConditionalOnProperty`. This allows a bean to remain in a disabled state using a JDK dynamic proxy so that it can later on be replaced with a real implementation when/if configuration is refreshed. 
 
 ### Feature Toggles
 
