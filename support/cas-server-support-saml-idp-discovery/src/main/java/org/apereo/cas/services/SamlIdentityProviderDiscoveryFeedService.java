@@ -1,13 +1,14 @@
 package org.apereo.cas.services;
 
-import java.util.Collection;
+import org.apereo.cas.entity.SamlIdentityProviderEntity;
+import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apereo.cas.entity.SamlIdentityProviderEntity;
+import java.util.Collection;
 
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
+
 
 /**
  * This is {@link SamlIdentityProviderDiscoveryFeedService}.
@@ -18,12 +19,24 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
  */
 public interface SamlIdentityProviderDiscoveryFeedService {
 
+    /**
+     * @return available IdPs (may not yet be built)
+     */
     Collection<SamlIdentityProviderEntity> getDiscoveryFeed();
 
+    /**
+     * @return the entityIDs of already built IdPs
+     */
     Collection<String> getEntityIds();
 
-    DelegatedClientIdentityProviderConfiguration getProvider(final String entityID,
-            final HttpServletRequest httpServletRequest,
-            final HttpServletResponse httpServletResponse);
+    /**
+     * @param entityID the entityID
+     * @param httpServletRequest the servlet request
+     * @param httpServletResponse the servlet response
+     * @return the provider for the given entityID
+     */
+    DelegatedClientIdentityProviderConfiguration getProvider(String entityID,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse);
 
 }

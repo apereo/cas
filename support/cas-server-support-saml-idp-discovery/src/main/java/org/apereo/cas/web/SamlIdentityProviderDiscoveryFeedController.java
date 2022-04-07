@@ -2,20 +2,11 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
-import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
 import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
-import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
-import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.client.Clients;
-import org.pac4j.core.util.InitializableObject;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 /**
  * This is {@link SamlIdentityProviderDiscoveryFeedController}.
@@ -52,7 +41,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
 
     @GetMapping(path = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<SamlIdentityProviderEntity> getDiscoveryFeed() {
-    	return samlIdentityProviderDiscoveryFeedService.getDiscoveryFeed();
+        return samlIdentityProviderDiscoveryFeedService.getDiscoveryFeed();
     }
 
     /**
