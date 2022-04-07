@@ -193,7 +193,7 @@ public class MultifactorAuthenticationUtils {
             return null;
         });
     }
-    
+
     /**
      * Gets authentication provider for service.
      *
@@ -204,16 +204,15 @@ public class MultifactorAuthenticationUtils {
     public Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderForService(
         final RegisteredService service,
         final ApplicationContext applicationContext) {
-        val policy = service.getMultifactorPolicy();
-        if (policy != null) {
-            return policy.getMultifactorAuthenticationProviders().stream()
+        return Optional.ofNullable(service.getMultifactorPolicy())
+            .map(policy -> policy.getMultifactorAuthenticationProviders()
+                .stream()
                 .map(provider ->
                     MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider, applicationContext))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toSet());
-        }
-        return null;
+                .collect(Collectors.toSet()))
+            .orElseGet(HashSet::new);
     }
 
     /**
