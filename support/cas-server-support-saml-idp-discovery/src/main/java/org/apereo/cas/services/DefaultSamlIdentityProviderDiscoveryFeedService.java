@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.util.InitializableObject;
+import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
 
 import javax.servlet.http.HttpServletRequest;
