@@ -18,7 +18,6 @@ const cas = require('../../cas.js');
     await cas.screenshot(page)
     await cas.assertInnerText(page, '#content h2', "Multifactor Authentication Provider Selection");
     await cas.assertVisibility(page, '#mfa-gauth')
-    await cas.assertVisibility(page, '#mfa-yubikey')
-
+    await cas.assertVisibility(page, '#mfa-simple')
     await browser.close();
 })();

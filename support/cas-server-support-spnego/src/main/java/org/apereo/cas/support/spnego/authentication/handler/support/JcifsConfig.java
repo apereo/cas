@@ -1,7 +1,8 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +40,6 @@ public class JcifsConfig {
          * @param resourceLoader the resource loader
          * @param loginConf      the login conf
          */
-        @SneakyThrows
         public static void initialize(final ResourceLoader resourceLoader, final String loginConf) {
             val propValue = System.getProperty(JcifsConfigConstants.SYS_PROP_LOGIN_CONF);
             if (StringUtils.isNotBlank(propValue)) {
@@ -53,7 +53,7 @@ public class JcifsConfig {
 
                 val res = resourceLoader.getResource(effectiveLoginConf);
                 if (res.exists()) {
-                    val urlPath = res.getURL().toExternalForm();
+                    val urlPath = FunctionUtils.doUnchecked(() -> res.getURL().toExternalForm());
                     LOGGER.debug("Located login config [{}] and configured it under [{}]", urlPath, JcifsConfigConstants.SYS_PROP_LOGIN_CONF);
                     System.setProperty(JcifsConfigConstants.SYS_PROP_LOGIN_CONF, urlPath);
                 } else {

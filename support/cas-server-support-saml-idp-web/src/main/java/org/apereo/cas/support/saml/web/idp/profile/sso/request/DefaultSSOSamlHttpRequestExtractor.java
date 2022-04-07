@@ -3,10 +3,10 @@ package org.apereo.cas.support.saml.web.idp.profile.sso.request;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
@@ -38,15 +38,16 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
         actionResolverName = AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER)
     @Override
-    @SneakyThrows
     public Optional<Pair<? extends SignableSAMLObject, MessageContext>> extract(final HttpServletRequest request,
-                                                                                 final BaseHttpServletRequestXMLMessageDecoder decoder,
-                                                                                 final Class<? extends SignableSAMLObject> clazz) {
-        LOGGER.trace("Received SAML profile request [{}]", request.getRequestURI());
-        decoder.setHttpServletRequest(request);
-        decoder.setParserPool(this.parserPool);
-        decoder.initialize();
-        decoder.decode();
+                                                                                final BaseHttpServletRequestXMLMessageDecoder decoder,
+                                                                                final Class<? extends SignableSAMLObject> clazz) {
+        FunctionUtils.doUnchecked(u -> {
+            LOGGER.trace("Received SAML profile request [{}]", request.getRequestURI());
+            decoder.setHttpServletRequest(request);
+            decoder.setParserPool(this.parserPool);
+            decoder.initialize();
+            decoder.decode();
+        });
 
         val messageContext = decoder.getMessageContext();
         LOGGER.trace("Locating SAML object from message context...");

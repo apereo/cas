@@ -216,15 +216,13 @@ public class CasPersonDirectoryConfiguration {
 
         @Bean
         public InitializingBean casPersonDirectoryInitializer(final CasConfigurationProperties casProperties) {
-            return () -> {
-                FunctionUtils.doIf(LOGGER.isInfoEnabled(), value -> {
-                    val stub = casProperties.getAuthn().getAttributeRepository().getStub();
-                    val attrs = stub.getAttributes();
-                    if (!attrs.isEmpty()) {
-                        LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
-                    }
-                }).accept(null);
-            };
+            return () -> FunctionUtils.doIf(LOGGER.isInfoEnabled(), value -> {
+                val stub = casProperties.getAuthn().getAttributeRepository().getStub();
+                val attrs = stub.getAttributes();
+                if (!attrs.isEmpty()) {
+                    LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
+                }
+            }).accept(null);
         }
     }
 

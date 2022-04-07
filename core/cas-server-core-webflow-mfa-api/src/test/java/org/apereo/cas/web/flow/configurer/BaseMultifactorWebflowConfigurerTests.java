@@ -48,11 +48,9 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         states.forEach(stateId -> {
             val state = (State) flow.getState(stateId);
             if (state instanceof TransitionableState) {
-                ((TransitionableState) state).getTransitionSet().forEach(t -> {
-                    assertTrue(flow.containsState(t.getTargetStateId()),
-                        () -> String.format("Destination of transition [%s]-%s->[%s] must be in flow definition",
-                            stateId, t.getId(), t.getTargetStateId()));
-                });
+                ((TransitionableState) state).getTransitionSet().forEach(t -> assertTrue(flow.containsState(t.getTargetStateId()),
+                    () -> String.format("Destination of transition [%s]-%s->[%s] must be in flow definition",
+                        stateId, t.getId(), t.getTargetStateId())));
             }
         });
     }

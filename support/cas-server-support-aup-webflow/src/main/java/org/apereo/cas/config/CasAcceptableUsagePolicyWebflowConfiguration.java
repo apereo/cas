@@ -153,10 +153,8 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) throws Exception {
             return BeanSupplier.of(Action.class)
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
-                .supply(() -> new ConsumerExecutionAction(requestContext -> {
-                    acceptableUsagePolicyRepository.fetchPolicy(requestContext)
-                        .ifPresent(policy -> WebUtils.putAcceptableUsagePolicyTermsIntoFlowScope(requestContext, policy));
-                }))
+                .supply(() -> new ConsumerExecutionAction(requestContext -> acceptableUsagePolicyRepository.fetchPolicy(requestContext)
+                    .ifPresent(policy -> WebUtils.putAcceptableUsagePolicyTermsIntoFlowScope(requestContext, policy))))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }

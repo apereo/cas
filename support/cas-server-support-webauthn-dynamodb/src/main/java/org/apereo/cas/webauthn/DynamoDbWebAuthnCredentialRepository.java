@@ -6,7 +6,6 @@ import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -57,7 +56,6 @@ public class DynamoDbWebAuthnCredentialRepository extends BaseWebAuthnCredential
     }
 
     @Override
-    @SneakyThrows
     protected void update(final String username, final Collection<CredentialRegistration> records) {
         if (records.isEmpty()) {
             LOGGER.debug("No records are provided for [{}] so entry will be removed", username);

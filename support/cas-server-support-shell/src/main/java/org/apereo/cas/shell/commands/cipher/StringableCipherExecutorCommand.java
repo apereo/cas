@@ -2,8 +2,8 @@ package org.apereo.cas.shell.commands.cipher;
 
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -39,7 +39,6 @@ public class StringableCipherExecutorCommand {
      * @param signingEnabled          the signing enabled
      * @return the string
      */
-    @SneakyThrows
     @ShellMethod(key = {"cipher-text", "encode-text"}, value = "Sign and encrypt text data using keys")
     public String cipher(
         @ShellOption(value = { "value", "--value" }, defaultValue = ShellOption.NULL, help = "Value to put through the cipher")
@@ -61,7 +60,7 @@ public class StringableCipherExecutorCommand {
 
         var toEncode = value;
         if (value != null && new File(value).exists()) {
-            toEncode = FileUtils.readFileToString(new File(value), StandardCharsets.UTF_8);
+            toEncode = FunctionUtils.doUnchecked(() -> FileUtils.readFileToString(new File(value), StandardCharsets.UTF_8));
         }
 
         if (StringUtils.isNotBlank(toEncode)) {
@@ -86,7 +85,6 @@ public class StringableCipherExecutorCommand {
      * @param signingEnabled          the signing enabled
      * @return the string
      */
-    @SneakyThrows
     @ShellMethod(key = {"decipher-text", "decode-text"}, value = "Decrypt and verify text data using keys")
     public String decipher(
         @ShellOption(value = { "value", "--value" }, defaultValue = ShellOption.NULL, help = "Value to put through the cipher")
@@ -108,7 +106,7 @@ public class StringableCipherExecutorCommand {
 
         var toEncode = value;
         if (value != null && new File(value).exists()) {
-            toEncode = FileUtils.readFileToString(new File(value), StandardCharsets.UTF_8);
+            toEncode = FunctionUtils.doUnchecked(() -> FileUtils.readFileToString(new File(value), StandardCharsets.UTF_8));
         }
 
         if (StringUtils.isNotBlank(toEncode)) {

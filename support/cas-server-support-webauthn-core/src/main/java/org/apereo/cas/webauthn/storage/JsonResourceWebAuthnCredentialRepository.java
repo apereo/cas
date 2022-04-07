@@ -2,11 +2,11 @@ package org.apereo.cas.webauthn.storage;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.WebAuthnUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
@@ -53,28 +53,12 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
             : new HashSet<>(0);
     }
 
-    @SneakyThrows
-    private Map<String, Set<CredentialRegistration>> readFromJsonRepository() {
-        LOGGER.trace("Ensuring JSON repository file exists at [{}]", location.getFile());
-        val result = location.getFile().createNewFile();
-        if (result) {
-            LOGGER.trace("Created JSON repository file at [{}]", location.getFile());
-        }
-        if (location.getFile().length() > 0) {
-            LOGGER.trace("Reading JSON repository file at [{}]", location.getFile());
-            return new ConcurrentHashMap<>(WebAuthnUtils.getObjectMapper().readValue(location.getFile(), new TypeReference<>() {
-            }));
-        }
-        return new ConcurrentHashMap<>(0);
-    }
-
     @Override
     public Stream<CredentialRegistration> stream() {
         return readFromJsonRepository().values().stream().flatMap(Collection::stream);
     }
 
     @Override
-    @SneakyThrows
     protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
         val storage = readFromJsonRepository();
         val records = givenRecords.stream()
@@ -86,6 +70,22 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
             })
             .collect(Collectors.toList());
         storage.put(username.trim().toLowerCase(), new LinkedHashSet<>(records));
-        WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage);
+        FunctionUtils.doUnchecked(u -> WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage));
+    }
+
+    private Map<String, Set<CredentialRegistration>> readFromJsonRepository() {
+        return FunctionUtils.doUnchecked(() -> {
+            LOGGER.trace("Ensuring JSON repository file exists at [{}]", location.getFile());
+            val result = location.getFile().createNewFile();
+            if (result) {
+                LOGGER.trace("Created JSON repository file at [{}]", location.getFile());
+            }
+            if (location.getFile().length() > 0) {
+                LOGGER.trace("Reading JSON repository file at [{}]", location.getFile());
+                return new ConcurrentHashMap<>(WebAuthnUtils.getObjectMapper().readValue(location.getFile(), new TypeReference<>() {
+                }));
+            }
+            return new ConcurrentHashMap<>(0);
+        });
     }
 }

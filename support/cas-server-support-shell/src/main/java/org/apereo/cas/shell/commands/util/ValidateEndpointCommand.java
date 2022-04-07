@@ -44,53 +44,6 @@ import java.util.Arrays;
 @ShellComponent
 @Slf4j
 public class ValidateEndpointCommand {
-    /**
-     * Validate endpoint.
-     *
-     * @param url     the url
-     * @param proxy   the proxy
-     * @param timeout the timeout
-     * @return true/false
-     */
-    @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
-    public boolean validateEndpoint(
-        @ShellOption(value = {"url", "--url"},
-            help = "Endpoint URL to test") final String url,
-        @ShellOption(value = {"proxy", "--proxy"},
-            help = "Proxy address to use when testing the endpoint url",
-            defaultValue = StringUtils.EMPTY) final String proxy,
-        @ShellOption(value = {"timeout", "--timeout"},
-            help = "Timeout to use in milliseconds when testing the url",
-            defaultValue = "5000") final int timeout) {
-
-        try {
-            LOGGER.info("Trying to connect to [{}]", url);
-            val conn = createConnection(url, proxy);
-
-            LOGGER.info("Setting connection timeout to [{}]", timeout);
-            conn.setConnectTimeout(timeout);
-
-            try (val reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
-                 val in = new BufferedReader(reader)) {
-                in.readLine();
-
-                if (conn instanceof HttpURLConnection) {
-                    val code = ((HttpURLConnection) conn).getResponseCode();
-                    LOGGER.info("Response status code received: [{}]", code);
-                }
-                LOGGER.info("Successfully connected to url [{}]", url);
-                return true;
-            }
-        } catch (final Exception e) {
-            LOGGER.info("Could not connect to the host address [{}]", url);
-            LOGGER.info("The error is: [{}]", e.getMessage());
-            LOGGER.info("Here are the details:");
-            LOGGER.error(consolidateExceptionMessages(e));
-            testBadTlsConnection(url, proxy);
-        }
-        return false;
-    }
-
     @SneakyThrows
     private static X509TrustManager[] getSystemTrustManagers() {
         val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
@@ -111,13 +64,13 @@ public class ValidateEndpointCommand {
     private static URLConnection createConnection(final String url, final String proxy) throws Exception {
         val constructedUrl = new URL(url);
         return FunctionUtils.doIf(StringUtils.isNotBlank(proxy),
-            Unchecked.supplier(() -> {
-                val proxyUrl = new URL(proxy);
-                LOGGER.info("Using proxy address [{}]", proxy);
-                val proxyAddr = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
-                return constructedUrl.openConnection(new Proxy(Proxy.Type.HTTP, proxyAddr));
-            }),
-            Unchecked.supplier(constructedUrl::openConnection))
+                Unchecked.supplier(() -> {
+                    val proxyUrl = new URL(proxy);
+                    LOGGER.info("Using proxy address [{}]", proxy);
+                    val proxyAddr = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
+                    return constructedUrl.openConnection(new Proxy(Proxy.Type.HTTP, proxyAddr));
+                }),
+                Unchecked.supplier(constructedUrl::openConnection))
             .get();
     }
 
@@ -204,27 +157,78 @@ public class ValidateEndpointCommand {
         return "Not matched in trust store (which is expected of the host certificate that is part of a chain)";
     }
 
-    @SneakyThrows
     @SuppressWarnings("java:S4830")
     private static SSLContext getTheAllTrustingSSLContext() {
-        val sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, new TrustManager[]{new X509TrustManager() {
+        return FunctionUtils.doUnchecked(() -> {
+            val sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{new X509TrustManager() {
 
-            @Override
-            public void checkClientTrusted(final X509Certificate[] xcs, final String string) {
+                @Override
+                public void checkClientTrusted(final X509Certificate[] xcs, final String string) {
+                }
+
+                @Override
+                public void checkServerTrusted(final X509Certificate[] xcs, final String string) {
+                }
+
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+            }}, null);
+            return sslContext;
+        });
+    }
+
+    /**
+     * Validate endpoint.
+     *
+     * @param url     the url
+     * @param proxy   the proxy
+     * @param timeout the timeout
+     * @return true/false
+     */
+    @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
+    public boolean validateEndpoint(
+        @ShellOption(value = {"url", "--url"},
+            help = "Endpoint URL to test")
+        final String url,
+        @ShellOption(value = {"proxy", "--proxy"},
+            help = "Proxy address to use when testing the endpoint url",
+            defaultValue = StringUtils.EMPTY)
+        final String proxy,
+        @ShellOption(value = {"timeout", "--timeout"},
+            help = "Timeout to use in milliseconds when testing the url",
+            defaultValue = "5000")
+        final int timeout) {
+
+        try {
+            LOGGER.info("Trying to connect to [{}]", url);
+            val conn = createConnection(url, proxy);
+
+            LOGGER.info("Setting connection timeout to [{}]", timeout);
+            conn.setConnectTimeout(timeout);
+
+            try (val reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+                 val in = new BufferedReader(reader)) {
+                in.readLine();
+
+                if (conn instanceof HttpURLConnection) {
+                    val code = ((HttpURLConnection) conn).getResponseCode();
+                    LOGGER.info("Response status code received: [{}]", code);
+                }
+                LOGGER.info("Successfully connected to url [{}]", url);
+                return true;
             }
-
-            @Override
-            public void checkServerTrusted(final X509Certificate[] xcs, final String string) {
-            }
-
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-
-        }}, null);
-        return sslContext;
+        } catch (final Exception e) {
+            LOGGER.info("Could not connect to the host address [{}]", url);
+            LOGGER.info("The error is: [{}]", e.getMessage());
+            LOGGER.info("Here are the details:");
+            LOGGER.error(consolidateExceptionMessages(e));
+            testBadTlsConnection(url, proxy);
+        }
+        return false;
     }
 }
 

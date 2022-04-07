@@ -4,8 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.authenticator.BasicAuthenticator;
@@ -297,14 +297,15 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
 
             val valve = new RewriteValve() {
                 @Override
-                @SneakyThrows
                 public synchronized void startInternal() {
-                    super.startInternal();
-                    try (val is = res.getInputStream();
-                         val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                         val buffer = new BufferedReader(isr)) {
-                        parse(buffer);
-                    }
+                    FunctionUtils.doUnchecked(u -> {
+                        super.startInternal();
+                        try (val is = res.getInputStream();
+                             val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+                             val buffer = new BufferedReader(isr)) {
+                            parse(buffer);
+                        }
+                    });
                 }
             };
             valve.setAsyncSupported(true);

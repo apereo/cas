@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.web.UrlValidator;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -75,7 +74,6 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
      * @param parameters the parameters
      * @return the jwt
      */
-    @SneakyThrows
     protected String generateToken(final WebApplicationService service, final Map<String, String> parameters) {
         val ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
         return this.tokenTicketBuilder.build(ticketId, service);

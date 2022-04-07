@@ -131,31 +131,29 @@ public interface AttributeDefinitionStore {
         final RegisteredService registeredService) {
         val finalAttributes = new LinkedHashMap<String, List<Object>>(attributeDefinitions.size());
         attributeDefinitions
-            .forEach(entry -> {
-                locateAttributeDefinition(entry).ifPresentOrElse(definition -> {
-                    val attributeValues = determineValuesForAttributeDefinition(availableAttributes, entry, definition);
-                    LOGGER.trace("Resolving attribute [{}] from attribute definition store with values [{}]", entry, attributeValues);
-                    val result = resolveAttributeValues(entry, attributeValues, registeredService, availableAttributes);
-                    if (result.isPresent()) {
-                        val resolvedValues = result.get().getValue();
-                        if (!resolvedValues.isEmpty()) {
-                            LOGGER.trace("Resolving attribute [{}] based on attribute definition [{}]", entry, definition);
-                            val attributeKeys = org.springframework.util.StringUtils.commaDelimitedListToSet(
-                                StringUtils.defaultIfBlank(definition.getName(), entry));
+            .forEach(entry -> locateAttributeDefinition(entry).ifPresentOrElse(definition -> {
+                val attributeValues = determineValuesForAttributeDefinition(availableAttributes, entry, definition);
+                LOGGER.trace("Resolving attribute [{}] from attribute definition store with values [{}]", entry, attributeValues);
+                val result = resolveAttributeValues(entry, attributeValues, registeredService, availableAttributes);
+                if (result.isPresent()) {
+                    val resolvedValues = result.get().getValue();
+                    if (!resolvedValues.isEmpty()) {
+                        LOGGER.trace("Resolving attribute [{}] based on attribute definition [{}]", entry, definition);
+                        val attributeKeys = org.springframework.util.StringUtils.commaDelimitedListToSet(
+                            StringUtils.defaultIfBlank(definition.getName(), entry));
 
-                            attributeKeys.forEach(key -> {
-                                LOGGER.trace("Determined attribute name to be [{}] with values [{}]", key, resolvedValues);
-                                finalAttributes.put(key, resolvedValues);
-                            });
-                        } else {
-                            LOGGER.warn("Unable to produce or determine attributes values for attribute definition [{}]", definition);
-                        }
+                        attributeKeys.forEach(key -> {
+                            LOGGER.trace("Determined attribute name to be [{}] with values [{}]", key, resolvedValues);
+                            finalAttributes.put(key, resolvedValues);
+                        });
+                    } else {
+                        LOGGER.warn("Unable to produce or determine attributes values for attribute definition [{}]", definition);
                     }
-                }, () -> {
-                    LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry);
-                    finalAttributes.put(entry, availableAttributes.get(entry));
-                });
-            });
+                }
+            }, () -> {
+                LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry);
+                finalAttributes.put(entry, availableAttributes.get(entry));
+            }));
         LOGGER.trace("Final collection of attributes resolved from attribute definition store is [{}]", finalAttributes);
         return finalAttributes;
     }
