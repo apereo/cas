@@ -3,10 +3,10 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.velocity.app.VelocityEngine;
@@ -96,30 +96,17 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
         return ctx;
     }
 
-    /**
-     * Finalize encode response.
-     *
-     * @param authnRequest   the authn request
-     * @param encoder        the encoder
-     * @param samlResponse   the saml response
-     * @param relayState     the relay stateSurrogateAuthenticationPostProcessor.java
-     * @param messageContext the message context
-     */
-    @SneakyThrows
     protected void finalizeEncode(final RequestAbstractType authnRequest,
                                   final BaseSAML2MessageEncoder encoder,
                                   final T samlResponse,
                                   final String relayState,
                                   final MessageContext messageContext) {
-        encoder.initialize();
-        encoder.encode();
+        FunctionUtils.doUnchecked(u -> {
+            encoder.initialize();
+            encoder.encode();
+        });
     }
 
-    /**
-     * Gets binding.
-     *
-     * @return the binding
-     */
     protected abstract String getBinding();
 
     /**

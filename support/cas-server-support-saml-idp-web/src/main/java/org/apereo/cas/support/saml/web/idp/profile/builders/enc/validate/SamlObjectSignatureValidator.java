@@ -4,10 +4,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -239,21 +239,23 @@ public class SamlObjectSignatureValidator {
         }
     }
 
-    @SneakyThrows
-    private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver, final RequestAbstractType profileRequest) {
-        val kekCredentialResolver = new MetadataCredentialResolver();
-        val config = getSignatureValidationConfiguration();
-        kekCredentialResolver.setRoleDescriptorResolver(resolver);
-        kekCredentialResolver.setKeyInfoCredentialResolver(
-            DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
-        kekCredentialResolver.initialize();
-        val criteriaSet = new CriteriaSet();
-        criteriaSet.add(new SignatureValidationConfigurationCriterion(config));
-        criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
+    private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver,
+                                                 final RequestAbstractType profileRequest) {
+        return FunctionUtils.doUnchecked(() -> {
+            val kekCredentialResolver = new MetadataCredentialResolver();
+            val config = getSignatureValidationConfiguration();
+            kekCredentialResolver.setRoleDescriptorResolver(resolver);
+            kekCredentialResolver.setKeyInfoCredentialResolver(
+                DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
+            kekCredentialResolver.initialize();
+            val criteriaSet = new CriteriaSet();
+            criteriaSet.add(new SignatureValidationConfigurationCriterion(config));
+            criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
 
-        buildEntityCriteriaForSigningCredential(profileRequest, criteriaSet);
+            buildEntityCriteriaForSigningCredential(profileRequest, criteriaSet);
 
-        return Sets.newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
+            return Sets.newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
+        });
 
     }
 

@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSaml
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -105,7 +104,6 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     }
 
     @Override
-    @SneakyThrows
     public void saveOrUpdate(final SamlMetadataDocument document) {
         if (s3Client.listBuckets(ListBucketsRequest.builder().build())
             .buckets().stream().noneMatch(b -> b.name().equalsIgnoreCase(bucketName))) {

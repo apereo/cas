@@ -14,9 +14,9 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -61,7 +61,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
     private final File metadataBackupDirectory;
 
-    @SneakyThrows
     public UrlResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                        final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
@@ -69,13 +68,14 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         val md = samlIdPProperties.getMetadata();
         val backupLocation = StringUtils.defaultIfBlank(md.getHttp().getMetadataBackupLocation(), md.getFileSystem().getLocation());
         val location = SpringExpressionLanguageValueResolver.getInstance().resolve(backupLocation);
-        this.metadataBackupDirectory = new File(ResourceUtils.getRawResourceFrom(location).getFile(), DIRNAME_METADATA_BACKUPS);
+        this.metadataBackupDirectory = FunctionUtils.doUnchecked(
+            () -> new File(ResourceUtils.getRawResourceFrom(location).getFile(), DIRNAME_METADATA_BACKUPS));
         try {
             LOGGER.trace("Creating metadata backup directory at [{}]", this.metadataBackupDirectory);
             FileUtils.forceMkdir(this.metadataBackupDirectory);
         } catch (final Exception e) {
             LOGGER.error("Unable to create metadata backup directory [{}] to store downloaded metadata. "
-                + "This is likely due to a permission issue", this.metadataBackupDirectory);
+                         + "This is likely due to a permission issue", this.metadataBackupDirectory);
             LOGGER.debug(e.getMessage(), e);
         }
     }
@@ -121,8 +121,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         try {
             val metadataLocation = getMetadataLocationForService(service, new CriteriaSet());
             return StringUtils.isNotBlank(metadataLocation)
-                && StringUtils.startsWith(metadataLocation, "http")
-                && !SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation);
+                   && StringUtils.startsWith(metadataLocation, "http")
+                   && !SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -137,16 +137,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             return !status.isError();
         }
         return false;
-    }
-
-    private void cleanUpExpiredBackupMetadataFilesFor(final AbstractResource metadataResource,
-                                                      final SamlRegisteredService service) {
-        val prefix = getBackupMetadataFilenamePrefix(metadataResource, service);
-        val backups = FileUtils.listFiles(this.metadataBackupDirectory,
-            new AndFileFilter(CollectionUtils.wrapList(new PrefixFileFilter(prefix, IOCase.INSENSITIVE),
-                new SuffixFileFilter(FILENAME_EXTENSION_XML, IOCase.INSENSITIVE),
-                CanWriteFileFilter.CAN_WRITE, CanReadFileFilter.CAN_READ)), TrueFileFilter.INSTANCE);
-        backups.forEach(Unchecked.consumer(FileUtils::forceDelete));
     }
 
     /**
@@ -256,5 +246,15 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         val sha = DigestUtils.sha(fileName);
         LOGGER.trace("Metadata backup file for metadata location [{}] is linked to [{}]", fileName, sha);
         return sha;
+    }
+
+    private void cleanUpExpiredBackupMetadataFilesFor(final AbstractResource metadataResource,
+                                                      final SamlRegisteredService service) {
+        val prefix = getBackupMetadataFilenamePrefix(metadataResource, service);
+        val backups = FileUtils.listFiles(this.metadataBackupDirectory,
+            new AndFileFilter(CollectionUtils.wrapList(new PrefixFileFilter(prefix, IOCase.INSENSITIVE),
+                new SuffixFileFilter(FILENAME_EXTENSION_XML, IOCase.INSENSITIVE),
+                CanWriteFileFilter.CAN_WRITE, CanReadFileFilter.CAN_READ)), TrueFileFilter.INSTANCE);
+        backups.forEach(Unchecked.consumer(FileUtils::forceDelete));
     }
 }
