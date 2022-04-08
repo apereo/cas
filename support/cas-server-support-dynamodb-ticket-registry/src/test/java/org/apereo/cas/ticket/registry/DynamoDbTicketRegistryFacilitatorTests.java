@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DynamoDbTicketRegistryFacilitatorTests {
 
     @Nested
-    @EnabledIfPortOpen(port = 8000)
+    @EnabledIfListeningOnPort(port = 8000)
     @SuppressWarnings("ClassCanBeStatic")
     public class OriginalDynamoDbTicketRegistryFacilitatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
@@ -60,7 +60,7 @@ public class DynamoDbTicketRegistryFacilitatorTests {
     }
 
     @Nested
-    @EnabledIfPortOpen(port = 8000)
+    @EnabledIfListeningOnPort(port = 8000)
     @TestPropertySource(properties = "cas.ticket.registry.dynamo-db.billing-mode=PAY_PER_REQUEST")
     @SuppressWarnings("ClassCanBeStatic")
     public class DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests

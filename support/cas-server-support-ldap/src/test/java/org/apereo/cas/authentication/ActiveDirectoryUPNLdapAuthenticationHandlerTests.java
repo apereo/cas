@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -33,7 +33,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].hostname-verifier=ANY",
     "cas.authn.ldap[0].trust-manager=ANY"
 })
-@EnabledIfPortOpen(port = 10390)
+@EnabledIfListeningOnPort(port = 10390)
 @Tag("Ldap")
 public class ActiveDirectoryUPNLdapAuthenticationHandlerTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 

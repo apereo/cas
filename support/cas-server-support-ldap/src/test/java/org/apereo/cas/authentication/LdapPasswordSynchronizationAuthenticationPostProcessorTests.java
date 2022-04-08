@@ -3,7 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("Ldap")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -1,7 +1,7 @@
 package org.apereo.cas.couchbase.core;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.couchbase.client.java.query.QueryOptions;
 import lombok.val;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Couchbase")
-@EnabledIfPortOpen(port = 8091)
+@EnabledIfListeningOnPort(port = 8091)
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
         "cas.authn.couchbase.cluster-username=admin",

@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
@@ -35,7 +35,7 @@ public class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @EnabledIfPortOpen(port = 18080)
+    @EnabledIfListeningOnPort(port = 18080)
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
         properties = "cas.authn.syncope.url=http://localhost:18080/syncope")
     public class SyncopeCoreServerTests {

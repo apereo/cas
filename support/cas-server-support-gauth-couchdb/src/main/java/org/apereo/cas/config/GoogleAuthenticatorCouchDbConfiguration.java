@@ -54,9 +54,12 @@ public class GoogleAuthenticatorCouchDbConfiguration {
         final IGoogleAuthenticator googleAuthenticatorInstance,
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
         final CipherExecutor googleAuthenticatorAccountCipherExecutor,
+        @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")
+        final CipherExecutor googleAuthenticatorScratchCodesCipherExecutor,
         @Qualifier("couchDbOneTimeTokenAccountRepository")
         final GoogleAuthenticatorAccountCouchDbRepository couchDbRepository) {
-        return new CouchDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, couchDbRepository, googleAuthenticatorAccountCipherExecutor);
+        return new CouchDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, couchDbRepository, googleAuthenticatorAccountCipherExecutor,
+                googleAuthenticatorScratchCodesCipherExecutor);
     }
 
     @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAccountRepository")

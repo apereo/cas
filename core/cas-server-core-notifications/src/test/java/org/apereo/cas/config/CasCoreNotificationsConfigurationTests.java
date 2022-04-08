@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsSender;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.mail.port=25000"
     })
 @Tag("Mail")
-@EnabledIfPortOpen(port = 25000)
+@EnabledIfListeningOnPort(port = 25000)
 public class CasCoreNotificationsConfigurationTests {
     @Autowired
     @Qualifier("notificationSender")

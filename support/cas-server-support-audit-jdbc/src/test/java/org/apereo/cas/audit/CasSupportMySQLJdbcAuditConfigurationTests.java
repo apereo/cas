@@ -1,6 +1,6 @@
 package org.apereo.cas.audit;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -20,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.jdbc.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.MySQL8Dialect"
 })
-@EnabledIfPortOpen(port = 3306)
+@EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
 public class CasSupportMySQLJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
 }

@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.SurrogateLdapAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateLdapAuthenticationProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.surrogate.ldap.member-attribute-value-regex=\\\\w+@example.org"
 })
 @Getter
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
 
     private static final int LDAP_PORT = 10389;

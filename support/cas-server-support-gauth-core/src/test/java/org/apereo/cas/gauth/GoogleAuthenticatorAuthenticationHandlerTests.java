@@ -35,6 +35,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,7 +66,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
         googleAuthenticator = new GoogleAuthenticator(builder.build());
         tokenRepository = new CachingOneTimeTokenRepository(Caffeine.newBuilder().initialCapacity(10).build(s -> null));
         tokenCredentialRepository = new InMemoryGoogleAuthenticatorTokenCredentialRepository(
-            CipherExecutor.noOpOfStringToString(), googleAuthenticator);
+            CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber(), googleAuthenticator);
         googleAuthenticator.setCredentialRepository(new DummyCredentialRepository());
         handler = new GoogleAuthenticatorAuthenticationHandler("GAuth",
             servicesManager,
@@ -105,7 +106,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             .name(UUID.randomUUID().toString())
             .secretKey(account.getKey())
             .validationCode(account.getVerificationCode())
-            .scratchCodes(account.getScratchCodes())
+            .scratchCodes(new ArrayList<>(account.getScratchCodes()))
             .build();
         tokenCredentialRepository.save(toSave);
         credential.setAccountId(toSave.getId());
@@ -120,7 +121,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             .name(UUID.randomUUID().toString())
             .secretKey(account.getKey())
             .validationCode(account.getVerificationCode())
-            .scratchCodes(account.getScratchCodes())
+            .scratchCodes(new ArrayList<>(account.getScratchCodes()))
             .build();
         credential.setAccountId(toSave.getId());
         tokenCredentialRepository.save(toSave);
@@ -137,7 +138,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             .name(UUID.randomUUID().toString())
             .secretKey(account.getKey())
             .validationCode(account.getVerificationCode())
-            .scratchCodes(account.getScratchCodes())
+            .scratchCodes(new ArrayList<>(account.getScratchCodes()))
             .build();
         tokenCredentialRepository.save(toSave);
         credential.setAccountId(toSave.getId());
@@ -158,7 +159,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
                 .name(String.format("deviceName-%s", i))
                 .secretKey(account.getKey())
                 .validationCode(account.getVerificationCode())
-                .scratchCodes(account.getScratchCodes())
+                .scratchCodes(new ArrayList<>(account.getScratchCodes()))
                 .build();
             tokenCredentialRepository.save(toSave);
         }
@@ -179,7 +180,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             .name(UUID.randomUUID().toString())
             .secretKey(account.getKey())
             .validationCode(account.getVerificationCode())
-            .scratchCodes(account.getScratchCodes())
+            .scratchCodes(new ArrayList<>(account.getScratchCodes()))
             .build();
         tokenCredentialRepository.save(toSave);
         credential.setAccountId(null);

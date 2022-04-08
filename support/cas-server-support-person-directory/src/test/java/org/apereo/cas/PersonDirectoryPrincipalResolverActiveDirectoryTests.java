@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].attributes.objectGUID=objectGUID",
     "cas.authn.attribute-repository.ldap[0].attributes.objectSid=objectSid"
 })
-@EnabledIfPortOpen(port = 10390)
+@EnabledIfListeningOnPort(port = 10390)
 @Tag("Ldap")
 public class PersonDirectoryPrincipalResolverActiveDirectoryTests {
     public static final String AD_TRUST_STORE = "file:/tmp/adcacerts.jks";

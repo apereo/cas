@@ -23,7 +23,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.bson.Document;
@@ -80,7 +80,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mongo.password-attribute=password"
 })
 @EnableScheduling
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Tag("MongoDb")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbAuthenticationHandlerTests {

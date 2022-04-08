@@ -46,8 +46,9 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
         final GoogleAuthenticatorMultifactorProperties gauth,
-        final CipherExecutor<String, String> tokenCredentialCipher) {
-        super(tokenCredentialCipher, googleAuthenticator);
+        final CipherExecutor<String, String> tokenCredentialCipher,
+        final CipherExecutor<Number, Number> scratchCodesCipher) {
+        super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.gauth = gauth;
     }
 

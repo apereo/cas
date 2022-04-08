@@ -30,11 +30,13 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
 
     private final String collectionName;
 
-    public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                               final MongoOperations mongoTemplate,
-                                                               final String collectionName,
-                                                               final CipherExecutor<String, String> tokenCredentialCipher) {
-        super(tokenCredentialCipher, googleAuthenticator);
+    public MongoDbGoogleAuthenticatorTokenCredentialRepository(
+        final IGoogleAuthenticator googleAuthenticator,
+        final MongoOperations mongoTemplate,
+        final String collectionName,
+        final CipherExecutor<String, String> tokenCredentialCipher,
+        final CipherExecutor<Number, Number> scratchCodesCipher) {
+        super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }

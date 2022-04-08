@@ -52,7 +52,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8551");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         val entity = MAPPER.writeValueAsString(List.of("----"));
         try (val webServer = new MockWebServer(8551,
             new ByteArrayResource(entity.getBytes(UTF_8), "Output"), OK)) {
@@ -71,7 +71,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8551");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         val account = repo.create(UUID.randomUUID().toString());
         val entity = MAPPER.writeValueAsString(CollectionUtils.wrapArrayList(account));
         try (val webServer = new MockWebServer(8551,
@@ -86,7 +86,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8550");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         try (val webServer = new MockWebServer(8550,
             new ByteArrayResource("1".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
@@ -106,7 +106,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         val account = repo.create(UUID.randomUUID().toString());
         val entity = MAPPER.writeValueAsString(CollectionUtils.wrapList(account));
         try (val webServer = new MockWebServer(8552,
@@ -121,7 +121,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         val account = repo.create(UUID.randomUUID().toString());
         val entity = MAPPER.writeValueAsString(account);
         try (val webServer = new MockWebServer(8552,
@@ -136,7 +136,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         val account = repo.create(UUID.randomUUID().toString());
         val entity = MAPPER.writeValueAsString(account);
         try (val webServer = new MockWebServer(8552,
@@ -151,7 +151,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         try (val webServer = new MockWebServer(8552,
             new ByteArrayResource("1".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
@@ -164,7 +164,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8596");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         try (val webServer = new MockWebServer(8596,
             new ByteArrayResource("1".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
@@ -177,7 +177,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8553");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         val account = repo.create(UUID.randomUUID().toString());
         val entity = MAPPER.writeValueAsString(account);
         try (val webServer = new MockWebServer(8553,
@@ -204,7 +204,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8554");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            props, CipherExecutor.noOpOfStringToString());
+            props, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         val account = repo.create(UUID.randomUUID().toString());
         try (val webServer = new MockWebServer(8554,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(UTF_8), "Output"), HttpStatus.BAD_REQUEST)) {

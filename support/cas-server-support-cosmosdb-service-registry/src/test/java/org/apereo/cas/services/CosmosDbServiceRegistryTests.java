@@ -8,7 +8,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @ResourceLock("cosmosdb-service")
 @Getter
-@EnabledIfPortOpen(port = 8081)
+@EnabledIfListeningOnPort(port = 8081)
 public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cosmosDbServiceRegistry")

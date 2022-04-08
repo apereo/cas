@@ -3,7 +3,7 @@ package org.apereo.cas.consent;
 import org.apereo.cas.config.CasConsentCouchDbConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.couchdb.consent.CouchDbConsentDecision;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("CouchDb")
 @Getter
-@EnabledIfPortOpen(port = 5984)
+@EnabledIfListeningOnPort(port = 5984)
 public class CouchDbConsentDecisionTests {
     @Test
     public void verifyOperation() {

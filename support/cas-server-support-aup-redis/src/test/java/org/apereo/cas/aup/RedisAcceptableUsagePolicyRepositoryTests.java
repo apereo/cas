@@ -2,7 +2,7 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyRedisConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Redis")
 @Import(CasAcceptableUsagePolicyRedisConfiguration.class)
-@EnabledIfPortOpen(port = 6379)
+@EnabledIfListeningOnPort(port = 6379)
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.redis.host=localhost",
     "cas.acceptable-usage-policy.redis.port=6379",

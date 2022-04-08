@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import lombok.val;
@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "database.url=jdbc:postgresql://localhost:5432/",
     "database.dialect=org.hibernate.dialect.PostgreSQL10Dialect"
 })
-@EnabledIfPortOpen(port = 5432)
+@EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 @Import(QueryDatabaseAuthenticationHandlerPostgresTests.DatabaseTestConfiguration.class)
 public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthenticationHandlerTests {

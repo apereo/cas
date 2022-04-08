@@ -2,7 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.config.CasMongoDbThrottlingConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -36,7 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.audit.mongo.asynchronous=false"
 })
 @Getter
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 

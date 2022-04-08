@@ -2,7 +2,7 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
     "cas.monitor.memcached.hash-algorithm=FNV1A_64_HASH"
 })
 @Tag("Memcached")
-@EnabledIfPortOpen(port = 11211)
+@EnabledIfListeningOnPort(port = 11211)
 public class MemcachedHealthIndicatorTests {
     @Autowired
     @Qualifier("memcachedHealthIndicator")

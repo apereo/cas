@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticatio
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 public class LdapUtilsTests {
 
     @Test

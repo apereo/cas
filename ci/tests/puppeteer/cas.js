@@ -327,6 +327,18 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     });
 }
 
+exports.stopGradleApp = async (gradleDir, deleteDir= true) => {
+    let args = ['appStop', '-q', '--no-daemon'];
+    await this.logg(`Stopping process in ${gradleDir} with ${args}`);
+    return this.runGradle(gradleDir, args, (code) => {
+        console.log(`Stopped child process exited with code ${code}`);
+        if (deleteDir) {
+            this.sleep(3000);
+            this.removeDirectory(gradleDir);
+        }
+    });
+}
+
 exports.shutdownCas = async (baseUrl) => {
     await this.logg(`Stopping CAS via shutdown actuator`);
     const response = await this.doRequest(`${baseUrl}/actuator/shutdown`,

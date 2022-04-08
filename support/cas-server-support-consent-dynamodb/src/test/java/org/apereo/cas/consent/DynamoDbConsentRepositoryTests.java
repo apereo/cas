@@ -1,7 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.config.CasConsentDynamoDbConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -27,7 +27,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
         "cas.consent.dynamo-db.region=us-east-1"
     })
 @Tag("DynamoDb")
-@EnabledIfPortOpen(port = 8000)
+@EnabledIfListeningOnPort(port = 8000)
 @Getter
 public class DynamoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
     static {

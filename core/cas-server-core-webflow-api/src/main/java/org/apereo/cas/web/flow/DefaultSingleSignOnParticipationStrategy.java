@@ -74,7 +74,9 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
             if (tgtPolicy != null) {
                 val ticketState = getTicketState(ssoRequest);
                 return tgtPolicy.toExpirationPolicy()
-                    .map(policy -> !policy.isExpired((TicketGrantingTicketAwareTicket) ticketState.get())).orElse(Boolean.TRUE);
+                    .filter(tgt -> ticketState.isPresent())
+                    .map(policy -> !policy.isExpired((TicketGrantingTicketAwareTicket) ticketState.get()))
+                    .orElse(Boolean.TRUE);
             }
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);

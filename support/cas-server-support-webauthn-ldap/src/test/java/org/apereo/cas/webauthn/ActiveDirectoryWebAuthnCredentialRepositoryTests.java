@@ -1,7 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.config.LdapWebAuthnConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -40,7 +40,7 @@ import org.springframework.test.context.TestPropertySource;
         "cas.authn.mfa.web-authn.ldap.hostname-verifier=DEFAULT"
     })
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10636)
+@EnabledIfListeningOnPort(port = 10636)
 @Getter
 @Import(LdapWebAuthnConfiguration.class)
 public class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {

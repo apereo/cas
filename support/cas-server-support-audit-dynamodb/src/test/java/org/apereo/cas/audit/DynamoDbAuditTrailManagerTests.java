@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportDynamoDbAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -43,7 +43,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 )
 @Tag("DynamoDb")
 @Getter
-@EnabledIfPortOpen(port = 8000)
+@EnabledIfListeningOnPort(port = 8000)
 public class DynamoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     static {

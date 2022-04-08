@@ -22,7 +22,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mongo.CasMongoOperations;
 import org.apereo.cas.monitor.config.MongoDbMonitoringConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
@@ -82,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.mongo[0].authentication-database-name=admin",
         "cas.monitor.mongo[0].database-name=monitor"
     })
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @SuppressWarnings("JavaUtilDate")
 public class MongoDbHealthIndicatorTests {
     @Autowired
