@@ -8,7 +8,6 @@ import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -90,7 +89,6 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlObject(request));
     }
 
-    @SneakyThrows
     private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredService registeredService,

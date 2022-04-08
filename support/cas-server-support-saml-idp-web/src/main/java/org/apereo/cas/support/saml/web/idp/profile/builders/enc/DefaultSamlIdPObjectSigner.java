@@ -15,11 +15,11 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -206,32 +206,33 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
      * @param service    the service
      * @return the signature signing parameters
      */
-    @SneakyThrows
     protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
                                                                          final SamlRegisteredService service) {
-        val criteria = new CriteriaSet();
-        val signatureSigningConfiguration = getSignatureSigningConfiguration(service);
-        criteria.add(new SignatureSigningConfigurationCriterion(signatureSigningConfiguration));
-        criteria.add(new RoleDescriptorCriterion(descriptor));
+        return FunctionUtils.doUnchecked(() -> {
+            val criteria = new CriteriaSet();
+            val signatureSigningConfiguration = getSignatureSigningConfiguration(service);
+            criteria.add(new SignatureSigningConfigurationCriterion(signatureSigningConfiguration));
+            criteria.add(new RoleDescriptorCriterion(descriptor));
 
-        val resolver = new SAMLMetadataSignatureSigningParametersResolver();
-        LOGGER.trace("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
-        val params = resolver.resolveSingle(criteria);
-        if (params != null) {
-            LOGGER.trace("Created signature signing parameters."
-                         + "\nSignature algorithm: [{}]"
-                         + "\nSignature canonicalization algorithm: [{}]"
-                         + "\nSignature reference digest methods: [{}]"
-                         + "\nSignature reference canonicalization algorithm: [{}]",
-                params.getSignatureAlgorithm(),
-                params.getSignatureCanonicalizationAlgorithm(),
-                params.getSignatureReferenceDigestMethod(),
-                params.getSignatureReferenceCanonicalizationAlgorithm());
-        } else {
-            LOGGER.warn("Unable to resolve SignatureSigningParameters, response signing will fail."
-                        + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
-        }
-        return params;
+            val resolver = new SAMLMetadataSignatureSigningParametersResolver();
+            LOGGER.trace("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
+            val params = resolver.resolveSingle(criteria);
+            if (params != null) {
+                LOGGER.trace("Created signature signing parameters."
+                             + "\nSignature algorithm: [{}]"
+                             + "\nSignature canonicalization algorithm: [{}]"
+                             + "\nSignature reference digest methods: [{}]"
+                             + "\nSignature reference canonicalization algorithm: [{}]",
+                    params.getSignatureAlgorithm(),
+                    params.getSignatureCanonicalizationAlgorithm(),
+                    params.getSignatureReferenceDigestMethod(),
+                    params.getSignatureReferenceCanonicalizationAlgorithm());
+            } else {
+                LOGGER.warn("Unable to resolve SignatureSigningParameters, response signing will fail."
+                            + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
+            }
+            return params;
+        });
     }
 
     /**
