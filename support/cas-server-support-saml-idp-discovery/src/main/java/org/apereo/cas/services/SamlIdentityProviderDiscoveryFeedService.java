@@ -20,20 +20,26 @@ import java.util.Collection;
 public interface SamlIdentityProviderDiscoveryFeedService {
 
     /**
-     * @return available IdPs (may not yet be built)
+     * Available IdPs Entities (may not yet be built).
+     * 
+     * @return the IdP Entities
      */
     Collection<SamlIdentityProviderEntity> getDiscoveryFeed();
 
     /**
-     * @return the entityIDs of already built IdPs
+     * The entityIDs of already built IdPs.
+     * 
+     * @return the entityIDs
      */
     Collection<String> getEntityIds();
 
     /**
+     * The provider for the given entityID.
+     * 
      * @param entityID the entityID
      * @param httpServletRequest the servlet request
      * @param httpServletResponse the servlet response
-     * @return the provider for the given entityID
+     * @return the provider
      */
     DelegatedClientIdentityProviderConfiguration getProvider(String entityID,
             HttpServletRequest httpServletRequest,
