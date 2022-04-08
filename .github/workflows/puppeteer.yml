@@ -21,7 +21,6 @@ env:
   ADFS_PASSWORD: ${{ secrets.ADFS_PASSWORD }}
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
-  MAX_ATTEMPTS: 2
   JDK_CURRENT: 11
   NODE_CURRENT: '16'
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
@@ -70,8 +69,8 @@ jobs:
       - name: Initialize
         run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
-##########################################################################
-  
+  ##########################################################################
+
   puppeteer-scenarios:
     needs: [initialize]
     runs-on: ubuntu-latest
@@ -101,7 +100,7 @@ jobs:
       - id: get-scenarios511
         run: echo "::set-output name=scenarios511::$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)]}"
 
-##########################################################################
+  ##########################################################################
   puppeteer-tests-255:
     runs-on: ubuntu-latest
     needs: [puppeteer-scenarios]
@@ -132,19 +131,14 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3
+      #      - name: Setup tmate session
+      #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
-        uses: nick-fields/retry@v2
-        with:
-          max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 1
-          retry_on: error
-          shell: bash
-          command: |
-            export RUNNER_OS=${{ runner.os }}
-            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-##########################################################################
+        shell: bash
+        run: |
+          export RUNNER_OS=${{ runner.os }}
+          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+  ##########################################################################
   puppeteer-tests-511:
     runs-on: ubuntu-latest
     needs: [puppeteer-scenarios]
@@ -179,13 +173,8 @@ jobs:
       #      - name: Setup tmate session
       #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
-        uses: nick-fields/retry@v2
-        with:
-          max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 1
-          retry_on: error
-          shell: bash
-          command: |
-            export RUNNER_OS=${{ runner.os }}
-            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+        shell: bash
+        run: |
+          export RUNNER_OS=${{ runner.os }}
+          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
