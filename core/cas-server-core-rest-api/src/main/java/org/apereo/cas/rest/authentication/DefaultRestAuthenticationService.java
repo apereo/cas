@@ -69,6 +69,6 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
                         return authenticationSystemSupport.finalizeAuthenticationTransaction(service, authnCredentials);
                     })
                     .orElseGet(() -> authenticationSystemSupport.finalizeAllAuthenticationTransactions(result, service)))
-            .orElseGet(() -> authenticationSystemSupport.finalizeAuthenticationTransaction(service, credentials)));
+            .orElseGet(() -> authenticationSystemSupport.finalizeAllAuthenticationTransactions(result, service)));
     }
 }

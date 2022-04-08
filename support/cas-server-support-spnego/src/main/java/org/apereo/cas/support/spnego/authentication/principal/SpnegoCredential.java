@@ -1,10 +1,9 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
