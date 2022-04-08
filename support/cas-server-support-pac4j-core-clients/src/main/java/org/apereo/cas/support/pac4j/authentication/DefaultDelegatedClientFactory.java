@@ -464,6 +464,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                 cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
                 cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
+                cfg.setSpLogoutRequestBindingType(saml.getLogoutRequestBinding());
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
