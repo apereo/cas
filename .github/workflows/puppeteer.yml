@@ -182,6 +182,7 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
+          timeout_minutes: 1
           retry_on: error
           shell: bash
           command: |
