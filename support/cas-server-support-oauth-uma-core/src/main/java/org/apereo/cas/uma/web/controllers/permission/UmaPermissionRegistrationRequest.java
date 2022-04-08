@@ -1,12 +1,12 @@
 package org.apereo.cas.uma.web.controllers.permission;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import lombok.SneakyThrows;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -42,8 +42,7 @@ public class UmaPermissionRegistrationRequest implements Serializable {
      * @return the string
      */
     @JsonIgnore
-    @SneakyThrows
     public String toJson() {
-        return MAPPER.writeValueAsString(this);
+        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(this));
     }
 }

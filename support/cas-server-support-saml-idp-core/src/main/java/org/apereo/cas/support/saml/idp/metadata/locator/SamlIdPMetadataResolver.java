@@ -6,11 +6,11 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Iterables;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -98,7 +98,7 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
             if (entities != null) {
                 return entities;
             }
-            entities = resolveMetadata(criteria, filter);
+            entities = FunctionUtils.doUnchecked(() -> resolveMetadata(criteria, filter));
             if (entities != null && Iterables.size(entities) > 0) {
                 metadataCache.put(cacheKey, entities);
                 return entities;
@@ -123,9 +123,8 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
             .orElseGet(() -> casProperties.getAuthn().getSamlIdp().getCore().getEntityId());
     }
 
-    @SneakyThrows
     private Iterable<EntityDescriptor> resolveMetadata(final CriteriaSet criteria,
-                                                       final Optional<SamlRegisteredService> registeredService) {
+                                                       final Optional<SamlRegisteredService> registeredService) throws Exception {
         if (!locator.exists(registeredService) && locator.shouldGenerateMetadataFor(registeredService)) {
             generator.generate(registeredService);
         }

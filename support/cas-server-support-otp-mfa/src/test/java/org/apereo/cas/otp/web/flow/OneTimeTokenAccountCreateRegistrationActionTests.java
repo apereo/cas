@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowMfaActions")
 public class OneTimeTokenAccountCreateRegistrationActionTests {
     @Test
-    public void verifyCreateAccount() {
+    public void verifyCreateAccount() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

@@ -3,7 +3,6 @@ package org.apereo.cas.shell.commands.util;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -44,8 +43,7 @@ import java.util.Arrays;
 @ShellComponent
 @Slf4j
 public class ValidateEndpointCommand {
-    @SneakyThrows
-    private static X509TrustManager[] getSystemTrustManagers() {
+    private static X509TrustManager[] getSystemTrustManagers() throws Exception {
         val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
         LOGGER.info("Detected Truststore: [{}]", trustManagerFactory.getProvider().getName());
@@ -109,7 +107,7 @@ public class ValidateEndpointCommand {
         }
     }
 
-    private static void tlsConnectionReport(final HttpsURLConnection httpsConnection) {
+    private static void tlsConnectionReport(final HttpsURLConnection httpsConnection) throws Exception {
         val systemTrustManagers = getSystemTrustManagers();
 
         final Certificate[] certificates;
@@ -187,7 +185,8 @@ public class ValidateEndpointCommand {
      * @param url     the url
      * @param proxy   the proxy
      * @param timeout the timeout
-     * @return true/false
+     * @return true /false
+     * @throws Exception the exception
      */
     @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
     public boolean validateEndpoint(
@@ -201,7 +200,7 @@ public class ValidateEndpointCommand {
         @ShellOption(value = {"timeout", "--timeout"},
             help = "Timeout to use in milliseconds when testing the url",
             defaultValue = "5000")
-        final int timeout) {
+        final int timeout) throws Exception {
 
         try {
             LOGGER.info("Trying to connect to [{}]", url);

@@ -4,8 +4,8 @@ import org.apereo.cas.support.saml.util.credential.BasicResourceCredentialFactor
 import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -135,10 +135,11 @@ public class SamlUtils {
      * @param configBean       the config bean
      * @return the root element from
      */
-    @SneakyThrows
     public static Element getRootElementFrom(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
-        val document = configBean.getParserPool().parse(metadataResource);
-        return document.getDocumentElement();
+        return FunctionUtils.doUnchecked(() -> {
+            val document = configBean.getParserPool().parse(metadataResource);
+            return document.getDocumentElement();
+        });
     }
 
     /**
@@ -364,7 +365,6 @@ public class SamlUtils {
         }
     }
 
-    @SneakyThrows
     private static CriteriaSet buildSignatureValidationFilterCriteria() {
         val criteriaSet = new CriteriaSet();
 
@@ -375,7 +375,7 @@ public class SamlUtils {
             val paramsResolver = new BasicSignatureValidationParametersResolver();
 
             val configCriteria = new CriteriaSet(new SignatureValidationConfigurationCriterion(sigConfigs));
-            val params = paramsResolver.resolveSingle(configCriteria);
+            val params = FunctionUtils.doUnchecked(() -> paramsResolver.resolveSingle(configCriteria));
             if (params != null) {
                 criteriaSet.add(new SignatureValidationParametersCriterion(params), true);
             }

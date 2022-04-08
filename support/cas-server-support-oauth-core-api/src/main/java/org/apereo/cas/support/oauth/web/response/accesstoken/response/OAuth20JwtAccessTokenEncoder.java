@@ -11,7 +11,6 @@ import org.apereo.cas.util.DateTimeUtils;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -64,7 +63,6 @@ public class OAuth20JwtAccessTokenEncoder {
      * @param tokenId the token id
      * @return the string
      */
-    @SneakyThrows
     public String decode(final String tokenId) {
         try {
             if (StringUtils.isBlank(tokenId)) {

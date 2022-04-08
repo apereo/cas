@@ -18,7 +18,6 @@ import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -89,16 +88,15 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
 
-    private Set<IndirectClient> clients = new LinkedHashSet<>();
-
     private final CasSSLContext casSSLContext;
 
     private final ApplicationContext applicationContext;
 
-    @SneakyThrows
+    private Set<IndirectClient> clients = new LinkedHashSet<>();
+
     private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
                                                                                  final Class<T> clazz) {
-        val cfg = clazz.getDeclaredConstructor().newInstance();
+        val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
         if (StringUtils.isNotBlank(oidc.getScope())) {
             cfg.setScope(oidc.getScope());
         }
@@ -449,10 +447,10 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         pac4jProperties.getSaml()
             .stream()
             .filter(saml -> saml.isEnabled()
-                && StringUtils.isNotBlank(saml.getKeystorePath())
-                && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath())
-                && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
-                && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
+                            && StringUtils.isNotBlank(saml.getKeystorePath())
+                            && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath())
+                            && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
+                            && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
             .forEach(saml -> {
                 val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
@@ -567,8 +565,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         pac4jProperties.getOauth2()
             .stream()
             .filter(oauth -> oauth.isEnabled()
-                && StringUtils.isNotBlank(oauth.getId())
-                && StringUtils.isNotBlank(oauth.getSecret()))
+                             && StringUtils.isNotBlank(oauth.getId())
+                             && StringUtils.isNotBlank(oauth.getSecret()))
             .forEach(oauth -> {
                 val client = new GenericOAuth20Client();
                 client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalAttributeId(), pac4jProperties.getCore().getPrincipalAttributeId()));
@@ -628,7 +626,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             val genName = className.concat(RandomUtils.randomNumeric(2));
             client.setName(genName);
             LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
-                + "Consider defining an explicit name for the delegated provider", className, genName);
+                        + "Consider defining an explicit name for the delegated provider", className, genName);
         }
         val customProperties = client.getCustomProperties();
         customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, props.getAutoRedirectType());
@@ -661,7 +659,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         }
     }
 
-    @SneakyThrows
     private OidcClient getOidcClientFrom(final Pac4jOidcClientProperties oidc) {
         if (oidc.getAzure().isEnabled() && StringUtils.isNotBlank(oidc.getAzure().getId())) {
             LOGGER.debug("Building OpenID Connect client for Azure AD...");
@@ -692,11 +689,13 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             LOGGER.debug("Building OpenID Connect client for Apple...");
             val cfg = getOidcConfigurationForClient(oidc.getApple(), AppleOidcConfiguration.class);
 
-            val factory = new PrivateKeyFactoryBean();
-            factory.setAlgorithm("EC");
-            factory.setSingleton(false);
-            factory.setLocation(ResourceUtils.getResourceFrom(oidc.getApple().getPrivateKey()));
-            cfg.setPrivateKey((ECPrivateKey) factory.getObject());
+            FunctionUtils.doUnchecked(u -> {
+                val factory = new PrivateKeyFactoryBean();
+                factory.setAlgorithm("EC");
+                factory.setSingleton(false);
+                factory.setLocation(ResourceUtils.getResourceFrom(oidc.getApple().getPrivateKey()));
+                cfg.setPrivateKey((ECPrivateKey) factory.getObject());
+            });
 
             cfg.setPrivateKeyID(oidc.getApple().getPrivateKeyId());
             cfg.setTeamID(oidc.getApple().getTeamId());

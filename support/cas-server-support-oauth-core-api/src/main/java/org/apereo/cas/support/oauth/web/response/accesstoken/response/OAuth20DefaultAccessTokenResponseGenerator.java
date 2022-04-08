@@ -12,7 +12,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
@@ -65,7 +64,6 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      * @param result the result
      * @return the model and view
      */
-    @SneakyThrows
     protected ModelAndView generateResponseForDeviceToken(final OAuth20AccessTokenResponseResult result) {
         val model = getDeviceTokenResponseModel(result);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);

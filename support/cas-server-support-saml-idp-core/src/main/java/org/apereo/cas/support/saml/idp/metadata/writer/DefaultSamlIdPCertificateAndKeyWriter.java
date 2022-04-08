@@ -5,7 +5,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERSequence;
@@ -41,26 +40,32 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
     private static final int X509_CERT_BITS_SIZE = 160;
 
     private int keySize = 2048;
+
     private String hostname;
+
     private String keyType = "RSA";
+
     private String certificateAlgorithm = "SHA256withRSA";
+
     private int certificateLifetimeInYears = 20;
+
     private List<String> uriSubjectAltNames;
 
-    @SneakyThrows
     @Override
     public void writeCertificateAndKey(final Writer privateKeyWriter, final Writer certificateWriter) {
-        val keypair = generateKeyPair();
-        val certificate = generateCertificate(keypair);
-        try (val keyOut = new JcaPEMWriter(privateKeyWriter)) {
-            keyOut.writeObject(keypair.getPrivate());
-            keyOut.flush();
-        }
+        FunctionUtils.doUnchecked(u -> {
+            val keypair = generateKeyPair();
+            val certificate = generateCertificate(keypair);
+            try (val keyOut = new JcaPEMWriter(privateKeyWriter)) {
+                keyOut.writeObject(keypair.getPrivate());
+                keyOut.flush();
+            }
 
-        try (val certOut = new JcaPEMWriter(certificateWriter)) {
-            certOut.writeObject(certificate);
-            certOut.flush();
-        }
+            try (val certOut = new JcaPEMWriter(certificateWriter)) {
+                certOut.writeObject(certificate);
+                certOut.flush();
+            }
+        });
     }
 
     private KeyPair generateKeyPair() {

@@ -1,9 +1,10 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.codahale.metrics.MetricRegistry;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.core.config.ConfigurationService;
@@ -39,12 +40,13 @@ public class OpenSamlConfigBean {
 
     private final XMLObjectProviderRegistry xmlObjectProviderRegistry;
 
-    @SneakyThrows
     public OpenSamlConfigBean(final @NonNull ParserPool parserPool) {
         this.parserPool = parserPool;
 
-        LOGGER.trace("Initializing OpenSaml configuration...");
-        InitializationService.initialize();
+        FunctionUtils.doUnchecked(u -> {
+            LOGGER.trace("Initializing OpenSaml configuration...");
+            InitializationService.initialize();
+        });
 
         this.xmlObjectProviderRegistry = ConfigurationService.get(XMLObjectProviderRegistry.class);
         xmlObjectProviderRegistry.setParserPool(this.parserPool);

@@ -3,8 +3,8 @@ package org.apereo.cas.uma.ticket.resource.repository.impl;
 import org.apereo.cas.uma.ticket.resource.JpaResourceSet;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.repository.BaseResourceSetRepository;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,14 +35,13 @@ public class JpaResourceSetRepository extends BaseResourceSetRepository {
     @PersistenceContext(unitName = "umaEntityManagerFactory")
     private transient EntityManager entityManager;
 
-    @SneakyThrows
     @Override
     public ResourceSet save(final ResourceSet set) {
         if (!validateResourceSetScopes(set)) {
             throw new IllegalArgumentException("Cannot save a resource set with inconsistent scopes.");
         }
         val jpaResource = new JpaResourceSet();
-        BeanUtils.copyProperties(jpaResource, set);
+        FunctionUtils.doUnchecked(u -> BeanUtils.copyProperties(jpaResource, set));
 
         val isNew = jpaResource.getId() <= 0;
         val r = this.entityManager.merge(jpaResource);
