@@ -1,6 +1,7 @@
 package org.apereo.cas.impl.token;
 
-import lombok.SneakyThrows;
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
@@ -9,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -73,19 +73,20 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
             .executeUpdate();
     }
 
-    @SneakyThrows
     @Override
     public void saveToken(final String username, final String token) {
-        val entity = PasswordlessAuthenticationToken.builder()
-            .token(token)
-            .username(username)
-            .expirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTokenExpirationInSeconds()))
-            .build();
+        FunctionUtils.doUnchecked(u -> {
+            val entity = PasswordlessAuthenticationToken.builder()
+                .token(token)
+                .username(username)
+                .expirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTokenExpirationInSeconds()))
+                .build();
 
-        val record = new JpaPasswordlessAuthenticationToken();
-        BeanUtils.copyProperties(record, entity);
-        LOGGER.debug("Saving token [{}]", record);
-        entityManager.merge(record);
+            val record = new JpaPasswordlessAuthenticationToken();
+            BeanUtils.copyProperties(record, entity);
+            LOGGER.debug("Saving token [{}]", record);
+            entityManager.merge(record);
+        });
     }
 
     @Override

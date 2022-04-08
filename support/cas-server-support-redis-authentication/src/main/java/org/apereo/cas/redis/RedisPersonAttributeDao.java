@@ -6,7 +6,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -43,7 +42,6 @@ public class RedisPersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    @SneakyThrows
     public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
         val attributes = redisTemplate.opsForHash().entries(uid);
         return new CaseInsensitiveNamedPersonImpl(uid, stuffAttributesIntoList(attributes));

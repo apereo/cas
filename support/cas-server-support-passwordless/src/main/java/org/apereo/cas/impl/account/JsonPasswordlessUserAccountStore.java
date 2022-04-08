@@ -1,11 +1,11 @@
 package org.apereo.cas.impl.account;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import org.springframework.core.io.Resource;
 
 import java.util.Map;
@@ -24,9 +24,8 @@ public class JsonPasswordlessUserAccountStore extends SimplePasswordlessUserAcco
         super(readFromResource(resource));
     }
 
-    @SneakyThrows
     private static Map<String, PasswordlessUserAccount> readFromResource(final Resource resource) {
-        return MAPPER.readValue(resource.getInputStream(), new TypeReference<>() {
-        });
+        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(resource.getInputStream(), new TypeReference<>() {
+        }));
     }
 }

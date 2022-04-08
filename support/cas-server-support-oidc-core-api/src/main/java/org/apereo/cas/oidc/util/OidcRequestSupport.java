@@ -11,7 +11,6 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -111,12 +110,13 @@ public class OidcRequestSupport {
      * @param webContext          the web context
      * @return the redirect url with error
      */
-    @SneakyThrows
     public static String getRedirectUrlWithError(final String originalRedirectUrl, final String errorCode,
                                                  final WebContext webContext) {
-        val uriBuilder = new URIBuilder(originalRedirectUrl).addParameter(OAuth20Constants.ERROR, errorCode);
-        webContext.getRequestParameter(OAuth20Constants.STATE).ifPresent(st -> uriBuilder.addParameter(OAuth20Constants.STATE, st));
-        return uriBuilder.build().toASCIIString();
+        return FunctionUtils.doUnchecked(() -> {
+            val uriBuilder = new URIBuilder(originalRedirectUrl).addParameter(OAuth20Constants.ERROR, errorCode);
+            webContext.getRequestParameter(OAuth20Constants.STATE).ifPresent(st -> uriBuilder.addParameter(OAuth20Constants.STATE, st));
+            return uriBuilder.build().toASCIIString();
+        });
     }
 
     /**
@@ -126,18 +126,19 @@ public class OidcRequestSupport {
      * @param prompt the prompt
      * @return the string
      */
-    @SneakyThrows
     public static String removeOidcPromptFromAuthorizationRequest(final String url, final String prompt) {
-        val uriBuilder = new URIBuilder(url);
-        val newParams = uriBuilder.getQueryParams()
-            .stream()
-            .filter(p -> !OidcConstants.PROMPT.equals(p.getName()) || !p.getValue().equalsIgnoreCase(prompt))
-            .collect(Collectors.toList());
-        return uriBuilder
-            .removeQuery()
-            .addParameters(newParams)
-            .build()
-            .toASCIIString();
+        return FunctionUtils.doUnchecked(() -> {
+            val uriBuilder = new URIBuilder(url);
+            val newParams = uriBuilder.getQueryParams()
+                .stream()
+                .filter(p -> !OidcConstants.PROMPT.equals(p.getName()) || !p.getValue().equalsIgnoreCase(prompt))
+                .collect(Collectors.toList());
+            return uriBuilder
+                .removeQuery()
+                .addParameters(newParams)
+                .build()
+                .toASCIIString();
+        });
     }
 
     /**
