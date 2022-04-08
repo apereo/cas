@@ -5,7 +5,7 @@ import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.MongoDbPasswordlessAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("MongoDb")
 @Getter
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Import(MongoDbPasswordlessAuthenticationConfiguration.class)
 public class MongoDbPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired

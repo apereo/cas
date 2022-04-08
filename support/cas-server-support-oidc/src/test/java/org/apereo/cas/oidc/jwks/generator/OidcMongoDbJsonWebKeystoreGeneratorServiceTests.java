@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.config.OidcJwksMongoDbConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.jwks.mongo.authentication-database-name=admin",
     "cas.authn.oidc.jwks.mongo.drop-collection=true"
 })
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Import(OidcJwksMongoDbConfiguration.class)
 public class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test

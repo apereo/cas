@@ -5,7 +5,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.queue.DeleteTicketMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnabledIfPortOpen(port = 61616)
+@EnabledIfListeningOnPort(port = 61616)
 @Tag("JMS")
 public class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 

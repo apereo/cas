@@ -2,7 +2,7 @@ package org.apereo.cas.zookeeper;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.curator.framework.CuratorFramework;
@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("ZooKeeper")
-@EnabledIfPortOpen(port = 2181)
+@EnabledIfListeningOnPort(port = 2181)
 @EnableRetry
 public class ZooKeeperCloudConfigBootstrapConfigurationTests {
     @Autowired

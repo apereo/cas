@@ -34,8 +34,9 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     private final StringSerializer<Map<String, List<OneTimeTokenAccount>>> serializer = new OneTimeAccountSerializer();
 
     public JsonGoogleAuthenticatorTokenCredentialRepository(final Resource location, final IGoogleAuthenticator googleAuthenticator,
-                                                            final CipherExecutor<String, String> tokenCredentialCipher) {
-        super(tokenCredentialCipher, googleAuthenticator);
+                                                            final CipherExecutor<String, String> tokenCredentialCipher,
+                                                            final CipherExecutor<Number, Number> scratchCodesCipher) {
+        super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.location = location;
     }
 

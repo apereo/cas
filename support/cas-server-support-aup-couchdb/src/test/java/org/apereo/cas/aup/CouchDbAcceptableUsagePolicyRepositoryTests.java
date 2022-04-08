@@ -7,7 +7,7 @@ import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("CouchDb")
 @Getter
-@EnabledIfPortOpen(port = 5984)
+@EnabledIfListeningOnPort(port = 5984)
 public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
     @Autowired

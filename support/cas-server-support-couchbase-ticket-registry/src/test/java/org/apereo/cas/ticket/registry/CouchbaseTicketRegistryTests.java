@@ -5,7 +5,7 @@ import org.apereo.cas.config.CouchbaseTicketRegistryConfiguration;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Couchbase")
-@EnabledIfPortOpen(port = 8091)
+@EnabledIfListeningOnPort(port = 8091)
 @SpringBootTest(classes = {
     CouchbaseTicketRegistryConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class

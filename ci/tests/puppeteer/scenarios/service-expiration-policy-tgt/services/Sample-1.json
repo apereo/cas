@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://apereo.github.io",
+  "id": 1,
+  "name": "Sample",
+  "ticketGrantingTicketExpirationPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
+    "maxTimeToLiveInSeconds": 4
+  }
+}

@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "cas.authn.ldap[0].password-policy.type=AD",
     "cas.authn.ldap[0].password-policy.enabled=true"
 })
-@EnabledIfPortOpen(port = 10390)
+@EnabledIfListeningOnPort(port = 10390)
 @Tag("Ldap")
 public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 

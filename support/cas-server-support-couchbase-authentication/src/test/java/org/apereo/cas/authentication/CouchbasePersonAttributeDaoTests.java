@@ -3,7 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.AbstractCouchbaseTests;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Couchbase")
-@EnabledIfPortOpen(port = 8091)
+@EnabledIfListeningOnPort(port = 8091)
 @SpringBootTest(classes = AbstractCouchbaseTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.couchbase.cluster-username=admin",

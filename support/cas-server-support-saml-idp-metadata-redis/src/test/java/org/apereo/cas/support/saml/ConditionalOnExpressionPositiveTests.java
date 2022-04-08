@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.config.SamlIdPRedisIdPMetadataConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true",
     "cas.authn.saml-idp.metadata.redis.enabled=true"
 })
-@EnabledIfPortOpen(port = 6379)
+@EnabledIfListeningOnPort(port = 6379)
 public class ConditionalOnExpressionPositiveTests extends BaseRedisSamlMetadataTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

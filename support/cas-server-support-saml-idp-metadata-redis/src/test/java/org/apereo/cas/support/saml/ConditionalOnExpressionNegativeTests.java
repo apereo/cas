@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.config.SamlIdPRedisIdPMetadataConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 
@@ -23,11 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Redis")
-@SpringBootTest(classes = SamlIdPRedisIdPMetadataConfiguration.class)
-@TestPropertySource(properties = {
-    "cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true",
-    "cas.authn.saml-idp.metadata.redis.enabled=false"
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    SamlIdPRedisIdPMetadataConfiguration.class
 })
+@TestPropertySource(properties = "CasFeatureModule.SAMLIdentityProvider.redis.enabled=false")
+@EnabledIfListeningOnPort(port = 6379)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ConditionalOnExpressionNegativeTests {
     @Autowired

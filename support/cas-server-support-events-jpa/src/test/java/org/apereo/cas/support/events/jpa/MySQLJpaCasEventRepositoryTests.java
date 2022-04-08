@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events.jpa;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnabledIfPortOpen(port = 3306)
+@EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=false",

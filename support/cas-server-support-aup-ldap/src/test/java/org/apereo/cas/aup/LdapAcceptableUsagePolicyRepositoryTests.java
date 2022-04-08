@@ -4,7 +4,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 @Import(CasAcceptableUsagePolicyLdapConfiguration.class)
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.ldap[0].ldap-url=ldap://localhost:10389",

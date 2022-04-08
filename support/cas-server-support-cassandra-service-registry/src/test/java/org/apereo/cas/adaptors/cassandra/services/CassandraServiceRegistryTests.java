@@ -11,7 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.MethodOrderer;
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Tag("Cassandra")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@EnabledIfPortOpen(port = 9042)
+@EnabledIfListeningOnPort(port = 9042)
 @Getter
 @TestExecutionListeners(value = {
     SpringBootDependencyInjectionTestExecutionListener.class,

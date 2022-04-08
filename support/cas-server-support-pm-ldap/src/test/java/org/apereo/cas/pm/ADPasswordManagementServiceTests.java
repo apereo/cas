@@ -1,7 +1,7 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].min-pool-size=0",
     "cas.authn.pm.ldap[0].hostname-verifier=DEFAULT"
 })
-@EnabledIfPortOpen(port = 10636)
+@EnabledIfListeningOnPort(port = 10636)
 public class ADPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
 
     @BeforeAll

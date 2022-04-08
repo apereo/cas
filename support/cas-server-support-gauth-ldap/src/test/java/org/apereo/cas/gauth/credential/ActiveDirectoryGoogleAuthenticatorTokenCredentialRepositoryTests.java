@@ -1,6 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.Modification;
@@ -40,7 +40,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     })
 @EnableScheduling
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10636)
+@EnabledIfListeningOnPort(port = 10636)
 public class ActiveDirectoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Override
     @SneakyThrows

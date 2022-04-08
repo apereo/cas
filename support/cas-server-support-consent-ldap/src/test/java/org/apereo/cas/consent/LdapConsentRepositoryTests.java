@@ -2,7 +2,7 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
     "cas.consent.ldap.bind-dn=cn=Directory Manager",
     "cas.consent.ldap.bind-credential=password"
 })
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 @Slf4j
 @Tag("Ldap")
 public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {

@@ -3,7 +3,7 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.config.DynamoDbMultifactorAuthenticationTrustConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.trusted.dynamo-db.region=us-east-1"
 })
 @Tag("DynamoDb")
-@EnabledIfPortOpen(port = 8000)
+@EnabledIfListeningOnPort(port = 8000)
 public class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     static {

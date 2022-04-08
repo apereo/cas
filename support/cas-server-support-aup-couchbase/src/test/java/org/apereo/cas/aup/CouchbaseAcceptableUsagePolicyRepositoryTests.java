@@ -2,7 +2,7 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyCouchbaseConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.acceptable-usage-policy.couchbase.cluster-password=password"
     })
 @Tag("Couchbase")
-@EnabledIfPortOpen(port = 8091)
+@EnabledIfListeningOnPort(port = 8091)
 @Getter
 public class CouchbaseAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired

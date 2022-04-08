@@ -20,6 +20,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link GoogleAuthenticatorOneTimeTokenCredentialValidator}.
@@ -79,7 +80,8 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     }
 
     @Override
-    public OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> store(final GoogleAuthenticatorToken validatedToken) {
+    public OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> store(
+        final GoogleAuthenticatorToken validatedToken) {
         this.tokenRepository.store(validatedToken);
         return this;
     }
@@ -97,18 +99,20 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
      * @param accounts        the accounts
      * @return the authorized scratch code for token
      */
-    protected Optional<GoogleAuthenticatorAccount> getAuthorizedScratchCodeForToken(final GoogleAuthenticatorTokenCredential tokenCredential,
-                                                                                    final Authentication authentication,
-                                                                                    final Collection<? extends OneTimeTokenAccount> accounts) {
+    protected Optional<GoogleAuthenticatorAccount> getAuthorizedScratchCodeForToken(
+        final GoogleAuthenticatorTokenCredential tokenCredential,
+        final Authentication authentication,
+        final Collection<? extends OneTimeTokenAccount> accounts) {
         val uid = authentication.getPrincipal().getId();
         val otp = Integer.parseInt(tokenCredential.getToken());
         return accounts
             .stream()
-            .filter(ac -> isCredentialAssignedToAccount(tokenCredential, ac) && ac.getScratchCodes().contains(otp))
+            .filter(ac -> isCredentialAssignedToAccount(tokenCredential, ac)
+                          && ac.getScratchCodes().stream().map(Number::intValue).collect(Collectors.toList()).contains(otp))
             .map(GoogleAuthenticatorAccount.class::cast)
             .peek(acct -> {
                 LOGGER.info("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
-                acct.getScratchCodes().removeIf(token -> token == otp);
+                acct.getScratchCodes().removeIf(token -> token.intValue() == otp);
                 credentialRepository.update(acct);
             })
             .findFirst();
@@ -121,8 +125,9 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
      * @param accounts        the accounts
      * @return the authorized account for token
      */
-    protected Optional<GoogleAuthenticatorAccount> getAuthorizedAccountForToken(final GoogleAuthenticatorTokenCredential tokenCredential,
-                                                                                final Collection<? extends OneTimeTokenAccount> accounts) {
+    protected Optional<GoogleAuthenticatorAccount> getAuthorizedAccountForToken(
+        final GoogleAuthenticatorTokenCredential tokenCredential,
+        final Collection<? extends OneTimeTokenAccount> accounts) {
         val otp = Integer.parseInt(tokenCredential.getToken());
         return accounts.stream()
             .filter(ac -> isCredentialAssignedToAccount(tokenCredential, ac) && isTokenAuthorizedFor(otp, ac))

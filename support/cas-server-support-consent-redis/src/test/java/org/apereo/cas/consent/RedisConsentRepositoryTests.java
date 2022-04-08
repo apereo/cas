@@ -1,7 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.config.CasConsentRedisConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Redis")
 @Getter
-@EnabledIfPortOpen(port = 6379)
+@EnabledIfListeningOnPort(port = 6379)
 public class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

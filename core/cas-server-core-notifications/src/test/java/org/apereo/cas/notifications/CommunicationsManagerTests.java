@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
         "spring.mail.port=25000"
     })
 @Tag("Mail")
-@EnabledIfPortOpen(port = 25000)
+@EnabledIfListeningOnPort(port = 25000)
 public class CommunicationsManagerTests {
     @Autowired
     @Qualifier(CommunicationsManager.BEAN_NAME)

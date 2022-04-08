@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.config.JmsTicketRegistryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -29,7 +29,7 @@ import org.springframework.jms.annotation.EnableJms;
         "spring.activemq.packages.trust-all=true"
     })
 @EnableJms
-@EnabledIfPortOpen(port = 61616)
+@EnabledIfListeningOnPort(port = 61616)
 @Tag("JMS")
 @Getter
 public class JmsTicketRegistryTests extends BaseTicketRegistryTests {

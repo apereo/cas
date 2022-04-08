@@ -1,7 +1,7 @@
 package org.apereo.cas.syncope.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
@@ -37,7 +37,7 @@ public class SyncopePersonAttributeDaoTests {
             "cas.authn.attribute-repository.syncope.search-filter=username=={user}"
         })
     @Nested
-    @EnabledIfPortOpen(port = 18080)
+    @EnabledIfListeningOnPort(port = 18080)
     @SuppressWarnings("ClassCanBeStatic")
     public class SyncopeCoreServerTests extends BaseSyncopeTests {
         @Autowired

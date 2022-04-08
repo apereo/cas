@@ -2,7 +2,7 @@ package org.apereo.cas.webauthn;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.LdapWebAuthnConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
         "cas.authn.mfa.web-authn.ldap.trust-manager=ANY"
     })
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 11636)
+@EnabledIfListeningOnPort(port = 11636)
 @Getter
 @Import(LdapWebAuthnConfiguration.class)
 public class OpenLdapWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {

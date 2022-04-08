@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +26,7 @@ public class CustomPasswordPolicyLdapAuthenticationHandlerTests {
         "cas.authn.ldap[0].password-policy.enabled=true",
         "cas.authn.ldap[0].password-policy.custom-policy-class=org.apereo.cas.authentication.TestAuthenticationResponseHandler"
     })
-    @EnabledIfPortOpen(port = 10389)
+    @EnabledIfListeningOnPort(port = 10389)
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     public class ValidPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
@@ -43,7 +43,7 @@ public class CustomPasswordPolicyLdapAuthenticationHandlerTests {
         "cas.authn.ldap[0].password-policy.enabled=true",
         "cas.authn.ldap[0].password-policy.custom-policy-class=org.apereo.cas.authentication.UnknownAuthenticationResponseHandler"
     })
-    @EnabledIfPortOpen(port = 10389)
+    @EnabledIfListeningOnPort(port = 10389)
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     public class UnknownPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {

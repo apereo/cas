@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -63,11 +64,11 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @JsonProperty("validationCode")
     private int validationCode;
 
-    @ElementCollection
+    @ElementCollection(targetClass = BigInteger.class)
     @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"))
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "bigint", precision = 255, scale = 0)
     @Builder.Default
-    private List<Integer> scratchCodes = new ArrayList<>(0);
+    private List<Number> scratchCodes = new ArrayList<>(0);
 
     @Column(nullable = false)
     @JsonProperty("username")

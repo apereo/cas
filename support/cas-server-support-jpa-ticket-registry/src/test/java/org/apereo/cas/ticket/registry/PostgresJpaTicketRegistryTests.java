@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.jpa.url=jdbc:postgresql://localhost:5432/tickets",
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQL10Dialect"
 })
-@EnabledIfPortOpen(port = 5432)
+@EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 public class PostgresJpaTicketRegistryTests extends JpaTicketRegistryTests {
 }

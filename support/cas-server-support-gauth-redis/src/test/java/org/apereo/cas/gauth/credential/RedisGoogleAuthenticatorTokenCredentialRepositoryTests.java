@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.config.GoogleAuthenticatorRedisConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Tag("Redis")
 @Getter
-@EnabledIfPortOpen(port = 6379)
+@EnabledIfListeningOnPort(port = 6379)
 public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")

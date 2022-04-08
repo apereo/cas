@@ -3,7 +3,7 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.trusted.mongo.authentication-database-name=admin",
         "cas.authn.mfa.trusted.mongo.drop-collection=true"
     })
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Getter
 public class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 

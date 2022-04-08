@@ -1,7 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.config.DynamoDbWebAuthnConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
 
 import lombok.Getter;
@@ -25,7 +25,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     })
 @Tag("DynamoDb")
 @Getter
-@EnabledIfPortOpen(port = 8000)
+@EnabledIfListeningOnPort(port = 8000)
 @Import(DynamoDbWebAuthnConfiguration.class)
 public class DynamoDbWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     static {

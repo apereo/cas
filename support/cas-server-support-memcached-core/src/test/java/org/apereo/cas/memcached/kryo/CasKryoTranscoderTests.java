@@ -23,7 +23,7 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 
 import com.esotericsoftware.kryo.KryoException;
@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @Tag("Memcached")
-@EnabledIfPortOpen(port = 11211)
+@EnabledIfListeningOnPort(port = 11211)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreServicesComponentSerializationConfiguration.class,

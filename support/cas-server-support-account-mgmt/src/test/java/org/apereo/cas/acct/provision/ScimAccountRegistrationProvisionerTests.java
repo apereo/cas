@@ -4,7 +4,7 @@ import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasScimConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 
 import lombok.val;
@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.account-registration.provisioning.scim.enabled=true"
     })
 @Tag("SCIM")
-@EnabledIfPortOpen(port = 9666)
+@EnabledIfListeningOnPort(port = 9666)
 public class ScimAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier("accountMgmtRegistrationProvisioner")

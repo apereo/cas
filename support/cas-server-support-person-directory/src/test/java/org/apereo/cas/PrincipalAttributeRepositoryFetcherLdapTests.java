@@ -2,7 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +26,7 @@ public class PrincipalAttributeRepositoryFetcherLdapTests {
 
     @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={username})(name={username}))")
     @Nested
-    @EnabledIfPortOpen(port = 10389)
+    @EnabledIfListeningOnPort(port = 10389)
     @SuppressWarnings("ClassCanBeStatic")
     public class MultipleFiltersTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
@@ -45,7 +45,7 @@ public class PrincipalAttributeRepositoryFetcherLdapTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={cn})(title={title}))")
     @Nested
-    @EnabledIfPortOpen(port = 10389)
+    @EnabledIfListeningOnPort(port = 10389)
     public class MultipleFiltersByParameterNameTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
         public void verifyOperation() {
@@ -64,7 +64,7 @@ public class PrincipalAttributeRepositoryFetcherLdapTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={cn})(title={customParameter}))")
     @Nested
-    @EnabledIfPortOpen(port = 10389)
+    @EnabledIfListeningOnPort(port = 10389)
     public class MultipleFiltersByExtraQueryAttributesTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
         public void verifyOperation() {

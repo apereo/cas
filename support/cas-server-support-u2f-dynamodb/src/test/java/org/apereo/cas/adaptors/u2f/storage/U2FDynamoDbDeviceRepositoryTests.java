@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FDynamoDbConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.u2f.dynamo-db.region=us-east-1"
     })
 @Tag("DynamoDb")
-@EnabledIfPortOpen(port = 8000)
+@EnabledIfListeningOnPort(port = 8000)
 @Getter
 public class U2FDynamoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired

@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.service-registry.couchbase.bucket=testbucket"
     })
 @Tag("Couchbase")
-@EnabledIfPortOpen(port = 8091)
+@EnabledIfListeningOnPort(port = 8091)
 @Execution(ExecutionMode.SAME_THREAD)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ResourceLock("Couchbase")

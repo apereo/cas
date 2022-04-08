@@ -3,7 +3,7 @@ package org.apereo.cas.redis.core.util;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.audit.redis.port=6379"
     })
 @Tag("Redis")
-@EnabledIfPortOpen(port = 6379)
+@EnabledIfListeningOnPort(port = 6379)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisUtilsTests {
     @Autowired

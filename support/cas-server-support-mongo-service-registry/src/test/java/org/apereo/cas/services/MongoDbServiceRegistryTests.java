@@ -9,7 +9,7 @@ import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.service-registry.mongo.drop-collection=true"
     })
 @Tag("MongoDb")
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {

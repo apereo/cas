@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasServicesStreamingKafkaConfiguration;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.stream.kafka.bootstrap-address=localhost:9092",
     "cas.service-registry.stream.core.enabled=true"
 })
-@EnabledIfPortOpen(port = 9092)
+@EnabledIfListeningOnPort(port = 9092)
 public class RegisteredServiceKafkaDistributedCacheManagerTests {
 
     @Autowired

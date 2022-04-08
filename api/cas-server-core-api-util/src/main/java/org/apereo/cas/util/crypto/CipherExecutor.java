@@ -60,6 +60,15 @@ public interface CipherExecutor<I, O> {
     /**
      * Factory method.
      *
+     * @return Strongly -typed Noop {@code CipherExecutor Number -> Number}
+     */
+    static CipherExecutor<Number, Number> noOpOfNumberToNumber() {
+        return NoOpCipherExecutor.INSTANCE;
+    }
+
+    /**
+     * Factory method.
+     *
      * @return Strongly -typed Noop {@code CipherExecutor Serializable -> String}
      */
     static CipherExecutor<Serializable, String> noOpOfSerializableToString() {

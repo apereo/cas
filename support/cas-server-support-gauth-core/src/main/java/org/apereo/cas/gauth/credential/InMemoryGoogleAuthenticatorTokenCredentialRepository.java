@@ -26,8 +26,9 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     private final Map<String, List<OneTimeTokenAccount>> accounts;
 
     public InMemoryGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
+                                                                final CipherExecutor<Number, Number> scratchCodesCipher,
                                                                 final IGoogleAuthenticator googleAuthenticator) {
-        super(tokenCredentialCipher, googleAuthenticator);
+        super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.accounts = new ConcurrentHashMap<>();
     }
 

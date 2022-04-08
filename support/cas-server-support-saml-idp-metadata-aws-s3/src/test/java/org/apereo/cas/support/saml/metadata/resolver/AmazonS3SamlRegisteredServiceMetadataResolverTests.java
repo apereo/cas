@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=false"
 })
-@EnabledIfPortOpen(port = 4566)
+@EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     @Autowired

@@ -26,7 +26,7 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -89,7 +89,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.pac4j.core.typed-id-used=false"
     })
 @Tag("CouchDb")
-@EnabledIfPortOpen(port = 5984)
+@EnabledIfListeningOnPort(port = 5984)
 public class CouchDbAuthenticationHandlerTests {
     @Autowired
     @Qualifier("authenticationCouchDbFactory")

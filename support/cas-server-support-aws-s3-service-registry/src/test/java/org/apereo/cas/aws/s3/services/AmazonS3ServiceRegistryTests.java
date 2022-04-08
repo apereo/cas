@@ -9,7 +9,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
     "cas.service-registry.amazon-s3.credential-access-key=test",
     "cas.service-registry.amazon-s3.credential-secret-key=test"
 })
-@EnabledIfPortOpen(port = 4566)
+@EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

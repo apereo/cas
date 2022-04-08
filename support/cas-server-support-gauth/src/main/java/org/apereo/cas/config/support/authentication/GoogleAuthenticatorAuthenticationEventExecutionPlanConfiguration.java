@@ -37,6 +37,7 @@ import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrati
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.cipher.JasyptNumberCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -56,6 +57,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.condition.Conditi
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -102,6 +104,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration {
+
+        private static final BeanCondition CONDITION_SCRATCH_CODE =
+                BeanCondition.on("cas.authn.mfa.gauth.core.scratch-codes.encryption.key").exists();
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
@@ -126,6 +132,25 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             LOGGER.warn("Google Authenticator one-time token account encryption/signing is turned off. "
                         + "Consider turning on encryption, signing to securely and safely store one-time token accounts.");
             return CipherExecutor.noOp();
+        }
+
+        @ConditionalOnMissingBean(name = "googleAuthenticatorScratchCodesCipherExecutor")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CipherExecutor googleAuthenticatorScratchCodesCipherExecutor(final ApplicationContext applicationContext,
+                                                                            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(CipherExecutor.class)
+                    .when(CONDITION_SCRATCH_CODE.given(applicationContext.getEnvironment()))
+                    .supply(() -> {
+                        val key = casProperties.getAuthn().getMfa().getGauth().getCore().getScratchCodes().getEncryption().getKey();
+                        return new JasyptNumberCipherExecutor(key, "googleAuthenticatorScratchCodesCipherExecutor");
+                    })
+                    .otherwise(() -> {
+                        LOGGER.warn("Google Authenticator scratch codes encryption key is not defined. "
+                                + "Consider defining the encryption key to securely and safely store scratch codes.");
+                        return CipherExecutor.noOp();
+                    })
+                    .get();
         }
 
         @ConditionalOnMissingBean(name = "googlePrincipalFactory")
@@ -247,18 +272,20 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("googleAuthenticatorInstance")
             final IGoogleAuthenticator googleAuthenticatorInstance,
             @Qualifier("googleAuthenticatorAccountCipherExecutor")
-            final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
+            final CipherExecutor googleAuthenticatorAccountCipherExecutor,
+            @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")
+            final CipherExecutor googleAuthenticatorScratchCodesCipherExecutor) {
             val gauth = casProperties.getAuthn().getMfa().getGauth();
             if (gauth.getJson().getLocation() != null) {
                 return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(),
-                    googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor);
+                    googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor, googleAuthenticatorScratchCodesCipherExecutor);
             }
             if (StringUtils.isNotBlank(gauth.getRest().getUrl())) {
                 return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-                    gauth, googleAuthenticatorAccountCipherExecutor);
+                    gauth, googleAuthenticatorAccountCipherExecutor, googleAuthenticatorScratchCodesCipherExecutor);
             }
             return new InMemoryGoogleAuthenticatorTokenCredentialRepository(
-                googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
+                googleAuthenticatorAccountCipherExecutor, googleAuthenticatorScratchCodesCipherExecutor, googleAuthenticatorInstance);
         }
     }
 

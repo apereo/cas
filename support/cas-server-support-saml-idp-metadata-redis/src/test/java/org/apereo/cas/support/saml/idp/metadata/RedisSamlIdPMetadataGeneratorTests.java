@@ -5,7 +5,7 @@ import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true"
 })
 @Tag("Redis")
-@EnabledIfPortOpen(port = 6379)
+@EnabledIfListeningOnPort(port = 6379)
 public class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTests {
     @Autowired
     @Qualifier("redisSamlIdPMetadataTemplate")
