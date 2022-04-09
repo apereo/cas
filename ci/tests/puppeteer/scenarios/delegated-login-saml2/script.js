@@ -1,14 +1,12 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const path = require('path');
+const assert = require('assert');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
-    await page.waitForTimeout(1000)
-    
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(2000);
 
@@ -28,14 +26,13 @@ const path = require('path');
 
     console.log("Testing auto-redirection via configured cookie...")
     await cas.goto(page, "https://localhost:8443/cas/logout");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(3000)
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(2000);
     let url = await page.url()
     console.log(`Page url: ${url}`)
-    await page.waitForTimeout(2000);
-    await cas.assertCookie(page, true, "Pac4jCookie");
-    await cas.assertCookie(page);
+    await page.waitForTimeout(3000);
+    assert(url.startsWith("http://localhost:9443/simplesaml/"));
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
