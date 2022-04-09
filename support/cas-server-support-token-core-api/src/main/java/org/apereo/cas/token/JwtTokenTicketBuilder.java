@@ -12,7 +12,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.validation.TicketValidator;
@@ -45,9 +44,8 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    @SneakyThrows
     public String build(final String serviceTicketId, final WebApplicationService webApplicationService) {
-        val assertion = this.ticketValidator.validate(serviceTicketId, webApplicationService.getId());
+        val assertion = FunctionUtils.doUnchecked(() -> ticketValidator.validate(serviceTicketId, webApplicationService.getId()));
         val attributes = (Map) CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(assertion.getAttributes());
         attributes.putAll(CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(assertion.getPrincipal().getAttributes()));
 
@@ -81,7 +79,6 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     }
 
     @Override
-    @SneakyThrows
     public String build(final TicketGrantingTicket ticketGrantingTicket, final Map<String, List<Object>> claims) {
         val authentication = ticketGrantingTicket.getAuthentication();
 

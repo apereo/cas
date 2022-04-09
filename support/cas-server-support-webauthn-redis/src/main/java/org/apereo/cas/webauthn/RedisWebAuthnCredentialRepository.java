@@ -3,11 +3,11 @@ package org.apereo.cas.webauthn;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 
@@ -57,7 +57,6 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
     }
 
     @Override
-    @SneakyThrows
     protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
         val redisKey = buildRedisKeyForRecord(username);
         if (givenRecords.isEmpty()) {
@@ -71,7 +70,7 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
                     return record;
                 })
                 .collect(Collectors.toList());
-            val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
+            val jsonRecords = FunctionUtils.doUnchecked(() -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records)));
             val entry = RedisWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)
                 .username(username.trim().toLowerCase())

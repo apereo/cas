@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -14,7 +15,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
@@ -52,36 +52,40 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
 
     private FileWatcherService watcherService;
 
-    @SneakyThrows
     public JsonResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                         final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
-        val inputStream = new ClassPathResource("metadata/sp-metadata-template.xml").getInputStream();
-        this.metadataTemplate = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+        this.metadataTemplate = FunctionUtils.doUnchecked(() -> {
+            val inputStream = new ClassPathResource("metadata/sp-metadata-template.xml").getInputStream();
+            return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+        });
         val md = samlIdPProperties.getMetadata();
         val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getFileSystem().getLocation());
-        val metadataDir = ResourceUtils.getRawResourceFrom(location).getFile();
+        val metadataDir = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(location).getFile());
+
         this.jsonResource = new FileSystemResource(new File(metadataDir, "saml-sp-metadata.json"));
         if (this.jsonResource.exists()) {
             this.metadataMap = readDecisionsFromJsonResource();
-            this.watcherService = new FileWatcherService(jsonResource.getFile(), file -> this.metadataMap = readDecisionsFromJsonResource());
+            this.watcherService = FunctionUtils.doUnchecked(() -> new FileWatcherService(jsonResource.getFile(),
+                file -> this.metadataMap = readDecisionsFromJsonResource()));
             this.watcherService.start(getClass().getSimpleName());
         }
     }
 
     @Override
-    @SneakyThrows
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         if (metadataMap.containsKey(service.getServiceId())) {
-            val sp = metadataMap.get(service.getServiceId());
-            val metadata = metadataTemplate
-                .replace("${entityId}", sp.getEntityId())
-                .replace("${certificate}", sp.getCertificate())
-                .replace("${assertionConsumerServiceUrl}", sp.getAssertionConsumerServiceUrl());
-            val metadataResource = new ByteArrayInputStream(metadata.getBytes(StandardCharsets.UTF_8));
-            val resolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
-            configureAndInitializeSingleMetadataResolver(resolver, service);
-            return CollectionUtils.wrap(resolver);
+            return FunctionUtils.doUnchecked(() -> {
+                val sp = metadataMap.get(service.getServiceId());
+                val metadata = metadataTemplate
+                    .replace("${entityId}", sp.getEntityId())
+                    .replace("${certificate}", sp.getCertificate())
+                    .replace("${assertionConsumerServiceUrl}", sp.getAssertionConsumerServiceUrl());
+                val metadataResource = new ByteArrayInputStream(metadata.getBytes(StandardCharsets.UTF_8));
+                val resolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
+                configureAndInitializeSingleMetadataResolver(resolver, service);
+                return CollectionUtils.wrap(resolver);
+            });
         }
         return new ArrayList<>(0);
     }
@@ -119,13 +123,14 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         private String assertionConsumerServiceUrl;
     }
 
-    @SneakyThrows
     private Map<String, SamlServiceProviderMetadata> readDecisionsFromJsonResource() {
-        try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-            val personList = new TypeReference<Map<String, SamlServiceProviderMetadata>>() {
-            };
-            return MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-        }
+        return FunctionUtils.doUnchecked(() -> {
+            try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+                val personList = new TypeReference<Map<String, SamlServiceProviderMetadata>>() {
+                };
+                return MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+            }
+        });
     }
 }
 

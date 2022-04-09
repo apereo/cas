@@ -16,7 +16,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import com.google.common.base.Predicates;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -88,16 +87,7 @@ public class WsFederationHelper {
     @Setter
     private Clock clock = Clock.systemUTC();
 
-    /**
-     * Gets encryption credential.
-     * The encryption private key will need to contain the private keypair in PEM format.
-     * The encryption certificate is shared with ADFS in DER format, i.e certificate.crt.
-     *
-     * @param config the config
-     * @return the encryption credential
-     */
-    @SneakyThrows
-    private static Credential getEncryptionCredential(final WsFederationConfiguration config) {
+    private static Credential getEncryptionCredential(final WsFederationConfiguration config) throws Exception {
         LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
         val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
         Security.addProvider(new BouncyCastleProvider());
@@ -131,7 +121,7 @@ public class WsFederationHelper {
 
     }
 
-    private static Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) {
+    private static Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) throws Exception {
         val list = new ArrayList<EncryptedKeyResolver>(3);
         list.add(new InlineEncryptedKeyResolver());
         list.add(new EncryptedElementTypeEncryptedKeyResolver());

@@ -97,13 +97,11 @@ public class GoogleAuthenticatorRedisConfiguration {
         final CasConfigurationProperties casProperties) throws Exception {
         return BeanSupplier.of(OneTimeTokenCredentialRepository.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> {
-                return new RedisGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-                    redisGoogleAuthenticatorTemplate,
-                    googleAuthenticatorAccountCipherExecutor,
-                    googleAuthenticatorScratchCodesCipherExecutor,
-                    casProperties.getAuthn().getMfa().getGauth().getRedis().getScanCount());
-            })
+            .supply(() -> new RedisGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+                redisGoogleAuthenticatorTemplate,
+                googleAuthenticatorAccountCipherExecutor,
+                googleAuthenticatorScratchCodesCipherExecutor,
+                casProperties.getAuthn().getMfa().getGauth().getRedis().getScanCount()))
             .otherwiseProxy()
             .get();
 

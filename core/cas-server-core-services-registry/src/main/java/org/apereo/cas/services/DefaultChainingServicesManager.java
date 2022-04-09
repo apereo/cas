@@ -60,12 +60,10 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
     public void save(final Supplier<RegisteredService> supplier,
                      final Consumer<RegisteredService> andThenConsume,
                      final long countExclusive) {
-        serviceManagers.forEach(servicesManager -> {
-            servicesManager.save(() -> {
-                val registeredService = supplier.get();
-                return findServicesManager(registeredService).isPresent() ? registeredService : null;
-            }, andThenConsume, countExclusive);
-        });
+        serviceManagers.forEach(servicesManager -> servicesManager.save(() -> {
+            val registeredService = supplier.get();
+            return findServicesManager(registeredService).isPresent() ? registeredService : null;
+        }, andThenConsume, countExclusive));
     }
 
     @Override

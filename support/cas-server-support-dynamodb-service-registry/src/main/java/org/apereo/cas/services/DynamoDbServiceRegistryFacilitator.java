@@ -136,18 +136,16 @@ public class DynamoDbServiceRegistryFacilitator {
      * @param deleteTables the delete tables
      */
     public void createServicesTable(final boolean deleteTables) {
-        FunctionUtils.doUnchecked(unused -> {
-            DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-                    dynamoDbProperties.getTableName(), deleteTables,
-                    List.of(AttributeDefinition.builder()
-                        .attributeName(ColumnNames.ID.getColumnName())
-                        .attributeType(ScalarAttributeType.S)
-                        .build()),
-                    List.of(KeySchemaElement.builder()
-                        .attributeName(ColumnNames.ID.getColumnName())
-                        .keyType(KeyType.HASH)
-                        .build()));
-        });
+        FunctionUtils.doUnchecked(unused -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+                dynamoDbProperties.getTableName(), deleteTables,
+                List.of(AttributeDefinition.builder()
+                    .attributeName(ColumnNames.ID.getColumnName())
+                    .attributeType(ScalarAttributeType.S)
+                    .build()),
+                List.of(KeySchemaElement.builder()
+                    .attributeName(ColumnNames.ID.getColumnName())
+                    .keyType(KeyType.HASH)
+                    .build())));
     }
 
     /**

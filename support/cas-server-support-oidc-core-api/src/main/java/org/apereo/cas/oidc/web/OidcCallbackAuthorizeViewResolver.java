@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +39,6 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
     private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
     @Override
-    @SneakyThrows
     public ModelAndView resolve(final WebContext context, final ProfileManager manager, final String url) {
         val prompt = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
@@ -67,8 +65,10 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                     originalRedirectUrl::get,
                     () -> OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED, context))
                 .get();
-            LOGGER.warn("Unable to detect authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirect);
-            return authorizationModelAndViewBuilder.build(registeredService, responseType, redirect, parameters);
+            return FunctionUtils.doUnchecked(() -> {
+                LOGGER.warn("Unable to detect authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirect);
+                return authorizationModelAndViewBuilder.build(registeredService, responseType, redirect, parameters);
+            });
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
             LOGGER.trace("Removing login prompt from URL [{}]", url);

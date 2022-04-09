@@ -56,7 +56,8 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
         val authResult = Optional.ofNullable(
             authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credentials.toArray(Credential[]::new)));
 
-        return authResult.map(result -> result.getInitialAuthentication()
+        return authResult
+            .map(result -> result.getInitialAuthentication()
             .filter(authn -> !requestedContextValidator.validateAuthenticationContext(request, response, registeredService, authn, service).isSuccess())
             .map(authn ->
                 multifactorTriggerSelectionStrategy.resolve(request, response, registeredService, authn, service)
@@ -69,6 +70,6 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
                         return authenticationSystemSupport.finalizeAuthenticationTransaction(service, authnCredentials);
                     })
                     .orElseGet(() -> authenticationSystemSupport.finalizeAllAuthenticationTransactions(result, service)))
-            .orElseGet(() -> authenticationSystemSupport.finalizeAuthenticationTransaction(service, credentials)));
+            .orElseGet(() -> authenticationSystemSupport.finalizeAllAuthenticationTransactions(result, service)));
     }
 }

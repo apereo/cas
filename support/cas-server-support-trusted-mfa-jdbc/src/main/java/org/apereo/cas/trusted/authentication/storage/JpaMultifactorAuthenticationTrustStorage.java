@@ -7,8 +7,8 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.storage.generic.JpaMultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
@@ -112,13 +112,14 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
         return null;
     }
 
-    @SneakyThrows
     @Override
     public MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
-        val destination = getEntityFactory().newInstance();
-        BeanUtils.copyProperties(destination, record);
-        LOGGER.trace("Saving multifactor authentication trust record [{}]", destination);
-        return this.entityManager.merge(destination);
+        return FunctionUtils.doUnchecked(() -> {
+            val destination = getEntityFactory().newInstance();
+            BeanUtils.copyProperties(destination, record);
+            LOGGER.trace("Saving multifactor authentication trust record [{}]", destination);
+            return this.entityManager.merge(destination);
+        });
     }
 
     private AbstractJpaEntityFactory<MultifactorAuthenticationTrustRecord> getEntityFactory() {

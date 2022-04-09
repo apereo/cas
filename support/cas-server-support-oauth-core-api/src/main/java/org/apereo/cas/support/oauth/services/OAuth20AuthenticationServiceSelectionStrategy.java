@@ -14,7 +14,6 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -93,12 +92,10 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
         return res;
     }
 
-    @SneakyThrows
     private Optional<NameValuePair> resolveRedirectUri(final Service service) {
         return getRequestParameter(service, OAuth20Constants.REDIRECT_URI);
     }
 
-    @SneakyThrows
     private Optional<NameValuePair> resolveGrantType(final Service service) {
         return getRequestParameter(service, OAuth20Constants.GRANT_TYPE);
     }

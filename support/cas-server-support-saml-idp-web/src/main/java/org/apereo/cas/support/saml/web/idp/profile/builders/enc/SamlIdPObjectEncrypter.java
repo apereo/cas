@@ -12,9 +12,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -195,7 +195,6 @@ public class SamlIdPObjectEncrypter {
      * @param adaptor    the adaptor
      * @return the encrypter
      */
-    @SneakyThrows
     protected Encrypter buildEncrypterForSamlObject(final Object samlObject,
                                                     final SamlRegisteredService service,
                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
@@ -203,8 +202,10 @@ public class SamlIdPObjectEncrypter {
         LOGGER.trace("Calculating encryption security configuration for [{}] based on service [{}]", entityId, service.getName());
         val encryptionConfiguration = configureEncryptionSecurityConfiguration(service);
 
-        LOGGER.trace("Fetching key encryption credential for [{}] based on service [{}]", entityId, service.getName());
-        configureKeyEncryptionCredential(entityId, adaptor, service, encryptionConfiguration);
+        FunctionUtils.doUnchecked(u -> {
+            LOGGER.trace("Fetching key encryption credential for [{}] based on service [{}]", entityId, service.getName());
+            configureKeyEncryptionCredential(entityId, adaptor, service, encryptionConfiguration);
+        });
 
         LOGGER.trace("Fetching key encryption parameters for [{}] based on service [{}]", entityId, service.getName());
         val keyEncParams = getKeyEncryptionParameters(samlObject, service, adaptor, encryptionConfiguration);

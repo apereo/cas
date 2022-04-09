@@ -149,14 +149,12 @@ public class CasPersonDirectoryJdbcConfiguration {
             final BeanContainer<IPersonAttributeDao> jdbcAttributeRepositories) {
             return BeanSupplier.of(PersonDirectoryAttributeRepositoryPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> {
-                    return plan -> {
-                        val results = jdbcAttributeRepositories.toList()
-                            .stream()
-                            .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
-                            .collect(Collectors.toList());
-                        plan.registerAttributeRepositories(results);
-                    };
+                .supply(() -> plan -> {
+                    val results = jdbcAttributeRepositories.toList()
+                        .stream()
+                        .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                        .collect(Collectors.toList());
+                    plan.registerAttributeRepositories(results);
                 })
                 .otherwiseProxy()
                 .get();

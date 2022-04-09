@@ -3,12 +3,12 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,7 +46,6 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
 
     @Override
     @Synchronized
-    @SneakyThrows
     public ChainingMetadataResolver load(final SamlRegisteredServiceCacheKey cacheKey) {
         val metadataResolver = new ChainingMetadataResolver();
 
@@ -71,12 +70,14 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
         if (metadataResolvers.isEmpty()) {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             throw new SamlException("No metadata resolvers could be configured for service " + service.getName()
-                + " with metadata location " + metadataLocation);
+                                    + " with metadata location " + metadataLocation);
         }
-        metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-        LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", metadataResolvers.size());
-        metadataResolver.setResolvers(metadataResolvers);
-        metadataResolver.initialize();
+        FunctionUtils.doUnchecked(u -> {
+            metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+            LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", metadataResolvers.size());
+            metadataResolver.setResolvers(metadataResolvers);
+            metadataResolver.initialize();
+        });
 
         LOGGER.debug("Metadata resolvers active for this request are [{}]", metadataResolvers);
         return metadataResolver;

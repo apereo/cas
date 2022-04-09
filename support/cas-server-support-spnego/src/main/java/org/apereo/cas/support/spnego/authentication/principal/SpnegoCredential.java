@@ -2,6 +2,7 @@ package org.apereo.cas.support.spnego.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteSource;
@@ -10,7 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 
 import java.util.stream.IntStream;
@@ -88,12 +88,13 @@ public class SpnegoCredential implements Credential {
      * @param source the byte array source
      * @return the byte[] read from the source or null
      */
-    @SneakyThrows
     private static byte[] consumeByteSourceOrNull(final ByteSource source) {
-        if (source == null || source.isEmpty()) {
-            return null;
-        }
-        return source.read();
+        return FunctionUtils.doUnchecked(() -> {
+            if (source == null || source.isEmpty()) {
+                return null;
+            }
+            return source.read();
+        });
     }
 
     @Override

@@ -2,11 +2,11 @@ package org.apereo.cas.webauthn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -78,7 +78,6 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
     }
 
     @Override
-    @SneakyThrows
     public void update(final String username, final Collection<CredentialRegistration> givenRecords) {
         val records = givenRecords.stream()
             .map(record -> {
@@ -88,7 +87,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
                 return record;
             })
             .collect(Collectors.toList());
-        val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
+        val jsonRecords = FunctionUtils.doUnchecked(() -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records)));
         new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {

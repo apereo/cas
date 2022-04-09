@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -8,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
@@ -71,13 +72,14 @@ public class YubiKeyAccount implements Serializable, Cloneable {
     private String username;
 
     @Override
-    @SneakyThrows
     public YubiKeyAccount clone() {
-        val account = (YubiKeyAccount) super.clone();
-        account.setDevices(getDevices()
-            .stream()
-            .map(YubiKeyRegisteredDevice::clone)
-            .collect(Collectors.toList()));
-        return account;
+        return FunctionUtils.doUnchecked(() -> {
+            val account = (YubiKeyAccount) super.clone();
+            account.setDevices(getDevices()
+                .stream()
+                .map(YubiKeyRegisteredDevice::clone)
+                .collect(Collectors.toList()));
+            return account;
+        });
     }
 }

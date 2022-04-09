@@ -330,8 +330,7 @@ public class ScriptingUtils {
         }
         return null;
     }
-
-
+    
     @SneakyThrows
     private static <T> T getGroovyResult(final Resource groovyScript,
                                          final String methodName,

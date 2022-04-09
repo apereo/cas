@@ -50,6 +50,7 @@ docker run --name=simplesamlphp-idp -p 9443:8080 \
   -v $TMPDIR/saml.crt:/var/www/simplesamlphp/cert/saml.crt \
   -v $TMPDIR/saml.pem:/var/www/simplesamlphp/cert/saml.pem \
   -v $PWD/ci/tests/saml2/saml20-idp-remote.php:/var/www/simplesamlphp/metadata/saml20-idp-remote.php \
+  -v $PWD/ci/tests/saml2/saml20-idp-hosted.php:/var/www/simplesamlphp/metadata/saml20-idp-hosted.php \
   -v $PWD/ci/tests/saml2/authsources.php:/var/www/simplesamlphp/config/authsources.php \
   -v $PWD/ci/tests/saml2/config.php:/var/www/simplesamlphp/config/config.php \
   -d kenchan0130/simplesamlphp

@@ -8,9 +8,9 @@ import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepository;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +36,6 @@ public class DefaultQRAuthenticationTokenValidatorService implements QRAuthentic
     private final QRAuthenticationDeviceRepository deviceRepository;
 
     @Override
-    @SneakyThrows
     public QRAuthenticationTokenValidationResult validate(final QRAuthenticationTokenValidationRequest request) {
         val claims = jwtBuilder.unpack(request.getRegisteredService(), request.getToken());
         LOGGER.trace("Unpacked QR token as [{}]", claims);
@@ -64,7 +63,7 @@ public class DefaultQRAuthenticationTokenValidatorService implements QRAuthentic
             throw new AuthenticationException(message);
         }
 
-        val tokenDeviceId = claims.getStringClaim(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID);
+        val tokenDeviceId = FunctionUtils.doUnchecked(() -> claims.getStringClaim(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID));
         if (!StringUtils.equals(tokenDeviceId, request.getDeviceId())) {
             throw new AuthenticationException("Request is assigned an invalid device identifier");
         }

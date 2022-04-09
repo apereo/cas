@@ -2,7 +2,6 @@ package org.apereo.cas.support.claims;
 
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rt.security.claims.Claim;
@@ -22,7 +21,6 @@ public class NonWSFederationClaimsClaimsHandler extends WrappingSecurityTokenSer
         super(handlerRealm, issuer);
     }
 
-    @SneakyThrows
     @Override
     protected String createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
         val tokenType = parameters.getTokenRequirements().getTokenType();

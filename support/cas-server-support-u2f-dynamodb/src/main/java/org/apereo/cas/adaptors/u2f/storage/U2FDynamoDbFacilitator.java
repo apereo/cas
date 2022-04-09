@@ -5,10 +5,10 @@ import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -76,9 +76,8 @@ public class U2FDynamoDbFacilitator {
      *
      * @param deleteTables the delete tables
      */
-    @SneakyThrows
     public void createTable(final boolean deleteTables) {
-        DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+        FunctionUtils.doUnchecked(u -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
             dynamoDbProperties.getTableName(), deleteTables,
             List.of(AttributeDefinition.builder()
                 .attributeName(ColumnNames.ID.getColumnName())
@@ -86,7 +85,7 @@ public class U2FDynamoDbFacilitator {
             List.of(KeySchemaElement.builder()
                 .attributeName(ColumnNames.ID.getColumnName())
                 .keyType(KeyType.HASH)
-                .build()));
+                .build())));
     }
 
     /**
@@ -205,7 +204,6 @@ public class U2FDynamoDbFacilitator {
         private final String columnName;
     }
 
-    @SneakyThrows
     private Set<U2FDeviceRegistration> getRecordsByKeys(final DynamoDbQueryBuilder... queries) {
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient, dynamoDbProperties.getTableName(),
                 Arrays.stream(queries).collect(Collectors.toList()),

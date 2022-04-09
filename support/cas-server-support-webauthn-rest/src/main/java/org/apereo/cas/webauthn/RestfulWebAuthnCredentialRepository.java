@@ -5,11 +5,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -92,7 +92,6 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
     }
 
     @Override
-    @SneakyThrows
     protected void update(final String username, final Collection<CredentialRegistration> records) {
         val restProperties = getProperties().getAuthn().getMfa().getWebAuthn().getRest();
         HttpResponse response = null;
@@ -100,7 +99,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
             val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());
             val parameters = CollectionUtils.<String, Object>wrap("username", username);
-            val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
+            val jsonRecords = FunctionUtils.doUnchecked(() -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records)));
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())

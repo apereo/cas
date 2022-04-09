@@ -3,12 +3,12 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -30,16 +30,17 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    @SneakyThrows
     public U2FJsonResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
                                            final CasConfigurationProperties casProperties,
                                            final CipherExecutor<Serializable, String> cipherExecutor) {
         super(requestStorage, casProperties, cipherExecutor);
         val jsonResource = casProperties.getAuthn().getMfa().getU2f().getJson().getLocation();
         if (!ResourceUtils.doesResourceExist(jsonResource)) {
-            if (jsonResource.getFile().createNewFile()) {
-                LOGGER.debug("Created JSON resource [{}] for U2F device registrations", jsonResource);
-            }
+            FunctionUtils.doUnchecked(u -> {
+                if (jsonResource.getFile().createNewFile()) {
+                    LOGGER.debug("Created JSON resource [{}] for U2F device registrations", jsonResource);
+                }
+            });
         }
     }
 

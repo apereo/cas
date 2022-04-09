@@ -194,6 +194,6 @@ public class MultifactorAuthenticationUtilsTests {
         assertFalse(result.isEmpty());
 
         when(registeredService.getMultifactorPolicy()).thenReturn(null);
-        assertNull(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext));
+        assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext).isEmpty());
     }
 }

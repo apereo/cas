@@ -4,10 +4,10 @@ import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataL
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -40,7 +40,6 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
     }
 
     @Override
-    @SneakyThrows
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val metadataDocument = new SamlIdPMetadataDocument();
 
@@ -64,7 +63,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
         LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketToUse);
         val object = s3Client.getObject(GetObjectRequest.builder().bucket(bucketToUse).key(objectKey).build());
 
-        metadataDocument.setMetadata(IOUtils.toString(object, StandardCharsets.UTF_8));
+        metadataDocument.setMetadata(FunctionUtils.doUnchecked(() -> IOUtils.toString(object, StandardCharsets.UTF_8)));
         val objectMetadata = object.response().metadata();
         metadataDocument.setEncryptionCertificate(objectMetadata.get("encryptionCertificate"));
         metadataDocument.setSigningCertificate(objectMetadata.get("signingCertificate"));

@@ -8,9 +8,9 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 
@@ -39,22 +39,23 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Override
-    @SneakyThrows
     public SamlArtifactTicket create(final String artifactId,
                                      final Authentication authentication,
                                      final TicketGrantingTicket ticketGrantingTicket, final String issuer,
                                      final String relyingParty, final SAMLObject samlObject) {
-        try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
-            val codeId = createTicketIdFor(artifactId);
+        return FunctionUtils.doUnchecked(() -> {
+            try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
+                val codeId = createTicketIdFor(artifactId);
 
-            val service = this.webApplicationServiceFactory.createService(relyingParty);
-            val at = new SamlArtifactTicketImpl(codeId, service, authentication,
-                this.expirationPolicy.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
-            if (ticketGrantingTicket != null) {
-                ticketGrantingTicket.getDescendantTickets().add(at.getId());
+                val service = this.webApplicationServiceFactory.createService(relyingParty);
+                val at = new SamlArtifactTicketImpl(codeId, service, authentication,
+                    this.expirationPolicy.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
+                if (ticketGrantingTicket != null) {
+                    ticketGrantingTicket.getDescendantTickets().add(at.getId());
+                }
+                return at;
             }
-            return at;
-        }
+        });
     }
 
     @Override

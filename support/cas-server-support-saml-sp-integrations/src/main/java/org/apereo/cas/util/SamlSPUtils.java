@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -49,7 +48,6 @@ public class SamlSPUtils {
      * @param resolver the resolver
      * @return the saml registered service
      */
-    @SneakyThrows
     public static SamlRegisteredService newSamlServiceProviderService(final AbstractSamlSPProperties sp,
                                                                       final SamlRegisteredServiceCachingMetadataResolver resolver) {
         if (StringUtils.isBlank(sp.getMetadata())) {

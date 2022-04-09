@@ -1,9 +1,9 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.NameValuePair;
@@ -31,32 +31,29 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private final OAuth20RequestParameterResolver requestParameterResolver;
 
     @Override
-    @SneakyThrows
     public String compute(final String url, final WebContext context) {
         if (!url.startsWith(callbackUrl)) {
             return url;
         }
 
-        val builder = new URIBuilder(url);
-
-        addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
-        addUrlParameter(context, builder, OAuth20Constants.SCOPE);
-        addUrlParameter(context, builder, OAuth20Constants.REDIRECT_URI);
-        addUrlParameter(context, builder, OAuth20Constants.ACR_VALUES);
-        addUrlParameter(context, builder, OAuth20Constants.RESPONSE_TYPE);
-        addUrlParameter(context, builder, OAuth20Constants.GRANT_TYPE);
-        addUrlParameter(context, builder, OAuth20Constants.RESPONSE_MODE);
-        addUrlParameter(context, builder, OAuth20Constants.CLAIMS);
-        addUrlParameter(context, builder, OAuth20Constants.REQUEST);
-        addUrlParameter(context, builder, OAuth20Constants.STATE);
-        addUrlParameter(context, builder, OAuth20Constants.NONCE);
-
-        getIncludeParameterNames().forEach(param -> addUrlParameter(context, builder, param));
-
-        val callbackResolved = builder.build().toString();
-
-        LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
-        return callbackResolved;
+        return FunctionUtils.doUnchecked(() -> {
+            val builder = new URIBuilder(url);
+            addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
+            addUrlParameter(context, builder, OAuth20Constants.SCOPE);
+            addUrlParameter(context, builder, OAuth20Constants.REDIRECT_URI);
+            addUrlParameter(context, builder, OAuth20Constants.ACR_VALUES);
+            addUrlParameter(context, builder, OAuth20Constants.RESPONSE_TYPE);
+            addUrlParameter(context, builder, OAuth20Constants.GRANT_TYPE);
+            addUrlParameter(context, builder, OAuth20Constants.RESPONSE_MODE);
+            addUrlParameter(context, builder, OAuth20Constants.CLAIMS);
+            addUrlParameter(context, builder, OAuth20Constants.REQUEST);
+            addUrlParameter(context, builder, OAuth20Constants.STATE);
+            addUrlParameter(context, builder, OAuth20Constants.NONCE);
+            getIncludeParameterNames().forEach(param -> addUrlParameter(context, builder, param));
+            val callbackResolved = builder.build().toString();
+            LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
+            return callbackResolved;
+        });
     }
 
     /**
@@ -68,7 +65,6 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
         return new ArrayList<>(0);
     }
 
-    @SneakyThrows
     private Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
         val value = requestParameterResolver.resolveRequestParameter(context, name)
             .or(Unchecked.supplier(() -> {
