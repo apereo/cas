@@ -21,8 +21,13 @@ on:
 
 ##########################################################################
 
+permissions:
+  contents: read
+
 jobs:
   cancel-previous-runs:
+    permissions:
+      actions: write  # for styfle/cancel-workflow-action to cancel/stop running workflows
     if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') && !contains(github.event.head_commit.message, 'ci:minimal') }}
     runs-on: ubuntu-latest
     timeout-minutes: 1

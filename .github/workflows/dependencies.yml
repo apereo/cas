@@ -18,8 +18,13 @@ on:
     - cron: '0 0 * * *'
 ##########################################################################
 
+permissions:
+  contents: read
+
 jobs:
   cancel-previous-runs:
+    permissions:
+      actions: write  # for styfle/cancel-workflow-action to cancel/stop running workflows
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
