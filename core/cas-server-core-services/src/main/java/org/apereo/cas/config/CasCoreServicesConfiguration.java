@@ -193,15 +193,13 @@ public class CasCoreServicesConfiguration {
         public ServiceRegistryExecutionPlan serviceRegistryExecutionPlan(
             final ObjectProvider<List<ServiceRegistryExecutionPlanConfigurer>> provider) {
             val plan = new DefaultServiceRegistryExecutionPlan();
-            provider.ifAvailable(configurers -> {
-                configurers
-                    .stream()
-                    .filter(BeanSupplier::isNotProxy)
-                    .forEach(Unchecked.consumer(c -> {
-                        LOGGER.trace("Configuring service registry [{}]", c.getName());
-                        c.configureServiceRegistry(plan);
-                    }));
-            });
+            provider.ifAvailable(configurers -> configurers
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .forEach(Unchecked.consumer(c -> {
+                    LOGGER.trace("Configuring service registry [{}]", c.getName());
+                    c.configureServiceRegistry(plan);
+                })));
             return plan;
         }
     }

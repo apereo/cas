@@ -6,7 +6,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,6 +25,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.spec.ECParameterSpec;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -173,9 +173,12 @@ public class OidcJsonWebKeyStoreUtils {
      * @param json the json
      * @return the json web key set
      */
-    @SneakyThrows
     public static JsonWebKeySet parseJsonWebKeySet(final String json) {
-        return new JsonWebKeySet(json);
+        return FunctionUtils.doUnchecked(() -> new JsonWebKeySet(json));
+    }
+
+    private static PublicJsonWebKey generateJsonWebKeyEC(final ECParameterSpec spec) {
+        return FunctionUtils.doUnchecked(() -> EcJwkGenerator.generateJwk(spec));
     }
 
     /**
@@ -186,33 +189,32 @@ public class OidcJsonWebKeyStoreUtils {
      * @param usage       the usage
      * @return the public json web key
      */
-    @SneakyThrows
     public static PublicJsonWebKey generateJsonWebKey(final String jwksType, final int jwksKeySize,
                                                       final OidcJsonWebKeyUsage usage) {
         switch (jwksType.trim().toLowerCase()) {
             case "ec":
                 if (jwksKeySize == JWK_EC_P384_SIZE) {
-                    val jwk = EcJwkGenerator.generateJwk(EllipticCurves.P384);
+                    val jwk = generateJsonWebKeyEC(EllipticCurves.P384);
                     jwk.setKeyId(UUID.randomUUID().toString());
                     jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384);
                     usage.assignTo(jwk);
                     return jwk;
                 }
                 if (jwksKeySize == JWK_EC_P512_SIZE) {
-                    val jwk = EcJwkGenerator.generateJwk(EllipticCurves.P521);
+                    val jwk = generateJsonWebKeyEC(EllipticCurves.P521);
                     jwk.setKeyId(UUID.randomUUID().toString());
                     jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
                     usage.assignTo(jwk);
                     return jwk;
                 }
-                val jwk = EcJwkGenerator.generateJwk(EllipticCurves.P256);
+                val jwk = generateJsonWebKeyEC(EllipticCurves.P256);
                 jwk.setKeyId(UUID.randomUUID().toString());
                 jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
                 usage.assignTo(jwk);
                 return jwk;
             case "rsa":
             default:
-                val newJwk = RsaJwkGenerator.generateJwk(jwksKeySize);
+                val newJwk = FunctionUtils.doUnchecked(() -> RsaJwkGenerator.generateJwk(jwksKeySize));
                 newJwk.setKeyId(UUID.randomUUID().toString());
                 usage.assignTo(newJwk);
                 return newJwk;

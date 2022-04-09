@@ -231,7 +231,6 @@ public class SamlIdPUtils {
      * @param resolver        the resolver
      * @return the chaining metadata resolver for all saml services
      */
-    @SneakyThrows
     public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
                                                                          final String entityID,
                                                                          final SamlRegisteredServiceCachingMetadataResolver resolver) {
@@ -250,9 +249,11 @@ public class SamlIdPUtils {
 
         LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
 
-        chainingMetadataResolver.setResolvers(resolvers);
-        chainingMetadataResolver.setId(entityID);
-        chainingMetadataResolver.initialize();
+        FunctionUtils.doUnchecked(u -> {
+            chainingMetadataResolver.setResolvers(resolvers);
+            chainingMetadataResolver.setId(entityID);
+            chainingMetadataResolver.initialize();
+        });
         return chainingMetadataResolver;
     }
 

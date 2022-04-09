@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -182,9 +181,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         }
     }
 
-    @SneakyThrows
     private static SignatureMethod getSignatureMethodFromPublicKey(final PublicKey pubKey,
-                                                                   final XMLSignatureFactory sigFactory) {
+                                                                   final XMLSignatureFactory sigFactory) throws Exception {
         val algorithm = pubKey.getAlgorithm();
         if ("DSA".equalsIgnoreCase(algorithm)) {
             return sigFactory.newSignatureMethod(SignatureMethod.DSA_SHA1, null);

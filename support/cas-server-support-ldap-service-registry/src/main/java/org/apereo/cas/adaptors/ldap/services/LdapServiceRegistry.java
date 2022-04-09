@@ -7,8 +7,8 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,14 +40,15 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     private final LdapServiceRegistryProperties ldapProperties;
 
     public LdapServiceRegistry(final ConnectionFactory connectionFactory,
-        final LdapRegisteredServiceMapper ldapServiceMapper,
-        final LdapServiceRegistryProperties ldapProperties,
-        final ConfigurableApplicationContext applicationContext,
-        final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+                               final LdapRegisteredServiceMapper ldapServiceMapper,
+                               final LdapServiceRegistryProperties ldapProperties,
+                               final ConfigurableApplicationContext applicationContext,
+                               final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
         this.connectionFactory = connectionFactory;
         this.ldapProperties = ldapProperties;
-        this.ldapServiceMapper = Objects.requireNonNullElseGet(ldapServiceMapper, () -> new DefaultLdapRegisteredServiceMapper(ldapProperties));
+        this.ldapServiceMapper = Objects.requireNonNullElseGet(ldapServiceMapper,
+            () -> new DefaultLdapRegisteredServiceMapper(ldapProperties));
     }
 
     @Override
@@ -162,24 +163,20 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         return rs;
     }
 
-    @SneakyThrows
     private SearchResponse getSearchResultResponse() {
-        val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getLoadFilter());
-        return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
+        return FunctionUtils.doUnchecked(() -> {
+            val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getLoadFilter());
+            return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
+        });
     }
 
-    /**
-     * Search for service by id.
-     *
-     * @param id the id
-     * @return the response
-     */
-    @SneakyThrows
     private SearchResponse searchForServiceById(final Long id) {
-        val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
-            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
-        return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
-            filter, ldapProperties.getPageSize());
+        return FunctionUtils.doUnchecked(() -> {
+            val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
+            return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
+                filter, ldapProperties.getPageSize());
+        });
     }
 
     private String getCurrentDnForRegisteredService(final RegisteredService rs) {

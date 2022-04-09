@@ -39,6 +39,12 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     private String destinationBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
 
     /**
+     * The destination binding to use
+     * when creating logout requests.
+     */
+    private String logoutRequestBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
+
+    /**
      * The password to use when generating the SP/CAS keystore.
      */
     @RequiredProperty

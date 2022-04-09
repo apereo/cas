@@ -2,9 +2,9 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
@@ -140,9 +140,8 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         return ttl.intValue();
     }
 
-    @SneakyThrows
     private MemcachedClientIF getClientFromPool() {
-        return this.connectionPool.borrowObject();
+        return FunctionUtils.doUnchecked(this.connectionPool::borrowObject);
     }
 
     private void returnClientToPool(final MemcachedClientIF clientFromPool) {

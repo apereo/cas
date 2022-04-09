@@ -7,7 +7,6 @@ import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -117,7 +116,6 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             : new GCMParameterSpec(GCM_TAG_LENGTH, iv);
     }
 
-    @SneakyThrows
     private void ensureEncryptionKeyExists(final String encryptionSecretKey, final int encryptionKeySize) {
         final byte[] genEncryptionKey;
         if (StringUtils.isBlank(encryptionSecretKey)) {
@@ -133,7 +131,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
                 //CHECKSTYLE:ON
                 genEncryptionKey = EncodingUtils.decodeBase64(key);
             } else {
-                val keyGenerator = KeyGenerator.getInstance(this.secretKeyAlgorithm);
+                val keyGenerator = FunctionUtils.doUnchecked(() -> KeyGenerator.getInstance(this.secretKeyAlgorithm));
                 keyGenerator.init(encryptionKeySize);
                 val secretKey = keyGenerator.generateKey();
                 genEncryptionKey = secretKey.getEncoded();

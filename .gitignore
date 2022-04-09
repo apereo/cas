@@ -67,3 +67,4 @@ ci/tests/puppeteer/**/strapi
 ci/tests/puppeteer/**/*.jwks
 ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/shibcasauthn
 ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/saml-md
+ci/tests/puppeteer/scenarios/wsfed-idp-login/wsfed-sp/

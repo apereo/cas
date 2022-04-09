@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -104,9 +103,8 @@ public class DefaultAcmeCertificateManager implements AcmeCertificateManager {
         return locator.execute(order, csrb);
     }
 
-    @SneakyThrows
     private void fetchStatusAndUpdate(final AcmeJsonResource resource,
-                                      final Supplier<Status> statusSupplier) {
+                                      final Supplier<Status> statusSupplier) throws Exception {
         val acme = casProperties.getAcme();
         var attempts = acme.getRetryAttempts();
 
@@ -135,13 +133,7 @@ public class DefaultAcmeCertificateManager implements AcmeCertificateManager {
         return challenge;
     }
 
-    /**
-     * Authorize a domain. It will be associated with your account, so you will be able to
-     * retrieve a signed certificate for the domain later.
-     *
-     * @param auth {@link Authorization} to perform
-     */
-    private void authorize(final Authorization auth) throws AcmeException {
+    private void authorize(final Authorization auth) throws Exception {
         val challenge = httpChallenge(auth);
         if (challenge.getStatus() != Status.VALID) {
             challenge.trigger();

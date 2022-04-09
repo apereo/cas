@@ -8,9 +8,9 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
 
 /**
@@ -40,6 +39,30 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
     private final SurrogateAuthenticationService surrogateAuthenticationService;
 
     private final SurrogateAuthenticationProperties properties;
+
+    @Override
+    public int getOrder() {
+        return super.getOrder() - 1;
+    }
+
+    @Override
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
+        val credentials = super.fromRequest(request, requestBody);
+        if (credentials.isEmpty()) {
+            return credentials;
+        }
+        val credential = FunctionUtils.doUnchecked(() -> extractCredential(request, credentials));
+        if (credential == null) {
+            LOGGER.trace("Not a surrogate authentication attempt, returning parent class credentials");
+            return credentials;
+        }
+        val surrogateAccounts = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy(credential.getId());
+        if (!surrogateAccounts.contains(credential.getSurrogateUsername())) {
+            throw new SurrogateAuthenticationException(
+                "Unable to authorize surrogate authentication request for " + credential.getSurrogateUsername());
+        }
+        return CollectionUtils.wrapList(credential);
+    }
 
     /**
      * Extract credential surrogate username password.
@@ -71,30 +94,5 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
             return sc;
         }
         return null;
-    }
-
-    @Override
-    public int getOrder() {
-        return super.getOrder() - 1;
-    }
-
-    @SneakyThrows
-    @Override
-    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
-        val credentials = super.fromRequest(request, requestBody);
-        if (credentials.isEmpty()) {
-            return credentials;
-        }
-        val credential = extractCredential(request, credentials);
-        if (credential == null) {
-            LOGGER.trace("Not a surrogate authentication attempt, returning parent class credentials");
-            return credentials;
-        }
-        val surrogateAccounts = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy(credential.getId());
-        if (!surrogateAccounts.contains(credential.getSurrogateUsername())) {
-            throw new SurrogateAuthenticationException(
-                "Unable to authorize surrogate authentication request for " + credential.getSurrogateUsername());
-        }
-        return CollectionUtils.wrapList(credential);
     }
 }

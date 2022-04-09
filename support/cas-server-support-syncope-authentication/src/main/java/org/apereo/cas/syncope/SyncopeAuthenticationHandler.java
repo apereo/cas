@@ -72,14 +72,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
 
-    /**
-     * Authenticate syncope user and provide result as json node.
-     *
-     * @param credential the credential
-     * @return the optional
-     */
-    @SneakyThrows
-    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
+    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) throws Exception {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");

@@ -4,11 +4,11 @@ import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttrib
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -67,12 +67,12 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     @Override
     public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
         val attributes = new HashMap<String, List<Object>>();
-        syncopeSearch(uid).filter(sr -> sr.has("result")).ifPresent(sr -> {
+        FunctionUtils.doUnchecked(u -> syncopeSearch(uid).filter(sr -> sr.has("result")).ifPresent(sr -> {
             val result = sr.get("result").iterator();
             if (result.hasNext()) {
                 attributes.putAll(SyncopeUserTOConverterUtils.convert(result.next()));
             }
-        });
+        }));
         return new NamedPersonImpl(uid, attributes);
     }
 
@@ -137,8 +137,7 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
      * @param value the value
      * @return the optional
      */
-    @SneakyThrows
-    protected Optional<JsonNode> syncopeSearch(final String value) {
+    protected Optional<JsonNode> syncopeSearch(final String value) throws Exception {
         HttpResponse response = null;
         try {
             val fiql = EncodingUtils.urlEncode(properties.getSearchFilter().replace("{user}", value).replace("{0}", value));

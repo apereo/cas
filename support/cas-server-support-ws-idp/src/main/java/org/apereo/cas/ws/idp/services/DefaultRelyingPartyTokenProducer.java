@@ -6,12 +6,12 @@ import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -95,10 +95,9 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         writer.writeEndElement();
     }
 
-    @SneakyThrows
     private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service,
                                                 final SecurityTokenServiceClient sts,
-                                                final Assertion assertion) {
+                                                final Assertion assertion) throws Exception {
         val writer = new W3CDOMStreamWriter();
         writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
         writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
@@ -131,7 +130,6 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         sts.setClaims(claims);
     }
 
-    @SneakyThrows
     private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
                                                  final SecurityTokenServiceClient sts,
                                                  final Assertion assertion) {
@@ -140,8 +138,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             properties.put(SecurityConstants.USERNAME, assertion.getPrincipal().getName());
             val uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
             properties.put(SecurityConstants.PASSWORD, uid);
-
-            return sts.requestSecurityTokenResponse(service.getAppliesTo());
+            return FunctionUtils.doUnchecked(() -> sts.requestSecurityTokenResponse(service.getAppliesTo()));
         } catch (final SoapFault ex) {
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
                 throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));

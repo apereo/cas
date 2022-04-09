@@ -171,12 +171,10 @@ public class DynamoDbTicketRegistryFacilitator {
      */
     public void createTicketTables(final boolean deleteTables) {
         val metadata = this.ticketCatalog.findAll();
-        metadata.forEach(Unchecked.consumer(r -> {
-            DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-                r.getProperties().getStorageName(), deleteTables,
-                List.of(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.S).build()),
-                List.of(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build()));
-        }));
+        metadata.forEach(Unchecked.consumer(r -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+            r.getProperties().getStorageName(), deleteTables,
+            List.of(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.S).build()),
+            List.of(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build()))));
     }
 
     /**

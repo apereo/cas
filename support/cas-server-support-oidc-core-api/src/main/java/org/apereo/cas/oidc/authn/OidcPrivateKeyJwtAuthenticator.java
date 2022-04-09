@@ -12,7 +12,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -47,9 +46,8 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
             ticketRegistry, webApplicationServiceServiceFactory, casProperties, applicationContext);
     }
 
-    @SneakyThrows
     private static void determineUserProfile(final UsernamePasswordCredentials credentials,
-                                             final JwtConsumer consumer) {
+                                             final JwtConsumer consumer) throws Exception {
         val jwt = consumer.processToClaims(credentials.getPassword());
         val userProfile = new CommonProfile(true);
         userProfile.setId(jwt.getSubject());
@@ -75,18 +73,19 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
         val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
             applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING));
         keys.ifPresent(Unchecked.consumer(jwks ->
-            jwks.getJsonWebKeys().forEach(jsonWebKey -> {
-                val consumer = new JwtConsumerBuilder()
-                    .setVerificationKey(jsonWebKey.getKey())
-                    .setRequireSubject()
-                    .setExpectedSubject(clientId)
-                    .setRequireJwtId()
-                    .setRequireExpirationTime()
-                    .setExpectedIssuer(true, clientId)
-                    .setExpectedAudience(true, audience)
-                    .build();
-                determineUserProfile(credentials, consumer);
-            })));
+            jwks.getJsonWebKeys()
+                .forEach(Unchecked.consumer(jsonWebKey -> {
+                    val consumer = new JwtConsumerBuilder()
+                        .setVerificationKey(jsonWebKey.getKey())
+                        .setRequireSubject()
+                        .setExpectedSubject(clientId)
+                        .setRequireJwtId()
+                        .setRequireExpirationTime()
+                        .setExpectedIssuer(true, clientId)
+                        .setExpectedAudience(true, audience)
+                        .build();
+                    determineUserProfile(credentials, consumer);
+                }))));
     }
 
     @Override

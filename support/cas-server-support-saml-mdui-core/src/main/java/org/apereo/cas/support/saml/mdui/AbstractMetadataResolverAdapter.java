@@ -5,7 +5,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -64,22 +63,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         this.metadataResources = metadataResources;
     }
 
-    /**
-     * Retrieve the remote source's input stream to parse data.
-     *
-     * @param resource the resource
-     * @param entityId the entity id
-     * @return the input stream
-     * @throws IOException if stream cannot be read
-     */
-    protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
-        LOGGER.debug("Locating metadata resource from input stream.");
-        if (!resource.exists() || !resource.isReadable()) {
-            throw new FileNotFoundException("Resource does not exist or is unreadable");
-        }
-        return resource.getInputStream();
-    }
-
     @Override
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
         return FunctionUtils.doUnchecked(() -> {
@@ -105,7 +88,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param entityId the entity id
      */
     @Synchronized
-    @SneakyThrows
     public void buildMetadataResolverAggregate(final String entityId) {
         LOGGER.trace("Building metadata resolver aggregate");
         this.metadataResolver = new ChainingMetadataResolver();
@@ -116,11 +98,29 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             LOGGER.debug("Loading [{}]", resource.getFilename());
             resolvers.addAll(loadMetadataFromResource(entry.getValue(), resource, entityId));
         });
-        this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-        this.metadataResolver.setResolvers(resolvers);
-        LOGGER.debug("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
-        this.metadataResolver.initialize();
-        LOGGER.info("Metadata aggregate initialized successfully.");
+        FunctionUtils.doUnchecked(u -> {
+            this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+            this.metadataResolver.setResolvers(resolvers);
+            LOGGER.debug("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
+            this.metadataResolver.initialize();
+            LOGGER.info("Metadata aggregate initialized successfully.");
+        });
+    }
+
+    /**
+     * Retrieve the remote source's input stream to parse data.
+     *
+     * @param resource the resource
+     * @param entityId the entity id
+     * @return the input stream
+     * @throws IOException if stream cannot be read
+     */
+    protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
+        LOGGER.debug("Locating metadata resource from input stream.");
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new FileNotFoundException("Resource does not exist or is unreadable");
+        }
+        return resource.getInputStream();
     }
 
     /**
@@ -155,7 +155,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param document            the xml document to parse
      * @return list of resolved metadata from resources.
      */
-    @SneakyThrows
     private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain, final Resource resource,
                                                                final Document document) {
         val metadataRoot = document.getDocumentElement();
@@ -168,7 +167,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             metadataProvider.setMetadataFilter(metadataFilterChain);
         }
         LOGGER.debug("Initializing metadata resolver for [{}]", resource);
-        metadataProvider.initialize();
+        FunctionUtils.doUnchecked(u -> metadataProvider.initialize());
         val resolvers = new ArrayList<MetadataResolver>(1);
         resolvers.add(metadataProvider);
         return resolvers;

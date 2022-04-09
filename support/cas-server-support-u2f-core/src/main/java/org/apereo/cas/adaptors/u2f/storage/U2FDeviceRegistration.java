@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.springframework.data.annotation.Id;
@@ -65,10 +64,9 @@ public class U2FDeviceRegistration implements Serializable, Cloneable {
     }
 
     @Override
-    @SneakyThrows
     @JsonIgnore
     public U2FDeviceRegistration clone() {
-        return (U2FDeviceRegistration) super.clone();
+        return FunctionUtils.doUnchecked(() -> (U2FDeviceRegistration) super.clone());
     }
 
     /**

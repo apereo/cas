@@ -151,6 +151,7 @@ exports.assertCookie = async (page, present= true, cookieName = "TGC") => {
         return value.name === cookieName
     });
     if (present) {
+        console.log(`Checking for cookie ${cookieName}`);
         assert(theCookie.length !== 0);
         console.log(`Asserting cookie:\n${colors.green(JSON.stringify(theCookie, undefined, 2))}`);
         return theCookie[0];

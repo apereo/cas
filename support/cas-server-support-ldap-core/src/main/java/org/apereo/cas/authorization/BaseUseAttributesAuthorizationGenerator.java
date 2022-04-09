@@ -2,11 +2,11 @@ package org.apereo.cas.authorization;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.LdapAttribute;
@@ -65,14 +65,13 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     }
 
     @Override
-    @SneakyThrows
     public Optional<UserProfile> generate(final WebContext context, final SessionStore sessionStore,
                                           final UserProfile profile) {
         val username = profile.getId();
         LOGGER.debug("Attempting to get details for user [{}].", username);
         val filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchOperation.getTemplate().getFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username));
-        val response = this.userSearchOperation.execute(filter);
+        val response = FunctionUtils.doUnchecked(() -> userSearchOperation.execute(filter));
 
         LOGGER.debug("LDAP user search response: [{}]", response);
         if (!this.allowMultipleResults && response.entrySize() > 1) {

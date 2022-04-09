@@ -18,7 +18,6 @@ import jcifs.ntlmssp.Type3Message;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbSession;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -125,8 +124,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(ntlmCredential), ntlmCredential.getPrincipal());
     }
 
-    @SneakyThrows
-    private UniAddress getUniAddress() {
+    private UniAddress getUniAddress() throws Exception {
         if (this.loadBalance) {
             if (StringUtils.isNotBlank(this.includePattern)) {
                 val dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);

@@ -6,11 +6,11 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
@@ -127,26 +127,28 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return record;
     }
 
-    @SneakyThrows
     private void readTrustedRecordsFromResource() {
         this.storage = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(location)) {
-            try (val reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
-                val personList = new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
-                };
-                this.storage = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-            }
+            FunctionUtils.doUnchecked(u -> {
+                try (val reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
+                    val personList = new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
+                    };
+                    this.storage = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+                }
+            });
         }
     }
 
-    @SneakyThrows
     private void writeTrustedRecordsToResource() {
-        val file = this.location.getFile();
-        val res = file.createNewFile();
-        if (res) {
-            LOGGER.debug("Created JSON resource @ [{}]", this.location);
-        }
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(file, this.storage);
-        readTrustedRecordsFromResource();
+        FunctionUtils.doUnchecked(u -> {
+            val file = this.location.getFile();
+            val res = file.createNewFile();
+            if (res) {
+                LOGGER.debug("Created JSON resource @ [{}]", this.location);
+            }
+            MAPPER.writerWithDefaultPrettyPrinter().writeValue(file, this.storage);
+            readTrustedRecordsFromResource();
+        });
     }
 }

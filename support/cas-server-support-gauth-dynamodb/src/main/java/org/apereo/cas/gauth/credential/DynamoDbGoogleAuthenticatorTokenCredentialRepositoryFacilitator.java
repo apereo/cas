@@ -242,16 +242,14 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
      * @param deleteTables delete existing tables
      */
     public void createTable(final boolean deleteTables) {
-        FunctionUtils.doUnchecked(unused -> {
-            DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-                dynamoDbProperties.getTableName(), deleteTables,
-                List.of(AttributeDefinition.builder()
-                    .attributeName(ColumnNames.ID.getColumnName())
-                    .attributeType(ScalarAttributeType.N).build()),
-                List.of(KeySchemaElement.builder()
-                    .attributeName(ColumnNames.ID.getColumnName())
-                    .keyType(KeyType.HASH).build()));
-        });
+        FunctionUtils.doUnchecked(unused -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+            dynamoDbProperties.getTableName(), deleteTables,
+            List.of(AttributeDefinition.builder()
+                .attributeName(ColumnNames.ID.getColumnName())
+                .attributeType(ScalarAttributeType.N).build()),
+            List.of(KeySchemaElement.builder()
+                .attributeName(ColumnNames.ID.getColumnName())
+                .keyType(KeyType.HASH).build())));
     }
 
     /**
