@@ -142,7 +142,7 @@
                         <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}">Secret key to register is...</p>
                     </div>
                     <hr>
-                    <p>Scratch codes:</p>
+                    <p th:text="#{screen.authentication.gauth.scratchcodes}">Scratch codes:</p>
                     <div class="d-flex align-items-start mb-4">
                         <div class="mdc-chip-set" role="grid" id="scratchcodes">
                             <div th:each="code : ${key.getScratchCodes()}" class="mdc-chip" role="row">
