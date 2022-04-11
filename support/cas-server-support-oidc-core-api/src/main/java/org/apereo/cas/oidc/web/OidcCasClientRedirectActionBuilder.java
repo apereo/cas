@@ -32,7 +32,7 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
         var renew = casClient.getConfiguration().isRenew();
         var gateway = casClient.getConfiguration().isGateway();
 
-        val prompts = parameterResolver.resolvePromptValues(context);
+        val prompts = parameterResolver.resolveSupportedPromptValues(context);
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
             renew = false;
             gateway = true;

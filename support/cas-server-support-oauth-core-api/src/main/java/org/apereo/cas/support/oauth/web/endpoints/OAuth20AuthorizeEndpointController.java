@@ -67,7 +67,12 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Exception {
-
+        val webContext = new JEEContext(request, response);
+        val prompts = getConfigurationContext().getRequestParameterResolver().resolveSupportedPromptValues(webContext);
+        val requestedPrompt = getConfigurationContext().getRequestParameterResolver().resolveRequestedPromptValues(webContext);
+        if (!requestedPrompt.isEmpty() && !requestedPrompt.equals(prompts)) {
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Unsupported prompt parameter value");
+        }
         ensureSessionReplicationIsAutoconfiguredIfNeedBe(request);
 
         val context = new JEEContext(request, response);

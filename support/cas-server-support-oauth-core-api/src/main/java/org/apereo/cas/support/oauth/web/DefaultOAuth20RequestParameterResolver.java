@@ -249,7 +249,18 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public Set<String> resolvePromptValues(final String url) {
+    public Set<String> resolveRequestedPromptValues(final WebContext context) {
+        val url = context.getFullRequestURL();
+        return FunctionUtils.doUnchecked(() -> new URIBuilder(url).getQueryParams()
+            .stream()
+            .filter(p -> OAuth20Constants.PROMPT.equals(p.getName()))
+            .map(param -> param.getValue().split(" "))
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public Set<String> resolveSupportedPromptValues(final String url) {
         val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getPromptValuesSupported();
         return FunctionUtils.doUnchecked(() -> new URIBuilder(url).getQueryParams()
             .stream()

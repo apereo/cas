@@ -76,6 +76,24 @@ public class OidcAuthorizeEndpointControllerTests {
         }
 
         @Test
+        public void verifyUnknownPrompt() throws Exception {
+            val id = UUID.randomUUID().toString();
+            val service = getOidcRegisteredService(id);
+            service.setBypassApprovalPrompt(true);
+            servicesManager.save(service);
+            
+            val mockRequest = getHttpRequestForEndpoint(OidcConstants.AUTHORIZE_URL);
+            mockRequest.setMethod(HttpMethod.GET.name());
+            mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);
+            mockRequest.setParameter(OAuth20Constants.PROMPT, "unknown");
+            mockRequest.setContextPath(StringUtils.EMPTY);
+            mockRequest.setQueryString(OAuth20Constants.PROMPT + "=unknown");
+            val mockResponse = new MockHttpServletResponse();
+            val mv = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
+            assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
+        }
+
+        @Test
         public void verify() throws Exception {
             val id = UUID.randomUUID().toString();
             val mockRequest = getHttpRequestForEndpoint(OidcConstants.AUTHORIZE_URL);
