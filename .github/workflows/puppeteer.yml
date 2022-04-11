@@ -23,6 +23,7 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 11
   NODE_CURRENT: '16'
+  MAX_ATTEMPTS: 2
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
 
 on:
@@ -134,6 +135,11 @@ jobs:
       #      - name: Setup tmate session
       #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          retry_on: error
+          timeout_minutes: 5
         shell: bash
         run: |
           export RUNNER_OS=${{ runner.os }}
@@ -173,6 +179,11 @@ jobs:
       #      - name: Setup tmate session
       #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          retry_on: error
+          timeout_minutes: 5
         shell: bash
         run: |
           export RUNNER_OS=${{ runner.os }}
