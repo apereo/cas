@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.OAuth20TicketGrantingTicketAwareSecurityLogic;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -27,18 +28,21 @@ import java.util.List;
  */
 @Slf4j
 public class OidcAuthenticationAuthorizeSecurityLogic extends OAuth20TicketGrantingTicketAwareSecurityLogic {
+    private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
     public OidcAuthenticationAuthorizeSecurityLogic(final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                                     final TicketRegistry ticketRegistry,
-                                                    final CentralAuthenticationService centralAuthenticationService) {
+                                                    final CentralAuthenticationService centralAuthenticationService,
+                                                    final OAuth20RequestParameterResolver parameterResolver) {
         super(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+        this.oauthRequestParameterResolver = parameterResolver;
     }
 
 
     @Override
     protected List<UserProfile> loadProfiles(final ProfileManager manager, final WebContext context,
                                              final SessionStore sessionStore, final List<Client> clients) {
-        val prompts = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(context);
+        val prompts = oauthRequestParameterResolver.resolvePromptValues(context);
         LOGGER.debug("Located OpenID Connect prompts from request as [{}]", prompts);
 
         val tooOld = OidcRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context)

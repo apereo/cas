@@ -88,6 +88,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("code_challenge_methods_supported")
     private Set<String> codeChallengeMethodsSupported;
 
+    @JsonProperty("prompt_values_supported")
+    private Set<String> promptValuesSupported;
+    
     @JsonProperty("claims_parameter_supported")
     private boolean claimsParameterSupported = true;
 

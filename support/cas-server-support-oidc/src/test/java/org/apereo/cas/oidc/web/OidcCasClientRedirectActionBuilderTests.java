@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -39,7 +39,7 @@ public class OidcCasClientRedirectActionBuilderTests extends AbstractOidcTests {
     private void verifyBuild(final String prompt) {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
-        request.setQueryString(OidcConstants.PROMPT + prompt);
+        request.setQueryString(OAuth20Constants.PROMPT + prompt);
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 

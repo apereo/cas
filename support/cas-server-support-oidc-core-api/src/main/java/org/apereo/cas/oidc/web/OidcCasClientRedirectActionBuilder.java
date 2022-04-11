@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,14 @@ import java.util.Optional;
 public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientRedirectActionBuilder {
     private final OidcRequestSupport oidcRequestSupport;
 
+    private final OAuth20RequestParameterResolver parameterResolver;
+
     @Override
     public Optional<RedirectionAction> build(final CasClient casClient, final WebContext context) {
         var renew = casClient.getConfiguration().isRenew();
         var gateway = casClient.getConfiguration().isGateway();
 
-        val prompts = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(context);
+        val prompts = parameterResolver.resolvePromptValues(context);
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
             renew = false;
             gateway = true;
