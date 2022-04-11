@@ -24,6 +24,7 @@ env:
   JDK_CURRENT: 11
   NODE_CURRENT: '16'
   MAX_ATTEMPTS: 2
+  RETRY_MINUTES: 10
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
 
 on:
@@ -139,7 +140,7 @@ jobs:
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
-          timeout_minutes: 5
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}
@@ -183,7 +184,7 @@ jobs:
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
-          timeout_minutes: 5
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}

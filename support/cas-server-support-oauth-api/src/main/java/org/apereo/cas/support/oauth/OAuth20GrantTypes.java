@@ -16,6 +16,10 @@ public enum OAuth20GrantTypes {
      */
     NONE("none"),
     /**
+     * Grant type designated for device code flows.
+     */
+    DEVICE_CODE("urn:ietf:params:oauth:grant-type:device_code"),
+    /**
      * For the authorization grant type.
      */
     AUTHORIZATION_CODE("authorization_code"),
