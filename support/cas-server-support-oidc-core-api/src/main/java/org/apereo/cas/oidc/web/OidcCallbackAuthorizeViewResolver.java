@@ -40,7 +40,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
 
     @Override
     public ModelAndView resolve(final WebContext context, final ProfileManager manager, final String url) {
-        val prompt = oauthRequestParameterResolver.resolvePromptValues(url);
+        val prompt = oauthRequestParameterResolver.resolveSupportedPromptValues(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
             val result = manager.getProfile();
             if (result.isPresent()) {

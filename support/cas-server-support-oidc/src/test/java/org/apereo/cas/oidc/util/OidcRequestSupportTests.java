@@ -56,7 +56,7 @@ public class OidcRequestSupportTests extends AbstractOidcTests {
     @Test
     public void verifyOidcPrompt() {
         val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + "=value1";
-        val authorizationRequest = oauthRequestParameterResolver.resolvePromptValues(url);
+        val authorizationRequest = oauthRequestParameterResolver.resolveSupportedPromptValues(url);
         assertEquals("value1", authorizationRequest.toArray()[0]);
     }
 
@@ -65,7 +65,7 @@ public class OidcRequestSupportTests extends AbstractOidcTests {
         val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + "=value1";
         val context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn(url);
-        val authorizationRequest = oauthRequestParameterResolver.resolvePromptValues(context);
+        val authorizationRequest = oauthRequestParameterResolver.resolveSupportedPromptValues(context);
         assertEquals("value1", authorizationRequest.toArray()[0]);
     }
 

@@ -198,12 +198,20 @@ public interface OAuth20RequestParameterResolver {
     Set<String> resolveUserInfoRequestClaims(WebContext context) throws Exception;
 
     /**
+     * Resolve prompt parameter set.
+     *
+     * @param context the context
+     * @return the set
+     */
+    Set<String> resolveRequestedPromptValues(WebContext context);
+
+    /**
      * Resolve prompt values.
      *
      * @param url the url
      * @return the set
      */
-    Set<String> resolvePromptValues(String url);
+    Set<String> resolveSupportedPromptValues(String url);
 
     /**
      * Resolve prompt values.
@@ -211,7 +219,7 @@ public interface OAuth20RequestParameterResolver {
      * @param context the context
      * @return the set
      */
-    default Set<String> resolvePromptValues(final WebContext context) {
-        return resolvePromptValues(context.getFullRequestURL());
+    default Set<String> resolveSupportedPromptValues(final WebContext context) {
+        return resolveSupportedPromptValues(context.getFullRequestURL());
     }
 }

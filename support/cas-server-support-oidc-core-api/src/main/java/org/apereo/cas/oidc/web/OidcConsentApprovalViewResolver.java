@@ -46,7 +46,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
                 LOGGER.trace("Consent approval is bypassed for pushed authorization requests");
                 return true;
             }
-            val prompts = oauthRequestParameterResolver.resolvePromptValues(context);
+            val prompts = oauthRequestParameterResolver.resolveSupportedPromptValues(context);
             if (prompts.contains(OidcConstants.PROMPT_CONSENT)) {
                 return false;
             }

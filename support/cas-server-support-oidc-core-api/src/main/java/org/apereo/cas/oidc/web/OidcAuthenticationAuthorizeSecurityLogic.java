@@ -42,7 +42,7 @@ public class OidcAuthenticationAuthorizeSecurityLogic extends OAuth20TicketGrant
     @Override
     protected List<UserProfile> loadProfiles(final ProfileManager manager, final WebContext context,
                                              final SessionStore sessionStore, final List<Client> clients) {
-        val prompts = oauthRequestParameterResolver.resolvePromptValues(context);
+        val prompts = oauthRequestParameterResolver.resolveSupportedPromptValues(context);
         LOGGER.debug("Located OpenID Connect prompts from request as [{}]", prompts);
 
         val tooOld = OidcRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context)
