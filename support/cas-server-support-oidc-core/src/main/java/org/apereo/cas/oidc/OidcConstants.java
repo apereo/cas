@@ -80,10 +80,6 @@ public interface OidcConstants {
      * The max age.
      */
     String MAX_AGE = "max_age";
-    /**
-     * The prompt parameter.
-     */
-    String PROMPT = "prompt";
 
     /**
      * The {@code ui_locales} parameter.

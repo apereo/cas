@@ -3,8 +3,10 @@ package org.apereo.cas.oidc.util;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -32,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 5.1.0
  */
 @Tag("OIDC")
-public class OidcRequestSupportTests {
+public class OidcRequestSupportTests extends AbstractOidcTests {
 
     protected static JEEContext getContextForEndpoint(final String endpoint) {
         val request = new MockHttpServletRequest();
@@ -46,24 +48,24 @@ public class OidcRequestSupportTests {
 
     @Test
     public void verifyRemovePrompt() {
-        val url = "https://tralala.whapi.com/something?" + OidcConstants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT;
+        val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT;
         val request = OidcRequestSupport.removeOidcPromptFromAuthorizationRequest(url, OidcConstants.PROMPT_CONSENT);
-        assertFalse(request.contains(OidcConstants.PROMPT));
+        assertFalse(request.contains(OAuth20Constants.PROMPT));
     }
 
     @Test
     public void verifyOidcPrompt() {
-        val url = "https://tralala.whapi.com/something?" + OidcConstants.PROMPT + "=value1";
-        val authorizationRequest = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+        val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + "=value1";
+        val authorizationRequest = oauthRequestParameterResolver.resolvePromptValues(url);
         assertEquals("value1", authorizationRequest.toArray()[0]);
     }
 
     @Test
     public void verifyOidcPromptFromContext() {
-        val url = "https://tralala.whapi.com/something?" + OidcConstants.PROMPT + "=value1";
+        val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + "=value1";
         val context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn(url);
-        val authorizationRequest = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(context);
+        val authorizationRequest = oauthRequestParameterResolver.resolvePromptValues(context);
         assertEquals("value1", authorizationRequest.toArray()[0]);
     }
 

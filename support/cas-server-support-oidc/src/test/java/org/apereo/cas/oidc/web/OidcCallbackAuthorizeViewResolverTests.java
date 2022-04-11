@@ -53,7 +53,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
     @Test
     public void verifyPromptNoneWithProfile() {
         val request = new MockHttpServletRequest();
-        val url = "https://cas.org/something?" + OidcConstants.PROMPT + "=none";
+        val url = "https://cas.org/something?" + OAuth20Constants.PROMPT + "=none";
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
@@ -71,7 +71,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
     @Test
     public void verifyPromptNoneWithoutProfile() {
         val request = new MockHttpServletRequest();
-        val url = "https://cas.org/something?" + OidcConstants.PROMPT + "=none";
+        val url = "https://cas.org/something?" + OAuth20Constants.PROMPT + "=none";
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
@@ -90,7 +90,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.STATE, "randomState");
         request.addParameter(OAuth20Constants.NONCE, "nonce");
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
-        request.addParameter(OidcConstants.PROMPT, "none");
+        request.addParameter(OAuth20Constants.PROMPT, "none");
         val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
 
         val builder = new URIBuilder();
@@ -110,7 +110,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
     public void verifyPromptNoneWithoutProfileWithRedirectParam() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://google.com");
-        val url = "https://cas.org/something?" + OidcConstants.PROMPT + "=none";
+        val url = "https://cas.org/something?" + OAuth20Constants.PROMPT + "=none";
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
@@ -123,7 +123,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
     @Test
     public void verifyPromptLogin() {
         val request = new MockHttpServletRequest();
-        val url = "https://cas.org/something?" + OidcConstants.PROMPT + "=login";
+        val url = "https://cas.org/something?" + OAuth20Constants.PROMPT + "=login";
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val manager = new ProfileManager(context, JEESessionStore.INSTANCE);

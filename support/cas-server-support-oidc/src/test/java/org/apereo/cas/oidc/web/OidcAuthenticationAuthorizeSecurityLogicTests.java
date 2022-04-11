@@ -62,7 +62,8 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, new BasicUserProfile(), false);
-        val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+        val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
+            ticketRegistry, centralAuthenticationService, oauthRequestParameterResolver);
         assertFalse(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
         request.setQueryString("prompt=login");
         assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
@@ -84,7 +85,8 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
             ZonedDateTime.now(Clock.systemUTC()).minusSeconds(30));
 
         profileManager.save(true, profile, false);
-        val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+        val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
+            ticketRegistry, centralAuthenticationService, oauthRequestParameterResolver);
         assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
     }
 
@@ -96,7 +98,8 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, new BasicUserProfile(), false);
-        val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+        val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
+            ticketRegistry, centralAuthenticationService, oauthRequestParameterResolver);
         assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
     }
 }
