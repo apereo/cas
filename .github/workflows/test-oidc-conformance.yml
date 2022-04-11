@@ -46,7 +46,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -70,7 +70,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -79,7 +79,7 @@ jobs:
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
         shell: bash
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
