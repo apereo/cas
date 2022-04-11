@@ -140,10 +140,10 @@ jobs:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
           timeout_minutes: 5
-        shell: bash
-        run: |
-          export RUNNER_OS=${{ runner.os }}
-          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
   ##########################################################################
   puppeteer-tests-511:
     runs-on: ubuntu-latest
@@ -184,8 +184,8 @@ jobs:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
           timeout_minutes: 5
-        shell: bash
-        run: |
-          export RUNNER_OS=${{ runner.os }}
-          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
