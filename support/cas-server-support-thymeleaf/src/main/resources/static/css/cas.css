@@ -218,7 +218,11 @@ button.close {
     color: var(--cas-theme-warning, #e6a210);
 }
 
-.banner-success:before {
+.banner-success h1:before,
+.banner-success h2:before,
+.banner-success h3:before,
+.banner-success h4:before,
+.banner-success h5:before {
     content: "\F012D";
     font-size: 24px;
     font: normal normal normal 24px/1 "Material Design Icons";

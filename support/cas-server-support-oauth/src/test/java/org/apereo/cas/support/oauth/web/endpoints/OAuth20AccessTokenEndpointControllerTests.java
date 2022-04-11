@@ -449,7 +449,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.DEVICE_CODE.getType());
-        mockRequest.setParameter(OAuth20Constants.CODE, devCode);
+        mockRequest.setParameter(OAuth20Constants.DEVICE_CODE, devCode);
         val approveResp = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, approveResp, null);
         val mvApproved = accessTokenController.handleGetRequest(mockRequest, approveResp);
