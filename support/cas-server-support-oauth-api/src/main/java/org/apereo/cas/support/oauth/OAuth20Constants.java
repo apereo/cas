@@ -9,6 +9,11 @@ package org.apereo.cas.support.oauth;
 public interface OAuth20Constants {
 
     /**
+     * The prompt parameter.
+     */
+    String PROMPT = "prompt";
+
+    /**
      * Device code flow verification uri.
      */
     String DEVICE_VERIFICATION_URI = "verification_uri";

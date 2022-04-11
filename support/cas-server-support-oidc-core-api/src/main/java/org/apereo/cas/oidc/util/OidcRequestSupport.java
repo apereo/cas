@@ -9,7 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,9 +24,7 @@ import org.pac4j.jee.context.JEEContext;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -42,30 +39,6 @@ public class OidcRequestSupport {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final TicketRegistrySupport ticketRegistrySupport;
-
-    /**
-     * Gets oidc prompt from authorization request.
-     *
-     * @param url the url
-     * @return the oidc prompt from authorization request
-     */
-    public static Set<String> getOidcPromptFromAuthorizationRequest(final @NonNull String url) {
-        return FunctionUtils.doUnchecked(() -> new URIBuilder(url).getQueryParams().stream()
-            .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
-            .map(param -> param.getValue().split(" "))
-            .flatMap(Arrays::stream)
-            .collect(Collectors.toSet()));
-    }
-
-    /**
-     * Gets oidc prompt from authorization request.
-     *
-     * @param context the context
-     * @return the oidc prompt from authorization request
-     */
-    public static Set<String> getOidcPromptFromAuthorizationRequest(final WebContext context) {
-        return getOidcPromptFromAuthorizationRequest(context.getFullRequestURL());
-    }
 
     /**
      * Gets oidc max age from authorization request.
@@ -131,7 +104,7 @@ public class OidcRequestSupport {
             val uriBuilder = new URIBuilder(url);
             val newParams = uriBuilder.getQueryParams()
                 .stream()
-                .filter(p -> !OidcConstants.PROMPT.equals(p.getName()) || !p.getValue().equalsIgnoreCase(prompt))
+                .filter(p -> !OAuth20Constants.PROMPT.equals(p.getName()) || !p.getValue().equalsIgnoreCase(prompt))
                 .collect(Collectors.toList());
             return uriBuilder
                 .removeQuery()

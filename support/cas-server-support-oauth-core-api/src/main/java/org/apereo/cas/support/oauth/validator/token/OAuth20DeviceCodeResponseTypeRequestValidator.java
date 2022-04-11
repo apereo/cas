@@ -4,11 +4,12 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,31 +43,40 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
 
     @Override
     public boolean validate(final WebContext context) {
-        val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
-        if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
-            LOGGER.warn("Response type [{}] is not supported.", responseType);
+        val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val grantType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val validResponseType = OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE);
+        val validGrantType = OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.DEVICE_CODE);
+
+        if (!validResponseType && !validGrantType) {
+            LOGGER.warn("Response type [{}] or grant type [{}] is not supported.", responseType, grantType);
             return false;
         }
 
         val clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
-
-        try {
+        return FunctionUtils.doAndHandle(() -> {
+            val registeredService = Objects.requireNonNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId));
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        } catch (final UnauthorizedServiceException e) {
+            return (validResponseType && requestParameterResolver.isAuthorizedResponseTypeForService(context, registeredService))
+                   || (validGrantType && requestParameterResolver.isAuthorizedGrantTypeForService(context, registeredService));
+        }, t -> {
             LOGGER.warn("Registered service access is not allowed for service definition for client id [{}]", clientId);
             return false;
-        }
-        return requestParameterResolver.isAuthorizedResponseTypeForService(context, Objects.requireNonNull(registeredService));
+        }).get();
     }
 
     @Override
     public boolean supports(final WebContext context) {
         val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val grantType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         val clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)
-            && StringUtils.isNotBlank(clientId);
+        val validRequest = OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)
+                           || OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.DEVICE_CODE);
+        return validRequest && StringUtils.isNotBlank(clientId);
     }
 }

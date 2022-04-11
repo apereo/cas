@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Download Dependencies
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
@@ -75,7 +75,7 @@ jobs:
           distribution: 'temurin'
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}

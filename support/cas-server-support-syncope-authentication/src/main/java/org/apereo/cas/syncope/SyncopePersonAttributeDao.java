@@ -131,12 +131,6 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
         return sc.getStatement().getProperty();
     }
 
-    /**
-     * Syncope search optional.
-     *
-     * @param value the value
-     * @return the optional
-     */
     protected Optional<JsonNode> syncopeSearch(final String value) throws Exception {
         HttpResponse response = null;
         try {

@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
-import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -47,8 +46,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
                 LOGGER.trace("Consent approval is bypassed for pushed authorization requests");
                 return true;
             }
-            val url = context.getFullRequestURL();
-            val prompts = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+            val prompts = oauthRequestParameterResolver.resolveSupportedPromptValues(context);
             if (prompts.contains(OidcConstants.PROMPT_CONSENT)) {
                 return false;
             }

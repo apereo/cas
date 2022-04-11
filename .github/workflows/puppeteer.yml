@@ -23,6 +23,8 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 11
   NODE_CURRENT: '16'
+  MAX_ATTEMPTS: 2
+  RETRY_MINUTES: 10
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
 
 on:
@@ -60,7 +62,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -87,7 +89,7 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -119,7 +121,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -134,10 +136,15 @@ jobs:
       #      - name: Setup tmate session
       #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
-        shell: bash
-        run: |
-          export RUNNER_OS=${{ runner.os }}
-          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          retry_on: error
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
   ##########################################################################
   puppeteer-tests-511:
     runs-on: ubuntu-latest
@@ -158,7 +165,7 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -173,8 +180,13 @@ jobs:
       #      - name: Setup tmate session
       #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
-        shell: bash
-        run: |
-          export RUNNER_OS=${{ runner.os }}
-          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          retry_on: error
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################

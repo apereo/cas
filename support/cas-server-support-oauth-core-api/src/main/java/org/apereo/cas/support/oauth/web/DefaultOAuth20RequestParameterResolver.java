@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.client.utils.URIBuilder;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
@@ -234,7 +235,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         val claims = FunctionUtils.doIf(supported,
             () -> resolveRequestParameter(context, OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY),
             () -> StringUtils.EMPTY).get();
-        
+
         if (StringUtils.isBlank(claims)) {
             return new HashMap<>(0);
         }
@@ -245,5 +246,28 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public Set<String> resolveUserInfoRequestClaims(final WebContext context) throws Exception {
         val requestedClaims = resolveRequestClaims(context);
         return requestedClaims.getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>(0)).keySet();
+    }
+
+    @Override
+    public Set<String> resolveRequestedPromptValues(final WebContext context) {
+        val url = context.getFullRequestURL();
+        return FunctionUtils.doUnchecked(() -> new URIBuilder(url).getQueryParams()
+            .stream()
+            .filter(p -> OAuth20Constants.PROMPT.equals(p.getName()))
+            .map(param -> param.getValue().split(" "))
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public Set<String> resolveSupportedPromptValues(final String url) {
+        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getPromptValuesSupported();
+        return FunctionUtils.doUnchecked(() -> new URIBuilder(url).getQueryParams()
+            .stream()
+            .filter(p -> OAuth20Constants.PROMPT.equals(p.getName()))
+            .map(param -> param.getValue().split(" "))
+            .flatMap(Arrays::stream)
+            .filter(supported::contains)
+            .collect(Collectors.toSet()));
     }
 }

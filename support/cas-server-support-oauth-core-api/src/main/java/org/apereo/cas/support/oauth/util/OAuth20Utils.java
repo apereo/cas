@@ -231,7 +231,7 @@ public class OAuth20Utils {
      * @return whether the grant type is the expected one
      */
     public static boolean isGrantType(final String type, final OAuth20GrantTypes expectedType) {
-        return expectedType.name().equalsIgnoreCase(type);
+        return expectedType.getType().equalsIgnoreCase(type);
     }
 
     /**
