@@ -9,8 +9,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -50,19 +48,20 @@ public class SpnegoCredentialsTests {
     }
 
     @Test
-    public void verifyToStringWithToken() {
+    public void verifyToStringWithToken() throws Exception {
         val credentials = new SpnegoCredential(new byte[16]);
         credentials.setNextToken(new byte[16]);
-        assertThat(credentials.toString(), not(containsString("initToken")));
-        assertThat(credentials.toString(), not(containsString("nextToken")));
+        assertFalse(MAPPER.writeValueAsString(credentials).contains("initToken"));
+        assertFalse(MAPPER.writeValueAsString(credentials).contains("nextToken"));
+
     }
 
     @Test
     public void verifyJsonWithToken() throws Exception {
         val credentials = new SpnegoCredential(new byte[16]);
         credentials.setNextToken(new byte[16]);
-        assertThat(MAPPER.writeValueAsString(credentials), not(containsString("initToken")));
-        assertThat(MAPPER.writeValueAsString(credentials), not(containsString("nextToken")));
+        assertFalse(MAPPER.writeValueAsString(credentials).contains("initToken"));
+        assertFalse(MAPPER.writeValueAsString(credentials).contains("nextToken"));
     }
 
 }
