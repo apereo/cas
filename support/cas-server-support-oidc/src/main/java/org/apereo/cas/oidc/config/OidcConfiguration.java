@@ -171,13 +171,16 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityLogic oidcAuthorizationSecurityLogic(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            return new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+            return new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
+                ticketRegistry, centralAuthenticationService, oauthRequestParameterResolver);
         }
 
         @Bean
@@ -316,17 +319,21 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = "oidcCasClientRedirectActionBuilder")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20CasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("oidcRequestSupport")
             final OidcRequestSupport oidcRequestSupport) {
-            return new OidcCasClientRedirectActionBuilder(oidcRequestSupport);
+            return new OidcCasClientRedirectActionBuilder(oidcRequestSupport, oauthRequestParameterResolver);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("oidcRequestSupport")
             final OidcRequestSupport oidcRequestSupport) {
-            return new OidcCasClientRedirectActionBuilder(oidcRequestSupport);
+            return new OidcCasClientRedirectActionBuilder(oidcRequestSupport, oauthRequestParameterResolver);
         }
     }
 

@@ -60,7 +60,7 @@ public interface OAuth20RequestParameterResolver {
      */
     boolean isAuthorizedGrantTypeForService(WebContext context,
                                             OAuthRegisteredService registeredService);
-    
+
     /**
      * Resolve response type.
      *
@@ -196,4 +196,30 @@ public interface OAuth20RequestParameterResolver {
      * @throws Exception the exception
      */
     Set<String> resolveUserInfoRequestClaims(WebContext context) throws Exception;
+
+    /**
+     * Resolve prompt parameter set.
+     *
+     * @param context the context
+     * @return the set
+     */
+    Set<String> resolveRequestedPromptValues(WebContext context);
+
+    /**
+     * Resolve prompt values.
+     *
+     * @param url the url
+     * @return the set
+     */
+    Set<String> resolveSupportedPromptValues(String url);
+
+    /**
+     * Resolve prompt values.
+     *
+     * @param context the context
+     * @return the set
+     */
+    default Set<String> resolveSupportedPromptValues(final WebContext context) {
+        return resolveSupportedPromptValues(context.getFullRequestURL());
+    }
 }

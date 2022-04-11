@@ -48,7 +48,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     public void verifyBypassedByPrompt() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
-        request.setQueryString(OidcConstants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT);
+        request.setQueryString(OAuth20Constants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT);
 
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);

@@ -47,6 +47,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setTokenEndpointAuthMethodsSupported(
             new LinkedHashSet<>(discoveryConfig.getTokenEndpointAuthMethodsSupported()));
         discovery.setClaimsParameterSupported(discoveryConfig.isClaimsParameterSupported());
+        discovery.setPromptValuesSupported(new LinkedHashSet<>(discoveryConfig.getPromptValuesSupported()));
 
         discovery.setIdTokenSigningAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getIdTokenSigningAlgValuesSupported()));

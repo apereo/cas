@@ -35,7 +35,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
         val deviceCode = getConfigurationContext().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.CODE).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(context, OAuth20Constants.DEVICE_CODE).orElse(StringUtils.EMPTY);
         val service = getConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
@@ -64,16 +64,23 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
     @Override
     public boolean supports(final WebContext context) {
         val responseType = getConfigurationContext().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val grantType = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         val clientId = getConfigurationContext().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
-        return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)
-            && StringUtils.isNotBlank(clientId);
+            .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val validRequest = OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)
+                           || OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.DEVICE_CODE);
+        return validRequest && StringUtils.isNotBlank(clientId);
+
     }
 
     @Override
     public OAuth20GrantTypes getGrantType() {
-        return OAuth20GrantTypes.NONE;
+        return OAuth20GrantTypes.DEVICE_CODE;
     }
 
     @Override

@@ -268,13 +268,14 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         })
 }
 
-exports.doPost = async (url, params, headers, successHandler, failureHandler) => {
+exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
     const instance = axios.create({
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
     });
     let urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
+    console.log(`Posting to URL ${colors.green(url)}`)
     await instance
         .post(url, urlParams, {headers: headers})
         .then(res => {
@@ -282,6 +283,7 @@ exports.doPost = async (url, params, headers, successHandler, failureHandler) =>
             successHandler(res);
         })
         .catch(error => {
+            console.log(error.response.data)
             failureHandler(error);
         })
 }

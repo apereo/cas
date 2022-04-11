@@ -93,6 +93,14 @@ public class OidcDiscoveryProperties implements Serializable {
     private List<String> responseModesSupported = Stream.of("query", "fragment", "form_post").collect(Collectors.toList());
 
     /**
+     * Supported prompt values.
+     * If CAS receives a prompt value that it does not support
+     * (not declared in the {@code prompt_values_supported} metadata field) the CAS SHOULD
+     * respond with an HTTP 400 (Bad Request) status code and an error value of invalid request.
+     */
+    private List<String> promptValuesSupported = Stream.of("none", "login", "consent").collect(Collectors.toList());
+
+    /**
      * Supported authentication methods for introspection.
      */
     private List<String> introspectionSupportedAuthenticationMethods = Stream.of("client_secret_basic").collect(Collectors.toList());
