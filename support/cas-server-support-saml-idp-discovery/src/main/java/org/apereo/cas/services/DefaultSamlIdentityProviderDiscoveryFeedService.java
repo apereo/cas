@@ -18,7 +18,6 @@ import org.pac4j.saml.client.SAML2Client;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * This is {@link DefaultSamlIdentityProviderDiscoveryFeedService}.
  *
- * @author Misagh Moayyed
+ * @author Sam Hough
  * @since 6.6.0
  */
 @RequiredArgsConstructor
@@ -65,8 +64,8 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
 
     @Override
     public DelegatedClientIdentityProviderConfiguration getProvider(final String entityID,
-                         final HttpServletRequest httpServletRequest,
-                         final HttpServletResponse httpServletResponse) {
+                                                                    final HttpServletRequest httpServletRequest,
+                                                                    final HttpServletResponse httpServletResponse) {
         val idp = getDiscoveryFeed()
             .stream()
             .filter(entity -> entity.getEntityID().equals(entityID))
