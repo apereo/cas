@@ -108,6 +108,8 @@ Return static attributes to the service with values hard-coded in the service de
 }
 ```
 
+Attribute values can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
 ### Deny All
 
 Never ever return principal attributes to applications. Note that this policy

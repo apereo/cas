@@ -283,7 +283,9 @@ exports.doPost = async (url, params = "", headers = {}, successHandler, failureH
             successHandler(res);
         })
         .catch(error => {
-            console.log(error.response.data)
+            if (error.response !== undefined) {
+                this.logr(error.response.data)
+            }
             failureHandler(error);
         })
 }
