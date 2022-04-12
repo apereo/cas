@@ -62,16 +62,12 @@ public class CouchDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     @BeforeEach
     public void setUp() {
+//        val databaseName = auditCouchDbFactory.getCouchDbConnector().getDatabaseName();
+//        if (auditCouchDbFactory.getCouchDbInstance().checkIfDbExists(databaseName)) {
+//            auditCouchDbFactory.getCouchDbInstance().deleteDatabase(databaseName);
+//        }
         auditCouchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(auditCouchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
         super.onSetUp();
-    }
-
-    @AfterEach
-    public void tearDown() {
-        val databaseName = auditCouchDbFactory.getCouchDbConnector().getDatabaseName();
-        if (auditCouchDbFactory.getCouchDbInstance().checkIfDbExists(databaseName)) {
-            auditCouchDbFactory.getCouchDbInstance().deleteDatabase(databaseName);
-        }
     }
 }

@@ -71,4 +71,26 @@ public class ReturnStaticAttributeReleasePolicyTests {
         assertTrue(results.containsKey("Hello"));
         assertEquals("World", results.get("Hello").get(0));
     }
+
+    @Test
+    public void verifyExpressions() {
+        System.setProperty("MY_ATTR", "World");
+        val policy = new ReturnStaticAttributeReleasePolicy();
+        policy.setAllowedAttributes(CollectionUtils.wrap("Hello",
+            CollectionUtils.wrapList("${#systemProperties['MY_ATTR']}")));
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val results = policy.getAttributes(releasePolicyContext);
+        assertEquals(1, results.size());
+        assertTrue(results.containsKey("Hello"));
+        assertEquals("World", results.get("Hello").get(0));
+    }
 }
