@@ -3,6 +3,7 @@ package org.apereo.cas.audit;
 import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -106,22 +108,32 @@ public class DynamoDbAuditTrailManagerFacilitator {
         createTable(true);
     }
 
+
     /**
      * Gets audit records.
      *
-     * @param localDate the local date
-     * @return the audit records since
+     * @param whereClause the where clause
+     * @return the audit records
      */
     @SuppressWarnings("JavaUtilDate")
-    public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
+    public Set<? extends AuditActionContext> getAuditRecords(final Map<AuditTrailManager.WhereClauseFields, Object> whereClause) {
+        val localDate = (LocalDate) whereClause.get(AuditTrailManager.WhereClauseFields.DATE);
         val time = DateTimeUtils.dateOf(localDate).getTime();
-        val keys = DynamoDbQueryBuilder.builder()
+        val queryKeys = CollectionUtils.<DynamoDbQueryBuilder>wrap(DynamoDbQueryBuilder.builder()
             .key(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName())
             .attributeValue(List.of(AttributeValue.builder().s(String.valueOf(time)).build()))
             .operator(ComparisonOperator.GE)
-            .build();
-        return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient, dynamoDbProperties.getTableName(),
-                List.of(keys), item -> {
+            .build());
+        if (whereClause.containsKey(AuditTrailManager.WhereClauseFields.PRINCIPAL)) {
+            queryKeys.add(DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.PRINCIPAL.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().s(whereClause.get(AuditTrailManager.WhereClauseFields.PRINCIPAL).toString()).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
+        }
+        return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient,
+                dynamoDbProperties.getTableName(), queryKeys,
+                item -> {
                     val principal = item.get(ColumnNames.PRINCIPAL.getColumnName()).s();
                     val actionPerformed = item.get(ColumnNames.ACTION_PERFORMED.getColumnName()).s();
                     val appCode = item.get(ColumnNames.APPLICATION_CODE.getColumnName()).s();

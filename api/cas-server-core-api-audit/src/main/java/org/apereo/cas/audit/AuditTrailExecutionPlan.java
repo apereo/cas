@@ -3,8 +3,8 @@ package org.apereo.cas.audit;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,10 +37,10 @@ public interface AuditTrailExecutionPlan {
     void record(AuditActionContext audit);
 
     /**
-     * Gets audit records since the specified date.
+     * Gets audit records for the specified query.
      *
-     * @param sinceDate the since date
+     * @param criteria the criteria
      * @return the audit records since
      */
-    Set<AuditActionContext> getAuditRecordsSince(LocalDate sinceDate);
+    Set<AuditActionContext> getAuditRecords(Map<AuditTrailManager.WhereClauseFields, Object> criteria);
 }

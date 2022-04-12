@@ -9,6 +9,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,8 @@ public class MockAuditTrailManager implements AuditTrailManager {
 
     @Override
     @SuppressWarnings("JavaUtilDate")
-    public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
+    public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
+        val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
         val dt = DateTimeUtils.dateOf(localDate);
         return auditRecords
             .stream()

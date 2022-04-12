@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import org.apereo.cas.util.RandomUtils;
+
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,26 +21,37 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Timur Duehr
  * @since 6.0.0
  */
+@SuppressWarnings("JavaUtilDate")
 public abstract class BaseAuditConfigurationTests {
+    private static final String USER = RandomUtils.randomAlphanumeric(6);
+
     public abstract AuditTrailManager getAuditTrailManager();
 
     @BeforeEach
     public void onSetUp() {
         val auditTrailManager = getAuditTrailManager();
         auditTrailManager.removeAll();
-    }
-
-    @Test
-    @SuppressWarnings("JavaUtilDate")
-    public void verifyAuditManager() {
-        val auditTrailManager = getAuditTrailManager();
-        val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
-        val ctx = new AuditActionContext("casuser", "TEST", "TEST",
+        val ctx = new AuditActionContext(USER, "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4", "GoogleChrome");
         auditTrailManager.record(ctx);
-        val results = auditTrailManager.getAuditRecordsSince(time);
+    }
+
+    @Test
+    public void verifyAuditByDate() {
+        val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
+        val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(AuditTrailManager.WhereClauseFields.DATE, time);
+        val results = getAuditTrailManager().getAuditRecords(criteria);
         assertFalse(results.isEmpty());
-        auditTrailManager.removeAll();
+    }
+
+    @Test
+    public void verifyAuditByPrincipal() {
+        val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
+        val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
+            AuditTrailManager.WhereClauseFields.DATE, time,
+            AuditTrailManager.WhereClauseFields.PRINCIPAL, USER);
+        val results = getAuditTrailManager().getAuditRecords(criteria);
+        assertFalse(results.isEmpty());
     }
 }

@@ -62,5 +62,7 @@ public class PrepareAccountProfileViewActionTests extends AbstractWebflowActions
         val list = WebUtils.getAuthorizedServices(context);
         assertFalse(list.isEmpty());
         assertNotNull(WebUtils.getAuthentication(context));
+
+        assertTrue(context.getFlowScope().contains("auditLog"));
     }
 }

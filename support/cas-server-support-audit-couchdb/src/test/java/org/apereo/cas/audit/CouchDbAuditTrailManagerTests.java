@@ -12,6 +12,7 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
+import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,10 +64,14 @@ public class CouchDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
     public void setUp() {
         auditCouchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(auditCouchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
+        super.onSetUp();
     }
 
     @AfterEach
     public void tearDown() {
-        auditCouchDbFactory.getCouchDbInstance().deleteDatabase(auditCouchDbFactory.getCouchDbConnector().getDatabaseName());
+        val databaseName = auditCouchDbFactory.getCouchDbConnector().getDatabaseName();
+        if (auditCouchDbFactory.getCouchDbInstance().checkIfDbExists(databaseName)) {
+            auditCouchDbFactory.getCouchDbInstance().deleteDatabase(databaseName);
+        }
     }
 }
