@@ -24,7 +24,7 @@ env:
   JDK_CURRENT: 11
   NODE_CURRENT: '16'
   MAX_ATTEMPTS: 2
-  RETRY_MINUTES: 10
+  RETRY_MINUTES: 15
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
 
 on:
