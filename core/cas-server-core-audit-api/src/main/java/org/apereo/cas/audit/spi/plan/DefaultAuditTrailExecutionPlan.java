@@ -39,6 +39,7 @@ public class DefaultAuditTrailExecutionPlan implements AuditTrailExecutionPlan {
     public Set<AuditActionContext> getAuditRecords(final Map<AuditTrailManager.WhereClauseFields, Object> criteria) {
         return auditTrailManagers
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .map(manager -> manager.getAuditRecords(criteria))
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
