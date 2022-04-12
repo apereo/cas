@@ -78,6 +78,12 @@
                                         <i class="mdi mdi-apps fa fa-key"></i>&nbsp;
                                         <span class="mdc-list-item__text">Applications</span>
                                     </a>
+                                    <a class="mdc-list-item list-group-item list-group-item-action"
+                                       onclick="showPanel('#divAuditLog');"
+                                       href="#divAuditLog">
+                                        <i class="mdi mdi-account-reactivate fa fa-key"></i>&nbsp;
+                                        <span class="mdc-list-item__text">Audit Log</span>
+                                    </a>
                                     <hr align="left" width="85%">
                                     <form method="post" id="fmChangePsw" name="fmChangePsw">
                                         <a class="mdc-list-item list-group-item list-group-item-action"
@@ -122,13 +128,54 @@
                             </p>
                         </div>
 
+                        <div id="divAuditLog"
+                             class="profile-content w-100"
+                             style="display: none;">
+                            <h2>
+                                <i class="mdi mdi-account-reactivate fas fa-door-open"></i>
+                                <span th:utext="#{screen.account.auditlog.title}">Audit Log</span>
+                            </h2>
+                            <p th:utext="#{screen.account.auditlog.subtitle}">Examine the CAS audit log here.</p>
+
+                            <table id="auditLogTable" class="mdc-data-table__table table table-striped noborder">
+                                <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Activity</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date/time</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Resource</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">IP Address</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">User Agent</th>
+                                </tr>
+                                </thead>
+                                <tbody class="mdc-data-table__content">
+                                <tr th:each="entry : ${auditLog}" class="mdc-data-table__row">
+                                    <td class="mdc-data-table__cell">
+                                        <span th:utext="${entry.actionPerformed}"/>
+                                    </td>
+                                    <td class="mdc-data-table__cell">
+                                        <span th:utext="${entry.whenActionWasPerformed}"/>
+                                    </td>
+                                    <td class="mdc-data-table__cell">
+                                        <span th:utext="${entry.resourceOperatedUpon}"/>
+                                    </td>
+                                    <td class="mdc-data-table__cell">
+                                        <span th:utext="${entry.clientIpAddress}"/>
+                                    </td>
+                                    <td class="mdc-data-table__cell">
+                                        <span th:utext="${entry.userAgent}"/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                         <div id="divSecurityQuestions"
                              class="profile-content w-100"
                              style="display: none;">
-                            
+
                             <h2>
                                 <i class="mdi mdi-door-open fas fa-door-open"></i>
-                                <span th:utext="#{screen.account.securityquestions.title}">>Security Questions</span>
+                                <span th:utext="#{screen.account.securityquestions.title}">Security Questions</span>
                             </h2>
                             <p th:utext="#{screen.account.securityquestions.subtitle}">
                                 You can review and update your security questions here.</p>
@@ -139,7 +186,7 @@
                                     <h2 th:utext="#{screen.account.failure}">Failure</h2>
                                     <span th:each="message : ${flowRequestContext.messageContext.allMessages}"
                                           th:if="${message.severity.name() == 'ERROR'}"
-                                           th:utext="${message.text}">Message Text</span>
+                                          th:utext="${message.text}">Message Text</span>
                                 </div>
                                 <div class="banner banner-success my-2"
                                      th:unless="${flowRequestContext.messageContext.hasErrorMessages()}">
@@ -211,11 +258,8 @@
                                             <span class="mdc-button__label" th:utext="#{cas.screen.acct.button.update}">Submit</span>
                                         </button>
                                     </div>
-
                                 </form>
-
                             </div>
-
                         </div>
 
                         <div class="profile-content w-100 mdc-data-table table-responsive"
@@ -272,7 +316,7 @@
                             <div class="text-justify">
                                 <p th:utext="#{screen.account.attributes}">Attributes</p>
                             </div>
-                            
+
                             <table id="attributesTable" class="table table-striped" style="white-space: unset">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">

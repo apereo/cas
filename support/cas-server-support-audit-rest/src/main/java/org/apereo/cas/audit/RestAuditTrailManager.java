@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -24,6 +25,7 @@ import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -71,16 +73,21 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
-    public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
+    public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
         HttpResponse response = null;
         try {
+            val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
             LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", localDate);
+            val parameters = CollectionUtils.<String, Object>wrap("date", String.valueOf(localDate.toEpochDay()));
+            FunctionUtils.doIf(whereClause.containsKey(WhereClauseFields.PRINCIPAL),
+                    c -> parameters.put("principial", whereClause.get(WhereClauseFields.PRINCIPAL).toString()))
+                .accept(whereClause);
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(properties.getUrl())
-                .parameters(CollectionUtils.wrap("date", String.valueOf(localDate.toEpochDay())))
+                .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {

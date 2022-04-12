@@ -4,6 +4,7 @@ import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.FilterAndDelegateAuditTrailManager;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -82,7 +84,8 @@ public class FilterAndDelegateAuditTrailManagerTests {
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
-        assertEquals(1, mgr.getAuditRecordsSince(LocalDate.now(ZoneOffset.UTC)).size());
+        val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(AuditTrailManager.WhereClauseFields.DATE, LocalDate.now(ZoneOffset.UTC));
+        assertEquals(1, mgr.getAuditRecords(criteria).size());
         assertDoesNotThrow(mgr::removeAll);
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.account;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -12,9 +13,14 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +38,8 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private final ServicesManager servicesManager;
 
     private final CasConfigurationProperties casProperties;
+
+    private final AuditTrailExecutionPlan auditTrailManager;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -55,6 +63,15 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
                     .collect(Collectors.toList());
                 WebUtils.putAuthorizedServices(requestContext, authorizedServices);
             }
+            val sinceDate = LocalDate.now(Clock.systemUTC()).minusMonths(2);
+            val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
+                AuditTrailManager.WhereClauseFields.DATE, sinceDate,
+                AuditTrailManager.WhereClauseFields.PRINCIPAL, ticket.getAuthentication().getPrincipal().getId());
+            val auditLog = auditTrailManager.getAuditRecords(criteria)
+                .stream()
+                .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed).reversed())
+                .collect(Collectors.toList());
+            requestContext.getFlowScope().put("auditLog", auditLog);
         });
 
         return success();

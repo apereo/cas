@@ -79,7 +79,7 @@ public class CasReportsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditLogEndpoint auditLogEndpoint(
         @Qualifier("auditTrailExecutionPlan")
-        final ObjectProvider<AuditTrailExecutionPlan> auditTrailExecutionPlan,
+        final AuditTrailExecutionPlan auditTrailExecutionPlan,
         final CasConfigurationProperties casProperties) {
         return new AuditLogEndpoint(auditTrailExecutionPlan, casProperties);
     }

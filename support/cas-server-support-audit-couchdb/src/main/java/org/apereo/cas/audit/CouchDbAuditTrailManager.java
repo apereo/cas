@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apereo.inspektr.audit.AuditActionContext;
 
-import java.time.LocalDate;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -36,11 +36,7 @@ public class CouchDbAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
-    public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
-        return CollectionUtils.wrapHashSet(couchDb.findAuditRecordsSince(localDate));
-    }
-
-    @Override
-    public void removeAll() {
+    public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
+        return CollectionUtils.wrapHashSet(couchDb.findAuditRecords(whereClause));
     }
 }

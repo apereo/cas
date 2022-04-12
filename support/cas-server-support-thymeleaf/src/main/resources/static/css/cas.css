@@ -65,6 +65,9 @@ aside, section, main {
     z-index: 7;
 }
 
+div#content {
+    box-shadow:1px 1px 3px #888;
+}
 /* widgets */
 
 .notifications-count {
@@ -134,7 +137,6 @@ header>nav .cas-brand .cas-logo {
     text-shadow: 0 1px 0 #fff;
     text-transform: none;
     text-decoration: none;
-    ;
 }
 
 button.close {

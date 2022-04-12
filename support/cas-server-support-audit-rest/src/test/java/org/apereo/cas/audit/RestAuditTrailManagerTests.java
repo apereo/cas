@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,7 +76,11 @@ public class RestAuditTrailManagerTests {
             auditTrailManager.record(audit);
 
             val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
-            val results = auditTrailManager.getAuditRecordsSince(time);
+
+            val criteria = new HashMap<AuditTrailManager.WhereClauseFields, Object>();
+            criteria.put(AuditTrailManager.WhereClauseFields.DATE, time);
+            criteria.put(AuditTrailManager.WhereClauseFields.PRINCIPAL, "casuser");
+            val results = auditTrailManager.getAuditRecords(criteria);
             assertFalse(results.isEmpty());
         }
     }

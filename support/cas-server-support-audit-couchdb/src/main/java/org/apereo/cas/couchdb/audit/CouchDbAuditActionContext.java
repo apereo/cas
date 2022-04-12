@@ -24,7 +24,7 @@ public class CouchDbAuditActionContext extends AuditActionContext {
 
     @JsonProperty("_rev")
     private String rev;
-
+    
     @JsonCreator
     public CouchDbAuditActionContext(@JsonProperty("_id") final String cid,
                                      @JsonProperty("_rev") final String rev,
