@@ -284,7 +284,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   echo $buildcmd
   $buildcmd > build.log 2>&1 &
   pid=$!
-  sleep 20
+  sleep 25
   printgreen "Current Java processes found for PID ${pid}"
   ps -ef | grep $pid | grep java
   if [[ $? -ne 0 ]]; then

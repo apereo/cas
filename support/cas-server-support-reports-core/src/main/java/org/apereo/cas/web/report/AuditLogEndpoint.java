@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -34,9 +35,9 @@ import java.util.stream.Collectors;
 @Endpoint(id = "auditLog", enableByDefault = false)
 public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
 
-    private final AuditTrailExecutionPlan auditTrailManager;
+    private final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager;
 
-    public AuditLogEndpoint(final AuditTrailExecutionPlan auditTrailManager,
+    public AuditLogEndpoint(final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager,
                             final CasConfigurationProperties casProperties) {
         super(casProperties);
         this.auditTrailManager = auditTrailManager;
@@ -58,14 +59,14 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = LocalDate.now(ZoneId.systemDefault())
                 .minusDays(casProperties.getAudit().getEngine().getNumberOfDaysInHistory());
-            return auditTrailManager.getAuditRecords(Map.of(AuditTrailManager.WhereClauseFields.DATE, sinceDate));
+            return auditTrailManager.getObject().getAuditRecords(Map.of(AuditTrailManager.WhereClauseFields.DATE, sinceDate));
         }
 
         val duration = Beans.newDuration(interval);
         val sinceTime = new Date(new Date().getTime() - duration.toMillis());
         val days = duration.toDays();
         val sinceDate = LocalDate.now(ZoneId.systemDefault()).minusDays(days + 1);
-        return auditTrailManager.getAuditRecords(Map.of(AuditTrailManager.WhereClauseFields.DATE, sinceDate))
+        return auditTrailManager.getObject().getAuditRecords(Map.of(AuditTrailManager.WhereClauseFields.DATE, sinceDate))
             .stream()
             .filter(a -> a.getWhenActionWasPerformed().after(sinceTime))
             .collect(Collectors.toSet());
