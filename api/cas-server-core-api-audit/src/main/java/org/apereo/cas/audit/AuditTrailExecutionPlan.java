@@ -14,6 +14,10 @@ import java.util.Set;
  * @since 5.3.0
  */
 public interface AuditTrailExecutionPlan {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "auditTrailExecutionPlan";
 
     /**
      * Register audit trail manager.

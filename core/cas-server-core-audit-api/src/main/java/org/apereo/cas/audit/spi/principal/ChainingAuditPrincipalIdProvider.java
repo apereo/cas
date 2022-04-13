@@ -2,6 +2,7 @@ package org.apereo.cas.audit.spi.principal;
 
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.val;
 import org.aspectj.lang.JoinPoint;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingAuditPrincipalIdProvider}.
@@ -27,7 +29,9 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
      * @param provider the provider
      */
     public void addProvider(final AuditPrincipalIdProvider provider) {
-        providers.add(provider);
+        if (BeanSupplier.isNotProxy(provider)) {
+            providers.add(provider);
+        }
     }
 
     /**
@@ -36,13 +40,15 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
      * @param provider the provider
      */
     public void addProviders(final List<AuditPrincipalIdProvider> provider) {
-        providers.addAll(provider);
+        providers.addAll(provider.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList()));
     }
 
     @Override
     public String getPrincipalIdFrom(final JoinPoint auditTarget, final Authentication authentication,
                                      final Object resultValue, final Exception exception) {
-        val result = providers.stream()
+        val result = providers
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(p -> p.supports(auditTarget, authentication, resultValue, exception))
             .findFirst()
             .orElseGet(DefaultAuditPrincipalIdProvider::new);
@@ -52,7 +58,9 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
     @Override
     public boolean supports(final JoinPoint auditTarget, final Authentication authentication,
                             final Object resultValue, final Exception exception) {
-        return providers.stream().anyMatch(p -> p.supports(auditTarget, authentication, resultValue, exception));
+        return providers.stream()
+            .filter(BeanSupplier::isNotProxy)
+            .anyMatch(p -> p.supports(auditTarget, authentication, resultValue, exception));
     }
 
     @Override

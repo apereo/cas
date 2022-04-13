@@ -31,7 +31,7 @@ git clone --recursive --depth=1 --single-branch --branch=master git@github.com:a
 # git fetch --unshallow
 ```
 
-For a successful clone, you will need to have [set up SSH keys](https://help.github.com/articles/working-with-ssh-key-passphrases/) for your account on Github.
+For a successful clone, you will need to have [set up SSH keys](https://docs.github.com/en/authentication) for your account on Github.
 If that is not an option, you may clone the CAS repository under `https` via `https://github.com/apereo/cas.git`.
 
 You may also need to update submodules linked to the CAS repository. Newer versions of Git will do this automatically, 

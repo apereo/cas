@@ -295,7 +295,7 @@ public class CasCoreAuditConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         protected AuditTrailManager filterAndDelegateAuditTrailManager(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("auditTrailExecutionPlan")
+            @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
             final CasConfigurationProperties casProperties) throws Exception {
             return BeanSupplier.of(AuditTrailManager.class)
@@ -463,7 +463,7 @@ public class CasCoreAuditConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasCoreAuditExecutionPlanConfiguration {
-        @ConditionalOnMissingBean(name = "auditTrailExecutionPlan")
+        @ConditionalOnMissingBean(name = AuditTrailExecutionPlan.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailExecutionPlan auditTrailExecutionPlan(final List<AuditTrailExecutionPlanConfigurer> configurers) {

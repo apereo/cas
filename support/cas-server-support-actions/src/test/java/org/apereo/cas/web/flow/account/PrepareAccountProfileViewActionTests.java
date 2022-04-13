@@ -1,5 +1,9 @@
 package org.apereo.cas.web.flow.account;
 
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
+import org.apereo.cas.audit.spi.MockAuditTrailManager;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.AbstractWebflowActionsTests;
@@ -12,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -36,7 +41,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "CasFeatureModule.AccountManagement.enabled=true",
     "cas.view.authorized-services-on-successful-login=true"
 })
-@Import(CasWebflowAccountProfileConfiguration.class)
+@Import({
+    PrepareAccountProfileViewActionTests.AuditTestConfiguration.class,
+    CasWebflowAccountProfileConfiguration.class,
+    CasCoreAuditConfiguration.class
+})
 public class PrepareAccountProfileViewActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
@@ -64,5 +73,13 @@ public class PrepareAccountProfileViewActionTests extends AbstractWebflowActions
         assertNotNull(WebUtils.getAuthentication(context));
 
         assertTrue(context.getFlowScope().contains("auditLog"));
+    }
+
+    @TestConfiguration(value = "AuditTestConfiguration", proxyBeanMethods = false)
+    public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
+        @Override
+        public void configureAuditTrailExecutionPlan(final AuditTrailExecutionPlan plan) {
+            plan.registerAuditTrailManager(new MockAuditTrailManager());
+        }
     }
 }

@@ -78,7 +78,7 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditLogEndpoint auditLogEndpoint(
-        @Qualifier("auditTrailExecutionPlan")
+        @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
         final ObjectProvider<AuditTrailExecutionPlan> auditTrailExecutionPlan,
         final CasConfigurationProperties casProperties) {
         return new AuditLogEndpoint(auditTrailExecutionPlan, casProperties);

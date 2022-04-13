@@ -23,7 +23,7 @@ public class Pac4jDelegatedAuthenticationGitHubProperties extends Pac4jIdentifia
     /**
      * The requested scope from the provider.
      *  The default scope is {@code user}, i.e. {@code read/write} access to the GitHub user account.
-     *  For a full list of possible scopes, <a href="https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">see this</a>).
+     *  For a full list of possible scopes, <a href="https://docs.github.com/en/developers/apps/building-oauth-apps">see this</a>).
      */
     private String scope;
 

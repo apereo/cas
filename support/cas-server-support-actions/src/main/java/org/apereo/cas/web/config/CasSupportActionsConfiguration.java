@@ -445,7 +445,7 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
         public Action prepareAccountProfileViewAction(
-            @Qualifier("auditTrailExecutionPlan")
+            @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
