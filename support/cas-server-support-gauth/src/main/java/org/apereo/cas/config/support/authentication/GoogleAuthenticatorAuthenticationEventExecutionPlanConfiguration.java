@@ -106,7 +106,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public static class GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration {
 
         private static final BeanCondition CONDITION_SCRATCH_CODE =
-                BeanCondition.on("cas.authn.mfa.gauth.core.scratch-codes.encryption.key").exists();
+            BeanCondition.on("cas.authn.mfa.gauth.core.scratch-codes.encryption.key");
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean

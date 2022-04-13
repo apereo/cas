@@ -176,12 +176,12 @@
         </div>
 
         <script type="text/javascript">
-            (function (material) {
-                document.addEventListener('DOMContentLoaded', function () {
+            (material => {
+                document.addEventListener('DOMContentLoaded', () => {
                     var element = document.getElementById('confirm-reg-dialog');
                     var dialog = material.dialog.MDCDialog.attachTo(element);
                     var btn = document.getElementById('confirm');
-                    btn.addEventListener('click', function (event) {
+                    btn.addEventListener('click', event => {
                         dialog.open();
                         event.preventDefault();
                     }, false);

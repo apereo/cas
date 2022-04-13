@@ -26,13 +26,17 @@
                 $('#source').val(select.value);
             }
 
-            let tooltips = document.querySelector('.mdc-tooltip')
+            let tooltips = document.querySelectorAll('.mdc-tooltip')
             if (tooltips != null) {
-                new mdc.tooltip.MDCTooltip(tooltips);
+                tooltips.forEach(t => {
+                    new material.tooltip.MDCTooltip(t);
+                })
             }
-            let banners = document.querySelector('.mdc-banner')
+            let banners = document.querySelectorAll('.mdc-banner')
             if (banners != null) {
-                new mdc.banner.MDCBanner(banners);
+                banners.forEach(b => {
+                    new material.banner.MDCBanner(b);
+                })
             }
         },
         checkCaps: ev => {

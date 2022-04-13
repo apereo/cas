@@ -85,7 +85,7 @@ public class CasThrottlingConfiguration {
         @ConditionalOnMissingBean(name = "authenticationThrottlingConfigurationContext")
         public ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("auditTrailExecutionPlan")
+            @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
             final CasConfigurationProperties casProperties,
             @Qualifier("throttledRequestResponseHandler")
