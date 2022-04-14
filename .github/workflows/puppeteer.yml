@@ -112,7 +112,7 @@ jobs:
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios255)}}
     name: ${{matrix.scenario}}
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
@@ -155,7 +155,7 @@ jobs:
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
     name: ${{matrix.scenario}}
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
