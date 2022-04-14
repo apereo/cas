@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFAProvider")
+@Tag("DuoSecurity")
 public class DuoSecurityUniversalPromptCredentialTests {
 
     @Test

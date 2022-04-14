@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebflowEvents")
+@Tag("DuoSecurity")
 public class DuoSecurityAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("duoAuthenticationWebflowEventResolver")
