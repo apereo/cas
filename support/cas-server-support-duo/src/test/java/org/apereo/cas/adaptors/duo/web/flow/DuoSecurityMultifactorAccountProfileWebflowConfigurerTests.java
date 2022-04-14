@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuth
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -51,7 +52,7 @@ import static org.mockito.Mockito.*;
  * @since 6.6.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebflowMfaConfig")
+@Tag("DuoSecurity")
 @Getter
 @Import({
     BaseDuoSecurityTests.SharedTestConfiguration.class,
@@ -65,7 +66,7 @@ import static org.mockito.Mockito.*;
 })
 public class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier("accountProfileFlowRegistry")
+    @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
 
     @Autowired

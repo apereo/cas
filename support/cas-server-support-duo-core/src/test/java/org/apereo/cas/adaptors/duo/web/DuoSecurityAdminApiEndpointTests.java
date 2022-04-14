@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, CasCoreHttpConfiguration.class},
     properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("ActuatorEndpoint")
+@Tag("DuoSecurity")
 public class DuoSecurityAdminApiEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();

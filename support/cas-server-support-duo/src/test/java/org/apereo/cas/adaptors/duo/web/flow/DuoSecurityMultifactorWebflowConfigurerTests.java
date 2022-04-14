@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebflowMfaConfig")
+@Tag("DuoSecurity")
 public class DuoSecurityMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     static {
         System.setProperty("DUO_SECURITY_ADMIN_SKEY", UUID.randomUUID().toString());

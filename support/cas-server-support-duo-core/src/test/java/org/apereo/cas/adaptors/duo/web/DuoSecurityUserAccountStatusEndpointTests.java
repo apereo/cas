@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("ActuatorEndpoint")
+@Tag("DuoSecurity")
 public class DuoSecurityUserAccountStatusEndpointTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
