@@ -332,6 +332,7 @@ layout: null
     *   [Overview](/cas/{{ version }}/password_management/Password-Management.html)
     *   [Password History](/cas/{{ version }}/password_management/Password-Management-History.html)
     *   [Forgot Username](/cas/{{ version }}/password_management/Password-Management-ForgotUsername.html)
+    *   [Account Profile](/cas/{{ version }}/registration/Account-Management-Overview.html)
     *   [Account Management](#pwmOptions)
         *   [JSON](/cas/{{ version }}/password_management/Password-Management-JSON.html)
         *   [Groovy](/cas/{{ version }}/password_management/Password-Management-Groovy.html)
@@ -407,6 +408,7 @@ layout: null
 
 * [Account Registration](#acctregistration)
     *   [Overview](/cas/{{ version }}/registration/Account-Registration-Overview.html)
+    *   [Account Profile](/cas/{{ version }}/registration/Account-Management-Overview.html)
     *   [Provisioning](#acctregprovisioning)
         *   [Groovy](/cas/{{ version }}/registration/Account-Registration-Provisioning-Groovy.html)
         *   [REST](/cas/{{ version }}/registration/Account-Registration-Provisioning-REST.html)

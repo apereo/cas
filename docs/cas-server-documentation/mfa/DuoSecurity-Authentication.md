@@ -44,6 +44,10 @@ For this behavior to function, separate unique ids of your own choosing need to 
 provider. Each provider instance is registered with CAS and activated in the authentication
 flows as necessary. The provider id need not be defined if there is only a single Duo instance available.
 
+## Account Profile Management
+
+The integration with Duo Security is able to provide user device registration information to the account profile management feature in CAS. [See this guide](../registration/Account-Management-Overview.html) for better details.
+
 ## User Account Status
 
 If users are unregistered with Duo Security or allowed through via a direct bypass, 

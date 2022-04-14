@@ -1,7 +1,13 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserDevice;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityAdminApiService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -31,18 +37,12 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.mockito.Mockito.*;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
-
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.awaitility.Awaitility.*;
 
 /**
  * This is {@link DuoSecurityMultifactorAccountProfileWebflowConfigurerTests}.
@@ -55,7 +55,7 @@ import static org.awaitility.Awaitility.*;
 @Getter
 @Import({
     BaseDuoSecurityTests.SharedTestConfiguration.class,
-    DuoSecurityMultifactorAccountProfileWebflowConfigurerTests.AccountProfileTestConfiguration.class
+    DuoSecurityMultifactorAccountProfileWebflowConfigurerTests.DuoSecurityTestConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
@@ -84,11 +84,32 @@ public class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         val result = duoMultifactorAuthenticationDeviceProviderAction.execute(context);
         assertNull(result);
-        assertNotNull(WebUtils.getMultifactorAuthenticationRegisteredDevices(context));
+        val devices = WebUtils.getMultifactorAuthenticationRegisteredDevices(context);
+        assertNotNull(devices);
+        assertEquals(devices.size(), 1);
     }
-
-    @TestConfiguration("AccountProfileTestConfiguration")
-    public static class AccountProfileTestConfiguration {
+    @TestConfiguration("DuoSecurityTestConfiguration")
+    public static class DuoSecurityTestConfiguration {
+        @Bean
+        public DuoSecurityMultifactorAuthenticationProvider dummyDuoSecurityProvider() throws Exception {
+            val acct = new DuoSecurityUserAccount(UUID.randomUUID().toString());
+            acct.setDevices(List.of(DuoSecurityUserDevice.builder()
+                .id(UUID.randomUUID().toString())
+                .model("Samsung S20")
+                .name("My Device")
+                .number("1234567890")
+                .platform("Android")
+                .type("Android Phone - Google")
+                .build()));
+            val adminApi = mock(DuoSecurityAdminApiService.class);
+            when(adminApi.getDuoSecurityUserAccount(anyString())).thenReturn(Optional.of(acct));
+            val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
+            val duoService = mock(DuoSecurityAuthenticationService.class);
+            when(duoService.getAdminApiService()).thenReturn(Optional.of(adminApi));
+            when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
+            when(provider.getDuoAuthenticationService()).thenReturn(duoService);
+            return provider;
+        }
 
         @Bean
         public FlowDefinitionRegistry accountProfileFlowRegistry() {

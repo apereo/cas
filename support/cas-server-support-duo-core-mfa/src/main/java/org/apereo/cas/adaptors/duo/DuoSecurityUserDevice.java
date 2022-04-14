@@ -1,10 +1,17 @@
 package org.apereo.cas.adaptors.duo;
 
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,8 +28,14 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @RequiredArgsConstructor
+@SuperBuilder
+@NoArgsConstructor(force = true)
+@Jacksonized
 public class DuoSecurityUserDevice implements Serializable {
     private static final long serialVersionUID = -6631171454545763954L;
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final String name;
 
@@ -41,4 +54,13 @@ public class DuoSecurityUserDevice implements Serializable {
     private String model;
 
     private List<String> capabilities = new ArrayList<>();
+
+    /**
+     * Convert this record into JSON.
+     *
+     * @return the string
+     */
+    public String toJson() {
+        return FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
+    }
 }

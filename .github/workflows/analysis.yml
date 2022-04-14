@@ -180,6 +180,7 @@ jobs:
           - CheckMissingPuppeteerConfig
           - CheckSpringConfigurationConditionals
           - CheckMissingConditionalOnFeature
+          - CheckPuppeteerScenarioScriptConfiguration
     name: ${{ matrix.check }}
     steps:
       - uses: actions/checkout@v3
