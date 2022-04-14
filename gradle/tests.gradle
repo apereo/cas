@@ -17,6 +17,7 @@ enum TestCategories {
     Couchbase,
     CouchDb,
     Delegation,
+    DuoSecurity,
     DynamoDb,
     Ehcache,
     ExpirationPolicy,
