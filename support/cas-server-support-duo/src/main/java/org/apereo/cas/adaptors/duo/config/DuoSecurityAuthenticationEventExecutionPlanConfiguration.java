@@ -10,6 +10,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationPro
 import org.apereo.cas.adaptors.duo.web.DuoSecurityAdminApiEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityPingEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityUserAccountStatusEndpoint;
+import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityMultifactorAccountProfileWebflowConfigurer;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDetermineUserAccountAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityPrepareWebLoginFormAction;
@@ -244,16 +245,40 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .get();
         }
 
+        @ConditionalOnMissingBean(name = "duoMultifactorAccountProfileWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer duoMultifactorAccountProfileWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry accountProfileFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new DuoSecurityMultifactorAccountProfileWebflowConfigurer(flowBuilderServices,
+                    accountProfileFlowRegistry, applicationContext, casProperties,
+                    MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext)))
+                .otherwiseProxy()
+                .get();
+        }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "duoSecurityCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer duoSecurityCasWebflowExecutionPlanConfigurer(
+            @Qualifier("duoMultifactorAccountProfileWebflowConfigurer")
+            final CasWebflowConfigurer duoMultifactorAccountProfileWebflowConfigurer,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("duoMultifactorWebflowConfigurer")
             final CasWebflowConfigurer duoMultifactorWebflowConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> plan -> plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer))
+                .supply(() -> plan -> {
+                    plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer);
+                    plan.registerWebflowConfigurer(duoMultifactorAccountProfileWebflowConfigurer);
+                })
                 .otherwiseProxy()
                 .get();
         }

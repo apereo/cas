@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProviderFactoryTests;
 import org.apereo.cas.adaptors.duo.authn.UniversalPromptDuoSecurityAuthenticationServiceTests;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEventResolverTests;
+import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityMultifactorAccountProfileWebflowConfigurerTests;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityMultifactorWebflowConfigurerTests;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityAuthenticationWebflowActionTests;
@@ -26,6 +27,7 @@ import org.junit.platform.suite.api.Suite;
     DuoSecurityMultifactorAuthenticationProviderFactoryTests.class,
     DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests.class,
     DuoSecurityMultifactorWebflowConfigurerTests.class,
+    DuoSecurityMultifactorAccountProfileWebflowConfigurerTests.class,
     DuoSecurityUniversalPromptPrepareLoginActionTests.class,
     DuoSecurityUniversalPromptValidateLoginActionTests.class,
     UniversalPromptDuoSecurityAuthenticationServiceTests.class,
