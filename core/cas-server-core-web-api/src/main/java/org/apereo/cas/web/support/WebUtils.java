@@ -1969,4 +1969,24 @@ public class WebUtils {
     public static <T extends Serializable> List<T> getWsFederationDelegatedClients(final RequestContext context, final Class<T> clazz) {
         return (List<T>) context.getFlowScope().get("wsfedUrls", List.class);
     }
+
+    /**
+     * Put multifactor authentication registered devices.
+     *
+     * @param requestContext the request context
+     * @param accounts       the accounts
+     */
+    public static void putMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext, final List accounts) {
+        requestContext.getFlowScope().put("multifactorRegisteredAccounts", accounts);
+    }
+
+    /**
+     * Gets multifactor authentication registered devices.
+     *
+     * @param requestContext the request context
+     * @return the multifactor authentication registered devices
+     */
+    public static List getMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
+    }
 }

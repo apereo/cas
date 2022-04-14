@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationPro
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDirectAuthenticationAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityMultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptPrepareLoginAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptValidateLoginAction;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -17,6 +18,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
@@ -61,6 +63,13 @@ public class DuoSecurityConfiguration {
         return new DuoSecurityAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver);
     }
 
+    @ConditionalOnMissingBean(name = "duoMultifactorAuthenticationDeviceProviderAction")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public MultifactorAuthenticationDeviceProviderAction duoMultifactorAuthenticationDeviceProviderAction(
+        final ConfigurableApplicationContext applicationContext) {
+        return new DuoSecurityMultifactorAuthenticationDeviceProviderAction(applicationContext);
+    }
     @ConditionalOnMissingBean(name = "duoUniversalPromptPrepareLoginAction")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

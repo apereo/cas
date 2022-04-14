@@ -50,10 +50,10 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     private static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
 
     public DuoSecurityMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties,
-        final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                   final ConfigurableApplicationContext applicationContext,
+                                                   final CasConfigurationProperties casProperties,
+                                                   final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry,
             applicationContext, casProperties, Optional.empty(), mfaFlowCustomizers);
     }
@@ -61,7 +61,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     @Override
     protected void doInitialize() {
         val duoConfig = casProperties.getAuthn().getMfa().getDuo();
-        var flowRegistryBeans = duoConfig
+        val flowRegistryBeans = duoConfig
             .stream()
             .map(duo -> {
                 val duoFlowRegistry = buildDuoFlowRegistry(duo);
@@ -83,6 +83,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
                 val registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
                 registerMultifactorTrustedAuthentication(registry);
             });
+
     }
 
     private FlowDefinitionRegistry buildDuoFlowRegistry(final DuoSecurityMultifactorAuthenticationProperties properties) {
@@ -112,7 +113,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final DuoSecurityMultifactorAuthenticationProperties p,
-        final DynamicFlowModelBuilder modelBuilder) {
+                                                                   final DynamicFlowModelBuilder modelBuilder) {
         val holder = new DefaultFlowModelHolder(modelBuilder);
         val flowBuilder = new FlowModelFlowBuilder(holder);
         val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
@@ -121,7 +122,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     private static void createDuoFlowStates(final DynamicFlowModelBuilder modelBuilder,
-        final DuoSecurityMultifactorAuthenticationProperties properties) {
+                                            final DuoSecurityMultifactorAuthenticationProperties properties) {
         val states = new ArrayList<AbstractStateModel>();
 
         createDuoInitializeLoginAction(states);
