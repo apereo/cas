@@ -66,7 +66,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     @ElementCollection(targetClass = BigInteger.class)
     @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"))
-    @Column(nullable = false, columnDefinition = "bigint", precision = 255, scale = 0)
+    @Column(nullable = false, columnDefinition = "numeric", precision = 255, scale = 0)
     @Builder.Default
     private List<Number> scratchCodes = new ArrayList<>(0);
 
