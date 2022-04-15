@@ -71,7 +71,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="http://www.ellucian.com/Software/Colleague-WebAdvisor/">
 <img src="https://cloud.githubusercontent.com/assets/1205228/23185912/5c3f2f50-f89a-11e6-8450-6da44a1a9d9d.png" height="48" width="140"></a>
 
-<a href="https://docs.openathens.net/display/public/MD/SAML+interoperability+requirements/">
+<a href="https://docs.openathens.net">
 <img src="https://cloud.githubusercontent.com/assets/1205228/24070833/ffb5f63a-0bd9-11e7-8bda-28301c37188b.png" height="48" width="140"></a>
 
 <a href="http://server.arcgis.com/en/portal/latest/administer/linux/configuring-a-saml-compliant-identity-provider-with-your-portal.htm">

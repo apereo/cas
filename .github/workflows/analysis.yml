@@ -120,8 +120,6 @@ jobs:
     strategy:
       matrix:
         category:
-          - spotbugsMain
-          - spotbugsTest
           - checkstyleMain
           - checkstyleTest
           - checkLicense

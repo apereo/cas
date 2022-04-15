@@ -32,7 +32,7 @@ in your configuration and overlays. This is just to teach you that it exists.</p
 
 ## Account Management
 
-CAS may also allow individual end-users to update certain aspects of their account that relate to password management in a *mini portal* like setup, such as resetting the password or updating security questions, etc. Please [see this guide](../registration/Account-Management-Overview.md) for more details.
+CAS may also allow individual end-users to update certain aspects of their account that relate to password management in a *mini portal* like setup, such as resetting the password or updating security questions, etc. Please [see this guide](../registration/Account-Management-Overview.html) for more details.
 
 ## Configuration
 

@@ -81,7 +81,7 @@ releases, when new branches are created.</p></div>
 Change GitHub Actions workflows to trigger and *only* build the newly-created release branch:
 
 * Modify the `analysis.yml` workflow to run on the newly-created branch. 
-  * Disable `spotBugsMain`, `spotBugsTest` and `checkLicense` tasks.
+  * Disable `checkLicense` tasks.
 * Modify the `validation.yml` workflow to run on the newly-created branch.
 * Modify the `publish.yml` workflow to run on the newly-created branch.
 * Modify the `publish-docs.yml` to point to the newly-created branch.

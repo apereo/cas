@@ -30,7 +30,6 @@ buildscript {
 
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
-        classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "com.github.jengelman.gradle.plugins:shadow:$gradleShadowVersion"
         classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
@@ -139,7 +138,7 @@ dependencyCheck {
     failBuildOnCVSS = 8
     skipTestGroups = true
     skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
-                          'signatures', 'spotbugs', 'spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
+                          'signatures', 'checkstyle', 'errorprone', 'errorproneJavac',
                           'annotationProcessor', 'archives', 'compileOnlyApi ',
                           'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
                           'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor',
@@ -489,9 +488,6 @@ subprojects {
         }
     }
 
-    if (!providers.systemProperty("skipSpotbugs").present && projectShouldBePublished(project)) {
-        apply from: rootProject.file("gradle/spotbugs.gradle")
-    }
 
     if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("checkLicense") }) {
         apply plugin: "com.github.jk1.dependency-license-report"
@@ -536,11 +532,6 @@ subprojects {
 
         annotationProcessor libraries.springindexer
 
-        if (!providers.systemProperty("skipSpotbugs").present && projectShouldBePublished(project)) {
-            spotbugsPlugins libraries.findbugscontrib
-            spotbugsPlugins libraries.findbugssec
-        }
-
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
             errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
@@ -551,7 +542,6 @@ subprojects {
         if (!ci) {
             testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
         }
-        compileOnly libraries.spotbugsannotations
     }
 }
 

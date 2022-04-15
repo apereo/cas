@@ -471,14 +471,6 @@ ext.libraries = [
                 dependencies.create("javax.cache:cache-api:$jcacheVersion") {
                 }
         ],
-        findbugscontrib         : dependencies.create("com.mebigfatguy.sb-contrib:sb-contrib:$spotbugsContribVersion") {
-        },
-        spotbugs                : dependencies.create("com.github.spotbugs:spotbugs:$spotbugsVersion") {
-        },
-        spotbugsannotations     : dependencies.create("com.github.spotbugs:spotbugs-annotations:$spotbugsVersion") {
-        },
-        findbugssec             : dependencies.create("com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion") {
-        },
         groovy                  : [
                 dependencies.create("org.apache.groovy:groovy-jsr223:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")

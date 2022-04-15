@@ -31,7 +31,7 @@ git clone --recursive --depth=1 --single-branch --branch=master git@github.com:a
 # git fetch --unshallow
 ```
 
-For a successful clone, you will need to have [set up SSH keys](https://docs.github.com/en/authentication) for your account on Github.
+For a successful clone, you will need to have set up SSH keys for your account on Github.
 If that is not an option, you may clone the CAS repository under `https` via `https://github.com/apereo/cas.git`.
 
 You may also need to update submodules linked to the CAS repository. Newer versions of Git will do this automatically, 
@@ -69,7 +69,6 @@ The following commandline boolean flags are supported by the build and can be pa
 | `remoteDebuggingSuspend`          | Set to `true` to suspend JVM remote debugging until the debugger attaches to the running session.
 | `verbose`                         | Control the logging level for tests and output additional data about passing/failing/skipped tests.
 | `skipCheckstyle`                  | Skip running Checkstyle checks.
-| `skipSpotbugs`                    | Skip running Spotbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `skipNestedConfigMetadataGen`     | Skip generating configuration metadata for nested properties and generic collections.
 | `skipSonarqube`                   | Ignore reporting results to Sonarqube.
