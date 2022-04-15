@@ -181,9 +181,15 @@ public interface CasFeatureModule {
          */
         Events,
         /**
-         * Account management and signup.
+         * Account management and profile.
          */
         AccountManagement,
+
+        /**
+         * Account management and signup.
+         */
+        AccountRegistration,
+
         /**
          * AUP feature.
          */

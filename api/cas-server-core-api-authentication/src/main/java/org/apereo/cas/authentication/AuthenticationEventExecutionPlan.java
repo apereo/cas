@@ -29,8 +29,9 @@ public interface AuthenticationEventExecutionPlan {
      * Register authentication handler.
      *
      * @param handler the handler
+     * @return true/false
      */
-    void registerAuthenticationHandler(AuthenticationHandler handler);
+    boolean registerAuthenticationHandler(AuthenticationHandler handler);
 
     /**
      * Register authentication handlers.
@@ -109,8 +110,9 @@ public interface AuthenticationEventExecutionPlan {
      *
      * @param handler           the handler
      * @param principalResolver the principal resolver
+     * @return true if handler was able to successfully register itself, otherwise false.
      */
-    void registerAuthenticationHandlerWithPrincipalResolver(AuthenticationHandler handler, PrincipalResolver principalResolver);
+    boolean registerAuthenticationHandlerWithPrincipalResolver(AuthenticationHandler handler, PrincipalResolver principalResolver);
 
     /**
      * Register authentication handlers with principal resolver.

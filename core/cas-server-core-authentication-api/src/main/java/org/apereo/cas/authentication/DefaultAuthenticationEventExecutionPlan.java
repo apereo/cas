@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.NonNull;
@@ -46,8 +47,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
     @Override
-    public void registerAuthenticationHandler(final AuthenticationHandler handler) {
-        registerAuthenticationHandlerWithPrincipalResolver(handler, null);
+    public boolean registerAuthenticationHandler(final AuthenticationHandler handler) {
+        return registerAuthenticationHandlerWithPrincipalResolver(handler, null);
     }
 
     @Override
@@ -111,19 +112,30 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public void registerAuthenticationHandlerWithPrincipalResolver(final AuthenticationHandler handler,
-                                                                   final PrincipalResolver principalResolver) {
-        if (BeanSupplier.isNotProxy(handler)) {
+    public boolean registerAuthenticationHandlerWithPrincipalResolver(final AuthenticationHandler handler,
+                                                                      final PrincipalResolver principalResolver) {
+        return FunctionUtils.doIf(BeanSupplier.isNotProxy(handler), () -> {
             LOGGER.trace("Registering handler [{}] with [{}] principal resolver into the execution plan",
                 handler.getName(), Optional.ofNullable(principalResolver).map(PrincipalResolver::getName).orElse("no"));
-            this.authenticationHandlerPrincipalResolverMap.put(handler, principalResolver);
-        }
+
+            if (authenticationHandlerPrincipalResolverMap.containsKey(handler)) {
+                val result = authenticationHandlerPrincipalResolverMap.get(handler);
+                LOGGER.error("Authentication execution plan has found an existing handler [{}]. "
+                             + "Attempts to register a new authentication handler [{}] may lead to unpredictable results. "
+                             + "Please make sure all authentication handlers are uniquely defined in the CAS configuration.",
+                    result, handler);
+                return false;
+            }
+            authenticationHandlerPrincipalResolverMap.put(handler, principalResolver);
+            return true;
+        }, () -> false).get();
     }
 
     @Override
     public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
                                                                     final PrincipalResolver principalResolver) {
-        handlers.stream().filter(BeanSupplier::isNotProxy).forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
+        handlers.stream().filter(BeanSupplier::isNotProxy)
+            .forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
     }
 
     @Override

@@ -28,7 +28,7 @@ public class DefaultMultifactorAuthenticationFailureModeEvaluator implements Mul
         final RegisteredService service,
         final MultifactorAuthenticationProvider provider) {
         var failureMode = casProperties.getAuthn().getMfa().getCore().getGlobalFailureMode();
-        LOGGER.debug("Setting failure mode to [{}] based on Global Policy", failureMode);
+        LOGGER.debug("Setting failure mode to [{}] based on global policy", failureMode);
 
         if (provider.getFailureMode() != MultifactorAuthenticationProviderFailureModes.UNDEFINED) {
             LOGGER.debug("Provider failure mode [{}] overriding global mode [{}]", provider.getFailureMode(), failureMode);
