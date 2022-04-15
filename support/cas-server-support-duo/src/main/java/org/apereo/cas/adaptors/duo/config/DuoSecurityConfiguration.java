@@ -28,6 +28,7 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,6 +37,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -133,15 +135,19 @@ public class DuoSecurityConfiguration {
 
     @Configuration(value = "DuoSecurityAccountProfileWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement)
-    @ConditionalOnBean(name = CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class DuoSecurityAccountProfileWebflowConfiguration {
         @ConditionalOnMissingBean(name = "duoMultifactorAuthenticationDeviceProviderAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationDeviceProviderAction duoMultifactorAuthenticationDeviceProviderAction(
             final ConfigurableApplicationContext applicationContext) {
-            return new DuoSecurityMultifactorAuthenticationDeviceProviderAction(applicationContext);
+            return BeanSupplier.of(MultifactorAuthenticationDeviceProviderAction.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new DuoSecurityMultifactorAuthenticationDeviceProviderAction(applicationContext))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "duoMultifactorAccountProfileWebflowConfigurer")

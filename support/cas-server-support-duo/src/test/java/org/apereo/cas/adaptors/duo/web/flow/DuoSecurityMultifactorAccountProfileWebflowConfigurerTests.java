@@ -55,10 +55,11 @@ import static org.mockito.Mockito.*;
 @Tag("DuoSecurity")
 @Getter
 @Import({
-    BaseDuoSecurityTests.SharedTestConfiguration.class,
-    DuoSecurityMultifactorAccountProfileWebflowConfigurerTests.DuoSecurityTestConfiguration.class
+    DuoSecurityMultifactorAccountProfileWebflowConfigurerTests.DuoSecurityTestConfiguration.class,
+    BaseDuoSecurityTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {
+    "CasFeatureModule.AccountManagement.enabled=true",
     "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
     "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
     "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",

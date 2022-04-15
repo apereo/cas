@@ -67,7 +67,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends Ba
                     .type(device.getType())
                     .model(model)
                     .number(device.getNumber())
-                    .name(StringUtils.defaultString(device.getName(), model))
+                    .name(StringUtils.defaultIfBlank(device.getName(), model))
                     .payload(device.toJson())
                     .build();
             })
