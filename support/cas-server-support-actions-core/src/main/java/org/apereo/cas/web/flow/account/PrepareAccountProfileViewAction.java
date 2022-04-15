@@ -91,7 +91,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
             .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed).reversed())
             .map(AccountAuditActionContext::new)
             .collect(Collectors.toList());
-        requestContext.getFlowScope().put("auditLog", auditLog);
+        FunctionUtils.doIf(!auditLog.isEmpty(), u -> requestContext.getFlowScope().put("auditLog", auditLog)).accept(auditLog);
     }
 
     @Getter
