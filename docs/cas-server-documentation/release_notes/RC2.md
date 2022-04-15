@@ -142,6 +142,7 @@ This should be very similar for other databases: you need to migrate the column 
 - TextMagic
 - Apache Tomcat
 - Nimbus
+- OpenSAML
 - Hibernate
 - Spring Data
 - Spring

@@ -4,6 +4,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +34,6 @@ import java.util.List;
 @Jacksonized
 public class DuoSecurityUserDevice implements Serializable {
     private static final long serialVersionUID = -6631171454545763954L;
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -53,6 +53,7 @@ public class DuoSecurityUserDevice implements Serializable {
 
     private String model;
 
+    @Builder.Default
     private List<String> capabilities = new ArrayList<>();
 
     /**
