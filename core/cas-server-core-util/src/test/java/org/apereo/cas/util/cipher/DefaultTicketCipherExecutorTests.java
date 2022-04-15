@@ -1,5 +1,7 @@
 package org.apereo.cas.util.cipher;
 
+import org.apereo.cas.util.EncodingUtils;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -68,5 +70,20 @@ public class DefaultTicketCipherExecutorTests {
         val cipher3 = new DefaultTicketCipherExecutor(encryptionKey, signingKey,
             "AES", 512, 16, "webflow");
         assertEquals("ST-1234567890", new String(cipher3.decode(encoded), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void verifyCas63BackwardCompatibility() {
+        val encodedByCas63 = "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LkViVE0wX0ZzMnhfam9tTzNuMGtpcXU4ODhoZ1JZZlR5bUE5bkRHOGh3aWZCazVuND"
+                + "VtTXVmZy40ZUNYYTluRFl3NnJmeEtHU1Y0c2laajh0aG1Sc1BUd0ZDa3NjMXJRYW8tSGlGVGJ6V1lMcXF4Y080TjVxNENqR3IwM0VYZGNOc3V1cV9ISTRidGVsdw==";
+        val encoded = EncodingUtils.decodeBase64(encodedByCas63);
+
+        val signingKey = "RDt6YZHZIH7jUv3nBNIsUMp5Nbs5hblVhK9YYI44KyOXSP5nxpHXD67mH2_7DgklQAPBUcr7WNuOVoeqUFqL6A";
+        val encryptionKey = "UdLCpnNxmFOviC3M-kDvvQ";
+        val cipherCas63 = new DefaultTicketCipherExecutor(encryptionKey, signingKey,
+                "AES", 512, 16, "cas63");
+
+        val decoded = cipherCas63.decode(encoded);
+        assertEquals("CAS_SERVER_VERSION_6.3.X", new String(decoded, StandardCharsets.UTF_8));
     }
 }
