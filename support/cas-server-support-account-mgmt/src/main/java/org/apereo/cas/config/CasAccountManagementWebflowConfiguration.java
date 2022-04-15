@@ -78,7 +78,7 @@ import java.util.stream.Collectors;
  */
 @Configuration(value = "CasAccountManagementWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountRegistration)
 public class CasAccountManagementWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "accountMgmtCipherExecutor")
@@ -176,7 +176,7 @@ public class CasAccountManagementWebflowConfiguration {
     @ConditionalOnClass(PrincipalProvisioner.class)
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, module = "scim")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "scim")
     public static class CasAccountManagementScimProvisioningConfiguration {
         @ConditionalOnMissingBean(name = "scimAccountRegistrationProvisionerConfigurer")
         @Bean
@@ -312,7 +312,7 @@ public class CasAccountManagementWebflowConfiguration {
 
     }
 
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, module = "captcha")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "captcha")
     @Configuration(value = "CasAccountManagementRegistrationCaptchaConfiguration", proxyBeanMethods = false)
     public static class CasAccountManagementRegistrationCaptchaConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.account-registration.google-recaptcha.enabled").isTrue();
