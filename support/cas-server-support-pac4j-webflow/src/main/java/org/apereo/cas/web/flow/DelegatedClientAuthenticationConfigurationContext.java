@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
+import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
@@ -60,6 +61,8 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final SessionStore sessionStore;
 
+    private final DelegatedClientNameExtractor delegatedClientNameExtractor;
+    
     private final DelegatedAuthenticationAccessStrategyHelper delegatedAuthenticationAccessStrategyHelper;
 
     private final CasConfigurationProperties casProperties;
