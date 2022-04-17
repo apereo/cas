@@ -51,6 +51,11 @@ cas.version=6.6.0-RC3
 The following items are new improvements and enhancements presented in this release.
 
 ## Other Stuff
+    
+- The codebase for the WebAuthn helper library is now merged into CAS as part of its core [WebAuthn feature](../mfa/FIDO2-WebAuthn-Authentication.html).
 
 ## Library Upgrades
+
+- Pac4j
+- Ldaptive
 

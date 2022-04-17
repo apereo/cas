@@ -1,0 +1,36 @@
+{
+  "identifier": "ccb72cf9-a408-4f0a-8fa1-3cf9f7029d01",
+  "version": 2,
+  "vendorInfo": {
+    "url": "https://yubico.com",
+    "imageUrl": "https://developers.yubico.com/U2F/Images/yubico.png",
+    "name": "Yubico"
+  },
+  "trustedCertificates": [
+    "-----BEGIN CERTIFICATE-----\nMIICrzCCAZegAwIBAgIESFs9tjANBgkqhkiG9w0BAQsFADAhMR8wHQYDVQQDDBZZ\ndWJpY28gRklETyBQcmV2aWV3IENBMB4XDTE4MDQxMjEwNTcxMFoXDTE4MTIzMTEw\nNTcxMFowbzELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UE\nCwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEoMCYGA1UEAwwfWXViaWNvIFUy\nRiBFRSBTZXJpYWwgMTIxMzkzOTEyNjBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IA\nBPss3TBDKMVySlDM5vYLrX0nqRtZ4eZvKXuJydQ9wrLHeIm08P+dAijLlG384BsZ\nWJtngEqsl38oGJzNsyV0yiijbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEu\nNDE0ODIuMS42MBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIE\nEPigEfOMCk0VgAYXER+e3H0wDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOC\nAQEAMvPkvVjXQiuvSZmGCB8NqTvGqhxyEfkoU+vz63PaaTsG3jEzjl0C7PZ26VxC\nvqWPJdM3P3e7Kp18sj4RjEHUmkya2PPipOwBd3p0qMQSQ8MeziCPLQ9uvGGb4YSh\ncvaprMv4c21b4piza+znHneNCmmq+ZS4Y23o+vYv085/BEwyLPcmPjSZ5qWysCq7\nrVvZ7OWwcU1zu5RhSZyUKl8dzK9lAzs5OdRH2fzEewsW2OkB/Ow/jBvAxqwLXXTH\nuwMFaRfpmBoZuQlcofSrnwJ8KA+K+e0dKTz2zC8EbZrWYrSpbrHKyqxeBT6DkUd8\nH4tgAd5lOr/yqrtVmIaRfq07Ng==\n-----END CERTIFICATE-----",
+    "-----BEGIN CERTIFICATE-----\nMIICrTCCAZWgAwIBAgIEBa/dtDANBgkqhkiG9w0BAQsFADAhMR8wHQYDVQQDDBZZ\ndWJpY28gRklETyBQcmV2aWV3IENBMB4XDTE4MDQxMjEwNTcxMFoXDTE4MTIzMTEw\nNTcxMFowbTELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UE\nCwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEmMCQGA1UEAwwdWXViaWNvIFUy\nRiBFRSBTZXJpYWwgOTU0MTE2MzYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAS4\nXJ8XTq5ZLqR05/o6vl68cQAO0W1ixksk7W7/3Md5Tc6mO8a3f8bzdUPdsxjWcmn3\n5V2Yp4TiWEodvn9096V+o2wwajAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQx\nNDgyLjEuNjATBgsrBgEEAYLlHAIBAQQEAwIEMDAhBgsrBgEEAYLlHAEBBAQSBBDG\nAC0hNY38QIVPmuXQ3Z5UMAwGA1UdEwEB/wQCMAAwDQYJKoZIhvcNAQELBQADggEB\nAJVH6elCSlLot2M9EUs+6aTrNxHeK4KbUUjaH5lNdOx8syIE03lrmhYQ4UYuMml/\newq7zFA2M5tKzLeGagyjWwyCgp2SNHkrpoO4I7oMLDgais+BTESKde/JVzDuNf2+\n4QD2AXb4atVYmAKvTPASSYgT8wFWL4oKYvmCBBOQajM0qnDJODpkFcm6jM0FgQnK\nQonZfhT64hO89Z6QdCr2CfdBTYTRR8VGrePbGSxPauJTU2jh6poFZ/ALoSLceH4k\nCuw2YIZLbBcd/NMWc8rvMw3ivGVhhO0yPh9Jzq21b3cqrayRuQMf68UxZdL2g3BM\nDKRNTKjBWDlJG+YB/48qTJE=\n-----END CERTIFICATE-----"
+  ],
+  "devices": [
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.6",
+      "displayName": "YubiKey Preview",
+      "transports": 4,
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.41482.1.6"
+          }
+        },
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.41482.2",
+            "value": "1.3.6.1.4.1.41482.1.6"
+          }
+        }
+      ]
+    }
+  ]
+}
