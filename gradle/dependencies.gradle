@@ -92,6 +92,9 @@ ext.libraries = [
                 }
         ],
         webauthn                    : [
+                dependencies.create("com.upokecenter:cbor:$cborVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
                 dependencies.create("com.yubico:webauthn-server-core:$yubicoWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
@@ -128,13 +131,6 @@ ext.libraries = [
                     exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
                     exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
                     exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
-                },
-                dependencies.create("org.apereo:cas-server-webauthn-helper:$casWebauthnVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
                 }
         ],
         semver                  : [
@@ -3765,9 +3761,6 @@ ext.libraries = [
                 dependencies.create("org.webjars:es5-shim:$es5ShimVersion") {
                 },
                 dependencies.create("org.webjars.npm:css-vars-ponyfill:$cssVarsPonyfillVersion") {
-                },
-                dependencies.create("com.upokecenter:cbor:$cborVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("org.webjars.npm:text-encoding:$textEncodingVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

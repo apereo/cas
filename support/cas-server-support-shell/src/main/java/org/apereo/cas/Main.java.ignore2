@@ -58,7 +58,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        final var total = new AtomicInteger();
+        vartotal = new AtomicInteger();
 
         Files.walk(Paths.get("/Users/Misagh/Workspace/GitWorkspace/cas-server"))
             .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Configuration.java")
