@@ -1,9 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -12,8 +10,6 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.History;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 import java.util.HashMap;
 
@@ -25,7 +21,6 @@ import java.util.HashMap;
  * @since 4.2
  */
 public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    private static final String DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE = "checkDelegatedAuthnFailureDecision";
 
     public DelegatedAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -84,7 +79,8 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_RESUME, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
-        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE));
+        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+            CasWebflowConstants.DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_STOP, CasWebflowConstants.STATE_ID_STOP_WEBFLOW));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_WARN));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET));
@@ -97,20 +93,13 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
      * @param flow the flow
      */
     protected void createStopWebflowViewState(final Flow flow) {
-        createDecisionState(flow, DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE, "flowScope.unauthorizedRedirectUrl != null",
+        createDecisionState(flow, CasWebflowConstants.DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE,
+            "flowScope.unauthorizedRedirectUrl != null",
             CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
 
         val stopWebflowState = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW);
-        stopWebflowState.getEntryActionList().add(new BaseCasWebflowAction() {
-            @Override
-            protected Event doExecute(final RequestContext requestContext) {
-                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-                val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-                val mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, response.getStatus());
-                mv.ifPresent(modelAndView -> modelAndView.getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v)));
-                return null;
-            }
-        });
+        stopWebflowState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_FAILURE));
+
         createTransitionForState(stopWebflowState, CasWebflowConstants.TRANSITION_ID_RETRY, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY);
         val retryState = createEndState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY);
         retryState.setFinalResponseAction(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY));
@@ -139,7 +128,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
     private void createRedirectToProviderViewState(final Flow flow) {
         var factory = createExternalRedirectViewFactory("requestScope."
-            + DelegatedClientAuthenticationDynamicDiscoveryExecutionAction.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL);
+                                                        + DelegatedClientAuthenticationDynamicDiscoveryExecutionAction.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL);
         createViewState(flow, CasWebflowConstants.STATE_ID_REDIRECT_TO_DELEGATED_AUTHN_PROVIDER_VIEW, factory);
     }
 }

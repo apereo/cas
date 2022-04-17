@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationExceptio
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
+import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -18,7 +19,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
@@ -29,15 +29,12 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * This class represents an action to put at the beginning of the webflow.
@@ -60,44 +57,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
-    public DelegatedClientAuthenticationAction(final DelegatedClientAuthenticationConfigurationContext context,
-                                               final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager) {
+    private final DelegatedClientAuthenticationFailureEvaluator failureEvaluator;
+
+    public DelegatedClientAuthenticationAction(
+        final DelegatedClientAuthenticationConfigurationContext context,
+        final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager,
+        final DelegatedClientAuthenticationFailureEvaluator failureEvaluator) {
         super(context.getInitialAuthenticationAttemptWebflowEventResolver(),
             context.getServiceTicketRequestWebflowEventResolver(),
             context.getAdaptiveAuthenticationPolicy());
         this.configContext = context;
+        this.failureEvaluator = failureEvaluator;
         this.delegatedClientAuthenticationWebflowManager = delegatedClientAuthenticationWebflowManager;
-    }
-
-    /**
-     * Determine if request has errors.
-     *
-     * @param request the request
-     * @param status  the status
-     * @return the optional model and view, if request is an error.
-     */
-    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
-        val params = request.getParameterMap();
-        if (Stream.of("error", "error_code", "error_description", "error_message").anyMatch(params::containsKey)) {
-            val model = new HashMap<String, Object>();
-            if (params.containsKey("error_code")) {
-                model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
-            } else {
-                model.put("code", status);
-            }
-            model.put("error", StringEscapeUtils.escapeHtml4(request.getParameter("error")));
-            model.put("reason", StringEscapeUtils.escapeHtml4(request.getParameter("error_reason")));
-            if (params.containsKey("error_description")) {
-                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_description")));
-            } else if (params.containsKey("error_message")) {
-                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
-            }
-            model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
-            model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
-            LOGGER.debug("Delegation request has failed. Details are [{}]", model);
-            return Optional.of(new ModelAndView(CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW, model));
-        }
-        return Optional.empty();
     }
 
     /**
@@ -135,7 +106,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 configContext.getCentralAuthenticationService().deleteTicket(tgt);
             }
 
-            if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
+            if (failureEvaluator.evaluate(request, response.getStatus()).isPresent()) {
                 throw new IllegalArgumentException("Delegated authentication has failed with client " + clientName);
             }
 
@@ -171,7 +142,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @return the client name
      */
     protected String retrieveClientName(final WebContext webContext) {
-        return webContext.getRequestParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER).orElse(null);
+        return configContext.getDelegatedClientNameExtractor().extract(webContext).orElse(StringUtils.EMPTY);
     }
 
     /**

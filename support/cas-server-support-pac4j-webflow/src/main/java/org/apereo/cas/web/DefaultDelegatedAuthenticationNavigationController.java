@@ -47,10 +47,9 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
      */
     @GetMapping(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT)
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
-        var clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
-        if (StringUtils.isBlank(clientName)) {
-            clientName = (String) request.getAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
-        }
+        val webContext = new JEEContext(request, response);
+        val clientName = getConfigurationContext().getDelegatedClientNameExtractor().extract(webContext)
+            .orElseGet(() -> (String) request.getAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER));
 
         try {
             if (StringUtils.isBlank(clientName)) {
@@ -62,7 +61,6 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
             }
             val client = IndirectClient.class.cast(clientResult.get());
             client.init();
-            val webContext = new JEEContext(request, response);
             val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
 
             return getResultingView(client, webContext, ticket);

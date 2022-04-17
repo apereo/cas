@@ -1067,6 +1067,11 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * Action to check if delegated authentication has failed.
+     */
+    String DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE = "checkDelegatedAuthnFailureDecision";
+
+    /**
      * Action to check if login should redirect to password reset subflow.
      */
     String DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
@@ -1291,6 +1296,11 @@ public interface CasWebflowConstants {
      * Action id `delegatedAuthenticationAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
+     * Action id `delegatedAuthenticationFailureAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_FAILURE = "delegatedAuthenticationFailureAction";
 
     /**
      * Action id `delegatedAuthenticationClientLogoutAction`.
