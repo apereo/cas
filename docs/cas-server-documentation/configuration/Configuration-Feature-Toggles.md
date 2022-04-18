@@ -30,9 +30,17 @@ identify all of them. This can be done using the following feature toggles:
                 <tr>
                     <td><code data-bs-toggle="tooltip" 
                         data-bs-placment="top" data-bs-html="true" 
-                        title="{{ cfg.type }}">{{ cfg.feature }}</code>
+                        title="<code>{{ cfg.type }}</code>">{{ cfg.feature }}</code>
                     </td>
-                    <td><code>{{ cfg.property }}</code></td>
+                    <td>
+                        {% unless cfg.enabledByDefault %}
+                        <i class="fa fa-info-circle"  data-bs-toggle="tooltip" 
+                            data-bs-placment="top" data-bs-html="true" 
+                            title="If selected, this configuration feature toggle must be enabled explicitly and defined in CAS configuration sources.">
+                        </i>
+                        {% endunless %}
+                        <code>{{ cfg.property }}</code>
+                    </td>
                 </tr>
             {% endfor %}
         {% endfor %}

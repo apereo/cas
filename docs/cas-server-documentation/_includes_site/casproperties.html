@@ -39,10 +39,10 @@
     function enablePropertiesTab{{ casPropertiesRandomNumber }}(link) {
         // console.log(link);
         let id = new URL(link.href).hash;
-        console.log("Tab link selected " + id);
+        console.log(`Tab link selected ${id}`);
         $("#casPropertiesTabContent{{casPropertiesRandomNumber}} .properties-tab").removeClass("show").removeClass("active");
-        $(".modal-body " + id).addClass("show").addClass("active");
-        $(".modal-body " + id + " table tr").css("display", "block");
+        $(`.modal-body ${id}`).addClass("show").addClass("active");
+        $(`.modal-body ${id} table tr`).css("display", "block");
     }
 
     window.addEventListener('load', (event) => {
@@ -50,9 +50,9 @@
         $("ul#navPillsMenus{{ casPropertiesRandomNumber }}").css("display", "")
             .show().addClass("show").addClass("active");
 
-        setTimeout(function() {
+        setTimeout(() => {
             let selector = "ul#navPillsMenus{{ casPropertiesRandomNumber }} li a:visible:first";
-            console.log("Activating link " + selector + ": " + $(selector));
+            console.log(`Activating link ${selector}: ${$(selector)}`);
             $(selector).show().addClass("show").addClass("active");
         }, 1000);
     });

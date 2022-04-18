@@ -483,7 +483,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
-
                 if (applicationContext.containsBean(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)) {
                     val factory = applicationContext.getBean(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY, SAMLMessageStoreFactory.class);
                     cfg.setSamlMessageStoreFactory(factory);
