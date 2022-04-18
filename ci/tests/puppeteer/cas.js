@@ -183,6 +183,10 @@ exports.newPage = async (browser) => {
     await page.setDefaultNavigationTimeout(0);
     // await page.setRequestInterception(true);
     await page.bringToFront();
+    page
+        .on('console', message =>
+            this.logr(`${message.type().substr(0, 3).toUpperCase()} ${message.text()}`))
+        .on('pageerror', ({ message }) => this.logr(message));
     return page;
 }
 
