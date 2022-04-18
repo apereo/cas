@@ -6,7 +6,7 @@ function randomWord() {
         "relaxed", "romantic", "sad", "serene", "sharp", "quirky", "scared",
         "sleepy", "stoic", "strange", "suspicious", "sweet", "tender", "thirsty",
         "trusting", "unruffled", "upbeat", "vibrant", "vigilant", "vigorous",
-        "wizardly", "wonderful", "youthful", "zealous", "zen"]
+        "wizardly", "wonderful", "youthful", "zealous", "zen"];
 
     let names = ["austin", "borg", "bohr", "wozniak", "bose", "wu", "wing", "wilson",
         "boyd", "guss", "jobs", "hawking", "hertz", "ford", "solomon", "spence",
@@ -14,11 +14,11 @@ function randomWord() {
         "darwin", "buck", "brown", "benz", "boss", "allen", "gates", "bose",
         "edison", "einstein", "feynman", "ferman", "franklin", "lincoln", "jefferson",
         "mandela", "gandhi", "curie", "newton", "tesla", "faraday", "bell",
-        "aristotle", "hubble", "nobel", "pascal", "washington", "galileo"]
+        "aristotle", "hubble", "nobel", "pascal", "washington", "galileo"];
 
     let n1 = things[Math.floor(Math.random() * things.length)];
     let n2 = names[Math.floor(Math.random() * names.length)];
-    return `${n1}_${n2}`
+    return `${n1}_${n2}`;
 }
 
 function copyClipboard(element) {
