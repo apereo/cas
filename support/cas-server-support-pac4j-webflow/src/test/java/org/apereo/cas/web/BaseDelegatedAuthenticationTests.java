@@ -85,14 +85,21 @@ public abstract class BaseDelegatedAuthenticationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         ThymeleafAutoConfiguration.class,
+        MockMvcAutoConfiguration.class,
+        ErrorMvcAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
     @EnableWebMvc
     @Import({
-        WebMvcAutoConfiguration.class,
-        MockMvcAutoConfiguration.class,
-        ErrorMvcAutoConfiguration.class,
+        DelegatedAuthenticationWebflowTestConfiguration.class,
+        Pac4jDelegatedAuthenticationConfiguration.class,
+        Pac4jAuthenticationEventExecutionPlanConfiguration.class,
+        Pac4jDelegatedAuthenticationSerializationConfiguration.class,
+        DelegatedAuthenticationDynamicDiscoverySelectionConfiguration.class,
+        DelegatedAuthenticationWebflowConfiguration.class,
+
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
@@ -120,13 +127,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasThymeleafConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreAuditConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        DelegatedAuthenticationWebflowTestConfiguration.class,
-        Pac4jDelegatedAuthenticationConfiguration.class,
-        Pac4jAuthenticationEventExecutionPlanConfiguration.class,
-        Pac4jDelegatedAuthenticationSerializationConfiguration.class,
-        DelegatedAuthenticationWebflowConfiguration.class,
-        DelegatedAuthenticationDynamicDiscoverySelectionConfiguration.class
+        CasWebApplicationServiceFactoryConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
