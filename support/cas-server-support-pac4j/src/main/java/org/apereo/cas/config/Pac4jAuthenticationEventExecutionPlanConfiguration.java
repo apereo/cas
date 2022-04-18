@@ -20,6 +20,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.RefreshableDelegatedClients;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
@@ -218,6 +219,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanClientFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jAuthenticationEventExecutionPlanClientFactoryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "pac4jDelegatedClientNameExtractor")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DelegatedClientNameExtractor pac4jDelegatedClientNameExtractor() {
+            return DelegatedClientNameExtractor.fromHttpRequest();
+        }
         @Bean
         @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

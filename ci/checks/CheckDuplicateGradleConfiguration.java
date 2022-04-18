@@ -32,7 +32,7 @@ public class CheckDuplicateGradleConfiguration {
     }
 
     protected static void checkPattern(final String arg) throws IOException {
-        final var failBuild = new AtomicBoolean(false);
+        var failBuild = new AtomicBoolean(false);
         var pattern = Pattern.compile("implementation\\s+(project.+)");
         var testPattern = Pattern.compile("testImplementation\\s+(project.+)");
 

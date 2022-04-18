@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator;
 import org.apereo.cas.services.UnauthorizedServiceException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,17 +22,20 @@ import java.util.Map;
  */
 @Slf4j
 public class DelegatedAuthenticationErrorViewResolver extends DefaultErrorViewResolver {
+    private final DelegatedClientAuthenticationFailureEvaluator failureEvaluator;
 
     public DelegatedAuthenticationErrorViewResolver(final ApplicationContext applicationContext,
-                                                    final WebProperties.Resources resources) {
+                                                    final WebProperties.Resources resources,
+                                                    final DelegatedClientAuthenticationFailureEvaluator failureEvaluator) {
         super(applicationContext, resources);
+        this.failureEvaluator = failureEvaluator;
     }
 
     @Override
     public ModelAndView resolveErrorView(final HttpServletRequest request,
                                          final HttpStatus status, final Map<String, Object> map) {
 
-        val mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, status.value());
+        val mv = failureEvaluator.evaluate(request, status.value());
         val exception = request.getAttribute("javax.servlet.error.exception");
         if (exception != null) {
             val cause = ((Throwable) exception).getCause();

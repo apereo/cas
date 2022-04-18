@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticatio
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.core.ticket.RememberMeAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -29,6 +30,19 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Authentication")
 public class DefaultAuthenticationEventExecutionPlanTests {
+    @Test
+    public void verifyDuplicateHandlers() throws Exception {
+        val h1 = new AcceptUsersAuthenticationHandler("Handler1");
+        val h2 = new AcceptUsersAuthenticationHandler(h1.getName());
+        assertEquals(h1, h2);
+        
+        val plan = new DefaultAuthenticationEventExecutionPlan();
+        assertTrue(plan.registerAuthenticationHandler(h1));
+        assertFalse(plan.registerAuthenticationHandler(h2));
+        h2.setState(AuthenticationHandlerStates.STANDBY);
+        assertTrue(plan.registerAuthenticationHandler(h2));
+    }
+
     @Test
     public void verifyOperation() {
         val context = PrincipalResolutionContext.builder()

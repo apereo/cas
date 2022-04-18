@@ -14,7 +14,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -69,10 +68,9 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                     .anyMatch(extensions -> !extensions.getUnknownXMLObjects(Asynchronous.DEFAULT_ELEMENT_NAME).isEmpty()));
             }
             return logout.isSendLogoutResponse()
-                && samlRegisteredService != null
-                && samlRegisteredService.isLogoutResponseEnabled()
-                && sloRequest != null
-                && !async.get();
+                   && samlRegisteredService.isLogoutResponseEnabled()
+                   && sloRequest != null
+                   && !async.get();
         }
         return false;
     }
@@ -130,9 +128,9 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                                                         final SamlRegisteredService samlRegisteredService,
                                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
-        if (sloService != null) {
-            produceSamlLogoutResponseRedirect(adaptor, sloService, context, samlRegisteredService, samlLogoutRequest);
-        }
+        FunctionUtils.doIfNotNull(sloService,
+            s -> FunctionUtils.doUnchecked(u -> produceSamlLogoutResponseRedirect(adaptor,
+                sloService, context, samlRegisteredService, samlLogoutRequest)));
     }
 
     /**
@@ -146,10 +144,9 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
     protected void handleSingleLogoutForPostBinding(final RequestContext context, final LogoutRequest samlLogoutRequest,
                                                     final SamlRegisteredService samlRegisteredService,
                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        var sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI);
-        if (sloService != null) {
-            produceSamlLogoutResponsePost(adaptor, sloService, context, samlRegisteredService, samlLogoutRequest);
-        }
+        val sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI);
+        FunctionUtils.doIfNotNull(sloService, s -> FunctionUtils.doUnchecked(u -> produceSamlLogoutResponsePost(adaptor,
+            sloService, context, samlRegisteredService, samlLogoutRequest)));
     }
 
     /**
@@ -160,13 +157,13 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
      * @param context           the context
      * @param registeredService the registered service
      * @param logoutRequest     the logout request
+     * @throws Exception the exception
      */
-    @SneakyThrows
     protected void produceSamlLogoutResponseRedirect(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                      final SingleLogoutService sloService,
                                                      final RequestContext context,
                                                      final SamlRegisteredService registeredService,
-                                                     final LogoutRequest logoutRequest) {
+                                                     final LogoutRequest logoutRequest) throws Exception {
         val logoutResponse = buildSamlLogoutResponse(adaptor, sloService, context, registeredService, logoutRequest);
         val location = StringUtils.isBlank(sloService.getResponseLocation())
             ? sloService.getLocation()
@@ -191,13 +188,13 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
      * @param context           the context
      * @param registeredService the registered service
      * @param logoutRequest     the logout request
+     * @throws Exception the exception
      */
-    @SneakyThrows
     protected void produceSamlLogoutResponsePost(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                  final SingleLogoutService sloService,
                                                  final RequestContext context,
                                                  final SamlRegisteredService registeredService,
-                                                 final LogoutRequest logoutRequest) {
+                                                 final LogoutRequest logoutRequest) throws Exception {
         val logoutResponse = buildSamlLogoutResponse(adaptor, sloService, context, registeredService, logoutRequest);
         val location = StringUtils.isBlank(sloService.getResponseLocation())
             ? sloService.getLocation()

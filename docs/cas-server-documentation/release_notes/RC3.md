@@ -43,17 +43,24 @@ cas.version=6.6.0-RC3
 ```
 
 <div class="alert alert-info">
-<strong>System Requirements</strong><br/>There are no changes to the 
-minimum system/platform requirements for this release.
+<strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
 
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
 
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases and scenarios. At the moment, total number of jobs stands at approximately `285` distinct scenarios. The overall test coverage of the CAS codebase is approximately `94%`. 
 
 ## Other Stuff
-
+    
+- The codebase for the WebAuthn helper library is now merged into CAS as part of its core [WebAuthn feature](../mfa/FIDO2-WebAuthn-Authentication.html).
+- Minor improvements to CAS documentation to display and advertise [configuration feature toggles](../configuration/Configuration-Feature-Toggles.html) better and automatically.
 
 ## Library Upgrades
+
+- Pac4j
+- Ldaptive
 

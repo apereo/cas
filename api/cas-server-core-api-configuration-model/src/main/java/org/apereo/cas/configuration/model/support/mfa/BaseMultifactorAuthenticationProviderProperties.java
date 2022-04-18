@@ -70,6 +70,9 @@ public abstract class BaseMultifactorAuthenticationProviderProperties implements
 
     /**
      * The name of the authentication handler used to verify credentials in MFA.
+     * Remember that if you have more than one authentication handler of the same type,
+     * the names must be defined uniquely for each authentication scheme. Failing to do so
+     * may force CAS to not register authentication handlers with a duplicate name.
      */
     private String name;
 
