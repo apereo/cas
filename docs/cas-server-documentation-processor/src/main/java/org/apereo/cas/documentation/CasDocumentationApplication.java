@@ -207,7 +207,8 @@ public class CasDocumentationApplication {
                     if (StringUtils.isNotBlank(feature.module())) {
                         map.put("module", feature.module());
                     }
-
+                    map.put("enabledByDefault", feature.enabledByDefault());
+                    
                     map.put("property", propName);
                     properties.add(map);
                 }

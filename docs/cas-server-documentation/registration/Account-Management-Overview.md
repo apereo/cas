@@ -15,7 +15,7 @@ If you are looking for ways to allow the end-user to sign up, register and creat
 you should be looking at the <a href="Account-Registration-Overview.html">Account Registration</a> feature instead.</p>
 </div>
 
-This profile management capability must be enabled using the `AccountManagement` feature toggle, as [described here](../configuration/Configuration-Feature-Toggles.html).
+{% include_cached featuretoggles.html features="AccountManagement" %}
 
 ## Password Management
 
