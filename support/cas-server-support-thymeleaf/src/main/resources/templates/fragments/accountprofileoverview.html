@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Account Profile</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<span th:fragment="overview">
+        <script type="text/javascript">
+            (material => {
+                document.addEventListener('DOMContentLoaded', () => {
+
+                });
+            })(mdc);
+        </script>
+
+        <div id="divOverview"
+             class="profile-content p-1 text-justify"
+             style="display: none;">
+            <h2>
+                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                <span>Hello, <span th:text="${authentication.principal.id}"></span>!</span>
+            </h2>
+            <p th:utext="#{screen.account.success(${authentication.principal.id})}">You,
+                <strong>username</strong>, have successfully logged into the Central Authentication Service.</p>
+            <p th:utext="#{screen.account.security}">
+                When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
+            </p>
+        </div>
+
+    </span>
+</body>
+
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Account Profile</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<span th:fragment="securityquestions">
+        <script type="text/javascript">
+            function addSecurityQuestionRow(element) {
+                // let lastRow = $('#securityQuestionsTable tr:last');
+                let currentRow = $(element).parent().parent();
+                let newRow = currentRow.clone();
+                newRow.insertAfter(currentRow);
+            }
+
+            function removeSecurityQuestionRow(element) {
+                console.log("Removing row");
+                if ($("#securityQuestionsTable tr").length > 1) {
+                    $(element).parent().parent().remove();
+                }
+            }
+        </script>
+
+        <div id="divSecurityQuestions"
+             th:if="${securityQuestionsEnabled}"
+             class="profile-content w-100"
+             style="display: none;">
+
+            <h2>
+                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                <span th:utext="#{screen.account.securityquestions.title}">Security Questions</span>
+            </h2>
+            <p th:utext="#{screen.account.securityquestions.subtitle}">
+                You can review and update your security questions here.</p>
+
+            <span th:remove="tag"
+                  th:if="${flowRequestContext.messageContext.allMessages.length > 0}">
+                <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                    <h2 th:utext="#{screen.account.failure}">Failure</h2>
+                    <span th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                          th:if="${message.severity.name() == 'ERROR'}"
+                          th:utext="${message.text}">Message Text</span>
+                </div>
+                <div class="banner banner-success my-2"
+                     th:unless="${flowRequestContext.messageContext.hasErrorMessages()}">
+                    <span th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                          th:utext="${message.text}">Message Text</span>
+                </div>
+            </span>
+
+            <div class="mdc-data-table table-responsive p-2 w-100 noborder">
+                <form method="post" id="updateQuestionsForm">
+                    <table id="securityQuestionsTable" class="table table-striped w-100">
+                        <tbody class="mdc-data-table__content">
+                        <tr th:each="entry,iterStat : ${questions}" class="mdc-data-table__header-row py-1">
+                            <td class="mdc-data-table__cell pad-0">
+                                <a href="#divSecurityQuestions" onclick="addSecurityQuestionRow(this)"/>
+                                <i class="mdi mdi-account-multiple-plus-outline fas fa-add"></i>
+                            </td>
+                            <td class="mdc-data-table__cell pad-0">
+                                <a href="#divSecurityQuestions" onclick="removeSecurityQuestionRow(this)"/>
+                                <i class="mdi mdi-delete fas fa-delete"></i>
+                            </td>
+
+                            <td class="mdc-data-table__cell w-50 pad-0">
+                                <div class="cas-field form-group my-3">
+                                    <label class="mdc-text-field mdc-text-field--outlined control-label">
+                                        <span class="mdc-notched-outline">
+                                            <span class="mdc-notched-outline__leading"></span>
+                                            <span class="mdc-notched-outline__notch">
+                                                <span class="mdc-floating-label"
+                                                      th:utext="#{screen.pm.reset.question(${iterStat.count})}">Question</span>
+                                            </span>
+                                            <span class="mdc-notched-outline__trailing"></span>
+                                        </span>
+                                        <input class="mdc-text-field__input form-control"
+                                               type="text"
+                                               th:name="questions"
+                                               th:value="${entry.key}"
+                                               autocomplete="off" required/>
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="mdc-data-table__cell pad-0">
+                                <div class="cas-field form-group my-3">
+                                    <label class="mdc-text-field mdc-text-field--outlined control-label">
+                                        <span class="mdc-notched-outline">
+                                            <span class="mdc-notched-outline__leading"></span>
+                                            <span class="mdc-notched-outline__notch">
+                                                <span class="mdc-floating-label"
+                                                      th:utext="#{screen.pm.reset.answer(${iterStat.count})}">Answer</span>
+                                            </span>
+                                            <span class="mdc-notched-outline__trailing"></span>
+                                        </span>
+                                        <input class="mdc-text-field__input form-control"
+                                               type="text"
+                                               th:value="${entry.value}"
+                                               th:name="answers"
+                                               autocomplete="off" required/>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <p/>
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="updateSecurityQuestions"/>
+                        <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="l" type="submit">
+                            <span class="mdc-button__label" th:utext="#{cas.screen.acct.button.update}">Submit</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </span>
+</body>
+
+</html>

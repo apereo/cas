@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Account Profile</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+    <span th:fragment="attributes">
+        <script type="text/javascript">
+            (material => {
+                document.addEventListener('DOMContentLoaded', () => {
+                    $('#attributesTable').DataTable();
+                });
+            })(mdc);
+        </script>
+
+        <div class="profile-content w-100 mdc-data-table table-responsive noborder"
+                                     id="divAttributes">
+                            <h2>
+                                <i class="mdi mdi-door-open fas fa-door-open"></i>
+                                <span>Hello, <span th:utext="${authentication.principal.id}"></span>!</span>
+
+                            </h2>
+                            <div class="text-justify">
+                                <p th:utext="#{screen.account.attributes}">Attributes</p>
+                            </div>
+
+                            <table id="attributesTable" class="table table-striped" style="white-space: unset">
+                                <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                                </tr>
+                                </thead>
+                                <tbody class="mdc-data-table__content">
+                                <tr th:each="attribute : ${authentication.principal.attributes}" class="mdc-data-table__row">
+                                    <td class="mdc-data-table__cell"><code><kbd th:utext="${attribute.key}"/></code></td>
+                                    <td class="mdc-data-table__cell">
+                                        <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
+                                    </td>
+                                </tr>
+                                <tr th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
+                                    <td class="mdc-data-table__cell"><code><kbd th:utext="${attribute.key}"/></code></td>
+                                    <td class="mdc-data-table__cell">
+                                        <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+        </div>
+
+    </span>
+</body>
+
+</html>
