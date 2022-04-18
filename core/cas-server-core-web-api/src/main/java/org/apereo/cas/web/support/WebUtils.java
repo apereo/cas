@@ -55,6 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -1977,7 +1978,9 @@ public class WebUtils {
      * @param accounts       the accounts
      */
     public static void putMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext, final List accounts) {
-        requestContext.getFlowScope().put("multifactorRegisteredAccounts", accounts);
+        val list = ObjectUtils.defaultIfNull(getMultifactorAuthenticationRegisteredDevices(requestContext), new ArrayList<>());
+        list.addAll(accounts);
+        requestContext.getFlowScope().put("multifactorRegisteredAccounts", list);
     }
 
     /**
@@ -1986,7 +1989,7 @@ public class WebUtils {
      * @param requestContext the request context
      * @return the multifactor authentication registered devices
      */
-    public static List getMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext) {
+    public List getMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
     }
 }
