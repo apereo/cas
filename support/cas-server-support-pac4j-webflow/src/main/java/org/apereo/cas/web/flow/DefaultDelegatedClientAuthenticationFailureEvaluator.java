@@ -23,6 +23,9 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultDelegatedClientAuthenticationFailureEvaluator implements DelegatedClientAuthenticationFailureEvaluator {
+    /**
+     * Delegation configuration context.
+     */
     protected final DelegatedClientAuthenticationConfigurationContext configContext;
 
     @Override
