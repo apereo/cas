@@ -18,6 +18,7 @@ import org.apereo.cas.pac4j.client.GroovyDelegatedClientIdentityProviderRedirect
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -233,10 +234,9 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final ServicesManager servicesManager) {
             val chain = new ChainingDelegatedClientIdentityProviderRedirectionStrategy();
             val strategy = casProperties.getAuthn().getPac4j().getCore().getGroovyRedirectionStrategy();
-            if (strategy.getLocation() != null) {
-                chain.addStrategy(new GroovyDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
-                    new WatchableGroovyScriptResource(strategy.getLocation()), applicationContext));
-            }
+            FunctionUtils.doIfNotNull(strategy.getLocation(),
+                resource -> chain.addStrategy(new GroovyDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
+                    new WatchableGroovyScriptResource(resource), applicationContext)));
             chain.addStrategy(new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
                 delegatedAuthenticationCookieGenerator, casProperties, applicationContext));
             return chain;

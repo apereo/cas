@@ -34,8 +34,8 @@ public class CheckMissingClassInTestsSuite {
     }
 
     protected static void checkPattern(final String arg) throws IOException {
-        varfailBuild = new AtomicBoolean(false);
-        varcount = new AtomicInteger(0);
+        var failBuild = new AtomicBoolean(false);
+        var count = new AtomicInteger(0);
 
         Files.walk(Paths.get(arg))
             .filter(file -> Files.isDirectory(file) && file.toFile().getPath().endsWith("src/test/java"))
