@@ -68,6 +68,7 @@ ext {
         '**/docs/**',
         '**/soap/generated/**',
         '**/com/duosecurity/**',
+        '**/com/yubico/**',
         '**/support/openid/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',

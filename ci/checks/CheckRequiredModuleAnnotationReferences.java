@@ -34,7 +34,7 @@ public class CheckRequiredModuleAnnotationReferences {
     }
 
     protected static void checkPattern(final String location) throws IOException {
-        final var failBuild = new AtomicBoolean(false);
+        var failBuild = new AtomicBoolean(false);
         var pattern = Pattern.compile("@RequiresModule\\(name = \"(.+)\"\\)");
 
         Files.walk(Paths.get(location))

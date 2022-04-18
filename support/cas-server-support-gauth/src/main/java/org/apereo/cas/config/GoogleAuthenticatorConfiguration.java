@@ -41,9 +41,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Configuration(value = "GoogleAuthenticatorConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator)
 public class GoogleAuthenticatorConfiguration {
-
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
-
     @Configuration(value = "GoogleAuthenticatorMultifactorWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorMultifactorWebflowConfiguration {
@@ -91,7 +89,7 @@ public class GoogleAuthenticatorConfiguration {
     }
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @Configuration(value = "GauthMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "GoogleAuthenticatorMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("googleAuthenticatorMultifactorWebflowConfigurer")
     @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "gauth")
     public static class GoogleAuthenticatorMultifactorTrustConfiguration {

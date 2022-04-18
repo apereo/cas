@@ -61,6 +61,32 @@ public class WebAuthnController {
 
     private final WebAuthnServer server;
 
+    private static ResponseEntity<Object> startResponse(final Object request) throws Exception {
+        LOGGER.trace("Response: [{}]", request);
+        return ResponseEntity.ok(writeJson(request));
+    }
+
+    private static String writeJson(final Object o) throws Exception {
+        return MAPPER.writeValueAsString(o);
+    }
+
+    private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
+                                                         final String responseJson) throws Exception {
+        if (result.isRight()) {
+            LOGGER.trace("Response: [{}]", responseJson);
+            return ResponseEntity.ok(writeJson(result.right().get()));
+        }
+        return messagesJson(ResponseEntity.badRequest(), result.left().get());
+    }
+
+    private static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final String message) {
+        return messagesJson(response, List.of(message));
+    }
+
+    private static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final List<String> messages) {
+        return response.body(Map.of("messages", messages));
+    }
+
     /**
      * Start registration and provide response entity.
      *
@@ -115,7 +141,9 @@ public class WebAuthnController {
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Object> finishRegistration(@RequestBody final String responseJson) throws Exception {
+    public ResponseEntity<Object> finishRegistration(
+        @RequestBody
+        final String responseJson) throws Exception {
         val result = server.finishRegistration(responseJson);
         return finishResponse(result, responseJson);
     }
@@ -128,8 +156,9 @@ public class WebAuthnController {
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> startAuthentication(@RequestParam(value = "username", required = false)
-                                                      final String username) throws Exception {
+    public ResponseEntity<Object> startAuthentication(
+        @RequestParam(value = "username", required = false)
+        final String username) throws Exception {
         val request = server.startAuthentication(Optional.ofNullable(username));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().get()));
@@ -145,35 +174,11 @@ public class WebAuthnController {
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> finishAuthentication(@RequestBody final String responseJson) throws Exception {
+    public ResponseEntity<Object> finishAuthentication(
+        @RequestBody
+        final String responseJson) throws Exception {
         val result = server.finishAuthentication(responseJson);
         return finishResponse(result, responseJson);
-    }
-
-    private static ResponseEntity<Object> startResponse(final Object request) throws Exception {
-        LOGGER.trace("Response: [{}]", request);
-        return ResponseEntity.ok(writeJson(request));
-    }
-
-    private static String writeJson(final Object o) throws Exception {
-        return MAPPER.writeValueAsString(o);
-    }
-
-    private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
-                                                         final String responseJson) throws Exception {
-        if (result.isRight()) {
-            LOGGER.trace("Response: [{}]", responseJson);
-            return ResponseEntity.ok(writeJson(result.right().get()));
-        }
-        return messagesJson(ResponseEntity.badRequest(), result.left().get());
-    }
-
-    private static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final String message) {
-        return messagesJson(response, List.of(message));
-    }
-
-    private static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final List<String> messages) {
-        return response.body(Map.of("messages", messages));
     }
 
     @RequiredArgsConstructor

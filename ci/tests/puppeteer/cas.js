@@ -425,18 +425,22 @@ exports.base64Decode = async(data) => {
 }
 
 exports.screenshot = async (page) => {
-    let index = Math.floor(Math.random() * 90000);
-    let filePath = path.join(__dirname, `/screenshot${index}.png`)
-    try {
-        let url = await page.url()
-        console.log(`Page URL when capturing screenshot: ${url}`)
-        console.log(`Attempting to take a screenshot and save at ${filePath}`)
-        await page.setViewport({width: 1920, height: 1080});
-        await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
-        console.log(`Screenshot saved at ${colors.green(filePath)}`);
-        await this.uploadImage(filePath);
-    } catch (e)  {
-        console.log(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
+    if (process.env.CI === "true") {
+        let index = Math.floor(Math.random() * 90000);
+        let filePath = path.join(__dirname, `/screenshot${index}.png`)
+        try {
+            let url = await page.url()
+            console.log(`Page URL when capturing screenshot: ${url}`)
+            console.log(`Attempting to take a screenshot and save at ${filePath}`)
+            await page.setViewport({width: 1920, height: 1080});
+            await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
+            console.log(`Screenshot saved at ${colors.green(filePath)}`);
+            await this.uploadImage(filePath);
+        } catch (e)  {
+            console.log(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
+        }
+    } else {
+        console.log("Capturing screenshots is disabled in non-CI environments");
     }
 }
 
@@ -509,7 +513,7 @@ exports.goto = async (page, url, retryCount = 5) => {
     while(response === null && attempts < retryCount) {
         attempts += 1;
         try {
-            console.log(`Navigating: ${colors.green(url)}`)
+            console.log(`Navigating to: ${colors.green(url)}`)
             response = await page.goto(url);
             assert (await page.evaluate(() => document.title) !== null);
         } catch (err) {

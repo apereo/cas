@@ -204,12 +204,12 @@ public class RelaxedPropertyNames implements Iterable<String> {
                 return value;
             }
             var builder = new StringBuilder();
-            for (final var field : Splitter.on(SEPARATED_TO_CAMEL_CASE_PATTERN).split(value)) {
-                final var fieldCased = caseInsensitive ? field.toLowerCase() : field;
+            for (var field : Splitter.on(SEPARATED_TO_CAMEL_CASE_PATTERN).split(value)) {
+                var fieldCased = caseInsensitive ? field.toLowerCase() : field;
                 builder.append(builder.length() == 0 ? field : StringUtils.capitalize(fieldCased));
             }
             var lastChar = value.charAt(value.length() - 1);
-            for (final var suffix : SUFFIXES) {
+            for (var suffix : SUFFIXES) {
                 if (lastChar == suffix) {
                     builder.append(suffix);
                     break;
