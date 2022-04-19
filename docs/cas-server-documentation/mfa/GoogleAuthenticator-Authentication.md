@@ -81,3 +81,9 @@ In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is tur
 is injected into the REST authentication engine in order to recognize credentials and authenticate them as part of the REST request. 
 The expected parameter name in the request body is `gauthotp`. The account identifier may also 
 be passed using the `gauthacct` parameter in the request body.
+
+## Account Profile Management
+
+The integration with Google Authenticator is able to provide user device registration information 
+to the account profile management feature in CAS. [See this guide](../registration/Account-Management-Overview.html) for better details.
+
