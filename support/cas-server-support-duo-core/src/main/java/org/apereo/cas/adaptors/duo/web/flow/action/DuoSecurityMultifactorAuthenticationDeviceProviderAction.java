@@ -69,6 +69,8 @@ public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends Ba
                     .number(device.getNumber())
                     .name(StringUtils.defaultIfBlank(device.getName(), model))
                     .payload(device.toJson())
+                    .lastUsedDateTime(device.getLastSeen())
+                    .source("Duo Security")
                     .build();
             })
             .collect(Collectors.toList());

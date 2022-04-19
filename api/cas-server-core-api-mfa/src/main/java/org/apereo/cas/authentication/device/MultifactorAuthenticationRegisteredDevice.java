@@ -54,6 +54,7 @@ public class MultifactorAuthenticationRegisteredDevice implements Serializable {
      */
     private final String model;
 
+    private final String lastUsedDateTime;
     @Builder.Default
     private Map<String, Object> details = new LinkedHashMap<>();
 
@@ -62,4 +63,6 @@ public class MultifactorAuthenticationRegisteredDevice implements Serializable {
      * typically captured here as JSON.
      */
     private final String payload;
+
+    private final String source;
 }

@@ -83,6 +83,9 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Builder.Default
     private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneOffset.UTC);
 
+    @Column
+    @JsonProperty("lastUsedDateTime")
+    private String lastUsedDateTime;
     @Override
     public int compareTo(final OneTimeTokenAccount o) {
         return new CompareToBuilder()
@@ -91,7 +94,9 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
             .append(this.secretKey, o.getSecretKey())
             .append(this.username, o.getUsername())
             .append(this.name, o.getName())
-            .build();
+            .append(this.lastUsedDateTime, o.getLastUsedDateTime())
+            .build()
+            .intValue();
     }
 
     @Override

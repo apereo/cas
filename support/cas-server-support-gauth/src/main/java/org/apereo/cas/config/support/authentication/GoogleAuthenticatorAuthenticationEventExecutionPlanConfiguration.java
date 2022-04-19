@@ -23,6 +23,8 @@ import org.apereo.cas.gauth.credential.InMemoryGoogleAuthenticatorTokenCredentia
 import org.apereo.cas.gauth.credential.JsonGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.gauth.token.GoogleAuthenticatorTokenRepositoryCleaner;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorAuthenticationDeviceProviderAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorDeleteAccountAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorSaveRegistrationAction;
@@ -31,7 +33,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecut
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
-import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationAction;
@@ -42,6 +43,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
@@ -54,6 +56,7 @@ import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -62,7 +65,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Action;
 
 import java.util.concurrent.TimeUnit;
@@ -100,14 +103,11 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         }
 
     }
-
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration {
-
         private static final BeanCondition CONDITION_SCRATCH_CODE =
             BeanCondition.on("cas.authn.mfa.gauth.core.scratch-codes.encryption.key");
-
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
@@ -140,17 +140,17 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         public CipherExecutor googleAuthenticatorScratchCodesCipherExecutor(final ApplicationContext applicationContext,
                                                                             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(CipherExecutor.class)
-                    .when(CONDITION_SCRATCH_CODE.given(applicationContext.getEnvironment()))
-                    .supply(() -> {
-                        val key = casProperties.getAuthn().getMfa().getGauth().getCore().getScratchCodes().getEncryption().getKey();
-                        return new JasyptNumberCipherExecutor(key, "googleAuthenticatorScratchCodesCipherExecutor");
-                    })
-                    .otherwise(() -> {
-                        LOGGER.warn("Google Authenticator scratch codes encryption key is not defined. "
+                .when(CONDITION_SCRATCH_CODE.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val key = casProperties.getAuthn().getMfa().getGauth().getCore().getScratchCodes().getEncryption().getKey();
+                    return new JasyptNumberCipherExecutor(key, "googleAuthenticatorScratchCodesCipherExecutor");
+                })
+                .otherwise(() -> {
+                    LOGGER.warn("Google Authenticator scratch codes encryption key is not defined. "
                                 + "Consider defining the encryption key to securely and safely store scratch codes.");
-                        return CipherExecutor.noOp();
-                    })
-                    .get();
+                    return CipherExecutor.noOp();
+                })
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "googlePrincipalFactory")
@@ -259,7 +259,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.mfa.gauth.cleaner.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))
-                .supply(() -> new GoogleAuthenticatorOneTimeTokenRepositoryCleaner(repository))
+                .supply(() -> new GoogleAuthenticatorTokenRepositoryCleaner(repository))
                 .otherwiseProxy()
                 .get();
         }
@@ -380,19 +380,18 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         }
     }
 
-    /**
-     * The type Google authenticator one time token repository cleaner.
-     */
-    public static class GoogleAuthenticatorOneTimeTokenRepositoryCleaner extends OneTimeTokenRepositoryCleaner {
-
-        public GoogleAuthenticatorOneTimeTokenRepositoryCleaner(final OneTimeTokenRepository tokenRepository) {
-            super(tokenRepository);
-        }
-
-        @Scheduled(initialDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.start-delay:PT30S}", fixedDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.repeat-interval:PT35S}")
-        @Override
-        public void clean() {
-            super.clean();
+    @Configuration(value = "GoogleAuthenticatorAccountProfileWebflowConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
+    public static class GoogleAuthenticatorAccountProfileWebflowConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "googleAccountDeviceProviderAction")
+        public MultifactorAuthenticationDeviceProviderAction googleAccountDeviceProviderAction(
+            @Qualifier("googleAuthenticatorAccountRegistry")
+            final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
+            return new GoogleAuthenticatorAuthenticationDeviceProviderAction(googleAuthenticatorAccountRegistry);
         }
     }
 }

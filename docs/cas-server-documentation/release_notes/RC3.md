@@ -63,4 +63,7 @@ The collection of end-to-end browser tests based on Puppeteer continue to grow t
 
 - Pac4j
 - Ldaptive
+- Spring Security
+- MongoDb Driver
+- Lombok
 

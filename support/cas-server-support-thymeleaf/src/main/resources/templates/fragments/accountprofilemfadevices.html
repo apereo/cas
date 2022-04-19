@@ -14,22 +14,22 @@
 <span th:fragment="mfadevices">
         <script type="text/javascript">
             (material => {
-              document.addEventListener('DOMContentLoaded', () => {
-                  $('#mfaDevicesTable').DataTable();
-                  let mfaDeviceDialog = material.dialog.MDCDialog.attachTo(document.getElementById('mfaDevice-dialog'));
+                document.addEventListener('DOMContentLoaded', () => {
+                    $('#mfaDevicesTable').DataTable();
+                    let mfaDeviceDialog = material.dialog.MDCDialog.attachTo(document.getElementById('mfaDevice-dialog'));
 
-                  document.getElementsByName("viewMfaDeviceDetails").forEach(btn => {
-                      btn.addEventListener('click', event => {
-                          let caller = event.target || event.srcElement;
-                          let json = $(caller).next("span").text().trim();
-                          $("#mfaDeviceDetails").text(json);
-                          hljs.highlightAll();
-                          mfaDeviceDialog.open();
-                          event.preventDefault();
-                      }, false);
-                  });
-              });
-          })(mdc);
+                    document.getElementsByName("viewMfaDeviceDetails").forEach(btn => {
+                        btn.addEventListener('click', event => {
+                            let caller = event.target || event.srcElement;
+                            let json = $(caller).next("span").text().trim();
+                            $("#mfaDeviceDetails").text(json);
+                            hljs.highlightAll();
+                            mfaDeviceDialog.open();
+                            event.preventDefault();
+                        }, false);
+                    });
+                });
+            })(mdc);
         </script>
 
        <div class="mdc-dialog" id="mfaDevice-dialog" role="alertdialog"
@@ -67,6 +67,7 @@
             <table id="mfaDevicesTable" class="mdc-data-table__table table table-striped noborder">
                 <thead>
                 <tr class="mdc-data-table__header-row">
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
@@ -77,22 +78,14 @@
                 </thead>
                 <tbody class="mdc-data-table__content">
                 <tr th:each="entry : ${multifactorRegisteredAccounts}" class="mdc-data-table__row">
-                    <td class="mdc-data-table__cell"
-                        th:utext="${entry.id}">Value
-                    </td>
-                    <td class="mdc-data-table__cell"
-                        th:utext="${entry.name}">Value
-                    </td>
-                    <td class="mdc-data-table__cell"
-                        th:utext="${entry.type}">Value
-                    </td>
-                    <td class="mdc-data-table__cell"
-                        th:utext="${entry.model}">Value
-                    </td>
-                    <td class="mdc-data-table__cell" th:utext="${entry.number}">Value</td>
-
+                    <td class="mdc-data-table__cell" th:utext="${entry.source}">Value</td>
+                    <td class="mdc-data-table__cell"><code th:utext="${entry.id}">Value</code></td>
+                    <td class="mdc-data-table__cell" th:utext="${entry.name}">Value</td>
+                    <td class="mdc-data-table__cell" th:title="${entry.type}" th:utext="*{entry.type}?: 'N/A'">Value</td>
+                    <td class="mdc-data-table__cell" th:title="${entry.model}" th:utext="*{entry.model}?: 'N/A'">Value</td>
+                    <td class="mdc-data-table__cell" th:title="${entry.number}" th:utext="*{entry.number}?: 'N/A'">Value</td>
                     <td class="mdc-data-table__cell">
-                        <a name="viewMfaDeviceDetails" href="#">
+                        <a name="viewMfaDeviceDetails" href="#" th:if="${entry.payload}">
                             <i class="mdi mdi-account-details fas fa-add"></i>
                             <span style="display: none" th:utext="${entry.payload}"/>
                         </a>
