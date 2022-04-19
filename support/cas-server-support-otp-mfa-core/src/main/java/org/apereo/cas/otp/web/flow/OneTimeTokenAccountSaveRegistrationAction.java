@@ -21,7 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class OneTimeTokenAccountSaveRegistrationAction extends BaseCasWebflowAction {
+public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAccount> extends BaseCasWebflowAction {
 
     /**
      * Parameter name indicating account name.
@@ -43,10 +43,10 @@ public class OneTimeTokenAccountSaveRegistrationAction extends BaseCasWebflowAct
      * @param requestContext the request context
      * @return the one time token account
      */
-    protected OneTimeTokenAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
+    protected T buildOneTimeTokenAccount(final RequestContext requestContext) {
         val currentAcct = getCandidateAccountFrom(requestContext);
         val accountName = requestContext.getRequestParameters().getRequired(REQUEST_PARAMETER_ACCOUNT_NAME);
-        return OneTimeTokenAccount.builder()
+        return (T) OneTimeTokenAccount.builder()
             .username(currentAcct.getUsername())
             .secretKey(currentAcct.getSecretKey())
             .validationCode(currentAcct.getValidationCode())
@@ -61,8 +61,8 @@ public class OneTimeTokenAccountSaveRegistrationAction extends BaseCasWebflowAct
      * @param requestContext the request context
      * @return the candidate account from
      */
-    protected OneTimeTokenAccount getCandidateAccountFrom(final RequestContext requestContext) {
-        return requestContext.getFlowScope()
+    protected T getCandidateAccountFrom(final RequestContext requestContext) {
+        return (T) requestContext.getFlowScope()
             .get(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, OneTimeTokenAccount.class);
     }
 
@@ -101,7 +101,7 @@ public class OneTimeTokenAccountSaveRegistrationAction extends BaseCasWebflowAct
      * @param requestContext the request context
      * @return true/false
      */
-    protected boolean validate(final OneTimeTokenAccount account, final RequestContext requestContext) {
+    protected boolean validate(final T account, final RequestContext requestContext) {
         return true;
     }
 

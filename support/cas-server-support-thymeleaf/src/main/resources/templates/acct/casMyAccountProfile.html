@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout(mainContentClass='container-xxl')}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -11,7 +12,7 @@
 </head>
 
 <body id="cas">
-<main role="main" class="container mt-3 mb-3">
+<main role="main" class="container-xxl mt-3 mb-3">
     <div layout:fragment="content">
         <script type="text/javascript">
             function jqueryReady() {
@@ -38,11 +39,10 @@
                             <a href="fragments/accountprofilemfadevices.html">Fragment goes here</a>
                         </div>
                     </td>
-                    <td width="75%">
+                    <td width="85%">
                         <div th:replace="fragments/accountprofileoverview :: overview">
                             <a href="fragments/accountprofilemfadevices.html">Fragment goes here</a>
                         </div>
-
 
                         <div th:replace="fragments/accountprofilemfadevices :: mfadevices">
                             <a href="fragments/accountprofilemfadevices.html">Fragment goes here</a>
@@ -69,11 +69,6 @@
             </table>
         </div>
 
-        <div id="tooltip-change-password" class="mdc-tooltip" role="tooltip" aria-hidden="true">
-            <div class="mdc-tooltip__surface mdc-tooltip__surface-animation" th:text="#{screen.account.tooltip.logout}">
-                This operation forces a logout.
-            </div>
-        </div>
 
     </div>
 </main>
