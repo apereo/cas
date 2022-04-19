@@ -89,7 +89,7 @@ public class SpnegoProperties implements Serializable {
     /**
      * A regex pattern that indicates whether the client IP is allowed for spnego.
      */
-    private String ipsToCheckPattern = "127.+";
+    private String ipsToCheckPattern = "^127.+";
 
     /**
      * Alternative header name to use in order to find the host address.
