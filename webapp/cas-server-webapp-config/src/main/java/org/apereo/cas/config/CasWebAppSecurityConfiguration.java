@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.webflow.execution.Action;
@@ -68,11 +67,6 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerJdbcAdapter")
     public CasWebSecurityJdbcConfigurerAdapter casWebSecurityConfigurerJdbcAdapter() {
         return new CasWebSecurityJdbcConfigurerAdapter(casProperties, applicationContext);
-    }
-
-    @Bean
-    public InitializingBean securityContextHolderInitialization() {
-        return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
     }
 
     @Bean
