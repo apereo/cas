@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -43,19 +44,19 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "CasConsentWebflowConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Consent)
 public class CasConsentWebflowConfiguration {
-
     private static final BeanCondition CONDITION = BeanCondition.on("cas.consent.core.enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "CasConsentWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentWebflowActionConfiguration {
 
-        @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CHECK_CONSENT_REQUIRED)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action checkConsentRequiredAction(
-            final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-            @Qualifier("attributeDefinitionStore")
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
@@ -65,22 +66,29 @@ public class CasConsentWebflowConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(ConsentActivationStrategy.BEAN_NAME)
             final ConsentActivationStrategy consentActivationStrategy) {
-            return BeanSupplier.of(Action.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new CheckConsentRequiredAction(servicesManager, authenticationRequestServiceSelectionStrategies,
-                    consentEngine, casProperties, attributeDefinitionStore,
-                    applicationContext, consentActivationStrategy))
-                .otherwise(() -> ConsumerExecutionAction.NONE)
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(CONDITION.given(applicationContext.getEnvironment()))
+                    .supply(() -> new CheckConsentRequiredAction(servicesManager,
+                        authenticationRequestServiceSelectionStrategies,
+                        consentEngine, casProperties, attributeDefinitionStore,
+                        applicationContext, consentActivationStrategy))
+                    .otherwise(() -> ConsumerExecutionAction.NONE)
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_CHECK_CONSENT_REQUIRED)
+                .build()
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "confirmConsentAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CONFIRM_CONSENT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action confirmConsentAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("attributeDefinitionStore")
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
@@ -88,11 +96,17 @@ public class CasConsentWebflowConfiguration {
             final ConsentEngine consentEngine,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return BeanSupplier.of(Action.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new ConfirmConsentAction(servicesManager, authenticationRequestServiceSelectionStrategies,
-                    consentEngine, casProperties, attributeDefinitionStore, applicationContext))
-                .otherwise(() -> ConsumerExecutionAction.NONE)
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(CONDITION.given(applicationContext.getEnvironment()))
+                    .supply(() -> new ConfirmConsentAction(servicesManager, authenticationRequestServiceSelectionStrategies,
+                        consentEngine, casProperties, attributeDefinitionStore, applicationContext))
+                    .otherwise(() -> ConsumerExecutionAction.NONE)
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_CONFIRM_CONSENT)
+                .build()
                 .get();
         }
     }

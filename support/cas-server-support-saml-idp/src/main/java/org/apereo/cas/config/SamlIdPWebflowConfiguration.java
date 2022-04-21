@@ -183,7 +183,7 @@ public class SamlIdPWebflowConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPConsentableAttributeBuilder")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentableAttributeBuilder samlIdPConsentableAttributeBuilder(
-            @Qualifier("attributeDefinitionStore")
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore) {
             return new SamlIdPConsentableAttributeBuilder(attributeDefinitionStore);
         }

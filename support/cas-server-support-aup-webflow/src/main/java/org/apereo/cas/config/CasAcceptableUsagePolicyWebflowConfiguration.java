@@ -22,6 +22,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -116,62 +117,90 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     public static class CasAcceptableUsagePolicyWebflowActionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "acceptableUsagePolicySubmitAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUP_SUBMIT)
         public Action acceptableUsagePolicySubmitAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) throws Exception {
-            return BeanSupplier.of(Action.class)
-                .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
-                .supply(() -> new AcceptableUsagePolicySubmitAction(acceptableUsagePolicyRepository))
-                .otherwise(() -> ConsumerExecutionAction.NONE)
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
+                    .supply(() -> new AcceptableUsagePolicySubmitAction(acceptableUsagePolicyRepository))
+                    .otherwise(() -> ConsumerExecutionAction.NONE)
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_AUP_SUBMIT)
+                .build()
                 .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "acceptableUsagePolicyVerifyAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUP_VERIFY)
         public Action acceptableUsagePolicyVerifyAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
-            return BeanSupplier.of(Action.class)
-                .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
-                .supply(() -> new AcceptableUsagePolicyVerifyAction(acceptableUsagePolicyRepository, registeredServiceAccessStrategyEnforcer))
-                .otherwise(() -> ConsumerExecutionAction.NONE)
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
+                    .supply(() -> new AcceptableUsagePolicyVerifyAction(acceptableUsagePolicyRepository, registeredServiceAccessStrategyEnforcer))
+                    .otherwise(() -> ConsumerExecutionAction.NONE)
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
+                .build()
                 .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "acceptableUsagePolicyRenderAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUP_RENDER)
         public Action acceptableUsagePolicyRenderAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) throws Exception {
-            return BeanSupplier.of(Action.class)
-                .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
-                .supply(() -> new ConsumerExecutionAction(requestContext -> acceptableUsagePolicyRepository.fetchPolicy(requestContext)
-                    .ifPresent(policy -> WebUtils.putAcceptableUsagePolicyTermsIntoFlowScope(requestContext, policy))))
-                .otherwise(() -> ConsumerExecutionAction.NONE)
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
+                    .supply(() -> new ConsumerExecutionAction(requestContext -> acceptableUsagePolicyRepository.fetchPolicy(requestContext)
+                        .ifPresent(policy -> WebUtils.putAcceptableUsagePolicyTermsIntoFlowScope(requestContext, policy))))
+                    .otherwise(() -> ConsumerExecutionAction.NONE)
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_AUP_RENDER)
+                .build()
                 .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "acceptableUsagePolicyVerifyServiceAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUP_VERIFY_SERVICE)
         public Action acceptableUsagePolicyVerifyServiceAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
-            return BeanSupplier.of(Action.class)
-                .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
-                .supply(() -> new AcceptableUsagePolicyVerifyServiceAction(acceptableUsagePolicyRepository, registeredServiceAccessStrategyEnforcer))
-                .otherwise(() -> ConsumerExecutionAction.NONE)
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
+                    .supply(() -> new AcceptableUsagePolicyVerifyServiceAction(acceptableUsagePolicyRepository, registeredServiceAccessStrategyEnforcer))
+                    .otherwise(() -> ConsumerExecutionAction.NONE)
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_AUP_VERIFY_SERVICE)
+                .build()
                 .get();
         }
     }

@@ -31,6 +31,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
@@ -70,10 +71,11 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     @Configuration(value = "CasSimpleMultifactorAuthenticationActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSimpleMultifactorAuthenticationActionConfiguration {
-        @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_SIMPLE_SEND_TOKEN)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action mfaSimpleMultifactorSendTokenAction(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
@@ -85,11 +87,19 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             final CommunicationsManager communicationsManager,
             @Qualifier("mfaSimpleMultifactorBucketConsumer")
             final BucketConsumer mfaSimpleMultifactorBucketConsumer) {
-            val simple = casProperties.getAuthn().getMfa().getSimple();
-            return new CasSimpleMultifactorSendTokenAction(centralAuthenticationService,
-                communicationsManager, ticketFactory, simple,
-                mfaSimpleMultifactorTokenCommunicationStrategy,
-                mfaSimpleMultifactorBucketConsumer);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> {
+                    val simple = casProperties.getAuthn().getMfa().getSimple();
+                    return new CasSimpleMultifactorSendTokenAction(centralAuthenticationService,
+                        communicationsManager, ticketFactory, simple,
+                        mfaSimpleMultifactorTokenCommunicationStrategy,
+                        mfaSimpleMultifactorBucketConsumer);
+                })
+                .withId(CasWebflowConstants.ACTION_ID_MFA_SIMPLE_SEND_TOKEN)
+                .build()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketConsumer")

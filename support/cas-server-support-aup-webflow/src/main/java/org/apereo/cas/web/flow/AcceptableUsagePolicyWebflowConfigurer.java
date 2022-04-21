@@ -63,7 +63,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
      * @param flow the flow
      */
     protected void createSubmitActionState(final Flow flow) {
-        val aupAcceptedAction = createActionState(flow, CasWebflowConstants.STATE_ID_AUP_ACCEPTED, "acceptableUsagePolicySubmitAction");
+        val aupAcceptedAction = createActionState(flow, CasWebflowConstants.STATE_ID_AUP_ACCEPTED, CasWebflowConstants.ACTION_ID_AUP_SUBMIT);
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         val transitionSet = aupAcceptedAction.getTransitionSet();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED, target));

@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("DuoSecurity")
 public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
-    @Qualifier("duoUniversalPromptPrepareLoginAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
     private Action duoUniversalPromptPrepareLoginAction;
 
     @Autowired
@@ -63,7 +64,7 @@ public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWe
         val identifier = casProperties.getAuthn().getMfa().getDuo().get(0).getId();
         val provider = TestMultifactorAuthenticationProvider
             .registerProviderIntoApplicationContext(applicationContext, new TestMultifactorAuthenticationProvider(identifier));
-        
+
         configurableApplicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class)
             .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
 

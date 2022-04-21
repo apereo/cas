@@ -102,7 +102,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
     private void createDuoFlowUniversalPromptActions(final Flow flow) {
         val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN,
-            "duoUniversalPromptValidateLoginAction");
+            CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
 
         val realSubmit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         val targetSuccess = realSubmit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();

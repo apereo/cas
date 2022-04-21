@@ -47,7 +47,7 @@ public class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMu
     private ConfigurableApplicationContext configurableApplicationContext;
 
     @Autowired
-    @Qualifier("duoNonWebAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION)
     private Action duoNonWebAuthenticationAction;
 
     private RequestContext context;

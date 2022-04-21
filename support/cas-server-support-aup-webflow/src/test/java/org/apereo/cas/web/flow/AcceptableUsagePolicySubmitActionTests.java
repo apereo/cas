@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AcceptableUsagePolicySubmitActionTests extends BaseAcceptableUsagePolicyActionTests {
 
     @Autowired
-    @Qualifier("acceptableUsagePolicySubmitAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_AUP_SUBMIT)
     private Action acceptableUsagePolicySubmitAction;
 
     @Test

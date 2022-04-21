@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.authy.config;
 
+import org.apereo.cas.adaptors.authy.AuthyClientInstance;
+import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorTrustedDeviceWebflowConfigurer;
@@ -13,6 +15,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -125,15 +128,44 @@ public class AuthyConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AuthyWebflowActionConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHY_REGISTRATION)
         @Bean
+        public Action authyAuthenticationRegistrationWebflowAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("authyClientInstance")
+            final AuthyClientInstance authyClientInstance) throws Exception {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(CONDITION.given(applicationContext.getEnvironment()))
+                    .supply(() -> new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance))
+                    .otherwiseProxy()
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_AUTHY_REGISTRATION)
+                .build()
+                .get();
+        }
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHY_AUTHENTICATION)
         public Action authyAuthenticationWebflowAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("authyAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver authyAuthenticationWebflowEventResolver) throws Exception {
-            return BeanSupplier.of(Action.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver))
-                .otherwiseProxy()
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(CONDITION.given(applicationContext.getEnvironment()))
+                    .supply(() -> new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver))
+                    .otherwiseProxy()
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_AUTHY_AUTHENTICATION)
+                .build()
                 .get();
         }
     }
@@ -141,7 +173,6 @@ public class AuthyConfiguration {
     @Configuration(value = "AuthyWebflowExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AuthyWebflowExecutionPlanConfiguration {
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authyCasWebflowExecutionPlanConfigurer")

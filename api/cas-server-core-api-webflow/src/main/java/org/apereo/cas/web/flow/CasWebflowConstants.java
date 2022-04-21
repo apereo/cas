@@ -17,7 +17,7 @@ public interface CasWebflowConstants {
      * Bean name for account profile flow registry.
      */
     String BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY = "accountProfileFlowRegistry";
-    
+
     /**
      * Bean name for login flow registry.
      */
@@ -66,7 +66,7 @@ public interface CasWebflowConstants {
      * The transition state 'passwordlessGetUserId'.
      */
     String TRANSITION_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserId";
-    
+
     /**
      * The transition state 'discovery'.
      */
@@ -992,7 +992,7 @@ public interface CasWebflowConstants {
     /**
      * State id 'determineDelegatedAuthentication'.
      */
-    String STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN= "determineDelegatedAuthentication";
+    String STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN = "determineDelegatedAuthentication";
 
     /**
      * State id 'passwordlessVerifyAccount'.
@@ -1008,6 +1008,11 @@ public interface CasWebflowConstants {
      * State id 'passwordlessGetUserIdView'.
      */
     String STATE_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserIdView";
+
+    /**
+     * State id 'sendSimpleToken'.
+     */
+    String STATE_ID_SIMPLE_MFA_SEND_TOKEN = "sendSimpleToken";
 
     /*
      ****************************************
@@ -1192,7 +1197,7 @@ public interface CasWebflowConstants {
      * Action id 'setServiceUnauthorizedRedirectUrlAction'.
      */
     String ACTION_ID_SET_SERVICE_UNAUTHORIZED_REDIRECT_URL = "setServiceUnauthorizedRedirectUrlAction";
-    
+
     /**
      * Action id 'authenticationViaFormAction'.
      */
@@ -1377,6 +1382,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_AUP_VERIFY = "acceptableUsagePolicyVerifyAction";
 
     /**
+     * Action id 'acceptableUsagePolicySubmitAction.
+     */
+    String ACTION_ID_AUP_SUBMIT = "acceptableUsagePolicySubmitAction";
+
+    /**
      * Action id 'acceptableUsagePolicyRenderAction.
      */
     String ACTION_ID_AUP_RENDER = "acceptableUsagePolicyRenderAction";
@@ -1425,6 +1435,10 @@ public interface CasWebflowConstants {
      * Action id 'selectSurrogateAction .
      */
     String ACTION_ID_SELECT_SURROGATE_ACTION = "selectSurrogateAction";
+    /**
+     * Action id 'duoUniversalPromptValidateLoginAction .
+     */
+    String ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptValidateLoginAction";
 
     /**
      * Action id 'duoUniversalPromptPrepareLoginAction .
@@ -1570,9 +1584,30 @@ public interface CasWebflowConstants {
      * Action id 'mfaBypassAction'.
      */
     String ACTION_ID_MFA_CHECK_BYPASS = "mfaBypassAction";
-    
+
     /**
      * Action id 'mfaFailureAction'.
      */
     String ACTION_ID_MFA_CHECK_FAILURE = "mfaFailureAction";
+
+    /**
+     * Action id 'checkConsentRequiredAction'.
+     */
+    String ACTION_ID_CHECK_CONSENT_REQUIRED = "checkConsentRequiredAction";
+    /**
+     * Action id 'confirmConsentAction'.
+     */
+    String ACTION_ID_CONFIRM_CONSENT = "confirmConsentAction";
+    /**
+     * Action id 'mfaSimpleMultifactorSendTokenAction'.
+     */
+    String ACTION_ID_MFA_SIMPLE_SEND_TOKEN = "mfaSimpleMultifactorSendTokenAction";
+    /**
+     * Action id 'authyAuthenticationWebflowAction'.
+     */
+    String ACTION_ID_AUTHY_AUTHENTICATION = "authyAuthenticationWebflowAction";
+    /**
+     * Action id 'authyAuthenticationRegistrationWebflowAction'.
+     */
+    String ACTION_ID_AUTHY_REGISTRATION = "authyAuthenticationRegistrationWebflowAction";
 }
