@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
 public class OAuth20LogoutReplicateSessionTests {
 
     @Autowired
-    @Qualifier("logoutExecutionPlan")
+    @Qualifier(LogoutExecutionPlan.BEAN_NAME)
     private LogoutExecutionPlan logoutExecutionPlan;
 
     @Test

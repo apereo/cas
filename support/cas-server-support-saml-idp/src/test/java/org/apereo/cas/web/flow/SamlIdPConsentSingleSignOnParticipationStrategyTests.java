@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWebflowTests {
 
     @Autowired
-    @Qualifier("singleSignOnParticipationStrategy")
+    @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
     private SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Test

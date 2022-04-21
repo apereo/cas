@@ -77,6 +77,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for
@@ -91,6 +92,9 @@ import java.util.Objects;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = "name")
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
+
+    private static final Action[] EMPTY_ACTIONS_ARRAY = {};
+
     /**
      * Flow builder services.
      */
@@ -227,12 +231,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public ActionState createActionState(final Flow flow, final String name) {
-        return createActionState(flow, name, new Action[]{});
+        return createActionState(flow, name, EMPTY_ACTIONS_ARRAY);
     }
 
     @Override
-    public ActionState createActionState(final Flow flow, final String name, final String action) {
-        return createActionState(flow, name, createEvaluateAction(action));
+    public ActionState createActionState(final Flow flow, final String name, final String... action) {
+        val actionList = Arrays.stream(action).map(this::createEvaluateAction).collect(Collectors.toList());
+        return createActionState(flow, name, actionList.toArray(EMPTY_ACTIONS_ARRAY));
     }
 
     @Override

@@ -27,8 +27,10 @@ import org.apereo.cas.web.flow.PopulateSpringSecurityContextAction;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.account.PrepareAccountProfileViewAction;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.FetchTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.login.CreateTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.apereo.cas.web.flow.login.InitialAuthenticationRequestValidationAction;
@@ -93,64 +95,126 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FETCH_TICKET_GRANTING_TICKET)
         public Action fetchTicketGrantingTicketAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            return new FetchTicketGrantingTicketAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new FetchTicketGrantingTicketAction(centralAuthenticationService,
+                    ticketGrantingTicketCookieGenerator))
+                .withId(CasWebflowConstants.ACTION_ID_FETCH_TICKET_GRANTING_TICKET)
+                .build()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action authenticationViaFormAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceTicketRequestWebflowEventResolver")
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
             @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
             @Qualifier("adaptiveAuthenticationPolicy")
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
-            return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
+                    serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy))
+                .withId(CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SERVICE_AUTHZ_CHECK)
         @Bean
         public Action serviceAuthorizationCheck(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
-            return new ServiceAuthorizationCheckAction(servicesManager, authenticationRequestServiceSelectionStrategies);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new ServiceAuthorizationCheckAction(servicesManager, authenticationRequestServiceSelectionStrategies))
+                .withId(CasWebflowConstants.ACTION_ID_SERVICE_AUTHZ_CHECK)
+                .build()
+                .get();
+        }
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
+        @Bean
+        public Action singleSignOnSessionCreated(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> ConsumerExecutionAction.NONE)
+                .withId(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
         @Bean
         public Action sendTicketGrantingTicketAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("singleSignOnParticipationStrategy")
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy) {
-            return new SendTicketGrantingTicketAction(centralAuthenticationService,
-                ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new SendTicketGrantingTicketAction(centralAuthenticationService,
+                    ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy))
+                .withId(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
         @Bean
         public Action createTicketGrantingTicketAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-            return new CreateTicketGrantingTicketAction(casWebflowConfigurationContext);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new CreateTicketGrantingTicketAction(casWebflowConfigurationContext))
+                .withId(CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
+                .build()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINISH_LOGOUT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action finishLogoutAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -160,10 +224,16 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
-            @Qualifier("logoutExecutionPlan")
+            @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan) {
-            return new FinishLogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
-                argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new FinishLogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+                    argumentExtractor, servicesManager, logoutExecutionPlan, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_FINISH_LOGOUT)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -171,6 +241,7 @@ public class CasSupportActionsConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT)
         public Action logoutAction(
             final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
@@ -179,28 +250,49 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
-            @Qualifier("logoutExecutionPlan")
+            @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan) {
-            return new LogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
-                argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new LogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+                    argumentExtractor, servicesManager, logoutExecutionPlan, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_LOGOUT)
+                .build()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action initializeLoginAction(final CasConfigurationProperties casProperties,
+                                            final ConfigurableApplicationContext applicationContext,
                                             @Qualifier(ServicesManager.BEAN_NAME)
                                             final ServicesManager servicesManager) {
-            return new InitializeLoginAction(servicesManager, casProperties);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new InitializeLoginAction(servicesManager, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "setServiceUnauthorizedRedirectUrlAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SET_SERVICE_UNAUTHORIZED_REDIRECT_URL)
         @Bean
         public Action setServiceUnauthorizedRedirectUrlAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new SetServiceUnauthorizedRedirectUrlAction(servicesManager);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new SetServiceUnauthorizedRedirectUrlAction(servicesManager))
+                .withId(CasWebflowConstants.ACTION_ID_SET_SERVICE_UNAUTHORIZED_REDIRECT_URL)
+                .build()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
@@ -211,13 +303,20 @@ public class CasSupportActionsConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new RenderLoginAction(servicesManager, casProperties, applicationContext);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new RenderLoginAction(servicesManager, casProperties, applicationContext))
+                .withId(CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
         public Action initialFlowSetupAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("authenticationEventExecutionPlan")
             final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
@@ -231,20 +330,28 @@ public class CasSupportActionsConfiguration {
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-            @Qualifier("singleSignOnParticipationStrategy")
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor) {
-            return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor), servicesManager,
-                authenticationRequestServiceSelectionStrategies, ticketGrantingTicketCookieGenerator,
-                warnCookieGenerator, casProperties, authenticationEventExecutionPlan,
-                webflowSingleSignOnParticipationStrategy, ticketRegistrySupport);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor), servicesManager,
+                    authenticationRequestServiceSelectionStrategies, ticketGrantingTicketCookieGenerator,
+                    warnCookieGenerator, casProperties, authenticationEventExecutionPlan,
+                    webflowSingleSignOnParticipationStrategy, ticketRegistrySupport))
+                .withId(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VERIFY_REQUIRED_SERVICE)
         public Action verifyRequiredServiceAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -252,23 +359,39 @@ public class CasSupportActionsConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport) {
-            return new VerifyRequiredServiceAction(servicesManager,
-                ticketGrantingTicketCookieGenerator, casProperties, ticketRegistrySupport);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new VerifyRequiredServiceAction(servicesManager,
+                    ticketGrantingTicketCookieGenerator, casProperties, ticketRegistrySupport))
+                .withId(CasWebflowConstants.ACTION_ID_VERIFY_REQUIRED_SERVICE)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INITIAL_AUTHN_REQUEST_VALIDATION)
         public Action initialAuthenticationRequestValidationAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
             final CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver) {
-            return new InitialAuthenticationRequestValidationAction(rankedAuthenticationProviderWebflowEventResolver);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new InitialAuthenticationRequestValidationAction(rankedAuthenticationProviderWebflowEventResolver))
+                .withId(CasWebflowConstants.ACTION_ID_INITIAL_AUTHN_REQUEST_VALIDATION)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "genericSuccessViewAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
         public Action genericSuccessViewAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -276,24 +399,39 @@ public class CasSupportActionsConfiguration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            return new GenericSuccessViewAction(centralAuthenticationService, servicesManager,
-                webApplicationServiceFactory, casProperties);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new GenericSuccessViewAction(centralAuthenticationService, servicesManager,
+                    webApplicationServiceFactory, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "redirectUnauthorizedServiceUrlAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL)
         public Action redirectUnauthorizedServiceUrlAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new RedirectUnauthorizedServiceUrlAction(servicesManager, applicationContext);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new RedirectUnauthorizedServiceUrlAction(servicesManager, applicationContext))
+                .withId(CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
         public Action generateServiceTicketAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -306,26 +444,43 @@ public class CasSupportActionsConfiguration {
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy) {
-            return new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService,
-                ticketRegistrySupport, authenticationRequestServiceSelectionStrategies,
-                servicesManager, principalElectionStrategy);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService,
+                    ticketRegistrySupport, authenticationRequestServiceSelectionStrategies,
+                    servicesManager, principalElectionStrategy))
+                .withId(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
+                .build()
+                .get();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "gatewayServicesManagementCheck")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GATEWAY_SERVICES_MANAGEMENT)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action gatewayServicesManagementCheck(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
-            return new GatewayServicesManagementCheckAction(servicesManager, authenticationRequestServiceSelectionStrategies);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new GatewayServicesManagementCheckAction(servicesManager, authenticationRequestServiceSelectionStrategies))
+                .withId(CasWebflowConstants.ACTION_ID_GATEWAY_SERVICES_MANAGEMENT)
+                .build()
+                .get();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FRONT_CHANNEL_LOGOUT)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action frontChannelLogoutAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -335,20 +490,35 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
-            @Qualifier("logoutExecutionPlan")
+            @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan) {
-            return new FrontChannelLogoutAction(centralAuthenticationService,
-                ticketGrantingTicketCookieGenerator, argumentExtractor,
-                servicesManager, logoutExecutionPlan, casProperties);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new FrontChannelLogoutAction(centralAuthenticationService,
+                    ticketGrantingTicketCookieGenerator, argumentExtractor,
+                    servicesManager, logoutExecutionPlan, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_FRONT_CHANNEL_LOGOUT)
+                .build()
+                .get();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action ticketGrantingTicketCheckAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            return new TicketGrantingTicketCheckAction(centralAuthenticationService);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new TicketGrantingTicketCheckAction(centralAuthenticationService))
+                .withId(CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK)
+                .build()
+                .get();
         }
 
         @Bean
@@ -367,15 +537,22 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("defaultSingleLogoutRequestExecutor")
             final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
-            return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
-                warnCookieGenerator, casProperties.getLogout(), logoutManager,
-                applicationContext, defaultSingleLogoutRequestExecutor);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+                    warnCookieGenerator, casProperties.getLogout(), logoutManager,
+                    applicationContext, defaultSingleLogoutRequestExecutor))
+                .withId(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
+                .build()
+                .get();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "confirmLogoutAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CONFIRM_LOGOUT)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action confirmLogoutAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -385,16 +562,24 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
-            @Qualifier("logoutExecutionPlan")
+            @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan) {
-            return new ConfirmLogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
-                argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new ConfirmLogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+                    argumentExtractor, servicesManager, logoutExecutionPlan, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_CONFIRM_LOGOUT)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
         public Action logoutViewSetupAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -404,17 +589,26 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
-            @Qualifier("logoutExecutionPlan")
+            @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan) {
-            return new LogoutViewSetupAction(centralAuthenticationService,
-                ticketGrantingTicketCookieGenerator, argumentExtractor,
-                servicesManager, logoutExecutionPlan, casProperties);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new LogoutViewSetupAction(centralAuthenticationService,
+                    ticketGrantingTicketCookieGenerator, argumentExtractor,
+                    servicesManager, logoutExecutionPlan, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
+                .build()
+                .get();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SERVICE_WARNING)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action serviceWarningAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier("warnCookieGenerator")
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -425,15 +619,28 @@ public class CasSupportActionsConfiguration {
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy) {
-            return new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
-                ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
+                    ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy))
+                .withId(CasWebflowConstants.ACTION_ID_SERVICE_WARNING)
+                .build()
+                .get();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action populateSpringSecurityContextAction() {
-            return new PopulateSpringSecurityContextAction();
+        public Action populateSpringSecurityContextAction(final CasConfigurationProperties casProperties,
+                                                          final ConfigurableApplicationContext applicationContext) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(PopulateSpringSecurityContextAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
+                .build()
+                .get();
         }
     }
 
@@ -445,6 +652,7 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
         public Action prepareAccountProfileViewAction(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -452,8 +660,15 @@ public class CasSupportActionsConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            return new PrepareAccountProfileViewAction(centralAuthenticationService,
-                servicesManager, casProperties, auditTrailExecutionPlan);
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new PrepareAccountProfileViewAction(centralAuthenticationService,
+                    servicesManager, casProperties, auditTrailExecutionPlan))
+                .withId(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
+                .build()
+                .get();
         }
     }
 }

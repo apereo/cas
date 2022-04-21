@@ -160,7 +160,7 @@ public class CasCoreLogoutConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public LogoutManager logoutManager(
-            @Qualifier("logoutExecutionPlan")
+            @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan,
             final CasConfigurationProperties casProperties) {
             return new DefaultLogoutManager(casProperties.getSlo().isDisabled(), logoutExecutionPlan);
@@ -200,7 +200,7 @@ public class CasCoreLogoutConfiguration {
     @Configuration(value = "CasCoreLogoutExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreLogoutExecutionPlanConfiguration {
-        @ConditionalOnMissingBean(name = "logoutExecutionPlan")
+        @ConditionalOnMissingBean(name = LogoutExecutionPlan.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LogoutExecutionPlan logoutExecutionPlan(final List<LogoutExecutionPlanConfigurer> configurers) {

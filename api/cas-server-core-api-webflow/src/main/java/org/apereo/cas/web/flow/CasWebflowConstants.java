@@ -1189,6 +1189,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_RENDER_LOGIN_FORM = "renderLoginFormAction";
 
     /**
+     * Action id 'setServiceUnauthorizedRedirectUrlAction'.
+     */
+    String ACTION_ID_SET_SERVICE_UNAUTHORIZED_REDIRECT_URL = "setServiceUnauthorizedRedirectUrlAction";
+    
+    /**
      * Action id 'authenticationViaFormAction'.
      */
     String ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION = "authenticationViaFormAction";
@@ -1213,6 +1218,16 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheckAction";
     /**
+     * Action id 'frontChannelLogoutAction'.
+     */
+    String ACTION_ID_FRONT_CHANNEL_LOGOUT = "frontChannelLogoutAction";
+
+    /**
+     * Action id 'gatewayServicesManagementCheck'.
+     */
+    String ACTION_ID_GATEWAY_SERVICES_MANAGEMENT = "gatewayServicesManagementCheck";
+
+    /**
      * Action id 'prepareAccountProfileViewAction'.
      */
     String ACTION_ID_PREPARE_ACCOUNT_PROFILE = "prepareAccountProfileViewAction";
@@ -1228,6 +1243,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_INITIAL_AUTHN_REQUEST_VALIDATION = "initialAuthenticationRequestValidationAction";
 
     /**
+     * Action id 'genericSuccessViewAction'.
+     */
+    String ACTION_ID_GENERIC_SUCCESS_VIEW = "genericSuccessViewAction";
+
+    /**
      * Action id 'remoteAuthenticate'.
      */
     String ACTION_ID_REMOTE_TRUSTED_AUTHENTICATION = "remoteAuthenticate";
@@ -1236,6 +1256,11 @@ public interface CasWebflowConstants {
      * Action id 'clearWebflowCredentialsAction'.
      */
     String ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS = "clearWebflowCredentialsAction";
+
+    /**
+     * Action id 'redirectUnauthorizedServiceUrlAction'.
+     */
+    String ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL = "redirectUnauthorizedServiceUrlAction";
 
     /**
      * Action id 'generateServiceTicketAction'.
@@ -1248,9 +1273,14 @@ public interface CasWebflowConstants {
     String ACTION_ID_REDIRECT_TO_SERVICE = "redirectToServiceAction";
 
     /**
-     * Action id 'redirectToServiceAction'.
+     * Action id 'terminateSessionAction'.
      */
     String ACTION_ID_TERMINATE_SESSION = "terminateSessionAction";
+
+    /**
+     * Action id 'confirmLogoutAction'.
+     */
+    String ACTION_ID_CONFIRM_LOGOUT = "confirmLogoutAction";
 
     /**
      * Action id 'logoutViewSetupAction'.
@@ -1286,6 +1316,11 @@ public interface CasWebflowConstants {
      * Action id 'sendTicketGrantingTicketAction'.
      */
     String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
+
+    /**
+     * Action id 'singleSignOnSessionCreated'.
+     */
+    String ACTION_ID_SINGLE_SIGON_SESSION_CREATED = "singleSignOnSessionCreated";
 
     /**
      * Action id 'createTicketGrantingTicketAction'.

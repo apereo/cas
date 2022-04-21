@@ -166,7 +166,7 @@ public interface CasWebflowConfigurer extends Ordered {
      * @param action the action
      * @return the action state
      */
-    ActionState createActionState(Flow flow, String name, String action);
+    ActionState createActionState(Flow flow, String name, String... action);
 
     /**
      * Create action state action state.

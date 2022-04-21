@@ -158,7 +158,7 @@ public class CasCoreWebflowConfiguration {
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("singleSignOnParticipationStrategy")
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
@@ -204,7 +204,7 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "renewAuthenticationRequestCheckAction")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action renewAuthenticationRequestCheckAction(
-            @Qualifier("singleSignOnParticipationStrategy")
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy) {
             return new RenewAuthenticationRequestCheckAction(singleSignOnParticipationStrategy);
         }
@@ -334,7 +334,7 @@ public class CasCoreWebflowConfiguration {
     public static class CasCoreWebflowSingleSignOnConfiguration {
 
         @Bean
-        @ConditionalOnMissingBean(name = "singleSignOnParticipationStrategy")
+        @ConditionalOnMissingBean(name = SingleSignOnParticipationStrategy.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy(
             final List<SingleSignOnParticipationStrategyConfigurer> providers) {

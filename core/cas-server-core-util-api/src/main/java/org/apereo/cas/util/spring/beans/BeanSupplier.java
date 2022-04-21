@@ -1,5 +1,7 @@
 package org.apereo.cas.util.spring.beans;
 
+import org.apereo.cas.util.ResourceUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -103,6 +105,16 @@ public interface BeanSupplier<T> {
      */
     default BeanSupplier<T> when(final boolean rawValue) {
         return when(() -> rawValue);
+    }
+
+    /**
+     * Add condition to ensure given resource exist.
+     *
+     * @param resource the resource
+     * @return the bean supplier
+     */
+    default BeanSupplier<T> ifExists(final String resource) {
+        return when(() -> ResourceUtils.doesResourceExist(resource));
     }
 
     /**

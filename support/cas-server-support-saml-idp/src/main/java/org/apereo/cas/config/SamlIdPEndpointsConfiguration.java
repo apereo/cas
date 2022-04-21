@@ -527,7 +527,7 @@ public class SamlIdPEndpointsConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("samlObjectSignatureValidator")
             final SamlObjectSignatureValidator samlObjectSignatureValidator,
-            @Qualifier("singleSignOnParticipationStrategy")
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
             @Qualifier("singleLogoutServiceLogoutUrlBuilder")
             final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
