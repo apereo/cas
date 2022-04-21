@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OAuth20LogoutDontReplicateSessionTests extends AbstractOAuth20Tests {
 
     @Autowired
-    @Qualifier("logoutExecutionPlan")
+    @Qualifier(LogoutExecutionPlan.BEAN_NAME)
     private LogoutExecutionPlan logoutExecutionPlan;
 
     @Test

@@ -14,6 +14,11 @@ import org.springframework.core.Ordered;
 public interface SingleSignOnParticipationStrategy extends Ordered {
 
     /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "singleSignOnParticipationStrategy";
+
+    /**
      * Always participating single sign on participation strategy.
      *
      * @return the single sign on participation strategy

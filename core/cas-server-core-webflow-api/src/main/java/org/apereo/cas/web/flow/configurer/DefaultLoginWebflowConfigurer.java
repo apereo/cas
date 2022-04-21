@@ -251,6 +251,8 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void createSendTicketGrantingTicketAction(final Flow flow) {
         val action = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET,
             CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET);
+        action.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED));
+        
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS,
             CasWebflowConstants.STATE_ID_SERVICE_CHECK);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
@@ -425,7 +427,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createRedirectUnauthorizedServiceUrlEndState(final Flow flow) {
         val state = createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_REDIR_UNAUTHZ_URL, "flowScope.unauthorizedRedirectUrl", true);
-        state.getEntryActionList().add(createEvaluateAction("redirectUnauthorizedServiceUrlAction"));
+        state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL));
     }
 
     /**
@@ -459,7 +461,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createGenericLoginSuccessEndState(final Flow flow) {
         val state = createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS, "login/casGenericSuccessView");
-        state.getEntryActionList().add(createEvaluateAction("genericSuccessViewAction"));
+        state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW));
     }
 
     /**
@@ -514,7 +516,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
             "flowScope.unauthorizedRedirectUrl != null",
             CasWebflowConstants.STATE_ID_VIEW_REDIR_UNAUTHZ_URL,
             CasWebflowConstants.STATE_ID_VIEW_SERVICE_ERROR);
-        decision.getEntryActionList().add(createEvaluateAction("setServiceUnauthorizedRedirectUrlAction"));
+        decision.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SET_SERVICE_UNAUTHORIZED_REDIRECT_URL));
     }
 
     /**

@@ -31,6 +31,10 @@ exports.browserOptions = (opt) => {
     };
 };
 
+exports.logy = async(text) => {
+    console.log(colors.yellow(text));
+}
+
 exports.logg = async(text) => {
     console.log(colors.green(text));
 }
@@ -168,7 +172,7 @@ exports.submitForm = async (page, selector) => {
 }
 
 exports.type = async (page, selector, value, obfuscate = false) => {
-    let logValue = obfuscate ? "******" : value;
+    let logValue = obfuscate ? `******` : value;
     console.log(`Typing ${logValue} in field ${selector}`);
     await page.$eval(selector, el => el.value = '');
     await page.type(selector, value);
@@ -184,9 +188,14 @@ exports.newPage = async (browser) => {
     // await page.setRequestInterception(true);
     await page.bringToFront();
     page
-        .on('console', message =>
-            this.logr(`${message.type().substr(0, 3).toUpperCase()} ${message.text()}`))
-        .on('pageerror', ({ message }) => this.logr(message));
+        .on('console', message => {
+            if (message.type() === "warning") {
+                this.logy(`Console ${message.type()}: ${message.text()}`)
+            } else {
+                this.logg(`Console ${message.type()}: ${message.text()}`)
+            }
+        })
+        .on('pageerror', ({ message }) => this.logr(`Console: ${message}`));
     return page;
 }
 

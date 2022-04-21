@@ -15,6 +15,10 @@ import java.util.Collection;
  * @since 5.1.0
  */
 public interface LogoutExecutionPlan {
+    /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "logoutExecutionPlan";
 
     /**
      * Register logout handler.

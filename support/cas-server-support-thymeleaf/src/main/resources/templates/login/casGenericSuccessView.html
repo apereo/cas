@@ -160,38 +160,36 @@
         <script type="text/javascript" th:inline="javascript">
             let divs = ["divPrincipalAttributes", "divAuthenticationAttributes", "divAuthorizedServices"]
             divs.forEach(id => {
-                console.log(`Marking element ${id}`)
+                console.log(`Selecting element ${id}`)
                 let div = document.querySelector(`#${id}`);
-                $(function() {
-                    if (typeof mdc !== 'undefined') {
-                        new mdc.dataTable.MDCDataTable(div);
-                        tabify(mdc);
-                    } else {
-                        $('#principal-tab').tab('show');
+                if (div !== null) {
+                    $(() => {
+                        if (typeof mdc === 'undefined') {
+                            $('#principal-tab').tab('show');
+                            $('button[data-toggle="tab"]').on('shown.bs.tab', event => {
+                                let id = $(event.target).data('target');
+                                $('.tab-pane').addClass('d-none');
+                                $(`#${id}`).removeClass('d-none');
 
-                        $('button[data-toggle="tab"]').on('shown.bs.tab', function (event) {
-                            var id = $(event.target).data('target');
-                            $('.tab-pane').addClass('d-none');
-                            $(`#${id}`).removeClass('d-none');
-
-                        })
-                    }
-                });
+                            })
+                        } else {
+                            new mdc.dataTable.MDCDataTable(div);
+                            tabify(mdc);
+                        }
+                    });
+                }
             });
             function tabify(material) {
-                var elm = document.getElementById('attribute-tabs');
-                if (material) {
-                    var tabs = material.tabBar.MDCTabBar.attachTo(elm);
+                let elm = document.getElementById('attribute-tabs');
+                let tabs = material.tabBar.MDCTabBar.attachTo(elm);
 
-                    tabs.listen('MDCTabBar:activated', function (ev) {
-                        var index = ev.detail.index;
-                        $('.attribute-tab').addClass('d-none');
-                        $('#attribute-tab-' + index).removeClass('d-none');
-                    });
+                tabs.listen('MDCTabBar:activated', ev => {
+                    let index = ev.detail.index;
+                    $('.attribute-tab').addClass('d-none');
+                    $(`#attribute-tab-${index}`).removeClass('d-none');
+                });
 
-                    tabs.foundation.adapter.activateTabAtIndex(0);
-                }
-
+                tabs.foundation.adapter.activateTabAtIndex(0);
                 return tabs;
             }
 

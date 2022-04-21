@@ -47,7 +47,7 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     private CasConfigurationProperties casProperties;
     
     @Autowired
-    @Qualifier("genericSuccessViewAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
     private Action genericSuccessViewAction;
     
     @BeforeEach

@@ -44,7 +44,7 @@ public class FrontChannelLogoutActionTests {
     public class SingleLogoutDisabledTests extends AbstractWebflowActionsTests {
 
         @Autowired
-        @Qualifier("frontChannelLogoutAction")
+        @Qualifier(CasWebflowConstants.ACTION_ID_FRONT_CHANNEL_LOGOUT)
         private Action frontChannelLogoutAction;
 
         @Test
@@ -81,7 +81,7 @@ public class FrontChannelLogoutActionTests {
     public class SingleLogoutEnabledTests extends AbstractWebflowActionsTests {
 
         @Autowired
-        @Qualifier("frontChannelLogoutAction")
+        @Qualifier(CasWebflowConstants.ACTION_ID_FRONT_CHANNEL_LOGOUT)
         private Action frontChannelLogoutAction;
 
         @Test

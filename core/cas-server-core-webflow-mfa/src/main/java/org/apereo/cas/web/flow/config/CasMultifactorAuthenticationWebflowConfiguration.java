@@ -89,7 +89,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
             @Qualifier("authenticationContextValidator")
             final MultifactorAuthenticationContextValidator authenticationContextValidator,
-            @Qualifier("singleSignOnParticipationStrategy")
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy) {
             return new RankedMultifactorAuthenticationProviderWebflowEventResolver(
                 casWebflowConfigurationContext,

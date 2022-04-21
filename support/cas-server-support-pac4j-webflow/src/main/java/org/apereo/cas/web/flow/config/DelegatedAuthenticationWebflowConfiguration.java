@@ -369,7 +369,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final TicketFactory ticketFactory,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("singleSignOnParticipationStrategy")
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,

@@ -14,10 +14,12 @@ understand the internals of actions, states, decisions and scopes please [see th
 
 CAS by default operates on the following core webflow configuration files:
 
-| Flow     | Description                              |
-|----------|------------------------------------------|
-| `login`  | Authentication flow for login attempts.  |
-| `logout` | Authentication flow for logout attempts. |
+| Flow        | Description                                                                                     |
+|-------------|-------------------------------------------------------------------------------------------------|
+| `login`     | Authentication flow for login attempts.                                                         |
+| `logout`    | Authentication flow for logout attempts.                                                        |
+| `pswdreset` | [Password management](../password_management/Password-Management.html) and password reset flow. |
+| `account`   | [Account management](../registration/Account-Management-Overview.html) and profile flow..       |
 
 The above flows present a minimal structure for what CAS needs at its core to handle login and logout flows. It is important to note that at
 runtime many other actions and states are injected into either of these flows dynamically depending on the CAS configuration and presence of
@@ -138,8 +140,6 @@ You may configure CAS to alter and auto-configure the webflow via a Groovy scrip
 access to CAS APIs that allow you alter the webflow. However, configuration and scaffolding of the overlay and required dependencies is
 easier as all is provided by CAS at runtime.
 
-{% include_cached casproperties.html properties="cas.webflow.autoconfigure,cas.webflow.groovy" %}
-
 <div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided 
 here, specifically executed as part of the Groovy script are considered implementations 
 internal to CAS mostly. They may be added or removed with little hesitation which means 
@@ -147,6 +147,12 @@ changes may break your deployment and upgrades at runtime. Remember that unlike 
 classes, scripts are not statically compiled when you build CAS and you only may observe 
 failures when you do in fact turn on the server and deploy. Thus, choose this option 
 with good reason and make sure you have thought changes through before stepping into code.</p></div>
+
+#### Configuration
+
+{% include_cached casproperties.html properties="cas.webflow.autoconfigure,cas.webflow.groovy" %}
+
+#### Webflow Auto Configuration
 
 A sample Groovy script follows that aims to locate the CAS login flow and a particular state pre-defined in the flow. If found, a custom
 action is inserted into the state to execute as soon as CAS enters that state in the flow. While this is a rather modest example, note that
@@ -200,3 +206,47 @@ The parameters passed are as follows:
 | `webflow`                  | The object representing a facade on top of Spring Webflow APIs.    |
 | `springApplicationContext` | The Spring application context.                                    |
 | `logger`                   | Logger object for issuing log messages such as `logger.info(...)`. |
+
+#### Webflow Actions
+
+Webflow operations are typically handled via `Action` components that are implemented and registered with the CAS runtime as `Bean` definitions. While these 
+definitions could be conditionally substituted with an alternative implementation, you also have the option to carry out the action operation via Groovy 
+scripts. In this scenario, you take over the responsibility of action implemention yourself, relieving CAS from providing you with an implementation.
+
+{% include_cached casproperties.html properties="cas.webflow.groovy.actions" %}
+
+<div class="alert alert-info"><strong>Note</strong>
+<p>You will need to dig up the name of the original action <code>Bean</code> first before you can provide a Groovy substitute. This will require a careful
+analysis of CAS codebase. Furthermore, please note that not all Spring Webflow actions may be subtituted with a Groovy equivalent. Groovy support
+in this area is a continuous development effort and will gradually improve throughout various CAS releases. Cross-check with the codebase to be sure.
+</p></div>
+
+The outline of the script may be as follows:
+
+```groovy
+import org.apereo.cas.authentication.principal.*
+import org.apereo.cas.authentication.*
+import org.apereo.cas.util.*
+import org.springframework.webflow.*
+import org.springframework.webflow.action.*
+
+def run(Object[] args) {
+    def requestContext = args[0]
+    def applicationContext = args[1]
+    def properties = args[2]
+    def logger = args[3]
+
+    logger.info("Handling action...")
+    return new EventFactorySupport().event(this, "success")
+}
+```
+
+The outcome of the script should be a Spring Webflow `Event`. The parameters passed are as follows:
+
+| Parameter            | Description                                                                                              |
+|----------------------|----------------------------------------------------------------------------------------------------------|
+| `requestContext`     | The object representing the Spring Webflow execution context that carries the HTTP request and response. |
+| `applicationContext` | The Spring application context.                                                                          |
+| `properties`         | Reference to CAS configuration properties.                                                               |
+| `logger`             | Logger object for issuing log messages such as `logger.info(...)`.                                       |
+
