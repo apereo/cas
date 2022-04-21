@@ -49,6 +49,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -98,7 +99,7 @@ public class CasAccountManagementWebflowConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "accountMgmtRegistrationService")
+    @ConditionalOnMissingBean(name = AccountRegistrationService.BEAN_NAME)
     public AccountRegistrationService accountMgmtRegistrationService(
         final CasConfigurationProperties casProperties,
         @Qualifier("accountMgmtRegistrationPropertyLoader")
@@ -172,7 +173,7 @@ public class CasAccountManagementWebflowConfiguration {
                 .get();
         }
     }
-    
+
     @ConditionalOnClass(PrincipalProvisioner.class)
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -194,7 +195,7 @@ public class CasAccountManagementWebflowConfiguration {
                 .get();
         }
     }
-    
+
     @Configuration(value = "CasAccountManagementWebflowCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasAccountManagementWebflowCoreConfiguration {
@@ -230,32 +231,47 @@ public class CasAccountManagementWebflowConfiguration {
     @Configuration(value = "CasAccountManagementWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasAccountManagementWebflowActionConfiguration {
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
         public Action validateAccountRegistrationTokenAction(
-            @Qualifier("accountMgmtRegistrationService")
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            return new ValidateAccountRegistrationTokenAction(centralAuthenticationService, accountMgmtRegistrationService);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new ValidateAccountRegistrationTokenAction(centralAuthenticationService, accountMgmtRegistrationService))
+                .withId(CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST)
         @Bean
         public Action finalizeAccountRegistrationRequestAction(
-            @Qualifier("accountMgmtRegistrationService")
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService) {
-            return new FinalizeAccountRegistrationAction(accountMgmtRegistrationService);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new FinalizeAccountRegistrationAction(accountMgmtRegistrationService))
+                .withId(CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "loadAccountRegistrationPropertiesAction")
         public Action loadAccountRegistrationPropertiesAction(
-            @Qualifier("accountMgmtRegistrationService")
+            @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService) {
             return new LoadAccountRegistrationPropertiesAction(accountMgmtRegistrationService);
         }
@@ -265,7 +281,7 @@ public class CasAccountManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "submitAccountRegistrationAction")
         public Action submitAccountRegistrationAction(
             final CasConfigurationProperties casProperties,
-            @Qualifier("accountMgmtRegistrationService")
+            @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory defaultTicketFactory,
@@ -285,7 +301,7 @@ public class CasAccountManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "accountMgmtRegistrationAuditPrincipalIdResolver")
         public AuditPrincipalIdProvider accountMgmtRegistrationAuditPrincipalIdResolver(
-            @Qualifier("accountMgmtRegistrationService")
+            @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService) {
             return new AccountRegistrationRequestAuditPrincipalIdResolver(accountMgmtRegistrationService);
         }
@@ -347,12 +363,21 @@ public class CasAccountManagementWebflowConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("accountMgmtRegistrationCaptchaActivationStrategy")
             final CaptchaActivationStrategy accountMgmtRegistrationCaptchaActivationStrategy) {
+
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> {
-                    val recaptcha = casProperties.getAccountRegistration().getGoogleRecaptcha();
-                    return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha), accountMgmtRegistrationCaptchaActivationStrategy);
-                })
+                .supply(() ->
+                    WebflowActionBeanSupplier.builder()
+                        .withApplicationContext(applicationContext)
+                        .withProperties(casProperties)
+                        .withAction(() -> {
+                            val recaptcha = casProperties.getAccountRegistration().getGoogleRecaptcha();
+                            return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha),
+                                accountMgmtRegistrationCaptchaActivationStrategy);
+                        })
+                        .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA)
+                        .build()
+                        .get())
                 .otherwiseProxy()
                 .get();
         }

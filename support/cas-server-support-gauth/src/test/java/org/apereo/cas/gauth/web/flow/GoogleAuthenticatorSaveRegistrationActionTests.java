@@ -1,8 +1,8 @@
 package org.apereo.cas.gauth.web.flow;
 
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
+import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationAction;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -31,8 +31,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.webflow.context.ExternalContextHolder.setExternalContext;
-import static org.springframework.webflow.execution.RequestContextHolder.setRequestContext;
+import static org.springframework.webflow.context.ExternalContextHolder.*;
+import static org.springframework.webflow.execution.RequestContextHolder.*;
 
 /**
  * This is {@link GoogleAuthenticatorSaveRegistrationActionTests}.
@@ -46,20 +46,16 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
 })
 @Tag("WebflowMfaActions")
 public class GoogleAuthenticatorSaveRegistrationActionTests {
-
     @Autowired
     @Qualifier("googleSaveAccountRegistrationAction")
     private Action googleSaveAccountRegistrationAction;
-
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
-
     @BeforeEach
     public void beforeEach() {
         googleAuthenticatorAccountRegistry.deleteAll();
     }
-
     @Test
     public void verifyMultipleRegDisabled(@Autowired final CasConfigurationProperties casProperties) throws Exception {
         val context = new MockRequestContext();
@@ -69,7 +65,7 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
         setRequestContext(context);
         setExternalContext(context.getExternalContext());
 
-        val acct = OneTimeTokenAccount.builder()
+        val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
             .secretKey("secret")
@@ -85,7 +81,7 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
 
     @Test
     public void verifyAccountValidationFails() throws Exception {
-        val acct = OneTimeTokenAccount.builder()
+        val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
             .secretKey("secret")
@@ -108,7 +104,7 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
 
     @Test
     public void verifyAccountValidationOnly() throws Exception {
-        val acct = OneTimeTokenAccount.builder()
+        val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
             .secretKey("secret")

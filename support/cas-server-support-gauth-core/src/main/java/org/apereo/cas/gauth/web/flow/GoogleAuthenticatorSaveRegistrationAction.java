@@ -69,14 +69,6 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
     @Override
     protected GoogleAuthenticatorAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
         val acct = super.buildOneTimeTokenAccount(requestContext);
-        return GoogleAuthenticatorAccount.builder()
-            .id(acct.getId())
-            .name(acct.getName())
-            .username(acct.getUsername())
-            .secretKey(acct.getSecretKey())
-            .validationCode(acct.getValidationCode())
-            .scratchCodes(acct.getScratchCodes())
-            .registrationDate(acct.getRegistrationDate())
-            .build();
+        return GoogleAuthenticatorAccount.from(acct);
     }
 }
