@@ -67,6 +67,7 @@ The collection of end-to-end browser tests based on Puppeteer continue to grow t
     
 - The codebase for the WebAuthn helper library is now merged into CAS as part of its core [WebAuthn feature](../mfa/FIDO2-WebAuthn-Authentication.html).
 - Minor improvements to CAS documentation to display and advertise [configuration feature toggles](../configuration/Configuration-Feature-Toggles.html) better and automatically.
+- Triggering multifactor authentication [based on a Groovy script](../mfa/Configuring-Multifactor-Authentication-Triggers-Groovy.html) is now able to support provider selection menus.
 
 ## Library Upgrades
 

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategy implements
         }
 
         for (val trigger : multifactorAuthenticationTriggers) {
-            if (!trigger.supports(request, registeredService, authentication, service)) {
+            if (BeanSupplier.isNotProxy(trigger) && !trigger.supports(request, registeredService, authentication, service)) {
                 continue;
             }
             val activated = trigger.isActivated(authentication, registeredService, request, response, service);
