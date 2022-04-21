@@ -865,6 +865,10 @@ public interface CasWebflowConstants {
      * State id 'casBadHoursView'.
      */
     String STATE_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
+    /**
+     * State id 'tokenAuthenticationCheck'.
+     */
+    String STATE_ID_TOKEN_AUTHENTICATION_CHECK = "tokenAuthenticationCheck";
 
     /**
      * State id 'casAuthenticationBlockedView'.
@@ -1559,6 +1563,10 @@ public interface CasWebflowConstants {
      * Action id 'webAuthnStartRegistrationAction .
      */
     String ACTION_ID_WEB_AUTHN_START_REGISTRATION = "webAuthnStartRegistrationAction";
+    /**
+     * Action id 'tokenAuthenticationAction .
+     */
+    String ACTION_ID_TOKEN_AUTHENTICATION_ACTION = "tokenAuthenticationAction";
 
     /**
      * Action id 'webAuthnValidateSessionCredentialTokenAction .

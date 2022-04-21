@@ -12,6 +12,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TokenAuthenticationAction;
 import org.apereo.cas.web.flow.TokenWebflowConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -59,8 +60,10 @@ public class TokenAuthenticationWebflowConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "tokenAuthenticationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TOKEN_AUTHENTICATION_ACTION)
     public Action tokenAuthenticationAction(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("tokenRequestExtractor")
         final TokenRequestExtractor tokenRequestExtractor,
         @Qualifier("adaptiveAuthenticationPolicy")
@@ -71,9 +74,15 @@ public class TokenAuthenticationWebflowConfiguration {
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
-        return new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, tokenRequestExtractor,
-            servicesManager);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, tokenRequestExtractor,
+                servicesManager))
+            .withId(CasWebflowConstants.ACTION_ID_TOKEN_AUTHENTICATION_ACTION)
+            .build()
+            .get();
     }
 
     @Bean

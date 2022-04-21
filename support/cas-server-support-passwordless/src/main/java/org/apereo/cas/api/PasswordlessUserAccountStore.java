@@ -12,6 +12,11 @@ import java.util.Optional;
 public interface PasswordlessUserAccountStore {
 
     /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "passwordlessUserAccountStore";
+
+    /**
      * Find user passwordless user account.
      *
      * @param username the username

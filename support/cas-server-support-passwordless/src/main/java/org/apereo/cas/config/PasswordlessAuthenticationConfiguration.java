@@ -69,7 +69,7 @@ public class PasswordlessAuthenticationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "passwordlessUserAccountStore")
+    @ConditionalOnMissingBean(name = PasswordlessUserAccountStore.BEAN_NAME)
     public PasswordlessUserAccountStore passwordlessUserAccountStore(final CasConfigurationProperties casProperties) {
         val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
         if (accounts.getJson().getLocation() != null) {

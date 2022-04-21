@@ -17,9 +17,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    static final String STATE_ID_TOKEN_AUTHENTICATION_CHECK = "tokenAuthenticationCheck";
-
-    private static final String ACTION_ID_TOKEN_AUTHENTICATION_ACTION = "tokenAuthenticationAction";
 
     public TokenWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -33,8 +30,8 @@ public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val actionState = createActionState(flow, STATE_ID_TOKEN_AUTHENTICATION_CHECK,
-                createEvaluateAction(ACTION_ID_TOKEN_AUTHENTICATION_ACTION));
+            val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_TOKEN_AUTHENTICATION_CHECK,
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_TOKEN_AUTHENTICATION_ACTION));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));

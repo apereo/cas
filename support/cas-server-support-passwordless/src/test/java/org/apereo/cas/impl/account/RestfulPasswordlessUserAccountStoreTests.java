@@ -35,7 +35,7 @@ public class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUs
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Autowired
-    @Qualifier("passwordlessUserAccountStore")
+    @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test

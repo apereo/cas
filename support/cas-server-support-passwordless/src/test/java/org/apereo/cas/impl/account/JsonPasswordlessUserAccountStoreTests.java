@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JsonPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
 
     @Autowired
-    @Qualifier("passwordlessUserAccountStore")
+    @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test

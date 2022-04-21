@@ -28,7 +28,7 @@ public class GroovyPasswordlessUserAccountStoreTests extends BasePasswordlessUse
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
-    @Qualifier("passwordlessUserAccountStore")
+    @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test

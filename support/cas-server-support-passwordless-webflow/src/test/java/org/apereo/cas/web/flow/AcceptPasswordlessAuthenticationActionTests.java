@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org")
 public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
-    @Qualifier("acceptPasswordlessAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN)
     private Action acceptPasswordlessAuthenticationAction;
 
     @Autowired
@@ -73,7 +73,7 @@ public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordles
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
         val request = new MockHttpServletRequest();
-       
+
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         val account = PasswordlessUserAccount.builder()
             .email("email")

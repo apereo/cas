@@ -59,7 +59,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
     private static final String ENCRYPTION_SECRET = RANDOM_STRING_GENERATOR.getNewString(48);
 
     @Autowired
-    @Qualifier("tokenAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_TOKEN_AUTHENTICATION_ACTION)
     private ObjectProvider<Action> action;
 
     @Autowired
