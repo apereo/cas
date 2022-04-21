@@ -25,6 +25,15 @@ import java.util.regex.Pattern;
 public interface BeanCondition {
 
     /**
+     * Always true bean condition.
+     *
+     * @return the bean condition
+     */
+    static BeanCondition alwaysTrue() {
+        return on("cas.server.name").evenIfMissing();
+    }
+
+    /**
      * On bean condition.
      *
      * @param name the name

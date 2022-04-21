@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-public interface BeanSupplier<T> {
+public interface BeanSupplier<T> extends Supplier<T> {
 
     /**
      * ToString() prefix.
@@ -64,11 +64,7 @@ public interface BeanSupplier<T> {
         return !isProxy(result);
     }
 
-    /**
-     * Get bean or proxied instance of the bean.
-     *
-     * @return the type
-     */
+    @Override
     T get();
 
     /**

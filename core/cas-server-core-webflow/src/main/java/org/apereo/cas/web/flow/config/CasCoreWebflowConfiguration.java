@@ -44,6 +44,7 @@ import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
@@ -90,7 +91,6 @@ import java.util.List;
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreWebflowConfiguration {
-
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreWebflowEventResolutionConfiguration {
@@ -102,8 +102,6 @@ public class CasCoreWebflowConfiguration {
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return new ServiceTicketRequestWebflowEventResolver(casWebflowConfigurationContext);
         }
-
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CipherExecutor webflowCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -189,57 +187,103 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action clearWebflowCredentialsAction() {
-            return new ClearWebflowCredentialAction();
+        public Action clearWebflowCredentialsAction(final ConfigurableApplicationContext applicationContext,
+                                                    final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(ClearWebflowCredentialAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS)
+                .build()
+                .get();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "checkWebAuthenticationRequestAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CHECK_WEB_AUTHENTICATION_REQUEST)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action checkWebAuthenticationRequestAction(final CasConfigurationProperties casProperties) {
-            return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getCore().getContentType());
+        public Action checkWebAuthenticationRequestAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getCore().getContentType()))
+                .withId(CasWebflowConstants.ACTION_ID_CHECK_WEB_AUTHENTICATION_REQUEST)
+                .build()
+                .get();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "renewAuthenticationRequestCheckAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RENEW_AUTHN_REQUEST)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action renewAuthenticationRequestCheckAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy) {
-            return new RenewAuthenticationRequestCheckAction(singleSignOnParticipationStrategy);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new RenewAuthenticationRequestCheckAction(singleSignOnParticipationStrategy))
+                .withId(CasWebflowConstants.ACTION_ID_RENEW_AUTHN_REQUEST)
+                .build()
+                .get();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action redirectToServiceAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier("webApplicationResponseBuilderLocator")
             final ResponseBuilderLocator responseBuilderLocator) {
-            return new RedirectToServiceAction(responseBuilderLocator);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new RedirectToServiceAction(responseBuilderLocator))
+                .withId(CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE)
+                .build()
+                .get();
         }
-
         @Bean
-        @ConditionalOnMissingBean(name = "injectResponseHeadersAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INJECT_RESPONSE_HEADERS)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action injectResponseHeadersAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("webApplicationResponseBuilderLocator")
             final ResponseBuilderLocator responseBuilderLocator) {
-            return new InjectResponseHeadersAction(responseBuilderLocator);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new InjectResponseHeadersAction(responseBuilderLocator))
+                .withId(CasWebflowConstants.ACTION_ID_INJECT_RESPONSE_HEADERS)
+                .build()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action authenticationExceptionHandler(final List<CasWebflowExceptionHandler> handlers) {
+        public Action authenticationExceptionHandler(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            final List<CasWebflowExceptionHandler> handlers) {
             AnnotationAwareOrderComparator.sort(handlers);
-            return new AuthenticationExceptionHandlerAction(handlers);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new AuthenticationExceptionHandlerAction(handlers))
+                .withId(CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER)
+                .build()
+                .get();
         }
     }
 
     @Configuration(value = "CasCoreWebflowExceptionHandlingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreWebflowExceptionHandlingConfiguration {
-
         @ConditionalOnMissingBean(name = "groovyCasWebflowAuthenticationExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

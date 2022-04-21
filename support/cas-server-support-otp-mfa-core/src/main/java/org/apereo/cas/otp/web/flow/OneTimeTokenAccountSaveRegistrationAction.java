@@ -43,10 +43,10 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
      * @param requestContext the request context
      * @return the one time token account
      */
-    protected T buildOneTimeTokenAccount(final RequestContext requestContext) {
+    protected OneTimeTokenAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
         val currentAcct = getCandidateAccountFrom(requestContext);
         val accountName = requestContext.getRequestParameters().getRequired(REQUEST_PARAMETER_ACCOUNT_NAME);
-        return (T) OneTimeTokenAccount.builder()
+        return OneTimeTokenAccount.builder()
             .username(currentAcct.getUsername())
             .secretKey(currentAcct.getSecretKey())
             .validationCode(currentAcct.getValidationCode())
@@ -76,7 +76,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
                     return getErrorEvent(requestContext);
                 }
             }
-            val account = buildOneTimeTokenAccount(requestContext);
+            val account = (T) buildOneTimeTokenAccount(requestContext);
             if (!validate(account, requestContext)) {
                 LOGGER.error("Unable to validate account");
                 return getErrorEvent(requestContext);

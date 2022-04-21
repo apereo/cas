@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.web.flow;
 
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -35,9 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
-    properties = {
-        "CasFeatureModule.AccountManagement.enabled=true"
-    })
+    properties = "CasFeatureModule.AccountManagement.enabled=true")
 @Tag("WebflowMfaActions")
 public class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
     @Autowired

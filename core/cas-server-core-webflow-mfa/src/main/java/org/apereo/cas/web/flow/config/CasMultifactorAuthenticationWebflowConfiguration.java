@@ -32,6 +32,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationAvailableAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationBypassAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationFailureAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.actions.composite.MultifactorProviderSelectedAction;
 import org.apereo.cas.web.flow.actions.composite.PrepareMultifactorProviderSelectionAction;
 import org.apereo.cas.web.flow.authentication.ChainingMultifactorAuthenticationProviderSelector;
@@ -400,11 +401,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             return new DefaultMultifactorAuthenticationTriggerSelectionStrategy(triggers);
         }
     }
-
     @Configuration(value = "CasMultifactorAuthenticationWebflowResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasMultifactorAuthenticationWebflowResolverConfiguration {
-
         @Bean
         @ConditionalOnMissingBean(name = MultifactorAuthenticationProviderResolver.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -443,12 +442,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             return new RankedMultifactorAuthenticationProviderSelector();
         }
     }
-
     @Configuration(value = "CasMultifactorAuthenticationWebflowContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasMultifactorAuthenticationWebflowContextConfiguration {
-
-
         @ConditionalOnMissingBean(name = "initialAuthenticationAttemptWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -508,36 +504,71 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
-        public Action mfaAvailableAction() {
-            return new MultifactorAuthenticationAvailableAction();
+        public Action mfaAvailableAction(final ConfigurableApplicationContext applicationContext,
+                                         final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(MultifactorAuthenticationAvailableAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
-        public Action mfaBypassAction() {
-            return new MultifactorAuthenticationBypassAction();
+        public Action mfaBypassAction(final ConfigurableApplicationContext applicationContext,
+                                      final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(MultifactorAuthenticationBypassAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
-        public Action mfaFailureAction() {
-            return new MultifactorAuthenticationFailureAction();
+        public Action mfaFailureAction(final ConfigurableApplicationContext applicationContext,
+                                       final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(MultifactorAuthenticationFailureAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "multifactorProviderSelectedAction")
-        public Action multifactorProviderSelectedAction() {
-            return new MultifactorProviderSelectedAction();
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED)
+        public Action multifactorProviderSelectedAction(final ConfigurableApplicationContext applicationContext,
+                                                        final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(MultifactorProviderSelectedAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "prepareMultifactorProviderSelectionAction")
-        public Action prepareMultifactorProviderSelectionAction() {
-            return new PrepareMultifactorProviderSelectionAction();
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION)
+        public Action prepareMultifactorProviderSelectionAction(final ConfigurableApplicationContext applicationContext,
+                                                                final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(PrepareMultifactorProviderSelectionAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION)
+                .build()
+                .get();
         }
     }
 
