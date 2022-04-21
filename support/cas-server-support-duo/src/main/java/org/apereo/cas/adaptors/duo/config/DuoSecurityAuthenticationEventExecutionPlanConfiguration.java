@@ -36,6 +36,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
@@ -260,13 +261,20 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "prepareDuoWebLoginFormAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_DUO_WEB_LOGIN_FORM)
         public Action prepareDuoWebLoginFormAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return BeanSupplier.of(Action.class)
-                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(DuoSecurityPrepareWebLoginFormAction::new)
-                .otherwiseProxy()
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                    .supply(DuoSecurityPrepareWebLoginFormAction::new)
+                    .otherwiseProxy()
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_PREPARE_DUO_WEB_LOGIN_FORM)
+                .build()
                 .get();
         }
 
@@ -274,11 +282,18 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action determineDuoUserAccountAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return BeanSupplier.of(Action.class)
-                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(DuoSecurityDetermineUserAccountAction::new)
-                .otherwiseProxy()
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                    .supply(DuoSecurityDetermineUserAccountAction::new)
+                    .otherwiseProxy()
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_DETERMINE_DUO_USER_ACCOUNT)
+                .build()
                 .get();
         }
     }
@@ -289,24 +304,27 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public DuoSecurityPingEndpoint duoPingEndpoint(final CasConfigurationProperties casProperties,
-                                                       final ConfigurableApplicationContext applicationContext) {
+        public DuoSecurityPingEndpoint duoPingEndpoint(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityPingEndpoint(casProperties, applicationContext);
         }
 
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint(final CasConfigurationProperties casProperties,
-                                                                             final ConfigurableApplicationContext applicationContext) {
+        public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
         }
 
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public DuoSecurityAdminApiEndpoint duoAdminApiEndpoint(final CasConfigurationProperties casProperties,
-                                                               final ConfigurableApplicationContext applicationContext) {
+        public DuoSecurityAdminApiEndpoint duoAdminApiEndpoint(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityAdminApiEndpoint(casProperties, applicationContext);
         }
     }

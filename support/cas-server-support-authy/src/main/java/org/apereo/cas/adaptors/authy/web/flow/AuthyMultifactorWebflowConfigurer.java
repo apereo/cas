@@ -58,7 +58,7 @@ public class AuthyMultifactorWebflowConfigurer extends AbstractCasMultifactorWeb
             createStateDefaultTransition(registerState, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
-                createEvaluateAction("authyAuthenticationWebflowAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_AUTHY_AUTHENTICATION));
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
@@ -72,8 +72,8 @@ public class AuthyMultifactorWebflowConfigurer extends AbstractCasMultifactorWeb
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
         });
-        
+
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_AUTHY_EVENT_ID,
-                casProperties.getAuthn().getMfa().getAuthy().getId());
+            casProperties.getAuthn().getMfa().getAuthy().getId());
     }
 }

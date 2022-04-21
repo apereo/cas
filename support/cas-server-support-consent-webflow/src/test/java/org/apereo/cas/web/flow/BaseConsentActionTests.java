@@ -80,11 +80,11 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseConsentActionTests {
     @Autowired
-    @Qualifier("confirmConsentAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_CONFIRM_CONSENT)
     protected Action confirmConsentAction;
 
     @Autowired
-    @Qualifier("checkConsentRequiredAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_CHECK_CONSENT_REQUIRED)
     protected Action checkConsentRequiredAction;
 
     @Autowired

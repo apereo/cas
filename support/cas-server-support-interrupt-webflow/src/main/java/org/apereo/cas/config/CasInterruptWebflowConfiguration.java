@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,7 +42,6 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "CasInterruptWebflowConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.InterruptNotifications)
 public class CasInterruptWebflowConfiguration {
-
     @ConditionalOnMissingBean(name = "interruptWebflowConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -52,36 +52,57 @@ public class CasInterruptWebflowConfiguration {
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
-        return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+            applicationContext, casProperties);
     }
-
-    @ConditionalOnMissingBean(name = "inquireInterruptAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INQUIRE_INTERRUPT)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action inquireInterruptAction(final CasConfigurationProperties casProperties,
-                                         @Qualifier("interruptCookieGenerator")
-                                         final CasCookieBuilder interruptCookieGenerator,
-                                         @Qualifier("interruptInquirer")
-                                         final InterruptInquiryExecutionPlan interruptInquirer) {
-        return new InquireInterruptAction(interruptInquirer.getInterruptInquirers(), casProperties, interruptCookieGenerator);
+    public Action inquireInterruptAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("interruptCookieGenerator")
+        final CasCookieBuilder interruptCookieGenerator,
+        @Qualifier("interruptInquirer")
+        final InterruptInquiryExecutionPlan interruptInquirer) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new InquireInterruptAction(interruptInquirer.getInterruptInquirers(),
+                casProperties, interruptCookieGenerator))
+            .withId(CasWebflowConstants.ACTION_ID_INQUIRE_INTERRUPT)
+            .build()
+            .get();
     }
-
-    @ConditionalOnMissingBean(name = "prepareInterruptViewAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_INTERRUPT_VIEW)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action prepareInterruptViewAction() {
-        return new PrepareInterruptViewAction();
+    public Action prepareInterruptViewAction(final ConfigurableApplicationContext applicationContext,
+                                             final CasConfigurationProperties casProperties) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(PrepareInterruptViewAction::new)
+            .withId(CasWebflowConstants.ACTION_ID_PREPARE_INTERRUPT_VIEW)
+            .build()
+            .get();
     }
-
-    @ConditionalOnMissingBean(name = "finalizeInterruptFlowAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action finalizeInterruptFlowAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier("interruptCookieGenerator")
         final CasCookieBuilder interruptCookieGenerator) {
-        return new FinalizeInterruptFlowAction(interruptCookieGenerator);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new FinalizeInterruptFlowAction(interruptCookieGenerator))
+            .withId(CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT)
+            .build()
+            .get();
     }
-
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategy")
@@ -92,9 +113,9 @@ public class CasInterruptWebflowConfiguration {
         final ServicesManager servicesManager,
         @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
-        return new InterruptSingleSignOnParticipationStrategy(servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan);
+        return new InterruptSingleSignOnParticipationStrategy(servicesManager,
+            ticketRegistrySupport, authenticationServiceSelectionPlan);
     }
-
     @Bean
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategyConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -103,7 +124,6 @@ public class CasInterruptWebflowConfiguration {
         final SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy) {
         return chain -> chain.addStrategy(interruptSingleSignOnParticipationStrategy);
     }
-
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "interruptCasWebflowExecutionPlanConfigurer")

@@ -23,6 +23,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -54,31 +55,47 @@ public class DuoSecurityConfiguration {
     @Configuration(value = "DuoSecurityCoreWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DuoSecurityCoreWebflowConfiguration {
-        @ConditionalOnMissingBean(name = "duoNonWebAuthenticationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action duoNonWebAuthenticationAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return BeanSupplier.of(Action.class)
-                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(DuoSecurityDirectAuthenticationAction::new)
-                .otherwiseProxy()
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                    .supply(DuoSecurityDirectAuthenticationAction::new)
+                    .otherwiseProxy()
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION)
+                .build()
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "duoAuthenticationWebflowAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DUO_AUTHENTICATION_WEBFLOW)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action duoAuthenticationWebflowAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("duoAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver duoAuthenticationWebflowEventResolver) {
-            return new DuoSecurityAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new DuoSecurityAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver))
+                .withId(CasWebflowConstants.ACTION_ID_DUO_AUTHENTICATION_WEBFLOW)
+                .build()
+                .get();
         }
 
-        @ConditionalOnMissingBean(name = "duoUniversalPromptPrepareLoginAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action duoUniversalPromptPrepareLoginAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("duoProviderBean")
             final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean,
@@ -86,17 +103,24 @@ public class DuoSecurityConfiguration {
             final TicketFactory ticketFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry) {
-            return BeanSupplier.of(Action.class)
-                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(ticketRegistry, duoProviderBean, ticketFactory))
-                .otherwiseProxy()
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                    .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(ticketRegistry, duoProviderBean, ticketFactory))
+                    .otherwiseProxy()
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
+                .build()
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "duoUniversalPromptValidateLoginAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action duoUniversalPromptValidateLoginAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("duoAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
@@ -106,12 +130,18 @@ public class DuoSecurityConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("duoProviderBean")
             final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean) {
-            return BeanSupplier.of(Action.class)
-                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DuoSecurityUniversalPromptValidateLoginAction(
-                    duoAuthenticationWebflowEventResolver, centralAuthenticationService,
-                    duoProviderBean, authenticationSystemSupport))
-                .otherwiseProxy()
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                    .supply(() -> new DuoSecurityUniversalPromptValidateLoginAction(
+                        duoAuthenticationWebflowEventResolver, centralAuthenticationService,
+                        duoProviderBean, authenticationSystemSupport))
+                    .otherwiseProxy()
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN)
+                .build()
                 .get();
         }
 
@@ -128,8 +158,6 @@ public class DuoSecurityConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-
-
     }
 
     @Configuration(value = "DuoSecurityAccountProfileWebflowConfiguration", proxyBeanMethods = false)

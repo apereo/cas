@@ -5,7 +5,6 @@ import org.apereo.cas.adaptors.authy.AuthyClientInstance;
 import org.apereo.cas.adaptors.authy.AuthyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.authy.AuthyTokenCredential;
 import org.apereo.cas.adaptors.authy.DefaultAuthyClientInstance;
-import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWebflowAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -36,7 +35,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.webflow.execution.Action;
 
 import java.net.URL;
 
@@ -157,19 +155,6 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
             .supply(() -> new AuthenticationContextAttributeMetaDataPopulator(
                 casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), authyAuthenticationHandler,
                 authyAuthenticatorMultifactorAuthenticationProvider.getId()))
-            .otherwiseProxy()
-            .get();
-    }
-
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    public Action authyAuthenticationRegistrationWebflowAction(
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier("authyClientInstance")
-        final AuthyClientInstance authyClientInstance) throws Exception {
-        return BeanSupplier.of(Action.class)
-            .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance))
             .otherwiseProxy()
             .get();
     }

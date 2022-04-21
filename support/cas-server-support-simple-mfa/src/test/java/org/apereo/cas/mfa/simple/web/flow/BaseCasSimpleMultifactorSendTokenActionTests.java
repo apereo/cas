@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class)
 public abstract class BaseCasSimpleMultifactorSendTokenActionTests {
     @Autowired
-    @Qualifier("mfaSimpleMultifactorSendTokenAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_SIMPLE_SEND_TOKEN)
     protected Action mfaSimpleMultifactorSendTokenAction;
 
     @Autowired

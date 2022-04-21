@@ -67,11 +67,11 @@ import static org.mockito.Mockito.*;
 @Tag("DuoSecurity")
 public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
-    @Qualifier("duoUniversalPromptValidateLoginAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN)
     private Action duoUniversalPromptValidateLoginAction;
 
     @Autowired
-    @Qualifier("duoUniversalPromptPrepareLoginAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
     private Action duoUniversalPromptPrepareLoginAction;
 
     @Autowired

@@ -48,15 +48,16 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
 
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
-            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "sendSimpleToken");
+            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN);
             setStartState(flow, initLoginFormState);
             createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
             createEndState(flow, CasWebflowConstants.STATE_ID_UNAVAILABLE);
 
-            val sendSimpleToken = createActionState(flow, "sendSimpleToken", "mfaSimpleMultifactorSendTokenAction");
+            val sendSimpleToken = createActionState(flow, CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN, CasWebflowConstants.ACTION_ID_MFA_SIMPLE_SEND_TOKEN);
             createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_UNAVAILABLE);
             createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-            
+
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
             val propertiesToBind = CollectionUtils.wrapList("token");
             val binder = createStateBinderConfiguration(propertiesToBind);
@@ -67,8 +68,9 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
 
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
-            
-            createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_RESEND, "sendSimpleToken",
+
+            createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_RESEND,
+                CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN,
                 Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,

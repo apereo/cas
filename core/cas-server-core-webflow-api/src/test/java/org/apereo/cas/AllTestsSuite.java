@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.flow.CasWebflowLoginContextProviderTests;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionActionTests;
+import org.apereo.cas.web.flow.actions.GroovyScriptWebflowActionTests;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionActionTests;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplierTests;
 import org.apereo.cas.web.flow.configurer.DefaultCasWebflowExecutionPlanTests;
@@ -32,6 +33,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultCasWebflowExecutionPlanTests.class,
     StaticEventExecutionActionTests.class,
     WebflowActionBeanSupplierTests.class,
+    GroovyScriptWebflowActionTests.class,
     EncryptedTranscoderTests.class
 })
 @Suite

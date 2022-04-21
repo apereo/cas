@@ -15,6 +15,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,7 +53,8 @@ public class CasCaptchaConfiguration {
         final FlowBuilderServices flowBuilderServices) throws Exception {
         return BeanSupplier.of(CasWebflowConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties))
+            .supply(() -> new CasCaptchaWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, applicationContext, casProperties))
             .otherwiseProxy()
             .get();
     }
@@ -72,17 +74,24 @@ public class CasCaptchaConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @ConditionalOnMissingBean(name = "validateCaptchaAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VALIDATE_CAPTCHA)
     public Action validateCaptchaAction(
+        final CasConfigurationProperties casProperties,
         @Qualifier("captchaActivationStrategy")
         final CaptchaActivationStrategy captchaActivationStrategy,
         @Qualifier("captchaValidator")
         final CaptchaValidator captchaValidator,
         final ConfigurableApplicationContext applicationContext) throws Exception {
-        return BeanSupplier.of(Action.class)
-            .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new ValidateCaptchaAction(captchaValidator, captchaActivationStrategy))
-            .otherwiseProxy()
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> BeanSupplier.of(Action.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new ValidateCaptchaAction(captchaValidator, captchaActivationStrategy))
+                .otherwiseProxy()
+                .get())
+            .withId(CasWebflowConstants.ACTION_ID_VALIDATE_CAPTCHA)
+            .build()
             .get();
     }
 
@@ -102,18 +111,25 @@ public class CasCaptchaConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @ConditionalOnMissingBean(name = "initializeCaptchaAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_CAPTCHA)
     public Action initializeCaptchaAction(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("captchaActivationStrategy")
         final CaptchaActivationStrategy captchaActivationStrategy) throws Exception {
-        return BeanSupplier.of(Action.class)
-            .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new InitializeCaptchaAction(captchaActivationStrategy,
-                requestContext -> requestContext.getFlowScope().put("recaptchaLoginEnabled", casProperties.getGoogleRecaptcha().isEnabled()),
-                casProperties.getGoogleRecaptcha()))
-            .otherwiseProxy()
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> BeanSupplier.of(Action.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new InitializeCaptchaAction(captchaActivationStrategy,
+                    requestContext -> requestContext.getFlowScope().put("recaptchaLoginEnabled",
+                        casProperties.getGoogleRecaptcha().isEnabled()),
+                    casProperties.getGoogleRecaptcha()))
+                .otherwiseProxy()
+                .get())
+            .withId(CasWebflowConstants.ACTION_ID_INIT_CAPTCHA)
+            .build()
             .get();
     }
 
