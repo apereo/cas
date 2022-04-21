@@ -56,7 +56,7 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
     private Action displayBeforePasswordlessAuthenticationAction;
 
     @Autowired
-    @Qualifier("passwordlessUserAccountStore")
+    @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test

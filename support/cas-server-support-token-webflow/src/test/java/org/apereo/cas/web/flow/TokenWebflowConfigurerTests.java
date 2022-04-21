@@ -33,7 +33,7 @@ public class TokenWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-        val state = (TransitionableState) flow.getState(TokenWebflowConfigurer.STATE_ID_TOKEN_AUTHENTICATION_CHECK);
+        val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_TOKEN_AUTHENTICATION_CHECK);
         assertNotNull(state);
     }
 }

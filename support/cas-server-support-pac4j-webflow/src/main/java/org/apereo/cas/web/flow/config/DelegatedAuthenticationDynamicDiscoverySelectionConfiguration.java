@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationDynamicDiscoveryExecutionAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -53,16 +54,23 @@ public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
     @Bean
     public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction(
+        final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
         final DelegatedClientAuthenticationConfigurationContext configContext,
         @Qualifier("delegatedAuthenticationDynamicDiscoveryProviderLocator")
         final DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator) {
-        return BeanSupplier.of(Action.class)
-            .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new DelegatedClientAuthenticationDynamicDiscoveryExecutionAction(
-                configContext, delegatedAuthenticationDynamicDiscoveryProviderLocator))
-            .otherwise(() -> ConsumerExecutionAction.NONE)
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> BeanSupplier.of(Action.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new DelegatedClientAuthenticationDynamicDiscoveryExecutionAction(
+                    configContext, delegatedAuthenticationDynamicDiscoveryProviderLocator))
+                .otherwise(() -> ConsumerExecutionAction.NONE)
+                .get())
+            .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
+            .build()
             .get();
     }
 }

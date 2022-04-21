@@ -47,7 +47,7 @@ public class MongoDbPasswordlessUserAccountStoreTests extends BasePasswordlessUs
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("passwordlessUserAccountStore")
+    @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Autowired
