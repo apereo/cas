@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,21 +32,22 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
                                                                           final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
                                                                           final HttpServletRequest request) {
-        if (registeredService == null) {
-            return true;
-        }
 
-        val mfaPolicy = registeredService.getMultifactorPolicy();
-        val shouldProceed = mfaPolicy == null || !mfaPolicy.isBypassEnabled();
+        if (registeredService != null) {
+            val mfaPolicy = registeredService.getMultifactorPolicy();
+            val bypassEnabled = mfaPolicy != null
+                                && StringUtils.isNotBlank(mfaPolicy.getBypassPrincipalAttributeName())
+                                && StringUtils.isNotBlank(mfaPolicy.getBypassPrincipalAttributeValue());
 
-        if (!shouldProceed) {
-            val principal = resolvePrincipal(authentication.getPrincipal());
-            val bypass = locateMatchingAttributeValue(mfaPolicy.getBypassPrincipalAttributeName(),
-                mfaPolicy.getBypassPrincipalAttributeValue(),
-                principal.getAttributes(), true);
-            if (bypass) {
-                LOGGER.debug("Bypass rules for principal [{}] indicate the request may be ignored", principal.getId());
-                return false;
+            if (bypassEnabled) {
+                val principal = resolvePrincipal(authentication.getPrincipal());
+                val bypass = locateMatchingAttributeValue(mfaPolicy.getBypassPrincipalAttributeName(),
+                    mfaPolicy.getBypassPrincipalAttributeValue(),
+                    principal.getAttributes(), true);
+                if (bypass) {
+                    LOGGER.debug("Bypass rules for principal [{}] indicate the request may be ignored", principal.getId());
+                    return false;
+                }
             }
         }
         return true;
