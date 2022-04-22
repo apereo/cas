@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GroovyScriptMultifactorAuthenticationProviderSelectorTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
-    @Qualifier("multifactorAuthenticationProviderSelector")
+    @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     @Test
