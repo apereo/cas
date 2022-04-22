@@ -31,7 +31,7 @@ public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowCon
         val flow = getLoginFlow();
         if (flow != null) {
             val actionState = createActionState(flow, STATE_ID_DIGEST_AUTHENTICATION_CHECK,
-                createEvaluateAction("digestAuthenticationAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_DIGEST_AUTHENTICATION));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,

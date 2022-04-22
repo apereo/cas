@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthenticationActionTests {
     @Autowired
-    @Qualifier("surrogateAuthorizationCheck")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK)
     private Action surrogateAuthorizationCheck;
 
     @Test

@@ -29,6 +29,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -104,6 +105,6 @@ public abstract class BaseCertificateCredentialActionTests {
     public static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
     @Autowired
-    @Qualifier("x509Check")
+    @Qualifier(CasWebflowConstants.ACTION_ID_X509_CHECK)
     protected Action action;
 }

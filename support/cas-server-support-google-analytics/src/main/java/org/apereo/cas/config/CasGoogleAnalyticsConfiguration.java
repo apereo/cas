@@ -61,7 +61,7 @@ public class CasGoogleAnalyticsConfiguration {
         return cfg;
     }
 
-    @ConditionalOnMissingBean(name = "createGoogleAnalyticsCookieAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_CREATE_COOKIE)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action createGoogleAnalyticsCookieAction(final CasConfigurationProperties casProperties,
@@ -70,7 +70,7 @@ public class CasGoogleAnalyticsConfiguration {
         return new CreateGoogleAnalyticsCookieAction(casProperties, casGoogleAnalyticsCookieGenerator);
     }
 
-    @ConditionalOnMissingBean(name = "removeGoogleAnalyticsCookieAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_REMOVE_COOKIE)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action removeGoogleAnalyticsCookieAction(

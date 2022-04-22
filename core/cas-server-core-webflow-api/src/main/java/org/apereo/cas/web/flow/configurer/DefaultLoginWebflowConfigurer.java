@@ -356,7 +356,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void createGatewayServicesMgmtAction(final Flow flow) {
         val gatewayServicesManagementCheck = createActionState(flow,
             CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK,
-            CasWebflowConstants.ACTION_ID_GATEWAY_CHECK);
+            CasWebflowConstants.ACTION_ID_GATEWAY_SERVICES_MANAGEMENT);
         createTransitionForState(gatewayServicesManagementCheck, CasWebflowConstants.STATE_ID_SUCCESS,
             CasWebflowConstants.STATE_ID_REDIRECT);
     }

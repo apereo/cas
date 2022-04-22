@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 public class RemoteAddressNonInteractiveCredentialsActionTests {
 
     @Autowired
-    @Qualifier("remoteAddressCheck")
+    @Qualifier(CasWebflowConstants.ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK)
     private Action remoteAddressCheck;
 
     @Test

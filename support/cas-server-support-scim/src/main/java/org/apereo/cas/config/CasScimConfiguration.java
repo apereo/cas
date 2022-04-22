@@ -49,7 +49,7 @@ public class CasScimConfiguration {
     @Configuration(value = "CasScimWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasScimWebflowConfiguration {
-        @ConditionalOnMissingBean(name = "principalScimProvisionerAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SCIM_PROVISIONING_PRINCIPAL)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action principalScimProvisionerAction(

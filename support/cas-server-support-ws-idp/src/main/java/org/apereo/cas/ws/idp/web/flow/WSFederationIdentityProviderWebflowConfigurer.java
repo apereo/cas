@@ -29,7 +29,7 @@ public class WSFederationIdentityProviderWebflowConfigurer extends AbstractCasWe
         val loginFlow = getLoginFlow();
         if (loginFlow != null) {
             val state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
-            state.getEntryActionList().add(createEvaluateAction("wsFederationMetadataUIAction"));
+            state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_WSFEDERATION_METADATA_UI));
         }
     }
 }

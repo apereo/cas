@@ -1,8 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.flow.login.InitializeLoginAction;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import org.springframework.webflow.action.EventFactorySupport;
@@ -15,11 +13,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class PrepareForPasswordlessAuthenticationAction extends InitializeLoginAction {
-    public PrepareForPasswordlessAuthenticationAction(final ServicesManager servicesManager,
-        final CasConfigurationProperties casProperties) {
-        super(servicesManager, casProperties);
-    }
+public class PrepareForPasswordlessAuthenticationAction extends BaseCasWebflowAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
@@ -27,6 +21,6 @@ public class PrepareForPasswordlessAuthenticationAction extends InitializeLoginA
         if (!WebUtils.hasPasswordlessAuthenticationAccount(requestContext) && isLoginFlowActive(requestContext)) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID);
         }
-        return super.doExecute(requestContext);
+        return null;
     }
 }

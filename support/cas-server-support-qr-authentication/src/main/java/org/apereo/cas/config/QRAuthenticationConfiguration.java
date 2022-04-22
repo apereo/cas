@@ -225,14 +225,14 @@ public class QRAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class QRAuthenticationWebflowActionConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "qrAuthenticationValidateWebSocketChannelAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action qrAuthenticationValidateWebSocketChannelAction() {
             return new QRAuthenticationValidateTokenAction();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "qrAuthenticationGenerateCodeAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_GENERATE_CODE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action qrAuthenticationGenerateCodeAction() {
             return new QRAuthenticationGenerateCodeAction();

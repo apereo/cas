@@ -119,7 +119,7 @@ public class InweboWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class InweboWebflowActionConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "inweboPushAuthenticateAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INWEBO_PUSH_AUTHENTICATION)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action inweboPushAuthenticateAction(
             @Qualifier("inweboService")
@@ -128,7 +128,7 @@ public class InweboWebflowConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "inweboCheckUserAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INWEBO_CHECK_USER)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action inweboCheckUserAction(
             @Qualifier("inweboService")
@@ -138,14 +138,14 @@ public class InweboWebflowConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "inweboMustEnrollAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INWEBO_MUST_ENROLL)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action inweboMustEnrollAction() {
             return new InweboMustEnrollAction();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "inweboCheckAuthenticationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INWEBO_CHECK_AUTHENTICATION)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action inweboCheckAuthenticationAction(
             @Qualifier("inweboMultifactorAuthenticationWebflowEventResolver")
@@ -157,7 +157,7 @@ public class InweboWebflowConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "inweboSuccessAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INWEBO_SUCCESS)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action inweboSuccessAction() {
             return StaticEventExecutionAction.SUCCESS;

@@ -40,7 +40,7 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
 
         val signUpView = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_ACCOUNT_SIGNUP, "acct-mgmt/casAccountSignupView");
         createTransitionForState(signUpView, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION);
-        signUpView.getEntryActionList().add(createEvaluateAction("loadAccountRegistrationPropertiesAction"));
+        signUpView.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES));
 
         val viewLoginForm = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         createTransitionForState(viewLoginForm, CasWebflowConstants.TRANSITION_ID_SIGNUP, signUpView.getId());

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -41,7 +42,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
 public class WebAuthnStartRegistrationActionTests {
     @Autowired
-    @Qualifier("webAuthnStartRegistrationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_WEB_AUTHN_START_REGISTRATION)
     private Action webAuthnStartRegistrationAction;
 
     @Autowired

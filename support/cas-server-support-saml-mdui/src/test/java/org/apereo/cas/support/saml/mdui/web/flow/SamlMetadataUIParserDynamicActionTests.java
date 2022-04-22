@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
@@ -43,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLMetadata")
 public class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTests {
     @Autowired
-    @Qualifier("samlMetadataUIParserAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SAML_METADATA_UI_PARSER)
     private Action samlMetadataUIParserAction;
 
     @Test

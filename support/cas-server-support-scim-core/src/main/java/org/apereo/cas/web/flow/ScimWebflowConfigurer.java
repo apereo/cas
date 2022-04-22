@@ -28,7 +28,7 @@ public class ScimWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val flow = getLoginFlow();
         if (flow != null) {
             val tgtAction = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
-            tgtAction.getExitActionList().add(createEvaluateAction("principalScimProvisionerAction"));
+            tgtAction.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SCIM_PROVISIONING_PRINCIPAL));
         }
     }
 }

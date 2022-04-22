@@ -80,7 +80,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createSurrogateAuthorizationActionState(final Flow flow) {
         val actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
-        actionState.getEntryActionList().add(createEvaluateAction("surrogateAuthorizationCheck"));
+        actionState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK));
     }
 
     private void createTransitionToInjectSurrogateIntoFlow(final Flow flow) {

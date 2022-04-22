@@ -30,7 +30,7 @@ public class RemoteAddressWebflowConfigurer extends AbstractCasWebflowConfigurer
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val actionState = createActionState(flow, START_AUTHENTICATE, "remoteAddressCheck");
+            val actionState = createActionState(flow, START_AUTHENTICATE, CasWebflowConstants.ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK);
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));

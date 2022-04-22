@@ -55,7 +55,7 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
             createEndState(flow, CasWebflowConstants.STATE_ID_DENY);
 
             val fetchAccountState = createActionState(flow, "fetchUserAccountStatus",
-                createEvaluateAction("mfaAccepttoMultifactorDetermineUserAccountStatusAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCEPTTO_DETERMINE_USER_ACCOUNT_STATUS));
             createTransitionForState(fetchAccountState, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.STATE_ID_MFA_FAILURE);
             createTransitionForState(fetchAccountState, CasWebflowConstants.TRANSITION_ID_DENY, CasWebflowConstants.STATE_ID_DENY);
             createTransitionForState(fetchAccountState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_REGISTER_DEVICE);
@@ -63,17 +63,17 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
             createTransitionForState(fetchAccountState, CasWebflowConstants.TRANSITION_ID_APPROVE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
 
             val fetchChannelState = createActionState(flow, "authenticateAndFetchChannel",
-                createEvaluateAction("mfaAccepttoMultifactorFetchChannelAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCEPTTO_FETCH_CHANNEL));
             createTransitionForState(fetchChannelState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "redirectToAcceptto");
 
             val validateState = createActionState(flow, "validateUser",
-                createEvaluateAction("mfaAccepttoMultifactorValidateUserDeviceRegistrationAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCEPTTO_VALIDATE_USER_DEVICE_REGISTRATION));
             createTransitionForState(validateState, CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
             createTransitionForState(validateState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_DENY);
             createTransitionForState(validateState, CasWebflowConstants.TRANSITION_ID_DENY, CasWebflowConstants.STATE_ID_DENY);
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
-                createEvaluateAction("mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCEPTTO_FINALIZE_AUTHENTICATION));
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
@@ -92,7 +92,7 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
                 casProperties.getAuthn().getMfa().getAcceptto().getId());
             val startState = getStartState(flow);
             addActionsToActionStateExecutionListAt(flow, startState.getId(), 0,
-                createEvaluateAction("mfaAccepttoMultifactorValidateChannelAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCEPTTO_VALIDATE_CHANNEL));
 
             createTransitionForState(startState,
                 CasWebflowConstants.TRANSITION_ID_FINALIZE, "accepttoFinalizeAuthentication");
@@ -110,7 +110,7 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
                 val qrSubmission = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
                 createTransitionForState(qrSubmission, "accepttoQRLogin", "validateWebSocketChannel");
 
-                val validateAction = createActionState(flow, "validateWebSocketChannel", "mfaAccepttoQRCodeValidateWebSocketChannelAction");
+                val validateAction = createActionState(flow, "validateWebSocketChannel", CasWebflowConstants.ACTION_ID_ACCEPTTO_QR_CODE_VALIDATE_CHANNEL);
                 createTransitionForState(validateAction, CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
             }
         }

@@ -42,7 +42,7 @@ public class CasOAuth20WebflowConfiguration {
     @Configuration(value = "CasOAuth20WebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20WebflowActionConfiguration {
-        @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action oauth20RegisteredServiceUIAction(
@@ -55,7 +55,7 @@ public class CasOAuth20WebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "oauth20SessionStoreTicketGrantingTicketAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OAUTH20_SESSION_STORE_TICKET_GRANTING_TICKET)
         public Action oauth20SessionStoreTicketGrantingTicketAction(
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore) {

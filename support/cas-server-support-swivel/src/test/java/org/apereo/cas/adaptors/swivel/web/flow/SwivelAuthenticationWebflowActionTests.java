@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
     })
 public class SwivelAuthenticationWebflowActionTests {
     @Autowired
-    @Qualifier("swivelAuthenticationWebflowAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SWIVEL_AUTHENTICATION)
     private Action swivelAuthenticationWebflowAction;
 
     @Test

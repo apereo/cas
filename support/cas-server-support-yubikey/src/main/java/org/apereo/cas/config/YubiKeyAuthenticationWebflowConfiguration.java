@@ -119,7 +119,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "yubikeyAuthenticationWebflowAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_YUBIKEY_AUTHENTICATION)
         public Action yubikeyAuthenticationWebflowAction(
             @Qualifier("yubikeyAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver) {
@@ -128,14 +128,14 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "prepareYubiKeyAuthenticationLoginAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_YUBIKEY_PREPARE_LOGIN)
         public Action prepareYubiKeyAuthenticationLoginAction(final CasConfigurationProperties casProperties) {
             return new YubiKeyAuthenticationPrepareLoginAction(casProperties);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "yubiKeyAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_YUBIKEY_ACCOUNT_REGISTRATION)
         public Action yubiKeyAccountRegistrationAction(
             @Qualifier("yubiKeyAccountRegistry")
             final YubiKeyAccountRegistry yubiKeyAccountRegistry) {
@@ -144,7 +144,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "yubiKeySaveAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_YUBIKEY_SAVE_ACCOUNT_REGISTRATION)
         public Action yubiKeySaveAccountRegistrationAction(
             @Qualifier("yubiKeyAccountRegistry")
             final YubiKeyAccountRegistry yubiKeyAccountRegistry) {

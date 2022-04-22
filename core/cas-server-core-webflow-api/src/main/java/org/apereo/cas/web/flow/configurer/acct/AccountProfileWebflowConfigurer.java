@@ -35,11 +35,13 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         createTransitionForState(myAccountView, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_REQUEST);
         createTransitionForState(myAccountView, CasWebflowConstants.TRANSITION_ID_UPDATE_SECURITY_QUESTIONS, CasWebflowConstants.STATE_ID_UPDATE_SECURITY_QUESTIONS);
 
-        val updateQuestions = createActionState(accountFlow, CasWebflowConstants.STATE_ID_UPDATE_SECURITY_QUESTIONS, "accountProfileUpdateSecurityQuestionsAction");
+        val updateQuestions = createActionState(accountFlow, CasWebflowConstants.STATE_ID_UPDATE_SECURITY_QUESTIONS,
+            CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS);
         createTransitionForState(updateQuestions, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         createTransitionForState(updateQuestions, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
 
-        val passwordChangeRequest = createActionState(accountFlow, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_REQUEST, "accountProfilePasswordChangeRequestAction");
+        val passwordChangeRequest = createActionState(accountFlow, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_REQUEST,
+            CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST);
         createTransitionForState(passwordChangeRequest, CasWebflowConstants.TRANSITION_ID_SUCCESS, "redirectToPasswordReset");
         createEndState(accountFlow, "redirectToPasswordReset", "requestScope.url", true);
 

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QRAuthenticationValidateTokenActionTests {
 
     @Autowired
-    @Qualifier("qrAuthenticationValidateWebSocketChannelAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL)
     private Action qrAuthenticationValidateWebSocketChannelAction;
 
     @Test

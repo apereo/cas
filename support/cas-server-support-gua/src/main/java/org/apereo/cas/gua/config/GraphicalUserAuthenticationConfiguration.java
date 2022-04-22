@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.LdapUserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
@@ -16,6 +15,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationAction;
 import org.apereo.cas.web.flow.GraphicalUserAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -82,27 +82,50 @@ public class GraphicalUserAuthenticationConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "acceptUserGraphicsForAuthenticationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GUA_ACCEPT_USER)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action acceptUserGraphicsForAuthenticationAction() {
-        return new AcceptUserGraphicsForAuthenticationAction();
+    public Action acceptUserGraphicsForAuthenticationAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(AcceptUserGraphicsForAuthenticationAction::new)
+            .withId(CasWebflowConstants.ACTION_ID_GUA_ACCEPT_USER)
+            .build()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "displayUserGraphicsBeforeAuthenticationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GUA_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION)
     public Action displayUserGraphicsBeforeAuthenticationAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier("userGraphicalAuthenticationRepository")
         final UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository) {
-        return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository))
+            .withId(CasWebflowConstants.ACTION_ID_GUA_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION)
+            .build()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action initializeLoginAction(final CasConfigurationProperties casProperties,
-                                        @Qualifier(ServicesManager.BEAN_NAME)
-                                        final ServicesManager servicesManager) {
-        return new PrepareForGraphicalAuthenticationAction(servicesManager, casProperties);
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GUA_PREPARE_LOGIN)
+    public Action prepareForGraphicalAuthenticationAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(PrepareForGraphicalAuthenticationAction::new)
+            .withId(CasWebflowConstants.ACTION_ID_GUA_PREPARE_LOGIN)
+            .build()
+            .get();
     }
 
     @Bean

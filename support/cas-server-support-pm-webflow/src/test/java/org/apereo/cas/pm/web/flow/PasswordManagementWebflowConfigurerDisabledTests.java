@@ -53,7 +53,7 @@ public class PasswordManagementWebflowConfigurerDisabledTests extends BaseWebflo
     private HandlerAdapter passwordResetHandlerAdapter;
 
     @Autowired
-    @Qualifier("verifySecurityQuestionsAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VERIFY_SECURITY_QUESTIONS)
     private Action verifySecurityQuestionsAction;
 
     @Test

@@ -136,7 +136,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
                 casProperties.getAuthn().getSurrogate().getSeparator());
         }
 
-        @ConditionalOnMissingBean(name = "surrogateAuthorizationCheck")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action surrogateAuthorizationCheck(

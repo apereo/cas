@@ -69,7 +69,7 @@ public class X509AuthenticationWebflowConfiguration {
         return new X509CasMultifactorWebflowCustomizer();
     }
 
-    @ConditionalOnMissingBean(name = "x509Check")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_X509_CHECK)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action x509Check(

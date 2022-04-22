@@ -89,14 +89,14 @@ public class SamlIdPWebflowConfiguration {
     public static class SamlIdPWebflowActionsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "samlIdPSessionStoreTicketGrantingTicketAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_IDP_SESSION_STORE_TICKET_GRANTING_TICKET)
         public Action samlIdPSessionStoreTicketGrantingTicketAction(
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore) {
             return new SessionStoreTicketGrantingTicketAction(samlIdPDistributedSessionStore);
         }
 
-        @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action samlIdPMetadataUIParserAction(

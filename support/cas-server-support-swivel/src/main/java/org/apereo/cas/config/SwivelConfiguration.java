@@ -91,7 +91,7 @@ public class SwivelConfiguration {
     public static class SwivelWebflowActionsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SWIVEL_AUTHENTICATION)
         public Action swivelAuthenticationWebflowAction(
             @Qualifier("swivelAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver swivelAuthenticationWebflowEventResolver) {

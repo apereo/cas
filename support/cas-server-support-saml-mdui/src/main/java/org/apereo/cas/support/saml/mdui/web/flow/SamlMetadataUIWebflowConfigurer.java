@@ -29,7 +29,7 @@ public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigure
         val flow = getLoginFlow();
         if (flow != null) {
             val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
-            state.getEntryActionList().add(createEvaluateAction("samlMetadataUIParserAction"));
+            state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SAML_METADATA_UI_PARSER));
         }
     }
 }

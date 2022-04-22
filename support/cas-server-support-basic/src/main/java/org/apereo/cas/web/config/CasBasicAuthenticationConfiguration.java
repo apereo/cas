@@ -40,7 +40,7 @@ import org.springframework.webflow.execution.Action;
 public class CasBasicAuthenticationConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(name = "basicAuthenticationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_BASIC_AUTHENTICATION)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action basicAuthenticationAction(
         @Qualifier("adaptiveAuthenticationPolicy")

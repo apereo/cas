@@ -59,6 +59,7 @@ public class OpenIdWebflowConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION)
     public Action openIdSingleSignOnAction(
         @Qualifier("defaultOpenIdUserNameExtractor")
         final OpenIdUserNameExtractor defaultOpenIdUserNameExtractor,
