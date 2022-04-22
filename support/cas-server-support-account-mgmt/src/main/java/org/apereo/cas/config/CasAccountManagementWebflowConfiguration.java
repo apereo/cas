@@ -269,7 +269,7 @@ public class CasAccountManagementWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "loadAccountRegistrationPropertiesAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES)
         public Action loadAccountRegistrationPropertiesAction(
             @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService) {
@@ -278,7 +278,7 @@ public class CasAccountManagementWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "submitAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT)
         public Action submitAccountRegistrationAction(
             final CasConfigurationProperties casProperties,
             @Qualifier(AccountRegistrationService.BEAN_NAME)

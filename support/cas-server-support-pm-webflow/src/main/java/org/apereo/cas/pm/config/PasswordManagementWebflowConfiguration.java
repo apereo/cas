@@ -161,7 +161,7 @@ public class PasswordManagementWebflowConfiguration {
             return new InitPasswordChangeAction(casProperties);
         }
 
-        @ConditionalOnMissingBean(name = "initPasswordResetAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public Action initPasswordResetAction(
@@ -170,7 +170,7 @@ public class PasswordManagementWebflowConfiguration {
             return new InitPasswordResetAction(passwordManagementService);
         }
 
-        @ConditionalOnMissingBean(name = "passwordChangeAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_CHANGE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public Action passwordChangeAction(
@@ -181,7 +181,7 @@ public class PasswordManagementWebflowConfiguration {
             return new PasswordChangeAction(passwordManagementService, passwordValidationService);
         }
 
-        @ConditionalOnMissingBean(name = "sendPasswordResetInstructionsAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_SEND_INSTRUCTIONS)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action sendPasswordResetInstructionsAction(
@@ -203,7 +203,7 @@ public class PasswordManagementWebflowConfiguration {
                 defaultPrincipalResolver, passwordResetUrlBuilder);
         }
 
-        @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VERIFY_REQUEST)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action verifyPasswordResetRequestAction(
@@ -216,14 +216,14 @@ public class PasswordManagementWebflowConfiguration {
                 passwordManagementService, centralAuthenticationService);
         }
 
-        @ConditionalOnMissingBean(name = "handlePasswordExpirationWarningMessagesAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_EXPIRATION_HANDLE_WARNINGS)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action handlePasswordExpirationWarningMessagesAction() {
             return new HandlePasswordExpirationWarningMessagesAction();
         }
 
-        @ConditionalOnMissingBean(name = "verifySecurityQuestionsAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VERIFY_SECURITY_QUESTIONS)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action verifySecurityQuestionsAction(final CasConfigurationProperties casProperties,
@@ -236,7 +236,7 @@ public class PasswordManagementWebflowConfiguration {
             return new VerifySecurityQuestionsAction(passwordManagementService);
         }
 
-        @ConditionalOnMissingBean(name = "validatePasswordResetTokenAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VALIDATE_TOKEN)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action validatePasswordResetTokenAction(
@@ -276,7 +276,7 @@ public class PasswordManagementWebflowConfiguration {
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "passwordResetValidateCaptchaAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VALIDATE_CAPTCHA)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public Action passwordResetValidateCaptchaAction(
@@ -351,7 +351,7 @@ public class PasswordManagementWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "accountProfilePasswordChangeRequestAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS)
         public Action accountProfileUpdateSecurityQuestionsAction(
             final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
@@ -361,7 +361,7 @@ public class PasswordManagementWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "accountProfilePasswordChangeRequestAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST)
         public Action accountProfilePasswordChangeRequestAction(
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
@@ -372,7 +372,7 @@ public class PasswordManagementWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "prepareAccountProfilePasswordMgmtAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)
         public Action prepareAccountProfilePasswordMgmtAction(
             final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)

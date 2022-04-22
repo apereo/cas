@@ -453,7 +453,7 @@ public class OidcEndpointsConfiguration {
             return cfg;
         }
 
-        @ConditionalOnMissingBean(name = "oidcRegisteredServiceUIAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OIDC_REGSTERED_SERVICE_UI)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action oidcRegisteredServiceUIAction(

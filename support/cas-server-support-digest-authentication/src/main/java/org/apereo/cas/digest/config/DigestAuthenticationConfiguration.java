@@ -52,7 +52,7 @@ public class DigestAuthenticationConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "digestAuthenticationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DIGEST_AUTHENTICATION)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action digestAuthenticationAction(
         @Qualifier("defaultDigestCredentialRetriever")

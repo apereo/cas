@@ -136,6 +136,10 @@ public interface CasWebflowConstants {
      * The transition state 'resend'.
      */
     String TRANSITION_ID_RESEND = "resend";
+    /**
+     * The transition state 'guaGetUserId'.
+     */
+    String TRANSITION_ID_GUA_GET_USERID = "guaGetUserId";
 
     /**
      * The transition state 'error'.
@@ -967,6 +971,18 @@ public interface CasWebflowConstants {
      * State id 'viewLoginFormDuo'.
      */
     String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
+    /**
+     * State id 'acceptUserGraphicsForAuthentication'.
+     */
+    String STATE_ID_ACCEPT_GUA = "acceptUserGraphicsForAuthentication";
+    /**
+     * State id 'guaGetUserIdView'.
+     */
+    String STATE_ID_GUA_GET_USERID = "guaGetUserIdView";
+    /**
+     * State id 'guaDisplayUserGraphics'.
+     */
+    String STATE_ID_GUA_DISPLAY_USER_GFX = "guaDisplayUserGraphics";
 
     /**
      * State id 'finalizeAuthentication'.
@@ -1143,11 +1159,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_SERVICE_AUTHZ_CHECK = "serviceAuthorizationCheck";
 
     /**
-     * Action id 'gatewayServicesManagementCheck'.
-     */
-    String ACTION_ID_GATEWAY_CHECK = "gatewayServicesManagementCheck";
-
-    /**
      * Action id 'validateCaptchaAction'.
      */
     String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
@@ -1240,6 +1251,12 @@ public interface CasWebflowConstants {
      * Action id 'prepareAccountProfileViewAction'.
      */
     String ACTION_ID_PREPARE_ACCOUNT_PROFILE = "prepareAccountProfileViewAction";
+
+    /**
+     * Action id 'accountProfilePasswordChangeRequestAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST = "accountProfilePasswordChangeRequestAction";
+
 
     /**
      * Action id 'prepareAccountProfilePasswordMgmtAction'.
@@ -1520,6 +1537,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN = "displayBeforePasswordlessAuthenticationAction";
 
     /**
+     * Action id 'passswordPrepareLoginAction .
+     */
+    String ACTION_ID_PASSWORDLESS_PREPARE_LOGIN = "passswordPrepareLoginAction";
+
+    /**
      * Action id 'verifyPasswordlessAccountAuthenticationAction .
      */
     String ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN = "verifyPasswordlessAccountAuthenticationAction";
@@ -1614,8 +1636,310 @@ public interface CasWebflowConstants {
      * Action id 'authyAuthenticationWebflowAction'.
      */
     String ACTION_ID_AUTHY_AUTHENTICATION = "authyAuthenticationWebflowAction";
+
     /**
      * Action id 'authyAuthenticationRegistrationWebflowAction'.
      */
     String ACTION_ID_AUTHY_REGISTRATION = "authyAuthenticationRegistrationWebflowAction";
+
+    /**
+     * Action id 'loadAccountRegistrationPropertiesAction'.
+     */
+    String ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES = "loadAccountRegistrationPropertiesAction";
+
+    /**
+     * Action id 'googleSaveAccountRegistrationAction'.
+     */
+    String ACTION_ID_GOOGLE_SAVE_ACCOUNT_REGISTRATION = "googleSaveAccountRegistrationAction";
+
+    /**
+     * Action id 'googleAccountCheckRegistrationAction'.
+     */
+    String ACTION_ID_GOOGLE_CHECK_ACCOUNT_REGISTRATION = "googleAccountCheckRegistrationAction";
+
+    /**
+     * Action id 'googleAccountConfirmSelectionAction'.
+     */
+    String ACTION_ID_GOOGLE_CONFIRM_SELECTION = "googleAccountConfirmSelectionAction";
+    /**
+     * Action id 'googleAccountDeleteDeviceAction'.
+     */
+    String ACTION_ID_GOOGLE_ACCOUNT_DELETE_DEVICE = "googleAccountDeleteDeviceAction";
+    /**
+     * Action id 'prepareGoogleAuthenticatorLoginAction'.
+     */
+    String ACTION_ID_GOOGLE_PREPARE_LOGIN = "prepareGoogleAuthenticatorLoginAction";
+    /**
+     * Action id 'googleAccountCreateRegistrationAction'.
+     */
+    String ACTION_ID_GOOGLE_ACCOUNT_CREATE_REGISTRATION = "googleAccountCreateRegistrationAction";
+
+    /**
+     * Action id 'validateSelectedRegistrationAction'.
+     */
+    String ACTION_ID_GOOGLE_VALIDATE_SELECTED_REGISTRATION = "validateSelectedRegistrationAction";
+
+    /**
+     * Action id 'yubikeyAuthenticationWebflowAction'.
+     */
+    String ACTION_ID_YUBIKEY_AUTHENTICATION = "yubikeyAuthenticationWebflowAction";
+
+    /**
+     * Action id 'prepareYubiKeyAuthenticationLoginAction'.
+     */
+    String ACTION_ID_YUBIKEY_PREPARE_LOGIN = "prepareYubiKeyAuthenticationLoginAction";
+
+    /**
+     * Action id 'yubiKeyAccountRegistrationAction'.
+     */
+    String ACTION_ID_YUBIKEY_ACCOUNT_REGISTRATION = "yubiKeyAccountRegistrationAction";
+
+    /**
+     * Action id 'yubiKeySaveAccountRegistrationAction'.
+     */
+    String ACTION_ID_YUBIKEY_SAVE_ACCOUNT_REGISTRATION = "yubiKeySaveAccountRegistrationAction";
+
+    /**
+     * Action id 'initPasswordResetAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_INIT = "initPasswordResetAction";
+
+    /**
+     * Action id 'passwordChangeAction'.
+     */
+    String ACTION_ID_PASSWORD_CHANGE = "passwordChangeAction";
+
+    /**
+     * Action id 'sendPasswordResetInstructionsAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_SEND_INSTRUCTIONS = "sendPasswordResetInstructionsAction";
+
+    /**
+     * Action id 'verifyPasswordResetRequestAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_VERIFY_REQUEST = "verifyPasswordResetRequestAction";
+
+    /**
+     * Action id 'verifySecurityQuestionsAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_VERIFY_SECURITY_QUESTIONS = "verifySecurityQuestionsAction";
+
+    /**
+     * Action id 'validatePasswordResetTokenAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_VALIDATE_TOKEN = "validatePasswordResetTokenAction";
+
+    /**
+     * Action id 'u2fAuthenticationWebflowAction'.
+     */
+    String ACTION_ID_U2F_AUTHENTICATION = "u2fAuthenticationWebflowAction";
+
+    /**
+     * Action id 'u2fStartAuthenticationAction'.
+     */
+    String ACTION_ID_U2F_START_AUTHENTICATION = "u2fStartAuthenticationAction";
+
+    /**
+     * Action id 'u2fStartRegistrationAction'.
+     */
+    String ACTION_ID_U2F_START_REGISTRATION = "u2fStartRegistrationAction";
+
+    /**
+     * Action id 'u2fCheckAccountRegistrationAction'.
+     */
+    String ACTION_ID_U2F_CHECK_REGISTRATION = "u2fCheckAccountRegistrationAction";
+
+    /**
+     * Action id 'u2fSaveAccountRegistrationAction'.
+     */
+    String ACTION_ID_U2F_SAVE_REGISTRATION = "u2fSaveAccountRegistrationAction";
+
+    /**
+     * Action id 'remoteAddressCheck'.
+     */
+    String ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK = "remoteAddressCheck";
+
+    /**
+     * Action id 'basicAuthenticationAction'.
+     */
+    String ACTION_ID_BASIC_AUTHENTICATION = "basicAuthenticationAction";
+
+    /**
+     * Action id 'digestAuthenticationAction'.
+     */
+    String ACTION_ID_DIGEST_AUTHENTICATION = "digestAuthenticationAction";
+
+    /**
+     * Action id 'principalScimProvisionerAction'.
+     */
+    String ACTION_ID_SCIM_PROVISIONING_PRINCIPAL = "principalScimProvisionerAction";
+
+    /**
+     * Action id 'radiusAuthenticationWebflowAction'.
+     */
+    String ACTION_ID_RADIUS_AUTHENTICATION = "radiusAuthenticationWebflowAction";
+
+    /**
+     * Action id 'surrogateAuthorizationCheck'.
+     */
+    String ACTION_ID_SURROGATE_AUTHORIZATION_CHECK = "surrogateAuthorizationCheck";
+
+    /**
+     * Action id 'handlePasswordExpirationWarningMessagesAction'.
+     */
+    String ACTION_ID_PASSWORD_EXPIRATION_HANDLE_WARNINGS = "handlePasswordExpirationWarningMessagesAction";
+
+    /**
+     * Action id 'removeGoogleAnalyticsCookieAction'.
+     */
+    String ACTION_ID_GOOGLE_ANALYTICS_REMOVE_COOKIE = "removeGoogleAnalyticsCookieAction";
+
+    /**
+     * Action id 'createGoogleAnalyticsCookieAction'.
+     */
+    String ACTION_ID_GOOGLE_ANALYTICS_CREATE_COOKIE = "createGoogleAnalyticsCookieAction";
+
+    /**
+     * Action id 'qrAuthenticationValidateWebSocketChannelAction'.
+     */
+    String ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL = "qrAuthenticationValidateWebSocketChannelAction";
+
+    /**
+     * Action id 'qrAuthenticationGenerateCodeAction'.
+     */
+    String ACTION_ID_QR_AUTHENTICATION_GENERATE_CODE = "qrAuthenticationGenerateCodeAction";
+
+    /**
+     * Action id 'acceptUserGraphicsForAuthenticationAction'.
+     */
+    String ACTION_ID_GUA_ACCEPT_USER = "acceptUserGraphicsForAuthenticationAction";
+    /**
+     * Action id 'acceptUserGraphicsForAuthenticationAction'.
+     */
+    String ACTION_ID_GUA_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION = "displayUserGraphicsBeforeAuthenticationAction";
+
+    /**
+     * Action id 'prepareForGraphicalAuthenticationAction'.
+     */
+    String ACTION_ID_GUA_PREPARE_LOGIN = "prepareForGraphicalAuthenticationAction";
+
+    /**
+     * Action id 'samlMetadataUIParserAction'.
+     */
+    String ACTION_ID_SAML_METADATA_UI_PARSER = "samlMetadataUIParserAction";
+
+    /**
+     * Action id 'samlIdPSessionStoreTicketGrantingTicketAction'.
+     */
+    String ACTION_ID_SAML_IDP_SESSION_STORE_TICKET_GRANTING_TICKET = "samlIdPSessionStoreTicketGrantingTicketAction";
+
+    /**
+     * Action id 'samlIdPMetadataUIParserAction'.
+     */
+    String ACTION_ID_SAML_IDP_METADATA_UI_PARSER = "samlIdPMetadataUIParserAction";
+
+    /**
+     * Action id 'oidcRegisteredServiceUIAction'.
+     */
+    String ACTION_ID_OIDC_REGSTERED_SERVICE_UI = "oidcRegisteredServiceUIAction";
+
+    /**
+     * Action id 'oauth20RegisteredServiceUIAction'.
+     */
+    String ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI = "oauth20RegisteredServiceUIAction";
+
+    /**
+     * Action id 'oauth20SessionStoreTicketGrantingTicketAction'.
+     */
+    String ACTION_ID_OAUTH20_SESSION_STORE_TICKET_GRANTING_TICKET = "oauth20SessionStoreTicketGrantingTicketAction";
+
+    /**
+     * Action id 'inweboPushAuthenticateAction'.
+     */
+    String ACTION_ID_INWEBO_PUSH_AUTHENTICATION = "inweboPushAuthenticateAction";
+
+    /**
+     * Action id 'inweboCheckUserAction'.
+     */
+    String ACTION_ID_INWEBO_CHECK_USER = "inweboCheckUserAction";
+
+    /**
+     * Action id 'inweboMustEnrollAction'.
+     */
+    String ACTION_ID_INWEBO_MUST_ENROLL = "inweboMustEnrollAction";
+
+    /**
+     * Action id 'inweboCheckAuthenticationAction'.
+     */
+    String ACTION_ID_INWEBO_CHECK_AUTHENTICATION = "inweboCheckAuthenticationAction";
+
+    /**
+     * Action id 'inweboSuccessAction'.
+     */
+    String ACTION_ID_INWEBO_SUCCESS = "inweboSuccessAction";
+
+    /**
+     * Action id 'mfaAccepttoMultifactorValidateUserDeviceRegistrationAction'.
+     */
+    String ACTION_ID_ACCEPTTO_VALIDATE_USER_DEVICE_REGISTRATION = "mfaAccepttoMultifactorValidateUserDeviceRegistrationAction";
+
+    /**
+     * Action id 'mfaAccepttoMultifactorFetchChannelAction'.
+     */
+    String ACTION_ID_ACCEPTTO_FETCH_CHANNEL = "mfaAccepttoMultifactorFetchChannelAction";
+
+    /**
+     * Action id 'mfaAccepttoMultifactorValidateChannelAction'.
+     */
+    String ACTION_ID_ACCEPTTO_VALIDATE_CHANNEL = "mfaAccepttoMultifactorValidateChannelAction";
+
+    /**
+     * Action id 'mfaAccepttoQRCodeValidateWebSocketChannelAction'.
+     */
+    String ACTION_ID_ACCEPTTO_QR_CODE_VALIDATE_CHANNEL = "mfaAccepttoQRCodeValidateWebSocketChannelAction";
+
+    /**
+     * Action id 'mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction'.
+     */
+    String ACTION_ID_ACCEPTTO_FINALIZE_AUTHENTICATION = "mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction";
+
+    /**
+     * Action id 'mfaAccepttoMultifactorDetermineUserAccountStatusAction'.
+     */
+    String ACTION_ID_ACCEPTTO_DETERMINE_USER_ACCOUNT_STATUS = "mfaAccepttoMultifactorDetermineUserAccountStatusAction";
+
+    /**
+     * Action id 'swivelAuthenticationWebflowAction'.
+     */
+    String ACTION_ID_SWIVEL_AUTHENTICATION = "swivelAuthenticationWebflowAction";
+
+    /**
+     * Action id 'wsFederationMetadataUIAction'.
+     */
+    String ACTION_ID_WSFEDERATION_METADATA_UI = "wsFederationMetadataUIAction";
+
+    /**
+     * Action id 'accountProfileUpdateSecurityQuestionsAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS = "accountProfileUpdateSecurityQuestionsAction";
+
+    /**
+     * Action id 'ldapSpnegoClientAction'.
+     */
+    String ACTION_ID_SPNEGO_CLIENT_LDAP = "ldapSpnegoClientAction";
+
+    /**
+     * Action id 'hostnameSpnegoClientAction'.
+     */
+    String ACTION_ID_SPNEGO_CLIENT_HOSTNAME = "hostnameSpnegoClientAction";
+
+    /**
+     * Action id 'baseSpnegoClientAction'.
+     */
+    String ACTION_ID_SPNEGO_CLIENT_BASE = "baseSpnegoClientAction";
+
+    /**
+     * The action id 'spnego'.
+     */
+    String ACTION_ID_SPNEGO = "spnego";
 }

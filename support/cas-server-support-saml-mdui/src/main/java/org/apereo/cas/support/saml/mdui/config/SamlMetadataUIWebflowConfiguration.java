@@ -54,7 +54,7 @@ public class SamlMetadataUIWebflowConfiguration {
             loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
-    @ConditionalOnMissingBean(name = "samlMetadataUIParserAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_METADATA_UI_PARSER)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action samlMetadataUIParserAction(

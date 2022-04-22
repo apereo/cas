@@ -70,7 +70,6 @@ public class PasswordlessAuthenticationWebflowConfiguration {
             .build()
             .get();
     }
-
     @Bean
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -92,7 +91,6 @@ public class PasswordlessAuthenticationWebflowConfiguration {
             .build()
             .get();
     }
-
     @Bean
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -171,7 +169,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action initializeLoginAction(
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_LOGIN)
+    public Action passswordPrepareLoginAction(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -179,8 +178,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
             .withProperties(casProperties)
-            .withAction(() -> new PrepareForPasswordlessAuthenticationAction(servicesManager, casProperties))
-            .withId(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
+            .withAction(PrepareForPasswordlessAuthenticationAction::new)
+            .withId(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_LOGIN)
             .build()
             .get();
     }

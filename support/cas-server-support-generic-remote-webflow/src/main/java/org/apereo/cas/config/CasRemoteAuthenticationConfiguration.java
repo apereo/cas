@@ -72,7 +72,7 @@ public class CasRemoteAuthenticationConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "remoteAddressCheck")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action remoteAddressCheck(
         @Qualifier("adaptiveAuthenticationPolicy")

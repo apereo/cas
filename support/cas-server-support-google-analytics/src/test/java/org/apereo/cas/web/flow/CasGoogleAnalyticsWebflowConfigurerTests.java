@@ -31,11 +31,11 @@ public class CasGoogleAnalyticsWebflowConfigurerTests extends BaseWebflowConfigu
         assertNotNull(flow);
         var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
         assertTrue(Arrays.stream(state.getExitActionList().toArray())
-            .anyMatch(ac -> ac.toString().contains(CasGoogleAnalyticsWebflowConfigurer.ACTION_ID_CREATE_GOOGLE_ANALYTICS_COOKIE)));
+            .anyMatch(ac -> ac.toString().contains(CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_CREATE_COOKIE)));
 
         val logoutFlow = (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGOUT);
         state = (TransitionableState) logoutFlow.getState(CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
         assertTrue(Arrays.stream(state.getExitActionList().toArray())
-            .anyMatch(ac -> ac.toString().contains(CasGoogleAnalyticsWebflowConfigurer.ACTION_ID_REMOVE_GOOGLE_ANALYTICS_COOKIE)));
+            .anyMatch(ac -> ac.toString().contains(CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_REMOVE_COOKIE)));
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.client;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
@@ -31,7 +32,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.spnego.alternative-remote-host-attribute=",
     "cas.authn.spnego.ips-to-check-pattern=.+",
     "cas.authn.spnego.dns-timeout=0",
-    "cas.authn.spnego.host-name-client-action-strategy=ldapSpnegoClientAction",
+    "cas.authn.spnego.host-name-client-action-strategy=" + CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_LDAP,
     "cas.authn.spnego.spnego-attribute-name=mail"
 })
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {

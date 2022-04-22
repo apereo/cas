@@ -28,7 +28,7 @@ public class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphi
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         val event = initializeLoginAction.execute(context);
-        assertEquals(GraphicalUserAuthenticationWebflowConfigurer.TRANSITION_ID_GUA_GET_USERID, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GUA_GET_USERID, event.getId());
     }
 
     @Test

@@ -79,7 +79,7 @@ public class RadiusMultifactorConfiguration {
     public static class RadiusMultifactorWebflowActionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RADIUS_AUTHENTICATION)
         public Action radiusAuthenticationWebflowAction(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("radiusAuthenticationWebflowEventResolver")

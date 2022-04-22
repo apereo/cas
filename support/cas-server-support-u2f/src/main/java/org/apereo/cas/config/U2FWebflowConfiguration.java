@@ -145,7 +145,7 @@ public class U2FWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class U2FWebflowActionConfiguration {
 
-        @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_AUTHENTICATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fAuthenticationWebflowAction(
@@ -154,7 +154,7 @@ public class U2FWebflowConfiguration {
             return new U2FAuthenticationWebflowAction(u2fAuthenticationWebflowEventResolver);
         }
 
-        @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_START_AUTHENTICATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fStartAuthenticationAction(final CasConfigurationProperties casProperties,
@@ -165,7 +165,7 @@ public class U2FWebflowConfiguration {
             return new U2FStartAuthenticationAction(u2fService, casProperties.getServer().getName(), u2fDeviceRepository);
         }
 
-        @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_START_REGISTRATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fStartRegistrationAction(final CasConfigurationProperties casProperties,
@@ -176,7 +176,7 @@ public class U2FWebflowConfiguration {
             return new U2FStartRegistrationAction(u2fService, casProperties.getServer().getName(), u2fDeviceRepository);
         }
 
-        @ConditionalOnMissingBean(name = "u2fCheckAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_CHECK_REGISTRATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fCheckAccountRegistrationAction(
@@ -185,7 +185,7 @@ public class U2FWebflowConfiguration {
             return new U2FAccountCheckRegistrationAction(u2fDeviceRepository);
         }
 
-        @ConditionalOnMissingBean(name = "u2fSaveAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_SAVE_REGISTRATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fSaveAccountRegistrationAction(

@@ -71,6 +71,6 @@ public abstract class BaseScimProvisionerActionTests {
     protected PrincipalProvisioner scimProvisioner;
 
     @Autowired
-    @Qualifier("principalScimProvisionerAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SCIM_PROVISIONING_PRINCIPAL)
     protected Action principalScimProvisionerAction;
 }

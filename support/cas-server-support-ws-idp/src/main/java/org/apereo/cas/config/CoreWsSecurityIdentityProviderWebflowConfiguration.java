@@ -36,6 +36,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WSFEDERATION_METADATA_UI)
     public Action wsFederationMetadataUIAction(
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,

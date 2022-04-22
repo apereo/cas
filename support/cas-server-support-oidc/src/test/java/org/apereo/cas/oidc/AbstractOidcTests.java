@@ -94,6 +94,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -283,7 +284,7 @@ public abstract class AbstractOidcTests {
     protected AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    @Qualifier("oidcRegisteredServiceUIAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_OIDC_REGSTERED_SERVICE_UI)
     protected Action oidcRegisteredServiceUIAction;
 
     @Autowired

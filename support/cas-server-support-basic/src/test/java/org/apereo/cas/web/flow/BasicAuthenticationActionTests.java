@@ -87,7 +87,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowAuthenticationActions")
 public class BasicAuthenticationActionTests {
     @Autowired
-    @Qualifier("basicAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_BASIC_AUTHENTICATION)
     private Action basicAuthenticationAction;
 
     @Test

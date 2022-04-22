@@ -56,11 +56,11 @@ public abstract class AbstractGraphicalAuthenticationTests {
     protected Action initializeLoginAction;
 
     @Autowired
-    @Qualifier("displayUserGraphicsBeforeAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_GUA_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION)
     protected Action displayUserGraphicsBeforeAuthenticationAction;
 
     @Autowired
-    @Qualifier("acceptUserGraphicsForAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_GUA_ACCEPT_USER)
     protected Action acceptUserGraphicsForAuthenticationAction;
     
     @ImportAutoConfiguration({

@@ -47,7 +47,7 @@ public class WebAuthnValidateSessionCredentialTokenActionTests {
     private static final String SAMPLE_TOKEN = "mO2ST2ZLIZCP6VmGDkiIX-_-VNXfOJQ6TjCwUFSCA3Y";
 
     @Autowired
-    @Qualifier("webAuthnValidateSessionCredentialTokenAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_WEBAUTHN_VALIDATE_SESSION_CREDENTIAL_TOKEN)
     private Action webAuthnValidateSessionCredentialTokenAction;
 
     @Autowired
