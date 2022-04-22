@@ -47,7 +47,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
-        policy.setBypassEnabled(true);
+        policy.setBypassEnabled(false);
         policy.setBypassPrincipalAttributeName("cn");
         policy.setBypassPrincipalAttributeValue("^e[x]am.*");
         when(registeredService.getMultifactorPolicy()).thenReturn(policy);
@@ -73,7 +73,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
-        policy.setBypassEnabled(true);
+        policy.setBypassEnabled(false);
         policy.setBypassPrincipalAttributeName("cn");
         policy.setBypassPrincipalAttributeValue("^e[x]am.*");
         when(registeredService.getMultifactorPolicy()).thenReturn(policy);
@@ -87,7 +87,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
-        
+
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
