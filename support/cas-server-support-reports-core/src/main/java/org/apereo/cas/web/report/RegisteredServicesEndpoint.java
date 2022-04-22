@@ -20,7 +20,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -81,8 +80,8 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Handle and produce a list of services from registry")
     @GetMapping(produces = {
-        ActuatorMediaType.V2_JSON,
-        ActuatorMediaType.V3_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         MediaType.APPLICATION_JSON_VALUE,
         "application/vnd.cas.services+yaml"
@@ -100,8 +99,8 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Fetch service either by numeric id or service id pattern")
     @GetMapping(path = "{id}", produces = {
-        ActuatorMediaType.V2_JSON,
-        ActuatorMediaType.V3_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         MediaType.APPLICATION_JSON_VALUE,
         "application/vnd.cas.services+yaml"
@@ -127,8 +126,8 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Fetch services by their type")
     @GetMapping(path = "type/{type}", produces = {
-        ActuatorMediaType.V2_JSON,
-        ActuatorMediaType.V3_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         MediaType.APPLICATION_JSON_VALUE,
         "application/vnd.cas.services+yaml"
@@ -151,8 +150,8 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     @DeleteMapping(path = "{id}",
         consumes = {
             MediaType.APPLICATION_OCTET_STREAM_VALUE,
-            ActuatorMediaType.V2_JSON,
-            ActuatorMediaType.V3_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
             "application/vnd.cas.services+yaml",
             MediaType.APPLICATION_JSON_VALUE
         })
@@ -183,11 +182,11 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @PostMapping(path = "/import", consumes = {
         MediaType.APPLICATION_OCTET_STREAM_VALUE,
-        ActuatorMediaType.V2_JSON,
-        ActuatorMediaType.V3_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         "application/vnd.cas.services+yaml",
         MediaType.APPLICATION_JSON_VALUE
-    }, produces = {ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
+    }, produces = {MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Import registered services as a JSON document or a zip file")
     public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {

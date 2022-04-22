@@ -82,10 +82,14 @@ with the specified value(s).
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "bypassPrincipalAttributeName": "attributeForBypass",
     "bypassPrincipalAttributeValue": "^bypass-value-[A-Z].+",
-    "bypassEnabled" : "true"
   }
 }
 ```
+
+<div class="alert alert-info"><strong>Remember</strong>
+<p>Setting the <code>bypassEnabled</code> flag here is unnecessary and may cause side-effects. Once principal attribute name and match value
+are defined, the <code>bypassEnabled</code> is expected to be <code>true</code> anyway.</p>
+</div>
 
 ## Additional Bypass Providers
 
