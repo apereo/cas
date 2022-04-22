@@ -57,13 +57,15 @@ public class GraphicalUserAuthenticationConfiguration {
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
-        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")
-    public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository(final CasConfigurationProperties casProperties) {
+    public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository(
+        final CasConfigurationProperties casProperties) {
         val gua = casProperties.getAuthn().getGua();
         if (!gua.getSimple().isEmpty()) {
             val accounts = gua.getSimple().entrySet().stream().map(Unchecked.function(entry -> {

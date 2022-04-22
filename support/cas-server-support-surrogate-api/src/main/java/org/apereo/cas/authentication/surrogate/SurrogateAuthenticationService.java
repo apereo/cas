@@ -17,6 +17,11 @@ import java.util.Optional;
 @FunctionalInterface
 public interface SurrogateAuthenticationService {
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "surrogateAuthenticationService";
+
+    /**
      * Surrogate username attribute in the authentication payload.
      */
     String AUTHENTICATION_ATTR_SURROGATE_USER = "surrogateUser";

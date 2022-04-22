@@ -1448,6 +1448,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_OTP_AUTHENTICATION_ACTION = "oneTimeTokenAuthenticationWebflowAction";
 
     /**
+     * Action id 'surrogateInitialAuthenticationAction'.
+     */
+    String ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION = "surrogateInitialAuthenticationAction";
+
+    /**
      * Action id 'loadSurrogatesListAction .
      */
     String ACTION_ID_LOAD_SURROGATES_LIST_ACTION = "loadSurrogatesListAction";

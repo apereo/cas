@@ -68,7 +68,7 @@ public class SurrogateAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationPostProcessor surrogateAuthenticationPostProcessor(
-            @Qualifier("surrogateAuthenticationService")
+            @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
             final SurrogateAuthenticationService surrogateAuthenticationService,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -145,7 +145,7 @@ public class SurrogateAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationServiceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
+        @ConditionalOnMissingBean(name = SurrogateAuthenticationService.BEAN_NAME)
         @Bean
         public SurrogateAuthenticationService surrogateAuthenticationService(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -185,7 +185,7 @@ public class SurrogateAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SurrogatePrincipalBuilder surrogatePrincipalBuilder(
-            @Qualifier("surrogateAuthenticationService")
+            @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
             final SurrogateAuthenticationService surrogateAuthenticationService,
             @Qualifier("surrogatePrincipalFactory")
             final PrincipalFactory surrogatePrincipalFactory,

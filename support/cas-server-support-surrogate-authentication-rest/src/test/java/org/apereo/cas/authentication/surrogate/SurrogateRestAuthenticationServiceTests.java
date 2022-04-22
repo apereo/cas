@@ -40,7 +40,7 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
 
     @Autowired
-    @Qualifier("surrogateAuthenticationService")
+    @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;
 
     private MockWebServer webServer;

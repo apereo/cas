@@ -22,6 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JsonResourceSurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @Autowired
-    @Qualifier("surrogateAuthenticationService")
+    @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;
 }
