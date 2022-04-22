@@ -1,22 +1,21 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
+import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -33,72 +32,68 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
     @Test
     @Order(1)
     public void verifyOperationByProvider() {
-        val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().getGroovyScript().setLocation(new ClassPathResource("GroovyMfaTrigger.groovy"));
-        val trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
+        val trigger = buildGroovyTrigger();
+        var result = trigger.isActivated(authentication, registeredService,
+            this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
 
         val service = MultifactorAuthenticationTestUtils.getService("nomfa");
-        result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, service);
+        result = trigger.isActivated(authentication, registeredService,
+            this.httpRequest, this.httpResponse, service);
         assertFalse(result.isPresent());
     }
 
     @Test
     @Order(2)
-    public void verifyScriptDoesNotExist() {
-        val props = new CasConfigurationProperties();
-        var trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
-        assertFalse(result.isPresent());
-        
-        props.getAuthn().getMfa().getGroovyScript().setLocation(new ClassPathResource("DoesNotExist.groovy"));
-        trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
-        assertFalse(result.isPresent());
+    public void verifyCompositeProvider() {
+        val trigger = buildGroovyTrigger();
+        val service = MultifactorAuthenticationTestUtils.getService("composite");
+        val result = trigger.isActivated(authentication, registeredService,
+            this.httpRequest, this.httpResponse, service);
+        assertTrue(result.isPresent());
     }
 
     @Test
     @Order(3)
     public void verifyBadInputParameters() {
-        val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().getGroovyScript().setLocation(new ClassPathResource("GroovyMfaTrigger.groovy"));
-
-        var trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(null, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
+        val trigger = buildGroovyTrigger();
+        var result = trigger.isActivated(null, registeredService,
+            this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
 
-        result = trigger.isActivated(authentication, null, this.httpRequest, this.httpResponse, mock(Service.class));
+        result = trigger.isActivated(authentication, null,
+            this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
 
-        result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, null);
-        assertFalse(result.isPresent());
-
+        result = trigger.isActivated(authentication, registeredService,
+            this.httpRequest, this.httpResponse, null);
+        assertTrue(result.isPresent());
         trigger.destroy();
     }
 
     @Test
-    @Order(4)
-    public void verifyFailProvider() throws Exception {
-        val file = File.createTempFile("example", ".txt");
-        FileUtils.writeStringToFile(file, "script", StandardCharsets.UTF_8);
-
-        val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().getGroovyScript().setLocation(new FileSystemResource(file));
-        val trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
-        assertTrue(result.isEmpty());
-    }
-    
-    @Test
     @Order(0)
     @Tag("DisableProviderRegistration")
     public void verifyNoProvider() {
-        val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().getGroovyScript().setLocation(new ClassPathResource("GroovyMfaTrigger.groovy"));
-        val trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
+        val trigger = buildGroovyTrigger();
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService,
+                this.httpRequest, this.httpResponse, mock(Service.class)));
+        assertDoesNotThrow(trigger::destroy);
+        assertNotNull(trigger.getApplicationContext());
+        assertNotNull(trigger.getMultifactorAuthenticationProviderResolver());
+        assertNotNull(trigger.getMultifactorAuthenticationProviderSelector());
+        assertNotNull(trigger.getWatchableScript());
+    }
+
+    private GroovyScriptMultifactorAuthenticationTrigger buildGroovyTrigger() {
+        val selector = mock(MultifactorAuthenticationProviderSelector.class);
+        when(selector.resolve(any(), any(), any())).thenReturn(new TestMultifactorAuthenticationProvider());
+        return new GroovyScriptMultifactorAuthenticationTrigger(
+            new WatchableGroovyScriptResource(new ClassPathResource("GroovyMfaTrigger.groovy")),
+            applicationContext,
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
+            selector);
     }
 
 }
