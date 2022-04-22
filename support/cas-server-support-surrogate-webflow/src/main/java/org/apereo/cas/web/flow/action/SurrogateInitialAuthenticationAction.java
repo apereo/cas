@@ -2,13 +2,11 @@ package org.apereo.cas.web.flow.action;
 
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
-import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
@@ -23,23 +21,17 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 @Slf4j
-public class SurrogateInitialAuthenticationAction extends InitialAuthenticationAction {
+@RequiredArgsConstructor
+public class SurrogateInitialAuthenticationAction extends BaseCasWebflowAction {
     private final String separator;
 
-    public SurrogateInitialAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
-                                                final CasWebflowEventResolver webflowEventResolver,
-                                                final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-                                                final String separator) {
-        super(delegatingWebflowEventResolver, webflowEventResolver, adaptiveAuthenticationPolicy);
-        this.separator = separator;
-    }
-
     @Override
-    protected Event doPreExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) throws Exception {
         val up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
         if (up == null) {
-            LOGGER.debug("Provided credentials cannot be found, or are already of type [{}]", SurrogateUsernamePasswordCredential.class.getName());
-            return super.doPreExecute(context);
+            LOGGER.debug("Provided credentials cannot be found, or are already of type [{}]",
+                SurrogateUsernamePasswordCredential.class.getName());
+            return null;
         }
         if (up.getUsername().contains(this.separator)) {
             LOGGER.debug("Credential username includes the separator [{}]. Converting to surrogate...", this.separator);
@@ -47,7 +39,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
         } else {
             convertToUsernamePasswordCredential(context, up);
         }
-        return super.doPreExecute(context);
+        return null;
     }
 
     private void convertToSurrogateCredential(final RequestContext context, final UsernamePasswordCredential up) {

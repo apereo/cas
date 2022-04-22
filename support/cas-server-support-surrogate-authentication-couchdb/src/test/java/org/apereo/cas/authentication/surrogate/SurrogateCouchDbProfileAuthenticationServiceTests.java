@@ -41,7 +41,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
 
     @Autowired
-    @Qualifier("surrogateAuthenticationService")
+    @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;
 
     @Autowired

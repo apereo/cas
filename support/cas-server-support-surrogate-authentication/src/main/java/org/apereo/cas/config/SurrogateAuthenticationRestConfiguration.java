@@ -39,7 +39,7 @@ public class SurrogateAuthenticationRestConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer(
-        @Qualifier("surrogateAuthenticationService")
+        @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
         final SurrogateAuthenticationService surrogateAuthenticationService, final CasConfigurationProperties casProperties) {
         return factory -> factory.registerCredentialFactory(
             new SurrogateAuthenticationRestHttpRequestCredentialFactory(surrogateAuthenticationService, casProperties.getAuthn().getSurrogate()));
