@@ -16,6 +16,7 @@ import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -36,8 +37,8 @@ import java.util.Optional;
  */
 @RequiresModule(name = "cas-server-support-couchdb-service-registry")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "CouchDbServiceRegistryConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "couchdb")
+@AutoConfiguration
 public class CouchDbServiceRegistryConfiguration {
 
     @Bean

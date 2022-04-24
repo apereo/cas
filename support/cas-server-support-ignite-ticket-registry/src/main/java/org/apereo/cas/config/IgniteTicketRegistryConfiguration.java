@@ -22,10 +22,10 @@ import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apache.ignite.ssl.SslContextFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 
@@ -41,9 +41,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "IgniteTicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "ignite")
+@AutoConfiguration
 public class IgniteTicketRegistryConfiguration {
 
     private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite, final TicketCatalog ticketCatalog) {

@@ -47,6 +47,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -69,9 +70,9 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "PasswordManagementWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@AutoConfiguration
 public class PasswordManagementWebflowConfiguration {
 
     @Configuration(value = "PasswordManagementWebflowSingleSignOnConfiguration", proxyBeanMethods = false)

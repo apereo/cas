@@ -23,12 +23,12 @@ import org.ektorp.impl.ObjectMapperFactory;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.couch.profile.service.CouchProfileService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -37,10 +37,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration(value = "CouchDbAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "couchdb")
 @Slf4j
+@AutoConfiguration
 public class CouchDbAuthenticationConfiguration {
 
     @Bean

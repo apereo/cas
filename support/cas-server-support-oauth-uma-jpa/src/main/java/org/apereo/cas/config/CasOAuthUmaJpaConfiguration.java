@@ -17,7 +17,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -40,10 +40,9 @@ import javax.sql.DataSource;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureBefore(CasOAuthUmaConfiguration.class)
 @EnableTransactionManagement(proxyTargetClass = false)
-@Configuration(value = "CasOAuthUmaJpaConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.UMA, module = "jpa")
+@AutoConfiguration(before = CasOAuthUmaConfiguration.class)
 public class CasOAuthUmaJpaConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.oauth.uma.resource-set.jpa.url");
 

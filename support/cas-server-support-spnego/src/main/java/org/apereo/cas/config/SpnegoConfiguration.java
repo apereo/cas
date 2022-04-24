@@ -26,12 +26,12 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.stream.Collectors;
@@ -43,9 +43,9 @@ import java.util.stream.Collectors;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration(value = "SpnegoConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SPNEGO)
+@AutoConfiguration
 public class SpnegoConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

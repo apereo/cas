@@ -24,6 +24,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -38,8 +39,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.4.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "InweboAuthenticationConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
+@AutoConfiguration
 public class InweboAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "inweboPrincipalFactory")

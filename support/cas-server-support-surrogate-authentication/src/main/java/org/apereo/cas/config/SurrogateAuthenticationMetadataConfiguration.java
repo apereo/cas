@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -22,8 +23,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration(value = "SurrogateAuthenticationMetadataConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
+@AutoConfiguration
 public class SurrogateAuthenticationMetadataConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationMetadataBaseConfiguration", proxyBeanMethods = false)

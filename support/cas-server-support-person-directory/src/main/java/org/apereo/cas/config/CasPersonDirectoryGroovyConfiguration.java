@@ -16,6 +16,7 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -33,10 +34,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration(value = "CasPersonDirectoryGroovyConfiguration", proxyBeanMethods = false)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfiguration
 public class CasPersonDirectoryGroovyConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.groovy[0].location").exists();
 

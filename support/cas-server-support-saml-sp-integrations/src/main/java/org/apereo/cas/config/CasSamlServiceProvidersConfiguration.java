@@ -14,9 +14,9 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.function.Function;
 
@@ -28,10 +28,10 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "CasSamlServiceProvidersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAML)
 @Slf4j
+@AutoConfiguration
 public class CasSamlServiceProvidersConfiguration {
 
     private static void processSamlServiceProvider(final AbstractSamlSPProperties provider,

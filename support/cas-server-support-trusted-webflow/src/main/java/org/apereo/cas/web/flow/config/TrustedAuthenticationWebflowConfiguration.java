@@ -9,6 +9,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TrustedAuthenticationWebflowConfigurer;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -25,9 +26,9 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "TrustedAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "trusted")
+@AutoConfiguration
 public class TrustedAuthenticationWebflowConfiguration {
 
     @Configuration(value = "TrustedAuthenticationWebflowBaseConfiguration", proxyBeanMethods = false)

@@ -13,6 +13,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +33,7 @@ import java.util.function.Supplier;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
-@Configuration(value = "Pac4jAuthenticationProvisioningConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class Pac4jAuthenticationProvisioningConfiguration {
 
     @Configuration(value = "Pac4jAuthenticationScimProvisioningConfiguration", proxyBeanMethods = false)

@@ -28,7 +28,7 @@ import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -58,7 +58,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "CasServiceRegistryInitializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnMissingClass(value = {
     "org.apereo.cas.services.JsonServiceRegistry",
@@ -69,7 +68,7 @@ import java.util.Optional;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableAsync(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
-@AutoConfigureAfter(CasCoreServicesConfiguration.class)
+@AutoConfiguration(after = CasCoreServicesConfiguration.class)
 public class CasServiceRegistryInitializationConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.core.init-from-json").isTrue();

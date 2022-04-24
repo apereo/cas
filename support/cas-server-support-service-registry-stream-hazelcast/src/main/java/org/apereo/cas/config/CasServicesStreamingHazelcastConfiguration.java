@@ -19,6 +19,7 @@ import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,8 +38,8 @@ import java.util.concurrent.TimeUnit;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "CasServicesStreamingHazelcastConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistryStreaming)
+@AutoConfiguration
 public class CasServicesStreamingHazelcastConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.stream.core.enabled").isTrue().evenIfMissing();
 

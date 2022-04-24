@@ -6,9 +6,9 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * This is {@link CasMetricsConfiguration} that attempts to create Spring-managed beans
@@ -17,9 +17,9 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "CasMetricsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Metrics)
+@AutoConfiguration
 public class CasMetricsConfiguration {
     @Bean
     public TimedAspect timedAspect(final MeterRegistry registry) {

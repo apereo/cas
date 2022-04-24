@@ -28,6 +28,7 @@ import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -50,14 +51,14 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "WebAuthnWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@AutoConfiguration
 public class WebAuthnWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled")
         .isTrue().evenIfMissing();
-    
+
     @Configuration(value = "WebAuthnWebflowRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnWebflowRegistryConfiguration {
@@ -160,7 +161,7 @@ public class WebAuthnWebflowConfiguration {
     public static class WebAuthnMultifactorTrustConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.trusted-device-enabled")
             .isTrue().evenIfMissing();
-        
+
         @ConditionalOnMissingBean(name = "webAuthnMultifactorTrustWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

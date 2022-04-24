@@ -8,10 +8,10 @@ import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -21,9 +21,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  * @deprecated Since 6.2, due to Ehcache 2.x being unmaintained. Other registries are available, including Ehcache 3.x.
  */
-@Configuration(value = "EhcacheMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
+@AutoConfiguration
 public class EhCacheMonitorConfiguration {
 
     @ConditionalOnEnabledHealthIndicator("ehcacheHealthIndicator")

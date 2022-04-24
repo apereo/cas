@@ -23,12 +23,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "GraphicalUserAuthenticationConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "gua")
+@AutoConfiguration
 public class GraphicalUserAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")

@@ -22,6 +22,7 @@ import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.apereo.inspektr.common.Cleanable;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -48,11 +49,11 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "CasJdbcAuditConfiguration", proxyBeanMethods = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Audit, module = "jdbc")
+@AutoConfiguration
 public class CasSupportJdbcAuditConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.audit.jdbc.url").evenIfMissing();
 

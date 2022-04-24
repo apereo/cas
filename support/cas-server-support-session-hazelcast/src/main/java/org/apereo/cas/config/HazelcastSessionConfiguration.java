@@ -13,13 +13,13 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.session.HazelcastSessionProperties;
 import org.springframework.boot.autoconfigure.session.SessionProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.session.MapSession;
 import org.springframework.session.hazelcast.Hazelcast4IndexedSessionRepository;
@@ -34,11 +34,11 @@ import java.time.Duration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "HazelcastSessionConfiguration", proxyBeanMethods = false)
 @EnableHazelcastHttpSession
 @EnableConfigurationProperties({CasConfigurationProperties.class,
     SessionProperties.class, HazelcastSessionProperties.class, ServerProperties.class})
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SessionManagement, module = "hazelcast")
+@AutoConfiguration
 public class HazelcastSessionConfiguration {
 
     /**

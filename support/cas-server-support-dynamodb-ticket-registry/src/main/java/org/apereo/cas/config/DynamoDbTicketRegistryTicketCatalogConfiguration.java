@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -21,9 +22,9 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "DynamoDbTicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "dynamodb")
+@AutoConfiguration
 public class DynamoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
     public DynamoDbTicketRegistryTicketCatalogConfiguration(
@@ -33,7 +34,7 @@ public class DynamoDbTicketRegistryTicketCatalogConfiguration extends BaseTicket
         final CasTicketCatalogConfigurationValuesProvider configProvider) {
         super(casProperties, configProvider, applicationContext);
     }
-    
+
     @Configuration(value = "DynamoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DynamoDbTicketRegistryTicketCatalogProviderConfiguration {

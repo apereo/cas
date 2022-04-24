@@ -30,6 +30,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -45,8 +46,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "TrustedAuthenticationConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "trusted")
+@AutoConfiguration
 public class TrustedAuthenticationConfiguration {
 
     @Configuration(value = "TrustedAuthenticationHandlerConfiguration", proxyBeanMethods = false)

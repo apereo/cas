@@ -32,6 +32,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -57,8 +58,8 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableWebSocketMessageBroker
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "QRAuthenticationConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "qr")
+@AutoConfiguration
 public class QRAuthenticationConfiguration {
 
     @Configuration(value = "QRAuthenticationServiceConfiguration", proxyBeanMethods = false)

@@ -19,13 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -42,11 +42,11 @@ import java.util.function.Supplier;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Configuration(value = "OidcJwksJpaConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnClass(JpaBeanFactory.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
+@AutoConfiguration
 public class OidcJwksJpaConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.oidc.jwks.jpa.url");

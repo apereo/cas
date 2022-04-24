@@ -20,6 +20,7 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,9 +42,9 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "SwivelConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "swivel")
+@AutoConfiguration
 public class SwivelConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
@@ -153,7 +154,7 @@ public class SwivelConfiguration {
     public static class SwivelMultifactorTrustConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.swivel.trusted-device-enabled")
             .isTrue().evenIfMissing();
-        
+
         @ConditionalOnMissingBean(name = "swivelMultifactorTrustWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

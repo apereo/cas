@@ -33,6 +33,7 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticatio
 import lombok.val;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -54,8 +55,8 @@ import java.util.Objects;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "SamlIdPWebflowConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
+@AutoConfiguration
 public class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowCoreConfiguration", proxyBeanMethods = false)

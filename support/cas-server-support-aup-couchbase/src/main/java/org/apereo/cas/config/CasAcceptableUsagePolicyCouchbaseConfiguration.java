@@ -12,11 +12,11 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -26,8 +26,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "CasAcceptableUsagePolicyCouchbaseConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "couchbase")
+@AutoConfiguration
 public class CasAcceptableUsagePolicyCouchbaseConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

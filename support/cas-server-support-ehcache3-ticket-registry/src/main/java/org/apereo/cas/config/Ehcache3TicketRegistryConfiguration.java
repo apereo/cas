@@ -39,13 +39,13 @@ import org.ehcache.jsr107.config.ConfigurationElementState;
 import org.ehcache.jsr107.config.Jsr107Configuration;
 import org.ehcache.spi.service.ServiceCreationConfiguration;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ScopedProxyMode;
 
@@ -62,10 +62,10 @@ import java.util.HashMap;
  * @author Hal Deadman
  * @since 6.2.0
  */
-@Configuration(value = "Ehcache3TicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "ehcache3")
 @Slf4j
+@AutoConfiguration
 public class Ehcache3TicketRegistryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.ehcache3.enabled").isTrue().evenIfMissing();
 
