@@ -136,9 +136,7 @@ public class DuoSecurityMultifactorProviderBypassConfiguration {
         final CasConfigurationProperties casProperties) {
         val duoProps = casProperties.getAuthn().getMfa().getDuo();
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
-        duoProps.stream()
-            .filter(duo -> StringUtils.isNotBlank(duo.getBypass().getCredentialClassType()))
-            .forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(duo.getId())));
+        duoProps.forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(duo.getId())));
         if (bypass.isEmpty()) {
             return NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance();
         }
