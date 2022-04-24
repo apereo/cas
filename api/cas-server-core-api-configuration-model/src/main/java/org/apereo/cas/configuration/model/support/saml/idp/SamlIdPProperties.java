@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.profile.SamlIdPProfileProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;

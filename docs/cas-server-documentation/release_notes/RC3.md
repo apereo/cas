@@ -59,8 +59,8 @@ are [Duo Security](../mfa/DuoSecurity-Authentication.html) and [Google Authentic
 
 ### Testing Strategy
 
-The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases and scenarios. At the moment, total number of jobs stands
-at approximately `285` distinct scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases and scenarios. At the moment, total number of jobs 
+stands at approximately `285` distinct scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 
 ### Groovy Webflow Actions
 
@@ -75,6 +75,7 @@ total control in scenaios where using Java may not be ideal or possible.
   and automatically.
 - Triggering multifactor authentication [based on a Groovy script](../mfa/Configuring-Multifactor-Authentication-Triggers-Groovy.html) is now able to support
   provider selection menus.
+- Minor bug fixes to allow [Duo Security](../mfa/DuoSecurity-Authentication.html) to correct recognize bypass rules that are defined based on principal 
 
 ## Library Upgrades
 
@@ -83,6 +84,8 @@ total control in scenaios where using Java may not be ideal or possible.
 - Spring Security
 - MongoDb Driver
 - Lombok
+- Groovy
+- CosmosDb
 - Spring Data
 - Spring Integration
 - Spring Kafka
