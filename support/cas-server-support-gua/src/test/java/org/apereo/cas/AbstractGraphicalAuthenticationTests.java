@@ -52,7 +52,7 @@ import org.springframework.webflow.execution.Action;
     properties = "cas.authn.gua.simple.casuser=classpath:image.jpg")
 public abstract class AbstractGraphicalAuthenticationTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
+    @Qualifier(CasWebflowConstants.ACTION_ID_GUA_PREPARE_LOGIN)
     protected Action initializeLoginAction;
 
     @Autowired
@@ -62,7 +62,7 @@ public abstract class AbstractGraphicalAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GUA_ACCEPT_USER)
     protected Action acceptUserGraphicsForAuthenticationAction;
-    
+
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
