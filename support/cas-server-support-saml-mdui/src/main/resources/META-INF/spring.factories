@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration,\
-  org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration

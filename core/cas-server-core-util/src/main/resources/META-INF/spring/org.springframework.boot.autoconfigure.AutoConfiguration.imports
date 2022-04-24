@@ -1,0 +1,2 @@
+org.apereo.cas.config.CasCoreUtilConfiguration
+org.apereo.cas.config.CasCoreUtilSerializationConfiguration

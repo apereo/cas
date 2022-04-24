@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.support.authentication.RadiusTokenAuthenticationEventExecutionPlanConfiguration,\
-  org.apereo.cas.config.RadiusMultifactorConfiguration,\
-  org.apereo.cas.config.support.authentication.RadiusTokenAuthenticationComponentSerializationConfiguration,\
-  org.apereo.cas.config.support.authentication.RadiusTokenAuthenticationMultifactorProviderBypassConfiguration
