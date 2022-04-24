@@ -116,7 +116,7 @@
         </div>
 
         <form method="POST" id="webauthnLoginForm" class="fm-v clearfix" th:action="@{/login}">
-            <input type="hidden" name="_eventId" value="validateWebAuthn"/>
+            <input type="hidden" name="_eventId" value="validate"/>
             <input type="hidden" id="token" name="token"/>
             <input type="hidden" name="geolocation"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
