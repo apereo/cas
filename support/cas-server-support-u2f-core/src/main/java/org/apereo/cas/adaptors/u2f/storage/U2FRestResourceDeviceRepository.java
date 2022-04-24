@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -42,28 +43,29 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     }
 
     @Override
-    @SneakyThrows
     public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
-        HttpResponse response = null;
-        try {
-            val rest = casProperties.getAuthn().getMfa().getU2f().getRest();
-            val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(rest.getBasicAuthPassword())
-                .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.GET)
-                .url(rest.getUrl())
-                .build();
+        return FunctionUtils.doUnchecked(() -> {
+            HttpResponse response = null;
+            try {
+                val rest = casProperties.getAuthn().getMfa().getU2f().getRest();
+                val exec = HttpUtils.HttpExecutionRequest.builder()
+                    .basicAuthPassword(rest.getBasicAuthPassword())
+                    .basicAuthUsername(rest.getBasicAuthUsername())
+                    .method(HttpMethod.GET)
+                    .url(rest.getUrl())
+                    .build();
 
-            response = HttpUtils.execute(exec);
-            if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                return MAPPER.readValue(response.getEntity().getContent(),
-                    new TypeReference<>() {
-                    });
+                response = HttpUtils.execute(exec);
+                if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+                    return MAPPER.readValue(response.getEntity().getContent(),
+                        new TypeReference<>() {
+                        });
+                }
+            } finally {
+                HttpUtils.close(response);
             }
-        } finally {
-            HttpUtils.close(response);
-        }
-        return new HashMap<>(0);
+            return new HashMap<>(0);
+        });
     }
 
     @Override

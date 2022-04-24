@@ -6,7 +6,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
@@ -51,9 +50,8 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      */
     private boolean saml2compliant;
 
-    @SneakyThrows
     public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
-        this.sourceIdDigest = DigestUtils.rawDigest("SHA", sourceId.getBytes("8859_1"));
+        this.sourceIdDigest = FunctionUtils.doUnchecked(() -> DigestUtils.rawDigest("SHA", sourceId.getBytes("8859_1")));
         this.random = RandomUtils.getNativeInstance();
     }
 

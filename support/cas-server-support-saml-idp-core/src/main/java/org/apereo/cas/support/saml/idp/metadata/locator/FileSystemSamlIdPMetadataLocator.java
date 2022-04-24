@@ -75,7 +75,7 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     }
 
     @Override
-    protected SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
+    protected SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
         return FunctionUtils.doUnchecked(() -> {
             val doc = new SamlIdPMetadataDocument();
             doc.setMetadata(IOUtils.toString(resolveMetadata(registeredService).getInputStream(), StandardCharsets.UTF_8));

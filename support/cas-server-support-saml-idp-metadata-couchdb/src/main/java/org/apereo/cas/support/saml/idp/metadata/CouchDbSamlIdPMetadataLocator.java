@@ -29,7 +29,7 @@ public class CouchDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     }
 
     @Override
-    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
+    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
         if (registeredService.isPresent()) {
             val doc = couchDb.getForService(registeredService);
             if (doc != null && doc.isValid()) {

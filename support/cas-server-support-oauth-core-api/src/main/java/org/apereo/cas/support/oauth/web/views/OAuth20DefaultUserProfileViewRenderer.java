@@ -28,7 +28,8 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
 
     @Override
     public ResponseEntity render(final Map<String, Object> model,
-                                 final OAuth20AccessToken accessToken, final HttpServletResponse response) {
+                                 final OAuth20AccessToken accessToken,
+                                 final HttpServletResponse response) {
         val userProfile = getRenderedUserProfile(model, accessToken, response);
         return renderProfileForModel(userProfile, accessToken, response);
     }
