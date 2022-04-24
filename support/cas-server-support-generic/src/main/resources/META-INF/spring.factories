@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.adaptors.generic.config.FileAuthenticationEventExecutionPlanConfiguration,\
-  org.apereo.cas.adaptors.generic.config.RejectUsersAuthenticationEventExecutionPlanConfiguration,\
-  org.apereo.cas.adaptors.generic.config.JsonResourceAuthenticationEventExecutionPlanConfiguration,\
-  org.apereo.cas.adaptors.generic.config.GroovyAuthenticationEventExecutionPlanConfiguration

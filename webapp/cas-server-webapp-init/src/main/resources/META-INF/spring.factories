@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasWebApplicationConfiguration
+#Sun Apr 24 19:12:14 GST 2022
 org.springframework.context.ApplicationContextInitializer=org.apereo.cas.context.CasApplicationContextInitializer

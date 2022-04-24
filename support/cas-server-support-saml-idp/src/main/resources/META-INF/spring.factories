@@ -1,9 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SamlIdPConfiguration,\
-  org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration,\
-  org.apereo.cas.config.SamlIdpComponentSerializationConfiguration,\
-  org.apereo.cas.config.SamlIdPWebflowConfiguration,\
-  org.apereo.cas.config.SamlIdPEndpointsConfiguration,\
-  org.apereo.cas.config.SamlIdPMetadataConfiguration,\
-  org.apereo.cas.config.SamlIdPTicketCatalogConfiguration,\
-  org.apereo.cas.config.SamlIdPTicketSerializationConfiguration,\
-  org.apereo.cas.config.SamlIdPDelegatedAuthenticationConfiguration

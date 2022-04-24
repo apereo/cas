@@ -1,0 +1,2 @@
+org.apereo.cas.config.SamlIdPRestfulMetadataConfiguration
+org.apereo.cas.config.SamlIdPRestfulIdPMetadataConfiguration

@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAuthenticationEventExecutionPlanConfiguration,\
-  org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration,\
-  org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationComponentSerializationConfiguration

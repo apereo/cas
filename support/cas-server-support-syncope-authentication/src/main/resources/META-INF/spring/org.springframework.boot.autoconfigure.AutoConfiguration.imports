@@ -1,0 +1,2 @@
+org.apereo.cas.config.SyncopeAuthenticationConfiguration
+org.apereo.cas.config.SyncopePersonDirectoryConfiguration

@@ -1,0 +1,2 @@
+org.apereo.cas.config.DynamoDbTicketRegistryConfiguration
+org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration

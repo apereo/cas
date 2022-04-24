@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration,\
-  org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration,\
-  org.apereo.cas.config.authentication.support.SamlUniqueTicketIdGeneratorConfiguration,\
-  org.apereo.cas.config.authentication.support.SamlRestConfiguration,\
-  org.apereo.cas.config.SamlConfiguration

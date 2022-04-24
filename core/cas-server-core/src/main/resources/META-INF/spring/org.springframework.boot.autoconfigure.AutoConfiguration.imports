@@ -1,0 +1,2 @@
+org.apereo.cas.config.CasCoreConfiguration
+org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration

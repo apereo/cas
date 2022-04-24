@@ -1,0 +1,2 @@
+org.apereo.cas.config.CasMetricsRepositoryConfiguration
+org.apereo.cas.config.CasMetricsConfiguration
