@@ -56,6 +56,21 @@ the supported multifactor providers for this capability
 are [Duo Security](../mfa/DuoSecurity-Authentication.html) and [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html).
 
 <img width="1699" alt="image" src="https://user-images.githubusercontent.com/1205228/164191147-1864c987-a339-4678-98e6-54d2beb8200c.png">
+                      
+### Spring Boot 2.7
+                   
+CAS components are now upgraded to use and build against Spring Boot `2.7`. While the upgrade should remain largely invisible, there are changes 
+to how auto-configuration components are now constructed and registered with Spring Boot mainly via a new `@AutoConfiguration` annotation. 
+
+> This annotation 
+is now used to annotate top-level auto-configuration classes that are listed in the 
+new `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` file, replacing `@Configuration`. Configuration classes that are 
+nested within or imported by an @AutoConfiguration class should continue to use `@Configuration` as before.
+
+For backwards compatibility, entries in existing `spring.factories` files will still be honored particularly if you have designed your own configuration 
+components. Internal CAS configuration classes will slowly begin to transition to the new `@AutoConfiguration` annotation to prepare for a future upgrade
+to Spring Boot `3.0`. This change will eventually become visible in CAS overlays that are built by 
+the [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
 
 ### Testing Strategy
 
