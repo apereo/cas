@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -97,7 +96,6 @@ public class SamlIdPUtils {
      * @param requestValue       the request value
      * @return the t
      */
-    @SneakyThrows
     public static <T extends RequestAbstractType> T retrieveSamlRequest(final OpenSamlConfigBean openSamlConfigBean,
                                                                         final Class<T> clazz, final String requestValue) {
         try {
@@ -108,11 +106,13 @@ public class SamlIdPUtils {
                     openSamlConfigBean.getParserPool(), is));
             }
         } catch (final Exception e) {
-            val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
-            try (val is = new ByteArrayInputStream(encodedRequest)) {
-                return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
-                    openSamlConfigBean.getParserPool(), is));
-            }
+            return FunctionUtils.doUnchecked(() -> {
+                val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
+                try (val is = new ByteArrayInputStream(encodedRequest)) {
+                    return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
+                        openSamlConfigBean.getParserPool(), is));
+                }
+            });
         }
     }
 

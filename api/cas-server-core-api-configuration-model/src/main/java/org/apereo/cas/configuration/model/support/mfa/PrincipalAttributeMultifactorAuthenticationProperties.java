@@ -47,12 +47,14 @@ public class PrincipalAttributeMultifactorAuthenticationProperties implements Se
      * of assigning provider ids to attributes as values.</li>
      * </ul>
      * Needless to say, the attributes need to have been resolved for the principal prior to this step.
+     * Matching and comparison operations are case insensitive.
      */
     private String globalPrincipalAttributeNameTriggers;
 
     /**
      * The regular expression that is cross matches against the principal attribute to determine
      * if the account is qualified for multifactor authentication.
+     * Matching and comparison operations are case insensitive.
      */
     private String globalPrincipalAttributeValueRegex;
 

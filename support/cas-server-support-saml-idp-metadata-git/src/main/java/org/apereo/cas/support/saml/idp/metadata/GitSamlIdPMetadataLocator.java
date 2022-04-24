@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -35,9 +34,8 @@ public class GitSamlIdPMetadataLocator extends FileSystemSamlIdPMetadataLocator 
         this.gitRepository = gitRepository;
     }
 
-    @SneakyThrows
     @Override
-    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
+    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
         if (gitRepository.pull()) {
             LOGGER.debug("Successfully pulled metadata changes from the remote repository");
         } else {

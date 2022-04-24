@@ -7,11 +7,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.oauth2.sdk.auth.ClientSecretJWT;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
@@ -44,7 +44,6 @@ public class OidcClientSecretJwtAuthenticator extends BaseOidcJwtAuthenticator {
     }
 
     @Override
-    @SneakyThrows
     public void validate(final Credentials creds,
                          final WebContext webContext,
                          final SessionStore sessionStore) {
@@ -57,7 +56,7 @@ public class OidcClientSecretJwtAuthenticator extends BaseOidcJwtAuthenticator {
         val params = new HashMap<String, List<String>>();
         params.put(OAuth20Constants.CLIENT_ASSERTION_TYPE, List.of(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER));
         params.put(OAuth20Constants.CLIENT_ASSERTION, List.of(credentials.getPassword()));
-        val jwt = ClientSecretJWT.parse(params);
+        val jwt = FunctionUtils.doUnchecked(() -> ClientSecretJWT.parse(params));
         val userProfile = new CommonProfile(true);
         userProfile.setId(jwt.getClientID().getValue());
         credentials.setUserProfile(userProfile);

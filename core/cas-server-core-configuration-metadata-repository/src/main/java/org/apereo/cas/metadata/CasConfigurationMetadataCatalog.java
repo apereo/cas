@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -112,9 +111,8 @@ public class CasConfigurationMetadataCatalog {
             });
     }
 
-    @SneakyThrows
     private static Map reasonJsonValueAsMap(final String value) {
-        return MAPPER.readValue(value, Map.class);
+        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(value, Map.class));
     }
 
     private static CasReferenceProperty collectReferenceProperty(final ConfigurationMetadataProperty property,
@@ -122,7 +120,7 @@ public class CasConfigurationMetadataCatalog {
         if (repository.getAllGroups().containsKey(property.getId())) {
             return null;
         }
-        
+
         val builder = CasReferenceProperty.builder();
         builder.owner(determinePropertySourceType(property));
 

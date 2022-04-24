@@ -5,13 +5,21 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import lombok.val;
+import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link JacksonObjectMapperFactory}.
@@ -34,6 +42,9 @@ public class JacksonObjectMapperFactory {
 
     @Builder.Default
     private final boolean defaultViewInclusion = true;
+
+    @Builder.Default
+    private final Map<String, Object> injectableValues = new LinkedHashMap<>();
 
     private final JsonFactory jsonFactory;
 
@@ -66,6 +77,8 @@ public class JacksonObjectMapperFactory {
             .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, isWriteDatesAsTimestamps())
 
+            .setInjectableValues(new RelaxedInjectableValueProvider(getInjectableValues()))
+
             .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
             .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
@@ -76,6 +89,26 @@ public class JacksonObjectMapperFactory {
             mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(),
                 ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         }
+
         return mapper;
+    }
+
+    private static class RelaxedInjectableValueProvider extends InjectableValues.Std {
+        private static final long serialVersionUID = -7327438202032303292L;
+
+        RelaxedInjectableValueProvider(final Map<String, Object> values) {
+            super(values);
+        }
+
+        @Override
+        public Object findInjectableValue(final Object valueId, final DeserializationContext ctxt,
+                                          final BeanProperty beanProperty, final Object beanInstance) {
+            val key = valueId.toString();
+            val valueToReturn = this._values.get(key);
+            if (!this._values.containsKey(key)) {
+                return new DirectFieldAccessFallbackBeanWrapper(beanInstance).getPropertyValue(key);
+            }
+            return valueToReturn;
+        }
     }
 }
