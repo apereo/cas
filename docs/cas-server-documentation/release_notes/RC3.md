@@ -56,14 +56,15 @@ the supported multifactor providers for this capability
 are [Duo Security](../mfa/DuoSecurity-Authentication.html) and [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html).
 
 <img width="1699" alt="image" src="https://user-images.githubusercontent.com/1205228/164191147-1864c987-a339-4678-98e6-54d2beb8200c.png">
+
+This mini-portal will be improved in the coming releases to list more account-related data, such as one's active single sign-on sessions, etc.
                       
 ### Spring Boot 2.7
                    
 CAS components are now upgraded to use and build against Spring Boot `2.7`. While the upgrade should remain largely invisible, there are changes 
 to how auto-configuration components are now constructed and registered with Spring Boot mainly via a new `@AutoConfiguration` annotation. 
 
-> This annotation 
-is now used to annotate top-level auto-configuration classes that are listed in the 
+> This annotation is now used to annotate top-level auto-configuration classes that are listed in the 
 new `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` file, replacing `@Configuration`. Configuration classes that are 
 nested within or imported by an @AutoConfiguration class should continue to use `@Configuration` as before.
 
@@ -81,7 +82,8 @@ stands at approximately `285` distinct scenarios. The overall test coverage of t
 
 Certain Spring Webflow actions are now given the option for an [alternative Groovy implementation](../webflow/Webflow-Customization-Extensions.html). This  
 allows one to completely replace the Java implementation of a Spring webflow action that is provided by CAS with a Groovy script for custom use cases and
-total control in scenaios where using Java may not be ideal or possible.
+total control in scenaios where using Java may not be ideal or possible. As part of this change, all CAS webflow actions should be correctly marked with
+`@ConditionalOnMissingBean` annotations that would allow one to customize and replace them with one's own implementation as necessary.
 
 ## Other Stuff
 
