@@ -42,7 +42,7 @@ public class DefaultBucketConsumer implements BucketConsumer {
         }).get();
 
         val headers = new LinkedHashMap<String, String>();
-        if (!canProceed) {
+        if (canProceed) {
             val probe = this.bucket.tryConsumeAndReturnRemaining(1);
             val seconds = TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill());
             headers.put(HEADER_NAME_X_RATE_LIMIT_RETRY_AFTER_SECONDS, Long.toString(seconds));
