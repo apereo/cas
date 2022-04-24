@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -30,10 +31,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
-@Configuration(value = "X509RestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.X509, module = "rest")
+@AutoConfiguration
 public class X509RestConfiguration {
 
     @Configuration(value = "X509RestCredentialFactoryConfiguration", proxyBeanMethods = false)

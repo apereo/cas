@@ -21,6 +21,7 @@ import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -36,9 +37,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "CasOAuth20EndpointsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth)
+@AutoConfiguration
 public class CasOAuth20EndpointsConfiguration {
 
     @Configuration(value = "CasOAuth20EndpointControllersConfiguration", proxyBeanMethods = false)
@@ -72,7 +73,7 @@ public class CasOAuth20EndpointsConfiguration {
             final OAuth20ConfigurationContext context) {
             return new OAuth20AccessTokenEndpointController(context, accessTokenGrantAuditableRequestExtractor);
         }
-        
+
         @ConditionalOnMissingBean(name = "deviceUserCodeApprovalEndpointController")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

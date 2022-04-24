@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -12,7 +13,6 @@ import org.springframework.boot.autoconfigure.session.JdbcSessionDataSourceScrip
 import org.springframework.boot.autoconfigure.session.JdbcSessionProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.session.jdbc.config.annotation.SpringSessionDataSource;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 
@@ -26,10 +26,10 @@ import javax.sql.DataSource;
  */
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.JDBC)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SessionManagement)
-@Configuration(value = "CasJdbcSessionConfiguration", proxyBeanMethods = false)
 @EnableJdbcHttpSession
 @EnableConfigurationProperties({CasConfigurationProperties.class, JdbcSessionProperties.class})
 @ImportAutoConfiguration(DataSourceAutoConfiguration.class)
+@AutoConfiguration
 public class CasJdbcSessionConfiguration {
     @Bean
     @ConditionalOnMissingBean

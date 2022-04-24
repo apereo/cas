@@ -6,9 +6,9 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,8 +22,8 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "MongoDbCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "mongo")
+@AutoConfiguration
 public class MongoDbCloudConfigBootstrapConfiguration {
     /**
      * MongoDb CAS configuration key URI.

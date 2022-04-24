@@ -21,6 +21,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -38,7 +39,7 @@ import org.springframework.core.Ordered;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WsFederation)
-@Configuration(value = "WsFederationConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class WsFederationAuthenticationConfiguration {
 
     @Configuration(value = "WsFederationAuthenticationHelperConfiguration", proxyBeanMethods = false)

@@ -6,10 +6,10 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFacto
 import org.apereo.cas.util.CollectionUtils;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
-@Configuration(value = "OpenIdServiceFactoryConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class OpenIdServiceFactoryConfiguration {
 
     @Bean

@@ -8,13 +8,13 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import lombok.val;
 import org.apache.catalina.filters.CsrfPreventionFilter;
 import org.apache.catalina.filters.RemoteAddrFilter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
 
@@ -24,10 +24,10 @@ import org.springframework.http.HttpStatus;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "CasEmbeddedContainerTomcatFiltersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportAutoConfiguration(CasEmbeddedContainerTomcatConfiguration.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ApacheTomcat)
+@AutoConfiguration
 public class CasEmbeddedContainerTomcatFiltersConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -9,9 +9,9 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.EnableMBeanExport;
 
@@ -21,11 +21,11 @@ import org.springframework.context.annotation.EnableMBeanExport;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "CasJmxConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableMBeanExport
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Core, module = "jmx")
+@AutoConfiguration
 public class CasJmxConfiguration {
 
     @Bean

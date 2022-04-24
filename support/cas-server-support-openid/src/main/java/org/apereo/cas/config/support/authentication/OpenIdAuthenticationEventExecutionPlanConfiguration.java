@@ -15,10 +15,10 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * This is {@link OpenIdAuthenticationEventExecutionPlanConfiguration}.
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
-@Configuration(value = "OpenIdAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class OpenIdAuthenticationEventExecutionPlanConfiguration {
 
     @Bean

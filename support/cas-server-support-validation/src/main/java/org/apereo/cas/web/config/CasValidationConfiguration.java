@@ -44,6 +44,7 @@ import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -64,9 +65,9 @@ import static org.springframework.http.MediaType.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "CasValidationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Validation)
+@AutoConfiguration
 public class CasValidationConfiguration {
     private static final BeanCondition CONDITION_PROXY_AUTHN = BeanCondition.on("cas.sso.proxy-authn-enabled")
         .isTrue().evenIfMissing();

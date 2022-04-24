@@ -9,8 +9,8 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "JdbcCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "jdbc")
+@AutoConfiguration
 public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLocator {
 
     private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.jdbc";

@@ -10,10 +10,10 @@ import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 
@@ -23,9 +23,9 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration(value = "LdapWebAuthnConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@AutoConfiguration
 public class LdapWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

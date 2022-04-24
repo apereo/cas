@@ -42,6 +42,7 @@ import lombok.val;
 import org.jose4j.keys.RsaKeyUtil;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -71,7 +72,7 @@ import java.util.Objects;
 @EnableRetry
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "acceptto")
-@Configuration(value = "AccepttoMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class AccepttoMultifactorAuthenticationConfiguration {
 
     @Configuration(value = "AccepttoMultifactorAuthenticationCoreConfiguration", proxyBeanMethods = false)

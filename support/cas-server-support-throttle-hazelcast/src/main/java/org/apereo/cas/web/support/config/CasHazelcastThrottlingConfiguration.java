@@ -12,11 +12,11 @@ import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -26,10 +26,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Travis Schmidt
  * @since 5.3.4
  */
-@Configuration(value = "CasHazelcastThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Throttling, module = "hazelcast")
+@AutoConfiguration
 public class CasHazelcastThrottlingConfiguration {
 
     private static final String MAP_KEY = "ipMap";

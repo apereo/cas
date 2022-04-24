@@ -12,6 +12,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,9 +28,9 @@ import java.io.FileInputStream;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration(value = "GoogleFirebaseCloudMessagingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Notifications, module = "fcm")
+@AutoConfiguration
 public class GoogleFirebaseCloudMessagingConfiguration {
 
     @Bean

@@ -18,6 +18,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -41,7 +42,7 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F, module = "jpa")
-@Configuration(value = "U2fJpaConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class U2FJpaConfiguration {
 
     @Configuration(value = "U2FJpaTransactionConfiguration", proxyBeanMethods = false)

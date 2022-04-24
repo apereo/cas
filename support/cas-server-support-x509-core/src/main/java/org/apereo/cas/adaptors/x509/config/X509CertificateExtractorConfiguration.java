@@ -7,11 +7,11 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -21,9 +21,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Curtis W Ruck
  * @since 5.3.3
  */
-@Configuration(value = "X509CertificateExtractorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.X509)
+@AutoConfiguration
 public class X509CertificateExtractorConfiguration {
 
     @ConditionalOnMissingBean(name = "x509CertificateExtractor")

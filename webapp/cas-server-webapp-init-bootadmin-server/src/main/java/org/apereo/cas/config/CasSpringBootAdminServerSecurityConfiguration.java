@@ -6,7 +6,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -18,9 +18,9 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "CasSpringBootAdminServerSecurityConfiguration", proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SpringBootAdmin)
+@AutoConfiguration
 public class CasSpringBootAdminServerSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final AdminServerProperties adminServerProperties;
 

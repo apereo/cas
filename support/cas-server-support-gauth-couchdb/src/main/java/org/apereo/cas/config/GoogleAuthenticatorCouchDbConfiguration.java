@@ -17,11 +17,11 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -31,10 +31,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration(value = "GoogleAuthenticatorCouchDbConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator, module = "couchdb")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@AutoConfiguration
 public class GoogleAuthenticatorCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "oneTimeTokenAccountCouchDbFactory")

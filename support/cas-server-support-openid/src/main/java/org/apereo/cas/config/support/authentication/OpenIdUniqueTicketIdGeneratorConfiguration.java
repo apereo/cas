@@ -7,10 +7,10 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -20,9 +20,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  * @deprecated 6.2
  */
-@Configuration(value = "OpenIdUniqueTicketIdGeneratorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
+@AutoConfiguration
 public class OpenIdUniqueTicketIdGeneratorConfiguration {
 
     @Bean

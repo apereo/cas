@@ -41,6 +41,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -64,7 +65,7 @@ import java.util.List;
 @ImportResource(locations = "classpath:META-INF/cxf/cxf.xml")
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
-@Configuration(value = "CoreWsSecurityIdentityProviderConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class CoreWsSecurityIdentityProviderConfiguration {
 
     @Configuration(value = "CoreWsSecurityIdentityProviderWebConfiguration", proxyBeanMethods = false)

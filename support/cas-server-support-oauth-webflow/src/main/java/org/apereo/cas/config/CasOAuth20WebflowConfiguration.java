@@ -16,6 +16,7 @@ import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 import lombok.val;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,9 +35,9 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "CasOAuth20WebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth)
+@AutoConfiguration
 public class CasOAuth20WebflowConfiguration {
 
     @Configuration(value = "CasOAuth20WebflowActionConfiguration", proxyBeanMethods = false)

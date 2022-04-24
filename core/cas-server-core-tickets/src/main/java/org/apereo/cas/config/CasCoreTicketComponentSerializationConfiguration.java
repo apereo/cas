@@ -20,11 +20,11 @@ import org.apereo.cas.ticket.registry.DefaultEncodedTicket;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -33,9 +33,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "CasCoreComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
+@AutoConfiguration
 public class CasCoreTicketComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "coreTicketsComponentSerializationPlanConfigurer")
@@ -62,7 +62,7 @@ public class CasCoreTicketComponentSerializationConfiguration {
             plan.registerSerializableClass(ThrottledUseAndTimeoutExpirationPolicy.class);
             plan.registerSerializableClass(TicketGrantingTicketExpirationPolicy.class);
             plan.registerSerializableClass(BaseDelegatingExpirationPolicy.class);
-            
+
         };
     }
 }

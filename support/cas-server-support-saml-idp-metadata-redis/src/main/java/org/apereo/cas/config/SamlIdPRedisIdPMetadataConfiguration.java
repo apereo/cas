@@ -22,12 +22,12 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 
@@ -39,8 +39,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "SamlIdPRedisIdPMetadataConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider, module = "redis")
+@AutoConfiguration
 public class SamlIdPRedisIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition
         .on("cas.authn.saml-idp.metadata.redis.idp-metadata-enabled").isTrue()

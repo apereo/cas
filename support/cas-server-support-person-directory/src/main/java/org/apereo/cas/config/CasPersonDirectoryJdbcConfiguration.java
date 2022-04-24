@@ -25,6 +25,7 @@ import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,10 +45,10 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 @ConditionalOnClass(value = JpaBeans.class)
-@Configuration(value = "CasPersonDirectoryJdbcConfiguration", proxyBeanMethods = false)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfiguration
 public class CasPersonDirectoryJdbcConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.jdbc[0].sql");
 

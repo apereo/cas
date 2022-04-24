@@ -31,6 +31,7 @@ import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -53,7 +54,7 @@ import java.util.Properties;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Deprecated(since = "6.2.0")
-@Configuration(value = "OpenidConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class OpenIdConfiguration {
 
     @Bean

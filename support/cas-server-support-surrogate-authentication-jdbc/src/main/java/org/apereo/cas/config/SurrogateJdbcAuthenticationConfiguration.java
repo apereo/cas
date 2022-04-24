@@ -10,11 +10,11 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -27,8 +27,8 @@ import javax.sql.DataSource;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "SurrogateJdbcAuthenticationConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication, module = "jdbc")
+@AutoConfiguration
 public class SurrogateJdbcAuthenticationConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -40,7 +40,7 @@ public class SurrogateJdbcAuthenticationConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val su = casProperties.getAuthn().getSurrogate();
-        return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(), 
+        return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
             new JdbcTemplate(surrogateAuthenticationJdbcDataSource),
             su.getJdbc().getSurrogateAccountQuery(), servicesManager);
     }

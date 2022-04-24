@@ -30,12 +30,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ import java.util.HashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "jdbc")
-@Configuration(value = "CasJdbcAuthenticationConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class CasJdbcAuthenticationConfiguration {
     private static AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(
         final SearchJdbcAuthenticationProperties b,

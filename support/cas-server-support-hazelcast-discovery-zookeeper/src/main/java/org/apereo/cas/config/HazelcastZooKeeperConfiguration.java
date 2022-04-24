@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,8 +31,8 @@ import org.springframework.integration.zookeeper.lock.ZookeeperLockRegistry;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Configuration(value = "HazelcastZooKeeperConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfiguration
 public class HazelcastZooKeeperConfiguration {
 
     @Configuration(value = "HazelcastTicketRegistryZooKeeperLockingConfiguration", proxyBeanMethods = false)

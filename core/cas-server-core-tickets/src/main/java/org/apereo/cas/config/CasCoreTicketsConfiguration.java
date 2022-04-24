@@ -52,6 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -77,13 +78,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "CasCoreTicketsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
+@AutoConfiguration
 public class CasCoreTicketsConfiguration {
 
     @Configuration(value = "CasCoreTicketsBaseConfiguration", proxyBeanMethods = false)

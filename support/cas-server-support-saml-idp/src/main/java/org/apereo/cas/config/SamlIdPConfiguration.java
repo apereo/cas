@@ -71,6 +71,7 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -87,8 +88,8 @@ import java.time.Duration;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "SamlIdPConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
+@AutoConfiguration
 public class SamlIdPConfiguration {
 
     @Configuration(value = "SamlIdPProfileBuilderConfiguration", proxyBeanMethods = false)
@@ -124,7 +125,7 @@ public class SamlIdPConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlProfileSamlResponseBuilder")
-            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
                 .samlIdPMetadataResolver(casSamlIdPMetadataResolver)
                 .openSamlConfigBean(openSamlConfigBean)
@@ -174,7 +175,7 @@ public class SamlIdPConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
-            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
                 .samlIdPMetadataResolver(casSamlIdPMetadataResolver)
                 .openSamlConfigBean(openSamlConfigBean)
@@ -288,7 +289,7 @@ public class SamlIdPConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
-            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
                 .samlIdPMetadataResolver(casSamlIdPMetadataResolver)
                 .openSamlConfigBean(openSamlConfigBean)
@@ -338,7 +339,7 @@ public class SamlIdPConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlProfileSamlResponseBuilder")
-            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
                 .samlIdPMetadataResolver(casSamlIdPMetadataResolver)
                 .openSamlConfigBean(openSamlConfigBean)
@@ -504,7 +505,7 @@ public class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlProfileSamlResponseBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder(
+        public SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,

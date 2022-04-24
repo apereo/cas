@@ -16,6 +16,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.ScriptEnginePersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,11 +35,11 @@ import java.util.ArrayList;
  * @since 6.4.0
  * @deprecated Since 6.2
  */
-@Configuration(value = "CasPersonDirectoryScriptedConfiguration", proxyBeanMethods = false)
 @Deprecated(since = "6.2.0")
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfiguration
 public class CasPersonDirectoryScriptedConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.script[0].location");
 

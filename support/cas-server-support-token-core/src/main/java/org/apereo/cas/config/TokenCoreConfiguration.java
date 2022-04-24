@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,7 +46,7 @@ import org.springframework.core.Ordered;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Tokens)
-@Configuration(value = "TokenCoreConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class TokenCoreConfiguration {
 
     @Configuration(value = "TokenCoreValidatorConfiguration", proxyBeanMethods = false)

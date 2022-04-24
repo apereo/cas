@@ -11,8 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
@@ -37,10 +37,10 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "DynamoDbCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @Slf4j
 @Getter
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "dynamodb")
+@AutoConfiguration
 public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySourceLocator {
 
     /**
