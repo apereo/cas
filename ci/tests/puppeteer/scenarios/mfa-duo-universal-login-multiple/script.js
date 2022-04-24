@@ -6,10 +6,10 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await login(page, "mfa-duo");
-    await page.waitForTimeout(1000)
-    await login(page, "mfa-duo-alt");
-    await page.waitForTimeout(1000)
+    // await login(page, "mfa-duo");
+    // await page.waitForTimeout(1000)
+    // await login(page, "mfa-duo-alt");
+    // await page.waitForTimeout(1000)
 
     await login(page, "mfa-duo", "https://apereo.github.io");
     await page.waitForTimeout(1000)
@@ -31,7 +31,7 @@ async function login(page, providerId, service = undefined) {
     await cas.loginWith(page, "duobypass", "Mellon");
     await cas.screenshot(page);
     if (service !== undefined) {
-        await page.waitForTimeout(2000)
+        await page.waitForTimeout(4000)
         const url = await page.url()
         console.log(`Page url: ${url}`)
         let ticket = await cas.assertTicketParameter(page);

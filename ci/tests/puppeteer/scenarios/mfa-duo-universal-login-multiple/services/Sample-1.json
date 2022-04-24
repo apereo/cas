@@ -5,6 +5,6 @@
   "multifactorPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "bypassPrincipalAttributeName": "bypassEnabled",
-    "bypassPrincipalAttributeValue": "YES"
+    "bypassPrincipalAttributeValue": "true"
   }
 }
