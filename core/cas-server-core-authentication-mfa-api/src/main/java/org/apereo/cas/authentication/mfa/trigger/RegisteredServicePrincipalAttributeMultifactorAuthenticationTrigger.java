@@ -29,7 +29,6 @@ import org.springframework.webflow.execution.Event;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger}.
@@ -87,7 +86,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
             org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
             registeredService, Optional.empty(), providers,
             (attributeValue, mfaProvider) ->
-                attributeValue != null && RegexUtils.matches(Pattern.compile(policy.getPrincipalAttributeValueToMatch()), attributeValue));
+                attributeValue != null && RegexUtils.find(policy.getPrincipalAttributeValueToMatch(), attributeValue));
 
         if (result != null && !result.isEmpty()) {
             return CollectionUtils.firstElement(result)
