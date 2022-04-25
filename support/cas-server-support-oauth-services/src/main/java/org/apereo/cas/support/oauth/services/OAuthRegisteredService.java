@@ -51,6 +51,8 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     private Set<String> supportedResponseTypes = new HashSet<>(0);
 
+    private String userProfileViewType;
+
     @Override
     public void initialize() {
         super.initialize();

@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowAuthenticationActions")
 public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
-    private Action initializeLoginAction;
+    @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_LOGIN)
+    private Action prepareLoginAction;
 
     @Test
     public void verifyAction() throws Exception {
@@ -39,7 +39,8 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
 
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID, initializeLoginAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID, prepareLoginAction.execute(context).getId());
+
         val account = PasswordlessUserAccount.builder()
             .email("email")
             .phone("phone")
@@ -47,7 +48,6 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
             .name("casuser")
             .build();
         WebUtils.putPasswordlessAuthenticationAccount(context, account);
-
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, initializeLoginAction.execute(context).getId());
+        assertNull(prepareLoginAction.execute(context));
     }
 }
