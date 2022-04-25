@@ -53,7 +53,7 @@ import org.springframework.webflow.execution.Action;
 public abstract class AbstractGraphicalAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GUA_PREPARE_LOGIN)
-    protected Action initializeLoginAction;
+    protected Action prepareLoginAction;
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GUA_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION)

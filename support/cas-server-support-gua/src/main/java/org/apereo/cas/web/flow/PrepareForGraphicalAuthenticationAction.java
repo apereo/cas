@@ -14,8 +14,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 public class PrepareForGraphicalAuthenticationAction extends BaseCasWebflowAction {
-
-
     @Override
     public Event doExecute(final RequestContext requestContext) {
         WebUtils.putGraphicalUserAuthenticationEnabled(requestContext, Boolean.TRUE);
