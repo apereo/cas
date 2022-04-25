@@ -32,21 +32,19 @@ import java.util.UUID;
  */
 @Slf4j
 public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRenderer {
-    private final ServicesManager servicesManager;
     private final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService;
 
     public OidcUserProfileViewRenderer(final OAuthProperties oauthProperties,
                                        final ServicesManager servicesManager,
                                        final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService) {
-        super(oauthProperties);
-        this.servicesManager = servicesManager;
+        super(oauthProperties, servicesManager);
         this.signingAndEncryptionService = signingAndEncryptionService;
     }
 
     @Override
     protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile, final OAuth20AccessToken accessToken,
                                                    final HttpServletResponse response) {
-        val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
+        val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
         if (!(service instanceof OidcRegisteredService)) {
             return super.renderProfileForModel(userProfile, accessToken, response);
         }
