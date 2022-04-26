@@ -718,7 +718,8 @@ public class CasOAuth20Configuration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
-            return new OAuth20DefaultUserProfileViewRenderer(casProperties.getAuthn().getOauth(), servicesManager);
+            return new OAuth20DefaultUserProfileViewRenderer(servicesManager,
+                casProperties.getAuthn().getOauth());
         }
 
         @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")

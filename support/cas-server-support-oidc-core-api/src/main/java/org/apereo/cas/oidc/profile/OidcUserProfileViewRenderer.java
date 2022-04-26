@@ -37,12 +37,13 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
     public OidcUserProfileViewRenderer(final OAuthProperties oauthProperties,
                                        final ServicesManager servicesManager,
                                        final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService) {
-        super(oauthProperties, servicesManager);
+        super(servicesManager, oauthProperties);
         this.signingAndEncryptionService = signingAndEncryptionService;
     }
 
     @Override
-    protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile, final OAuth20AccessToken accessToken,
+    protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile,
+                                                   final OAuth20AccessToken accessToken,
                                                    final HttpServletResponse response) {
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
         if (!(service instanceof OidcRegisteredService)) {
