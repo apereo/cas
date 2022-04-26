@@ -176,8 +176,11 @@ public class SamlIdPEndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController(
-            @Qualifier("samlProfileHandlerConfigurationContext")
-            final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+            @Qualifier("samlIdPInitiatedProfileHandlerConfigurationContext")
+            final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
+            @Qualifier("samlIdPObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator) {
+            samlProfileHandlerConfigurationContext.setSamlObjectSignatureValidator(samlObjectSignatureValidator);
             return new SamlIdPInitiatedProfileHandlerController(samlProfileHandlerConfigurationContext);
         }
 
