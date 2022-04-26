@@ -177,8 +177,11 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController(
             @Qualifier("samlIdPInitiatedProfileHandlerConfigurationContext")
-            final SamlProfileHandlerConfigurationContext samlIdPInitiatedProfileHandlerConfigurationContext) {
-            return new SamlIdPInitiatedProfileHandlerController(samlIdPInitiatedProfileHandlerConfigurationContext);
+            final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
+            @Qualifier("samlIdPObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator) {
+            samlProfileHandlerConfigurationContext.setSamlObjectSignatureValidator(samlObjectSignatureValidator);
+            return new SamlIdPInitiatedProfileHandlerController(samlProfileHandlerConfigurationContext);
         }
 
         @Bean
@@ -575,93 +578,6 @@ public class SamlIdPEndpointsConfiguration {
                 .callbackService(samlIdPCallbackService)
                 .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder)
                 .build();
-        }
-
-        @Bean
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        public SamlProfileHandlerConfigurationContext samlIdPInitiatedProfileHandlerConfigurationContext(
-                @Qualifier("authenticationAttributeReleasePolicy")
-                final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
-                @Qualifier("samlIdPCallbackService")
-                final Service samlIdPCallbackService,
-                @Qualifier("samlObjectEncrypter")
-                final SamlIdPObjectEncrypter samlObjectEncrypter,
-                @Qualifier("samlObjectSigner")
-                final SamlIdPObjectSigner samlObjectSigner,
-                @Qualifier(TicketRegistrySupport.BEAN_NAME)
-                final TicketRegistrySupport ticketRegistrySupport,
-                @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-                final OpenSamlConfigBean openSamlConfigBean,
-                @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-                final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-                @Qualifier("samlIdPServiceFactory")
-                final ServiceFactory samlIdPServiceFactory,
-                @Qualifier(TicketRegistry.BEAN_NAME)
-                final TicketRegistry ticketRegistry,
-                final CasConfigurationProperties casProperties,
-                @Qualifier("registeredServiceAccessStrategyEnforcer")
-                final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                @Qualifier(ServicesManager.BEAN_NAME)
-                final ServicesManager servicesManager,
-                @Qualifier("samlIdPTicketValidator")
-                final TicketValidator samlIdPTicketValidator,
-                @Qualifier("ssoSamlHttpRequestExtractor")
-                final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-                @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-                final AuthenticationSystemSupport authenticationSystemSupport,
-                @Qualifier("samlIdPObjectSignatureValidator")
-                final SamlObjectSignatureValidator samlObjectSignatureValidator,
-                @Qualifier("singleSignOnParticipationStrategy")
-                final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-                @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-                final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-                @Qualifier("samlIdPLogoutResponseObjectBuilder")
-                final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-                @Qualifier("samlIdPDistributedSessionCookieGenerator")
-                final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-                @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
-                final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                @Qualifier("samlIdPDistributedSessionStore")
-                final SessionStore samlIdPDistributedSessionStore,
-                @Qualifier("samlProfileSamlResponseBuilder")
-                final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
-                @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
-                final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder,
-                @Qualifier(TicketFactory.BEAN_NAME)
-                final TicketFactory defaultTicketFactory,
-                @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-                final IPersonAttributeDao attributeRepository,
-                @Qualifier("ssoPostProfileHandlerDecoders")
-                final HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders) {
-            return SamlProfileHandlerConfigurationContext.builder()
-                    .attributeRepository(attributeRepository)
-                    .samlMessageDecoders(ssoPostProfileHandlerDecoders)
-                    .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
-                    .samlObjectSigner(samlObjectSigner)
-                    .ticketFactory(defaultTicketFactory)
-                    .samlObjectEncrypter(samlObjectEncrypter)
-                    .authenticationSystemSupport(authenticationSystemSupport)
-                    .servicesManager(servicesManager)
-                    .webApplicationServiceFactory(samlIdPServiceFactory)
-                    .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-                    .openSamlConfigBean(openSamlConfigBean)
-                    .casProperties(casProperties)
-                    .ticketRegistrySupport(ticketRegistrySupport)
-                    .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-                    .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-                    .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-                    .samlObjectSignatureValidator(samlObjectSignatureValidator)
-                    .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-                    .responseBuilder(samlProfileSamlResponseBuilder)
-                    .ticketValidator(samlIdPTicketValidator)
-                    .ticketRegistry(ticketRegistry)
-                    .sessionStore(samlIdPDistributedSessionStore)
-                    .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-                    .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-                    .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-                    .callbackService(samlIdPCallbackService)
-                    .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder)
-                    .build();
         }
     }
 }
