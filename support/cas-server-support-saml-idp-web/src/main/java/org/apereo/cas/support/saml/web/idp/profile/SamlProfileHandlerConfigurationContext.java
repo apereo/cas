@@ -77,7 +77,7 @@ public class SamlProfileHandlerConfigurationContext {
     private final CasConfigurationProperties casProperties;
 
     @Nonnull
-    private final SamlObjectSignatureValidator samlObjectSignatureValidator;
+    private SamlObjectSignatureValidator samlObjectSignatureValidator;
 
     @Nonnull
     private final Service callbackService;

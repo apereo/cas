@@ -18,4 +18,11 @@ $config = [
       'certificate' => 'saml.crt',
       'idp' => $_ENV['IDP_ENTITYID']
  ],
+  'signed-sp' => [
+       'saml:SP',
+       'privatekey' => 'saml.pem',
+       'certificate' => 'saml.crt',
+       'idp' => $_ENV['IDP_ENTITYID'],
+       'sign.authnrequest' => true
+  ],
 ];
