@@ -26,9 +26,12 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfileViewRenderer {
-    private final OAuthProperties oauthProperties;
-
+    /**
+     * Services manager instance.
+     */
     protected final ServicesManager servicesManager;
+
+    private final OAuthProperties oauthProperties;
 
     @Override
     public ResponseEntity render(final Map<String, Object> model,
