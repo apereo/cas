@@ -1,6 +1,7 @@
 package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
@@ -28,12 +29,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.LinkedHashMap;
 
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
  *
- * @author Misagh Moayyed
  * @param <T> the type parameter
+ * @author Misagh Moayyed
  * @since 4.1
  */
 @Slf4j
@@ -48,7 +50,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final ObjectMapper objectMapper;
-    
+
     private final transient PrettyPrinter prettyPrinter;
 
     /**
@@ -223,12 +225,17 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     protected T readObjectFromString(final String jsonString) {
         try {
             LOGGER.trace("Attempting to consume [{}]", jsonString);
+            ApplicationContextProvider.getCasConfigurationProperties().ifPresent(casProperties -> {
+                val values = new LinkedHashMap<String, Object>(casProperties.getAuthn().getSamlIdp().getServices().getDefaults());
+                val injectables = new JacksonObjectMapperFactory.RelaxedInjectableValueProvider(values);
+                this.objectMapper.setInjectableValues(injectables);
+            });
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "
-                    + "in the absence of a configuration/support module that knows how to interpret the fragment, "
-                    + "specially if the fragment describes a CAS registered service definition. "
-                    + "Internal parsing error is [{}]",
+                         + "in the absence of a configuration/support module that knows how to interpret the fragment, "
+                         + "specially if the fragment describes a CAS registered service definition. "
+                         + "Internal parsing error is [{}]",
                 DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
             LOGGER.debug(e.getMessage(), e);
         }

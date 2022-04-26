@@ -1,5 +1,7 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.util.model.TriStateBoolean;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -93,10 +95,10 @@ public class JacksonObjectMapperFactory {
         return mapper;
     }
 
-    private static class RelaxedInjectableValueProvider extends InjectableValues.Std {
+    public static class RelaxedInjectableValueProvider extends InjectableValues.Std {
         private static final long serialVersionUID = -7327438202032303292L;
 
-        RelaxedInjectableValueProvider(final Map<String, Object> values) {
+        public RelaxedInjectableValueProvider(final Map<String, Object> values) {
             super(values);
         }
 
@@ -105,8 +107,14 @@ public class JacksonObjectMapperFactory {
                                           final BeanProperty beanProperty, final Object beanInstance) {
             val key = valueId.toString();
             val valueToReturn = this._values.get(key);
+
+            val wrapper = new DirectFieldAccessFallbackBeanWrapper(beanInstance);
             if (!this._values.containsKey(key)) {
-                return new DirectFieldAccessFallbackBeanWrapper(beanInstance).getPropertyValue(key);
+                return wrapper.getPropertyValue(key);
+            }
+            val propType = wrapper.getPropertyType(key);
+            if (propType.equals(TriStateBoolean.class)) {
+                return TriStateBoolean.valueOf(valueToReturn.toString());
             }
             return valueToReturn;
         }
