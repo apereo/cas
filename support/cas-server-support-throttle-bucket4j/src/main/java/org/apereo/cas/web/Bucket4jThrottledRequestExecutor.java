@@ -28,7 +28,7 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
             val remoteAddress = clientInfo.getClientIpAddress();
             val result = bucketConsumer.consume(remoteAddress);
             result.getHeaders().forEach(response::addHeader);
-            return result.isConsumed();
+            return !result.isConsumed();
         }
         return false;
     }
