@@ -2,12 +2,9 @@ package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -15,7 +12,6 @@ import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
