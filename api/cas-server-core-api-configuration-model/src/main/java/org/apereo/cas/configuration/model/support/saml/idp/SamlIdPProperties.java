@@ -69,4 +69,10 @@ public class SamlIdPProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SamlIdPProfileProperties profile = new SamlIdPProfileProperties();
+
+    /**
+     * Settings related to handling saml2 registered service definitions.
+     */
+    @NestedConfigurationProperty
+    private SamlIdPServicesProperties services = new SamlIdPServicesProperties();
 }

@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,7 +54,7 @@ public class CouchbaseServiceRegistryConfiguration {
         @Qualifier("serviceRegistryCouchbaseClientFactory")
         final CouchbaseClientFactory serviceRegistryCouchbaseClientFactory) {
         return new CouchbaseServiceRegistry(applicationContext, serviceRegistryCouchbaseClientFactory,
-            new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter()),
+            new RegisteredServiceJsonSerializer(applicationContext),
             Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 

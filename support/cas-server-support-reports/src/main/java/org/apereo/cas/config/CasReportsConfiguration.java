@@ -99,6 +99,7 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RegisteredServicesEndpoint registeredServicesReportEndpoint(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -106,7 +107,8 @@ public class CasReportsConfiguration {
         final CasConfigurationProperties casProperties) {
         return new RegisteredServicesEndpoint(casProperties, servicesManager,
             webApplicationServiceFactory,
-            CollectionUtils.wrapList(new RegisteredServiceYamlSerializer(), new RegisteredServiceJsonSerializer()));
+            CollectionUtils.wrapList(new RegisteredServiceYamlSerializer(applicationContext),
+                new RegisteredServiceJsonSerializer(applicationContext)), applicationContext);
     }
 
 

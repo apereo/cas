@@ -37,7 +37,7 @@ public class CreateResourceBasedRegisteredServiceWatcherTests {
         }).when(mockAppContext).publishEvent(any());
 
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-            List.of(new RegisteredServiceJsonSerializer()), mockAppContext,
+            List.of(new RegisteredServiceJsonSerializer(mockAppContext)), mockAppContext,
             new ArrayList<>()) {
             @Override
             protected String[] getExtensions() {

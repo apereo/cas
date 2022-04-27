@@ -80,7 +80,8 @@ public class GitServiceRegistryConfiguration {
                 locators.add(new DefaultGitRepositoryRegisteredServiceLocator(resourceNamingStrategy,
                     gitServiceRegistryRepositoryInstance.getRepositoryDirectory(), properties));
                 return new GitServiceRegistry(applicationContext, gitServiceRegistryRepositoryInstance,
-                    CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(), new RegisteredServiceYamlSerializer()),
+                    CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(applicationContext),
+                        new RegisteredServiceYamlSerializer(applicationContext)),
                     properties.isPushChanges(), properties.getRootDirectory(),
                     Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), locators);
             })

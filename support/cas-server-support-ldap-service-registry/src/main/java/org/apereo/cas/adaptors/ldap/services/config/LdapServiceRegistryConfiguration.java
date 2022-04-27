@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -50,7 +51,8 @@ public class LdapServiceRegistryConfiguration {
         final CasConfigurationProperties casProperties) throws Exception {
         return BeanSupplier.of(LdapRegisteredServiceMapper.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap()))
+            .supply(() -> new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap(),
+                new RegisteredServiceJsonSerializer(applicationContext)))
             .otherwiseProxy()
             .get();
     }

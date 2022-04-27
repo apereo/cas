@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
@@ -42,14 +43,16 @@ import java.util.stream.Collectors;
 @Getter
 public class DynamoDbServiceRegistryFacilitator {
 
-    private final StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
+    private final StringSerializer<RegisteredService> jsonSerializer;
 
     private final DynamoDbServiceRegistryProperties dynamoDbProperties;
 
     private final DynamoDbClient amazonDynamoDBClient;
 
     public DynamoDbServiceRegistryFacilitator(final DynamoDbServiceRegistryProperties dynamoDbProperties,
-                                              final DynamoDbClient amazonDynamoDBClient) {
+                                              final DynamoDbClient amazonDynamoDBClient,
+                                              final ConfigurableApplicationContext applicationContext) {
+        this.jsonSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = amazonDynamoDBClient;
         if (!dynamoDbProperties.isPreventTableCreationOnStartup()) {

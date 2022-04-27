@@ -10,7 +10,6 @@ import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,7 +40,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
                                    final ConfigurableApplicationContext applicationContext,
                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
-        this.serializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+        this.serializer = new RegisteredServiceJsonSerializer(applicationContext);
         this.container = container;
     }
 

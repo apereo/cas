@@ -40,11 +40,12 @@ public class DynamoDbServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("amazonDynamoDbServiceRegistryClient")
         final DynamoDbClient amazonDynamoDbServiceRegistryClient) {
         val db = casProperties.getServiceRegistry().getDynamoDb();
-        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient);
+        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient, applicationContext);
     }
 
     @Bean
