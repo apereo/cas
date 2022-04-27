@@ -12,6 +12,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -47,21 +48,16 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     private static final long serialVersionUID = -8415599777321259365L;
 
-    private final ObjectMapper objectMapper;
-    
-    private final transient PrettyPrinter prettyPrinter;
+    private final PrettyPrinter prettyPrinter;
+
+    private ObjectMapper objectMapper;
 
     protected AbstractJacksonBackedStringSerializer() {
         this(new DefaultPrettyPrinter());
     }
 
-    protected AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
-        this.objectMapper = initializeObjectMapper();
-        this.prettyPrinter = prettyPrinter;
-    }
-
     private boolean isJsonFormat() {
-        return !(this.objectMapper.getFactory() instanceof YAMLFactory);
+        return !(getObjectMapper().getFactory() instanceof YAMLFactory);
     }
 
     @Override
@@ -120,7 +116,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public void to(final OutputStream out, final T object) {
         FunctionUtils.doUnchecked(unused -> {
             try (val writer = new StringWriter()) {
-                this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
+                getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
                 val hjsonString = isJsonFormat()
                     ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
                     : writer.toString();
@@ -133,7 +129,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public void to(final Writer out, final T object) {
         FunctionUtils.doUnchecked(unused -> {
             try (val writer = new StringWriter()) {
-                this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
+                getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
 
                 if (isJsonFormat()) {
                     val opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
@@ -149,7 +145,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public void to(final File out, final T object) {
         FunctionUtils.doUnchecked(unused -> {
             try (val writer = new StringWriter()) {
-                this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
+                getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
 
                 if (isJsonFormat()) {
                     try (val fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
@@ -172,22 +168,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                 return writer.toString();
             }
         });
-    }
-
-    /**
-     * Initialize object mapper.
-     *
-     * @return the object mapper
-     */
-    protected ObjectMapper initializeObjectMapper() {
-        val mapper = JacksonObjectMapperFactory
-            .builder()
-            .defaultTypingEnabled(isDefaultTypingEnabled())
-            .jsonFactory(getJsonFactory())
-            .build()
-            .toObjectMapper();
-        configureObjectMapper(mapper);
-        return mapper;
     }
 
     /**
@@ -220,15 +200,34 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     protected T readObjectFromString(final String jsonString) {
         try {
             LOGGER.trace("Attempting to consume [{}]", jsonString);
-            return this.objectMapper.readValue(jsonString, getTypeToSerialize());
+            return getObjectMapper().readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "
-                    + "in the absence of a configuration/support module that knows how to interpret the fragment, "
-                    + "specially if the fragment describes a CAS registered service definition. "
-                    + "Internal parsing error is [{}]",
+                         + "in the absence of a configuration/support module that knows how to interpret the fragment, "
+                         + "specially if the fragment describes a CAS registered service definition. "
+                         + "Internal parsing error is [{}]",
                 DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
             LOGGER.debug(e.getMessage(), e);
         }
         return null;
+    }
+
+    /**
+     * Gets object mapper and builds on if uninitialized.
+     *
+     * @return the object mapper
+     */
+    @Synchronized
+    public ObjectMapper getObjectMapper() {
+        if (this.objectMapper == null) {
+            this.objectMapper = JacksonObjectMapperFactory
+                .builder()
+                .defaultTypingEnabled(isDefaultTypingEnabled())
+                .jsonFactory(getJsonFactory())
+                .build()
+                .toObjectMapper();
+            configureObjectMapper(objectMapper);
+        }
+        return this.objectMapper;
     }
 }
