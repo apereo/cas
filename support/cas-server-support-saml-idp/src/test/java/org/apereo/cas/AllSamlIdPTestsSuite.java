@@ -23,6 +23,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredServiceAttributeReleas
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaMicrosoftSqlServerTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaPostgresTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaTests;
+import org.apereo.cas.support.saml.services.SamlRegisteredServiceSerializationCustomizerTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataHealthIndicatorTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacadeTests;
@@ -156,6 +157,7 @@ import org.junit.platform.suite.api.Suite;
     SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests.class,
     SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests.class,
     SamlIdPProfileHandlerControllerTests.class,
+    SamlRegisteredServiceSerializationCustomizerTests.class,
     MetadataEntityAttributesAttributeReleasePolicyTests.class,
     DefaultSamlIdPCasEventListenerTests.class,
     AttributeQueryAttributeReleasePolicyTests.class,

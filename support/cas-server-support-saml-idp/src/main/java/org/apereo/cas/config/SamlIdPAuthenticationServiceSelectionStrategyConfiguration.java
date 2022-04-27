@@ -7,8 +7,10 @@ import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.util.RegisteredServiceSerializationCustomizer;
 import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactory;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.support.saml.services.SamlRegisteredServiceSerializationCustomizer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
@@ -31,6 +33,18 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 @AutoConfiguration
 public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
+
+    @Configuration(value = "SamlIdPRegisteredServicesConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPRegisteredServicesConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "samlRegisteredServiceSerializationCustomizer")
+        public RegisteredServiceSerializationCustomizer samlRegisteredServiceSerializationCustomizer(
+            final CasConfigurationProperties casProperties) {
+            return new SamlRegisteredServiceSerializationCustomizer(casProperties);
+        }
+    }
 
     @Configuration(value = "SamlIdPAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
