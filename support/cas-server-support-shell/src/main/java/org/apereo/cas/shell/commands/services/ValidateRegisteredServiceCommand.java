@@ -8,12 +8,16 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Objects;
 
 /**
@@ -26,8 +30,11 @@ import java.util.Objects;
 @ShellComponent
 @Slf4j
 public class ValidateRegisteredServiceCommand {
-
     private static final int SEP_LINE_LENGTH = 70;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
 
     /**
      * Validate service.
@@ -36,13 +43,15 @@ public class ValidateRegisteredServiceCommand {
      * @param directory the directory
      */
     @ShellMethod(key = "validate-service", value = "Validate a given JSON/YAML service definition by path or directory")
-    public static void validateService(
+    public void validateService(
         @ShellOption(value = {"file", "--file"},
             help = "Path to the JSON/YAML service definition file",
-            defaultValue = StringUtils.EMPTY) final String file,
+            defaultValue = StringUtils.EMPTY)
+        final String file,
         @ShellOption(value = {"directory", "--directory"},
             help = "Path to the JSON/YAML service definitions directory",
-            defaultValue = StringUtils.EMPTY) final String directory) {
+            defaultValue = StringUtils.EMPTY)
+        final String directory) {
 
         if (StringUtils.isNotBlank(file)) {
             val filePath = new File(file);
@@ -52,22 +61,25 @@ public class ValidateRegisteredServiceCommand {
         if (StringUtils.isNotBlank(directory)) {
             val directoryPath = new File(directory);
             if (directoryPath.isDirectory()) {
-                FileUtils.listFiles(directoryPath, new String[]{"json", "yml", "yaml"}, false).forEach(ValidateRegisteredServiceCommand::validate);
+                FileUtils.listFiles(directoryPath, new String[]{"json", "yml", "yaml"}, false)
+                    .forEach(this::validate);
             }
         }
     }
 
-    private static void validate(final File filePath) {
+    private void validate(final File filePath) {
         try {
             var validator = (RegisteredServiceJsonSerializer) null;
-            if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
+            val basicFileAttributes = Files.readAttributes(filePath.toPath(), BasicFileAttributes.class);
+            if (basicFileAttributes.isRegularFile() && filePath.exists()
+                && filePath.canRead() && basicFileAttributes.size() > 0) {
                 switch (FilenameUtils.getExtension(filePath.getPath()).toLowerCase()) {
                     case "json":
-                        validator = new RegisteredServiceJsonSerializer();
+                        validator = new RegisteredServiceJsonSerializer(applicationContext);
                         break;
                     case "yml":
                     case "yaml":
-                        validator = new RegisteredServiceYamlSerializer();
+                        validator = new RegisteredServiceYamlSerializer(applicationContext);
                         break;
                     default:
                         LOGGER.debug("Unknown file [{}]", filePath.getCanonicalPath());

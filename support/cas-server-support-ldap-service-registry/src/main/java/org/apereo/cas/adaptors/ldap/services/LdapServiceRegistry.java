@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServi
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -48,7 +49,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         this.connectionFactory = connectionFactory;
         this.ldapProperties = ldapProperties;
         this.ldapServiceMapper = Objects.requireNonNullElseGet(ldapServiceMapper,
-            () -> new DefaultLdapRegisteredServiceMapper(ldapProperties));
+            () -> new DefaultLdapRegisteredServiceMapper(ldapProperties, new RegisteredServiceJsonSerializer(applicationContext)));
     }
 
     @Override

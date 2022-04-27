@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 import java.util.UUID;
@@ -67,8 +68,10 @@ public class CasServicesStreamingKafkaConfigurationTests {
             .value(RegisteredServiceTestUtils.getRegisteredService())
             .publisherIdentifier(new PublisherIdentifier())
             .build();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString() + ".json");
-        val mapper = new RegisteredServiceJsonSerializer().getObjectMapper();
+        val mapper = new RegisteredServiceJsonSerializer(appCtx).getObjectMapper();
         mapper.writeValue(file, o);
         val readPolicy = mapper.readValue(file, DistributedCacheObject.class);
         assertEquals(o, readPolicy);

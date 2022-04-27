@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -61,15 +62,19 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
 
     private final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;
 
+    private final ConfigurableApplicationContext applicationContext;
+
     public RegisteredServicesEndpoint(
         final CasConfigurationProperties casProperties,
         final ServicesManager servicesManager,
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers) {
+        final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
+        final ConfigurableApplicationContext applicationContext) {
         super(casProperties);
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.registeredServiceSerializers = registeredServiceSerializers;
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -206,7 +211,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     @ResponseBody
     @Operation(summary = "Export registered services as a zip file")
     public ResponseEntity<Resource> export() {
-        val serializer = new RegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val resource = CompressionUtils.toZipFile(servicesManager.stream(),
             Unchecked.function(entry -> {
                 val service = (RegisteredService) entry;

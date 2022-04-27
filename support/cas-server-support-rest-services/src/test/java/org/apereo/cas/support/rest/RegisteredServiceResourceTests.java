@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
@@ -82,7 +83,9 @@ public class RegisteredServiceResourceTests {
     }
 
     private static MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
-        val sz = new RegisteredServiceJsonSerializer();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val sz = new RegisteredServiceJsonSerializer(appCtx);
         val converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
         return MockMvcBuilders.standaloneSetup(registeredServiceResource)
             .defaultRequest(get("/")
@@ -110,9 +113,11 @@ public class RegisteredServiceResourceTests {
 
     private void runTest(final String attrName, final String attrValue, final String credentials,
                          final ResultMatcher result) throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
         val service = RegisteredServiceTestUtils.getRegisteredService();
-        val sz = new RegisteredServiceJsonSerializer();
+        val sz = new RegisteredServiceJsonSerializer(appCtx);
         try (val writer = new StringWriter()) {
             sz.to(writer, service);
             configureMockMvcFor(registeredServiceResource)

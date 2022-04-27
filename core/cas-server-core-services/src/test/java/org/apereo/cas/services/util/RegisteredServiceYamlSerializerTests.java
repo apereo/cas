@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -24,7 +25,9 @@ public class RegisteredServiceYamlSerializerTests {
 
     @Test
     public void verifyPrinter() {
-        val zer = new RegisteredServiceYamlSerializer();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val zer = new RegisteredServiceYamlSerializer(appCtx);
         assertFalse(zer.supports(new File("bad-file")));
         assertFalse(zer.getContentTypes().isEmpty());
         assertNotNull(zer.getJsonFactory());
@@ -32,7 +35,9 @@ public class RegisteredServiceYamlSerializerTests {
 
     @Test
     public void verifyWriter() {
-        val zer = new RegisteredServiceYamlSerializer();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val zer = new RegisteredServiceYamlSerializer(appCtx);
         val writer = new StringWriter();
         zer.to(writer, new RegexRegisteredService());
         assertNotNull(zer.from(new ByteArrayInputStream(writer.toString().getBytes(StandardCharsets.UTF_8))));

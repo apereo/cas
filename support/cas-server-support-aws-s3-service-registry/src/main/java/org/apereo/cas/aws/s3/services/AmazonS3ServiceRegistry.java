@@ -9,7 +9,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -52,7 +51,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
         final S3Client s3Client) {
         super(applicationContext, serviceRegistryListeners);
         this.s3Client = s3Client;
-        this.registeredServiceSerializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+        this.registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
     }
 
     @Override

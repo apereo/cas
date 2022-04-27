@@ -50,7 +50,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory,
-            CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()),
+            CollectionUtils.wrapList(new RegisteredServiceYamlSerializer(applicationContext)),
             applicationContext, registeredServiceReplicationStrategy,
             resourceNamingStrategy, serviceRegistryListeners, serviceRegistryConfigWatcher);
     }

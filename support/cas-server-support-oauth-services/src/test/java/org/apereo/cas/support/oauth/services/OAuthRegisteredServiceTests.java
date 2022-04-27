@@ -80,7 +80,9 @@ public class OAuthRegisteredServiceTests {
         serviceWritten.setSupportedGrantTypes(CollectionUtils.wrapHashSet("something"));
         serviceWritten.setSupportedResponseTypes(CollectionUtils.wrapHashSet("something"));
 
-        val serializer = new RegisteredServiceJsonSerializer();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serializer = new RegisteredServiceJsonSerializer(appCtx);
         serializer.to(JSON_FILE, serviceWritten);
         val serviceRead = serializer.from(JSON_FILE);
         assertEquals(serviceWritten, serviceRead);
@@ -89,7 +91,7 @@ public class OAuthRegisteredServiceTests {
     @Test
     public void verifyInitialization() {
         val service = new OAuthRegisteredService();
-        assertEquals(service.newInstance().getClass(), service.getClass());
+        assertSame(service.newInstance().getClass(), service.getClass());
         service.setSupportedGrantTypes(null);
         service.setSupportedResponseTypes(null);
         service.initialize();

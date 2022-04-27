@@ -59,11 +59,12 @@ public class CasServicesStreamingKafkaConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "registeredServiceKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, DistributedCacheObject> registeredServiceKafkaListenerContainerFactory(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val kafka = casProperties.getServiceRegistry().getStream().getKafka();
         val factory = new KafkaObjectFactory<String, DistributedCacheObject>(kafka.getBootstrapAddress());
         factory.setConsumerGroupId("registeredServices");
-        val mapper = new RegisteredServiceJsonSerializer().getObjectMapper();
+        val mapper = new RegisteredServiceJsonSerializer(applicationContext).getObjectMapper();
         return factory.getKafkaListenerContainerFactory(new StringDeserializer(), new JsonDeserializer<>(DistributedCacheObject.class, mapper));
     }
 
@@ -75,7 +76,8 @@ public class CasServicesStreamingKafkaConfiguration {
         final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager,
         @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
         final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) throws Exception {
-        return new RegisteredServiceKafkaDistributedCacheListener(casRegisteredServiceStreamPublisherIdentifier, registeredServiceDistributedCacheManager);
+        return new RegisteredServiceKafkaDistributedCacheListener(
+            casRegisteredServiceStreamPublisherIdentifier, registeredServiceDistributedCacheManager);
     }
 
     @Bean
@@ -104,7 +106,7 @@ public class CasServicesStreamingKafkaConfiguration {
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val kafka = casProperties.getServiceRegistry().getStream().getKafka();
-                val mapper = new RegisteredServiceJsonSerializer().getObjectMapper();
+                val mapper = new RegisteredServiceJsonSerializer(applicationContext).getObjectMapper();
                 val factory = new KafkaObjectFactory<String, DistributedCacheObject<RegisteredService>>(kafka.getBootstrapAddress());
                 return factory.getKafkaTemplate(new StringSerializer(), new JsonSerializer<>(mapper));
             })

@@ -110,4 +110,5 @@ total control in scenaios where using Java may not be ideal or possible. As part
 - Spring Boot
 - Infinispan
 - Mockito
+- Apache Ignite
 - Micrometer

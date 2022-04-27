@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -31,10 +32,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "rest")
 @AutoConfiguration
 public class RestServicesConfiguration {
-
     @Bean
-    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-        val serializer = new RegisteredServiceJsonSerializer();
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(
+        final ConfigurableApplicationContext applicationContext) {
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         return new MappingJackson2HttpMessageConverter(serializer.getObjectMapper());
     }
 
