@@ -82,7 +82,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
             if (!matcherFile.find()) {
                 throw new IllegalArgumentException("Unable to locate groovy script file at " + script);
             }
-            val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(2));
+            val resource = ResourceUtils.getRawResourceFrom(script);
             this.executableScript = new WatchableGroovyScriptResource(resource);
         }
     }
