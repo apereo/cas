@@ -27,6 +27,8 @@ public class MessageSanitizationUtilsTests {
         assertTrue(results.contains("OC-1-*****"));
         results = MessageSanitizationUtils.sanitize("ticket AT-1-abcdefg created");
         assertTrue(results.contains("AT-1-*****"));
+        results = MessageSanitizationUtils.sanitize("ticket RT-1-abcdefg created");
+        assertTrue(results.contains("RT-1-*****"));
 
         results = MessageSanitizationUtils.sanitize("found a [password =se!ns4357$##@@**it!!_ive] here...");
         assertTrue(results.contains("[password =*****"));
