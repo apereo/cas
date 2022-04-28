@@ -44,11 +44,11 @@
             let el = ev.target.parentElement.nextElementSibling.nextElementSibling;
             if (el != null) {
                 if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                    console.log('CAPSLOCK is on');
+                    // console.log('CAPSLOCK is on');
                     el.classList.remove("caps-warn");
                     el.classList.add('caps-on');
                 } else {
-                    console.log('CAPSLOCK is off')
+                    // console.log('CAPSLOCK is off')
                     el.classList.remove("caps-on");
                     el.classList.add('caps-warn');
                 }
@@ -91,7 +91,7 @@ function resourceLoadedSuccessfully() {
             ev.preventDefault();
         });
 
-        console.log(`JQuery Ready: ${typeof (jqueryReady)}`);
+        // console.log(`JQuery Ready: ${typeof (jqueryReady)}`);
         if (typeof (jqueryReady) == 'function') {
             jqueryReady();
         }
