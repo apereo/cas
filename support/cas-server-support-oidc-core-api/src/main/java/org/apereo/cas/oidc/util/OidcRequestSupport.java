@@ -2,11 +2,13 @@ package org.apereo.cas.oidc.util;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -46,6 +48,8 @@ public class OidcRequestSupport {
     private final TicketRegistrySupport ticketRegistrySupport;
 
     private final OidcIssuerService oidcIssuerService;
+
+    private final CasConfigurationProperties casProperties;
 
     /**
      * Gets oidc prompt from authorization request.
@@ -245,7 +249,9 @@ public class OidcRequestSupport {
         val definedIssuer = oidcIssuerService.determineIssuer(Optional.empty());
 
         val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");
-        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl) || issuerFromRequestUrl.startsWith(definedIssuerWithSlash);
+        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl)
+                     || issuerFromRequestUrl.startsWith(definedIssuerWithSlash)
+                     || RegexUtils.find(casProperties.getAuthn().getOidc().getCore().getAcceptedIssuersPattern(), issuerFromRequestUrl);
         FunctionUtils.doIf(!result, o -> LOGGER.trace("Configured issuer [{}] defined does not match the request issuer [{}]",
             o, issuerFromRequestUrl)).accept(definedIssuer);
         return result;

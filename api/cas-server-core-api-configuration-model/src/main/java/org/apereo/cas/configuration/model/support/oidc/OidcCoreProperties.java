@@ -94,4 +94,13 @@ public class OidcCoreProperties implements Serializable {
      * in future CAS releases.
      */
     private boolean includeIdTokenClaims = true;
+
+    /**
+     * Defines the regular expression pattern that is matched against the calculated issuer
+     * from the request. If the issuer that is extracted from the request does not match
+     * the {@link #issuer} defined in the CAS configuration, this pattern acts as a secondary
+     * level rule to allow incoming requests to pass through if the match is successful. By default,
+     * the pattern is designed to never match anything.
+     */
+    private String acceptedIssuersPattern = "a^";
 }
