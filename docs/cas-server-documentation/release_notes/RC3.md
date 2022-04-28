@@ -108,7 +108,9 @@ total control in scenaios where using Java may not be ideal or possible. As part
 - Spring Kafka
 - Spring Session
 - Spring Boot
+- Spring Cloud
 - Infinispan
 - Mockito
 - Apache Ignite
 - Micrometer
+- MySQL Driver
