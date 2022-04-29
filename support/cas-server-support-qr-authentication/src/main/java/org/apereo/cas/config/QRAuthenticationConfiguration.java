@@ -26,6 +26,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -228,15 +229,30 @@ public class QRAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action qrAuthenticationValidateWebSocketChannelAction() {
-            return new QRAuthenticationValidateTokenAction();
+        public Action qrAuthenticationValidateWebSocketChannelAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(QRAuthenticationValidateTokenAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL)
+                .build()
+                .get();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_GENERATE_CODE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action qrAuthenticationGenerateCodeAction() {
-            return new QRAuthenticationGenerateCodeAction();
+        public Action qrAuthenticationGenerateCodeAction(final ConfigurableApplicationContext applicationContext,
+                                                         final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(QRAuthenticationGenerateCodeAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_GENERATE_CODE)
+                .build()
+                .get();
         }
 
     }

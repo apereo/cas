@@ -80,10 +80,18 @@ stands at approximately `285` distinct scenarios. The overall test coverage of t
 
 ### Groovy Webflow Actions
 
-Certain Spring Webflow actions are now given the option for an [alternative Groovy implementation](../webflow/Webflow-Customization-Extensions.html). This  
+Certain Spring Webflow actions are now given the option for an [alternative Groovy implementation](../webflow/Webflow-Customization-Extensions.html). This 
 allows one to completely replace the Java implementation of a Spring webflow action that is provided by CAS with a Groovy script for custom use cases and
 total control in scenaios where using Java may not be ideal or possible. As part of this change, all CAS webflow actions should be correctly marked with
 `@ConditionalOnMissingBean` annotations that would allow one to customize and replace them with one's own implementation as necessary.
+ 
+### Template Service Definitions
+
+Service definition records such as those that represent SAML2 service providers or OpenID Connect relying parties carry many fields
+that are assigned default values. In scenarios where there is no setting to change the field behavior at a global level, the 
+alternative might be to update all service definitions to change field default. To accomodate this change, options are now available
+to allow changing of the default field values for service definitions. This enhancement is initially made available for select fields
+that belong to [SAML2 service definitions](../services/SAML2-Service-Management.html).
 
 ## Other Stuff
 
@@ -114,3 +122,4 @@ total control in scenaios where using Java may not be ideal or possible. As part
 - Apache Ignite
 - Micrometer
 - MySQL Driver
+- Material Web Components
