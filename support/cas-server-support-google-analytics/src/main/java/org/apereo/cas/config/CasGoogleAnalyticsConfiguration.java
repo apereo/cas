@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CreateGoogleAnalyticsCookieAction;
 import org.apereo.cas.web.flow.RemoveGoogleAnalyticsCookieAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.val;
@@ -64,19 +65,35 @@ public class CasGoogleAnalyticsConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_CREATE_COOKIE)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action createGoogleAnalyticsCookieAction(final CasConfigurationProperties casProperties,
-                                                    @Qualifier("casGoogleAnalyticsCookieGenerator")
-                                                    final CasCookieBuilder casGoogleAnalyticsCookieGenerator) {
-        return new CreateGoogleAnalyticsCookieAction(casProperties, casGoogleAnalyticsCookieGenerator);
+    public Action createGoogleAnalyticsCookieAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casGoogleAnalyticsCookieGenerator")
+        final CasCookieBuilder casGoogleAnalyticsCookieGenerator) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new CreateGoogleAnalyticsCookieAction(casProperties, casGoogleAnalyticsCookieGenerator))
+            .withId(CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_CREATE_COOKIE)
+            .build()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_REMOVE_COOKIE)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action removeGoogleAnalyticsCookieAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier("casGoogleAnalyticsCookieGenerator")
         final CasCookieBuilder casGoogleAnalyticsCookieGenerator) {
-        return new RemoveGoogleAnalyticsCookieAction(casGoogleAnalyticsCookieGenerator);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new RemoveGoogleAnalyticsCookieAction(casGoogleAnalyticsCookieGenerator))
+            .withId(CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_REMOVE_COOKIE)
+            .build()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowExecutionPlanConfigurer")

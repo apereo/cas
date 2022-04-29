@@ -56,7 +56,8 @@ public class DigestAuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action digestAuthenticationAction(
         @Qualifier("defaultDigestCredentialRetriever")
-        final DigestHashedCredentialRetriever defaultDigestCredentialRetriever, final CasConfigurationProperties casProperties,
+        final DigestHashedCredentialRetriever defaultDigestCredentialRetriever,
+        final CasConfigurationProperties casProperties,
         @Qualifier("adaptiveAuthenticationPolicy")
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
         @Qualifier("serviceTicketRequestWebflowEventResolver")

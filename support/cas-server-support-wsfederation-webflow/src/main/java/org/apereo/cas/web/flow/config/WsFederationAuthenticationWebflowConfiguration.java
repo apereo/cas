@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.WsFederationClientRedirectAction;
 import org.apereo.cas.web.flow.WsFederationRequestBuilder;
 import org.apereo.cas.web.flow.WsFederationResponseValidator;
 import org.apereo.cas.web.flow.WsFederationWebflowConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -61,14 +62,25 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WS_FEDERATION_REDIRECT)
-    public Action wsFederationClientRedirectAction(final ServerProperties serverProperties) {
-        return new WsFederationClientRedirectAction(serverProperties);
+    public Action wsFederationClientRedirectAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        final ServerProperties serverProperties) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new WsFederationClientRedirectAction(serverProperties))
+            .withId(CasWebflowConstants.ACTION_ID_WS_FEDERATION_REDIRECT)
+            .build()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WS_FEDERATION)
     public Action wsFederationAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier("wsFederationRequestBuilder")
         final WsFederationRequestBuilder wsFederationRequestBuilder,
         @Qualifier("wsFederationResponseValidator")
@@ -79,9 +91,15 @@ public class WsFederationAuthenticationWebflowConfiguration {
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, wsFederationRequestBuilder,
-            wsFederationResponseValidator);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, wsFederationRequestBuilder,
+                wsFederationResponseValidator))
+            .withId(CasWebflowConstants.ACTION_ID_WS_FEDERATION)
+            .build()
+            .get();
     }
 
     @Bean

@@ -272,15 +272,24 @@ public class CasAccountManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES)
         public Action loadAccountRegistrationPropertiesAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService) {
-            return new LoadAccountRegistrationPropertiesAction(accountMgmtRegistrationService);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new LoadAccountRegistrationPropertiesAction(accountMgmtRegistrationService))
+                .withId(CasWebflowConstants.ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT)
         public Action submitAccountRegistrationAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService,
@@ -290,8 +299,14 @@ public class CasAccountManagementWebflowConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
-            return new SubmitAccountRegistrationAction(accountMgmtRegistrationService, casProperties,
-                communicationsManager, defaultTicketFactory, ticketRegistry);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new SubmitAccountRegistrationAction(accountMgmtRegistrationService, casProperties,
+                    communicationsManager, defaultTicketFactory, ticketRegistry))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT)
+                .build()
+                .get();
         }
     }
 
