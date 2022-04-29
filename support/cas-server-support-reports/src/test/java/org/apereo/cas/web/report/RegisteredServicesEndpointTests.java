@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -55,8 +56,10 @@ public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     public void verifyImportOperationAsJson() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val request = new MockHttpServletRequest();
-        val content = new RegisteredServiceJsonSerializer().toString(RegisteredServiceTestUtils.getRegisteredService());
+        val content = new RegisteredServiceJsonSerializer(appCtx).toString(RegisteredServiceTestUtils.getRegisteredService());
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
         assertEquals(HttpStatus.CREATED, endpoint.importService(request).getStatusCode());
     }
@@ -71,14 +74,17 @@ public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     public void verifyImportOperationAsYaml() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val request = new MockHttpServletRequest();
-        val content = new RegisteredServiceYamlSerializer().toString(RegisteredServiceTestUtils.getRegisteredService());
+        val content = new RegisteredServiceYamlSerializer(appCtx)
+            .toString(RegisteredServiceTestUtils.getRegisteredService());
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
         assertEquals(HttpStatus.CREATED, endpoint.importService(request).getStatusCode());
     }
 
     @Test
-    public void verifyExportOperation() throws Exception {
+    public void verifyExportOperation() {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         this.servicesManager.save(service);
         val response = endpoint.export();
@@ -88,12 +94,14 @@ public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     public void verifyBulkImportAsZip() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val request = new MockHttpServletRequest();
         request.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         try (val out = new ByteArrayOutputStream(2048);
              val zipStream = new ZipOutputStream(out)) {
             var registeredService = RegisteredServiceTestUtils.getRegisteredService();
-            val content = new RegisteredServiceJsonSerializer().toString(registeredService);
+            val content = new RegisteredServiceJsonSerializer(appCtx).toString(registeredService);
             var name = registeredService.getName() + ".json";
             val e = new ZipEntry(name);
             zipStream.putNextEntry(e);

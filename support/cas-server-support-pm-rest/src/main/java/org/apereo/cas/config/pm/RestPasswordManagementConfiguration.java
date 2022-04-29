@@ -12,11 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,10 +26,10 @@ import org.springframework.web.client.RestTemplate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "RestPasswordManagementConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "rest")
 @Slf4j
+@AutoConfiguration
 public class RestPasswordManagementConfiguration {
 
     private static RestTemplate buildRestTemplateBuilder(final RestTemplateBuilder restTemplateBuilder,

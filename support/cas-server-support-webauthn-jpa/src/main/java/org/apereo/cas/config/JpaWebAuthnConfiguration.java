@@ -15,6 +15,7 @@ import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,9 +35,9 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration(value = "JpaWebAuthnConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@AutoConfiguration
 public class JpaWebAuthnConfiguration {
 
     @Configuration(value = "JpaWebAuthnTransactionConfiguration", proxyBeanMethods = false)

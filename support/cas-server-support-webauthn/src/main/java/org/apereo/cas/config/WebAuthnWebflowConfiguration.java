@@ -28,6 +28,7 @@ import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -50,14 +51,14 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "WebAuthnWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@AutoConfiguration
 public class WebAuthnWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled")
         .isTrue().evenIfMissing();
-    
+
     @Configuration(value = "WebAuthnWebflowRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnWebflowRegistryConfiguration {
@@ -160,7 +161,7 @@ public class WebAuthnWebflowConfiguration {
     public static class WebAuthnMultifactorTrustConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.trusted-device-enabled")
             .isTrue().evenIfMissing();
-        
+
         @ConditionalOnMissingBean(name = "webAuthnMultifactorTrustWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -210,7 +211,7 @@ public class WebAuthnWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnWebflowActionConfiguration {
 
-        @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WEBAUTHN_START_AUTHENTICATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartAuthenticationAction(
@@ -224,7 +225,7 @@ public class WebAuthnWebflowConfiguration {
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "webAuthnStartRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WEB_AUTHN_START_REGISTRATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartRegistrationAction(
@@ -237,7 +238,7 @@ public class WebAuthnWebflowConfiguration {
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WEBAUTHN_CHECK_ACCOUNT_REGISTRATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnCheckAccountRegistrationAction(
@@ -251,7 +252,7 @@ public class WebAuthnWebflowConfiguration {
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "webAuthnSaveAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WEBAUTHN_SAVE_ACCOUNT_REGISTRATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnSaveAccountRegistrationAction(
@@ -267,7 +268,7 @@ public class WebAuthnWebflowConfiguration {
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WEBAUTHN_AUTHENTICATION_WEBFLOW)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnAuthenticationWebflowAction(
@@ -280,8 +281,8 @@ public class WebAuthnWebflowConfiguration {
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
-        
-        @ConditionalOnMissingBean(name = "webAuthnValidateSessionCredentialTokenAction")
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WEBAUTHN_VALIDATE_SESSION_CREDENTIAL_TOKEN)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnValidateSessionCredentialTokenAction(

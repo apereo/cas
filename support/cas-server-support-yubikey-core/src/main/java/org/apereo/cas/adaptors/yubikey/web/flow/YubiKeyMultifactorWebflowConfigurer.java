@@ -50,23 +50,23 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
             createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
 
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
-                createEvaluateAction("prepareYubiKeyAuthenticationLoginAction"),
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_YUBIKEY_PREPARE_LOGIN),
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);
             setStartState(flow, initLoginFormState);
 
             val acctRegCheckState = createActionState(flow, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION,
-                createEvaluateAction("yubiKeyAccountRegistrationAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_YUBIKEY_ACCOUNT_REGISTRATION));
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION);
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
             val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION,
-                createEvaluateAction("yubiKeySaveAccountRegistrationAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_YUBIKEY_SAVE_ACCOUNT_REGISTRATION));
             createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
             createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
-                createEvaluateAction("yubikeyAuthenticationWebflowAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_YUBIKEY_AUTHENTICATION));
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 

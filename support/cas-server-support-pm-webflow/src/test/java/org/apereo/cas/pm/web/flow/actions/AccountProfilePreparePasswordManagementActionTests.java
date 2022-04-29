@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -41,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasWebflowAccountProfileConfiguration.class)
 public class AccountProfilePreparePasswordManagementActionTests extends BasePasswordManagementActionTests {
     @Autowired
-    @Qualifier("prepareAccountProfilePasswordMgmtAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)
     private Action prepareAccountProfilePasswordMgmtAction;
 
     @Test

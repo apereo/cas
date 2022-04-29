@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.AccessLevel;
@@ -140,7 +141,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
             .stream()
             .filter(e -> {
                 LOGGER.debug("Attempting to match [{}] against [{}]", attrName, e.getKey());
-                return e.getKey().matches(attrName);
+                return RegexUtils.find(attrName, e.getKey());
             })
             .collect(Collectors.toSet());
 
@@ -162,7 +163,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
                 LOGGER.debug("Matching attribute [{}] with values [{}] against [{}]", e.getKey(), valuesCol, attrValue);
                 return valuesCol
                     .stream()
-                    .anyMatch(v -> v.toString().matches(attrValue));
+                    .anyMatch(v -> RegexUtils.find(attrValue, v.toString()));
             }).collect(Collectors.toSet());
 
         LOGGER.debug("Matching attribute values remaining are [{}]", values);

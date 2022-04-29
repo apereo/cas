@@ -32,6 +32,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -57,8 +58,8 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableWebSocketMessageBroker
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "QRAuthenticationConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "qr")
+@AutoConfiguration
 public class QRAuthenticationConfiguration {
 
     @Configuration(value = "QRAuthenticationServiceConfiguration", proxyBeanMethods = false)
@@ -225,14 +226,14 @@ public class QRAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class QRAuthenticationWebflowActionConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "qrAuthenticationValidateWebSocketChannelAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action qrAuthenticationValidateWebSocketChannelAction() {
             return new QRAuthenticationValidateTokenAction();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "qrAuthenticationGenerateCodeAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_GENERATE_CODE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action qrAuthenticationGenerateCodeAction() {
             return new QRAuthenticationGenerateCodeAction();

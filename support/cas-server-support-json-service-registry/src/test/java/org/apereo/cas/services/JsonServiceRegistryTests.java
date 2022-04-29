@@ -59,8 +59,10 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
 
     @Test
     public void verifyRequiredHandlersServiceDefinition() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val resource = new ClassPathResource("RequiredHandlers-10000004.json");
-        val serializer = new RegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer(appCtx);
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
@@ -68,7 +70,9 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
     @Test
     public void verifyExistingDefinitionForCompatibility2() throws Exception {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
-        val serializer = new RegisteredServiceJsonSerializer();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serializer = new RegisteredServiceJsonSerializer(appCtx);
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
@@ -79,8 +83,10 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
 
     @Test
     public void verifyExistingDefinitionForCompatibility1() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
-        val serializer = new RegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer(appCtx);
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());

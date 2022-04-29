@@ -9,10 +9,10 @@ import org.apereo.cas.support.sms.AmazonSimpleNotificationServiceSmsSender;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.sns.SnsClient;
 
@@ -22,9 +22,9 @@ import software.amazon.awssdk.services.sns.SnsClient;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration(value = "AmazonSimpleNotificationServiceSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Notifications, module = "aws-sns")
+@AutoConfiguration
 public class AmazonSimpleNotificationServiceSmsConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

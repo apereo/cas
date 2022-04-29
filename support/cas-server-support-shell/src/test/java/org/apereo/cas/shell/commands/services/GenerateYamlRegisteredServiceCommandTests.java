@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -27,11 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val file = File.createTempFile("service", ".json");
         val yaml = File.createTempFile("service", ".yaml");
         val svc = RegisteredServiceTestUtils.getRegisteredService("example");
         try (val writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-            new RegisteredServiceJsonSerializer().to(writer, svc);
+            new RegisteredServiceJsonSerializer(appCtx).to(writer, svc);
             writer.flush();
         }
         assertTrue(file.exists() && file.length() > 0);

@@ -146,6 +146,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -166,10 +167,10 @@ import java.util.Optional;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration(value = "CasOAuth20Configuration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth)
+@AutoConfiguration
 public class CasOAuth20Configuration {
 
     @Configuration(value = "CasOAuth20JwtConfiguration", proxyBeanMethods = false)
@@ -713,8 +714,12 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer(final CasConfigurationProperties casProperties) {
-            return new OAuth20DefaultUserProfileViewRenderer(casProperties.getAuthn().getOauth());
+        public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
+            return new OAuth20DefaultUserProfileViewRenderer(servicesManager,
+                casProperties.getAuthn().getOauth());
         }
 
         @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")

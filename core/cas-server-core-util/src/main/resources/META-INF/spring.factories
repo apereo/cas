@@ -1,4 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasCoreUtilConfiguration,\
-  org.apereo.cas.config.CasCoreUtilSerializationConfiguration
-
+#Sun Apr 24 19:11:21 GST 2022
 org.springframework.boot.diagnostics.FailureAnalyzer=org.apereo.cas.util.spring.boot.BeanDefinitionStoreFailureAnalyzer

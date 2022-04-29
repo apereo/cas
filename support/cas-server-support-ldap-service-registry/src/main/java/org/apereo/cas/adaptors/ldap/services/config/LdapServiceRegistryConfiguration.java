@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -17,12 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
@@ -35,10 +36,10 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "LdapServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "ldap")
+@AutoConfiguration
 public class LdapServiceRegistryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.ldap.ldap-url");
 
@@ -50,7 +51,8 @@ public class LdapServiceRegistryConfiguration {
         final CasConfigurationProperties casProperties) throws Exception {
         return BeanSupplier.of(LdapRegisteredServiceMapper.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap()))
+            .supply(() -> new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap(),
+                new RegisteredServiceJsonSerializer(applicationContext)))
             .otherwiseProxy()
             .get();
     }

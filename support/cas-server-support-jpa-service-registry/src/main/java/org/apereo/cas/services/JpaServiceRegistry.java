@@ -1,8 +1,11 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -29,6 +32,7 @@ import java.util.stream.LongStream;
 @EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER)
 @ToString
+@Slf4j
 public class JpaServiceRegistry extends AbstractServiceRegistry {
     /**
      * Transaction manager name.
@@ -40,16 +44,19 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;
 
+    private final StringSerializer<RegisteredService> serializer;
+
     public JpaServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final Collection<ServiceRegistryListener> serviceRegistryListeners,
                               final TransactionOperations transactionTemplate) {
         super(applicationContext, serviceRegistryListeners);
         this.transactionTemplate = transactionTemplate;
+        this.serializer = new RegisteredServiceJsonSerializer(getApplicationContext());
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        val entity = JpaRegisteredServiceEntity.fromRegisteredService(registeredService);
+        val entity = fromRegisteredService(registeredService);
 
         if (entityManager.contains(entity)) {
             entityManager.remove(entity);
@@ -72,7 +79,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
         val list = this.entityManager.createQuery(query, JpaRegisteredServiceEntity.class).getResultList();
         return list
             .stream()
-            .map(JpaRegisteredServiceEntity::toRegisteredService)
+            .map(this::toRegisteredService)
             .sorted()
             .map(this::invokeServiceRegistryListenerPostLoad)
             .filter(Objects::nonNull)
@@ -103,7 +110,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public RegisteredService findServiceById(final long id) {
         return Optional.ofNullable(this.entityManager.find(JpaRegisteredServiceEntity.class, id))
-            .map(JpaRegisteredServiceEntity::toRegisteredService)
+            .map(this::toRegisteredService)
             .stream()
             .peek(this::invokeServiceRegistryListenerPostLoad)
             .findFirst()
@@ -119,7 +126,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
             .getResultList();
         return results
             .stream()
-            .map(JpaRegisteredServiceEntity::toRegisteredService)
+            .map(this::toRegisteredService)
             .sorted()
             .filter(r -> r.matches(id))
             .peek(this::invokeServiceRegistryListenerPostLoad)
@@ -136,7 +143,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
             .getResultList();
         return results
             .stream()
-            .map(JpaRegisteredServiceEntity::toRegisteredService)
+            .map(this::toRegisteredService)
             .sorted()
             .peek(this::invokeServiceRegistryListenerPostLoad)
             .findFirst()
@@ -152,7 +159,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
             .getResultList();
         return results
             .stream()
-            .map(JpaRegisteredServiceEntity::toRegisteredService)
+            .map(this::toRegisteredService)
             .sorted()
             .peek(this::invokeServiceRegistryListenerPostLoad)
             .findFirst()
@@ -170,12 +177,37 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
         val isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
         invokeServiceRegistryListenerPreSave(registeredService);
 
-        val entity = JpaRegisteredServiceEntity.fromRegisteredService(registeredService);
+        val entity = fromRegisteredService(registeredService);
         if (isNew) {
             entityManager.persist(entity);
-            return entity.toRegisteredService();
+            return toRegisteredService(entity);
         }
         val r = entityManager.merge(entity);
-        return r.toRegisteredService();
+        return toRegisteredService(r);
+    }
+
+
+    /**
+     * From registered service.
+     *
+     * @param service the service
+     * @return the jpa registered service entity
+     */
+    private JpaRegisteredServiceEntity fromRegisteredService(final RegisteredService service) {
+        val jsonBody = serializer.toString(service);
+        return JpaRegisteredServiceEntity.builder()
+            .id(service.getId())
+            .name(service.getName())
+            .serviceId(service.getServiceId())
+            .evaluationOrder(service.getEvaluationOrder())
+            .body(jsonBody)
+            .build();
+    }
+
+    private RegisteredService toRegisteredService(final JpaRegisteredServiceEntity entity) {
+        val service = serializer.from(entity.getBody());
+        service.setId(entity.getId());
+        LOGGER.trace("Converted JPA entity [{}] to [{}]", this, service);
+        return service;
     }
 }

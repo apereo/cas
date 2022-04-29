@@ -5,6 +5,7 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.util.model.TriStateBoolean;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.EqualsAndHashCode;
@@ -87,6 +88,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String signingKeyAlgorithm;
 
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
+    @JacksonInject(value = "signAssertions")
     private TriStateBoolean signAssertions = TriStateBoolean.FALSE;
 
     private boolean signUnsolicitedAuthnRequest;

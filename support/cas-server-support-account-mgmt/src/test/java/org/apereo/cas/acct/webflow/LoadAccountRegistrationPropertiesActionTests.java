@@ -2,6 +2,7 @@ package org.apereo.cas.acct.webflow;
 
 import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurerTests {
 
     @Autowired
-    @Qualifier("loadAccountRegistrationPropertiesAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES)
     private Action loadAccountRegistrationPropertiesAction;
 
     @Test

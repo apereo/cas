@@ -1,6 +1,7 @@
 package org.apereo.cas.qr.web.flow;
 
 import org.apereo.cas.qr.BaseQRAuthenticationTokenValidatorServiceTests;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
 public class QRAuthenticationGenerateCodeActionTests {
     @Autowired
-    @Qualifier("qrAuthenticationGenerateCodeAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_GENERATE_CODE)
     private Action qrAuthenticationGenerateCodeAction;
 
     @Test

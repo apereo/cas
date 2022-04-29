@@ -42,7 +42,7 @@ public class CreateGoogleAnalyticsCookieActionTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("createGoogleAnalyticsCookieAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_CREATE_COOKIE)
     private Action createGoogleAnalyticsCookieAction;
 
     @Test

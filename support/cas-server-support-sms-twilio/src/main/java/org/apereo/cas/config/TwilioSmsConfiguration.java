@@ -7,10 +7,10 @@ import org.apereo.cas.support.sms.TwilioSmsSender;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.Assert;
 
@@ -20,9 +20,9 @@ import org.springframework.util.Assert;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "TwilioSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Notifications, module = "twilio")
+@AutoConfiguration
 public class TwilioSmsConfiguration {
 
     @Bean

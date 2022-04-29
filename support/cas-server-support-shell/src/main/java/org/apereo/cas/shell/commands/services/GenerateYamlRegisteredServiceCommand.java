@@ -6,6 +6,8 @@ import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -13,6 +15,8 @@ import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * This is {@link GenerateYamlRegisteredServiceCommand}.
@@ -24,8 +28,11 @@ import java.io.StringWriter;
 @ShellComponent
 @Slf4j
 public class GenerateYamlRegisteredServiceCommand {
-
     private static final int SEP_LINE_LENGTH = 70;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
 
     /**
      * Validate service.
@@ -35,24 +42,28 @@ public class GenerateYamlRegisteredServiceCommand {
      * @return the file
      */
     @ShellMethod(key = "generate-yaml", value = "Generate a YAML registered service definition")
-    public static File generateYaml(
+    public File generateYaml(
         @ShellOption(value = {"file", "--file"},
-            help = "Path to the JSON service definition file") final String file,
+            help = "Path to the JSON service definition file")
+        final String file,
         @ShellOption(value = {"destination", "--destination"},
-            help = "Path to the destination YAML service definition file") final String destination) {
+            help = "Path to the destination YAML service definition file")
+        final String destination) {
         val filePath = new File(file);
         val result = StringUtils.isBlank(destination) ? null : new File(destination);
         generate(filePath, result);
         return filePath;
     }
 
-    private static void generate(final File filePath, final File result) {
+    private void generate(final File filePath, final File result) {
         try {
-            val validator = new RegisteredServiceJsonSerializer();
-            if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
+            val validator = new RegisteredServiceJsonSerializer(applicationContext);
+            val basicFileAttributes = Files.readAttributes(filePath.toPath(), BasicFileAttributes.class);
+            if (basicFileAttributes.isRegularFile() && filePath.exists()
+                && filePath.canRead() && basicFileAttributes.size() > 0) {
                 val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
-                val yaml = new RegisteredServiceYamlSerializer();
+                val yaml = new RegisteredServiceYamlSerializer(applicationContext);
                 try (val writer = new StringWriter()) {
                     yaml.to(writer, svc);
                     LOGGER.info(writer.toString());

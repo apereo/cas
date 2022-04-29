@@ -28,6 +28,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -50,8 +51,8 @@ import org.springframework.webflow.execution.Action;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "U2FWebflowConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F)
+@AutoConfiguration
 public class U2FWebflowConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -145,7 +146,7 @@ public class U2FWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class U2FWebflowActionConfiguration {
 
-        @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_AUTHENTICATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fAuthenticationWebflowAction(
@@ -154,7 +155,7 @@ public class U2FWebflowConfiguration {
             return new U2FAuthenticationWebflowAction(u2fAuthenticationWebflowEventResolver);
         }
 
-        @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_START_AUTHENTICATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fStartAuthenticationAction(final CasConfigurationProperties casProperties,
@@ -165,7 +166,7 @@ public class U2FWebflowConfiguration {
             return new U2FStartAuthenticationAction(u2fService, casProperties.getServer().getName(), u2fDeviceRepository);
         }
 
-        @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_START_REGISTRATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fStartRegistrationAction(final CasConfigurationProperties casProperties,
@@ -176,7 +177,7 @@ public class U2FWebflowConfiguration {
             return new U2FStartRegistrationAction(u2fService, casProperties.getServer().getName(), u2fDeviceRepository);
         }
 
-        @ConditionalOnMissingBean(name = "u2fCheckAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_CHECK_REGISTRATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fCheckAccountRegistrationAction(
@@ -185,7 +186,7 @@ public class U2FWebflowConfiguration {
             return new U2FAccountCheckRegistrationAction(u2fDeviceRepository);
         }
 
-        @ConditionalOnMissingBean(name = "u2fSaveAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_U2F_SAVE_REGISTRATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action u2fSaveAccountRegistrationAction(

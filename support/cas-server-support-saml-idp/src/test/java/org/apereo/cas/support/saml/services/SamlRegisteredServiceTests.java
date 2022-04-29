@@ -162,7 +162,9 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
                    + "  \"signAssertions\" : true,\n"
                    + "  \"metadataLocation\" : \"https://url/to/metadata.xml\"\n"
                    + '}';
-        val serializer = new RegisteredServiceJsonSerializer();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serializer = new RegisteredServiceJsonSerializer(appCtx);
         val service = (SamlRegisteredService) serializer.from(json);
         assertNotNull(service);
         assertTrue(service.getSignAssertions().isTrue());
@@ -179,7 +181,10 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
                    + "  \"signAssertions\" : false,\n"
                    + "  \"metadataLocation\" : \"https://url/to/metadata.xml\"\n"
                    + '}';
-        val serializer = new RegisteredServiceJsonSerializer();
+
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serializer = new RegisteredServiceJsonSerializer(appCtx);
         val service = (SamlRegisteredService) serializer.from(json);
         assertNotNull(service);
         assertTrue(service.getSignAssertions().isFalse());

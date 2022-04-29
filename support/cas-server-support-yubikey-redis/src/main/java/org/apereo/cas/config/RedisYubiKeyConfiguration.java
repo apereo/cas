@@ -15,12 +15,12 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 
@@ -30,9 +30,9 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "RedisYubiKeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.YubiKey, module = "redis")
+@AutoConfiguration
 public class RedisYubiKeyConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.yubikey.redis.enabled").isTrue().evenIfMissing();
 

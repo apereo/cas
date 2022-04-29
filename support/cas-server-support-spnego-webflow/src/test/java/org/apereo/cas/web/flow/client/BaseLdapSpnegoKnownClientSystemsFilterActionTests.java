@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
 import org.apereo.cas.web.flow.AbstractSpnegoTests;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends AbstractSpnegoTests {
 
     @Autowired
-    @Qualifier("ldapSpnegoClientAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_LDAP)
     protected Action ldapSpnegoClientAction;
 
     @Test

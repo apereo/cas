@@ -22,6 +22,7 @@ import org.apereo.cas.util.jwt.JsonWebTokenSignerTests;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManagerTests;
 import org.apereo.cas.util.scripting.GroovyShellScriptTests;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResourceTests;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactoryTests;
 import org.apereo.cas.util.serialization.MessageSanitizationUtilsTests;
 import org.apereo.cas.util.serialization.SerializationUtilsTests;
 import org.apereo.cas.util.spring.ApplicationContextProviderTests;
@@ -90,6 +91,7 @@ import org.junit.platform.suite.api.Suite;
     TemporaryFileSystemResourceTests.class,
     PathWatcherServiceTests.class,
     FileWatcherServiceTests.class,
+    JacksonObjectMapperFactoryTests.class,
     RegexPrincipalNameTransformerTests.class,
     GroovyPrincipalNameTransformerTests.class
 })

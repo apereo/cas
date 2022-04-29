@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
-    @Qualifier("oauth20RegisteredServiceUIAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI)
     private Action oauth20RegisteredServiceUIAction;
 
     @Autowired

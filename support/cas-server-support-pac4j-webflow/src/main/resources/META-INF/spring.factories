@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration, \
-  org.apereo.cas.web.flow.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration, \
-  org.apereo.cas.web.flow.config.DelegatedAuthenticationSAMLConfiguration

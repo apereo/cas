@@ -9,6 +9,7 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SpnegoCredentialsAction;
 import org.apereo.cas.web.flow.SpnegoNegotiateCredentialsAction;
 import org.apereo.cas.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
@@ -20,6 +21,8 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
 import org.ldaptive.SearchOperation;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -37,13 +40,14 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "SpnegoWebflowActionsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SPNEGO)
+@AutoConfiguration
 public class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SPNEGO)
     public Action spnego(
         final CasConfigurationProperties casProperties,
         @Qualifier("adaptiveAuthenticationPolicy")
@@ -60,6 +64,7 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SPNEGO_NEGOTIATE)
     public Action negociateSpnego(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
@@ -69,6 +74,7 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_BASE)
     public Action baseSpnegoClientAction(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new BaseSpnegoKnownClientSystemsFilterAction(
@@ -79,6 +85,7 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_HOSTNAME)
     public Action hostnameSpnegoClientAction(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(
@@ -91,9 +98,10 @@ public class SpnegoWebflowActionsConfiguration {
     @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SPNEGO, module = "ldap")
     public static class SpnegoLdapWebflowActionsConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.spnego.ldap.ldap-url");
-        
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_LDAP)
         public Action ldapSpnegoClientAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

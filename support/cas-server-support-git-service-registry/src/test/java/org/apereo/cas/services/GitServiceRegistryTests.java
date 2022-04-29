@@ -152,8 +152,8 @@ import static org.mockito.Mockito.*;
 
         val registry = new GitServiceRegistry(applicationContext, gitRepository,
             CollectionUtils.wrapList(
-                new RegisteredServiceJsonSerializer(),
-                new RegisteredServiceYamlSerializer()),
+                new RegisteredServiceJsonSerializer(applicationContext),
+                new RegisteredServiceYamlSerializer(applicationContext)),
             false, null, List.of(), List.of());
         assertEquals(size, registry.load().size());
     }

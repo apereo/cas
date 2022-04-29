@@ -33,11 +33,18 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
+            createSurrogateAuthenticationActionState(flow);
             createSurrogateListViewState(flow);
             createSurrogateSelectionActionState(flow);
             createSurrogateAuthorizationActionState(flow);
             createTransitionToInjectSurrogateIntoFlow(flow);
         }
+    }
+
+    private void createSurrogateAuthenticationActionState(final Flow flow) {
+        val state = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+        prependActionsToActionStateExecutionList(flow, state,
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION));
     }
 
     /**
@@ -80,7 +87,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createSurrogateAuthorizationActionState(final Flow flow) {
         val actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
-        actionState.getEntryActionList().add(createEvaluateAction("surrogateAuthorizationCheck"));
+        actionState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK));
     }
 
     private void createTransitionToInjectSurrogateIntoFlow(final Flow flow) {

@@ -1,9 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
-import org.apereo.cas.util.serialization.StringSerializer;
-
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,7 +8,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,9 +41,6 @@ public class JpaRegisteredServiceEntity implements Serializable {
 
     private static final long serialVersionUID = 6534421912995436609L;
 
-    private static StringSerializer<RegisteredService> SERIALIZER =
-        new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "service_sequence")
     @SequenceGenerator(name = "service_sequence", allocationSize = 100)
@@ -70,32 +62,4 @@ public class JpaRegisteredServiceEntity implements Serializable {
     @Column(nullable = false, length = 8_000)
     private String body;
 
-    /**
-     * From registered service.
-     *
-     * @param service the service
-     * @return the jpa registered service entity
-     */
-    public static JpaRegisteredServiceEntity fromRegisteredService(final RegisteredService service) {
-        val jsonBody = SERIALIZER.toString(service);
-        return JpaRegisteredServiceEntity.builder()
-            .id(service.getId())
-            .name(service.getName())
-            .serviceId(service.getServiceId())
-            .evaluationOrder(service.getEvaluationOrder())
-            .body(jsonBody)
-            .build();
-    }
-
-    /**
-     * To registered service.
-     *
-     * @return the registered service
-     */
-    public RegisteredService toRegisteredService() {
-        val service = SERIALIZER.from(this.body);
-        service.setId(this.id);
-        LOGGER.trace("Converted JPA entity [{}] to [{}]", this, service);
-        return service;
-    }
 }

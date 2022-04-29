@@ -37,7 +37,7 @@ public class ModifyResourceBasedRegisteredServiceWatcherTests {
             return null;
         }).when(mockAppContext).publishEvent(any());
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-            List.of(new RegisteredServiceJsonSerializer()), mockAppContext,
+            List.of(new RegisteredServiceJsonSerializer(mockAppContext)), mockAppContext,
             new ArrayList<>()) {
             @Override
             protected String[] getExtensions() {
@@ -50,7 +50,7 @@ public class ModifyResourceBasedRegisteredServiceWatcherTests {
         service.setEvaluationOrder(666);
         registry.load();
         val temp = new FileSystemResource(File.createTempFile("Sample-1", ".json"));
-        new RegisteredServiceJsonSerializer().to(temp.getFile(), service);
+        new RegisteredServiceJsonSerializer(mockAppContext).to(temp.getFile(), service);
 
         val watcher = new ModifyResourceBasedRegisteredServiceWatcher(registry);
         watcher.accept(temp.getFile());

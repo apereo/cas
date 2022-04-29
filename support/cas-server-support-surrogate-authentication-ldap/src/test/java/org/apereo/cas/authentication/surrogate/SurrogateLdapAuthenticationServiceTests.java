@@ -56,7 +56,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("surrogateAuthenticationService")
+    @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;
 
     @Autowired
