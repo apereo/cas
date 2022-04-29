@@ -106,6 +106,18 @@ You should always use the latest version of the Intellij IDEA.
 Additionally, you may need to customize the VM settings to ensure the development environment can load and index the codebase:
 
 ```bash
+-Xms2g
+-Xmx8g
+
+-XX:+UseStringDeduplication
+-XX:+ParallelRefProcEnabled
+```
+
+The key point for making IntelliJ IDEA handle the project nicely is to give it lots of memory (either by specifying the `-Xmx8g` VM options or in the IDE menu `Help -> Change Memory Settings`).
+
+If you're still running IntelliJ with a JDK 8, you may require these options instead:
+
+```bash
 -server
 -Xms1g
 -Xmx8g
@@ -135,10 +147,6 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -Djsse.enableSNIExtension=true
 -ea
 ```
-
-If you're using OpenJDK 11 or later, you may find the above VM options do not work. The key point for making IntelliJ IDEA 
-handle the project nicely is to give it lots of memory (either by specifying the `-Xmx8g` VM options or in the IDE 
-menu `Help -> Change Memory Settings`).
 
 #### Plugins
 
