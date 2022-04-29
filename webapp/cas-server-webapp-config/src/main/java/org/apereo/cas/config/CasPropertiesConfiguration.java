@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.CasVersion;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
@@ -30,9 +31,8 @@ public class CasPropertiesConfiguration {
         return () -> {
             val sysProps = System.getProperties();
             val properties = new Properties();
-            if (CasVersion.getVersion() != null) {
-                properties.put("info.cas.version", CasVersion.getVersion());
-            }
+            FunctionUtils.doIfNotNull(CasVersion.getVersion(),
+                i -> properties.put("info.cas.version", i));
             properties.put("info.cas.date", CasVersion.getDateTime());
             properties.put("info.cas.java.home", sysProps.get("java.home"));
             properties.put("info.cas.java.vendor", sysProps.get("java.vendor"));
