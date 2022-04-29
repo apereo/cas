@@ -77,7 +77,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 | Endpoint             | Description                                                                                                   |
 |----------------------|---------------------------------------------------------------------------------------------------------------|
-| `/ws/idp/metadata`   | Displays the current federation metadata based on the configuration realm for the identity provider.          |
+| `/ws/idpmetadata`    | Displays the current federation metadata based on the configuration realm for the identity provider.          |
 | `/ws/idp/federation` | Endpoint to receive initial `GET` authentication requests from clients, typically identified as the `issuer`. |
 
 ## Realms
