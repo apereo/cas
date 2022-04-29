@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
 @Import(CasWebflowAccountProfileConfiguration.class)
 public class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswordManagementActionTests {
     @Autowired
-    @Qualifier("accountProfileUpdateSecurityQuestionsAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS)
     private Action accountProfileUpdateSecurityQuestionsAction;
 
     private MockParameterMap parameterMap;

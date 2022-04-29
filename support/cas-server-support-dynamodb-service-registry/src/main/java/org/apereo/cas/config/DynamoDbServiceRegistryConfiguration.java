@@ -13,12 +13,12 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
@@ -33,18 +33,19 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "DynamoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "hazelcast")
+@AutoConfiguration
 public class DynamoDbServiceRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("amazonDynamoDbServiceRegistryClient")
         final DynamoDbClient amazonDynamoDbServiceRegistryClient) {
         val db = casProperties.getServiceRegistry().getDynamoDb();
-        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient);
+        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient, applicationContext);
     }
 
     @Bean

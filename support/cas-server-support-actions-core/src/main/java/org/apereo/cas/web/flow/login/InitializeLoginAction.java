@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.login;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -46,13 +45,4 @@ public class InitializeLoginAction extends BaseCasWebflowAction {
         return success();
     }
 
-    /**
-     * Is login flow active.
-     *
-     * @param requestContext the request context
-     * @return the boolean
-     */
-    protected static boolean isLoginFlowActive(final RequestContext requestContext) {
-        return requestContext.getActiveFlow().getId().equalsIgnoreCase(CasWebflowConfigurer.FLOW_ID_LOGIN);
-    }
 }

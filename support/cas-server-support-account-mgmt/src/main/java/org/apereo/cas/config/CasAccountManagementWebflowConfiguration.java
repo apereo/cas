@@ -56,6 +56,7 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -77,9 +78,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Configuration(value = "CasAccountManagementWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountRegistration)
+@AutoConfiguration
 public class CasAccountManagementWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "accountMgmtCipherExecutor")
@@ -269,7 +270,7 @@ public class CasAccountManagementWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "loadAccountRegistrationPropertiesAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES)
         public Action loadAccountRegistrationPropertiesAction(
             @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService) {
@@ -278,7 +279,7 @@ public class CasAccountManagementWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "submitAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT)
         public Action submitAccountRegistrationAction(
             final CasConfigurationProperties casProperties,
             @Qualifier(AccountRegistrationService.BEAN_NAME)

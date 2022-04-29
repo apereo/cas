@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -55,10 +56,10 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration(value = "SurrogateAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
+@AutoConfiguration
 public class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationProcessorConfiguration", proxyBeanMethods = false)
@@ -68,7 +69,7 @@ public class SurrogateAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationPostProcessor surrogateAuthenticationPostProcessor(
-            @Qualifier("surrogateAuthenticationService")
+            @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
             final SurrogateAuthenticationService surrogateAuthenticationService,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -145,7 +146,7 @@ public class SurrogateAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationServiceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
+        @ConditionalOnMissingBean(name = SurrogateAuthenticationService.BEAN_NAME)
         @Bean
         public SurrogateAuthenticationService surrogateAuthenticationService(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -185,7 +186,7 @@ public class SurrogateAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SurrogatePrincipalBuilder surrogatePrincipalBuilder(
-            @Qualifier("surrogateAuthenticationService")
+            @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
             final SurrogateAuthenticationService surrogateAuthenticationService,
             @Qualifier("surrogatePrincipalFactory")
             final PrincipalFactory surrogatePrincipalFactory,

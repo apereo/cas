@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowAuthenticationActions")
 public class DigestAuthenticationActionTests {
     @Autowired
-    @Qualifier("digestAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DIGEST_AUTHENTICATION)
     private Action digestAuthenticationAction;
 
     @Test

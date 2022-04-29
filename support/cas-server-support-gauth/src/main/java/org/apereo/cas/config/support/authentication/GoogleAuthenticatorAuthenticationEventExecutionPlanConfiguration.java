@@ -43,6 +43,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -56,6 +57,7 @@ import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -80,7 +82,7 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator)
-@Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration", proxyBeanMethods = false)
@@ -294,14 +296,14 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public static class GoogleAuthenticatorMultifactorAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "validateSelectedRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_VALIDATE_SELECTED_REGISTRATION)
         public Action validateSelectedRegistrationAction() {
             return new GoogleAuthenticatorValidateSelectedRegistrationAction();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleSaveAccountRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_SAVE_ACCOUNT_REGISTRATION)
         public Action googleSaveAccountRegistrationAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAccountRegistry")
@@ -313,14 +315,14 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "prepareGoogleAuthenticatorLoginAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_PREPARE_LOGIN)
         public Action prepareGoogleAuthenticatorLoginAction(final CasConfigurationProperties casProperties) {
             return new GoogleAuthenticatorPrepareLoginAction(casProperties);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAccountCheckRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_CHECK_ACCOUNT_REGISTRATION)
         public Action googleAccountCheckRegistrationAction(
             @Qualifier("googleAuthenticatorAccountRegistry")
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
@@ -329,7 +331,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAccountConfirmSelectionAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_CONFIRM_SELECTION)
         public Action googleAccountConfirmSelectionAction(
             @Qualifier("googleAuthenticatorAccountRegistry")
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
@@ -338,7 +340,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAccountDeleteDeviceAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_DELETE_DEVICE)
         public Action googleAccountDeleteDeviceAction(
             @Qualifier("googleAuthenticatorAccountRegistry")
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
@@ -347,7 +349,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAccountCreateRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_CREATE_REGISTRATION)
         public Action googleAccountCreateRegistrationAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAccountRegistry")

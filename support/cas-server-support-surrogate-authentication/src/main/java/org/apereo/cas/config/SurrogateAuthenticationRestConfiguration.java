@@ -8,11 +8,11 @@ import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -21,10 +21,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "SurrogateAuthenticationRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
+@AutoConfiguration
 public class SurrogateAuthenticationRestConfiguration {
 
     /**
@@ -39,7 +39,7 @@ public class SurrogateAuthenticationRestConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer(
-        @Qualifier("surrogateAuthenticationService")
+        @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
         final SurrogateAuthenticationService surrogateAuthenticationService, final CasConfigurationProperties casProperties) {
         return factory -> factory.registerCredentialFactory(
             new SurrogateAuthenticationRestHttpRequestCredentialFactory(surrogateAuthenticationService, casProperties.getAuthn().getSurrogate()));

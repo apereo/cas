@@ -23,12 +23,12 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -50,8 +50,8 @@ import java.util.concurrent.ExecutionException;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @EnableKafka
-@Configuration(value = "CasServicesStreamingKafkaConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistryStreaming, module = "kafka")
+@AutoConfiguration
 public class CasServicesStreamingKafkaConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.stream.core.enabled").isTrue().evenIfMissing();
 
@@ -59,11 +59,12 @@ public class CasServicesStreamingKafkaConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "registeredServiceKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, DistributedCacheObject> registeredServiceKafkaListenerContainerFactory(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val kafka = casProperties.getServiceRegistry().getStream().getKafka();
         val factory = new KafkaObjectFactory<String, DistributedCacheObject>(kafka.getBootstrapAddress());
         factory.setConsumerGroupId("registeredServices");
-        val mapper = new RegisteredServiceJsonSerializer().getObjectMapper();
+        val mapper = new RegisteredServiceJsonSerializer(applicationContext).getObjectMapper();
         return factory.getKafkaListenerContainerFactory(new StringDeserializer(), new JsonDeserializer<>(DistributedCacheObject.class, mapper));
     }
 
@@ -75,7 +76,8 @@ public class CasServicesStreamingKafkaConfiguration {
         final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager,
         @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
         final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) throws Exception {
-        return new RegisteredServiceKafkaDistributedCacheListener(casRegisteredServiceStreamPublisherIdentifier, registeredServiceDistributedCacheManager);
+        return new RegisteredServiceKafkaDistributedCacheListener(
+            casRegisteredServiceStreamPublisherIdentifier, registeredServiceDistributedCacheManager);
     }
 
     @Bean
@@ -104,7 +106,7 @@ public class CasServicesStreamingKafkaConfiguration {
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val kafka = casProperties.getServiceRegistry().getStream().getKafka();
-                val mapper = new RegisteredServiceJsonSerializer().getObjectMapper();
+                val mapper = new RegisteredServiceJsonSerializer(applicationContext).getObjectMapper();
                 val factory = new KafkaObjectFactory<String, DistributedCacheObject<RegisteredService>>(kafka.getBootstrapAddress());
                 return factory.getKafkaTemplate(new StringSerializer(), new JsonSerializer<>(mapper));
             })

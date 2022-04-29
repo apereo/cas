@@ -1,0 +1,2 @@
+org.apereo.cas.config.GrouperMultifactorAuthenticationConfiguration
+org.apereo.cas.config.CasPersonDirectoryGrouperConfiguration

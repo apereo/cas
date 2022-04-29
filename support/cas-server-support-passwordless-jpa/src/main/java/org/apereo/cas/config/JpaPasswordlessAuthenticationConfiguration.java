@@ -17,6 +17,7 @@ import lombok.Synchronized;
 import lombok.val;
 import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -41,7 +42,7 @@ import java.util.Set;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn, module = "jpa")
-@Configuration(value = "JpaPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class JpaPasswordlessAuthenticationConfiguration {
 
     @Configuration(value = "JpaPasswordlessAuthenticationEntityConfiguration", proxyBeanMethods = false)

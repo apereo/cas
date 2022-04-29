@@ -48,7 +48,7 @@ import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.boot.actuate.audit.InMemoryAuditEventRepository;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -72,12 +72,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "CasCoreAuditConfiguration", proxyBeanMethods = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Audit)
-@AutoConfigureAfter(CasCoreServicesConfiguration.class)
+@AutoConfiguration(after = CasCoreServicesConfiguration.class)
 public class CasCoreAuditConfiguration {
     private static final BeanCondition CONDITION_AUDIT = BeanCondition.on("cas.audit.engine.enabled").isTrue().evenIfMissing();
 

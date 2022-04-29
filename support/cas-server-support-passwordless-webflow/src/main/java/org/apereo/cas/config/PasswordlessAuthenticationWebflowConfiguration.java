@@ -33,12 +33,12 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -52,7 +52,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn)
-@Configuration(value = "PasswordlessAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class PasswordlessAuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN)
@@ -70,7 +70,6 @@ public class PasswordlessAuthenticationWebflowConfiguration {
             .build()
             .get();
     }
-
     @Bean
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -92,7 +91,6 @@ public class PasswordlessAuthenticationWebflowConfiguration {
             .build()
             .get();
     }
-
     @Bean
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -171,7 +169,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action initializeLoginAction(
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_LOGIN)
+    public Action passswordPrepareLoginAction(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -179,8 +178,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
             .withProperties(casProperties)
-            .withAction(() -> new PrepareForPasswordlessAuthenticationAction(servicesManager, casProperties))
-            .withId(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
+            .withAction(PrepareForPasswordlessAuthenticationAction::new)
+            .withId(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_LOGIN)
             .build()
             .get();
     }

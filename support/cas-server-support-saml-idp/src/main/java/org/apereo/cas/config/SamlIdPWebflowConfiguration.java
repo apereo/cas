@@ -33,6 +33,7 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticatio
 import lombok.val;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -54,8 +55,8 @@ import java.util.Objects;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "SamlIdPWebflowConfiguration", proxyBeanMethods = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
+@AutoConfiguration
 public class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowCoreConfiguration", proxyBeanMethods = false)
@@ -89,14 +90,14 @@ public class SamlIdPWebflowConfiguration {
     public static class SamlIdPWebflowActionsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "samlIdPSessionStoreTicketGrantingTicketAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_IDP_SESSION_STORE_TICKET_GRANTING_TICKET)
         public Action samlIdPSessionStoreTicketGrantingTicketAction(
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore) {
             return new SessionStoreTicketGrantingTicketAction(samlIdPDistributedSessionStore);
         }
 
-        @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action samlIdPMetadataUIParserAction(

@@ -7,6 +7,7 @@ import org.apereo.cas.digest.config.support.authentication.DigestAuthenticationC
 import org.apereo.cas.digest.config.support.authentication.DigestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -62,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CasConfiguration")
 public class DigestAuthenticationConfigurationTests {
     @Autowired
-    @Qualifier("digestAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DIGEST_AUTHENTICATION)
     private Action digestAuthenticationAction;
 
     @Autowired

@@ -42,7 +42,7 @@ public class WebAuthnStartAuthenticationActionTests {
     private static final String USER = UUID.randomUUID().toString();
 
     @Autowired
-    @Qualifier("webAuthnStartAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_WEBAUTHN_START_AUTHENTICATION)
     private Action webAuthnStartAuthenticationAction;
 
     @Autowired

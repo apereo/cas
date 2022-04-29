@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -164,6 +165,6 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
         val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa()
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeNameTriggers());
         return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-            (attributeValue, mfaProvider) -> attributeValue != null && attributeValue.matches(globalPrincipalAttributeValueRegex));
+            (attributeValue, mfaProvider) -> attributeValue != null && RegexUtils.find(globalPrincipalAttributeValueRegex, attributeValue));
     }
 }

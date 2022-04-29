@@ -40,7 +40,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory,
-            CollectionUtils.wrapList(new RegisteredServiceJsonSerializer()),
+            CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(applicationContext)),
             applicationContext, registeredServiceReplicationStrategy, resourceNamingStrategy,
             serviceRegistryListeners, serviceRegistryConfigWatcher);
     }

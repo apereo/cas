@@ -17,6 +17,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -40,7 +41,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagementHistory, module = "jdbc")
-@Configuration(value = "JdbcPasswordHistoryManagementConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class JdbcPasswordHistoryManagementConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.history.core.enabled").isTrue();
 

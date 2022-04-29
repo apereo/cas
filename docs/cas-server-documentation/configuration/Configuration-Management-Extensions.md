@@ -17,10 +17,10 @@ of which are briefly highlighted in this document.
 This is the recommended approach to create additional Spring beans, override existing ones and inject your own 
 custom behavior into the CAS application runtime.
 
-Given CAS’ adoption of Spring Boot, most if not all of the old XML configuration is transformed into `@Configuration` 
+Given CAS’ adoption of Spring Boot, most if not all of the old XML configuration is transformed into `@AutoConfiguration` 
 components. These are classes declared by each relevant module that are automatically picked up at runtime whose job 
 is to declare and configure beans and register them into the application context. Another way of thinking about it 
-is, components that are decorated with `@Configuration` are loose equivalents of old XML configuration files that 
+is, components that are decorated with `@AutoConfiguration` are loose equivalents of old XML configuration files that 
 are highly organized where `<bean>` tags are translated to java methods tagged with `@Bean` and configured dynamically.
 
 ### Design
@@ -30,7 +30,7 @@ To design your own configuration class, take inspiration from the following samp
 ```java
 package org.apereo.cas.custom.config;
 
-@Configuration(value = "SomethingConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SomethingConfiguration {
 
@@ -51,10 +51,8 @@ public class SomethingConfiguration {
 
 - The `@Bean` definitions can also be tagged with `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` to become auto-reloadable when the CAS 
   context is refreshed as a result of an external property change.
-- `@Configuration` classes can be assigned an order with `@Order(1984)` which would place 
+- `@AutoConfiguration` classes can be assigned an order with `@Order(1984)` which would place 
   them in an ordered queue waiting to be loaded in that sequence.
-- To be more explicit, `@Configuration` classes can also be loaded exactly before/after 
-  another `@Configuration` component with `@AutoConfigureBefore` or `@AutoConfigureAfter` annotations.
 
 <div class="alert alert-info"><strong>To Build & Beyond</strong><p>Note that compiling configuration classes and any other
 piece of Java code that is put into the CAS Overlay may require additional CAS modules and dependencies on the classpath. You will need
@@ -66,11 +64,11 @@ as <code>CasConfigurationProperties</code> and others.</p></div>
 How are `@Configuration` components picked up? Each CAS module declares its set of configuration components as such, 
 per guidelines [laid out by Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/):
 
-- Create a `src/main/resources/META-INF/spring.factories` file
+- Create a `src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` file
 - Add the following into the file:
 
 ```properties
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.custom.config.SomethingConfiguration
+org.apereo.cas.custom.config.SomethingConfiguration
 ```
 
 ### Overrides

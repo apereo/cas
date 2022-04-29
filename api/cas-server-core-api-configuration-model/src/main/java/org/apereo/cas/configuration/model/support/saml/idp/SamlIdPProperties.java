@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.profile.SamlIdPProfileProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -68,4 +69,10 @@ public class SamlIdPProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SamlIdPProfileProperties profile = new SamlIdPProfileProperties();
+
+    /**
+     * Settings related to handling saml2 registered service definitions.
+     */
+    @NestedConfigurationProperty
+    private SamlIdPServicesProperties services = new SamlIdPServicesProperties();
 }

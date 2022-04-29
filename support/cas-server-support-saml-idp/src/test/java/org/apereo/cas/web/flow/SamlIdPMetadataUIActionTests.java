@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLMetadata")
 public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
     @Autowired
-    @Qualifier("samlIdPMetadataUIParserAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER)
     private Action samlIdPMetadataUIParserAction;
 
     @Autowired

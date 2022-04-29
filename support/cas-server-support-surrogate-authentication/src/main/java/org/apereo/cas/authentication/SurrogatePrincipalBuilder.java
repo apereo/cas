@@ -21,12 +21,10 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public class SurrogatePrincipalBuilder {
+
     private final PrincipalFactory principalFactory;
-
     private final IPersonAttributeDao attributeRepository;
-
     private final SurrogateAuthenticationService surrogateAuthenticationService;
-
 
     /**
      * Build principal.

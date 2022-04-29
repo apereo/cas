@@ -22,6 +22,7 @@ import lombok.val;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http2.Http2Protocol;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -43,9 +44,9 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "X509AuthenticationWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.X509)
+@AutoConfiguration
 public class X509AuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "x509WebflowConfigurer")
@@ -69,7 +70,7 @@ public class X509AuthenticationWebflowConfiguration {
         return new X509CasMultifactorWebflowCustomizer();
     }
 
-    @ConditionalOnMissingBean(name = "x509Check")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_X509_CHECK)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action x509Check(

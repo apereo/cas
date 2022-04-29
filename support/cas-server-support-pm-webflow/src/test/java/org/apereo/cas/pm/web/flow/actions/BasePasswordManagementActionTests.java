@@ -88,11 +88,11 @@ public class BasePasswordManagementActionTests {
     protected PasswordManagementService passwordManagementService;
 
     @Autowired
-    @Qualifier("verifySecurityQuestionsAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VERIFY_SECURITY_QUESTIONS)
     protected Action verifySecurityQuestionsAction;
 
     @Autowired
-    @Qualifier("initPasswordResetAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT)
     protected Action initPasswordResetAction;
 
     @Autowired
@@ -100,15 +100,15 @@ public class BasePasswordManagementActionTests {
     protected Action initPasswordChangeAction;
 
     @Autowired
-    @Qualifier("verifyPasswordResetRequestAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VERIFY_REQUEST)
     protected Action verifyPasswordResetRequestAction;
 
     @Autowired
-    @Qualifier("validatePasswordResetTokenAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VALIDATE_TOKEN)
     protected Action validatePasswordResetTokenAction;
 
     @Autowired
-    @Qualifier("sendPasswordResetInstructionsAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_SEND_INSTRUCTIONS)
     protected Action sendPasswordResetInstructionsAction;
 
     @Autowired

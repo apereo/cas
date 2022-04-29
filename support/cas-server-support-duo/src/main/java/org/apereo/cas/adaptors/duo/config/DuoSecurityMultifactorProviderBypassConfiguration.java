@@ -21,12 +21,12 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -37,7 +37,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
-@Configuration(value = "DuoSecurityMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "duoSecurityBypassEvaluator")
@@ -186,10 +186,8 @@ public class DuoSecurityMultifactorProviderBypassConfiguration {
             .supply(() -> {
                 val duoProps = casProperties.getAuthn().getMfa().getDuo();
                 val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
-                duoProps.stream()
-                    .filter(duo -> StringUtils.isNotBlank(duo.getBypass().getCredentialClassType()))
-                    .forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(
-                        new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(duo.getId())));
+                duoProps.forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(
+                    new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(duo.getId())));
                 if (bypass.isEmpty()) {
                     return NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance();
                 }

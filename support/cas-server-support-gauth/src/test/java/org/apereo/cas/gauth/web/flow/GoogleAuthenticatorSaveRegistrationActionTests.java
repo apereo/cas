@@ -47,11 +47,13 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
 @Tag("WebflowMfaActions")
 public class GoogleAuthenticatorSaveRegistrationActionTests {
     @Autowired
-    @Qualifier("googleSaveAccountRegistrationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_SAVE_ACCOUNT_REGISTRATION)
     private Action googleSaveAccountRegistrationAction;
+
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
+
     @BeforeEach
     public void beforeEach() {
         googleAuthenticatorAccountRegistry.deleteAll();

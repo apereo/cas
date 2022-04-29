@@ -78,6 +78,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -100,7 +101,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@Configuration(value = "SamlIdPEndpointsConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPEndpointCryptoConfiguration", proxyBeanMethods = false)

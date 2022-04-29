@@ -35,6 +35,7 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -68,19 +69,19 @@ import static org.mockito.Mockito.*;
  */
 public abstract class BaseU2FWebflowActionTests {
     @Autowired
-    @Qualifier("u2fSaveAccountRegistrationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_U2F_SAVE_REGISTRATION)
     protected Action u2fSaveAccountRegistrationAction;
 
     @Autowired
-    @Qualifier("u2fCheckAccountRegistrationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_U2F_CHECK_REGISTRATION)
     protected Action u2fCheckAccountRegistrationAction;
 
     @Autowired
-    @Qualifier("u2fStartRegistrationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_U2F_START_REGISTRATION)
     protected Action u2fStartRegistrationAction;
 
     @Autowired
-    @Qualifier("u2fStartAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_U2F_START_AUTHENTICATION)
     protected Action u2fStartAuthenticationAction;
 
     @Autowired

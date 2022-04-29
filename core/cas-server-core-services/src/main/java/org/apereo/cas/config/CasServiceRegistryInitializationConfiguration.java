@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.DefaultServiceRegistryInitializer;
 import org.apereo.cas.services.DefaultServiceRegistryInitializerEventListener;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryInitializer;
@@ -17,7 +16,6 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.WatcherService;
-import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
@@ -28,7 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -58,7 +56,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "CasServiceRegistryInitializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnMissingClass(value = {
     "org.apereo.cas.services.JsonServiceRegistry",
@@ -69,7 +66,7 @@ import java.util.Optional;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableAsync(proxyTargetClass = false)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
-@AutoConfigureAfter(CasCoreServicesConfiguration.class)
+@AutoConfiguration(after = CasCoreServicesConfiguration.class)
 public class CasServiceRegistryInitializationConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.core.init-from-json").isTrue();
@@ -181,11 +178,8 @@ public class CasServiceRegistryInitializationConfiguration {
                                              final Resource location,
                                              final Collection<ServiceRegistryListener> serviceRegistryListeners,
                                              final WatcherService watcherService) throws Exception {
-            super(location, getRegisteredServiceSerializers(), applicationContext, serviceRegistryListeners, watcherService);
-        }
-
-        static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {
-            return CollectionUtils.wrapList(new RegisteredServiceJsonSerializer());
+            super(location, CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(applicationContext)),
+                applicationContext, serviceRegistryListeners, watcherService);
         }
 
         @Override

@@ -18,18 +18,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is {@link CasCoreTicketsSchedulingConfiguration}.
@@ -37,14 +37,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "CasCoreTicketsSchedulingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync(proxyTargetClass = false)
 @EnableTransactionManagement(proxyTargetClass = false)
-@AutoConfigureAfter(CasCoreTicketsConfiguration.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
+@AutoConfiguration(after = CasCoreTicketsConfiguration.class)
 public class CasCoreTicketsSchedulingConfiguration {
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleaner")
@@ -88,7 +87,7 @@ public class CasCoreTicketsSchedulingConfiguration {
 
     /**
      * The Ticket registry cleaner scheduler. Because the cleaner itself is marked
-     * with {@link org.springframework.transaction.annotation.Transactional},
+     * with {@link Transactional},
      * we need to create a separate scheduler component that invokes it
      * so that {@link Scheduled} annotations can be processed and not interfere
      * with transaction semantics of the cleaner.

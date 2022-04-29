@@ -19,6 +19,7 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,7 +44,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.RadiusMFA)
-@Configuration(value = "RadiusMfaConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class RadiusMultifactorConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.radius.client.inet-address");
 
@@ -79,7 +80,7 @@ public class RadiusMultifactorConfiguration {
     public static class RadiusMultifactorWebflowActionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RADIUS_AUTHENTICATION)
         public Action radiusAuthenticationWebflowAction(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("radiusAuthenticationWebflowEventResolver")

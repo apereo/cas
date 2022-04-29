@@ -13,6 +13,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * This is {@link JacksonObjectMapperFactory}.
  *
@@ -34,6 +37,9 @@ public class JacksonObjectMapperFactory {
 
     @Builder.Default
     private final boolean defaultViewInclusion = true;
+
+    @Builder.Default
+    private final Map<String, Object> injectableValues = new LinkedHashMap<>();
 
     private final JsonFactory jsonFactory;
 
@@ -65,7 +71,7 @@ public class JacksonObjectMapperFactory {
 
             .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, isWriteDatesAsTimestamps())
-
+            .setInjectableValues(new JacksonInjectableValueSupplier(this::getInjectableValues))
             .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
             .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
@@ -76,6 +82,7 @@ public class JacksonObjectMapperFactory {
             mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(),
                 ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         }
+
         return mapper;
     }
 }
