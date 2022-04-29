@@ -29,11 +29,11 @@ public class GroovyScriptAuthenticationPolicyTests {
     @Test
     public void verifyActionExternalScript() throws Exception {
         val script = "import org.apereo.cas.authentication.*\n"
-            + "def run(Object[] args) {"
-            + " def principal = args[0]\n"
-            + " def logger = args[1]\n"
-            + " return Optional.of(new AuthenticationException())\n"
-            + '}';
+                     + "def run(Object[] args) {"
+                     + " def principal = args[0]\n"
+                     + " def logger = args[1]\n"
+                     + " return Optional.of(new AuthenticationException())\n"
+                     + '}';
 
         val scriptFile = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
@@ -46,9 +46,9 @@ public class GroovyScriptAuthenticationPolicyTests {
     @Test
     public void verifyResumeOnFailureExternal() throws Exception {
         val script = "def shouldResumeOnFailure(Object[] args) {"
-            + " def failure = args[0] \n"
-            + " return failure != null \n"
-            + '}';
+                     + " def failure = args[0] \n"
+                     + " return failure != null \n"
+                     + '}';
 
         val scriptFile = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
@@ -59,9 +59,9 @@ public class GroovyScriptAuthenticationPolicyTests {
     @Test
     public void verifyBadFile() throws Exception {
         val script = "def shouldResumeOnFailure(Object[] args) {"
-            + " def failure = args[0] \n"
-            + " return failure != null \n"
-            + '}';
+                     + " def failure = args[0] \n"
+                     + " return failure != null \n"
+                     + '}';
         val p = new GroovyScriptAuthenticationPolicy(script);
         assertThrows(IllegalArgumentException.class, () -> p.shouldResumeOnFailure(new RuntimeException()));
     }
