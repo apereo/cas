@@ -25,9 +25,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.web.FilterInvocation;
 
@@ -43,7 +41,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER)
 @RequiredArgsConstructor
-public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter implements DisposableBean {
+public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     /**
      * Endpoint url used for admin-level form-login of endpoints.
      */
@@ -68,36 +66,16 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         }
     }
 
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        val jaas = casProperties.getMonitor().getEndpoints().getJaas();
-        if (jaas.getLoginConfig() != null) {
-            configureJaasAuthenticationProvider(auth, jaas);
-        } else {
-            LOGGER.trace("No JAAS login config is defined to enable JAAS authentication");
-        }
-
-        val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
-            configureLdapAuthenticationProvider(auth, ldap);
-        } else {
-            LOGGER.trace("No LDAP url or search filter is defined to enable LDAP authentication");
-        }
-
-        if (!auth.isConfigured()) {
-            super.configure(auth);
-        }
-    }
-
     /**
      * Disable Spring Security configuration for protocol endpoints
      * allowing CAS' own security configuration to handle protection
      * of endpoints where necessary.
      *
      * @param http http security
+     * @return the http security
+     * @throws Exception the exception
      */
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
+    public HttpSecurity configureHttpSecurity(final HttpSecurity http) throws Exception {
         http
             .csrf()
             .disable()
@@ -135,7 +113,23 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         }));
         configureEndpointAccessToDenyUndefined(http, requests);
         configureEndpointAccessForStaticResources(requests);
+
+        val jaas = casProperties.getMonitor().getEndpoints().getJaas();
+        if (jaas.getLoginConfig() != null) {
+            configureJaasAuthenticationProvider(http, jaas);
+        } else {
+            LOGGER.trace("No JAAS login config is defined to enable JAAS authentication");
+        }
+
+        val ldap = casProperties.getMonitor().getEndpoints().getLdap();
+        if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
+            configureLdapAuthenticationProvider(http, ldap);
+        } else {
+            LOGGER.trace("No LDAP url or search filter is defined to enable LDAP authentication");
+        }
+
         protocolEndpointWebSecurityConfigurers.forEach(cfg -> cfg.configure(http));
+        return http;
     }
 
     /**
@@ -163,40 +157,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         });
     }
 
-    /**
-     * Configure ldap authentication provider.
-     *
-     * @param auth the auth
-     * @param ldap the ldap
-     */
-    protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth,
-                                                       final LdapSecurityActuatorEndpointsMonitorProperties ldap) {
-        if (isLdapAuthorizationActive()) {
-            val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-            val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-            endpointLdapAuthenticationProvider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
-            auth.authenticationProvider(endpointLdapAuthenticationProvider);
-        } else {
-            LOGGER.trace("LDAP authorization is undefined, given no LDAP url, base-dn, search filter or role/group filter is configured");
-        }
-    }
-
-    /**
-     * Configure jaas authentication provider.
-     *
-     * @param auth the auth
-     * @param jaas the jaas
-     * @throws Exception the exception
-     */
-    protected void configureJaasAuthenticationProvider(final AuthenticationManagerBuilder auth,
-                                                       final JaasSecurityActuatorEndpointsMonitorProperties jaas) throws Exception {
-        val p = new JaasAuthenticationProvider();
-        p.setLoginConfig(jaas.getLoginConfig());
-        p.setLoginContextName(jaas.getLoginContextName());
-        p.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
-        p.afterPropertiesSet();
-        auth.authenticationProvider(p);
-    }
 
     /**
      * Configure endpoint access for static resources.
@@ -337,5 +297,27 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                && StringUtils.isNotBlank(ldap.getSearchFilter())
                && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
                    || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
+    }
+
+    private static void configureJaasAuthenticationProvider(final HttpSecurity http,
+                                                            final JaasSecurityActuatorEndpointsMonitorProperties jaas)
+        throws Exception {
+        val p = new JaasAuthenticationProvider();
+        p.setLoginConfig(jaas.getLoginConfig());
+        p.setLoginContextName(jaas.getLoginContextName());
+        p.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
+        p.afterPropertiesSet();
+        http.authenticationProvider(p);
+    }
+
+    private void configureLdapAuthenticationProvider(final HttpSecurity http,
+                                                     final LdapSecurityActuatorEndpointsMonitorProperties ldap) {
+        if (isLdapAuthorizationActive()) {
+            val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
+            val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
+            this.endpointLdapAuthenticationProvider = new EndpointLdapAuthenticationProvider(ldap,
+                securityProperties, connectionFactory, authenticator);
+            http.authenticationProvider(endpointLdapAuthenticationProvider);
+        }
     }
 }

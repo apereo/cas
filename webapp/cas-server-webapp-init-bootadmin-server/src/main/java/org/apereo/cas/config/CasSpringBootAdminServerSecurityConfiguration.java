@@ -7,8 +7,10 @@ import de.codecentric.boot.admin.server.config.AdminServerProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
@@ -21,13 +23,13 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @RequiredArgsConstructor
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SpringBootAdmin)
 @AutoConfiguration
-public class CasSpringBootAdminServerSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class CasSpringBootAdminServerSecurityConfiguration {
     private final AdminServerProperties adminServerProperties;
 
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
+    @Bean
+    @ConditionalOnMissingBean(name = "springBootAdminSecurityAdapter")
+    public SecurityFilterChain springBootAdminSecurityAdapter(final HttpSecurity http) throws Exception {
         val adminContextPath = adminServerProperties.getContextPath();
-
         val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(adminContextPath + '/');
@@ -45,5 +47,6 @@ public class CasSpringBootAdminServerSecurityConfiguration extends WebSecurityCo
                 adminContextPath + "/instances",
                 adminContextPath + "/actuator/**"
             );
+        return http.build();
     }
 }

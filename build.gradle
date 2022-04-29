@@ -531,7 +531,7 @@ subprojects {
         api libraries.javaxel
         api libraries.javax
 
-        annotationProcessor libraries.springindexer
+//        annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"

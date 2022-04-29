@@ -1,14 +1,16 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 import org.apereo.cas.web.security.CasWebSecurityExpressionHandler;
-import org.apereo.cas.web.security.CasWebSecurityJdbcConfigurerAdapter;
 
+import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,9 +26,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -54,31 +60,9 @@ public class CasWebAppSecurityConfiguration {
         return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_THREADLOCAL);
     }
 
-    @Configuration(value = "CasWebappCoreSecurityConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasWebAppSecurityMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasWebappCoreSecurityConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
-        public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter(
-            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
-            final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
-            final SecurityProperties securityProperties,
-            final CasConfigurationProperties casProperties,
-            @Qualifier("casWebSecurityExpressionHandler")
-            final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) {
-            return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-                casWebSecurityExpressionHandler, pathMappedEndpoints, configurersList);
-        }
-
-        @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
-        @Bean
-        @ConditionalOnMissingBean(name = "casWebSecurityConfigurerJdbcAdapter")
-        public CasWebSecurityJdbcConfigurerAdapter casWebSecurityConfigurerJdbcAdapter(
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
-            return new CasWebSecurityJdbcConfigurerAdapter(casProperties, applicationContext);
-        }
-
+    public static class CasWebAppSecurityMvcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebAppSecurityWebMvcConfigurer")
         public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer() {
@@ -90,6 +74,50 @@ public class CasWebAppSecurityConfiguration {
                     registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
                 }
             };
+        }
+    }
+
+    @Configuration(value = "CasWebappCoreSecurityConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasWebappCoreSecurityConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
+        public SecurityFilterChain casWebSecurityConfigurerAdapter(
+            final HttpSecurity http,
+            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
+            final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
+            final SecurityProperties securityProperties,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casWebSecurityExpressionHandler")
+            final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) throws Exception {
+            val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
+                casWebSecurityExpressionHandler, pathMappedEndpoints, configurersList);
+            return adapter.configureHttpSecurity(http).build();
+        }
+    }
+
+    @Configuration(value = "CasWebAppSecurityJdbcConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
+    public static class CasWebAppSecurityJdbcConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "jdbcUserDetailsPasswordEncoder")
+        public static PasswordEncoder jdbcUserDetailsPasswordEncoder(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            val jdbc = casProperties.getMonitor().getEndpoints().getJdbc();
+            return PasswordEncoderUtils.newPasswordEncoder(jdbc.getPasswordEncoder(), applicationContext);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "jdbcUserDetailsManager")
+        public UserDetailsManager jdbcUserDetailsManager(
+            final CasConfigurationProperties casProperties) {
+            val jdbc = casProperties.getMonitor().getEndpoints().getJdbc();
+            val manager = new JdbcUserDetailsManager(JpaBeans.newDataSource(jdbc));
+            manager.setRolePrefix(jdbc.getRolePrefix());
+            manager.setUsersByUsernameQuery(jdbc.getQuery());
+            return manager;
         }
     }
 }
