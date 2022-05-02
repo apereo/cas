@@ -83,6 +83,8 @@ particular integration. It is UNNECESSARY to grab a copy of all service fields a
 you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy 
 deployment at that.</p></div>
 
+{% include_cached casproperties.html properties="cas.authn.saml-idp.services" %}
+
 ## Service Provider Integrations
 
 A number of SAML2 service provider integrations are provided natively by CAS. To learn more,
