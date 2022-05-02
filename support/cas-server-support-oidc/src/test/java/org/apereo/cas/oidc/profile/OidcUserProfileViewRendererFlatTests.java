@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +56,28 @@ public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         assertTrue(result.containsKey(CasProtocolConstants.PARAMETER_SERVICE));
         assertTrue(result.containsKey("email"));
         assertEquals("casuser@example.org", result.get("email"));
+    }
+
+    @Test
+    public void verifyOperationJWS() throws Exception {
+        val clientId = UUID.randomUUID().toString();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(new MockHttpServletRequest(), response);
+        val accessToken = getAccessToken(clientId);
+        val service = getOidcRegisteredService(clientId);
+        service.setUserInfoSigningAlg("RS256");
+        service.setSignIdToken(true);
+        service.setEncryptIdToken(false);
+        servicesManager.save(service);
+
+        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
+        assertNotNull(entity);
+        val body = (String) entity.getBody();
+        assertNotNull(body);
+        val claims = JwtBuilder.parse(body);
+        assertNotNull(claims);
+        assertEquals("casuser@example.org", claims.getClaim("email"));
     }
 
     @Test

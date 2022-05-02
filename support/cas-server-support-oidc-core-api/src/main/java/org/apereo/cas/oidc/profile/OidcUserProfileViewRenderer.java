@@ -6,6 +6,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRenderer;
+import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
@@ -21,6 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,7 +58,16 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
             if (signingAndEncryptionService.shouldSignToken(registeredService)
                 || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
                 val claims = new JwtClaims();
-                userProfile.forEach(claims::setClaim);
+                userProfile.forEach((key, value) -> {
+                    if (OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES.equals(key)) {
+                        val attributes = (Map<String, Object>) value;
+                        val newAttributes = new HashMap<String, Object>();
+                        attributes.forEach((k, v) -> newAttributes.put(k, useSingleValueForSingletonList(v)));
+                        claims.setClaim(key, newAttributes);
+                    } else {
+                        claims.setClaim(key, useSingleValueForSingletonList(value));
+                    }
+                });
                 claims.setAudience(registeredService.getClientId());
                 claims.setIssuedAt(NumericDate.now());
                 claims.setIssuer(this.signingAndEncryptionService.getIssuer());
@@ -77,5 +89,12 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
             LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity<>("Unable to produce user profile", HttpStatus.BAD_REQUEST);
+    }
+
+    private Object useSingleValueForSingletonList(final Object value) {
+        if (value instanceof List && ((List) value).size() == 1) {
+            return ((List) value).get(0);
+        }
+        return value;
     }
 }
