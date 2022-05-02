@@ -19,6 +19,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.sql.DataSource;
 import java.sql.Driver;
+import java.util.Properties;
 
 /**
  * This is {@link JpaBeans}.
@@ -107,6 +108,9 @@ public class JpaBeans {
         bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
         bean.setReadOnly(jpaProperties.isReadOnly());
         bean.setPoolName(jpaProperties.getPool().getName());
+        val dataSourceProperties = new Properties();
+        dataSourceProperties.putAll(jpaProperties.getProperties());
+        bean.setDataSourceProperties(dataSourceProperties);
         return new DefaultCloseableDataSource(bean);
     }
 
