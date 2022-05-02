@@ -35,11 +35,10 @@ public abstract class BaseBucket4jThrottledRequestTests {
         assertNotNull(throttledRequestExecutor);
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        assertTrue(throttledRequestExecutor.throttle(request, response));
+        assertFalse(throttledRequestExecutor.throttle(request, response));
         assertTrue(response.containsHeader(BucketConsumer.HEADER_NAME_X_RATE_LIMIT_REMAINING));
 
-        assertTrue(throttledRequestExecutor.throttle(request, response));
+        assertFalse(throttledRequestExecutor.throttle(request, response));
         assertTrue(response.containsHeader(BucketConsumer.HEADER_NAME_X_RATE_LIMIT_REMAINING));
     }
 }
-

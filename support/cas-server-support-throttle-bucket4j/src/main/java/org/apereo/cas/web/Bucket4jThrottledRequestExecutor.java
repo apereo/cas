@@ -23,6 +23,6 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
     public boolean throttle(final HttpServletRequest request, final HttpServletResponse response) {
         val result = bucketConsumer.consume();
         result.getHeaders().forEach(response::addHeader);
-        return result.isConsumed();
+        return !result.isConsumed();
     }
 }
