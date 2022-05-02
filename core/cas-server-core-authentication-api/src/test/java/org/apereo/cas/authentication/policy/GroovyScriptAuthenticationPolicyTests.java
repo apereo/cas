@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import javax.security.auth.login.AccountNotFoundException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
@@ -54,6 +55,13 @@ public class GroovyScriptAuthenticationPolicyTests {
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
         val p = new GroovyScriptAuthenticationPolicy("file:" + scriptFile.getCanonicalPath());
         assertTrue(p.shouldResumeOnFailure(new RuntimeException()));
+    }
+
+    @Test
+    public void verifyResumeOnFailureClasspath() {
+        val p = new GroovyScriptAuthenticationPolicy("classpath:/GroovyAuthenticationPolicy.groovy");
+        assertFalse(p.shouldResumeOnFailure(new RuntimeException()));
+        assertTrue(p.shouldResumeOnFailure(new AccountNotFoundException()));
     }
 
     @Test
