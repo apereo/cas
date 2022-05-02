@@ -19,6 +19,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.sql.DataSource;
 import java.sql.Driver;
+import java.util.Properties;
 
 /**
  * This is {@link JpaBeans}.
@@ -39,7 +40,7 @@ public class JpaBeans {
      * @param url         the url
      * @return the data source
      */
-    public static DataSource newDataSource(final String driverClass, final String username,
+    public DataSource newDataSource(final String driverClass, final String username,
                                            final String password, final String url) {
         return FunctionUtils.doUnchecked(() -> {
             val ds = new SimpleDriverDataSource();
@@ -72,7 +73,7 @@ public class JpaBeans {
      * @param jpaProperties the jpa properties
      * @return the data source
      */
-    public static CloseableDataSource newDataSource(final AbstractJpaProperties jpaProperties) {
+    public CloseableDataSource newDataSource(final AbstractJpaProperties jpaProperties) {
         val dataSourceName = jpaProperties.getDataSourceName();
 
         if (StringUtils.isNotBlank(dataSourceName)) {
@@ -107,6 +108,12 @@ public class JpaBeans {
         bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
         bean.setReadOnly(jpaProperties.isReadOnly());
         bean.setPoolName(jpaProperties.getPool().getName());
+        bean.setKeepaliveTime(Beans.newDuration(jpaProperties.getPool().getKeepAliveTime()).toMillis());
+        bean.setMaxLifetime(Beans.newDuration(jpaProperties.getPool().getMaximumLifetime()).toMillis());
+        bean.setSchema(jpaProperties.getDefaultSchema());
+        val dataSourceProperties = new Properties();
+        dataSourceProperties.putAll(jpaProperties.getProperties());
+        bean.setDataSourceProperties(dataSourceProperties);
         return new DefaultCloseableDataSource(bean);
     }
 
@@ -116,7 +123,7 @@ public class JpaBeans {
      * @param config the config
      * @return the local container entity manager factory bean
      */
-    public static LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigurationContext config) {
+    public LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigurationContext config) {
         val bean = new LocalContainerEntityManagerFactoryBean();
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
 
@@ -143,7 +150,7 @@ public class JpaBeans {
      * @param timeout the timeout
      * @return the boolean
      */
-    public static boolean isValidDataSourceConnection(final CloseableDataSource ds, final int timeout) {
+    public boolean isValidDataSourceConnection(final CloseableDataSource ds, final int timeout) {
         try (val con = ds.getConnection()) {
             return con.isValid(timeout);
         } catch (final Exception e) {
