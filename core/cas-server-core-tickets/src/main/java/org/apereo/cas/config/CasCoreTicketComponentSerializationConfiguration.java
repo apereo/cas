@@ -54,6 +54,7 @@ public class CasCoreTicketComponentSerializationConfiguration {
             plan.registerSerializableClass(MultiTimeUseOrTimeoutExpirationPolicy.class);
             plan.registerSerializableClass(MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class);
             plan.registerSerializableClass(MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class);
+            plan.registerSerializableClass(MultiTimeUseOrTimeoutExpirationPolicy.TransientSessionTicketExpirationPolicy.class);
             plan.registerSerializableClass(NeverExpiresExpirationPolicy.class);
             plan.registerSerializableClass(RememberMeDelegatingExpirationPolicy.class);
             plan.registerSerializableClass(TimeoutExpirationPolicy.class);
