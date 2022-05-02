@@ -119,7 +119,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     private String dataSourceName;
 
     /**
-     * Additional settings provided by Hibernate in form of key-value pairs.
+     * Additional settings provided by Hibernate (or the connection provider) in form of key-value pairs.
      */
     private Map<String, String> properties = new HashMap<>(0);
 
@@ -133,7 +133,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Controls the amount of time that a connection can be out of the pool before a message
      * is logged indicating a possible connection leak.
      */
-    private int leakThreshold = 3_000;
+    private long leakThreshold = 3_000L;
 
     /**
      * Allow hibernate to generate query statistics.
