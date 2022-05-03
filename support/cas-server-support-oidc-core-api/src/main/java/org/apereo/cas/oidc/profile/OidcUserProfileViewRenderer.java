@@ -22,8 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -91,9 +91,9 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
         return new ResponseEntity<>("Unable to produce user profile", HttpStatus.BAD_REQUEST);
     }
 
-    private Object useSingleValueForSingletonList(final Object value) {
-        if (value instanceof List && ((List) value).size() == 1) {
-            return ((List) value).get(0);
+    private static Object useSingleValueForSingletonList(final Object value) {
+        if (value instanceof Collection && ((Collection) value).size() == 1) {
+            return ((Collection) value).iterator().next();
         }
         return value;
     }
