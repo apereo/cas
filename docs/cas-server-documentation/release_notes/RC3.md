@@ -72,6 +72,13 @@ For backwards compatibility, entries in existing `spring.factories` files will s
 components. Internal CAS configuration classes will slowly begin to transition to the new `@AutoConfiguration` annotation to prepare for a future upgrade
 to Spring Boot `3.0`. This change will eventually become visible in CAS overlays that are built by 
 the [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
+  
+### CAS Registered Services
+
+Application definitions that are registered with CAS typically are marked with `RegexRegisteredService` that indicates the service type. As part of a larger 
+refactoring effort to simplify the service definition models and to assist with future development efforts in the area of authorization policies, such 
+services should be updated to use the now-dedicated type `CasRegisteredService` for all CAS-enabled applications. While the deprecation warning is quite 
+harmless for now, we STRNGLY suggest that you visit your application definitions and perform a bulk-update to avoid breaking upgrades in the future.
 
 ### Testing Strategy
 
