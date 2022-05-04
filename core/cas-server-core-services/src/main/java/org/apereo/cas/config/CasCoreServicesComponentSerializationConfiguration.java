@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ChainingRegisteredServiceDelegatedAuthenticationPolicy;
@@ -40,7 +41,6 @@ import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
@@ -83,7 +83,7 @@ public class CasCoreServicesComponentSerializationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer casCoreServicesComponentSerializationPlanConfigurer() {
         return plan -> {
-            plan.registerSerializableClass(RegexRegisteredService.class);
+            plan.registerSerializableClass(CasRegisteredService.class);
             plan.registerSerializableClass(RegisteredServiceLogoutType.class);
             plan.registerSerializableClass(RegisteredServicePublicKeyImpl.class);
             plan.registerSerializableClass(DefaultRegisteredServiceContact.class);

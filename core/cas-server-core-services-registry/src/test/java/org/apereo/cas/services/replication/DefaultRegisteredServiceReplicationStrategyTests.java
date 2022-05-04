@@ -1,8 +1,8 @@
 package org.apereo.cas.services.replication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.InMemoryServiceRegistry;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.util.CollectionUtils;
@@ -203,7 +203,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     private static RegisteredService newService(final String name) {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setServiceId("^https?://.*");
         service.setName(name);
         service.setId(1000L);

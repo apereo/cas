@@ -12,7 +12,7 @@ You may determine the multifactor authentication policy for a registered service
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "name": "test",
@@ -29,7 +29,7 @@ you may determine the multifactor authentication policy for a registered service
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "name": "test",

@@ -143,6 +143,15 @@ public interface StringSerializer<T> extends Serializable {
     Class<T> getTypeToSerialize();
 
     /**
+     * Read and consum the input
+     * and parse the result into a list/collection.
+     *
+     * @param json the json
+     * @return the list
+     */
+    List<T> fromList(String json);
+    
+    /**
      * Helper method with reusable code.
      *
      * @param <T> the type param

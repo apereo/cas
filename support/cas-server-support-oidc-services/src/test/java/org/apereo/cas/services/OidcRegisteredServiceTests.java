@@ -66,7 +66,6 @@ public class OidcRegisteredServiceTests {
         assertTrue(r3 instanceof OidcRegisteredService);
         assertEquals(r, r2);
         assertEquals(r2, r3);
-        assertNotNull(r.newInstance());
         assertNotNull(r.getFriendlyName());
     }
 

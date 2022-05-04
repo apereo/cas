@@ -36,7 +36,7 @@ basis via [dedicated properties](../services/Configuring-Service-Custom-Properti
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "sample service",
   "id" : 100,

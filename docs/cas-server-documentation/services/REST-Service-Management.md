@@ -33,13 +33,13 @@ For example, when loading and returning a collection of services with a `GET`, t
   "java.util.ArrayList",
   [
     {
-      "@class": "org.apereo.cas.services.RegexRegisteredService",
+      "@class": "org.apereo.cas.services.CasRegisteredService",
       "serviceId": "^https://github.com/apereo/cas",
       "name": "CAS-GitHub",
       "id": 1
     },
     {
-      "@class": "org.apereo.cas.services.RegexRegisteredService",
+      "@class": "org.apereo.cas.services.CasRegisteredService",
       "serviceId": "^https://apereo.github.io",
       "name": "CAS-Blog",
       "id": 2

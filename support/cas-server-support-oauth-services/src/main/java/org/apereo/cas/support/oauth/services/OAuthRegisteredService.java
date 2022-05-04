@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.services;
 
 import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -13,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * An extension of the {@link RegexRegisteredService} that defines the
+ * An extension of the {@link AbstractRegisteredService} that defines the
  * OAuth client id and secret for a given registered service.
  *
  * @author Misagh Moayyed
@@ -23,7 +22,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class OAuthRegisteredService extends RegexRegisteredService {
+public class OAuthRegisteredService extends AbstractRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
 
@@ -74,10 +73,5 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     @Override
     public int getEvaluationPriority() {
         return 2;
-    }
-
-    @Override
-    protected AbstractRegisteredService newInstance() {
-        return new OAuthRegisteredService();
     }
 }

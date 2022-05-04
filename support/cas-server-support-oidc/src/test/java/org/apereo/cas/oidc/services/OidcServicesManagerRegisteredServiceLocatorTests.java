@@ -1,9 +1,9 @@
 package org.apereo.cas.oidc.services;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
@@ -110,7 +110,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
 
         svc = webApplicationServiceFactory.createService("https://app.example.org/whatever?hello=world");
         result = servicesManager.findServiceBy(svc);
-        assertTrue(result instanceof RegexRegisteredService);
+        assertTrue(result instanceof CasRegisteredService);
     }
 
 }

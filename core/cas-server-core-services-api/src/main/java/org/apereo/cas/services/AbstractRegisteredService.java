@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -50,7 +52,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private String theme;
 
     private String locale;
-    
+
     private String informationUrl;
 
     private String privacyUrl;
@@ -79,7 +81,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private RegisteredServiceSingleSignOnParticipationPolicy singleSignOnParticipationPolicy;
 
     private RegisteredServiceWebflowInterruptPolicy webflowInterruptPolicy = new DefaultRegisteredServiceWebflowInterruptPolicy();
-    
+
     private int evaluationOrder;
 
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
@@ -110,13 +112,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     private List<RegisteredServiceContact> contacts = new ArrayList<>(0);
 
-    /**
-     * Sets the service identifier. Extensions are to define the format.
-     *
-     * @param id the new service id
-     */
-    public abstract void setServiceId(String id);
-
     @Override
     public int compareTo(final RegisteredService other) {
         return new CompareToBuilder()
@@ -133,8 +128,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @JsonIgnore
     public Set<String> getRequiredHandlers() {
         LOGGER.debug("Assigning a collection of required authentication handlers to a registered service is deprecated. "
-            + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
-            + "for the registered service instead to specify required authentication handlers");
+                     + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
+                     + "for the registered service instead to specify required authentication handlers");
         return getAuthenticationPolicy().getRequiredAuthenticationHandlers();
     }
 
@@ -149,8 +144,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     public void setRequiredHandlers(final Set<String> requiredHandlers) {
         if (requiredHandlers != null) {
             LOGGER.debug("Assigning a collection of required authentication handlers to a registered service is deprecated. "
-                + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
-                + "for the registered service instead to specify required authentication handlers [{}]", requiredHandlers);
+                         + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
+                         + "for the registered service instead to specify required authentication handlers [{}]", requiredHandlers);
             initialize();
             getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(requiredHandlers);
         }
@@ -173,10 +168,24 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.webflowInterruptPolicy = ObjectUtils.defaultIfNull(this.webflowInterruptPolicy, new DefaultRegisteredServiceWebflowInterruptPolicy());
     }
 
+    @Override
+    public boolean matches(final Service service) {
+        return service != null && matches(service.getId());
+    }
+
+    @Override
+    public boolean matches(final String serviceId) {
+        configureMatchingStrategy();
+        return !StringUtils.isBlank(serviceId) && getMatchingStrategy().matches(this, serviceId);
+    }
+
     /**
-     * Create a new service instance.
-     *
-     * @return the registered service
+     * Configure matching strategy.
+     * If the strategy is undefined, it will default to {@link FullRegexRegisteredServiceMatchingStrategy}.
      */
-    protected abstract AbstractRegisteredService newInstance();
+    protected void configureMatchingStrategy() {
+        if (getMatchingStrategy() == null) {
+            setMatchingStrategy(new FullRegexRegisteredServiceMatchingStrategy());
+        }
+    }
 }

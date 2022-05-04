@@ -91,7 +91,6 @@ public class OAuthRegisteredServiceTests {
     @Test
     public void verifyInitialization() {
         val service = new OAuthRegisteredService();
-        assertSame(service.newInstance().getClass(), service.getClass());
         service.setSupportedGrantTypes(null);
         service.setSupportedResponseTypes(null);
         service.initialize();

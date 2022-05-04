@@ -93,7 +93,7 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
 
-    private static class ExtendedRegisteredService extends RegexRegisteredService {
+    private static class ExtendedRegisteredService extends CasRegisteredService {
         private static final long serialVersionUID = 1820837947166559349L;
     }
 }

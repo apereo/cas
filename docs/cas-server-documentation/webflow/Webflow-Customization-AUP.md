@@ -37,7 +37,7 @@ Acceptable usage policy can be disabled and skipped on a per-service basis:
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "https://app.example.org",
   "name": "Example",
   "id": 1,

@@ -17,7 +17,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
@@ -87,7 +87,7 @@ public class ServiceThemeResolverTests {
 
     @Test
     public void verifyGetServiceThemeDoesNotExist() {
-        val r = new RegexRegisteredService();
+        val r = new CasRegisteredService();
         r.setTheme("myTheme");
         r.setId(1000);
         r.setName("Test Service");
