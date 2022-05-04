@@ -145,9 +145,4 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     public String getFriendlyName() {
         return "OpenID Connect Relying Party";
     }
-
-    @Override
-    protected AbstractRegisteredService newInstance() {
-        return new OidcRegisteredService();
-    }
 }

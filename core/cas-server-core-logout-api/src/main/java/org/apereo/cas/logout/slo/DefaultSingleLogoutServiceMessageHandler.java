@@ -3,7 +3,7 @@ package org.apereo.cas.logout.slo;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
@@ -32,6 +32,6 @@ public class DefaultSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                                        final RegisteredService registeredService,
                                        final SingleLogoutExecutionRequest context) {
         return super.supportsInternal(singleLogoutService, registeredService, context)
-            && registeredService.getFriendlyName().equalsIgnoreCase(RegexRegisteredService.FRIENDLY_NAME);
+            && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME);
     }
 }

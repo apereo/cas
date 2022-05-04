@@ -26,15 +26,15 @@ import static org.junit.jupiter.params.provider.Arguments.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit test for {@link RegexRegisteredService}.
+ * Unit test for {@link CasRegisteredService}.
  *
  * @author Marvin S. Addison
  * @since 3.4.0
  */
 @Tag("RegisteredService")
-public class RegexRegisteredServiceTests {
+public class CasRegisteredServiceTests {
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "CasRegisteredService.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -89,7 +89,7 @@ public class RegexRegisteredServiceTests {
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifyMatches(final RegexRegisteredService service,
+    public void verifyMatches(final CasRegisteredService service,
         final String serviceToMatch,
         final boolean expectedResult) {
         val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
@@ -98,11 +98,11 @@ public class RegexRegisteredServiceTests {
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifySerialization(final RegexRegisteredService service,
+    public void verifySerialization(final CasRegisteredService service,
         final String serviceToMatch,
         final boolean expectedResult) throws IOException {
         MAPPER.writeValue(JSON_FILE, service);
-        val serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, CasRegisteredService.class);
         assertEquals(service, serviceRead);
         val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
         assertEquals(expectedResult, serviceRead.matches(testService));
@@ -110,7 +110,7 @@ public class RegexRegisteredServiceTests {
 
     @Test
     public void verifyDefaultMatchingStrategy() {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setMatchingStrategy(null);
         service.setServiceId("\\d\\d\\d");
         assertFalse(service.matches("https://google123.com"));
@@ -128,8 +128,8 @@ public class RegexRegisteredServiceTests {
         assertDoesNotThrow(service::initialize);
     }
 
-    private static RegexRegisteredService newService(final String id) {
-        val service = new RegexRegisteredService();
+    private static RegisteredService newService(final String id) {
+        val service = new CasRegisteredService();
         service.setServiceId(id);
         service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
         service.setServiceTicketExpirationPolicy(

@@ -26,7 +26,7 @@ A sample JSON file follows:
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "https://.*",
   "name": "sample",
   "id": 1,
@@ -44,7 +44,7 @@ A sample JSON file follows:
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "\\d\\d\\d",
   "name": "sample",
   "id": 1,
@@ -65,7 +65,7 @@ A sample JSON file follows:
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "https://example.com?key=value",
   "name": "sample",
   "id": 1,

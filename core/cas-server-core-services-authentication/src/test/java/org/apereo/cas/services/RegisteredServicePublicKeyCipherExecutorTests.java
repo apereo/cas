@@ -46,7 +46,7 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
     }
 
     private static AbstractRegisteredService getService(final String keyLocation) {
-        val svc = new RegexRegisteredService();
+        val svc = new CasRegisteredService();
         svc.setServiceId("Testing");
         if (StringUtils.isNotBlank(keyLocation)) {
             svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));

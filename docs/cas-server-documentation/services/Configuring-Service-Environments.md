@@ -15,7 +15,7 @@ For example, the below service definition is only recognized and loaded by CAS i
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://app.example.org/.+",
   "name" : "ExampleApp",
   "id" : 1,

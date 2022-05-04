@@ -43,7 +43,7 @@ Register clients in the CAS service registry:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://openid.example.org/myapp",
   "name" : "openid",
   "description" : "OpenID Sample Application",

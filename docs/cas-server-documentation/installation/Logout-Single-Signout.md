@@ -117,7 +117,7 @@ Sample configuration follows:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -138,7 +138,7 @@ To configure a service specific endpoint, try the following example:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,

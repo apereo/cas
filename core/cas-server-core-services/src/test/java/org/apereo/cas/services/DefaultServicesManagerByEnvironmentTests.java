@@ -35,7 +35,7 @@ public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesMa
 
     @Test
     public void verifyServiceByEnvironment() {
-        val r = new RegexRegisteredService();
+        val r = new CasRegisteredService();
         r.setId(2000);
         r.setName(getClass().getSimpleName());
         r.setServiceId(getClass().getSimpleName());

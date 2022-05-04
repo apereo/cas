@@ -12,7 +12,7 @@ MFA can be triggered for a specific application registered inside the CAS servic
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "name": "test",

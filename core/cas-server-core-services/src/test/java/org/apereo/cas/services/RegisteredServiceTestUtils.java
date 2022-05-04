@@ -188,15 +188,15 @@ public class RegisteredServiceTestUtils {
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        return getRegisteredService(id, RegexRegisteredService.class, true);
+        return getRegisteredService(id, CasRegisteredService.class, true);
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id, final boolean uniq) {
-        return getRegisteredService(id, RegexRegisteredService.class, uniq);
+        return getRegisteredService(id, CasRegisteredService.class, uniq);
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id, final Map requiredAttributes) {
-        return getRegisteredService(id, RegexRegisteredService.class, true, requiredAttributes);
+        return getRegisteredService(id, CasRegisteredService.class, true, requiredAttributes);
     }
 
     public static Principal getPrincipal() {

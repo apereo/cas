@@ -63,7 +63,7 @@ public abstract class AbstractServiceRegistryTests {
 
     public static Stream<Class<? extends RegisteredService>> getParameters() {
         return Stream.of(
-            RegexRegisteredService.class,
+            CasRegisteredService.class,
             OAuthRegisteredService.class,
             SamlRegisteredService.class,
             OidcRegisteredService.class,
@@ -469,7 +469,7 @@ public abstract class AbstractServiceRegistryTests {
     public void verifyServiceType(final Class<? extends RegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         val r2 = this.serviceRegistry.save(r);
-        assertTrue(r2 instanceof RegexRegisteredService);
+        assertTrue(r2 instanceof RegisteredService);
     }
 
     @ParameterizedTest

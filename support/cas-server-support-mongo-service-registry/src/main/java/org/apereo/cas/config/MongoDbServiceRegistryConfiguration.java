@@ -50,7 +50,8 @@ public class MongoDbServiceRegistryConfiguration {
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         val collection = mongoTemplate.getCollection(mongo.getCollection());
-        val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder().onField("id").onField("serviceId").onField("name").build();
+        val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder().onField("id")
+            .onField("serviceId").onField("name").build();
         MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(columnsIndex));
         return mongoTemplate;
     }

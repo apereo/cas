@@ -62,7 +62,7 @@ whose ticket granting ticket expiration policy is to deviate from the default co
 
 ```json
 {
-    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "@class" : "org.apereo.cas.services.CasRegisteredService",
     "serviceId" : "^https://.*",
     "name" : "Sample",
     "id" : 10,
@@ -132,7 +132,7 @@ whose service ticket expiration policy is to deviate from the default configurat
 
 ```json
 {
-    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "@class" : "org.apereo.cas.services.CasRegisteredService",
     "serviceId" : "^https://.*",
     "name" : "Sample",
     "id" : 10,
@@ -162,7 +162,7 @@ whose proxy ticket expiration policy is to deviate from the default configuratio
 
 ```json
 {
-    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "@class" : "org.apereo.cas.services.CasRegisteredService",
     "serviceId" : "^https://.*",
     "name" : "Sample",
     "id" : 10,
@@ -190,7 +190,7 @@ whose proxy granting ticket expiration policy is to deviate from the default con
 
 ```json
 {
-    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "@class" : "org.apereo.cas.services.CasRegisteredService",
     "serviceId" : "^https://.*",
     "name" : "Sample",
     "id" : 10,

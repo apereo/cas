@@ -52,7 +52,7 @@ Ensure that Google Apps is registered in your [service registry](../services/Ser
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://www.google.com/a/YourGoogleDomain/acs",
   "name" : "googleApps",
   "id" : 1000,

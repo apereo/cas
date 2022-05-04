@@ -9,7 +9,7 @@
 
 
     <util:list id="inMemoryRegisteredServices">
-        <bean class="org.apereo.cas.services.RegexRegisteredService"
+        <bean class="org.apereo.cas.services.CasRegisteredService"
               p:id="100" p:name="Test" p:description="Another Test Service"
               p:serviceId="^.+" p:evaluationOrder="100"/>
     </util:list>

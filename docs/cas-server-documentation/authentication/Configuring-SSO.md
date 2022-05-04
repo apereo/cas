@@ -80,7 +80,7 @@ the following service will be challenged to present credentials every time, ther
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "...",
   "name" : "...",
   "id" : 1,
@@ -138,7 +138,7 @@ Such validation checks can be turned off and skipped on a per-application basis:
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "^https://www.example.com",
   "name": "Example",
   "id": 1,

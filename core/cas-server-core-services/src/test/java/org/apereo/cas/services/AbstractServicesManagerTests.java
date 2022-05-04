@@ -44,7 +44,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     protected ServicesManager servicesManager;
 
     protected AbstractServicesManagerTests() {
-        val r = new RegexRegisteredService();
+        val r = new CasRegisteredService();
         r.setId(2500);
         r.setServiceId("serviceId");
         r.setName("serviceName");
@@ -62,17 +62,17 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
 
     @Test
     public void verifySaveAndGet() {
-        val services = new RegexRegisteredService();
+        val services = new CasRegisteredService();
         services.setId(1100);
         services.setName(TEST);
         services.setServiceId(TEST);
         servicesManager.save(services);
         assertNotNull(servicesManager.findServiceBy(1100));
-        assertNotNull(servicesManager.findServiceBy(1100, RegexRegisteredService.class));
+        assertNotNull(servicesManager.findServiceBy(1100, CasRegisteredService.class));
         assertNotNull(servicesManager.findServiceByName(TEST));
-        assertNotNull(servicesManager.findServiceByName(TEST, RegexRegisteredService.class));
+        assertNotNull(servicesManager.findServiceByName(TEST, CasRegisteredService.class));
         assertTrue(servicesManager.count() > 0);
-        assertFalse(servicesManager.getAllServicesOfType(RegexRegisteredService.class).isEmpty());
+        assertFalse(servicesManager.getAllServicesOfType(CasRegisteredService.class).isEmpty());
 
         val mockSvc = mock(RegisteredService.class);
         assertTrue(servicesManager.getAllServicesOfType(mockSvc.getClass()).isEmpty());
@@ -80,7 +80,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
 
     @Test
     public void verifySaveInRegistryAndGetById() {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setId(2100);
         service.setName(TEST);
         service.setServiceId(TEST);
@@ -93,7 +93,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
 
     @Test
     public void verifySaveInRegistryAndGetByServiceId() {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setId(3100);
         service.setName(TEST);
         service.setServiceId(TEST);
@@ -101,13 +101,13 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         serviceRegistry.save(service);
         assertNotNull(serviceRegistry.findServiceByExactServiceId(TEST));
         val svc = new WebApplicationServiceFactory().createService(TEST);
-        assertNotNull(servicesManager.findServiceBy(svc, RegexRegisteredService.class));
+        assertNotNull(servicesManager.findServiceBy(svc, CasRegisteredService.class));
         assertTrue(isServiceInCache(TEST, 0));
     }
 
     @Test
     public void verifyDelete() {
-        val r = new RegexRegisteredService();
+        val r = new CasRegisteredService();
         r.setId(1000);
         r.setName(TEST);
         r.setServiceId(TEST);
@@ -121,7 +121,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
 
     @Test
     public void verifyExpiredNotify() {
-        val r = new RegexRegisteredService();
+        val r = new CasRegisteredService();
         r.setId(2000);
         r.setName(TEST);
         r.setServiceId(TEST);
@@ -135,7 +135,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
 
     @Test
     public void verifyExpiredNotifyAndDelete() {
-        val r = new RegexRegisteredService();
+        val r = new CasRegisteredService();
         r.setId(2001);
         r.setName(TEST);
         r.setServiceId(TEST);
@@ -158,7 +158,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
      */
     @Test
     public void verifyServiceCanBeFoundDuringLoadWithoutCacheInvalidation() throws Exception {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setId(RandomUtils.nextLong());
         service.setName(UUID.randomUUID().toString());
         service.setServiceId("https://test.edu.*");

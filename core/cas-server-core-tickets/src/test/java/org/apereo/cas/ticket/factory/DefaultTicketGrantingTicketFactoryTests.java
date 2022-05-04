@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
@@ -39,7 +39,7 @@ public class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTe
 
     @Test
     public void verifyCustomExpirationPolicy() {
-        val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("customTgtExpirationPolicy", RegexRegisteredService.class);
+        val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("customTgtExpirationPolicy", CasRegisteredService.class);
         defaultSvc.setTicketGrantingTicketExpirationPolicy(
             new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(120));
         servicesManager.save(defaultSvc);

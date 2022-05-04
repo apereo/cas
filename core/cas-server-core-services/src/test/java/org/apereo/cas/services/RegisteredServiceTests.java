@@ -64,11 +64,6 @@ public class RegisteredServiceTests {
         }
 
         @Override
-        protected AbstractRegisteredService newInstance() {
-            return this;
-        }
-
-        @Override
         public boolean matches(final Service service) {
             return true;
         }
@@ -90,9 +85,7 @@ public class RegisteredServiceTests {
     
     @Test
     public void verifyAllowToProxyIsFalseByDefault() {
-        val regexRegisteredService = new RegexRegisteredService();
-        assertFalse(regexRegisteredService.getProxyPolicy().isAllowedToProxy());
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         assertFalse(service.getProxyPolicy().isAllowedToProxy());
     }
 
@@ -212,7 +205,7 @@ public class RegisteredServiceTests {
 
     @Test
     public void verifySetRequiredHandlersDoesNotThrowNPEWhenNullHandlersRefIsPassedIn() {
-        val regexRegisteredService = new RegexRegisteredService();
-        assertDoesNotThrow(() -> regexRegisteredService.setRequiredHandlers(null));
+        val service = new CasRegisteredService();
+        assertDoesNotThrow(() -> service.setRequiredHandlers(null));
     }
 }

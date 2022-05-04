@@ -128,6 +128,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="AbstractClassName">
+            <property name="id" value="abstractClassName"/>
             <property name="ignoreModifier" value="true"/>
             <property name="severity" value="error"/>
             <property name="format" value="^Abstract.*$|^.*Factory$|^Base.*$|^Root.*$"/>

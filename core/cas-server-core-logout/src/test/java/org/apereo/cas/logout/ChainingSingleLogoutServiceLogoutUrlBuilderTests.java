@@ -4,11 +4,11 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.slo.ChainingSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.web.SimpleUrlValidator;
@@ -57,7 +57,7 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
             List.of(new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, SimpleUrlValidator.getInstance())));
 
         val service = CoreAuthenticationTestUtils.getWebApplicationService();
-        val registeredService = mock(RegexRegisteredService.class);
+        val registeredService = mock(CasRegisteredService.class);
         when(registeredService.matches(any(Service.class))).thenReturn(Boolean.TRUE);
         when(registeredService.getFriendlyName()).thenCallRealMethod();
         when(registeredService.getServiceId()).thenReturn(CoreAuthenticationTestUtils.CONST_TEST_URL);

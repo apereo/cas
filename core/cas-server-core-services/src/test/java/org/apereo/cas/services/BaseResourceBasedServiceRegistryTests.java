@@ -91,7 +91,7 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
                 return new String[] {".json"};
             }
         };
-        val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), RegexRegisteredService.class);
+        val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), CasRegisteredService.class);
         assertThrows(IllegalArgumentException.class, () -> registry.save(r));
         registry.destroy();
     }

@@ -95,7 +95,7 @@ be authorized to receive the PGT as an attribute for the given attribute release
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 1,

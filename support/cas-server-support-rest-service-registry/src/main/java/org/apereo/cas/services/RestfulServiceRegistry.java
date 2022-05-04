@@ -1,13 +1,12 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.model.core.services.RestfulServiceRegistryProperties;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.serialization.StringSerializer;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -22,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,10 +32,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class RestfulServiceRegistry extends AbstractServiceRegistry {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true)
-        .build()
-        .toObjectMapper();
+    private final StringSerializer<RegisteredService> serializer;
 
     private final RestfulServiceRegistryProperties properties;
 
@@ -46,6 +41,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                                   final RestfulServiceRegistryProperties properties) {
         super(applicationContext, serviceRegistryListeners);
         this.properties = properties;
+        this.serializer = new RegisteredServiceJsonSerializer(applicationContext);
     }
 
     private static Map<String, Object> getRequestHeaders(final RestfulServiceRegistryProperties properties) {
@@ -61,18 +57,19 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         HttpResponse response = null;
         try {
             invokeServiceRegistryListenerPreSave(registeredService);
+            val entity = this.serializer.toString(registeredService);
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
                 .url(properties.getUrl())
                 .headers(getRequestHeaders(properties))
-                .entity(MAPPER.writeValueAsString(registeredService))
+                .entity(entity)
                 .build();
             response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                return MAPPER.readValue(result, RegisteredService.class);
+                return this.serializer.from(result);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -137,9 +134,9 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                val services = MAPPER.readValue(result, new TypeReference<List<RegisteredService>>() {
-                });
-                services.stream()
+                val services = this.serializer.fromList(result);
+                services
+                    .stream()
                     .map(this::invokeServiceRegistryListenerPostLoad)
                     .filter(Objects::nonNull)
                     .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
@@ -168,7 +165,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                return MAPPER.readValue(result, RegisteredService.class);
+                return serializer.from(result);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

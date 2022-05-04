@@ -6,8 +6,9 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -257,8 +258,8 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         assertTrue(result.getException().isPresent());
     }
 
-    private static RegexRegisteredService createRegisteredService(final boolean enabled) {
-        val service = new RegexRegisteredService();
+    private static RegisteredService createRegisteredService(final boolean enabled) {
+        val service = new CasRegisteredService();
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         accessStrategy.setEnabled(enabled);
         service.setAccessStrategy(accessStrategy);

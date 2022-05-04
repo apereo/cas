@@ -8,8 +8,8 @@ import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -66,7 +66,7 @@ public class DefaultLogoutManagerTests {
 
     @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        val s = new RegexRegisteredService();
+        val s = new CasRegisteredService();
         s.setServiceId(id);
         s.setName("Test registered service " + id);
         s.setDescription("Registered service description");

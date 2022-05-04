@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.policy;
 
-import javax.security.auth.login.AccountNotFoundException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;

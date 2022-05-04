@@ -20,7 +20,7 @@ import java.util.Collection;
  * the directory structure to find relevant YAML files. Files are expected to have the
  * {@link #getExtensions()} extension. An example of the YAML file is included here:
  * &lt;pre&gt;
- * --- !&lt;org.apereo.cas.services.RegexRegisteredService&gt;
+ * --- !&lt;org.apereo.cas.services.CasRegisteredService&gt;
  * serviceId: "testId"
  * name: "YAML"
  * id: 1000

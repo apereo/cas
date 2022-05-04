@@ -126,11 +126,11 @@ import static org.mockito.Mockito.*;
     public void verifyMalformedJsonFile() throws Exception {
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
 
-        FileUtils.write(Paths.get(gitDir.getAbsolutePath(), "svc-cfg", RegexRegisteredService.FRIENDLY_NAME,
+        FileUtils.write(Paths.get(gitDir.getAbsolutePath(), "svc-cfg", CasRegisteredService.FRIENDLY_NAME,
             "malformed-1.json").normalize().toFile(), "{\"@class\":\"xxxx\"", StandardCharsets.UTF_8);
         gitRepositoryInstance.commitAll("Malformed json file");
 
-        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
+        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
         svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
         newServiceRegistry.save(svc);
 
@@ -145,7 +145,7 @@ import static org.mockito.Mockito.*;
         when(gitRepository.getObjectsInRepository(any())).thenThrow(new JGitInternalException("error"));
         when(gitRepository.getRepositoryDirectory()).thenReturn(gitRepositoryInstance.getRepositoryDirectory());
 
-        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
+        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
         svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
         newServiceRegistry.save(svc);
         val size = newServiceRegistry.load().size();
@@ -164,8 +164,8 @@ import static org.mockito.Mockito.*;
      */
     @Test
     public void verifyLoadWithRootDirectory() throws IOException {
-        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
-        val svc2 = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
+        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
+        val svc2 = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
         svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
         svc2.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
         newServiceRegistry.save(svc);
@@ -174,7 +174,7 @@ import static org.mockito.Mockito.*;
         assertEquals(2, size);
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
         val rootDir = new File(gitDir, "svc-cfg");
-        val clientDir = new File(rootDir, RegexRegisteredService.FRIENDLY_NAME);
+        val clientDir = new File(rootDir, CasRegisteredService.FRIENDLY_NAME);
         val svc2FileName = svc2.getName() + '-' + svc2.getId() + ".json";
         val svc2File = new File(clientDir, svc2FileName);
         val anotherRootDir = new File(gitDir, "svc-cfg2");

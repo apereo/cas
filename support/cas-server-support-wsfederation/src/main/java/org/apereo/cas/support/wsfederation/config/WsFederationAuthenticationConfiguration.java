@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -63,7 +63,7 @@ public class WsFederationAuthenticationConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return plan -> {
-                val service = new RegexRegisteredService();
+                val service = new CasRegisteredService();
                 service.setId(RandomUtils.nextLong());
                 service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());

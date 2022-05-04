@@ -28,7 +28,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
     public void verifyChangingDomain() {
         servicesManager.deleteAll();
 
-        var r = new RegexRegisteredService();
+        var r = new CasRegisteredService();
         r.setId(1);
         r.setName("domainService1");
         r.setServiceId("https://company.com.*");
@@ -52,7 +52,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
     public void verifyDeleteEmptyDomains() {
         servicesManager.deleteAll();
         
-        var r = new RegexRegisteredService();
+        var r = new CasRegisteredService();
         r.setId(10);
         r.setName("domainService1");
         r.setServiceId("https://www.example.com/one");
@@ -61,7 +61,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
         assertTrue(domainServicesManager.getServicesForDomain("nothing.com").isEmpty());
         assertFalse(domainServicesManager.getServicesForDomain("www.example.com").isEmpty());
 
-        r = new RegexRegisteredService();
+        r = new CasRegisteredService();
         r.setId(20);
         r.setName("domainService2");
         r.setServiceId("https://www.example.com/two");

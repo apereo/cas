@@ -64,7 +64,7 @@ Language locale may also be determined on a per-service basis:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://www.example.org",
   "name" : "MyTheme",
   "locale" : "de",

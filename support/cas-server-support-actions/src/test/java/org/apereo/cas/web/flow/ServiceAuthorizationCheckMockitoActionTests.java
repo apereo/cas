@@ -3,8 +3,8 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -40,8 +40,8 @@ public class ServiceAuthorizationCheckMockitoActionTests {
     private final ServicesManager servicesManager = mock(ServicesManager.class);
 
     private Action getAction() {
-        val authorizedRegisteredService = new RegexRegisteredService();
-        val unauthorizedRegisteredService = new RegexRegisteredService();
+        val authorizedRegisteredService = new CasRegisteredService();
+        val unauthorizedRegisteredService = new CasRegisteredService();
         unauthorizedRegisteredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
 
         val list = new ArrayList<RegisteredService>();

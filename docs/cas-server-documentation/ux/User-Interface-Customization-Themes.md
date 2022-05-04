@@ -49,7 +49,7 @@ Contents of this file may contain the following settings:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://www.example.org",
   "name" : "MyTheme",
   "theme" : "[theme_name]",
@@ -115,7 +115,7 @@ the service definition needs to point to the location of the script:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://www.example.org",
   "name" : "MyTheme",
   "theme" : "file:///etc/cas/config/themes.groovy",
@@ -160,7 +160,7 @@ response to determine the theme name. Empty response bodies will have CAS switch
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://www.example.org",
   "name" : "MyTheme",
   "theme" : "https://themes.example.org",

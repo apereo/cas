@@ -1,6 +1,6 @@
 package org.apereo.cas.services.util;
 
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -39,7 +39,7 @@ public class RegisteredServiceYamlSerializerTests {
         appCtx.refresh();
         val zer = new RegisteredServiceYamlSerializer(appCtx);
         val writer = new StringWriter();
-        zer.to(writer, new RegexRegisteredService());
+        zer.to(writer, new CasRegisteredService());
         assertNotNull(zer.from(new ByteArrayInputStream(writer.toString().getBytes(StandardCharsets.UTF_8))));
     }
 

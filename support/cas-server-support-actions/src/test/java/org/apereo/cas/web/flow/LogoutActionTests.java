@@ -5,7 +5,7 @@ import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -67,7 +67,7 @@ public class LogoutActionTests {
         @Test
         public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
             request.addParameter("service", TEST_SERVICE_ID);
-            val service = new RegexRegisteredService();
+            val service = new CasRegisteredService();
             service.setServiceId(TEST_SERVICE_ID);
             service.setName(TEST_SERVICE_ID);
             getServicesManager().save(service);
@@ -78,7 +78,7 @@ public class LogoutActionTests {
 
         @Test
         public void verifyLogoutForServiceWithFollowRedirectsAndInternalService() throws Exception {
-            val service = new RegexRegisteredService();
+            val service = new CasRegisteredService();
             service.setServiceId(TEST_SERVICE_ID);
             service.setName(TEST_SERVICE_ID);
             getServicesManager().save(service);
@@ -117,7 +117,7 @@ public class LogoutActionTests {
         public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
             getServicesManager().deleteAll();
             request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
-            val service = new RegexRegisteredService();
+            val service = new CasRegisteredService();
             service.setServiceId("http://FooBar");
             service.setName("FooBar");
             getServicesManager().save(service);

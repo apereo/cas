@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests
 import org.apereo.cas.config.CasServiceRegistryInitializationConfigurationTests;
 import org.apereo.cas.config.DomainServicesManagerConfigurationTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
+import org.apereo.cas.services.CasRegisteredServiceTests;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicyTests;
 import org.apereo.cas.services.DefaultChainingServicesManagerTests;
 import org.apereo.cas.services.DefaultDomainAwareServicesManagerTests;
@@ -35,7 +36,6 @@ import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategyTest
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicyTests;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicyTests;
-import org.apereo.cas.services.RegexRegisteredServiceTests;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtilsTests;
 import org.apereo.cas.services.RegisteredServiceAuthenticationHandlerResolverTests;
 import org.apereo.cas.services.RegisteredServiceAuthenticationPolicyResolverTests;
@@ -79,7 +79,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultDomainAwareServicesManagerTests.class,
     InMemoryServiceRegistryTests.class,
     PrincipalAttributeRegisteredServiceUsernameProviderTests.class,
-    RegexRegisteredServiceTests.class,
+    CasRegisteredServiceTests.class,
     RegexMatchingRegisteredServiceProxyPolicyTests.class,
     RefuseRegisteredServiceProxyPolicyTests.class,
     GroovyRegisteredServiceUsernameProviderTests.class,

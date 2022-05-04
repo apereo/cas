@@ -1,5 +1,5 @@
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "https://cn.admin.example.com",
   "name": "Sample",
   "id": 1,

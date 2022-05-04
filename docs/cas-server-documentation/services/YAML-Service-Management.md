@@ -22,7 +22,7 @@ Support is enabled by adding the following module into the overlay:
 A sample YAML file follows:
 
 ```yml
---- !<org.apereo.cas.services.RegexRegisteredService>
+--- !<org.apereo.cas.services.CasRegisteredService>
 serviceId: "testId"
 name: "YAML"
 id: 1000
