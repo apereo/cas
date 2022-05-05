@@ -58,7 +58,7 @@ public class RegisteredServiceJsonSerializerTests {
                    + "            \"id\" : \"20161214\"\n"
                    + "    }";
 
-        val s = zer.from(json);
+        val s = (CasRegisteredService) zer.from(json);
         assertNotNull(s);
         assertNotNull(s.getAccessStrategy());
         assertNotNull(s.getAttributeReleasePolicy());

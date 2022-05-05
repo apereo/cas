@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -50,7 +51,7 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
         val httpRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val authentication = WebUtils.getAuthentication(requestContext);
         val service = WebUtils.getService(requestContext);
-        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(requestContext);
         val credential = WebUtils.getCredential(requestContext);
         val eventFactorySupport = new EventFactorySupport();
 

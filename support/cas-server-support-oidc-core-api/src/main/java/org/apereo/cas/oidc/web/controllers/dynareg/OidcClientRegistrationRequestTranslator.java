@@ -154,7 +154,7 @@ public class OidcClientRegistrationRequestTranslator {
         if (!registrationRequest.getDefaultAcrValues().isEmpty()) {
             val multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
             multifactorPolicy.setMultifactorAuthenticationProviders(new HashSet<>(registrationRequest.getDefaultAcrValues()));
-            registeredService.setMultifactorPolicy(multifactorPolicy);
+            registeredService.setMultifactorAuthenticationPolicy(multifactorPolicy);
         }
 
         if (StringUtils.isNotBlank(registrationRequest.getIdTokenSignedResponseAlg())) {

@@ -50,7 +50,7 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifyServiceWithInvalidFileName(final Class<? extends RegisteredService> registeredServiceClass) {
+    public void verifyServiceWithInvalidFileName(final Class<? extends BaseRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setName("hell/o@world:*");
         assertThrows(IllegalArgumentException.class, () -> this.newServiceRegistry.save(r));

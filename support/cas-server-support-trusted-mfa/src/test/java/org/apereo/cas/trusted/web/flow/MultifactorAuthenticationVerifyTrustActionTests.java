@@ -112,11 +112,11 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("bad-principal"), context);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.EMPTY_MAP);
-        registeredService.setMultifactorPolicy(new DefaultRegisteredServiceMultifactorPolicy().setBypassTrustedDeviceEnabled(true));
+        registeredService.setMultifactorAuthenticationPolicy(new DefaultRegisteredServiceMultifactorPolicy().setBypassTrustedDeviceEnabled(true));
         WebUtils.putRegisteredService(context, registeredService);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP, mfaVerifyTrustAction.execute(context).getId());
 
-        registeredService.setMultifactorPolicy(new DefaultRegisteredServiceMultifactorPolicy());
+        registeredService.setMultifactorAuthenticationPolicy(new DefaultRegisteredServiceMultifactorPolicy());
         assertEquals(CasWebflowConstants.TRANSITION_ID_NO, mfaVerifyTrustAction.execute(context).getId());
     }
 

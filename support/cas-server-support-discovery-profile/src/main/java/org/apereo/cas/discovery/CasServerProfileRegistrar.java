@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -62,7 +62,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         };
         val collector = Collectors.toMap(RegisteredService::getFriendlyName, RegisteredService::getClass);
         return (Map) locateSubtypesByReflection(mapper, collector,
-            AbstractRegisteredService.class, o -> true, CentralAuthenticationService.NAMESPACE);
+            BaseRegisteredService.class, o -> true, CentralAuthenticationService.NAMESPACE);
     }
 
     private static Object locateSubtypesByReflection(final Function<Class, Object> mapper,

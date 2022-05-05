@@ -3,7 +3,7 @@ package org.apereo.cas.logout;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
@@ -46,7 +46,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @SneakyThrows
-    public AbstractRegisteredService getRegisteredService(final String id) {
+    public BaseRegisteredService getRegisteredService(final String id) {
         val s = new CasRegisteredService();
         s.setServiceId(id);
         s.setName("Test service " + id);

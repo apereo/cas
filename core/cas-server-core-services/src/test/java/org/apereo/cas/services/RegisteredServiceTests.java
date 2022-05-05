@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit test for {@link AbstractRegisteredService}.
+ * Unit test for {@link BaseRegisteredService}.
  *
  * @author Marvin S. Addison
  * @since 3.4.12
@@ -45,8 +45,6 @@ public class RegisteredServiceTests {
 
     private static final boolean ENABLED = false;
 
-    private static final boolean ALLOWED_TO_PROXY = false;
-
     private static final boolean SSO_ENABLED = false;
 
     private static final String ATTR_1 = "attr1";
@@ -55,7 +53,7 @@ public class RegisteredServiceTests {
 
     private static final String ATTR_3 = "attr3";
 
-    private final AbstractRegisteredService baseService = new AbstractRegisteredService() {
+    private final BaseRegisteredService baseService = new BaseRegisteredService() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -82,7 +80,7 @@ public class RegisteredServiceTests {
             CasConfigurationProperties.class.getSimpleName());
         ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
-    
+
     @Test
     public void verifyAllowToProxyIsFalseByDefault() {
         val service = new CasRegisteredService();
@@ -92,7 +90,6 @@ public class RegisteredServiceTests {
     @Test
     public void verifySettersAndGetters() {
         prepareService();
-        assertEquals(ALLOWED_TO_PROXY, baseService.getProxyPolicy().isAllowedToProxy());
         assertEquals(DESCRIPTION, baseService.getDescription());
         assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed());
         assertEquals(ID, baseService.getId());
@@ -101,7 +98,6 @@ public class RegisteredServiceTests {
         assertEquals(SSO_ENABLED, baseService.getAccessStrategy().isServiceAccessAllowedForSso());
         assertEquals(THEME, baseService.getTheme());
         assertNotNull(baseService);
-        assertNotEquals(baseService, new Object());
         assertEquals(baseService, baseService);
     }
 

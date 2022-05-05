@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -44,7 +45,7 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
             return false;
         }
 
-        val registeredService = getRegisteredService(ssoRequest);
+        val registeredService = (WebBasedRegisteredService) getRegisteredService(ssoRequest);
         if (registeredService == null) {
             return properties.isSsoEnabled();
         }
@@ -86,7 +87,7 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
 
     @Override
     public TriStateBoolean isCreateCookieOnRenewedAuthentication(final SingleSignOnParticipationRequest context) {
-        val registeredService = getRegisteredService(context);
+        val registeredService = (WebBasedRegisteredService) getRegisteredService(context);
         if (registeredService != null) {
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
             if (ssoPolicy != null) {

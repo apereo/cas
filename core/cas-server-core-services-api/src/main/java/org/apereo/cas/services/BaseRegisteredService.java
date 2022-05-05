@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,14 +31,13 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = "id")
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Slf4j
-public abstract class AbstractRegisteredService implements RegisteredService {
+public abstract class BaseRegisteredService implements RegisteredService {
 
     private static final long serialVersionUID = 7645279151115635245L;
 
@@ -66,21 +65,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     private RegisteredServiceExpirationPolicy expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
 
-    private RegisteredServiceAcceptableUsagePolicy acceptableUsagePolicy = new DefaultRegisteredServiceAcceptableUsagePolicy();
-
-    private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
-
-    private RegisteredServiceProxyTicketExpirationPolicy proxyTicketExpirationPolicy;
-
-    private RegisteredServiceProxyGrantingTicketExpirationPolicy proxyGrantingTicketExpirationPolicy;
-
     private RegisteredServiceTicketGrantingTicketExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
-    private RegisteredServiceServiceTicketExpirationPolicy serviceTicketExpirationPolicy;
-
-    private RegisteredServiceSingleSignOnParticipationPolicy singleSignOnParticipationPolicy;
-
-    private RegisteredServiceWebflowInterruptPolicy webflowInterruptPolicy = new DefaultRegisteredServiceWebflowInterruptPolicy();
 
     private int evaluationOrder;
 
@@ -92,20 +78,19 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 
-    private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+    @JsonProperty("multifactorPolicy")
+    private RegisteredServiceMultifactorPolicy multifactorAuthenticationPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+
+    private RegisteredServicePublicKey publicKey;
 
     private RegisteredServiceMatchingStrategy matchingStrategy = new FullRegexRegisteredServiceMatchingStrategy();
 
     private String logo;
 
     private String logoutUrl;
-
-    private String redirectUrl;
-
+    
     private RegisteredServiceAccessStrategy accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-
-    private RegisteredServicePublicKey publicKey;
-
+    
     private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
     private Map<String, RegisteredServiceProperty> properties = new HashMap<>(0);
@@ -153,19 +138,16 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @Override
     public void initialize() {
-        this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
         this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
         this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, RegisteredServiceLogoutType.BACK_CHANNEL);
         this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
-        this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
+        this.multifactorAuthenticationPolicy = ObjectUtils.defaultIfNull(this.multifactorAuthenticationPolicy, new DefaultRegisteredServiceMultifactorPolicy());
         this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap<>(0));
         this.attributeReleasePolicy = ObjectUtils.defaultIfNull(this.attributeReleasePolicy, new ReturnAllowedAttributeReleasePolicy());
         this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList<>(0));
         this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
-        this.acceptableUsagePolicy = ObjectUtils.defaultIfNull(this.acceptableUsagePolicy, new DefaultRegisteredServiceAcceptableUsagePolicy());
         this.authenticationPolicy = ObjectUtils.defaultIfNull(this.authenticationPolicy, new DefaultRegisteredServiceAuthenticationPolicy());
         this.matchingStrategy = ObjectUtils.defaultIfNull(this.matchingStrategy, new FullRegexRegisteredServiceMatchingStrategy());
-        this.webflowInterruptPolicy = ObjectUtils.defaultIfNull(this.webflowInterruptPolicy, new DefaultRegisteredServiceWebflowInterruptPolicy());
     }
 
     @Override

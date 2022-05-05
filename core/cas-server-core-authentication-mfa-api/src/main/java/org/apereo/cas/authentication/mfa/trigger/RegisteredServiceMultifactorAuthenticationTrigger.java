@@ -50,7 +50,7 @@ public class RegisteredServiceMultifactorAuthenticationTrigger implements Multif
             return Optional.empty();
         }
 
-        val policy = registeredService.getMultifactorPolicy();
+        val policy = registeredService.getMultifactorAuthenticationPolicy();
         if (policy == null || policy.getMultifactorAuthenticationProviders().isEmpty()) {
             LOGGER.trace("Authentication policy does not contain any multifactor authentication providers");
             return Optional.empty();

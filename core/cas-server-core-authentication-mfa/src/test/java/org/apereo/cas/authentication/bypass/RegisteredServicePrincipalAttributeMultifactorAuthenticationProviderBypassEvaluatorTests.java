@@ -50,7 +50,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
         policy.setBypassEnabled(false);
         policy.setBypassPrincipalAttributeName("cn");
         policy.setBypassPrincipalAttributeValue("^e[x]am.*");
-        when(registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
         assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService,
             provider, new MockHttpServletRequest()));
     }
@@ -76,7 +76,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
         policy.setBypassEnabled(false);
         policy.setBypassPrincipalAttributeName("cn");
         policy.setBypassPrincipalAttributeValue("^e[x]am.*");
-        when(registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
         assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
     }
 

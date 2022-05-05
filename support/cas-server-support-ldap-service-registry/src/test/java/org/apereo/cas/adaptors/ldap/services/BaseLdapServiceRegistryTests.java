@@ -6,8 +6,8 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
+import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -66,7 +66,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifySavingServiceChangesDn(final Class<? extends RegisteredService> registeredServiceClass) {
+    public void verifySavingServiceChangesDn(final Class<? extends BaseRegisteredService> registeredServiceClass) {
         getServiceRegistry().save(buildRegisteredServiceInstance(8080, registeredServiceClass));
         val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
@@ -84,7 +84,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
     @Test
     public void verifyServiceInserted() {
         val registeredService = buildRegisteredServiceInstance(998877, CasRegisteredService.class);
-        registeredService.setId(AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE);
+        registeredService.setId(BaseRegisteredService.INITIAL_IDENTIFIER_VALUE);
         getServiceRegistry().save(registeredService);
         val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
