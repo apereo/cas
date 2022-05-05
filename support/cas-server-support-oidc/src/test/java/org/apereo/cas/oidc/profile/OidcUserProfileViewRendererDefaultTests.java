@@ -4,9 +4,11 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.shaded.json.JSONObject;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -68,7 +70,7 @@ public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationSigned() throws Exception {
+    public void verifyOperationEncryptedAndSigned() throws Exception {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
@@ -85,5 +87,27 @@ public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
         assertNotNull(entity);
         assertNotNull(entity.getBody());
+    }
+
+    @Test
+    public void verifyOperationSigned() throws Exception {
+        val clientId = UUID.randomUUID().toString();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(new MockHttpServletRequest(), response);
+        val accessToken = getAccessToken(clientId);
+        val service = getOidcRegisteredService(clientId);
+        service.setUserInfoSigningAlg("RS256");
+        service.setSignIdToken(true);
+        service.setEncryptIdToken(false);
+        servicesManager.save(service);
+
+        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
+        assertNotNull(entity);
+        val body = (String) entity.getBody();
+        assertNotNull(body);
+        val claims = JwtBuilder.parse(body);
+        assertNotNull(claims);
+        assertEquals("casuser@example.org", ((JSONObject) claims.getClaim("attributes")).get("email"));
     }
 }
