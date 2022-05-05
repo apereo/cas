@@ -78,6 +78,7 @@ public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         val claims = JwtBuilder.parse(body);
         assertNotNull(claims);
         assertEquals("casuser@example.org", claims.getClaim("email"));
+        assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
     }
 
     @Test

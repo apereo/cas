@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.profile;
 
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -37,11 +39,15 @@ import java.util.UUID;
 public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRenderer {
     private final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService;
 
+    private final OidcIssuerService oidcIssuerService;
+
     public OidcUserProfileViewRenderer(final OAuthProperties oauthProperties,
                                        final ServicesManager servicesManager,
-                                       final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService) {
+                                       final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
+                                       final OidcIssuerService oidcIssuerService) {
         super(servicesManager, oauthProperties);
         this.signingAndEncryptionService = signingAndEncryptionService;
+        this.oidcIssuerService = oidcIssuerService;
     }
 
     @Override
@@ -70,7 +76,7 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
                 });
                 claims.setAudience(registeredService.getClientId());
                 claims.setIssuedAt(NumericDate.now());
-                claims.setIssuer(this.signingAndEncryptionService.getIssuer());
+                claims.setIssuer(this.oidcIssuerService.determineIssuer(Optional.of(registeredService)));
                 claims.setJwtId(UUID.randomUUID().toString());
 
                 LOGGER.debug("Collected user profile claims, before cipher operations, are [{}]", claims);
