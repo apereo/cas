@@ -222,7 +222,7 @@ public class PersonDirectoryPrincipalResolverTests {
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val p = resolver.resolve(c, Optional.empty());
         assertNotNull(p);
-        assertNotEquals(p.getId(), CoreAuthenticationTestUtils.CONST_USERNAME);
+        assertNotEquals(CoreAuthenticationTestUtils.CONST_USERNAME, p.getId());
         assertTrue(p.getAttributes().containsKey("memberOf"));
     }
 

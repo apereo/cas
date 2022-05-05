@@ -171,7 +171,7 @@ public class CasWebflowConfigurerTests {
         when(flow.containsState("SubflowState")).thenReturn(Boolean.FALSE);
         val subState = cfg.createSubflowState(flow, "SubflowState", "SubflowState", mock(Action.class));
         assertNotNull(subState);
-        assertNotEquals(subState.getEntryActionList().size(), 0);
+        assertNotEquals(0, subState.getEntryActionList().size());
     }
 
     @Test

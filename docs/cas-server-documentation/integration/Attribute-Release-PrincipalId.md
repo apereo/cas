@@ -33,13 +33,15 @@ principal id as the username for this service.
   "description" : "sample",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider",
-    "canonicalizationMode" : "NONE"
+    "canonicalizationMode" : "NONE",
+    "scope": "example.org"
   }
 }
 ```
 
 If you do not need to adjust the behavior of this provider (i.e. to modify the `canonicalization` mode),
-then you can leave out this block entirely.
+then you can leave out this block entirely. Furthermore, if you do not need the final value to be scoped to the defined value,
+you may also leave out the `scope` value.
 
 ## Encrypted
 
@@ -104,10 +106,13 @@ is not available, the default principal id will be used.
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
     "usernameAttribute" : "cn",
-    "canonicalizationMode" : "UPPER"
+    "canonicalizationMode" : "UPPER",
+    "scope": "example.org"
   }
 }
 ```
+
+If you do not need the final value to be scoped to the defined value, you may also leave out the `scope` value.
 
 ## Javascript/Python/Groovy Script
 

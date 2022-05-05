@@ -53,7 +53,7 @@ public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends
 
     @Test
     public void verifyAuthenticateWarnings() {
-        assertNotEquals(ldapAuthenticationHandlers.size(), 0);
+        assertNotEquals(0, ldapAuthenticationHandlers.size());
 
         ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());

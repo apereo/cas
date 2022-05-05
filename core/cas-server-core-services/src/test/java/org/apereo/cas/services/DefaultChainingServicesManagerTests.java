@@ -58,7 +58,7 @@ public class DefaultChainingServicesManagerTests extends AbstractServicesManager
         svc.setName("domainService2");
         svc.setServiceId("https://www.example.com/" + svc.getId());
         assertNotNull(servicesManager.save(svc, false));
-        assertEquals(servicesManager.getDomains().count(), 1);
+        assertEquals(1, servicesManager.getDomains().count());
         assertFalse(servicesManager.getServicesForDomain("example.org").isEmpty());
     }
 

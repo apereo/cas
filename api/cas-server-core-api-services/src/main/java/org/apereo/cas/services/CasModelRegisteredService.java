@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

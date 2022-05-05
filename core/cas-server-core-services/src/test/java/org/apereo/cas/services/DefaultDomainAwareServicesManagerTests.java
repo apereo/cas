@@ -71,7 +71,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
         assertNotNull(domainServicesManager.findServiceBy(serviceFactory.createService("https://www.example.com/one")));
         
         servicesManager.deleteAll();
-        assertEquals(domainServicesManager.getDomains().count(), 0);
+        assertEquals(0, domainServicesManager.getDomains().count());
     }
 
     @Override
