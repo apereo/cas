@@ -65,7 +65,7 @@ public class TicketGrantingTicketImplTests {
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
         assertNotNull(t);
-        assertNotEquals(t, new Object());
+        assertNotEquals(new Object(), t);
         assertEquals(t, t);
     }
 

@@ -31,7 +31,7 @@ public class WSFederationMetadataControllerTests extends BaseCoreWsSecurityIdent
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         wsFederationMetadataController.doGet(request, response);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 
     @Test
@@ -42,6 +42,6 @@ public class WSFederationMetadataControllerTests extends BaseCoreWsSecurityIdent
         doCallRealMethod().when(response).sendError(anyInt());
         doCallRealMethod().when(response).getStatus();
         wsFederationMetadataController.doGet(request, response);
-        assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
     }
 }

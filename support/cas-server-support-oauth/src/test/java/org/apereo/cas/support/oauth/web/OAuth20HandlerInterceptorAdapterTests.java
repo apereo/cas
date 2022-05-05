@@ -53,7 +53,7 @@ public class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests 
         request.removeAllParameters();
         assertTrue(oauthHandlerInterceptorAdapter.preHandle(request, response, new Object()));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
+        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
     }
 
     @Test

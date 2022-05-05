@@ -110,12 +110,12 @@ public class OidcRequestSupportTests extends AbstractOidcTests {
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=1000");
         val age = OidcRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
         assertTrue(age.isPresent());
-        assertEquals((long) age.get(), 1000);
+        assertEquals(1000, (long) age.get());
 
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=NA");
         val age2 = OidcRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
         assertTrue(age2.isPresent());
-        assertEquals((long) age2.get(), -1);
+        assertEquals(-1, (long) age2.get());
 
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?");
         val age3 = OidcRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);

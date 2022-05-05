@@ -81,7 +81,7 @@ public class InquireInterruptActionTests {
         event = action.doExecute(context);
         assertNotNull(InterruptUtils.getInterruptFrom(context));
         assertNotNull(WebUtils.getPrincipalFromRequestContext(context));
-        assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, event.getId());
     }
 
     @Test

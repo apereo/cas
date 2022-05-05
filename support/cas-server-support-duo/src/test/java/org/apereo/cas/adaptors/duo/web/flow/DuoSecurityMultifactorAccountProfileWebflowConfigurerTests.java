@@ -88,7 +88,7 @@ public class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends 
         assertNull(result);
         val devices = WebUtils.getMultifactorAuthenticationRegisteredDevices(context);
         assertNotNull(devices);
-        assertEquals(devices.size(), 1);
+        assertEquals(1, devices.size());
     }
     @TestConfiguration("DuoSecurityTestConfiguration")
     public static class DuoSecurityTestConfiguration {

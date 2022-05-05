@@ -42,8 +42,9 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
 
     private String usernameAttribute;
 
-    public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute, final String canonicalizationMode) {
-        super(canonicalizationMode, false);
+    public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute,
+                                                               final String canonicalizationMode) {
+        super(canonicalizationMode, false, null);
         this.usernameAttribute = usernameAttribute;
     }
 

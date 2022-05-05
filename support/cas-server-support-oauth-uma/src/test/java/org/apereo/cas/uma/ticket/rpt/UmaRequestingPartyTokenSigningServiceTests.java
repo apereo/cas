@@ -30,6 +30,6 @@ public class UmaRequestingPartyTokenSigningServiceTests extends BaseUmaEndpointC
         val signingService = new UmaRequestingPartyTokenSigningService(props);
         assertNull(signingService.getJsonWebKeySigningKey());
         val service = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString());
-        assertEquals(signingService.getAllowedSigningAlgorithms(service), JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE);
+        assertEquals(JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE, signingService.getAllowedSigningAlgorithms(service));
     }
 }

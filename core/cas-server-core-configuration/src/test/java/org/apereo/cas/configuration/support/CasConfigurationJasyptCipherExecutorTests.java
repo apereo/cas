@@ -47,7 +47,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
         val result = jasypt.encryptValue(getClass().getSimpleName());
         assertNotNull(result);
         val plain = jasypt.decryptValue(result);
-        assertEquals(plain, getClass().getSimpleName());
+        assertEquals(getClass().getSimpleName(), plain);
     }
 
     @Test

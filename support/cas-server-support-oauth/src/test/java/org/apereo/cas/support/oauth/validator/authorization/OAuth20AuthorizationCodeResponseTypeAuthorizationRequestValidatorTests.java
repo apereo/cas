@@ -108,7 +108,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
 
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
+        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
@@ -118,19 +118,19 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         request.setParameter(OAuth20Constants.CLIENT_ID, "client");
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
+        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE);
+        assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, "unknown");
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE);
+        assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
@@ -160,7 +160,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         request.setParameter(OAuth20Constants.REDIRECT_URI, "unknown-uri");
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
+        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
@@ -168,7 +168,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         service.getAccessStrategy().setServiceAccessAllowed(false);
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
+        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
 
         assertEquals(Ordered.LOWEST_PRECEDENCE, validator.getOrder());
         assertNotNull(validator.getRegisteredServiceAccessStrategyEnforcer());

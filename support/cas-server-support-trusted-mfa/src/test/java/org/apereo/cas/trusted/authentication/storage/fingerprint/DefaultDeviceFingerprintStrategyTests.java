@@ -49,7 +49,7 @@ public class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAu
 
         val f3 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);
         assertNotNull(response.getCookies());
-        assertEquals(response.getCookies().length, 1);
+        assertEquals(1, response.getCookies().length);
         request.setCookies(response.getCookies());
 
         val f4 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);

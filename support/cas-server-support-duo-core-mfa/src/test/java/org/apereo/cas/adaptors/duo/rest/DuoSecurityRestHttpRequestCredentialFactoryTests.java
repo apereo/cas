@@ -40,7 +40,7 @@ public class DuoSecurityRestHttpRequestCredentialFactoryTests {
         var credentials = factory.fromRequest(request, body);
         assertFalse(credentials.isEmpty());
         var credential = (DuoSecurityPasscodeCredential) credentials.get(0);
-        assertEquals(credential.getProviderId(), "custom-duo");
+        assertEquals("custom-duo", credential.getProviderId());
 
         credentials = factory.fromAuthentication(request, body, CoreAuthenticationTestUtils.getAuthentication(),
             new TestMultifactorAuthenticationProvider());

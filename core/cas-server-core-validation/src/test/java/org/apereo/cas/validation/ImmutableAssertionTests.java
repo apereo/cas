@@ -60,7 +60,7 @@ public class ImmutableAssertionTests {
         val assertion = new ImmutableAssertion(
             CoreAuthenticationTestUtils.getAuthentication(), list, true, RegisteredServiceTestUtils.getService());
 
-        assertNotEquals(assertion, null);
+        assertNotEquals(null, assertion);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class ImmutableAssertionTests {
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
         val assertion = new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(), list, true, RegisteredServiceTestUtils.getService());
-        assertNotEquals(assertion, "test");
+        assertNotEquals("test", assertion);
     }
 
     @Test

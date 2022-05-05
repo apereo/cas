@@ -19,12 +19,12 @@ public class SimpleServiceTests {
 
     @Test
     public void verifyEqualsWithNull() {
-        assertNotEquals(RegisteredServiceTestUtils.getService(), null, "Service matches null.");
+        assertNotEquals(null, RegisteredServiceTestUtils.getService(), "Service matches null.");
     }
 
     @Test
     public void verifyEqualsWithBadClass() {
-        assertNotEquals(RegisteredServiceTestUtils.getService(), new Object(), "Services matches String class.");
+        assertNotEquals(new Object(), RegisteredServiceTestUtils.getService(), "Services matches String class.");
     }
 
     @Test

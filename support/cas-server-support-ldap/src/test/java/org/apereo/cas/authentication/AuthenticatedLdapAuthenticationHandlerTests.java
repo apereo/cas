@@ -48,7 +48,7 @@ public class AuthenticatedLdapAuthenticationHandlerTests {
 
         @Test
         public void verifyAuthenticateFailureNotFound() {
-            assertNotEquals(ldapAuthenticationHandlers.size(), 0);
+            assertNotEquals(0, ldapAuthenticationHandlers.size());
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad")))));
         }

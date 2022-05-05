@@ -78,7 +78,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
 
         val mv = callbackAuthorizeViewResolver.resolve(context, manager, url);
         assertNotNull(mv);
-        assertEquals(mv.getModel().get(OAuth20Constants.ERROR), OidcConstants.LOGIN_REQUIRED);
+        assertEquals(OidcConstants.LOGIN_REQUIRED, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
 
         val mv = callbackAuthorizeViewResolver.resolve(context, manager, url);
         assertNotNull(mv);
-        assertEquals(mv.getModel().get(OAuth20Constants.ERROR), OidcConstants.LOGIN_REQUIRED);
+        assertEquals(OidcConstants.LOGIN_REQUIRED, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test

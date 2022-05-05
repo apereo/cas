@@ -53,7 +53,7 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
             LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party", registeredService);
             return principal.getId();
         }
-        val oidcSvc = OidcRegisteredService.class.cast(registeredService);
+        val oidcSvc = (OidcRegisteredService) registeredService;
         if (StringUtils.isBlank(oidcSvc.getSubjectType())
             || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
             LOGGER.warn("Service definition [{}] does not request a pairwise subject type", oidcSvc);

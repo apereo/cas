@@ -38,7 +38,7 @@ public class HttpBasedServiceCredentialTests {
     public void verifyEqualsWithNull() throws Exception {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.CONST_TEST_URL);
         val c = new HttpBasedServiceCredential(new URL(CoreAuthenticationTestUtils.CONST_GOOD_URL), registeredService);
-        assertNotEquals(c, null);
+        assertNotEquals(null, c);
     }
 
     @Test

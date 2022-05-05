@@ -52,6 +52,6 @@ public class TicketAsFirstParameterResourceResolverTests {
         val jp = mock(JoinPoint.class);
         val resolver = new TicketAsFirstParameterResourceResolver();
         val input = resolver.resolveFrom(jp, null);
-        assertEquals(input.length, 0);
+        assertEquals(0, input.length);
     }
 }

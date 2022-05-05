@@ -96,10 +96,10 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertTrue(modelAndView.getView() instanceof RedirectView);
         val modelView = (RedirectView) modelAndView.getView();
-        assertEquals(modelView.getUrl(), REDIRECT_URI);
+        assertEquals(REDIRECT_URI, modelView.getUrl());
 
         assertTrue(modelAndView.getModel().containsKey(OAuth20Constants.ERROR));
-        assertEquals(modelAndView.getModel().get(OAuth20Constants.ERROR).toString(), OAuth20Constants.INVALID_REQUEST);
+        assertEquals(OAuth20Constants.INVALID_REQUEST, modelAndView.getModel().get(OAuth20Constants.ERROR).toString());
     }
 
     @Test
@@ -260,7 +260,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
-        assertEquals(redirectUrl, REDIRECT_URI);
+        assertEquals(REDIRECT_URI, redirectUrl);
 
         assertEquals("/", oAuth20AuthorizeEndpointController.getConfigurationContext()
             .getOauthDistributedSessionCookieGenerator().getCookiePath());
@@ -432,7 +432,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
-        assertEquals(redirectUrl, REDIRECT_URI);
+        assertEquals(REDIRECT_URI, redirectUrl);
 
         val code = modelAndView.getModelMap().getAttribute("code");
 
@@ -492,7 +492,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val state = StringUtils.substringBetween(redirectUrl, "state=", "&");
         val accessToken = (OAuth20AccessToken) this.ticketRegistry.getTicket(code);
         assertNotNull(accessToken);
-        assertEquals(state, OAuth20Constants.STATE);
+        assertEquals(OAuth20Constants.STATE, state);
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
@@ -540,7 +540,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
-        assertEquals(redirectUrl, REDIRECT_URI);
+        assertEquals(REDIRECT_URI, redirectUrl);
 
         val code = modelAndView.getModelMap().get("code");
         val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(String.valueOf(code));

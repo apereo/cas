@@ -72,7 +72,7 @@ public class WSFederationClaimsReleasePolicyTests {
         val results = policy.getAttributes(releasePolicyContext);
         assertFalse(results.isEmpty());
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
-        assertEquals(results.get(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()), List.of("casuser@example.org"));
+        assertEquals(List.of("casuser@example.org"), results.get(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class WSFederationClaimsReleasePolicyTests {
         val results = policy.getAttributes(releasePolicyContext);
         assertFalse(results.isEmpty());
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
-        assertEquals(results.get(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()), List.of("casuser@example.org"));
+        assertEquals(List.of("casuser@example.org"), results.get(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
     }
 
     @Test

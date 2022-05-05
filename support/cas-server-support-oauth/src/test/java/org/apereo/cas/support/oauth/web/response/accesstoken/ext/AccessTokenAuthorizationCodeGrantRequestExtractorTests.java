@@ -44,7 +44,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
-        assertEquals(extractor.getResponseType(), OAuth20ResponseTypes.NONE);
+        assertEquals(OAuth20ResponseTypes.NONE, extractor.getResponseType());
 
         val context = new JEEContext(request, response);
         assertThrows(InvalidTicketException.class, () -> extractor.extract(context));

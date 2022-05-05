@@ -42,7 +42,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
         ctx.setExternalContext(extCtx);
 
         val ev = action.doExecute(ctx);
-        assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+        assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
         ctx.setExternalContext(extCtx);
 
         val ev = action.doExecute(ctx);
-        assertNotEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+        assertNotEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
         ctx.setExternalContext(extCtx);
 
         val ev = action.doExecute(ctx);
-        assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+        assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
         ctx.setExternalContext(extCtx);
 
         val ev = action.doExecute(ctx);
-        assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+        assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
         ctx.setExternalContext(extCtx);
 
         val ev = action.doExecute(ctx);
-        assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+        assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
 
     }
 
@@ -131,7 +131,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
         ctx.setExternalContext(extCtx);
 
         val ev = action.doExecute(ctx);
-        assertEquals(ev.getId(), new EventFactorySupport().no(this).getId());
+        assertEquals(new EventFactorySupport().no(this).getId(), ev.getId());
 
     }
 }

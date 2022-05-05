@@ -38,7 +38,7 @@ public class DefaultOAuth20AuthorizationModelAndViewBuilderTests extends Abstrac
         assertTrue(mv.getView() instanceof RedirectView);
         val view = (RedirectView) mv.getView();
         assertTrue(mv.getModel().isEmpty());
-        assertEquals(new URI(view.getUrl()).getFragment(), "code=123456");
+        assertEquals("code=123456", new URI(view.getUrl()).getFragment());
 
     }
 }

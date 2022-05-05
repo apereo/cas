@@ -118,7 +118,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
             mfaTrustEngine.save(record);
 
             assertNotNull(response.getCookies());
-            assertEquals(response.getCookies().length, 1);
+            assertEquals(1, response.getCookies().length);
             request.setCookies(response.getCookies());
 
             val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());

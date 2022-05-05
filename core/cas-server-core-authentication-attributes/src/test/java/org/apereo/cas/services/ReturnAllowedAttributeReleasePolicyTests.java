@@ -210,7 +210,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
                 .build();
             val attributes = policy.getAttributes(context);
             assertTrue(attributes.containsKey("custom-name"));
-            assertEquals(attributes.get("custom-Name").get(0), "CAS");
+            assertEquals("CAS", attributes.get("custom-Name").get(0));
         }
 
         @Test
@@ -247,7 +247,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
             val attributes = policy.getAttributes(context);
             assertEquals(2, attributes.size());
             assertTrue(attributes.containsKey("given-name"));
-            assertEquals(attributes.get("given-name").get(0), "hello");
+            assertEquals("hello", attributes.get("given-name").get(0));
         }
 
         @Test

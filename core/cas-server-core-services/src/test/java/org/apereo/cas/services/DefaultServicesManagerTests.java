@@ -28,7 +28,7 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
 
         serviceRegistry.save(service);
         assertNotNull(servicesManager.findServiceByName(service.getName()));
-        assertNotEquals(servicesManager.stream().count(), 0);
+        assertNotEquals(0, servicesManager.stream().count());
         assertEquals(1, servicesManager.getDomains().count());
         assertFalse(servicesManager.getServicesForDomain(UUID.randomUUID().toString()).isEmpty());
     }
@@ -42,7 +42,7 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
 
         serviceRegistry.save(service);
         assertNotNull(servicesManager.findServiceByName(service.getName(), CasRegisteredService.class));
-        assertNotEquals(servicesManager.stream().count(), 0);
+        assertNotEquals(0, servicesManager.stream().count());
     }
 
     @Test
