@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
@@ -117,10 +117,10 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
 
     @Test
     public void verifyBypass() throws Exception {
-        val service = (AbstractRegisteredService) WebUtils.getRegisteredService(context);
+        val service = (BaseRegisteredService) WebUtils.getRegisteredService(context);
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setBypassTrustedDeviceEnabled(true);
-        service.setMultifactorPolicy(policy);
+        service.setMultifactorAuthenticationPolicy(policy);
         WebUtils.putRegisteredService(context, service);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
             mfaSetTrustAction.execute(context).getId());

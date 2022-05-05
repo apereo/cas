@@ -88,7 +88,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val service = MultifactorAuthenticationTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService(service.getId(),
             BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
-        when(registeredService.getMultifactorPolicy()).thenReturn(mfaPolicy);
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(mfaPolicy);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
         val assertion = mock(Assertion.class);

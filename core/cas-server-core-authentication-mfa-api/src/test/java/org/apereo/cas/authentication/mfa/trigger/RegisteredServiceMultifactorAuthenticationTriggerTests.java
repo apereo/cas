@@ -49,7 +49,7 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of("mfa-dummy"));
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("email");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn("@example.org");
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
@@ -61,7 +61,7 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
     public void verifyOperationByProvider() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(TestMultifactorAuthenticationProvider.ID));
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
@@ -74,7 +74,7 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
     public void verifyOperationByNoKnownProvider() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of("unknown"));
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,

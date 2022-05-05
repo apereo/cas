@@ -47,7 +47,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("email");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(".+@example.*");
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(provider1.getId(), provider2.getId()));
-        when(registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val chain = new DefaultChainingMultifactorAuthenticationProvider(mock(MultifactorAuthenticationFailureModeEvaluator.class));
         chain.addMultifactorAuthenticationProviders(provider1, provider1);
@@ -83,12 +83,12 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         assertTrue(trigger.isActivated(authentication, null,
             httpRequest, httpResponse, mock(Service.class)).isEmpty());
 
-        when(registeredService.getMultifactorPolicy()).thenReturn(null);
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(null);
         assertTrue(trigger.isActivated(authentication, registeredService,
             httpRequest, httpResponse, mock(Service.class)).isEmpty());
 
 
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
         val result = trigger.isActivated(authentication, registeredService,
             this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
@@ -107,7 +107,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("email");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(".+@example.*");
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(provider1.getId(), provider2.getId()));
-        when(registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val selector = mock(MultifactorAuthenticationProviderSelector.class);
@@ -126,7 +126,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("bad-attribute");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(".+@example.*");
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(TestMultifactorAuthenticationProvider.ID));
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getPrincipal().setDenyIfUnmatched(true);
@@ -143,7 +143,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("bad-attribute");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(".+@example.*");
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(TestMultifactorAuthenticationProvider.ID));
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
@@ -159,7 +159,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("email");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(StringUtils.EMPTY);
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(TestMultifactorAuthenticationProvider.ID));
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,

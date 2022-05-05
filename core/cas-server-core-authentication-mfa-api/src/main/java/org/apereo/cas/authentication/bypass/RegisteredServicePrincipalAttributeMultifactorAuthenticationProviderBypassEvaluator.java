@@ -34,7 +34,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
                                                                           final HttpServletRequest request) {
 
         if (registeredService != null) {
-            val mfaPolicy = registeredService.getMultifactorPolicy();
+            val mfaPolicy = registeredService.getMultifactorAuthenticationPolicy();
             val bypassEnabled = mfaPolicy != null
                                 && StringUtils.isNotBlank(mfaPolicy.getBypassPrincipalAttributeName())
                                 && StringUtils.isNotBlank(mfaPolicy.getBypassPrincipalAttributeValue());

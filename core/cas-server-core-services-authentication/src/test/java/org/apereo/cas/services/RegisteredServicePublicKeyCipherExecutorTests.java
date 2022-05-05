@@ -45,7 +45,7 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
         assertNull(e.encode(ticketId, Optional.of(svc)));
     }
 
-    private static AbstractRegisteredService getService(final String keyLocation) {
+    private static BaseRegisteredService getService(final String keyLocation) {
         val svc = new CasRegisteredService();
         svc.setServiceId("Testing");
         if (StringUtils.isNotBlank(keyLocation)) {

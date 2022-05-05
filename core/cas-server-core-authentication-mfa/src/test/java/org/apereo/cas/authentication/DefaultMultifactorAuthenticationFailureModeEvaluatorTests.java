@@ -57,7 +57,7 @@ public class DefaultMultifactorAuthenticationFailureModeEvaluatorTests {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setFailureMode(serviceMode);
-        when(service.getMultifactorPolicy()).thenReturn(policy);
+        when(service.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val result = eval.evaluate(service, provider);
         assertEquals(expected, result);

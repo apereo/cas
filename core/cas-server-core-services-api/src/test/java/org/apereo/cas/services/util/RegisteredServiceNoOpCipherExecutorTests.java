@@ -1,6 +1,6 @@
 package org.apereo.cas.services.util;
 
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
@@ -34,7 +34,7 @@ public class RegisteredServiceNoOpCipherExecutorTests {
         assertFalse(cipher.isEnabled());
     }
 
-    private static AbstractRegisteredService getService(final String keyLocation) {
+    private static BaseRegisteredService getService(final String keyLocation) {
         val svc = new CasRegisteredService();
         svc.setServiceId("Testing");
         svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));

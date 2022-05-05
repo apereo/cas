@@ -50,7 +50,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public RegisteredService save(final RegisteredService service) {
         LOGGER.trace("Saving service [{}]:[{}]", service.getClass().getName(), service.getName());
-        if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
+        if (service.getId() == BaseRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             service.setId(UUID.randomUUID().getLeastSignificantBits());
         }
         val stringWriter = new StringWriter();

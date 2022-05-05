@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,13 +37,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceExpirationPolicy getExpirationPolicy();
 
     /**
-     * Get the proxy policy rules for this service.
-     *
-     * @return the proxy policy
-     */
-    RegisteredServiceProxyPolicy getProxyPolicy();
-
-    /**
      * Get the authentication policy assigned to this service.
      * @return the policy
      */
@@ -57,13 +49,17 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      */
     RegisteredServiceMatchingStrategy getMatchingStrategy();
 
-
     /**
-     * Gets interrupt policy that is assigned to this service.
+     * Gets the public key associated with this service
+     * that is used to authorize the request by
+     * encrypting certain elements and attributes in
+     * the CAS validation protocol response, such as
+     * the PGT.
      *
-     * @return the interrupt policy
+     * @return the public key instance used to authorize the request
+     * @since 4.1
      */
-    RegisteredServiceWebflowInterruptPolicy getWebflowInterruptPolicy();
+    RegisteredServicePublicKey getPublicKey();
 
     /**
      * The unique identifier for this service.
@@ -154,25 +150,11 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider();
 
     /**
-     * Get the acceptable usage policy linked to this application.
-     *
-     * @return an instance of {@link RegisteredServiceAcceptableUsagePolicy}
-     */
-    RegisteredServiceAcceptableUsagePolicy getAcceptableUsagePolicy();
-
-    /**
      * Gets multifactor authentication policy.
      *
      * @return the authentication policy
      */
-    RegisteredServiceMultifactorPolicy getMultifactorPolicy();
-
-    /**
-     * Gets proxy ticket expiration policy.
-     *
-     * @return the proxy ticket expiration policy
-     */
-    RegisteredServiceProxyTicketExpirationPolicy getProxyTicketExpirationPolicy();
+    RegisteredServiceMultifactorPolicy getMultifactorAuthenticationPolicy();
 
     /**
      * Gets ticket granting ticket expiration policy.
@@ -180,27 +162,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the ticket granting ticket expiration policy
      */
     RegisteredServiceTicketGrantingTicketExpirationPolicy getTicketGrantingTicketExpirationPolicy();
-
-    /**
-     * Gets proxy granting ticket expiration policy.
-     *
-     * @return the proxy granting ticket expiration policy
-     */
-    RegisteredServiceProxyGrantingTicketExpirationPolicy getProxyGrantingTicketExpirationPolicy();
-
-    /**
-     * Gets service ticket expiration policy.
-     *
-     * @return the service ticket expiration policy
-     */
-    RegisteredServiceServiceTicketExpirationPolicy getServiceTicketExpirationPolicy();
-
-    /**
-     * Gets SSO participation strategy.
-     *
-     * @return the service ticket expiration policy
-     */
-    RegisteredServiceSingleSignOnParticipationPolicy getSingleSignOnParticipationPolicy();
 
     /**
      * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
@@ -299,30 +260,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @since 4.1
      */
     String getLogoutUrl();
-
-    /**
-     * Identifies the redirect url that will be used
-     * when building a response to authentication requests.
-     * The url is ultimately used to carry the service ticket
-     * back to the application and will override the default
-     * url which is tracked by the {@link WebApplicationService#getOriginalUrl()}.
-     *
-     * @return the redirect url for this service
-     * @since 6.2
-     */
-    String getRedirectUrl();
-
-    /**
-     * Gets the public key associated with this service
-     * that is used to authorize the request by
-     * encrypting certain elements and attributes in
-     * the CAS validation protocol response, such as
-     * the PGT.
-     *
-     * @return the public key instance used to authorize the request
-     * @since 4.1
-     */
-    RegisteredServicePublicKey getPublicKey();
 
     /**
      * Describes extra metadata about the service; custom fields

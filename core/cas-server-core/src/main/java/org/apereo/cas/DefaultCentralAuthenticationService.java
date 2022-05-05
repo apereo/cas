@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
@@ -206,7 +207,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
-        val registeredService = configurationContext.getServicesManager().findServiceBy(serviceTicket.getService());
+        val registeredService = configurationContext.getServicesManager()
+            .findServiceBy(serviceTicket.getService(), CasModelRegisteredService.class);
 
         val ctx = AuditableContext.builder()
             .serviceTicket(serviceTicket)

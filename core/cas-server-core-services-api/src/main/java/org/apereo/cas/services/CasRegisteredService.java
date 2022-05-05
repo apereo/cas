@@ -3,6 +3,9 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * This is {@link CasRegisteredService}.
@@ -12,7 +15,10 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public class CasRegisteredService extends AbstractRegisteredService {
+@Getter
+@Setter
+public class CasRegisteredService extends BaseWebBasedRegisteredService implements CasModelRegisteredService {
+    
     /**
      * The friendly name for this client.
      */
@@ -20,9 +26,25 @@ public class CasRegisteredService extends AbstractRegisteredService {
 
     private static final long serialVersionUID = -2416680749378661897L;
 
+    private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
+
+    private RegisteredServiceProxyTicketExpirationPolicy proxyTicketExpirationPolicy;
+
+    private RegisteredServiceProxyGrantingTicketExpirationPolicy proxyGrantingTicketExpirationPolicy;
+
+    private RegisteredServiceServiceTicketExpirationPolicy serviceTicketExpirationPolicy;
+
+    private String redirectUrl;
+
     @JsonIgnore
     @Override
     public String getFriendlyName() {
         return FRIENDLY_NAME;
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
     }
 }

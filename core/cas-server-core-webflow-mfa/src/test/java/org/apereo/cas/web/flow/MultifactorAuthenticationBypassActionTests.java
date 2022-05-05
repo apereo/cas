@@ -121,7 +121,7 @@ public class MultifactorAuthenticationBypassActionTests {
             val service = RegisteredServiceTestUtils.getRegisteredService();
             val policy = new DefaultRegisteredServiceMultifactorPolicy();
             policy.setFailureMode(MultifactorAuthenticationProviderFailureModes.OPEN);
-            service.setMultifactorPolicy(policy);
+            service.setMultifactorAuthenticationPolicy(policy);
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);
             WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);

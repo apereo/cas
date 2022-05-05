@@ -1,6 +1,7 @@
 package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -61,7 +62,7 @@ public class RegexAttributeInterruptInquirerTests {
     @Test
     public void verifyInterruptSkippedWithServicePolicy() {
         val q = new RegexAttributeInterruptInquirer("member..", "CA.|system");
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
         registeredService.setWebflowInterruptPolicy(new DefaultRegisteredServiceWebflowInterruptPolicy().setEnabled(false));
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             registeredService,

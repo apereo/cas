@@ -207,7 +207,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(Map.of());
         val multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
         multifactorPolicy.setForceExecution(true);
-        registeredService.setMultifactorPolicy(multifactorPolicy);
+        registeredService.setMultifactorAuthenticationPolicy(multifactorPolicy);
         WebUtils.putRegisteredService(context, registeredService);
         assertEquals(TestMultifactorAuthenticationProvider.ID, resolver.resolveSingle(context).getId());
     }

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
+import org.apereo.cas.services.WebBasedRegisteredService;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,7 +47,7 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
                     RegisteredServiceProperties.SKIP_INTERRUPT_NOTIFICATIONS.getPropertyName(), registeredService.getName());
                 return true;
             }
-            val policy = registeredService.getWebflowInterruptPolicy();
+            val policy = ((WebBasedRegisteredService) registeredService).getWebflowInterruptPolicy();
             if (policy != null && !policy.isEnabled()) {
                 LOGGER.debug("Service [{}] is assigned an interrupt policy that disables interrupt notifications", registeredService.getName());
                 return true;

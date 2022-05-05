@@ -228,7 +228,7 @@ public class MultifactorAuthenticationProviderBypassTests {
 
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.isBypassEnabled()).thenReturn(true);
-        when(service.getMultifactorPolicy()).thenReturn(policy);
+        when(service.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         assertFalse(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }

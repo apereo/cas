@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mock.MockServiceTicket;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
@@ -121,7 +122,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
     private static RegisteredService createMockRegisteredService(final String svcId,
                                                                  final boolean enabled,
                                                                  final RegisteredServiceProxyPolicy proxy) {
-        val mockRegSvc = mock(RegisteredService.class);
+        val mockRegSvc = mock(CasModelRegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
         when(mockRegSvc.getName()).thenReturn(svcId);

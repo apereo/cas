@@ -124,7 +124,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         val validatedProvider = result.getProvider();
 
         if (result.isSuccess()) {
-            if (service.getMultifactorPolicy().isForceExecution() && validatedProvider.isPresent()) {
+            if (service.getMultifactorAuthenticationPolicy().isForceExecution() && validatedProvider.isPresent()) {
                 val provider = validatedProvider.get();
                 LOGGER.trace("Multifactor authentication policy for [{}] is set to force execution for [{}]", service, provider);
                 return buildEventForMultifactorProvider(context, service, authentication, id, provider);

@@ -4,6 +4,7 @@ import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -115,7 +116,7 @@ public class AcceptableUsagePolicyVerifyActionTests {
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+            val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
             val policy = new DefaultRegisteredServiceAcceptableUsagePolicy();
             policy.setEnabled(false);
             registeredService.setAcceptableUsagePolicy(policy);

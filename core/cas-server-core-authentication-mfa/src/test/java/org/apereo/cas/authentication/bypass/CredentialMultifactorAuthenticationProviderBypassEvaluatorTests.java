@@ -45,7 +45,7 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluatorTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
-        when(registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
         assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
 
         bypassProps.setCredentialClassType(BasicIdentifiableCredential.class.getName());

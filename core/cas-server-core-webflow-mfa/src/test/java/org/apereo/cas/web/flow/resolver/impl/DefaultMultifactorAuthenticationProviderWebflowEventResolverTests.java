@@ -110,7 +110,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests e
         
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(Map.of());
         registeredService.setServiceId(service.getId());
-        registeredService.setMultifactorPolicy(new DefaultRegisteredServiceMultifactorPolicy().setBypassEnabled(true));
+        registeredService.setMultifactorAuthenticationPolicy(new DefaultRegisteredServiceMultifactorPolicy().setBypassEnabled(true));
         servicesManager.save(registeredService);
         WebUtils.putRegisteredService(context, registeredService);
 

@@ -18,7 +18,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.TokenCoreComponentSerializationConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -122,7 +122,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
             };
         }
 
-        private AbstractRegisteredService createRegisteredService(final String id, final boolean hasSigningKey, final boolean hasEncryptionKey) {
+        private BaseRegisteredService createRegisteredService(final String id, final boolean hasSigningKey, final boolean hasEncryptionKey) {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
 
             if (hasSigningKey) {

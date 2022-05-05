@@ -204,7 +204,7 @@ public class MultifactorAuthenticationUtils {
     public Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderForService(
         final RegisteredService service,
         final ApplicationContext applicationContext) {
-        return Optional.ofNullable(service.getMultifactorPolicy())
+        return Optional.ofNullable(service.getMultifactorAuthenticationPolicy())
             .map(policy -> policy.getMultifactorAuthenticationProviders()
                 .stream()
                 .map(provider ->

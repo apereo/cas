@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.UnauthorizedProxyingException;
@@ -163,7 +164,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         val proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
             LOGGER.debug("Ticket-granting ticket is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
-            val proxyingService = configurationContext.getServicesManager().findServiceBy(proxiedBy);
+            val proxyingService = configurationContext.getServicesManager().findServiceBy(proxiedBy, CasModelRegisteredService.class);
             if (proxyingService != null) {
                 LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {

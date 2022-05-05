@@ -36,7 +36,7 @@ public class DefaultMultifactorAuthenticationFailureModeEvaluator implements Mul
         }
 
         if (service != null) {
-            val policy = service.getMultifactorPolicy();
+            val policy = service.getMultifactorAuthenticationPolicy();
             if (policy != null && policy.getFailureMode() != MultifactorAuthenticationProviderFailureModes.UNDEFINED) {
                 LOGGER.debug("Service failure mode [{}] overriding current failure mode [{}]", policy.getFailureMode(), failureMode);
                 failureMode = policy.getFailureMode();

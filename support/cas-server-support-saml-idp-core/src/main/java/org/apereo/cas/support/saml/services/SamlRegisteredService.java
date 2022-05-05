@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -32,7 +32,7 @@ import java.util.TreeMap;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class SamlRegisteredService extends AbstractRegisteredService {
+public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     /**
      * Service definition friendly name.

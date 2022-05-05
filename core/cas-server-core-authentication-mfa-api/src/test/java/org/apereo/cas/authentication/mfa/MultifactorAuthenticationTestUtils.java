@@ -91,7 +91,7 @@ public class MultifactorAuthenticationTestUtils {
         when(mfaPolicy.isBypassEnabled()).thenReturn(false);
         when(mfaPolicy.getFailureMode())
             .thenReturn(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.valueOf(failureMode));
-        when(service.getMultifactorPolicy()).thenReturn(mfaPolicy);
+        when(service.getMultifactorAuthenticationPolicy()).thenReturn(mfaPolicy);
         return service;
     }
 

@@ -183,17 +183,17 @@ public class MultifactorAuthenticationUtilsTests {
         assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId()).isPresent());
 
         val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
-        when(registeredService.getMultifactorPolicy().getMultifactorAuthenticationProviders()).thenReturn(Set.of("mfa-other"));
+        when(registeredService.getMultifactorAuthenticationPolicy().getMultifactorAuthenticationProviders()).thenReturn(Set.of("mfa-other"));
         var result = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext);
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
-        when(registeredService.getMultifactorPolicy().getMultifactorAuthenticationProviders()).thenReturn(Set.of(provider.getId()));
+        when(registeredService.getMultifactorAuthenticationPolicy().getMultifactorAuthenticationProviders()).thenReturn(Set.of(provider.getId()));
         result = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext);
         assertNotNull(result);
         assertFalse(result.isEmpty());
 
-        when(registeredService.getMultifactorPolicy()).thenReturn(null);
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(null);
         assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext).isEmpty());
     }
 }

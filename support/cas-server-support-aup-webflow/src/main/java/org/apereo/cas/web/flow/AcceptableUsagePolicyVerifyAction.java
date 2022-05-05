@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -54,7 +55,7 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
         WebUtils.putAcceptableUsagePolicyStatusIntoFlowScope(context, res);
 
         val eventFactorySupport = new EventFactorySupport();
-        val registeredService = WebUtils.getRegisteredService(context);
+        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(context);
 
         if (registeredService != null) {
             val service = WebUtils.getService(context);

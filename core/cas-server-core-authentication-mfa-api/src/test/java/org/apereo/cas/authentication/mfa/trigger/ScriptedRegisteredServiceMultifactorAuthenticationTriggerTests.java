@@ -27,7 +27,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
     public void verifyOperationByProviderEmbeddedScript() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("groovy { return '" + multifactorAuthenticationProvider.getId() + "' }");
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
@@ -39,7 +39,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
     public void verifyUnknownProvider() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("groovy { return 'unknown' }");
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
@@ -51,7 +51,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
     public void verifyNoResult() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("groovy { return null }");
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
@@ -66,7 +66,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
 
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("groovy { return '" + multifactorAuthenticationProvider.getId() + "' }");
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
@@ -78,7 +78,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
     public void verifyOperationByProviderScript() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("classpath:ScriptedRegisteredServiceMultifactorAuthenticationTrigger.groovy");
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
@@ -90,7 +90,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
     public void verifyOperationByProviderScriptUnknown() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("classpath:Unknown.groovy");
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);

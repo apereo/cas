@@ -1,6 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,7 +21,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class WSFederationRegisteredService extends AbstractRegisteredService {
+public class WSFederationRegisteredService extends BaseWebBasedRegisteredService {
 
     private static final long serialVersionUID = -3700571300568534062L;
 
