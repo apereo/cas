@@ -31,7 +31,7 @@ dependencies {
     implementation project(":support:cas-server-support-ws-idp-api")
 
     compileOnly project(":support:cas-server-support-jpa-util")
-    
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-cookie")

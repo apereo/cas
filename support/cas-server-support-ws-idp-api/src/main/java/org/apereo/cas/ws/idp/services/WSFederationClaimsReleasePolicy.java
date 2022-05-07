@@ -11,6 +11,7 @@ import org.apereo.cas.ws.idp.WSFederationClaims;
 import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,14 +32,11 @@ import java.util.TreeMap;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
     private static final long serialVersionUID = -2814928645221579489L;
 
     private Map<String, String> allowedAttributes = new LinkedHashMap<>();
-
-    public WSFederationClaimsReleasePolicy() {
-        setAllowedAttributes(new LinkedHashMap<>());
-    }
 
     public WSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {
         setAllowedAttributes(allowedAttributes);
