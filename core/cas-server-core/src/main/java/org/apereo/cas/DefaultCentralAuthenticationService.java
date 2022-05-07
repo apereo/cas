@@ -207,8 +207,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
-        val registeredService = configurationContext.getServicesManager()
-            .findServiceBy(serviceTicket.getService(), CasModelRegisteredService.class);
+        val registeredService = (CasModelRegisteredService) configurationContext.getServicesManager()
+            .findServiceBy(serviceTicket.getService());
 
         val ctx = AuditableContext.builder()
             .serviceTicket(serviceTicket)

@@ -58,10 +58,13 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      * @return the string
      */
     protected String determineServiceResponseUrl(final WebApplicationService service) {
-        val registeredService = this.servicesManager.findServiceBy(service, CasModelRegisteredService.class);
-        if (registeredService != null && StringUtils.isNotBlank(registeredService.getRedirectUrl())
-            && getUrlValidator().isValid(registeredService.getRedirectUrl())) {
-            return registeredService.getRedirectUrl();
+        val registeredService = this.servicesManager.findServiceBy(service);
+        if (registeredService instanceof CasModelRegisteredService) {
+            val casService = (CasModelRegisteredService) registeredService;
+            if (StringUtils.isNotBlank(casService.getRedirectUrl())
+                && getUrlValidator().isValid(casService.getRedirectUrl())) {
+                return casService.getRedirectUrl();
+            }
         }
         return service.getOriginalUrl();
     }
