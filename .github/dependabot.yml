@@ -9,3 +9,8 @@ updates:
   - dependency-name: org.bouncycastle:bcprov-jdk15on
     versions:
     - "1.68"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: 
+      interval: daily
+    open-pull-requests-limit: 10
