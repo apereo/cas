@@ -14,6 +14,8 @@ import org.apereo.cas.support.claims.NonWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
 import org.apereo.cas.support.realm.RealmPasswordVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
+import org.apereo.cas.support.saml.sts.SamlTokenProvider;
+import org.apereo.cas.support.saml.sts.SamlTokenValidator;
 import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.support.validation.CipheredCredentialsValidator;
 import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
@@ -46,12 +48,17 @@ import org.apache.cxf.sts.token.provider.TokenProvider;
 import org.apache.cxf.sts.token.provider.jwt.JWTTokenProvider;
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.sts.token.realm.Relationship;
-import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
 import org.apache.cxf.sts.token.validator.SCTValidator;
 import org.apache.cxf.sts.token.validator.TokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
 import org.apache.cxf.sts.token.validator.jwt.JWTTokenValidator;
 import org.apache.cxf.transport.servlet.CXFServlet;
+import org.apache.cxf.ws.policy.PolicyInterceptorProvider;
+import org.apache.cxf.ws.security.policy.interceptors.HttpsTokenInterceptorProvider;
+import org.apache.cxf.ws.security.policy.interceptors.IssuedTokenInterceptorProvider;
+import org.apache.cxf.ws.security.policy.interceptors.SamlTokenInterceptorProvider;
+import org.apache.cxf.ws.security.policy.interceptors.WSSecurityInterceptorProvider;
+import org.apache.cxf.ws.security.policy.interceptors.WSSecurityPolicyInterceptorProvider;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
 import org.apache.cxf.ws.security.sts.provider.operation.IssueOperation;
 import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
@@ -210,7 +217,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             c.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).toSeconds());
             c.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).toSeconds());
             c.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).toSeconds());
-            val provider = new SAMLTokenProvider();
+            val provider = new SamlTokenProvider();
             provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
             provider.setRealmMap(securityTokenServiceRealms);
             provider.setConditionsProvider(c);
@@ -280,7 +287,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @ConditionalOnMissingBean(name = "transportSamlTokenValidator")
         @Bean
         public TokenValidator transportSamlTokenValidator() {
-            return new SAMLTokenValidator();
+            return new SamlTokenValidator();
         }
 
         @ConditionalOnMissingBean(name = "transportJwtTokenValidator")
@@ -383,6 +390,31 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             rel.setTargetRealm(idp.getRealmName());
             s.setRelationships(CollectionUtils.wrap(rel));
             return s;
+        }
+
+        @Bean
+        public PolicyInterceptorProvider wsSecurityPolicyInterceptorProvider() {
+            return new WSSecurityPolicyInterceptorProvider();
+        }
+
+        @Bean
+        public PolicyInterceptorProvider wsSecurityInterceptorProvider() {
+            return new WSSecurityInterceptorProvider();
+        }
+
+        @Bean
+        public PolicyInterceptorProvider wsIssuedTokenInterceptorProvider() {
+            return new IssuedTokenInterceptorProvider();
+        }
+
+        @Bean
+        public PolicyInterceptorProvider wsHttpsTokenInterceptorProvider() {
+            return new HttpsTokenInterceptorProvider();
+        }
+
+        @Bean
+        public PolicyInterceptorProvider wsSamlTokenInterceptorProvider() {
+            return new SamlTokenInterceptorProvider();
         }
     }
 
