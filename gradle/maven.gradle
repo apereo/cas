@@ -186,12 +186,6 @@ ext.createPomRepositories = { node ->
     repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jitpack")
-    repository.appendNode("url", "https://jitpack.io")
-    repository.appendNode("releases").appendNode("enabled", "true")
-    repository.appendNode("snapshots").appendNode("enabled", "false")
-
-    repository = repositories.appendNode("repository")
     repository.appendNode("id", "sonatype-snapshot")
     repository.appendNode("url", "https://oss.sonatype.org/content/repositories/snapshots")
     repository.appendNode("snapshots").appendNode("enabled", "true")

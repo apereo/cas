@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * This is {@link BaseWebBasedRegisteredService}.
@@ -24,11 +23,4 @@ public abstract class BaseWebBasedRegisteredService extends BaseRegisteredServic
     private RegisteredServiceSingleSignOnParticipationPolicy singleSignOnParticipationPolicy;
 
     private RegisteredServiceWebflowInterruptPolicy webflowInterruptPolicy = new DefaultRegisteredServiceWebflowInterruptPolicy();
-
-    @Override
-    public void initialize() {
-        super.initialize();
-        this.acceptableUsagePolicy = ObjectUtils.defaultIfNull(this.acceptableUsagePolicy, new DefaultRegisteredServiceAcceptableUsagePolicy());
-        this.webflowInterruptPolicy = ObjectUtils.defaultIfNull(this.webflowInterruptPolicy, new DefaultRegisteredServiceWebflowInterruptPolicy());
-    }
 }

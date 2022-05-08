@@ -53,17 +53,6 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private String userProfileViewType;
 
-    @Override
-    public void initialize() {
-        super.initialize();
-        if (this.supportedGrantTypes == null) {
-            this.supportedGrantTypes = new HashSet<>(0);
-        }
-        if (this.supportedResponseTypes == null) {
-            this.supportedResponseTypes = new HashSet<>(0);
-        }
-    }
-
     @JsonIgnore
     @Override
     public String getFriendlyName() {

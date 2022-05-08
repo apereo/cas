@@ -76,15 +76,8 @@ public class SamlTokenProvider extends SAMLTokenProvider {
             }
             response.setToken(token);
 
-            final Instant validFrom;
-            final Instant validTill;
-            if (assertion.getSamlVersion().equals(SAMLVersion.VERSION_20)) {
-                validFrom = assertion.getSaml2().getConditions().getNotBefore();
-                validTill = assertion.getSaml2().getConditions().getNotOnOrAfter();
-            } else {
-                validFrom = assertion.getSaml1().getConditions().getNotBefore();
-                validTill = assertion.getSaml1().getConditions().getNotOnOrAfter();
-            }
+            val validFrom = getNotBefore(assertion);
+            val validTill = getNotOnOrAfter(assertion);
             response.setCreated(validFrom);
             response.setExpires(validTill);
             response.setEntropy(null);
@@ -92,5 +85,19 @@ public class SamlTokenProvider extends SAMLTokenProvider {
             LOGGER.debug("SAML Token successfully created");
             return response;
         });
+    }
+
+    private static Instant getNotBefore(final SamlAssertionWrapper assertion) {
+        if (assertion.getSamlVersion().equals(SAMLVersion.VERSION_20)) {
+            return assertion.getSaml2().getConditions().getNotBefore();
+        }
+        return assertion.getSaml1().getConditions().getNotBefore();
+    }
+
+    private static Instant getNotOnOrAfter(final SamlAssertionWrapper assertion) {
+        if (assertion.getSamlVersion().equals(SAMLVersion.VERSION_20)) {
+            return assertion.getSaml2().getConditions().getNotOnOrAfter();
+        }
+        return assertion.getSaml1().getConditions().getNotOnOrAfter();
     }
 }
