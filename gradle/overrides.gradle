@@ -95,6 +95,10 @@ configurations.all {
                 if (requested.group == "ch.qos.logback")  {
                     details.useVersion("${logbackVersion}")
                 }
+                if (requested.group == "org.glassfish.jaxb")  {
+                    details.useVersion("${jaxbRuntimeVersion}")
+                }
+
                 if (requested.group == "org.apache.httpcomponents")  {
                     if (details.requested.name == "httpcore") {
                         details.useVersion("${httpCoreVersion}")
