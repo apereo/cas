@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
@@ -18,7 +17,6 @@ import org.springframework.data.annotation.Id;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,9 +86,9 @@ public abstract class BaseRegisteredService implements RegisteredService {
     private String logo;
 
     private String logoutUrl;
-    
+
     private RegisteredServiceAccessStrategy accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-    
+
     private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
     private Map<String, RegisteredServiceProperty> properties = new HashMap<>(0);
@@ -134,20 +132,6 @@ public abstract class BaseRegisteredService implements RegisteredService {
             initialize();
             getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(requiredHandlers);
         }
-    }
-
-    @Override
-    public void initialize() {
-        this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
-        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, RegisteredServiceLogoutType.BACK_CHANNEL);
-        this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
-        this.multifactorAuthenticationPolicy = ObjectUtils.defaultIfNull(this.multifactorAuthenticationPolicy, new DefaultRegisteredServiceMultifactorPolicy());
-        this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap<>(0));
-        this.attributeReleasePolicy = ObjectUtils.defaultIfNull(this.attributeReleasePolicy, new ReturnAllowedAttributeReleasePolicy());
-        this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList<>(0));
-        this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
-        this.authenticationPolicy = ObjectUtils.defaultIfNull(this.authenticationPolicy, new DefaultRegisteredServiceAuthenticationPolicy());
-        this.matchingStrategy = ObjectUtils.defaultIfNull(this.matchingStrategy, new FullRegexRegisteredServiceMatchingStrategy());
     }
 
     @Override
