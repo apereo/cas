@@ -1,4 +1,4 @@
-package org.apereo.cas.services.util;
+package org.apereo.cas.util.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.Ordered;
@@ -7,20 +7,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link RegisteredServiceSerializationCustomizer}.
+ * This is {@link JacksonObjectMapperCustomizer}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-public interface RegisteredServiceSerializationCustomizer extends Ordered {
+public interface JacksonObjectMapperCustomizer extends Ordered {
 
     /**
-     * No-Op registered service serialization customizer.
+     * No-Op customizer.
      *
-     * @return the registered service serialization customizer
+     * @return the customizer
      */
-    static RegisteredServiceSerializationCustomizer noOp() {
-        return new RegisteredServiceSerializationCustomizer() {
+    static JacksonObjectMapperCustomizer noOp() {
+        return new JacksonObjectMapperCustomizer() {
         };
     }
 

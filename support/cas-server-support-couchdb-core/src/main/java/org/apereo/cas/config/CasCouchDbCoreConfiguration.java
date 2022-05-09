@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
@@ -30,8 +31,8 @@ public class CasCouchDbCoreConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "defaultObjectMapperFactory")
-    public ObjectMapperFactory defaultObjectMapperFactory() {
-        val objectMapperFactory = new CasObjectMapperFactory();
+    public ObjectMapperFactory defaultObjectMapperFactory(final ConfigurableApplicationContext applicationContext) {
+        val objectMapperFactory = new CasObjectMapperFactory(applicationContext);
         ViewQuery.setDefaultObjectMapperFactory(objectMapperFactory);
         return objectMapperFactory;
     }

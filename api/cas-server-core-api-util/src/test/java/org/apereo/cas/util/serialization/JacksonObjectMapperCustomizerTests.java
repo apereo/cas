@@ -1,6 +1,4 @@
-package org.apereo.cas.services.util;
-
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+package org.apereo.cas.util.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -11,18 +9,18 @@ import org.springframework.core.Ordered;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link RegisteredServiceSerializationCustomizerTests}.
+ * This is {@link JacksonObjectMapperCustomizerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("RegisteredService")
-public class RegisteredServiceSerializationCustomizerTests {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
+@Tag("Utility")
+public class JacksonObjectMapperCustomizerTests {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifyOperation() {
-        val customizer = RegisteredServiceSerializationCustomizer.noOp();
+        val customizer = JacksonObjectMapperCustomizer.noOp();
         assertEquals(Ordered.LOWEST_PRECEDENCE, customizer.getOrder());
         assertDoesNotThrow(() -> customizer.customize(MAPPER));
         assertTrue(customizer.getInjectableValues().isEmpty());

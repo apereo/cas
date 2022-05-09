@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.couchdb.core.CasObjectMapperFactory;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
@@ -11,10 +10,10 @@ import org.apereo.cas.services.CouchDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -47,11 +46,10 @@ public class CouchDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) {
-        val mapper = new RegisteredServiceJsonSerializer(applicationContext).getObjectMapper();
-        val factory = new CasObjectMapperFactory();
-        factory.setObjectMapper(mapper);
-        return new DefaultCouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), factory);
+        final CasConfigurationProperties casProperties,
+        @Qualifier("defaultObjectMapperFactory")
+        final ObjectMapperFactory objectMapperFactory) {
+        return new DefaultCouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory);
     }
 
     @Bean

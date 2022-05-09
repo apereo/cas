@@ -9,12 +9,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link JacksonObjectMapperFactory}.
@@ -42,6 +48,25 @@ public class JacksonObjectMapperFactory {
     private final Map<String, Object> injectableValues = new LinkedHashMap<>();
 
     private final JsonFactory jsonFactory;
+
+    /**
+     * Configure an existing mapper.
+     *
+     * @param applicationContext the application context
+     * @param objectMapper       the mapper
+     */
+    public static void configure(final ConfigurableApplicationContext applicationContext,
+                                 final ObjectMapper objectMapper) {
+        objectMapper.registerModule(new JavaTimeModule());
+        val serializers = new ArrayList<>(applicationContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values());
+        AnnotationAwareOrderComparator.sort(serializers);
+        val injectedValues = (Map) serializers
+            .stream()
+            .map(JacksonObjectMapperCustomizer::getInjectableValues)
+            .flatMap(entry -> entry.entrySet().stream())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        objectMapper.setInjectableValues(new JacksonInjectableValueSupplier(() -> injectedValues));
+    }
 
     /**
      * Produce an object mapper for YAML serialization/de-serialization.
