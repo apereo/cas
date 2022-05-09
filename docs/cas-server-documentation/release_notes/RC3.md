@@ -107,7 +107,7 @@ that belong to [SAML2 service definitions](../services/SAML2-Service-Management.
   and automatically.
 - Triggering multifactor authentication [based on a Groovy script](../mfa/Configuring-Multifactor-Authentication-Triggers-Groovy.html) is now able to support
   provider selection menus.
-- Minor bug fixes to allow [Duo Security](../mfa/DuoSecurity-Authentication.html) to correct recognize bypass rules that are defined based on principal 
+- Minor bug fixes to allow [Duo Security](../mfa/DuoSecurity-Authentication.html) to correctly recognize bypass rules that are defined based on principal 
 
 ## Library Upgrades
 

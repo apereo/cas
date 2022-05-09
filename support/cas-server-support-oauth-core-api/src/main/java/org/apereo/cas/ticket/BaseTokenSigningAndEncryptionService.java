@@ -8,10 +8,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 
 import com.nimbusds.jwt.JWTClaimsSet;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -33,11 +31,8 @@ import java.util.UUID;
  */
 @Slf4j
 @NoArgsConstructor(force = true)
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseTokenSigningAndEncryptionService implements OAuth20TokenSigningAndEncryptionService {
-    private final String issuer;
-
     @Override
     public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
         return FunctionUtils.doUnchecked(() -> {
@@ -52,7 +47,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             FunctionUtils.throwIf(StringUtils.isBlank(claims.getIssuer()),
                 () -> new IllegalArgumentException("Claims do not contain an issuer"));
 
-            validateIssuerClaim(claims);
+            validateIssuerClaim(claims, service);
 
             FunctionUtils.throwIf(StringUtils.isBlank(claims.getStringClaim(OAuth20Constants.CLIENT_ID)),
                 () -> new IllegalArgumentException("Claims do not contain a client id claim"));
@@ -69,17 +64,13 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
      */
     public abstract Set<String> getAllowedSigningAlgorithms(OAuthRegisteredService svc);
 
-    protected void validateIssuerClaim(final JWTClaimsSet claims) {
+    protected void validateIssuerClaim(final JWTClaimsSet claims, final Optional<OAuthRegisteredService> service) {
         LOGGER.debug("Validating claims as [{}] with issuer [{}]", claims, claims.getIssuer());
-        val iss = determineIssuer(claims);
+        val iss = resolveIssuer(service);
         Objects.requireNonNull(iss, "Issuer cannot be null or undefined");
         FunctionUtils.throwIf(!claims.getIssuer().equalsIgnoreCase(iss),
             () -> new IllegalArgumentException("Issuer assigned to claims "
                                                + claims.getIssuer() + " does not match " + iss));
-    }
-
-    protected String determineIssuer(final JWTClaimsSet claims) {
-        return getIssuer();
     }
 
     protected String signToken(final OAuthRegisteredService service,

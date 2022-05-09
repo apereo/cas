@@ -17,8 +17,8 @@ public interface OAuth20TokenSigningAndEncryptionService {
     /**
      * Sign id token.
      *
-     * @param service    the service
-     * @param claims the claims
+     * @param service the service
+     * @param claims  the claims
      * @return the string
      */
     String encode(OAuthRegisteredService service, JwtClaims claims);
@@ -43,13 +43,6 @@ public interface OAuth20TokenSigningAndEncryptionService {
     }
 
     /**
-     * Gets issuer.
-     *
-     * @return the issuer
-     */
-    String getIssuer();
-
-    /**
      * Should sign token for service?
      *
      * @param svc the svc
@@ -68,4 +61,12 @@ public interface OAuth20TokenSigningAndEncryptionService {
     default boolean shouldEncryptToken(final OAuthRegisteredService svc) {
         return false;
     }
+
+    /**
+     * Resolve issuer string.
+     *
+     * @param service the service
+     * @return the string
+     */
+    String resolveIssuer(Optional<OAuthRegisteredService> service);
 }

@@ -54,12 +54,10 @@ public class CasWebAppSecurityConfiguration {
     public SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler() {
         return new CasWebSecurityExpressionHandler();
     }
-
     @Bean
     public InitializingBean securityContextHolderInitialization() {
         return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_THREADLOCAL);
     }
-
     @Configuration(value = "CasWebAppSecurityMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebAppSecurityMvcConfiguration {
@@ -99,6 +97,7 @@ public class CasWebAppSecurityConfiguration {
     @Configuration(value = "CasWebAppSecurityJdbcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
+    @SuppressWarnings("ConditionalOnProperty")
     public static class CasWebAppSecurityJdbcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jdbcUserDetailsPasswordEncoder")

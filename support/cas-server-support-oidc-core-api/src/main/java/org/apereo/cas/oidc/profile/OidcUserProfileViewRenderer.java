@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -70,8 +71,8 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
                 });
                 claims.setAudience(registeredService.getClientId());
                 claims.setIssuedAt(NumericDate.now());
-                claims.setIssuer(this.signingAndEncryptionService.getIssuer());
                 claims.setJwtId(UUID.randomUUID().toString());
+                claims.setIssuer(signingAndEncryptionService.resolveIssuer(Optional.of(registeredService)));
 
                 LOGGER.debug("Collected user profile claims, before cipher operations, are [{}]", claims);
                 val result = this.signingAndEncryptionService.encode(registeredService, claims);
