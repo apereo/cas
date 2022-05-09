@@ -12,7 +12,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.nimbusds.jwt.EncryptedJWT;
-import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +81,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     }
 
     @Override
-    protected String determineIssuer(final JWTClaimsSet claims) {
+    public String resolveIssuer(final Optional<OAuthRegisteredService> service) {
         return this.issuerService.determineIssuer(Optional.empty());
     }
 
