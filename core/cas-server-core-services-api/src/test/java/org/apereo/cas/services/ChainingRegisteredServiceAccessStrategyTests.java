@@ -50,7 +50,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
         assertTrue(delegation.getAllowedProviders().contains("P1"));
         assertTrue(delegation.getAllowedProviders().contains("P2"));
         assertFalse(delegation.isProviderRequired());
-        assertFalse(delegation.isProviderAllowed("P2", new RegexRegisteredService()));
+        assertFalse(delegation.isProviderAllowed("P2", new CasRegisteredService()));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
         assertTrue(delegation.isPermitUndefined());
         assertTrue(delegation.isProviderRequired());
 
-        assertTrue(delegation.isProviderAllowed("P1", new RegexRegisteredService()));
+        assertTrue(delegation.isProviderAllowed("P1", new CasRegisteredService()));
     }
 
     @Test

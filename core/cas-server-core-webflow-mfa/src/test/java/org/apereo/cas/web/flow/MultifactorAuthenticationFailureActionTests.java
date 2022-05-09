@@ -53,7 +53,7 @@ public class MultifactorAuthenticationFailureActionTests {
             if (serviceMode != null) {
                 val policy = new DefaultRegisteredServiceMultifactorPolicy();
                 policy.setFailureMode(serviceMode);
-                service.setMultifactorPolicy(policy);
+                service.setMultifactorAuthenticationPolicy(policy);
             }
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);

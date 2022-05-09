@@ -29,8 +29,8 @@ public class SimplePrincipalTests {
     @Test
     public void verifyEquality() {
         val p = new SimplePrincipal("id", new HashMap<>());
-        assertNotEquals(p, null);
-        assertNotEquals(p, "HelloWorld");
+        assertNotEquals(null, p);
+        assertNotEquals("HelloWorld", p);
     }
 
     @Test

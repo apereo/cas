@@ -111,7 +111,7 @@ Application definitions may be assigned a dedicated webflow interrupt policy. A 
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "sample service",
   "id" : 100,
@@ -141,7 +141,7 @@ Interrupt notifications may be disabled on a per-service basis. A sample JSON fi
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "sample service",
   "id" : 100,

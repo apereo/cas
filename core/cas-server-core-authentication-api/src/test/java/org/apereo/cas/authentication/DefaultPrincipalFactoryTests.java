@@ -51,7 +51,7 @@ public class DefaultPrincipalFactoryTests {
     public void verifyAction() {
         val factory = PrincipalFactoryUtils.newPrincipalFactory();
         val p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
-        assertEquals(p.getId(), "casuser");
+        assertEquals("casuser", p.getId());
         assertEquals(1, p.getAttributes().size());
     }
 }

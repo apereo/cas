@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -51,7 +52,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     }
 
     private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
-        val registeredService = servicesManager.findServiceBy(service);
+        val registeredService = servicesManager.findServiceBy(service, CasModelRegisteredService.class);
         if (registeredService != null && registeredService.getProxyTicketExpirationPolicy() != null) {
             val policy = registeredService.getProxyTicketExpirationPolicy();
             val count = policy.getNumberOfUses();

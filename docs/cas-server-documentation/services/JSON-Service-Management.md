@@ -19,7 +19,7 @@ A sample JSON file follows:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testJsonFile",
   "id" : 103935657744185,
@@ -70,7 +70,7 @@ A given JSON file for instance could be formatted as such in CAS:
     Generic service definition that applies to https/imaps urls
     that wish to register with CAS for authentication.
   */
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "name" : "HTTPS and IMAPS",
   "id" : 10000001,

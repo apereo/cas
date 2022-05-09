@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -58,7 +59,7 @@ public class InquireInterruptActionTests {
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
 
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
         registeredService.setWebflowInterruptPolicy(new DefaultRegisteredServiceWebflowInterruptPolicy().setForceExecution(TriStateBoolean.TRUE));
         WebUtils.putRegisteredService(context, registeredService);
 
@@ -75,12 +76,12 @@ public class InquireInterruptActionTests {
         assertNotNull(event);
         assertNotNull(InterruptUtils.getInterruptFrom(context));
         assertNotNull(WebUtils.getPrincipalFromRequestContext(context));
-        assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, event.getId());
 
         event = action.doExecute(context);
         assertNotNull(InterruptUtils.getInterruptFrom(context));
         assertNotNull(WebUtils.getPrincipalFromRequestContext(context));
-        assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, event.getId());
     }
 
     @Test
@@ -104,7 +105,7 @@ public class InquireInterruptActionTests {
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
         assertNotNull(event);
-        assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, event.getId());
     }
 
 
@@ -129,7 +130,7 @@ public class InquireInterruptActionTests {
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
         assertNotNull(event);
-        assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, event.getId());
     }
 
     @Test
@@ -152,7 +153,7 @@ public class InquireInterruptActionTests {
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
         assertNotNull(event);
-        assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, event.getId());
     }
 
     @Test
@@ -176,6 +177,6 @@ public class InquireInterruptActionTests {
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
         assertNotNull(event);
-        assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, event.getId());
     }
 }

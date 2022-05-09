@@ -1,10 +1,10 @@
 package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -42,7 +42,7 @@ public class RegisteredServiceJsonSerializerTests {
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
         val writer = new StringWriter();
-        zer.to(writer, new RegexRegisteredService());
+        zer.to(writer, new CasRegisteredService());
         assertNotNull(zer.from(writer));
     }
 
@@ -52,13 +52,13 @@ public class RegisteredServiceJsonSerializerTests {
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
         val json = "    {\n"
-                   + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
+                   + "        \"@class\" : \"org.apereo.cas.services.CasRegisteredService\",\n"
                    + "            \"serviceId\" : \"^https://xyz.*\",\n"
                    + "            \"name\" : \"XYZ\",\n"
                    + "            \"id\" : \"20161214\"\n"
                    + "    }";
 
-        val s = zer.from(json);
+        val s = (CasRegisteredService) zer.from(json);
         assertNotNull(s);
         assertNotNull(s.getAccessStrategy());
         assertNotNull(s.getAttributeReleasePolicy());
@@ -75,7 +75,7 @@ public class RegisteredServiceJsonSerializerTests {
         policyWritten.setMessageCode("example.code");
         policyWritten.setText("example text");
 
-        val s = new RegexRegisteredService();
+        val s = new CasRegisteredService();
         s.setAcceptableUsagePolicy(policyWritten);
 
         val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
@@ -95,7 +95,7 @@ public class RegisteredServiceJsonSerializerTests {
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
         val json = "    {\n"
-                   + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
+                   + "        \"@class\" : \"org.apereo.cas.services.CasRegisteredService\",\n"
                    + "            \"serviceId\" : \"^https://xyz.*\",\n"
                    + "            \"name\" : \"XYZ\",\n"
                    + "            \"id\" : \"20161214\"\n"

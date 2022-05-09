@@ -17,7 +17,7 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
@@ -399,7 +399,7 @@ public class SamlIdPEndpointsConfiguration {
             return plan -> {
                 val callbackService = samlIdPCallbackService.getId().concat(".*");
                 LOGGER.debug("Initializing SAML IdP callback service [{}]", callbackService);
-                val service = new RegexRegisteredService();
+                val service = new CasRegisteredService();
                 service.setId(RandomUtils.nextLong());
                 service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());

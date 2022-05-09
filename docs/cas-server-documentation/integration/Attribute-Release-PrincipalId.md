@@ -26,20 +26,22 @@ principal id as the username for this service.
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
   "description" : "sample",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider",
-    "canonicalizationMode" : "NONE"
+    "canonicalizationMode" : "NONE",
+    "scope": "example.org"
   }
 }
 ```
 
 If you do not need to adjust the behavior of this provider (i.e. to modify the `canonicalization` mode),
-then you can leave out this block entirely.
+then you can leave out this block entirely. Furthermore, if you do not need the final value to be scoped to the defined value,
+you may also leave out the `scope` value.
 
 ## Encrypted
 
@@ -57,7 +59,7 @@ The public key is then configured for a service definition in CAS:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
@@ -96,7 +98,7 @@ is not available, the default principal id will be used.
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 600,
@@ -104,10 +106,13 @@ is not available, the default principal id will be used.
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
     "usernameAttribute" : "cn",
-    "canonicalizationMode" : "UPPER"
+    "canonicalizationMode" : "UPPER",
+    "scope": "example.org"
   }
 }
 ```
+
+If you do not need the final value to be scoped to the defined value, you may also leave out the `scope` value.
 
 ## Javascript/Python/Groovy Script
 
@@ -129,7 +134,7 @@ Scripts will receive and have access to the following variable bindings:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 500,
@@ -178,7 +183,7 @@ Embed the groovy script directly inside the service configuration.
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 600,
@@ -201,7 +206,7 @@ The script must return a single `String` value.
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 600,
@@ -229,7 +234,7 @@ Provides an opaque identifier for the username.
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 500,
@@ -248,7 +253,7 @@ The generated id may be based off of an existing principal attribute. If left un
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 500,

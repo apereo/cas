@@ -39,14 +39,14 @@ public class DelegatingExpirationPolicyTests {
         var ticketState = mock(TicketGrantingTicketAwareTicket.class);
         when(ticketState.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("cas"));
         assertTrue(policy.isExpired(ticketState));
-        assertEquals((long) policy.getTimeToLive(ticketState), 0);
-        assertEquals((long) policy.getTimeToLive(), 0);
-        assertEquals((long) policy.getTimeToIdle(), 0);
+        assertEquals(0, (long) policy.getTimeToLive(ticketState));
+        assertEquals(0, (long) policy.getTimeToLive());
+        assertEquals(0, (long) policy.getTimeToIdle());
 
         ticketState = mock(TicketGrantingTicketAwareTicket.class);
         when(ticketState.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("expired"));
         assertFalse(policy.isExpired(ticketState));
-        assertEquals((long) policy.getTimeToLive(ticketState), 0);
+        assertEquals(0, (long) policy.getTimeToLive(ticketState));
         assertNotNull(policy.toString());
     }
 }

@@ -49,7 +49,7 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser", Map.of("cn", List.of("example")));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
-        when(registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
         assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
     }
 }

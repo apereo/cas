@@ -42,7 +42,7 @@ public class PoolHealthIndicatorTests {
 
         };
         val health = monitor.health();
-        assertEquals(health.getStatus(), Status.UP);
+        assertEquals(Status.UP, health.getStatus());
 
         assertAll(((DisposableBean) monitor)::destroy);
     }
@@ -91,7 +91,7 @@ public class PoolHealthIndicatorTests {
             }
         };
         val health = monitor.health();
-        assertEquals(health.getStatus(), Status.OUT_OF_SERVICE);
+        assertEquals(Status.OUT_OF_SERVICE, health.getStatus());
         assertAll(((DisposableBean) monitor)::destroy);
     }
 }

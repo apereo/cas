@@ -69,7 +69,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
             return Optional.empty();
         }
 
-        val policy = registeredService.getMultifactorPolicy();
+        val policy = registeredService.getMultifactorAuthenticationPolicy();
         if (policy == null || StringUtils.isBlank(policy.getScript())) {
             LOGGER.trace("Multifactor authentication policy is absent or does not define a script to trigger multifactor authentication");
             return Optional.empty();

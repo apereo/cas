@@ -43,7 +43,7 @@ public class DuoSecurityHealthIndicatorTests {
         val indicator = new DuoSecurityHealthIndicator(applicationContext);
         val health = indicator.health();
         assertNotNull(health);
-        assertEquals(health.getStatus(), Status.UP);
+        assertEquals(Status.UP, health.getStatus());
         assertTrue(health.getDetails().containsKey("duoApiHost"));
     }
 }

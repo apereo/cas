@@ -73,6 +73,6 @@ public class TicketValidationResourceResolverTests {
     public void verifyEmpty() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);
-        assertEquals(resolver.resolveFrom(jp, new Object()).length, 0);
+        assertEquals(0, resolver.resolveFrom(jp, new Object()).length);
     }
 }

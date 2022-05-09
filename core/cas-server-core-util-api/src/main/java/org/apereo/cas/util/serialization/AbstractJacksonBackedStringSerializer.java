@@ -5,6 +5,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.List;
 
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
@@ -58,6 +60,12 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     private boolean isJsonFormat() {
         return !(getObjectMapper().getFactory() instanceof YAMLFactory);
+    }
+
+    @Override
+    public List<T> fromList(final String json) {
+        val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
+        return readObjectsFromString(jsonString);
     }
 
     @Override
@@ -205,6 +213,20 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "
                          + "in the absence of a configuration/support module that knows how to interpret the fragment, "
                          + "specially if the fragment describes a CAS registered service definition. "
+                         + "Internal parsing error is [{}]",
+                DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    protected List<T> readObjectsFromString(final String jsonString) {
+        try {
+            LOGGER.trace("Attempting to consume [{}]", jsonString);
+            return getObjectMapper().readValue(jsonString, new TypeReference<>() {
+            });
+        } catch (final Exception e) {
+            LOGGER.error("Cannot read/parse [{}] to deserialize into List of type [{}]."
                          + "Internal parsing error is [{}]",
                 DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
             LOGGER.debug(e.getMessage(), e);

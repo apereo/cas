@@ -62,8 +62,8 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
             return Optional.empty();
         }
 
-        val policy = registeredService.getMultifactorPolicy();
-        if (policy == null || registeredService.getMultifactorPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
+        val policy = registeredService.getMultifactorAuthenticationPolicy();
+        if (policy == null || registeredService.getMultifactorAuthenticationPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
             LOGGER.trace("Authentication policy is absent or does not contain any multifactor authentication providers");
             return Optional.empty();
         }

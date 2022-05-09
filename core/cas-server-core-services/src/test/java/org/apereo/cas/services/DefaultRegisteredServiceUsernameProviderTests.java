@@ -25,6 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 public class DefaultRegisteredServiceUsernameProviderTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceUsernameProvider.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -38,7 +39,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         beanFactory.registerSingleton(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, cipher);
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-        
+
         val provider = new DefaultRegisteredServiceUsernameProvider();
         provider.setCanonicalizationMode(null);
         provider.setEncryptUsername(true);
@@ -58,6 +59,17 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
         assertEquals(id, principal.getId().toUpperCase());
+    }
+
+    @Test
+    public void verifyScopedUsername() {
+        val provider = new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.UPPER.name());
+        provider.setScope("example.org");
+        val principal = mock(Principal.class);
+        when(principal.getId()).thenReturn("id");
+        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+        assertEquals(id, principal.getId().toUpperCase().concat("@EXAMPLE.ORG"));
     }
 
     @Test

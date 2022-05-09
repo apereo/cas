@@ -56,7 +56,7 @@ whose access should bypass MFA may be defined as such in the CAS service registr
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "multifactorPolicy" : {
@@ -75,7 +75,7 @@ with the specified value(s).
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "multifactorPolicy" : {

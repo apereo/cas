@@ -3,7 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.SimpleUrlValidator;
 
@@ -25,7 +25,7 @@ public class WebApplicationServiceResponseBuilderTests {
 
     @Test
     public void verifyServiceUrlRedirectOverride() {
-        val registeredService = mock(RegisteredService.class);
+        val registeredService = mock(CasModelRegisteredService.class);
         when(registeredService.getId()).thenReturn(1L);
         when(registeredService.getServiceId()).thenReturn("https://www.google.com/.+");
         when(registeredService.getRedirectUrl()).thenReturn("https://example.org");

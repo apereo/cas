@@ -130,7 +130,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     public void verifySize() {
         val uid = UUID.randomUUID().toString();
         val otp = getRandomOtp();
-        assertEquals(oneTimeTokenAuthenticatorTokenRepository.count(), 0);
+        assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count());
         val token = new GoogleAuthenticatorToken(otp, uid);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
         assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count());

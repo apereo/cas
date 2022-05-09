@@ -30,11 +30,11 @@ public class DefaultTicketRegistryCleanerTests {
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
         ticketRegistry.addTicket(tgt);
-        assertEquals(ticketRegistry.getTickets().size(), 1);
+        assertEquals(1, ticketRegistry.getTickets().size());
         val c = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry);
         tgt.markTicketExpired();
         c.clean();
-        assertEquals(ticketRegistry.sessionCount(), 0);
+        assertEquals(0, ticketRegistry.sessionCount());
     }
 
 
@@ -44,7 +44,7 @@ public class DefaultTicketRegistryCleanerTests {
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.stream()).thenThrow(IllegalArgumentException.class);
         val c = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry);
-        assertEquals(c.clean(), 0);
+        assertEquals(0, c.clean());
     }
 
     @Test
@@ -57,6 +57,6 @@ public class DefaultTicketRegistryCleanerTests {
                 return false;
             }
         };
-        assertEquals(c.clean(), 0);
+        assertEquals(0, c.clean());
     }
 }

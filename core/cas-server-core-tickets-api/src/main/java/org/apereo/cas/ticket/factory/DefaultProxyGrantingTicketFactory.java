@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProxyGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -94,7 +95,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected RegisteredServiceProxyGrantingTicketExpirationPolicy getProxyGrantingTicketExpirationPolicy(
         final ServiceTicket serviceTicket) {
-        val service = servicesManager.findServiceBy(serviceTicket.getService());
+        val service = servicesManager.findServiceBy(serviceTicket.getService(), CasModelRegisteredService.class);
         if (service != null) {
             return service.getProxyGrantingTicketExpirationPolicy();
         }

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.services;
 
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.BaseRegisteredService;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * An extension of the {@link RegexRegisteredService} that defines the
+ * An extension of the {@link BaseRegisteredService} that defines the
  * OAuth client id and secret for a given registered service.
  *
  * @author Misagh Moayyed
@@ -23,7 +23,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class OAuthRegisteredService extends RegexRegisteredService {
+public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
 
@@ -53,17 +53,6 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     private String userProfileViewType;
 
-    @Override
-    public void initialize() {
-        super.initialize();
-        if (this.supportedGrantTypes == null) {
-            this.supportedGrantTypes = new HashSet<>(0);
-        }
-        if (this.supportedResponseTypes == null) {
-            this.supportedResponseTypes = new HashSet<>(0);
-        }
-    }
-
     @JsonIgnore
     @Override
     public String getFriendlyName() {
@@ -74,10 +63,5 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     @Override
     public int getEvaluationPriority() {
         return 2;
-    }
-
-    @Override
-    protected AbstractRegisteredService newInstance() {
-        return new OAuthRegisteredService();
     }
 }

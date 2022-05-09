@@ -43,12 +43,12 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
 
         context.setRequestAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
         assertTrue(oauthInvalidAuthorizationBuilder.supports(context));
-        assertEquals(oauthInvalidAuthorizationBuilder.build(context).getViewName(),
-            CasWebflowConstants.VIEW_ID_SERVICE_ERROR);
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR,
+            oauthInvalidAuthorizationBuilder.build(context).getViewName());
 
         context.setRequestAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, false);
-        assertEquals(oauthInvalidAuthorizationBuilder.build(context).getViewName(),
-            CasWebflowConstants.VIEW_ID_SERVICE_ERROR);
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR,
+            oauthInvalidAuthorizationBuilder.build(context).getViewName());
     }
 
     @Test
@@ -69,15 +69,15 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
         val mv = oauthInvalidAuthorizationBuilder.build(context);
         assertTrue(mv.getView() instanceof RedirectView);
         val mvView = (RedirectView) mv.getView();
-        assertEquals(mvView.getUrl(), "https://github.com/apereo/cas");
+        assertEquals("https://github.com/apereo/cas", mvView.getUrl());
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ERROR));
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ERROR_DESCRIPTION));
         assertFalse(mv.getModel().containsKey(OAuth20Constants.STATE));
 
         val error = mv.getModel().get(OAuth20Constants.ERROR).toString();
-        assertEquals(error, OAuth20Constants.INVALID_REQUEST);
+        assertEquals(OAuth20Constants.INVALID_REQUEST, error);
         val errorDescription = mv.getModel().get(OAuth20Constants.ERROR_DESCRIPTION).toString();
-        assertEquals(errorDescription, "Invalid Request Description");
+        assertEquals("Invalid Request Description", errorDescription);
     }
 
     @Test
@@ -98,18 +98,18 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
         assertTrue(oauthInvalidAuthorizationBuilder.supports(context));
 
         val mv = oauthInvalidAuthorizationBuilder.build(context);
-        assertEquals(mv.getViewName(), CasWebflowConstants.VIEW_ID_POST_RESPONSE);
+        assertEquals(CasWebflowConstants.VIEW_ID_POST_RESPONSE, mv.getViewName());
         assertTrue(mv.getModel().containsKey("originalUrl"));
         assertTrue(mv.getModel().containsKey("parameters"));
 
         val originalUrl = mv.getModel().get("originalUrl");
-        assertEquals(originalUrl, "https://github.com/apereo/cas");
+        assertEquals("https://github.com/apereo/cas", originalUrl);
         val parameters = (Map) mv.getModel().get("parameters");
 
         assertTrue(parameters.containsKey(OAuth20Constants.ERROR));
         assertFalse(parameters.containsKey(OAuth20Constants.ERROR_DESCRIPTION));
         assertTrue(parameters.containsKey(OAuth20Constants.STATE));
-        assertEquals(parameters.get(OAuth20Constants.ERROR), OAuth20Constants.INVALID_REQUEST);
-        assertEquals(parameters.get(OAuth20Constants.STATE), "abcdefgh");
+        assertEquals(OAuth20Constants.INVALID_REQUEST, parameters.get(OAuth20Constants.ERROR));
+        assertEquals("abcdefgh", parameters.get(OAuth20Constants.STATE));
     }
 }

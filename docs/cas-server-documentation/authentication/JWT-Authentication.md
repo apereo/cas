@@ -64,7 +64,7 @@ Configure the appropriate service in your service registry to hold the secrets:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://.+",
   "name" : "testId",
   "id" : 1,

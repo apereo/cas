@@ -39,6 +39,6 @@ public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends 
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
         val ev = ldapSpnegoClientAction.execute(ctx);
-        assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+        assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 }

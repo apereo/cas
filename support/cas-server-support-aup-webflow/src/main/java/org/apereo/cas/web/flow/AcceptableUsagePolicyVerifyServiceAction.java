@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -45,7 +46,7 @@ public class AcceptableUsagePolicyVerifyServiceAction extends BaseCasWebflowActi
      * @return success if policy is accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
     private Event verify(final RequestContext context) {
-        val registeredService = WebUtils.getRegisteredService(context);
+        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(context);
 
         if (registeredService != null) {
             val authentication = WebUtils.getAuthentication(context);

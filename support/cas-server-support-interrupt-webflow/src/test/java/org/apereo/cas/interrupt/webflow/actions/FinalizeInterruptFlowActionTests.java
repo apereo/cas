@@ -68,7 +68,7 @@ public class FinalizeInterruptFlowActionTests {
 
         val action = new FinalizeInterruptFlowAction(mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
-        assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_STOP);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_STOP, event.getId());
         assertTrue(context.getMockExternalContext().isResponseComplete());
         assertNotNull(context.getMockExternalContext().getExternalRedirectUrl());
     }
@@ -88,7 +88,7 @@ public class FinalizeInterruptFlowActionTests {
 
         val action = new FinalizeInterruptFlowAction(mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
-        assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.getAttributes().containsKey(InquireInterruptAction.AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT));
     }

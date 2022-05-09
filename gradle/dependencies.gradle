@@ -182,6 +182,7 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "javax.validation", module: "validation-api")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 },
                 dependencies.create("io.swagger.core.v3:swagger-models:$swaggerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -282,15 +283,15 @@ ext.libraries = [
                 },
         ],
         apachecxf               : [
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-transports-http:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-transports-http:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.ow2.asm", module: "asm")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-frontend-jaxws:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-frontend-jaxws:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.ow2.asm", module: "asm")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-ws-security:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-ws-security:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
                     exclude(group: "org.apache.santuario", module: "xmlsec")
@@ -310,7 +311,7 @@ ext.libraries = [
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-policy")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-rs-security-sso-saml:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-rs-security-sso-saml:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.santuario", module: "xmlsec")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
@@ -327,7 +328,7 @@ ext.libraries = [
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-stax")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-ws-policy:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-ws-policy:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
                     exclude(group: "commons-collections", module: "commons-collections")
@@ -336,28 +337,28 @@ ext.libraries = [
                     exclude(group: "org.ow2.asm", module: "asm")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-stax")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-ws-addr:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-ws-addr:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
                     exclude(group: "org.ow2.asm", module: "asm")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-rs-client:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-rs-client:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.ow2.asm", module: "asm")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-frontend-jaxrs:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-frontend-jaxrs:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.ow2.asm", module: "asm")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-rs-service-description:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-rs-service-description:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.ow2.asm", module: "asm")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-rt-rs-extension-providers:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf:cxf-rt-rs-extension-providers:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.ow2.asm", module: "asm")
                 },
-                dependencies.create("com.github.mmoayyed.cxf:cxf-services-sts-core:$apacheCxfVersion") {
+                dependencies.create("org.apache.cxf.services.sts:cxf-services-sts-core:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.santuario", module: "xmlsec")
                     exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
@@ -383,7 +384,7 @@ ext.libraries = [
                     exclude(group: "org.apache.cxf", module: "cxf-rt-ws-security")
                 }
         ],
-        apachecxfsearch        : dependencies.create("com.github.mmoayyed.cxf:cxf-rt-rs-extension-search:$apacheCxfVersion") {
+        apachecxfsearch        : dependencies.create("org.apache.cxf:cxf-rt-rs-extension-search:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.ow2.asm", module: "asm")
         },
@@ -1165,9 +1166,11 @@ ext.libraries = [
                 },
                 dependencies.create("com.fasterxml.jackson.core:jackson-core:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonVersion") {
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
@@ -1175,11 +1178,13 @@ ext.libraries = [
                 dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 },
                 dependencies.create("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
@@ -1190,6 +1195,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
@@ -1201,9 +1207,11 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 },
                 dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion") {
                     exclude(group: "org.yaml", module: "snakeyaml")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
@@ -1212,11 +1220,13 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 },
                 dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 }
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),

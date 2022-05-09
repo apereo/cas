@@ -31,7 +31,7 @@ POST /cas/v1/services HTTP/1.0
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "...",
   "name" : "...",
   "id" : 1,

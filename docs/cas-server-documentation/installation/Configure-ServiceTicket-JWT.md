@@ -66,7 +66,7 @@ Signal the relevant application in CAS service registry to produce JWTs for serv
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.*",
   "name" : "Sample",
   "id" : 10,
@@ -90,7 +90,7 @@ the service definition in the registry to match the following:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.*",
   "name" : "Sample",
   "id" : 10,

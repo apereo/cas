@@ -1,4 +1,4 @@
---- !<org.apereo.cas.services.RegexRegisteredService>
+--- !<org.apereo.cas.services.CasRegisteredService>
 serviceId: "https://.+github.io.*"
 name: "Sample"
 id: 1

@@ -26,7 +26,7 @@ public class ChainingPrincipalNameTransformerTests {
         t.addTransformer(new PrefixSuffixPrincipalNameTransformer("prefix-", "-suffix"));
         t.addTransformer(new ConvertCasePrincipalNameTransformer(true));
         val uid = t.transform("casuser@example.org");
-        assertEquals(uid, "PREFIX-CASUSER-SUFFIX");
+        assertEquals("PREFIX-CASUSER-SUFFIX", uid);
     }
 
 }

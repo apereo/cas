@@ -19,7 +19,7 @@ to an SSO-participating application. This behavior can be defined on a per-servi
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "...",
   "name" : "...",
   "id" : 1,
@@ -45,7 +45,7 @@ the user for credentials and ignore the existing session.
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "...",
   "name" : "...",
   "id" : 1,
@@ -76,7 +76,7 @@ the ticket continues to actively issue service tickets, etc.
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "...",
   "name" : "...",
   "id" : 1,

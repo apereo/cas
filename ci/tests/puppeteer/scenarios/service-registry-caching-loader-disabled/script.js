@@ -13,7 +13,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#username")
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices/type";
-    await cas.doGet(`${baseUrl}/RegexRegisteredService`,
+    await cas.doGet(`${baseUrl}/CasRegisteredService`,
         res => {
             assert(res.status === 200)
             assert(res.data[1].length === 1)

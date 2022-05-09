@@ -49,7 +49,7 @@ public class QRAuthenticationValidateTokenActionTests {
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, "token");
         request.addParameter("deviceId", "abcdefgh987654321");
         val result = qrAuthenticationValidateWebSocketChannelAction.execute(context);
-        assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_FINALIZE);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINALIZE, result.getId());
         assertTrue(WebUtils.getCredential(context) instanceof QRAuthenticationTokenCredential);
     }
 

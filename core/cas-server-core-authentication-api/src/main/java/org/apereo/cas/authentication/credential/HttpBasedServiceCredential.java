@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.credential;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -40,14 +40,14 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     /**
      * The registered service associated with this callback.
      **/
-    private RegisteredService service;
+    private CasModelRegisteredService service;
 
     @JsonCreator
     public HttpBasedServiceCredential(
         @JsonProperty("callbackUrl")
         final String callbackUrl,
         @JsonProperty("service")
-        final RegisteredService service) {
+        final CasModelRegisteredService service) {
         this.callbackUrl = FunctionUtils.doUnchecked(() -> new URL(callbackUrl));
         this.service = service;
     }

@@ -86,7 +86,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             WebUtils.putAuthentication(authentication, context);
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
-            assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_DENY);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_DENY, result.getId());
         }
     }
 
@@ -124,7 +124,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             WebUtils.putAuthentication(authentication, context);
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
-            assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_DENY);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_DENY, result.getId());
         }
     }
 
@@ -162,7 +162,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             WebUtils.putAuthentication(authentication, context);
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
-            assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_APPROVE);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_APPROVE, result.getId());
         }
     }
 
@@ -200,7 +200,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             WebUtils.putAuthentication(authentication, context);
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
-            assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         }
     }
 
@@ -239,7 +239,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             WebUtils.putAuthentication(authentication, context);
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
-            assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_REGISTER);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, result.getId());
         }
     }
 

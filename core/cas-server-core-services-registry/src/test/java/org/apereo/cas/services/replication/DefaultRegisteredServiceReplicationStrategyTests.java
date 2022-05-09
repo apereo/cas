@@ -1,8 +1,8 @@
 package org.apereo.cas.services.replication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.InMemoryServiceRegistry;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.util.CollectionUtils;
@@ -77,7 +77,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
         val svc = strategy.getRegisteredServiceFromCacheIfAny(service, 1000, serviceRegistry);
         assertNotNull(svc);
-        assertEquals(serviceRegistry.size(), 0);
+        assertEquals(0, serviceRegistry.size());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
         val svc = strategy.getRegisteredServiceFromCacheIfAny(null, 1000, serviceRegistry);
         assertNotNull(svc);
-        assertEquals(serviceRegistry.size(), 1);
+        assertEquals(1, serviceRegistry.size());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
         var svc = strategy.getRegisteredServiceFromCacheIfAny(service, 1000, serviceRegistry);
         assertNotNull(svc);
-        assertEquals(serviceRegistry.size(), 1);
+        assertEquals(1, serviceRegistry.size());
         svc = serviceRegistry.findServiceById(1000);
         assertEquals("Test1", svc.getName());
     }
@@ -147,7 +147,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
         var svc = strategy.getRegisteredServiceFromCacheIfAny(service, 1000, serviceRegistry);
         assertNotNull(svc);
-        assertEquals(serviceRegistry.size(), 0);
+        assertEquals(0, serviceRegistry.size());
     }
 
     @Test
@@ -203,7 +203,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     private static RegisteredService newService(final String name) {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setServiceId("^https?://.*");
         service.setName(name);
         service.setId(1000L);

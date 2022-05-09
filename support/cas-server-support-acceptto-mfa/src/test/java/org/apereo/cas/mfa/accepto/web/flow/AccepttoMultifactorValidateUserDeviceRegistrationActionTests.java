@@ -77,7 +77,7 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationActionTests {
 
             val action = new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties);
             val result = action.doExecute(context);
-            assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_FINALIZE);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_FINALIZE, result.getId());
             assertTrue(WebUtils.getCredential(context) instanceof AccepttoEmailCredential);
         }
     }
@@ -108,7 +108,7 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationActionTests {
                 action::verifyUserDeviceIsPaired);
 
             val result = action.execute(context);
-            assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_DENY);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_DENY, result.getId());
         }
     }
 }

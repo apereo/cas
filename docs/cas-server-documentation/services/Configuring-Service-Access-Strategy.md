@@ -40,7 +40,7 @@ Service is not allowed to use CAS:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -59,7 +59,7 @@ To access the service, the principal must have a `cn` attribute with the value o
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -81,7 +81,7 @@ To access the service, the principal must have a `cn` attribute with the value o
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -103,7 +103,7 @@ To access the service, the principal must have a `cn` attribute whose value is e
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -128,7 +128,7 @@ Service access is denied if the principal does *not* have a `cn` attribute conta
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id": 1,
@@ -149,7 +149,7 @@ Service access is denied if the principal does *not* have a `cn` attribute conta
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id": 1,
@@ -204,7 +204,7 @@ To access the service, the principal must have a `cn` attribute whose value is e
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -228,7 +228,7 @@ To access the service, the principal must have a `cn` attribute whose value is e
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -296,7 +296,7 @@ Service access is only allowed within `startingDateTime` and `endingDateTime`:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 62,
@@ -325,7 +325,7 @@ with pre-defined rules and patterns, such as those that might be based on an IP 
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "id" : 1,
   "accessStrategy" : {
@@ -353,7 +353,7 @@ Here is an example of the remote endpoint access strategy authorizing service ac
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "id" : 1,
   "accessStrategy" : {
@@ -370,7 +370,7 @@ This strategy delegates to a Groovy script to dynamically decide the access rule
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "id" : 1,
   "accessStrategy" : {
@@ -422,7 +422,7 @@ Grouper access strategy based on group's display extension:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 62,
@@ -443,7 +443,7 @@ to override the defaults:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 62,
@@ -473,7 +473,7 @@ The following access strategy chain allows service access if the authenticated p
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 1,

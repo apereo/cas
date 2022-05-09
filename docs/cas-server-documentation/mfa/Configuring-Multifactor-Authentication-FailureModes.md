@@ -23,7 +23,7 @@ Failure mode for a given application can be set as part of the `multifactorPolic
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "multifactorPolicy" : {
