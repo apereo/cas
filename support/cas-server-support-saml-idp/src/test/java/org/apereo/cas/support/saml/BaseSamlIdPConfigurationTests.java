@@ -266,7 +266,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         service.setServiceId(entityId);
         service.setId(RandomUtils.nextInt());
         service.setSignAssertions(TriStateBoolean.fromBoolean(signAssertion));
-        service.setSignResponses(signResponses);
+        service.setSignResponses(TriStateBoolean.fromBoolean(signResponses));
         service.setEncryptAssertions(encryptAssertions);
         service.setDescription("SAML Service");
         service.setMetadataLocation("classpath:metadata/testshib-providers.xml");
