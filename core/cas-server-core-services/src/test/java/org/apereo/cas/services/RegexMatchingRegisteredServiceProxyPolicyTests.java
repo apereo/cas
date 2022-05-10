@@ -36,6 +36,7 @@ public class RegexMatchingRegisteredServiceProxyPolicyTests {
     @Test
     public void verifyBadPattern() throws Exception {
         val policy = new RegexMatchingRegisteredServiceProxyPolicy("***");
-        assertFalse(policy.isAllowedProxyCallbackUrl(new URL("https://github.com/apereo/cas")));
+        assertFalse(policy.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
+            new URL("https://github.com/apereo/cas")));
     }
 }

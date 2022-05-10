@@ -59,7 +59,7 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
     }
 
     @Override
-    public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
+    public boolean isAllowedProxyCallbackUrl(final RegisteredService registeredService, final URL pgtUrl) {
         return RegexUtils.find(this.pattern, pgtUrl.toExternalForm());
     }
 }
