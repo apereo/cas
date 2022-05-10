@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.services;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.WebBasedRegisteredService;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -35,7 +35,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
     /**
      * the registered service.
      **/
-    protected final RegisteredService registeredService;
+    protected final WebBasedRegisteredService registeredService;
 
     /**
      * Gets description.
@@ -84,7 +84,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
     public String getInformationURL() {
         val items = getInformationURLs();
         if (items.isEmpty()) {
-            return this.registeredService.getInformationUrl();
+            return registeredService.getInformationUrl();
         }
         return StringUtils.collectionToDelimitedString(items, ".");
     }

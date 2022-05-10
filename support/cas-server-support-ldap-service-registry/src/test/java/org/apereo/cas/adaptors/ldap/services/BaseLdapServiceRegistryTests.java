@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.BaseRegisteredService;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -66,7 +67,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifySavingServiceChangesDn(final Class<? extends BaseRegisteredService> registeredServiceClass) {
+    public void verifySavingServiceChangesDn(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         getServiceRegistry().save(buildRegisteredServiceInstance(8080, registeredServiceClass));
         val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());

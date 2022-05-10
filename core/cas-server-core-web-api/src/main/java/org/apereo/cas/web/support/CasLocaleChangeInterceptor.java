@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.configuration.model.core.web.LocaleProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
@@ -78,9 +79,13 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
         val service = this.argumentExtractor.extractService(request);
         if (service != null) {
             val registeredService = servicesManager.findServiceBy(service);
-            if (registeredService != null && StringUtils.isNotBlank(registeredService.getLocale())) {
-                val locale = new Locale(SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getLocale()));
-                configureLocale(request, response, locale);
+            if (registeredService instanceof WebBasedRegisteredService) {
+                val webRegisteredService = (WebBasedRegisteredService) registeredService;
+                if (StringUtils.isNotBlank(webRegisteredService.getLocale())) {
+                    val locale = new Locale(SpringExpressionLanguageValueResolver.getInstance()
+                        .resolve(webRegisteredService.getLocale()));
+                    configureLocale(request, response, locale);
+                }
             }
         }
 

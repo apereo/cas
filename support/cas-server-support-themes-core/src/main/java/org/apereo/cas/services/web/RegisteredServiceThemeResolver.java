@@ -3,8 +3,8 @@ package org.apereo.cas.services.web;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -86,7 +86,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             return rememberThemeName(request);
         }
 
-        val rService = this.servicesManager.findServiceBy(service);
+        val rService = (WebBasedRegisteredService) servicesManager.findServiceBy(service);
         if (rService == null || !rService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.warn("No registered service is found to match [{}] or access is denied. Using default theme [{}]", service, getDefaultThemeName());
             return rememberThemeName(request);
@@ -114,7 +114,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
      */
     protected String determineThemeNameToChoose(final HttpServletRequest request,
                                                 final Service service,
-                                                final RegisteredService rService) {
+                                                final WebBasedRegisteredService rService) {
         HttpResponse response = null;
         try {
             LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());

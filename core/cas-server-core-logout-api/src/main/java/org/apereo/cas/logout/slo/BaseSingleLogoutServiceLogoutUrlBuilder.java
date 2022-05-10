@@ -3,6 +3,7 @@ package org.apereo.cas.logout.slo;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.UrlValidator;
 
@@ -45,7 +46,7 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
                             final WebApplicationService singleLogoutService,
                             final Optional<HttpServletRequest> httpRequest) {
         return registeredService != null && singleLogoutService != null
-            && registeredService.getAccessStrategy().isServiceAccessAllowed();
+               && registeredService.getAccessStrategy().isServiceAccessAllowed();
     }
 
     @Override
@@ -60,15 +61,18 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
     public Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService,
                                                           final WebApplicationService singleLogoutService,
                                                           final Optional<HttpServletRequest> httpRequest) {
-        val serviceLogoutUrl = registeredService.getLogoutUrl();
-        if (StringUtils.hasText(serviceLogoutUrl)) {
-            LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
-            return SingleLogoutUrl.from(registeredService);
-        }
         val originalUrl = singleLogoutService.getOriginalUrl();
-        if (this.urlValidator.isValid(originalUrl)) {
-            LOGGER.debug("Logout request will be sent to [{}] for service [{}]", originalUrl, singleLogoutService);
-            return CollectionUtils.wrap(new SingleLogoutUrl(originalUrl, registeredService.getLogoutType()));
+        if (registeredService instanceof WebBasedRegisteredService) {
+            val webRegisteredService = (WebBasedRegisteredService) registeredService;
+            val serviceLogoutUrl = webRegisteredService.getLogoutUrl();
+            if (StringUtils.hasText(serviceLogoutUrl)) {
+                LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
+                return SingleLogoutUrl.from(registeredService);
+            }
+            if (this.urlValidator.isValid(originalUrl)) {
+                LOGGER.debug("Logout request will be sent to [{}] for service [{}]", originalUrl, singleLogoutService);
+                return CollectionUtils.wrap(new SingleLogoutUrl(originalUrl, webRegisteredService.getLogoutType()));
+            }
         }
         LOGGER.debug("Logout request will not be sent; The URL [{}] for service [{}] is not valid", originalUrl, singleLogoutService);
         return new ArrayList<>(0);

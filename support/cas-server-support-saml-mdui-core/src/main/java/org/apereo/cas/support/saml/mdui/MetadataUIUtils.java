@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.WebBasedRegisteredService;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -63,8 +63,10 @@ public class MetadataUIUtils {
      * @param requestContext    the request context
      * @return the simple metadata ui info
      */
-    public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final MetadataResolverAdapter metadataAdapter,
-                                                                            final String entityId, final RegisteredService registeredService, final HttpServletRequest requestContext) {
+    public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(
+        final MetadataResolverAdapter metadataAdapter,
+        final String entityId, final WebBasedRegisteredService registeredService,
+        final HttpServletRequest requestContext) {
         val entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
         return locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId, registeredService, requestContext);
     }
@@ -78,8 +80,9 @@ public class MetadataUIUtils {
      * @param requestContext    the request context
      * @return the simple metadata ui info
      */
-    public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor, final String entityId,
-                                                                            final RegisteredService registeredService, final HttpServletRequest requestContext) {
+    public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(
+        final EntityDescriptor entityDescriptor, final String entityId,
+        final WebBasedRegisteredService registeredService, final HttpServletRequest requestContext) {
         val mdui = new SamlMetadataUIInfo(registeredService, requestContext.getLocale().getLanguage());
         if (entityDescriptor == null) {
             LOGGER.trace("Entity descriptor not found for [{}]", entityId);
