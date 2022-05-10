@@ -29,7 +29,8 @@ public class RefuseRegisteredServiceProxyPolicyTests {
     @Test
     public void verifyJson() throws IOException {
         val policyWritten = new RefuseRegisteredServiceProxyPolicy();
-        assertFalse(policyWritten.isAllowedProxyCallbackUrl(new URL("https://github.com")));
+        assertFalse(policyWritten.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
+            new URL("https://github.com")));
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, RefuseRegisteredServiceProxyPolicy.class);
         assertEquals(policyWritten, policyRead);

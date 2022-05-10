@@ -8,7 +8,9 @@ category: Services
 
 # Configure Proxy Authentication Policy
 
-Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT.
+Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that
+a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in
+fact allowed to receive the PGT.
 
 Note that by default, the proxy authentication is disallowed for all applications.
 
@@ -46,3 +48,22 @@ A proxy policy that only allows proxying to PGT urls that match the specified re
   }
 }
 ```
+
+## REST
+
+A proxy policy that reaches out to an external REST endpoint to determine proxy authorization.
+
+```json
+{
+    "@class":"org.apereo.cas.services.RestfulRegisteredServiceProxyPolicy",
+    "endpoint":"http://localhost:9222",
+    "headers": {
+        "@class":"java.util.LinkedHashMap",
+        "header": "value"
+    }
+}
+```
+
+Endpoints must be designed to accept/process `application/json`, where the request body will contain
+the contents of the registered service definition, and the requesing PGT url is passed as `pgtUrl` request parameter.
+A successful `200` status code will allow proxy authentication to proceed. 

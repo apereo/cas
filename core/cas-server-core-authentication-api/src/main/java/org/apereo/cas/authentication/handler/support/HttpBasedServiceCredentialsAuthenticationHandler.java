@@ -53,7 +53,8 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
         val httpCredential = (HttpBasedServiceCredential) credential;
-        if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(httpCredential.getCallbackUrl())) {
+        if (!httpCredential.getService().getProxyPolicy()
+            .isAllowedProxyCallbackUrl(httpCredential.getService(), httpCredential.getCallbackUrl())) {
             LOGGER.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
                 httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");

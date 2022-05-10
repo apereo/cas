@@ -26,7 +26,7 @@ public class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProx
 
     @JsonIgnore
     @Override
-    public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
+    public boolean isAllowedProxyCallbackUrl(final RegisteredService registeredService, final URL pgtUrl) {
         return false;
     }
 

@@ -43,6 +43,7 @@ import org.apereo.cas.services.RegisteredServicePublicKeyImplTests;
 import org.apereo.cas.services.RegisteredServiceTests;
 import org.apereo.cas.services.RegisteredServicesEventListenerTests;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategyTests;
+import org.apereo.cas.services.RestfulRegisteredServiceProxyPolicyTests;
 import org.apereo.cas.services.ReturnEncryptedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ScriptedRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.SimpleServiceTests;
@@ -122,6 +123,7 @@ import org.junit.platform.suite.api.Suite;
     RegisteredServiceYamlSerializerTests.class,
     RegisteredServiceAuthenticationPolicyResolverTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
+    RestfulRegisteredServiceProxyPolicyTests.class,
     HttpRequestRegisteredServiceAccessStrategyTests.class,
     GroovyRegisteredServiceMultifactorPolicyTests.class,
     RegisteredServiceMutantRegexAttributeFilterTests.class,
