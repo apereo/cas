@@ -9,6 +9,7 @@ import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +97,7 @@ public class SamlSPUtils {
         service.setServiceId(entityIds);
 
         service.setSignAssertions(sp.getSignAssertions());
-        service.setSignResponses(sp.isSignResponses());
+        service.setSignResponses(TriStateBoolean.fromBoolean(sp.isSignResponses()));
 
         return service;
     }
