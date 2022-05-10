@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.services;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.WebBasedRegisteredService;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class DefaultRegisteredServiceUserInterfaceInfoTests {
     @Test
     public void verifyOperation() {
-        val info = new DefaultRegisteredServiceUserInterfaceInfo(mock(RegisteredService.class)) {
+        val info = new DefaultRegisteredServiceUserInterfaceInfo(mock(WebBasedRegisteredService.class)) {
             private static final long serialVersionUID = 2331519665722637762L;
 
             @Override
@@ -58,7 +58,7 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
 
     @Test
     public void verifySpecialCases() {
-        val service = mock(RegisteredService.class);
+        val service = mock(WebBasedRegisteredService.class);
         when(service.getInformationUrl()).thenReturn("https://apereo.org/cas");
         when(service.getPrivacyUrl()).thenReturn("https://apereo.org/cas");
         when(service.getLogo()).thenReturn("https://apereo.org/cas");
@@ -100,7 +100,7 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
 
     @Test
     public void verifyDefault() {
-        val service = mock(RegisteredService.class);
+        val service = mock(WebBasedRegisteredService.class);
         val info = new DefaultRegisteredServiceUserInterfaceInfo(service) {
             private static final long serialVersionUID = 2331519665722637762L;
 

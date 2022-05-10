@@ -9,6 +9,7 @@ import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -77,7 +78,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     @Override
     public boolean supports(final SingleLogoutExecutionRequest context, final WebApplicationService singleLogoutService) {
         val selectedService = (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
-        val registeredService = this.servicesManager.findServiceBy(selectedService);
+        val registeredService = (WebBasedRegisteredService) this.servicesManager.findServiceBy(selectedService);
 
         return registeredService != null
             && registeredService.getAccessStrategy().isServiceAccessAllowed()

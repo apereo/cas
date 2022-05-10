@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 
 import lombok.Getter;
@@ -40,12 +40,12 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
 
     private String locale;
 
-    public SamlMetadataUIInfo(final RegisteredService registeredService, final String locale) {
+    public SamlMetadataUIInfo(final WebBasedRegisteredService registeredService, final String locale) {
         this(null, registeredService);
         this.locale = locale;
     }
 
-    public SamlMetadataUIInfo(final UIInfo uiInfo, final RegisteredService registeredService) {
+    public SamlMetadataUIInfo(final UIInfo uiInfo, final WebBasedRegisteredService registeredService) {
         super(registeredService);
         this.uiInfo = uiInfo;
     }

@@ -124,16 +124,16 @@ public class RegisteredServiceTestUtils {
         return attributes;
     }
 
-    public static BaseRegisteredService getRegisteredService() {
+    public static BaseWebBasedRegisteredService getRegisteredService() {
         return getRegisteredService(CONST_TEST_URL);
     }
 
-    public static BaseRegisteredService getRegisteredService(final Map requiredAttributes) {
+    public static BaseWebBasedRegisteredService getRegisteredService(final Map requiredAttributes) {
         return getRegisteredService(CONST_TEST_URL, requiredAttributes);
     }
 
     @SneakyThrows
-    public static <T extends BaseRegisteredService> T getRegisteredService(final String id,
+    public static <T extends BaseWebBasedRegisteredService> T getRegisteredService(final String id,
                                                                            final Class<T> clazz,
                                                                            final boolean uniq) {
         return getRegisteredService(id, clazz, uniq, getTestAttributes());
@@ -185,7 +185,7 @@ public class RegisteredServiceTestUtils {
         return (T) s;
     }
 
-    public static <T extends BaseRegisteredService> T getRegisteredService(final String id, final Class<T> clazz) {
+    public static <T extends BaseWebBasedRegisteredService> T getRegisteredService(final String id, final Class<T> clazz) {
         return getRegisteredService(id, clazz, true);
     }
 
