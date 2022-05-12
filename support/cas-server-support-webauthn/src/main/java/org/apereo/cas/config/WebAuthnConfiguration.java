@@ -14,7 +14,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -26,7 +25,6 @@ import org.apereo.cas.webauthn.WebAuthnAuthenticationHandler;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
-import org.apereo.cas.webauthn.WebAuthnUtils;
 import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.WebAuthnController;
@@ -35,18 +33,14 @@ import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.yubico.core.DefaultSessionManager;
+import com.yubico.core.InMemoryRegistrationStorage;
 import com.yubico.core.SessionManager;
 import com.yubico.core.WebAuthnServer;
 import com.yubico.webauthn.RelyingParty;
-import com.yubico.webauthn.attestation.AttestationResolver;
+import com.yubico.webauthn.attestation.AttestationMetadataSource;
+import com.yubico.webauthn.attestation.AttestationTrustSource;
 import com.yubico.webauthn.attestation.MetadataObject;
-import com.yubico.webauthn.attestation.MetadataService;
-import com.yubico.webauthn.attestation.StandardMetadataService;
-import com.yubico.webauthn.attestation.TrustResolver;
-import com.yubico.webauthn.attestation.resolver.CompositeAttestationResolver;
-import com.yubico.webauthn.attestation.resolver.CompositeTrustResolver;
-import com.yubico.webauthn.attestation.resolver.SimpleAttestationResolver;
-import com.yubico.webauthn.attestation.resolver.SimpleTrustResolverWithEquality;
+import com.yubico.webauthn.attestation.YubicoJsonMetadataService;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
@@ -75,10 +69,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.net.URL;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link WebAuthnConfiguration}.
@@ -105,50 +97,28 @@ public class WebAuthnConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnMetadataService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public MetadataService webAuthnMetadataService(
+        public AttestationMetadataSource webAuthnMetadataService(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties,
-            final ObjectProvider<List<TrustResolver>> foundTrustResolvers,
-            final ObjectProvider<List<AttestationResolver>> foundAttestations) throws Exception {
-
-            return BeanSupplier.of(MetadataService.class)
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(AttestationMetadataSource.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
-                    val trustResolvers = new ArrayList<TrustResolver>();
-                    trustResolvers.add(StandardMetadataService.createDefaultTrustResolver());
-                    trustResolvers.addAll(Optional.ofNullable(foundTrustResolvers.getIfAvailable()).orElseGet(ArrayList::new));
-                    val trustResolver = new CompositeTrustResolver(trustResolvers);
-                    val attestationResolvers = new ArrayList<AttestationResolver>();
-                    attestationResolvers.add(StandardMetadataService.createDefaultAttestationResolver(trustResolver));
-                    val resource = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getTrustedDeviceMetadata().getLocation();
-                    if (resource != null) {
-                        val metadata = WebAuthnUtils.getObjectMapper().readValue(resource.getInputStream(), MetadataObject.class);
-                        attestationResolvers.add(new SimpleAttestationResolver(CollectionUtils.wrapList(metadata), trustResolver));
-                    }
-                    attestationResolvers.addAll(Optional.ofNullable(foundAttestations.getIfAvailable()).orElseGet(ArrayList::new));
-                    val attestationResolver = new CompositeAttestationResolver(attestationResolvers);
-                    return new StandardMetadataService(attestationResolver);
+                    val loc = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getTrustedDeviceMetadata().getLocation();
+                    val metadata = MetadataObject.readMetadata(loc.getInputStream());
+                    return new YubicoJsonMetadataService(List.of(metadata));
                 }))
                 .otherwiseProxy()
                 .get();
         }
-
     }
 
     @Configuration(value = "WebAuthnCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnCoreConfiguration {
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "simpleTrustResolverWithEquality")
-        public TrustResolver simpleTrustResolverWithEquality() {
-            return new SimpleTrustResolverWithEquality(new ArrayList<>());
-        }
-
-        @Bean
         @ConditionalOnMissingBean(name = "webAuthnSessionManager")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SessionManager webAuthnSessionManager(final ConfigurableApplicationContext applicationContext) throws Exception {
+        @Bean
+        public SessionManager webAuthnSessionManager(final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(SessionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(DefaultSessionManager::new)
@@ -207,7 +177,7 @@ public class WebAuthnConfiguration {
             @Qualifier("webAuthnCredentialRepository")
             final WebAuthnCredentialRepository webAuthnCredentialRepository,
             @Qualifier("webAuthnMetadataService")
-            final MetadataService webAuthnMetadataService,
+            final AttestationTrustSource webAuthnMetadataService,
             @Qualifier("webAuthnSessionManager")
             final SessionManager webAuthnSessionManager) throws Exception {
             val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
@@ -223,14 +193,17 @@ public class WebAuthnConfiguration {
                 origins.add(serverName);
             }
             val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase());
-            val relyingParty = RelyingParty.builder().identity(defaultRelyingPartyId)
+            val relyingParty = RelyingParty.builder()
+                .identity(defaultRelyingPartyId)
                 .credentialRepository(webAuthnCredentialRepository)
-                .origins(origins).attestationConveyancePreference(conveyance)
-                .metadataService(webAuthnMetadataService)
-                .allowUnrequestedExtensions(webAuthn.isAllowUnrequestedExtensions())
+                .origins(origins)
+                .attestationConveyancePreference(conveyance)
+                .attestationTrustSource(webAuthnMetadataService)
                 .allowUntrustedAttestation(webAuthn.isAllowUntrustedAttestation())
-                .validateSignatureCounter(webAuthn.isValidateSignatureCounter()).appId(appId).build();
-            return new WebAuthnServer(webAuthnCredentialRepository, newCache(), newCache(), relyingParty, webAuthnSessionManager);
+                .validateSignatureCounter(webAuthn.isValidateSignatureCounter())
+                .appId(appId).build();
+            return new WebAuthnServer(webAuthnCredentialRepository,
+                newCache(), newCache(), relyingParty, webAuthnSessionManager);
         }
     }
 
@@ -349,7 +322,7 @@ public class WebAuthnConfiguration {
                     if (location != null) {
                         return new JsonResourceWebAuthnCredentialRepository(casProperties, location, webAuthnCredentialRegistrationCipherExecutor);
                     }
-                    return WebAuthnCredentialRepository.inMemory();
+                    return new InMemoryRegistrationStorage(casProperties, webAuthnCredentialRegistrationCipherExecutor);
                 })
                 .otherwiseProxy()
                 .get();

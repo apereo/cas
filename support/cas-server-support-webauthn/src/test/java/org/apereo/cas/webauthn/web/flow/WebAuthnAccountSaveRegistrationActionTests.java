@@ -82,7 +82,7 @@ public class WebAuthnAccountSaveRegistrationActionTests {
                 .build());
         val token = EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8));
         val sessionId = webAuthnSessionManager.createSession(ByteArray.fromBase64(token));
-        request.setParameter("sessionToken", sessionId.toJsonString());
+        request.setParameter("sessionToken", sessionId.getBase64Url());
 
         result = webAuthnSaveAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());

@@ -7,6 +7,7 @@ import com.yubico.data.RegistrationRequest;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
 import com.yubico.webauthn.data.ByteArray;
+import com.yubico.webauthn.data.ResidentKeyRequirement;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -123,7 +124,9 @@ public class WebAuthnController {
             username,
             Optional.of(displayName),
             Optional.ofNullable(credentialNickname),
-            requireResidentKey,
+            requireResidentKey
+                ? ResidentKeyRequirement.REQUIRED
+                : ResidentKeyRequirement.DISCOURAGED,
             Optional.ofNullable(sessionTokenBase64).map(Unchecked.function(ByteArray::fromBase64Url)));
 
         if (result.isRight()) {

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
@@ -95,13 +96,6 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
     private String allowedOrigins;
 
     /**
-     * If {@code true} finish registration op and finish assertion will
-     * accept responses containing extension outputs for
-     * which there was no extension input.
-     */
-    private boolean allowUnrequestedExtensions;
-
-    /**
      * If false finish registration op will only allow
      * registrations where the attestation signature can be linked to a trusted attestation root. This excludes self
      * attestation and none attestation. Regardless of the value of this option, invalid attestation
@@ -135,4 +129,8 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
      * using their device as the first step.
      */
     private boolean allowPrimaryAuthentication;
+
+    public WebAuthnMultifactorAuthenticationCoreProperties() {
+        trustedDeviceMetadata.setLocation(new ClassPathResource("webauthn-metadata.json"));
+    }
 }

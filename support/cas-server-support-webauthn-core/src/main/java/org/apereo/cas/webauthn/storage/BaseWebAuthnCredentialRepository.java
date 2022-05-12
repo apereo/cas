@@ -84,7 +84,9 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
                 result.getCredentialId(), username)));
         val registrations = getRegistrationsByUsername(username);
         registrations.remove(registration);
-        registrations.add(registration.withSignatureCount(result.getSignatureCount()));
+        registrations.add(registration.withCredential(registration.getCredential().toBuilder()
+            .signatureCount(result.getSignatureCount())
+            .build()));
         update(username, new HashSet<>(registrations));
     }
 
@@ -122,7 +124,7 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
             .credentialId(reg.getCredential().getCredentialId())
             .userHandle(reg.getUserIdentity().getId())
             .publicKeyCose(reg.getCredential().getPublicKeyCose())
-            .signatureCount(reg.getSignatureCount())
+            .signatureCount(reg.getCredential().getSignatureCount())
             .build()));
     }
 
@@ -135,7 +137,7 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
                 .credentialId(reg.getCredential().getCredentialId())
                 .userHandle(reg.getUserIdentity().getId())
                 .publicKeyCose(reg.getCredential().getPublicKeyCose())
-                .signatureCount(reg.getSignatureCount())
+                .signatureCount(reg.getCredential().getSignatureCount())
                 .build())
             .collect(Collectors.toSet());
     }

@@ -77,8 +77,13 @@ the [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
 
 Application definitions that are registered with CAS typically are marked with `RegexRegisteredService` that indicates the service type. As part of a larger 
 refactoring effort to simplify the service definition models and to assist with future development efforts in the area of authorization policies, such 
-services should be updated to use the now-dedicated type `CasRegisteredService` for all CAS-enabled applications. While the deprecation warning is quite 
-harmless for now, we STRNGLY suggest that you visit your application definitions and perform a bulk-update to avoid breaking upgrades in the future.
+services should be updated to use the now-dedicated type `CasRegisteredService` for all CAS-enabled applications. 
+
+<div class="alert alert-warning"><strong>Usage</strong>
+<p>While the deprecation warning is quite harmless for now, we STRNGLY suggest that you visit your application definitions and perform a bulk-update to 
+avoid breaking upgrades in the future.</p>
+</div>
+
 
 ### Testing Strategy
 
@@ -99,6 +104,11 @@ that are assigned default values. In scenarios where there is no setting to chan
 alternative might be to update all service definitions to change field default. To accomodate this change, options are now available
 to allow changing of the default field values for service definitions. This enhancement is initially made available for select fields
 that belong to [SAML2 service definitions](../services/SAML2-Service-Management.html).
+  
+### WebAuthn FIDO Multifactor Authentication
+
+Following on work done in previous release candidates, this release upgrades the YubiKey WebAuthn FIDO implementation to version `2.0.0`.
+While this is a major upgrade internally, its exteral effects should remain largely invisible to the end-user. 
 
 ## Other Stuff
 
@@ -126,6 +136,7 @@ that belong to [SAML2 service definitions](../services/SAML2-Service-Management.
 - Spring Cloud
 - Infinispan
 - Mockito
+- Micrometer
 - Apache Ignite
 - Micrometer
 - MySQL Driver
