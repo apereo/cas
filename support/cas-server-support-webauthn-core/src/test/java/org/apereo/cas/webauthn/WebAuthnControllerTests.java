@@ -20,6 +20,7 @@ import com.yubico.webauthn.data.PublicKeyCredential;
 import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions;
 import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
+import com.yubico.webauthn.data.ResidentKeyRequirement;
 import com.yubico.webauthn.data.TokenBindingStatus;
 import com.yubico.webauthn.data.UserIdentity;
 import lombok.val;
@@ -129,7 +130,7 @@ public class WebAuthnControllerTests {
             publicKeyCredential);
         val authnResult = new WebAuthnServer.SuccessfulAuthenticationResult(assertion,
             response, List.of(registration),
-            "casuser", ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)), List.of());
+            "casuser", ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)));
 
         when(server.finishAuthentication(any())).thenReturn(Either.right(authnResult));
         result = controller.finishAuthentication("casuser");
@@ -158,7 +159,7 @@ public class WebAuthnControllerTests {
             ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)),
             publicKeyCredential,
             Optional.of(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8))));
-        when(server.startRegistration(anyString(), any(), any(), anyBoolean(), any()))
+        when(server.startRegistration(anyString(), any(), any(), any(ResidentKeyRequirement.class), any()))
             .thenReturn(Either.right(registrationRequest));
 
         val request = new MockHttpServletRequest();
@@ -166,7 +167,7 @@ public class WebAuthnControllerTests {
         var result = controller.startRegistration("casuser", "displayName", "nickName", false, "sessionToken", request, response);
         assertEquals(HttpStatus.OK, result.getStatusCode());
 
-        when(server.startRegistration(anyString(), any(), any(), anyBoolean(), any())).thenReturn(Either.left("failed"));
+        when(server.startRegistration(anyString(), any(), any(), any(ResidentKeyRequirement.class), any())).thenReturn(Either.left("failed"));
         result = controller.startRegistration("casuser", "displayName", "nickName", false, "sessionToken", request, response);
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
@@ -226,7 +227,7 @@ public class WebAuthnControllerTests {
                          + "\"authenticatorExtensions\":{\"boo\":\"far\"},"
                          + "\"challenge\":\"" + challenge.getBase64Url() + "\","
                          + "\"origin\":\"localhost\","
-                         + "\"tokenBinding\":{\"status\":\"" + tokenBindingStatus.toJsonString()
+                         + "\"tokenBinding\":{\"status\":\"" + tokenBindingStatus.getValue()
                          + "\",\"id\":\"" + tokenBindingId.getBase64Url() + "\"},"
                          + "\"type\":\"webauthn.get\""
                          + '}';

@@ -56,7 +56,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
         if (!httpCredential.getService().getProxyPolicy()
             .isAllowedProxyCallbackUrl(httpCredential.getService(), httpCredential.getCallbackUrl())) {
             LOGGER.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
-                httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
+                httpCredential.getService(), httpCredential.getCallbackUrl());
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
 
