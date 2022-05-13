@@ -57,7 +57,7 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
         val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
             Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
-        rep.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.NONE);
+        rep.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.SOURCE);
         rep.setAttributeRepositoryIds(Set.of("StubPersonAttributeDao"));
 
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();

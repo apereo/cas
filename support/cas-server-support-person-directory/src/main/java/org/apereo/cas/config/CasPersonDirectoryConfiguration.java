@@ -26,6 +26,7 @@ import org.apereo.services.persondir.support.AbstractAggregatingDefaultQueryPers
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.CascadingPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -88,15 +89,16 @@ public class CasPersonDirectoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
         public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver(
+            @Qualifier("attributeRepositoryAttributeMerger")
+            final IAttributeMerger attributeRepositoryAttributeMerger,
             final CasConfigurationProperties casProperties,
             @Qualifier("personDirectoryPrincipalFactory")
             final PrincipalFactory personDirectoryPrincipalFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository) {
             val personDirectory = casProperties.getPersonDirectory();
-            val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(personDirectoryPrincipalFactory,
-                attributeRepository, attributeMerger, personDirectory);
+                attributeRepository, attributeRepositoryAttributeMerger, personDirectory);
         }
 
         @ConditionalOnMissingBean(name = "principalResolutionExecutionPlanConfigurer")
@@ -181,18 +183,23 @@ public class CasPersonDirectoryConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "attributeRepositoryAttributeMerger")
+        public IAttributeMerger attributeRepositoryAttributeMerger(final CasConfigurationProperties casProperties) {
+            return CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "aggregatingAttributeRepository")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public IPersonAttributeDao aggregatingAttributeRepository(
+            @Qualifier("attributeRepositoryAttributeMerger")
+            final IAttributeMerger attributeRepositoryAttributeMerger,
             final CasConfigurationProperties casProperties,
             @Qualifier("personDirectoryAttributeRepositoryPlan")
             final PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan) {
             val aggregate = getAggregateAttributeRepository(casProperties);
-
-            val properties = casProperties.getAuthn().getAttributeRepository();
-            val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(properties.getCore().getMerger());
-            LOGGER.trace("Configured merging strategy for attribute sources is [{}]", attributeMerger);
-            aggregate.setMerger(attributeMerger);
+            aggregate.setMerger(attributeRepositoryAttributeMerger);
 
             val list = personDirectoryAttributeRepositoryPlan.getAttributeRepositories();
             aggregate.setPersonAttributeDaos(list);

@@ -45,11 +45,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
-import org.apereo.services.persondir.support.merger.BaseAdditiveAttributeMerger;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.apereo.services.persondir.support.merger.ReturnChangesAdditiveAttributeMerger;
+import org.apereo.services.persondir.support.merger.ReturnOriginalAdditiveAttributeMerger;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ApplicationContext;
@@ -61,7 +62,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -140,14 +140,10 @@ public class CoreAuthenticationUtils {
                 return merger;
             case ADD:
                 return new NoncollidingAttributeAdder();
-            case NONE:
-                return new BaseAdditiveAttributeMerger() {
-                    @Override
-                    protected Map<String, List<Object>> mergePersonAttributes(final Map<String, List<Object>> toModify,
-                                                                              final Map<String, List<Object>> toConsider) {
-                        return new LinkedHashMap<>(toModify);
-                    }
-                };
+            case SOURCE:
+                return new ReturnOriginalAdditiveAttributeMerger();
+            case DESTINATION:
+                return new ReturnChangesAdditiveAttributeMerger();
             case REPLACE:
             default:
                 return new ReplacingAttributeAdder();

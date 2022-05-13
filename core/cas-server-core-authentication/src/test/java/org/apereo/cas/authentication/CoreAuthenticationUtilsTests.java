@@ -209,6 +209,24 @@ public class CoreAuthenticationUtilsTests {
     }
 
     @Test
+    public void verifyAttributeMergerOriginal() {
+        val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.SOURCE);
+        val m1 = CollectionUtils.<String, List<Object>>wrap("key1", CollectionUtils.wrapList("value1"));
+        val m2 = CollectionUtils.<String, List<Object>>wrap("key2", CollectionUtils.wrapList("value2"));
+        val result = merger.mergeAttributes(m1, m2);
+        assertEquals(m1, result);
+    }
+
+    @Test
+    public void verifyAttributeMergerChanged() {
+        val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.DESTINATION);
+        val m1 = CollectionUtils.<String, List<Object>>wrap("key1", CollectionUtils.wrapList("value1"));
+        val m2 = CollectionUtils.<String, List<Object>>wrap("key2", CollectionUtils.wrapList("value2"));
+        val result = merger.mergeAttributes(m1, m2);
+        assertEquals(m2, result);
+    }
+
+    @Test
     public void verifyIpIntelligenceService() {
         var properties = new AdaptiveAuthenticationProperties();
         assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));

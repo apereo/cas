@@ -21,6 +21,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -87,11 +88,11 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategy principalElectionStrategy(
             final List<PrincipalElectionStrategyConfigurer> configurers,
-            final CasConfigurationProperties casProperties) {
+            @Qualifier("principalElectionAttributeMerger")
+            final IAttributeMerger attributeMerger) {
             LOGGER.trace("Building principal election strategies from [{}]", configurers);
             val chain = new ChainingPrincipalElectionStrategy();
-            val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-            chain.setAttributeMerger(merger);
+            chain.setAttributeMerger(attributeMerger);
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
 
             configurers.forEach(c -> {
@@ -101,22 +102,29 @@ public class CasCoreAuthenticationPrincipalConfiguration {
             return chain;
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "principalElectionAttributeMerger")
+        public IAttributeMerger principalElectionAttributeMerger(final CasConfigurationProperties casProperties) {
+            return CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+        }
+
         @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
+            @Qualifier("principalElectionAttributeMerger")
+            final IAttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,
             @Qualifier("principalFactory")
             final PrincipalFactory principalFactory) {
             return chain -> {
                 val strategy = new DefaultPrincipalElectionStrategy(principalFactory,
                     CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory()));
-                val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-                strategy.setAttributeMerger(merger);
+                strategy.setAttributeMerger(attributeMerger);
                 chain.registerElectionStrategy(strategy);
             };
         }
-
     }
 
     @Configuration(value = "CasCoreAuthenticationPrincipalFactoryConfiguration", proxyBeanMethods = false)
