@@ -22,7 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
