@@ -29,7 +29,7 @@ public interface ProtocolAttributeEncoder {
     Logger LOGGER = LoggerFactory.getLogger(ProtocolAttributeEncoder.class);
 
     /**
-     * The constant ENCODED_ATTRIBUTE_PREFIX.
+     * The prefix that is prepended to the name of the attribute name.
      */
     String ENCODED_ATTRIBUTE_PREFIX = "_";
 
@@ -48,7 +48,7 @@ public interface ProtocolAttributeEncoder {
      * @since 4.1
      */
     default Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
-        final RegisteredService registeredService, final WebApplicationService webApplicationService) {
+                                                 final RegisteredService registeredService, final WebApplicationService webApplicationService) {
         val finalAttributes = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
         attributes.forEach((k, v) -> {
             val attributeName = decodeAttribute(k);
@@ -65,7 +65,13 @@ public interface ProtocolAttributeEncoder {
      * @return true/false
      */
     static boolean isAttributeNameEncoded(final String name) {
-        return name.startsWith(ENCODED_ATTRIBUTE_PREFIX);
+        try {
+            val hexidecimalRadix = 16;
+            return name.startsWith(ENCODED_ATTRIBUTE_PREFIX) && Long.parseLong(name, hexidecimalRadix) != 0;
+        } catch (final Exception e) {
+            LOGGER.trace("Attribute [{}] is not encoded as a hex: [{}]", name, e.getMessage());
+        }
+        return false;
     }
 
     /**

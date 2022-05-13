@@ -31,6 +31,7 @@ public class DefaultCasProtocolAttributeEncoderTests {
         CipherExecutor.noOpOfStringToString());
 
     private RegisteredService registeredService;
+
     private WebApplicationService webApplicationService;
 
     @BeforeEach
@@ -83,5 +84,13 @@ public class DefaultCasProtocolAttributeEncoderTests {
         assertTrue(results.containsKey("user"));
         val user = results.get("user");
         assertTrue(user.getClass().isAssignableFrom(String.class));
+    }
+
+    @Test
+    public void verifyEncodedWithPrefix() {
+        val attributes = new LinkedHashMap<String, Object>();
+        attributes.put("_MAIL_", "casuser@example.org");
+        val results = encoder.encodeAttributes(attributes, registeredService, webApplicationService);
+        ProtocolAttributeEncoder.decodeAttributes(results, registeredService, webApplicationService);
     }
 }
