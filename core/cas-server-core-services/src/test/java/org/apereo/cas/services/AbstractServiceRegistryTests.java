@@ -192,7 +192,9 @@ public abstract class AbstractServiceRegistryTests {
         rs.setTheme("some-theme");
 
         if (rs instanceof CasRegisteredService) {
-            ((CasRegisteredService) rs).setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https"));
+            val policy = new RegexMatchingRegisteredServiceProxyPolicy();
+            policy.setPattern("https");
+            ((CasRegisteredService) rs).setProxyPolicy(policy);
         }
         rs.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy());
         assertNotNull(this.serviceRegistry.save(rs), registeredServiceClass::getName);
@@ -454,7 +456,9 @@ public abstract class AbstractServiceRegistryTests {
         r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
 
         if (r instanceof CasRegisteredService) {
-            ((CasRegisteredService) r).setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
+            val policy = new RegexMatchingRegisteredServiceProxyPolicy();
+            policy.setPattern("https");
+            ((CasRegisteredService) r).setProxyPolicy(policy);
         }
         r.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(CollectionUtils.wrapHashSet("h1", "h2"));
 

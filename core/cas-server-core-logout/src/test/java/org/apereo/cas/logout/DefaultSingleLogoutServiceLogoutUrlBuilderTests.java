@@ -51,7 +51,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         s.setServiceId(id);
         s.setName("Test service " + id);
         s.setDescription("Registered service description");
-        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern("^https?://.+"));
         s.setId(RandomUtils.getNativeInstance().nextInt());
         servicesManager.save(s);
         return s;

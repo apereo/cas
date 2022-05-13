@@ -115,8 +115,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         if (!canProxy) {
             return new RefuseRegisteredServiceProxyPolicy();
         }
-
-        return new RegexMatchingRegisteredServiceProxyPolicy(".*");
+        return new RegexMatchingRegisteredServiceProxyPolicy().setPattern(".*");
     }
 
     private static RegisteredService createMockRegisteredService(final String svcId,

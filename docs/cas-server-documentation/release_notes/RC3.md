@@ -109,6 +109,13 @@ that belong to [SAML2 service definitions](../services/SAML2-Service-Management.
 
 Following on work done in previous release candidates, this release upgrades the YubiKey WebAuthn FIDO implementation to version `2.0.0`.
 While this is a major upgrade internally, its exteral effects should remain largely invisible to the end-user. 
+ 
+## CAS Proxy Authentication
+        
+The [proxy authentication policy](../services/Configuring-Service-Proxy-Policy.html) that may 
+be assigned to a CAS service definition can now be defined using a REST endpoint. A few smaller enhancements
+are also applied to the proxy policies that operate based on regular expressions with additional logging in place to assist
+with better troubleshooting.
 
 ## Other Stuff
 
