@@ -119,9 +119,14 @@ public class PrincipalAttributesCoreProperties implements Serializable {
         ADD,
         /**
          * No merging.
-         * Doesn't merge attributes, ignores attributes from non-authentication attribute repositories.
+         * Doesn't merge attributes, and returns the original collection of attributes as passed.
          */
-        NONE,
+        SOURCE,
+        /**
+         * No merging. Ignore the collection of original attributes that are passed
+         * and always favor what is supplied as a subsequent source and an override.
+         */
+        DESTINATION,
         /**
          * Multivalued attributes.
          * Combines all values into a single attribute, essentially creating a multi-valued attribute.

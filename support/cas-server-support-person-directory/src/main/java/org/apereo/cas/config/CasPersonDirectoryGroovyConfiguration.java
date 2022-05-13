@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 @AutoConfiguration
 public class CasPersonDirectoryGroovyConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.groovy[0].location").exists();
-
     @Configuration(value = "GroovyAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GroovyAttributeRepositoryConfiguration {
