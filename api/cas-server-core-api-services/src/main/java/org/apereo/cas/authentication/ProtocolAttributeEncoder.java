@@ -65,7 +65,13 @@ public interface ProtocolAttributeEncoder {
      * @return true/false
      */
     static boolean isAttributeNameEncoded(final String name) {
-        return name.startsWith(ENCODED_ATTRIBUTE_PREFIX);
+        try {
+            val hexidecimalRadix = 16;
+            return name.startsWith(ENCODED_ATTRIBUTE_PREFIX) && Long.parseLong(name, hexidecimalRadix) != 0;
+        } catch (final Exception e) {
+            LOGGER.trace("Attribute [{}] is not encoded as a hex: [{}]", name, e.getMessage());
+        }
+        return false;
     }
 
     /**
