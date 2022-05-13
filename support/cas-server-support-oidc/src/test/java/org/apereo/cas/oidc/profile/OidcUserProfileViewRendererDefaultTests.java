@@ -109,5 +109,6 @@ public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         val claims = JwtBuilder.parse(body);
         assertNotNull(claims);
         assertEquals("casuser@example.org", ((JSONObject) claims.getClaim("attributes")).get("email"));
+        assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
     }
 }
