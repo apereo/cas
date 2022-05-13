@@ -70,7 +70,7 @@ public class DefaultLogoutManagerTests {
         s.setServiceId(id);
         s.setName("Test registered service " + id);
         s.setDescription("Registered service description");
-        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern("^https?://.+"));
         s.setId(RandomUtils.getNativeInstance().nextInt());
         return s;
     }

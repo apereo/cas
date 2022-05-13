@@ -44,10 +44,20 @@ A proxy policy that only allows proxying to PGT urls that match the specified re
   "id" : 1,
   "proxyPolicy" : {
     "@class" : "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
-    "pattern" : "^https?://.*"
+    "pattern" : "^https?://.*",
+    "useServiceId": false,
+    "exactMatch": false
   }
 }
 ```
+
+As noted earlier, the `pattern` must be specified as a valid regular expression. Furthermore, 
+
+- If the pattern used here is identical to the pattern used by the registered service itself as specified by the `serviceId`, you may be able to reuse the same 
+existing regular expression here via the `useServiceId` setting. 
+- The setting `exactMatch` treats the regular expression pattern as an exact liteal and turns off the evaluation of the pattern as a regular expression in 
+  favor of a literal comparison.
+
 
 ## REST
 

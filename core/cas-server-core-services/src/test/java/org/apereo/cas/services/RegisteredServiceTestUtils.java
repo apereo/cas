@@ -134,8 +134,8 @@ public class RegisteredServiceTestUtils {
 
     @SneakyThrows
     public static <T extends BaseWebBasedRegisteredService> T getRegisteredService(final String id,
-                                                                           final Class<T> clazz,
-                                                                           final boolean uniq) {
+                                                                                   final Class<T> clazz,
+                                                                                   final boolean uniq) {
         return getRegisteredService(id, clazz, uniq, getTestAttributes());
     }
 
@@ -167,7 +167,9 @@ public class RegisteredServiceTestUtils {
         s.setLogoutUrl("https://sys.example.org/logout.png");
 
         if (s instanceof CasRegisteredService) {
-            ((CasRegisteredService) s).setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
+            val policy = new RegexMatchingRegisteredServiceProxyPolicy();
+            policy.setPattern("^http.+");
+            ((CasRegisteredService) s).setProxyPolicy(policy);
         }
         s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
@@ -277,7 +279,7 @@ public class RegisteredServiceTestUtils {
 
         val svc5 = RegisteredServiceTestUtils.getRegisteredService("(https://)*google.com$");
         svc5.setEvaluationOrder(1);
-        svc5.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
+        svc5.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern(".+"));
         svc5.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
         val policy1 = new ReturnAllowedAttributeReleasePolicy();
         policy1.setAuthorizedToReleaseCredentialPassword(true);
@@ -334,7 +336,7 @@ public class RegisteredServiceTestUtils {
         list.add(svc12);
 
         val svc13 = RegisteredServiceTestUtils.getRegisteredService("^http://www.jasig.org.+");
-        svc13.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
+        svc13.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern(".+"));
         svc13.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc13.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         list.add(svc13);
@@ -345,7 +347,7 @@ public class RegisteredServiceTestUtils {
         list.add(svc14);
 
         val svc15 = RegisteredServiceTestUtils.getRegisteredService("proxyService");
-        svc15.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https://.+"));
+        svc15.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern("^https://.+"));
         svc15.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc15.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         list.add(svc15);
@@ -411,7 +413,7 @@ public class RegisteredServiceTestUtils {
         list.add(svc23);
 
         val svc24 = RegisteredServiceTestUtils.getRegisteredService("https://www.casinthecloud.com");
-        svc24.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
+        svc24.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern(".+"));
         svc24.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
         val policy24 = new ReturnAllowedAttributeReleasePolicy();
         policy24.setAuthorizedToReleaseCredentialPassword(true);

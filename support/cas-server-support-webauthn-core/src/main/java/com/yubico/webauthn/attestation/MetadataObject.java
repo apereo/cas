@@ -14,6 +14,7 @@ import com.yubico.internal.util.CertificateParser;
 import com.yubico.internal.util.ExceptionUtil;
 import com.yubico.internal.util.JacksonCodecs;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -32,6 +33,7 @@ import java.util.Map;
  * @since 6.6.0
  */
 @Slf4j
+@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(
     of = {"data"},
@@ -102,22 +104,6 @@ public class MetadataObject {
         } catch (final IOException e) {
             throw ExceptionUtil.wrapAndLog(LOGGER, "Failed to read default metadata", e);
         }
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public Map<String, String> getVendorInfo() {
-        return vendorInfo;
-    }
-
-    public List<String> getTrustedCertificates() {
-        return trustedCertificates;
     }
 
     @JsonIgnore

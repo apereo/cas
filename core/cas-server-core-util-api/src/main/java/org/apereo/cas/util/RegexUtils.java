@@ -34,7 +34,7 @@ public class RegexUtils {
      */
     public static boolean isValidRegex(final String pattern) {
         try {
-            if (pattern != null) {
+            if (StringUtils.isNotBlank(pattern)) {
                 Pattern.compile(pattern);
                 return true;
             }
