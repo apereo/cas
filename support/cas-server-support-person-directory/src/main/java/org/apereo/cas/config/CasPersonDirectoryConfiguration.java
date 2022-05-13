@@ -204,6 +204,7 @@ public class CasPersonDirectoryConfiguration {
             val list = personDirectoryAttributeRepositoryPlan.getAttributeRepositories();
             aggregate.setPersonAttributeDaos(list);
 
+            val properties = casProperties.getAuthn().getAttributeRepository();
             aggregate.setRequireAll(properties.getCore().isRequireAllRepositorySources());
             if (list.isEmpty()) {
                 LOGGER.debug("No attribute repository sources are available/defined to merge together.");

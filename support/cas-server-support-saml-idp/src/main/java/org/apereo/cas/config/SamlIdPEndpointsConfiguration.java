@@ -445,7 +445,8 @@ public class SamlIdPEndpointsConfiguration {
             final ServiceFactory samlIdPServiceFactory,
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
-            return new InternalTicketValidator(centralAuthenticationService, samlIdPServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
+            return new InternalTicketValidator(centralAuthenticationService, samlIdPServiceFactory,
+                authenticationAttributeReleasePolicy, servicesManager);
         }
 
         @Bean

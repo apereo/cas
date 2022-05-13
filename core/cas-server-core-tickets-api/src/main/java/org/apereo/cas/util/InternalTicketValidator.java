@@ -33,7 +33,6 @@ public class InternalTicketValidator implements TicketValidator {
     private final ServicesManager servicesManager;
 
     @Override
-    @SuppressWarnings("unchecked")
     public Assertion validate(final String ticketId, final String serviceId) {
         val service = webApplicationServiceFactory.createService(serviceId);
         val assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);

@@ -140,7 +140,6 @@ public class SamlResponseBuilder {
                                                       final Map<String, List<Object>> authnAttributes,
                                                       final Map<String, List<Object>> principalAttributes) {
         val registeredService = this.servicesManager.findServiceBy(service);
-
         LOGGER.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);
 
         val attributesToReturn = new HashMap<String, Object>();
