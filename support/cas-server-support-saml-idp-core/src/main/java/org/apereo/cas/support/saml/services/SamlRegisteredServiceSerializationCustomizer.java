@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.util.RegisteredServiceSerializationCustomizer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  * @since 6.6.0
  */
 @RequiredArgsConstructor
-public class SamlRegisteredServiceSerializationCustomizer implements RegisteredServiceSerializationCustomizer {
+public class SamlRegisteredServiceSerializationCustomizer implements JacksonObjectMapperCustomizer {
     private final CasConfigurationProperties casProperties;
 
     @Override

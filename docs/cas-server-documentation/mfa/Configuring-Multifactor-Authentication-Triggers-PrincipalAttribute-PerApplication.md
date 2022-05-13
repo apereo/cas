@@ -14,7 +14,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "name": "test",

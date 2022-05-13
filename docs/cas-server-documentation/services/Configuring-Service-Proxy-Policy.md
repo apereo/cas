@@ -20,7 +20,7 @@ Disallows proxy authentication for a service. This is default policy and need no
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -36,7 +36,7 @@ A proxy policy that only allows proxying to PGT urls that match the specified re
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,

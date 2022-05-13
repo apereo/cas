@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -160,7 +161,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         val pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
         if (StringUtils.isNotBlank(pgtUrl)) {
             try {
-                val registeredService = serviceValidateConfigurationContext.getServicesManager().findServiceBy(service);
+                val registeredService = serviceValidateConfigurationContext.getServicesManager()
+                    .findServiceBy(service, CasModelRegisteredService.class);
                 verifyRegisteredServiceProperties(registeredService, service);
                 return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -33,7 +34,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     /**
      * Services manager instance.
      */
-    protected final transient ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
     private final UrlValidator urlValidator;
 
@@ -58,9 +59,12 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      */
     protected String determineServiceResponseUrl(final WebApplicationService service) {
         val registeredService = this.servicesManager.findServiceBy(service);
-        if (registeredService != null && StringUtils.isNotBlank(registeredService.getRedirectUrl())
-            && getUrlValidator().isValid(registeredService.getRedirectUrl())) {
-            return registeredService.getRedirectUrl();
+        if (registeredService instanceof CasModelRegisteredService) {
+            val casService = (CasModelRegisteredService) registeredService;
+            if (StringUtils.isNotBlank(casService.getRedirectUrl())
+                && getUrlValidator().isValid(casService.getRedirectUrl())) {
+                return casService.getRedirectUrl();
+            }
         }
         return service.getOriginalUrl();
     }

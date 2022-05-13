@@ -33,7 +33,7 @@ public class DefaultRegisteredServiceAuthenticationPolicyTests {
         policy.setCriteria(criteria);
         svc.setAuthenticationPolicy(policy);
         MAPPER.writerWithDefaultPrettyPrinter().writeValue(JSON_FILE, svc);
-        val svc2 = MAPPER.readValue(JSON_FILE, AbstractRegisteredService.class);
+        val svc2 = MAPPER.readValue(JSON_FILE, BaseRegisteredService.class);
         assertEquals(svc, svc2);
     }
 

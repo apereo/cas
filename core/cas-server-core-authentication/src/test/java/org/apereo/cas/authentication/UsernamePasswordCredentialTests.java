@@ -92,7 +92,7 @@ public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifyEquals() {
-        assertNotEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(), null);
+        assertNotEquals(null, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
         assertNotEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(),

@@ -25,7 +25,7 @@ public class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator e
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
         return registeredService == null
-            || registeredService.getMultifactorPolicy() == null
-            || !registeredService.getMultifactorPolicy().isBypassEnabled();
+            || registeredService.getMultifactorAuthenticationPolicy() == null
+            || !registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled();
     }
 }

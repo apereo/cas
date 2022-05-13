@@ -25,7 +25,7 @@ public class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServ
     private static final long serialVersionUID = 5823989148794052951L;
 
     public DefaultRegisteredServiceUsernameProvider(final String canonicalizationMode) {
-        super(canonicalizationMode, false);
+        super(canonicalizationMode, false, null);
     }
 
     @Override

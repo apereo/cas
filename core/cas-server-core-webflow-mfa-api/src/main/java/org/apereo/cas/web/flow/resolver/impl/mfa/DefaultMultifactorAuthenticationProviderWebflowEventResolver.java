@@ -86,7 +86,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         final HttpServletRequest request,
         final HttpServletResponse response,
         final Service service) {
-        if (registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()) {
+        if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             return Optional.empty();
         }
         if (multifactorAuthenticationTrigger.supports(request, registeredService, authentication, service)) {

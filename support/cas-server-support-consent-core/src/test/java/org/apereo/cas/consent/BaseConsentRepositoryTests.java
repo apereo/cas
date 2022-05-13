@@ -24,7 +24,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -65,7 +65,7 @@ public abstract class BaseConsentRepositoryTests {
 
     protected static final Service SVC = RegisteredServiceTestUtils.getService();
 
-    protected static final AbstractRegisteredService REG_SVC = RegisteredServiceTestUtils.getRegisteredService(SVC.getId());
+    protected static final BaseRegisteredService REG_SVC = RegisteredServiceTestUtils.getRegisteredService(SVC.getId());
 
     protected static final Map<String, List<Object>> ATTR = CollectionUtils.wrap("attribute", List.of("value"));
 

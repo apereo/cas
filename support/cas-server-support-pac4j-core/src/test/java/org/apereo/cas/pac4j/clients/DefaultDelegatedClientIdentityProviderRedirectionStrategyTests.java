@@ -121,7 +121,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         val service = RegisteredServiceTestUtils.getService();
         val results = strategy.select(context, service, Set.of(provider));
         assertFalse(results.isEmpty());
-        assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
+        assertSame(DelegationAutoRedirectTypes.SERVER, results.get().getAutoRedirectType());
         assertEquals(Ordered.LOWEST_PRECEDENCE, strategy.getOrder());
     }
 
@@ -138,7 +138,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         WebUtils.putDelegatedAuthenticationProviderPrimary(context, null);
         val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
-        assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
+        assertSame(DelegationAutoRedirectTypes.SERVER, results.get().getAutoRedirectType());
     }
 
     @Test
@@ -153,7 +153,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         when(this.casCookieBuilder.retrieveCookieValue(any())).thenReturn("SomeClient");
         val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
-        assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
+        assertSame(DelegationAutoRedirectTypes.SERVER, results.get().getAutoRedirectType());
     }
 
     private void configureService(final RegisteredServiceDelegatedAuthenticationPolicy policy) {

@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
@@ -118,7 +118,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
             mfaTrustEngine.save(record);
 
             assertNotNull(response.getCookies());
-            assertEquals(response.getCookies().length, 1);
+            assertEquals(1, response.getCookies().length);
             request.setCookies(response.getCookies());
 
             val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());
@@ -135,10 +135,10 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
 
         @Test
         public void verifyPrepWithBypass() throws Exception {
-            val service = (AbstractRegisteredService) WebUtils.getRegisteredService(context);
+            val service = (BaseRegisteredService) WebUtils.getRegisteredService(context);
             val policy = new DefaultRegisteredServiceMultifactorPolicy();
             policy.setBypassTrustedDeviceEnabled(true);
-            service.setMultifactorPolicy(policy);
+            service.setMultifactorAuthenticationPolicy(policy);
             WebUtils.putRegisteredService(context, service);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP,
                 mfaPrepareTrustDeviceViewAction.execute(context).getId());

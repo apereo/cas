@@ -75,7 +75,7 @@ as a dynamic attribute whose value is determined by the inline Groovy script att
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 300,
@@ -97,7 +97,7 @@ as a dynamic attribute whose value is determined by the Groovy script attribute 
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 300,

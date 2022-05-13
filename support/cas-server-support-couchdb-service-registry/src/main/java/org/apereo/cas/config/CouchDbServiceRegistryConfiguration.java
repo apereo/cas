@@ -45,6 +45,7 @@ public class CouchDbServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultObjectMapperFactory")
         final ObjectMapperFactory objectMapperFactory) {

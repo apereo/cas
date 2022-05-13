@@ -35,30 +35,30 @@ public class DefaultChainingServicesManagerTests extends AbstractServicesManager
         assertEquals(0, servicesManager.count());
         assertNotNull(servicesManager.getName());
 
-        assertNull(servicesManager.findServiceBy(0, RegexRegisteredService.class));
-        assertNull(servicesManager.findServiceBy(new WebApplicationServiceFactory().createService("name"), RegexRegisteredService.class));
+        assertNull(servicesManager.findServiceBy(0, CasRegisteredService.class));
+        assertNull(servicesManager.findServiceBy(new WebApplicationServiceFactory().createService("name"), CasRegisteredService.class));
     }
 
     @Test
     public void verifySupports() {
-        val r = new RegexRegisteredService();
+        val r = new CasRegisteredService();
         r.setId(10);
         r.setName("domainService1");
         r.setServiceId("https://www.example.com/one");
         servicesManager.save(r);
-        assertTrue(servicesManager.supports(RegexRegisteredService.class));
+        assertTrue(servicesManager.supports(CasRegisteredService.class));
         assertTrue(servicesManager.supports(r));
         assertTrue(servicesManager.supports(RegisteredServiceTestUtils.getService()));
     }
 
     @Test
     public void verifySaveWithDomains() {
-        val svc = new RegexRegisteredService();
+        val svc = new CasRegisteredService();
         svc.setId(RandomUtils.nextLong());
         svc.setName("domainService2");
         svc.setServiceId("https://www.example.com/" + svc.getId());
         assertNotNull(servicesManager.save(svc, false));
-        assertEquals(servicesManager.getDomains().count(), 1);
+        assertEquals(1, servicesManager.getDomains().count());
         assertFalse(servicesManager.getServicesForDomain("example.org").isEmpty());
     }
 
@@ -66,7 +66,7 @@ public class DefaultChainingServicesManagerTests extends AbstractServicesManager
     public void verifySaveInBulk() {
         servicesManager.deleteAll();
         servicesManager.save(() -> {
-            val svc = new RegexRegisteredService();
+            val svc = new CasRegisteredService();
             svc.setId(RandomUtils.nextLong());
             svc.setName("domainService2");
             svc.setServiceId("https://www.example.com/" + svc.getId());

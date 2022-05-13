@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
@@ -34,7 +34,7 @@ public class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
     public void verifyCustomExpirationPolicy() {
-        val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", RegexRegisteredService.class);
+        val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", CasRegisteredService.class);
         svc.setServiceTicketExpirationPolicy(
             new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "666"));
         servicesManager.save(svc);
@@ -49,7 +49,7 @@ public class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
     public void verifyDefaultExpirationPolicy() {
-        val svc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", RegexRegisteredService.class);
+        val svc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", CasRegisteredService.class);
         servicesManager.save(svc);
 
         val factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);

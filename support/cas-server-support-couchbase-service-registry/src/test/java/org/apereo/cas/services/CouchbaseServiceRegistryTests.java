@@ -75,9 +75,9 @@ public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests 
 
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
-    public void verifySaveWithDefaultId(final Class<? extends RegisteredService> registeredServiceClass) {
+    public void verifySaveWithDefaultId(final Class<? extends BaseRegisteredService> registeredServiceClass) {
         val svc = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        svc.setId(AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE);
+        svc.setId(BaseRegisteredService.INITIAL_IDENTIFIER_VALUE);
         assertEquals(newServiceRegistry.save(svc).getServiceId(), svc.getServiceId(), registeredServiceClass::getName);
     }
 

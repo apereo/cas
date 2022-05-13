@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 
@@ -41,7 +41,7 @@ public class DefaultLdapRegisteredServiceMapperTests {
         val mapper = new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap(),
             new RegisteredServiceJsonSerializer(applicationContext));
         val id = String.format("^http://www.serviceid%s.org", RandomUtils.nextInt());
-        val rs = RegisteredServiceTestUtils.getRegisteredService(id, RegexRegisteredService.class);
+        val rs = RegisteredServiceTestUtils.getRegisteredService(id, CasRegisteredService.class);
         assertNotNull(mapper.mapFromRegisteredService(String.format("uid=%s,dc=example,dc=org", rs.getId()), rs));
     }
 }

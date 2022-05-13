@@ -62,7 +62,8 @@ public class RegisteredServiceTestUtils {
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
         try {
-            return new HttpBasedServiceCredential(new URL(url), RegisteredServiceTestUtils.getRegisteredService(url));
+            val service = (CasModelRegisteredService) RegisteredServiceTestUtils.getRegisteredService(url);
+            return new HttpBasedServiceCredential(new URL(url), service);
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }
@@ -123,27 +124,27 @@ public class RegisteredServiceTestUtils {
         return attributes;
     }
 
-    public static AbstractRegisteredService getRegisteredService() {
+    public static BaseRegisteredService getRegisteredService() {
         return getRegisteredService(CONST_TEST_URL);
     }
 
-    public static AbstractRegisteredService getRegisteredService(final Map requiredAttributes) {
+    public static BaseRegisteredService getRegisteredService(final Map requiredAttributes) {
         return getRegisteredService(CONST_TEST_URL, requiredAttributes);
     }
 
     @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id,
-                                                                 final Class<? extends RegisteredService> clazz,
-                                                                 final boolean uniq) {
+    public static <T extends BaseRegisteredService> T getRegisteredService(final String id,
+                                                                           final Class<T> clazz,
+                                                                           final boolean uniq) {
         return getRegisteredService(id, clazz, uniq, getTestAttributes());
     }
 
     @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id,
-                                                                 final Class<? extends RegisteredService> clazz,
-                                                                 final boolean uniq,
-                                                                 final Map requiredAttributes) {
-        val s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
+    public static <T extends BaseRegisteredService> T getRegisteredService(final String id,
+                                                                           final Class<T> clazz,
+                                                                           final boolean uniq,
+                                                                           final Map requiredAttributes) {
+        val s = (BaseRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
         if (uniq) {
@@ -153,7 +154,6 @@ public class RegisteredServiceTestUtils {
             s.setName(id);
         }
         s.setDescription("Registered service description");
-        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
         s.setId(RandomUtils.nextInt());
         s.setTheme("exampleTheme");
         s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
@@ -165,8 +165,10 @@ public class RegisteredServiceTestUtils {
         s.setLogo("https://logo.example.org/logo.png");
         s.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         s.setLogoutUrl("https://sys.example.org/logout.png");
-        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
+        if (s instanceof CasRegisteredService) {
+            ((CasRegisteredService) s).setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
+        }
         s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
         val policy = new ReturnAllowedAttributeReleasePolicy();
@@ -180,23 +182,23 @@ public class RegisteredServiceTestUtils {
         policy.setAllowedAttributes(new ArrayList<>(getTestAttributes().keySet()));
         s.setAttributeReleasePolicy(policy);
 
-        return s;
+        return (T) s;
     }
 
-    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
+    public static <T extends BaseRegisteredService> T getRegisteredService(final String id, final Class<T> clazz) {
         return getRegisteredService(id, clazz, true);
     }
 
-    public static AbstractRegisteredService getRegisteredService(final String id) {
-        return getRegisteredService(id, RegexRegisteredService.class, true);
+    public static CasRegisteredService getRegisteredService(final String id) {
+        return getRegisteredService(id, CasRegisteredService.class, true);
     }
 
-    public static AbstractRegisteredService getRegisteredService(final String id, final boolean uniq) {
-        return getRegisteredService(id, RegexRegisteredService.class, uniq);
+    public static CasRegisteredService getRegisteredService(final String id, final boolean uniq) {
+        return getRegisteredService(id, CasRegisteredService.class, uniq);
     }
 
-    public static AbstractRegisteredService getRegisteredService(final String id, final Map requiredAttributes) {
-        return getRegisteredService(id, RegexRegisteredService.class, true, requiredAttributes);
+    public static CasRegisteredService getRegisteredService(final String id, final Map requiredAttributes) {
+        return getRegisteredService(id, CasRegisteredService.class, true, requiredAttributes);
     }
 
     public static Principal getPrincipal() {

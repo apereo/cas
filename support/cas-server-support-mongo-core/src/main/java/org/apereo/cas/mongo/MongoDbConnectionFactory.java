@@ -20,6 +20,7 @@ import com.mongodb.connection.ConnectionPoolSettings;
 import com.mongodb.connection.ServerSettings;
 import com.mongodb.connection.SocketSettings;
 import com.mongodb.connection.SslSettings;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +70,7 @@ public class MongoDbConnectionFactory {
 
     private static final int DEFAULT_PORT = 27017;
 
+    @Getter
     private final MongoCustomConversions customConversions;
 
     private final SSLContext sslContext;
@@ -308,11 +310,9 @@ public class MongoDbConnectionFactory {
     }
 
     private Set<Class<?>> getInitialEntitySet() {
-        val initialEntitySet = new HashSet<Class<?>>();
-        for (val basePackage : getMappingBasePackages()) {
-            initialEntitySet.addAll(scanForEntities(basePackage));
-        }
-        return initialEntitySet;
+        return getMappingBasePackages().stream()
+            .flatMap(basePackage -> scanForEntities(basePackage).stream())
+            .collect(Collectors.toCollection(HashSet::new));
     }
 
     private Set<Class<?>> scanForEntities(final String basePackage) {

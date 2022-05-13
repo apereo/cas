@@ -19,7 +19,7 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
 
     @Test
     public void verifyFindByName() {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setId(6100);
         service.setName(TEST);
         service.setServiceId(TEST);
@@ -28,26 +28,26 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
 
         serviceRegistry.save(service);
         assertNotNull(servicesManager.findServiceByName(service.getName()));
-        assertNotEquals(servicesManager.stream().count(), 0);
+        assertNotEquals(0, servicesManager.stream().count());
         assertEquals(1, servicesManager.getDomains().count());
         assertFalse(servicesManager.getServicesForDomain(UUID.randomUUID().toString()).isEmpty());
     }
 
     @Test
     public void verifyFindByNameAndType() {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setId(6200);
         service.setName(TEST);
         service.setServiceId(TEST);
 
         serviceRegistry.save(service);
-        assertNotNull(servicesManager.findServiceByName(service.getName(), RegexRegisteredService.class));
-        assertNotEquals(servicesManager.stream().count(), 0);
+        assertNotNull(servicesManager.findServiceByName(service.getName(), CasRegisteredService.class));
+        assertNotEquals(0, servicesManager.stream().count());
     }
 
     @Test
     public void verifySaveAndRemoveFromCache() throws InterruptedException {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setId(4000);
         service.setName(TEST);
         service.setServiceId(TEST);
@@ -62,7 +62,7 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
 
     @Test
     public void verifyEmptyCacheFirst() {
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setId(5000);
         service.setName(TEST);
         service.setServiceId(TEST);

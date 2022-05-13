@@ -71,7 +71,7 @@ be authorized to receive the password as an attribute for the given attribute re
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^https://.+",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",

@@ -39,9 +39,9 @@ public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepo
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());
-        assertEquals(person.getAttributeValue("uid"), "casuser");
-        assertEquals(person.getAttributeValue("displayName"), "CAS Display Name");
-        assertEquals(person.getAttributeValue("commonName"), "CAS Common Name");
+        assertEquals("casuser", person.getAttributeValue("uid"));
+        assertEquals("CAS Display Name", person.getAttributeValue("displayName"));
+        assertEquals("CAS Common Name", person.getAttributeValue("commonName"));
     }
 
 

@@ -32,7 +32,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategy implements
                                                                final RegisteredService registeredService,
                                                                final Authentication authentication,
                                                                final Service service) {
-        if (registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()) {
+        if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             LOGGER.debug("Multifactor authentication policy for [{}] will ignore trigger executions", registeredService.getName());
             return Optional.empty();
         }

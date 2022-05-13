@@ -36,10 +36,9 @@ public class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractO
     public void verifyNoService() {
         val request = new MockHttpServletRequest();
         val service = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString(), CLIENT_SECRET);
-        request.addParameter(OAuth20Constants.REDIRECT_URI, service.getRedirectUrl());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        
+
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenRefreshTokenGrantRequestExtractor(oauth20ConfigurationContext);
         assertEquals(OAuth20ResponseTypes.NONE, extractor.getResponseType());

@@ -134,10 +134,6 @@ repositories {
         mavenContent { releasesOnly() }
         url "https://build.shibboleth.net/maven/releases/" 
     }
-    maven {
-        mavenContent { releasesOnly() }
-        url "https://jitpack.io"
-    }
 }
 ```
 

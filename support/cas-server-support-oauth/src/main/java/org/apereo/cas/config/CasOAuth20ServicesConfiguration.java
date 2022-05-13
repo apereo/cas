@@ -2,8 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -44,7 +44,7 @@ public class CasOAuth20ServicesConfiguration {
         return plan -> {
             val oAuthCallbackUrl = casProperties.getServer().getPrefix()
                                    + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-            val service = new RegexRegisteredService();
+            val service = new CasRegisteredService();
             service.setId(RandomUtils.nextLong());
             service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
             service.setName(service.getClass().getSimpleName());

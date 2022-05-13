@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.ServicesManager;
@@ -88,6 +89,7 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
             : null;
 
         Optional.ofNullable(registeredService)
+            .map(CasModelRegisteredService.class::cast)
             .map(RegisteredService::getTicketGrantingTicketExpirationPolicy)
             .map(RegisteredServiceTicketGrantingTicketExpirationPolicy::toExpirationPolicy)
             .filter(Optional::isPresent)
@@ -98,21 +100,24 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
             }));
 
         Optional.ofNullable(registeredService)
-            .map(RegisteredService::getServiceTicketExpirationPolicy)
+            .map(CasModelRegisteredService.class::cast)
+            .map(CasModelRegisteredService::getServiceTicketExpirationPolicy)
             .ifPresent(Unchecked.consumer(policy -> {
                 val details = getTicketExpirationPolicyDetails(policy);
                 model.put(ServiceTicket.class.getName().concat(registeredService.getName()), details);
             }));
 
         Optional.ofNullable(registeredService)
-            .map(RegisteredService::getProxyGrantingTicketExpirationPolicy)
+            .map(CasModelRegisteredService.class::cast)
+            .map(CasModelRegisteredService::getProxyGrantingTicketExpirationPolicy)
             .ifPresent(Unchecked.consumer(policy -> {
                 val details = getTicketExpirationPolicyDetails(policy);
                 model.put(ProxyGrantingTicket.class.getName().concat(registeredService.getName()), details);
             }));
 
         Optional.ofNullable(registeredService)
-            .map(RegisteredService::getProxyTicketExpirationPolicy)
+            .map(CasModelRegisteredService.class::cast)
+            .map(CasModelRegisteredService::getProxyTicketExpirationPolicy)
             .ifPresent(Unchecked.consumer(policy -> {
                 val details = getTicketExpirationPolicyDetails(policy);
                 model.put(ProxyTicket.class.getName().concat(registeredService.getName()), details);

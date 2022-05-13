@@ -59,7 +59,7 @@ public class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
         assertEquals(issuer, casProperties.getAuthn().getOidc().getCore().getIssuer());
         svc.setIdTokenIssuer("https://custom.issuer/");
         issuer = oidcIssuerService.determineIssuer(Optional.of(svc));
-        assertEquals(issuer, "https://custom.issuer");
+        assertEquals("https://custom.issuer", issuer);
     }
 
     @Test

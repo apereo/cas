@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.AccessLevel;
@@ -39,12 +40,15 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
 
     private boolean encryptUsername;
 
+    private String scope;
+
     @Override
     public final String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-        val username = resolveUsernameInternal(principal, service, registeredService);
+        val resolved = resolveUsernameInternal(principal, service, registeredService);
         if (canonicalizationMode == null) {
             canonicalizationMode = CaseCanonicalizationMode.NONE.name();
         }
+        val username = FunctionUtils.doIfNotNull(scope, () -> String.format("%s@%s", resolved, scope), () -> resolved).get();
         val uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(username.trim(), Locale.getDefault());
         LOGGER.debug("Resolved username for [{}] is [{}]", service, uid);
         if (!this.encryptUsername) {

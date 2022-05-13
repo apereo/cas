@@ -78,7 +78,7 @@ service application and specify a number of MDUI-like elements in the body of th
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "relying-party-entity-id",
   "name" : "Test",
   "id" : 100,

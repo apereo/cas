@@ -125,7 +125,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     /**
      * Fetch services by type response entity.
      *
-     * @param type the simple name of the CAS service type (i.e {@link org.apereo.cas.services.RegexRegisteredService}
+     * @param type the simple name of the CAS service type (i.e {@link org.apereo.cas.services.CasRegisteredService}
      * @return the response entity
      * @throws Exception the exception
      */
