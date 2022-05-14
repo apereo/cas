@@ -6,7 +6,6 @@ import org.apereo.cas.services.RegisteredService;
 import com.google.common.collect.Maps;
 import lombok.val;
 import org.apache.commons.codec.binary.Hex;
-import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,13 +64,7 @@ public interface ProtocolAttributeEncoder {
      * @return true/false
      */
     static boolean isAttributeNameEncoded(final String name) {
-        try {
-            val hexidecimalRadix = 16;
-            return name.startsWith(ENCODED_ATTRIBUTE_PREFIX) && Long.parseLong(name, hexidecimalRadix) != 0;
-        } catch (final Exception e) {
-            LOGGER.trace("Attribute [{}] is not encoded as a hex: [{}]", name, e.getMessage());
-        }
-        return false;
+        return name.startsWith(ENCODED_ATTRIBUTE_PREFIX);
     }
 
     /**
@@ -91,12 +84,14 @@ public interface ProtocolAttributeEncoder {
      * @return the string
      */
     static String decodeAttribute(final String s) {
-        return Unchecked.supplier(() -> {
+        try {
             if (isAttributeNameEncoded(s)) {
                 return new String(Hex.decodeHex(s.substring(1)), StandardCharsets.UTF_8);
             }
-            return s;
-        }).get();
+        } catch (final Exception e) {
+            LOGGER.trace("Unable to decode attribute [{}]: [{}]", s, e.getMessage());
+        }
+        return s;
     }
 
     /**

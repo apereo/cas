@@ -12,14 +12,6 @@
 
 <body>
 <span th:fragment="navigation">
-        <script type="text/javascript">
-            (material => {
-                document.addEventListener('DOMContentLoaded', () => {
-
-                });
-            })(mdc);
-        </script>
-
        <div>
             <div class="mdc-drawer__header">
                 <h3 class="mdc-drawer__title" th:text="${authentication.principal.id}">Username</h3>
