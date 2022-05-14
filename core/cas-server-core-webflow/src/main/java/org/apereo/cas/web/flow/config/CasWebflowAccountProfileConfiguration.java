@@ -58,7 +58,6 @@ public class CasWebflowAccountProfileConfiguration {
         return new AccountProfileWebflowConfigurer(flowBuilderServices,
             accountProfileFlowRegistry, applicationContext, casProperties);
     }
-
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "accountProfileWebflowExecutionPlanConfigurer")
@@ -67,7 +66,6 @@ public class CasWebflowAccountProfileConfiguration {
         final CasWebflowConfigurer accountProfileWebflowConfigurer) {
         return plan -> plan.registerWebflowConfigurer(accountProfileWebflowConfigurer);
     }
-
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public FlowExecutor accountProfileFlowExecutor(

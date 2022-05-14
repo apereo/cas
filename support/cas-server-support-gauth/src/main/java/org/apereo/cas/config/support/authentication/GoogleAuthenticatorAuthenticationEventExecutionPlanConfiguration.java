@@ -43,7 +43,10 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.MultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 
@@ -69,6 +72,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.concurrent.TimeUnit;
@@ -440,12 +445,35 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             return p;
         }
     }
-
     @Configuration(value = "GoogleAuthenticatorAccountProfileWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class GoogleAuthenticatorAccountProfileWebflowConfiguration {
+
+        @ConditionalOnMissingBean(name = "googleAccountProfileWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer googleAccountProfileWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry accountProfileFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new MultifactorAuthenticationAccountProfileWebflowConfigurer(flowBuilderServices,
+                accountProfileFlowRegistry, applicationContext, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "googleAccountCasWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer googleAccountCasWebflowExecutionPlanConfigurer(
+            @Qualifier("googleAccountProfileWebflowConfigurer")
+            final CasWebflowConfigurer googleAccountProfileWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(googleAccountProfileWebflowConfigurer);
+        }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleAccountDeviceProviderAction")

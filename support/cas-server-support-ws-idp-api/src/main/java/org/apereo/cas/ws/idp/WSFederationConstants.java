@@ -157,7 +157,7 @@ public interface WSFederationConstants {
     /**
      * Metadata endpoint.
      */
-    String ENDPOINT_FEDERATION_METADATA = BASE_ENDPOINT_IDP + "metadata";
+    String ENDPOINT_FEDERATION_METADATA = BASE_ENDPOINT_IDP + "/metadata";
 
     /**
      * Gets claim in cas namespace.

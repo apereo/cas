@@ -4,7 +4,6 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityMultifactorAccountProfileWebflowConfigurer;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDirectAuthenticationAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityMultifactorAuthenticationDeviceProviderAction;
@@ -22,6 +21,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.MultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -190,9 +190,8 @@ public class DuoSecurityConfiguration {
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DuoSecurityMultifactorAccountProfileWebflowConfigurer(flowBuilderServices,
-                    accountProfileFlowRegistry, applicationContext, casProperties,
-                    MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext)))
+                .supply(() -> new MultifactorAuthenticationAccountProfileWebflowConfigurer(flowBuilderServices,
+                    accountProfileFlowRegistry, applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
         }
