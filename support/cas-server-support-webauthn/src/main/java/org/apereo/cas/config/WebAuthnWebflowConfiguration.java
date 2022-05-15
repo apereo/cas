@@ -11,6 +11,8 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.configurer.MultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -18,6 +20,7 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowEventResolver;
+import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorDeviceProviderAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
@@ -29,6 +32,7 @@ import com.yubico.core.SessionManager;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,6 +42,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.Ordered;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -56,6 +61,7 @@ import org.springframework.webflow.execution.Action;
 @AutoConfiguration
 public class WebAuthnWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
+
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled")
         .isTrue().evenIfMissing();
 
@@ -298,6 +304,53 @@ public class WebAuthnWebflowConfiguration {
                 .supply(() -> new WebAuthnValidateSessionCredentialTokenAction(webAuthnCredentialRepository,
                     webAuthnSessionManager, webAuthnPrincipalFactory))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
+                .get();
+        }
+    }
+
+    @Configuration(value = "WebAuthnAccountProfileWebflowConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
+    public static class WebAuthnAccountProfileWebflowConfiguration {
+        @ConditionalOnMissingBean(name = "webAuthnAccountProfileWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer webAuthnAccountProfileWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry accountProfileFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new MultifactorAuthenticationAccountProfileWebflowConfigurer(flowBuilderServices,
+                    accountProfileFlowRegistry, applicationContext, casProperties))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "webAuthnAccountCasWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer webAuthnAccountCasWebflowExecutionPlanConfigurer(
+            @Qualifier("webAuthnAccountProfileWebflowConfigurer")
+            final CasWebflowConfigurer webAuthnAccountProfileWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(webAuthnAccountProfileWebflowConfigurer);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "webAuthnDeviceProviderAction")
+        public MultifactorAuthenticationDeviceProviderAction webAuthnDeviceProviderAction(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("webAuthnCredentialRepository")
+            final RegistrationStorage webAuthnCredentialRepository) {
+            return BeanSupplier.of(MultifactorAuthenticationDeviceProviderAction.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new WebAuthnMultifactorDeviceProviderAction(webAuthnCredentialRepository))
+                .otherwiseProxy()
                 .get();
         }
     }

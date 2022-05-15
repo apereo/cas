@@ -9,6 +9,7 @@ package com.yubico.webauthn.attestation;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.Builder;
@@ -28,10 +29,12 @@ public class Attestation implements Serializable {
     private final String metadataIdentifier;
 
     /** Free-form information about the authenticator vendor. */
-    private final Map<String, String> vendorProperties;
+    @Builder.Default
+    private final Map<String, String> vendorProperties = new HashMap<>();
 
     /** Free-form information about the authenticator model. */
-    private final Map<String, String> deviceProperties;
+    @Builder.Default
+    private final Map<String, String> deviceProperties = new HashMap<>();
 
     @JsonCreator
     private Attestation(
