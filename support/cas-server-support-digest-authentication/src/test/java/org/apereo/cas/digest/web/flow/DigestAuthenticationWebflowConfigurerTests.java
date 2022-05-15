@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.6
  */
 @Import({
     DigestAuthenticationConfiguration.class,
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
+@Deprecated(since = "6.6")
 public class DigestAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

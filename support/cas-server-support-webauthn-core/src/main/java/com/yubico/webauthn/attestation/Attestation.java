@@ -29,12 +29,10 @@ public class Attestation implements Serializable {
     private final String metadataIdentifier;
 
     /** Free-form information about the authenticator vendor. */
-    @Builder.Default
-    private final Map<String, String> vendorProperties = new HashMap<>();
+    private Map<String, String> vendorProperties;
 
     /** Free-form information about the authenticator model. */
-    @Builder.Default
-    private final Map<String, String> deviceProperties = new HashMap<>();
+    private Map<String, String> deviceProperties;
 
     @JsonCreator
     private Attestation(
@@ -67,14 +65,14 @@ public class Attestation implements Serializable {
 
     public static class AttestationBuilder {
         private String metadataIdentifier;
-        private Map<String, String> vendorProperties;
-        private Map<String, String> deviceProperties;
+        private Map<String, String> vendorProperties = new HashMap<>();
+        private Map<String, String> deviceProperties = new HashMap<>();
 
-        public AttestationBuilder metadataIdentifier(@NonNull Optional<String> metadataIdentifier) {
+        public AttestationBuilder metadataIdentifier(@NonNull final Optional<String> metadataIdentifier) {
             return this.metadataIdentifier(metadataIdentifier.orElse(null));
         }
 
-        public AttestationBuilder metadataIdentifier(String metadataIdentifier) {
+        public AttestationBuilder metadataIdentifier(final String metadataIdentifier) {
             this.metadataIdentifier = metadataIdentifier;
             return this;
         }
@@ -84,17 +82,17 @@ public class Attestation implements Serializable {
             return this.vendorProperties(vendorProperties.orElse(null));
         }
 
-        public AttestationBuilder vendorProperties(Map<String, String> vendorProperties) {
+        public AttestationBuilder vendorProperties(final Map<String, String> vendorProperties) {
             this.vendorProperties = vendorProperties;
             return this;
         }
 
         public AttestationBuilder deviceProperties(
-            @NonNull Optional<Map<String, String>> deviceProperties) {
+            @NonNull final Optional<Map<String, String>> deviceProperties) {
             return this.deviceProperties(deviceProperties.orElse(null));
         }
 
-        public AttestationBuilder deviceProperties(Map<String, String> deviceProperties) {
+        public AttestationBuilder deviceProperties(final Map<String, String> deviceProperties) {
             this.deviceProperties = deviceProperties;
             return this;
         }

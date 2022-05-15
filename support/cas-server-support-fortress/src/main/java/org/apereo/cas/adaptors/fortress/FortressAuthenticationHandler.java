@@ -26,13 +26,16 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Fortress authentication handler, this class will delegate the authentication to call fortress rest authentication.
+ * Fortress authentication handler, this class will delegate the
+ * authentication to call fortress rest authentication.
  *
  * @author yudhi.k.surtan
  * @since 5.2.0.
+ * @deprecated Since 6.6
  */
 @Slf4j
 @Setter
+@Deprecated(since = "6.6")
 public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /**

@@ -11,11 +11,13 @@ import org.junit.platform.suite.api.Suite;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.6
  */
 @SelectClasses({
     FortressAuthenticationHandlerTests.class,
     FortressAuthenticationConfigurationTests.class
 })
 @Suite
+@Deprecated(since = "6.6")
 public class CasFortressTestsSuite {
 }

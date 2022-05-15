@@ -16,8 +16,10 @@ import java.time.ZonedDateTime;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.6
  */
 @UtilityClass
+@Deprecated(since = "6.6")
 public class DigestAuthenticationUtils {
 
     /**

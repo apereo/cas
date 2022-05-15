@@ -27,8 +27,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.6
  */
 @Slf4j
+@Deprecated(since = "6.6")
 public class DigestAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
     private final String nonce = DigestAuthenticationUtils.createNonce();
 

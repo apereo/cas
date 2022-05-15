@@ -26,10 +26,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
  * @since 5.1.0
+ * @deprecated Since 6.6
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "digest")
 @AutoConfiguration
+@Deprecated(since = "6.6")
 public class DigestAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "digestAuthenticationPrincipalFactory")

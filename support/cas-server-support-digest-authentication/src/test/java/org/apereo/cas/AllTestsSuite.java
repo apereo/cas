@@ -16,6 +16,7 @@ import org.junit.platform.suite.api.Suite;
  *
  * @author Misagh Moayyed
  * @since 6.0.0-RC3
+ * @deprecated Since 6.6
  */
 @SelectClasses({
     DigestAuthenticationUtilsTests.class,
@@ -26,5 +27,6 @@ import org.junit.platform.suite.api.Suite;
     DigestAuthenticationWebflowConfigurerTests.class
 })
 @Suite
+@Deprecated(since = "6.6")
 public class AllTestsSuite {
 }

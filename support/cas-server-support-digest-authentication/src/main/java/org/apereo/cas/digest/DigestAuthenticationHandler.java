@@ -18,7 +18,9 @@ import java.security.GeneralSecurityException;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.6
  */
+@Deprecated(since = "6.6")
 public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
 
     public DigestAuthenticationHandler(final String name, final ServicesManager servicesManager,

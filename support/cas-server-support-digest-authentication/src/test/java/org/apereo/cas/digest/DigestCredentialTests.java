@@ -16,8 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Misagh Moayyed
  * @since 4.1
+ * @deprecated Since 6.6
  */
 @Tag("Authentication")
+@Deprecated(since = "6.6")
 public class DigestCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "digestCredential.json");

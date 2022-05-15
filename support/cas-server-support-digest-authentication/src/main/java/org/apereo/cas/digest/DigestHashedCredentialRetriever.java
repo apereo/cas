@@ -7,8 +7,10 @@ import javax.security.auth.login.AccountNotFoundException;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.6
  */
 @FunctionalInterface
+@Deprecated(since = "6.6")
 public interface DigestHashedCredentialRetriever {
 
     /**
