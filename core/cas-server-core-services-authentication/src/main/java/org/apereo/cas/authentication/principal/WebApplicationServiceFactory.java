@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.http.client.utils.URIBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,11 +69,8 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
 
         LOGGER.trace("Collected request parameters [{}] as service attributes", attributes);
-        val validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
-        if (validator.isValid(service.getOriginalUrl())) {
-            val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(service.getOriginalUrl()).getQueryParams());
-            queryParams.forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
-        }
+        val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(service.getOriginalUrl()).getQueryParams());
+        queryParams.forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
 
         LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
         service.setAttributes(new HashMap(attributes));
