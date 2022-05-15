@@ -51,6 +51,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultCasWebflowAbstractTicketExceptionHandlerTests.class,
     DefaultCasWebflowAuthenticationExceptionHandlerTests.class,
     GenericCasWebflowExceptionHandlerTests.class,
+    MultifactorAuthenticationAccountProfileWebflowConfigurerTests.class,
     RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTests.class,
     DefaultSingleSignOnParticipationStrategyTests.class,
     ChainingSingleSignOnParticipationStrategyTests.class,
