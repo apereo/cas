@@ -20,6 +20,7 @@ import org.apereo.cas.web.flow.authentication.GroovyCasWebflowAuthenticationExce
 import org.apereo.cas.web.flow.authentication.RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTests;
 import org.apereo.cas.web.flow.configurer.CasWebflowConfigurerTests;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurerTests;
+import org.apereo.cas.web.flow.configurer.MultifactorAuthenticationAccountProfileWebflowConfigurerTests;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionKeyTests;
 import org.apereo.cas.web.flow.executor.WebflowCipherBeanTests;
 
