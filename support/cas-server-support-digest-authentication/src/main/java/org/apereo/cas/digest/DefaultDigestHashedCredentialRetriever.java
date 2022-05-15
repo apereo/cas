@@ -10,8 +10,10 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.6
  */
 @RequiredArgsConstructor
+@Deprecated(since = "6.6")
 public class DefaultDigestHashedCredentialRetriever implements DigestHashedCredentialRetriever {
 
     private final Map<String, String> store;

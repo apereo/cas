@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.6
  */
 @SpringBootTest(classes = {
     DigestAuthenticationConfiguration.class,
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 }, properties = "cas.authn.digest.users.casuser=1234567890")
 @Tag("WebflowAuthenticationActions")
+@Deprecated(since = "6.6")
 public class DigestAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DIGEST_AUTHENTICATION)

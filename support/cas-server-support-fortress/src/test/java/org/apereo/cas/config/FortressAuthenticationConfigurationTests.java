@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.6
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 })
 @Tag("Authentication")
+@Deprecated(since = "6.6")
 public class FortressAuthenticationConfigurationTests {
     @Autowired
     @Qualifier("fortressAuthenticationHandler")

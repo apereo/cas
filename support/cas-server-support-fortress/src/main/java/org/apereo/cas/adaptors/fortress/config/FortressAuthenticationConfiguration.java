@@ -27,11 +27,13 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author yudhi.k.surtan
  * @since 5.2.0
+ * @deprecated Since 6.6.
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "fortress")
 @AutoConfiguration
+@Deprecated(since = "6.6")
 public class FortressAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "fortressPrincipalFactory")

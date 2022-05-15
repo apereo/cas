@@ -12,8 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author David Rodriguez
  * @since 5.1.0
+ * @deprecated Since 6.6
  */
 @Tag("Authentication")
+@Deprecated(since = "6.6")
 public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Test

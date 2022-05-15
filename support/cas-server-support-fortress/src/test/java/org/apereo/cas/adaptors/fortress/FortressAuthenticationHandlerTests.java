@@ -31,8 +31,10 @@ import static org.mockito.Mockito.*;
  *
  * @author yudhi.k.surtan
  * @since 5.2.0
+ * @deprecated Since 6.6
  */
 @Tag("AuthenticationHandler")
+@Deprecated(since = "6.6")
 public class FortressAuthenticationHandlerTests {
     @Mock
     private AccessMgr accessManager;

@@ -11,8 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 6.6
  */
 @Tag("Utility")
+@Deprecated(since = "6.6")
 public class DigestAuthenticationUtilsTests {
 
     @Test

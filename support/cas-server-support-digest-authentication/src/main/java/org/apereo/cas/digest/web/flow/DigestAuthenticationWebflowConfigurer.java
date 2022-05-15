@@ -14,7 +14,9 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.6
  */
+@Deprecated(since = "6.6")
 public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     static final String STATE_ID_DIGEST_AUTHENTICATION_CHECK = "digestAuthenticationCheck";

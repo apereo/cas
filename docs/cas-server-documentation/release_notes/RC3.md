@@ -116,6 +116,13 @@ The [proxy authentication policy](../services/Configuring-Service-Proxy-Policy.h
 be assigned to a CAS service definition can now be defined using a REST endpoint. A few smaller enhancements
 are also applied to the proxy policies that operate based on regular expressions with additional logging in place to assist
 with better troubleshooting.
+        
+### Deprecated Modules
+
+The following modules are deprecated and scheduled to be removed in future CAS versions:
+
+- [Digest Authentication](../authentication/Digest-Authentication.html)
+- [Apache Fortress Authentication](../authentication/Configuring-Fortress-Authentication.html)
 
 ## Other Stuff
 

@@ -11,6 +11,10 @@ Services connected to CAS can use [Apache Fortress](http://directory.apache.org/
 The idea of this is because Apache Fortress does not have any SSO mechanism. However, Apache Fortress is complied for `ANSI INCITS 359 RBAC`.  
 [See this link](http://directory.apache.org/fortress/testimonials.html) for background and history.
 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
 ## Overview
 
 The following diagram is a typical CAS deployment integrated with Apache Fortress:

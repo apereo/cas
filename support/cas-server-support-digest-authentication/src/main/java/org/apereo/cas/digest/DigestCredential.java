@@ -15,12 +15,14 @@ import lombok.ToString;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.6
  */
 @ToString(callSuper = true)
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
+@Deprecated(since = "6.6")
 public class DigestCredential extends BasicIdentifiableCredential {
 
     private static final long serialVersionUID = 1523693794392289803L;
