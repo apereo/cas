@@ -48,16 +48,21 @@ cas.version=6.6.0-RC3
 
 The following items are new improvements and enhancements presented in this release.
 
-### Multifactor Registered Devices
+### Account Profile Management
 
 Devices that are registered with CAS for multifactor authentication flows and integrations can now be listed
 in the [account profile dashboard](../registration/Account-Management-Overview.html) page. At the moment,
 the supported multifactor providers for this capability
-are [Duo Security](../mfa/DuoSecurity-Authentication.html) and [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html).
+are [Duo Security](../mfa/DuoSecurity-Authentication.html), [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html), 
+and [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html).
 
 <img width="1699" alt="image" src="https://user-images.githubusercontent.com/1205228/164191147-1864c987-a339-4678-98e6-54d2beb8200c.png">
 
-This mini-portal will be improved in the coming releases to list more account-related data, such as one's active single sign-on sessions, etc.
+Additionally, [attribute consent decisions](../integration/Attribute-Release-Consent.html) and 
+records tied to the authenticated user profile are now displayed in the account profile dashboard.
+
+This mini-portal will be improved in the coming releases to list more account-related data, 
+such as one's active single sign-on sessions, etc.
                       
 ### Spring Boot 2.7
                    

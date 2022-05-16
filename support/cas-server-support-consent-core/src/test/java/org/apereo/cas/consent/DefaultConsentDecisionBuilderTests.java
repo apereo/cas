@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 public class DefaultConsentDecisionBuilderTests {
     @Autowired
-    @Qualifier("consentDecisionBuilder")
+    @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
     private ConsentDecisionBuilder consentDecisionBuilder;
 
     @Test

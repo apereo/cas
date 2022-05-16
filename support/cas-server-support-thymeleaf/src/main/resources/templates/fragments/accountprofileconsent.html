@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Account Profile</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<span th:fragment="consent">
+        <script type="text/javascript">
+            (material => {
+                document.addEventListener('DOMContentLoaded', () => {
+                    $('#consentTable').DataTable();
+                    let consentDialog = material.dialog.MDCDialog.attachTo(document.getElementById('attribute-consent-dialog'));
+                    document.getElementsByName("viewConsentEntryDetails").forEach(btn => {
+                        btn.addEventListener('click', event => {
+                            let caller = event.target || event.srcElement;
+                            let json = $(caller).next("span").text().trim();
+                            $("#consentEntryDetails").text(json);
+                            hljs.highlightAll();
+                            consentDialog.open();
+                            event.preventDefault();
+                        }, false);
+                    });
+                });
+            })(mdc);
+        </script>
+
+        <div class="mdc-dialog" id="attribute-consent-dialog" role="alertdialog"
+         aria-modal="true" aria-labelledby="attribute-consent-dialog-title" aria-describedby="attribute-consent-dialog-content">
+            <div class="mdc-dialog__container w-100">
+                <div class="mdc-dialog__surface mw-100">
+                    <h1 class="mdc-dialog__title mt-lg-2" id="attribute-consent-dialog-title">
+                        Attribute Consent Entry Details
+                    </h1>
+                    <div class="mdc-dialog__content" id="attribute-consent-dialog-content">
+                        <p>Here are the details for this attribute-consent record entry.</p>
+                        <pre><code id="consentEntryDetails" class="border-rounded language-json">Text</code></pre>
+                    </div>
+                    <footer class="mdc-dialog__actions">
+                        <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
+                                data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
+                            <span class="mdc-button__label">Close</span>
+                        </button>
+                    </footer>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
+        </div>
+
+        <div id="divConsentDecisions"
+             class="profile-content w-100"
+             style="display: none;">
+            <h2>
+                <i class="mdi mdi-head-check-outline fas fa-door-open"></i>
+                <span th:utext="#{screen.account.consent.title}">Attribute Consent Decisions</span>
+            </h2>
+            <p th:utext="#{screen.account.consent.subtitle}">Examine the CAS Attribute Consent Decisions here.</p>
+
+            <table id="consentTable" class="mdc-data-table__table table table-striped noborder">
+                <thead>
+                <tr class="mdc-data-table__header-row">
+<!--                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>-->
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attributes</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date/Time</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Options</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Reminder</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                </tr>
+                </thead>
+                <tbody class="mdc-data-table__content">
+                <tr th:each="entry : ${consentDecisions}" class="mdc-data-table__row">
+<!--                    <td class="mdc-data-table__cell" th:utext="${entry.id}">Value</td>-->
+                    <td class="mdc-data-table__cell"><code th:utext="${entry.service}">Value</code></td>
+                    <td class="mdc-data-table__cell" th:utext="${entry.attributes}">Value</td>
+                    <td class="mdc-data-table__cell"
+                        th:utext="${#temporals.format(entry.createdDateTime, 'MMMM dd, yyyy HH:nn:ss')}">Value
+                    </td>
+                    <td class="mdc-data-table__cell" th:utext="#{${entry.options}}">Value
+                    </td>
+                    <td class="mdc-data-table__cell" th:utext="${entry.reminder}">Value</td>
+                    <td class="mdc-data-table__cell">
+                        <a name="viewConsentEntryDetails" href="#">
+                            <i class="mdi mdi-account-details fas fa-add"></i>
+                            <span style="display: none" th:utext="${entry.json}"/>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </span>
+</body>
+
+</html>

@@ -1626,6 +1626,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_MFA_CHECK_FAILURE = "mfaFailureAction";
 
     /**
+     * Action id 'consentAccountProfilePrepareAction'.
+     */
+    String ACTION_ID_CONSENT_ACCOUNT_PROFILE_PREPARE = "consentAccountProfilePrepareAction";
+
+    /**
      * Action id 'checkConsentRequiredAction'.
      */
     String ACTION_ID_CHECK_CONSENT_REQUIRED = "checkConsentRequiredAction";

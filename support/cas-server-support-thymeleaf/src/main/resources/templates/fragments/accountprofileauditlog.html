@@ -76,9 +76,7 @@
                 <tbody class="mdc-data-table__content">
                 <tr th:each="entry : ${auditLog}" class="mdc-data-table__row">
 
-                    <td class="mdc-data-table__cell"
-                        th:utext="${entry.actionPerformed}">Value
-                    </td>
+                    <td class="mdc-data-table__cell"><code th:utext="${entry.actionPerformed}">Value</code></td>
                     <td class="mdc-data-table__cell"
                         th:utext="${#dates.format(entry.whenActionWasPerformed, 'MMMM dd, yyyy')}">Value
                     </td>

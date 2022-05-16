@@ -29,7 +29,6 @@ import java.time.temporal.ChronoUnit;
 @Setter
 public class ConsentDecision implements Serializable {
     private static final long serialVersionUID = -3240292729509593433L;
-
     @Id
     @Transient
     @JsonSerialize(using = ToStringSerializer.class)
@@ -56,7 +55,6 @@ public class ConsentDecision implements Serializable {
     @Lob
     @Column(name = "attributes", length = Integer.MAX_VALUE)
     private String attributes;
-
     public ConsentDecision() {
         this.id = System.currentTimeMillis();
     }
