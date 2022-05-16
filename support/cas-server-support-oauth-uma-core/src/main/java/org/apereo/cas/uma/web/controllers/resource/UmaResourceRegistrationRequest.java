@@ -29,19 +29,15 @@ public class UmaResourceRegistrationRequest implements Serializable {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final long serialVersionUID = 3614209506339611242L;
-
-    @JsonProperty("_id")
+    @JsonProperty("id")
     private long id;
 
     @JsonProperty
     private String uri;
-
     @JsonProperty
     private String type;
-
     @JsonProperty("icon_uri")
     private String iconUri;
-
     @JsonProperty
     private String name;
 

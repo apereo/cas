@@ -311,7 +311,7 @@ public interface OAuth20Constants {
     /**
      * The bearer type.
      */
-    String TOKEN_TYPE_BEARER = "bearer";
+    String TOKEN_TYPE_BEARER = "Bearer";
 
     /**
      * Client assertion type as jwt bearer.
