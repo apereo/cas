@@ -45,7 +45,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.2
  */
 @Tag("OAuth")
-public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
+public class
+OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     private static final String AUTHORIZE_URL = CAS_SCHEME + "://" + CAS_SERVER + CONTEXT + "authorize";
 
     private static final String SERVICE_NAME = "serviceName";
@@ -320,7 +321,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
 
         assertEquals(StringUtils.EMPTY, oAuth20AuthorizeEndpointController.getConfigurationContext()
             .getOauthDistributedSessionCookieGenerator().getCookiePath());
-        val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
+        val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=Bearer");
         val accessToken = (OAuth20AccessToken) this.ticketRegistry.getTicket(code);
         assertNotNull(accessToken);
         val principal = accessToken.getAuthentication().getPrincipal();
@@ -376,7 +377,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         assertNotNull(redirectUrl);
 
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
-        val at = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
+        val at = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=Bearer");
         val decoded = this.oauthAccessTokenJwtCipherExecutor.decode(at).toString();
         assertNotNull(decoded);
         val jwt = JwtClaims.parse(decoded);
@@ -594,7 +595,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         assertNotNull(redirectUrl);
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
-        val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
+        val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=Bearer");
         val accessToken = (OAuth20AccessToken) this.ticketRegistry.getTicket(code);
         assertNotNull(accessToken);
         val principal = accessToken.getAuthentication().getPrincipal();
@@ -688,7 +689,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         assertNotNull(redirectUrl);
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
-        val at = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
+        val at = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=Bearer");
         assertNull(this.ticketRegistry.getTicket(at));
 
         val decoded = this.oauthAccessTokenJwtCipherExecutor.decode(at).toString();

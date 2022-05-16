@@ -15,7 +15,9 @@ import org.apache.http.client.utils.URIBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,7 +45,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      * @param serviceToUse the service to use
      * @return the simple web application service
      */
-    protected static AbstractWebApplicationService newWebApplicationService(
+    protected AbstractWebApplicationService newWebApplicationService(
         final HttpServletRequest request, final String serviceToUse) {
         val artifactId = Optional.ofNullable(request)
             .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_TICKET))
@@ -60,22 +62,30 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         return newService;
     }
 
-    private static void populateAttributes(final AbstractWebApplicationService service, final HttpServletRequest request) {
-        val attributes = request.getParameterMap()
+    protected void populateAttributes(final AbstractWebApplicationService service, final HttpServletRequest request) {
+        val attributes = (Map) request.getParameterMap()
             .entrySet()
             .stream()
             .filter(entry -> !IGNORED_ATTRIBUTES_PARAMS.contains(entry.getKey()))
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-
-        if (service.getOriginalUrl().startsWith("http") && service.getOriginalUrl().contains("?")) {
-            LOGGER.trace("Collected request parameters [{}] as service attributes", attributes);
-            val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(service.getOriginalUrl()).getQueryParams());
-            queryParams.forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
-        }
-
+        attributes.putAll(extractQueryParameters(service));
         LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
         service.setAttributes(new HashMap(attributes));
+    }
+
+    protected Map<String, List> extractQueryParameters(final WebApplicationService service) {
+        val attributes = new LinkedHashMap<String, List>();
+        val originalUrl = service.getOriginalUrl();
+        try {
+            if (StringUtils.isNotBlank(originalUrl) && originalUrl.startsWith("http") && originalUrl.contains("?")) {
+                val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(originalUrl).getQueryParams());
+                queryParams.forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Unable to extract query parameters from [{}]: [{}]", originalUrl, e.getMessage());
+        }
+        return attributes;
     }
 
     private static AbstractWebApplicationService determineWebApplicationFormat(
