@@ -43,7 +43,7 @@ public class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTe
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_CONSENT_ACCOUNT_PROFILE_PREPARE)
-    protected Action consentAccountProfilePrepareAction;
+    private Action consentAccountProfilePrepareAction;
 
     @Autowired
     @Qualifier(ConsentRepository.BEAN_NAME)
