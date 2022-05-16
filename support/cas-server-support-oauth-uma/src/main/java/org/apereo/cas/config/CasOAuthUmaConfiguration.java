@@ -195,8 +195,6 @@ public class CasOAuthUmaConfiguration {
             interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             return interceptor;
         }
-
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor(
@@ -258,6 +256,7 @@ public class CasOAuthUmaConfiguration {
                     registry.addInterceptor(new RefreshableHandlerInterceptor(umaRequestingPartyTokenSecurityInterceptor)).order(100)
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("/*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"));
@@ -342,7 +341,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaWellKnownEndpointController umaWellKnownEndpointController(
             @Qualifier("umaServerDiscoverySettingsFactory")
             final UmaServerDiscoverySettings discoverySettings) {
@@ -350,7 +348,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -358,7 +355,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -366,7 +362,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaDeleteResourceSetRegistrationEndpointController umaDeleteResourceSetRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -374,7 +369,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaUpdateResourceSetRegistrationEndpointController umaUpdateResourceSetRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -382,7 +376,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaFindResourceSetRegistrationEndpointController umaFindResourceSetRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -390,7 +383,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaCreatePolicyForResourceSetEndpointController umaCreatePolicyForResourceSetEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -398,7 +390,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -406,7 +397,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaUpdatePolicyForResourceSetEndpointController umaUpdatePolicyForResourceSetEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -414,7 +404,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {

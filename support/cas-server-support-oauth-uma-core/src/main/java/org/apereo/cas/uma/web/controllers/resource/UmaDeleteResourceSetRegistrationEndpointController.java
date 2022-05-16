@@ -10,7 +10,6 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,9 +39,7 @@ public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaE
      * @param response the response
      * @return the response entity
      */
-    @DeleteMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}")
     public ResponseEntity deleteResourceSet(@PathVariable("id") final long id, final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(id);

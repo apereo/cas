@@ -25,12 +25,10 @@ public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
     public DefaultTicketRegistry() {
         this(CipherExecutor.noOp());
     }
-
     public DefaultTicketRegistry(final CipherExecutor cipherExecutor) {
         super(cipherExecutor);
         this.mapInstance = new ConcurrentHashMap<>();
     }
-
     public DefaultTicketRegistry(final Map<String, Ticket> storageMap, final CipherExecutor cipherExecutor) {
         super(cipherExecutor);
         this.mapInstance = storageMap;
