@@ -68,9 +68,11 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
 
-        LOGGER.trace("Collected request parameters [{}] as service attributes", attributes);
-        val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(service.getOriginalUrl()).getQueryParams());
-        queryParams.forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
+        if (service.getOriginalUrl().startsWith("http") && service.getOriginalUrl().contains("?")) {
+            LOGGER.trace("Collected request parameters [{}] as service attributes", attributes);
+            val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(service.getOriginalUrl()).getQueryParams());
+            queryParams.forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
+        }
 
         LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
         service.setAttributes(new HashMap(attributes));

@@ -65,6 +65,15 @@
                         <span class="mdc-list-item__text">Multifactor Devices</span>
                     </a>
 
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divConsentDecisions');"
+                       id="linkConsentDecisions"
+                       th:if="${consentDecisions}"
+                       href="#divConsentDecisions">
+                        <i class="mdi mdi-head-check-outline fa fa-key"></i>&nbsp;
+                        <span class="mdc-list-item__text">Attribute Consent</span>
+                    </a>
+
                     <hr align="left" width="85%">
                     <form method="post" id="fmChangePsw" name="fmChangePsw">
                         <a class="mdc-list-item list-group-item list-group-item-action"
