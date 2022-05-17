@@ -23,7 +23,6 @@ import org.hjson.JsonValue;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,9 +58,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @return the response entity
      * @throws Exception the exception
      */
-    @PostMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL)
     public ResponseEntity handleAuthorizationRequest(
         @RequestBody
         final String body,

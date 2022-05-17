@@ -22,6 +22,9 @@ import org.springframework.core.Ordered;
  */
 @Slf4j
 public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
+    /**
+     * CAS configuration properties.
+     */
     protected final CasConfigurationProperties casProperties;
 
     public OAuth20ServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
