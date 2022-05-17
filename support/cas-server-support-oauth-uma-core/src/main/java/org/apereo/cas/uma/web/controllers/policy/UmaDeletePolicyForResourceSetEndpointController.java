@@ -9,7 +9,6 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,13 +41,14 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
      * @param response   the response
      * @return the policy for resource set
      */
-    @DeleteMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deletePoliciesForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
-                                                       @PathVariable(value = "policyId") final long policyId,
-                                                       final HttpServletRequest request,
-                                                       final HttpServletResponse response) {
+    @DeleteMapping(value = OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
+    public ResponseEntity deletePoliciesForResourceSet(
+        @PathVariable(value = "resourceId")
+        final long resourceId,
+        @PathVariable(value = "policyId")
+        final long policyId,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(resourceId);
