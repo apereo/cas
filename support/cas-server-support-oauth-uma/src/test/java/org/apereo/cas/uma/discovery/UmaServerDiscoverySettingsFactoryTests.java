@@ -17,10 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UmaServerDiscoverySettingsFactoryTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyOperation() {
-        assertNotNull(discoverySettings.getAuthorizationEndpoint());
         assertNotNull(discoverySettings.getAuthorizationRequestEndpoint());
-        assertNotNull(discoverySettings.getDynamicClientEndpoint());
-        assertNotNull(discoverySettings.getIntrospectionEndpoint());
         assertNotNull(discoverySettings.getPermissionRegistrationEndpoint());
         assertNotNull(discoverySettings.getRequestingPartyClaimsEndpoint());
         assertNotNull(discoverySettings.getResourceSetRegistrationEndpoint());

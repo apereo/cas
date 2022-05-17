@@ -229,7 +229,10 @@ exports.assertTicketParameter = async (page) => {
     return ticket;
 }
 
-exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, requestBody = undefined) =>
+exports.doRequest = async (url, method = "GET", headers = {},
+                           statusCode = 200,
+                           requestBody = undefined,
+                           callback = undefined) =>
     new Promise((resolve, reject) => {
         let options = {
             method: method,
@@ -239,6 +242,7 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
         console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`)
         const handler = (res) => {
             console.log(`Response status code: ${colors.green(res.statusCode)}`)
+            // console.log(`Response headers: ${colors.green(res.headers)}`)
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
             }
@@ -246,6 +250,9 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
             const body = [];
             res.on("data", chunk => body.push(chunk));
             res.on("end", () => resolve(body.join("")));
+            if (callback !== undefined) {
+                callback(res);
+            }
         };
 
         if (requestBody !== undefined) {

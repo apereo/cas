@@ -2,6 +2,17 @@ const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
+    let url = `https://localhost:8443/cas/oauth2.0/.well-known/uma-configuration`;
+    await cas.doGet(url, res => {
+        assert(res.data.issuer !== null);
+        assert(res.data.rpt_endpoint !== null);
+        assert(res.data.permission_registration_endpoint !== null);
+        assert(res.data.resource_set_registration_endpoint !== null);
+        assert(res.data.requesting_party_claims_endpoint !== null);
+    }, error => {
+        throw `Operation failed: ${error}`;
+    });
+
     let params = "client_id=client&";
     params += "client_secret=secret&";
     params += "scope=uma_protection&";
@@ -10,7 +21,7 @@ const cas = require('../../cas.js');
     params += "grant_type=password";
 
     let at = null;
-    let url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
+    url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.doPost(url, params, {
         'Content-Type': "application/json"
     }, res => {
@@ -46,7 +57,7 @@ const cas = require('../../cas.js');
     assert(resource.code !== null);
     assert(resource.location !== null);
     assert(resource.resourceId !== null);
-    
+
     console.log("Checking for all available resources")
     let result = JSON.parse(await cas.doRequest(resourceUrl, "GET",
         {
