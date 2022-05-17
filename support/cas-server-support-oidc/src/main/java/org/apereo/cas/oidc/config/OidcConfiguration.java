@@ -745,8 +745,8 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcServicesManagerRegisteredServiceLocator")
-        public ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator() {
-            return new OidcServicesManagerRegisteredServiceLocator();
+        public ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
+            return new OidcServicesManagerRegisteredServiceLocator(casProperties);
         }
 
         @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
