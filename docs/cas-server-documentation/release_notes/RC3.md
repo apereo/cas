@@ -85,10 +85,20 @@ refactoring effort to simplify the service definition models and to assist with 
 services should be updated to use the now-dedicated type `CasRegisteredService` for all CAS-enabled applications. 
 
 <div class="alert alert-warning"><strong>Usage</strong>
-<p>While the deprecation warning is quite harmless for now, we STRONGLY suggest that you visit your application definitions and perform a bulk-update to 
-avoid breaking upgrades in the future.</p>
+<p>While the deprecation warning is quite harmless for now, we STRONGLY suggest that you visit 
+your application definitions and perform a bulk-update to avoid breaking upgrades in the future.</p>
 </div>
 
+An example application definition using the new type follows:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "https://github.com/apereo/cas",
+  "name" : "CAS",
+  "id" : 1
+}
+```
 
 ### Testing Strategy
 

@@ -65,12 +65,18 @@ A proxy policy that reaches out to an external REST endpoint to determine proxy 
 
 ```json
 {
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "proxyPolicy" : {
     "@class":"org.apereo.cas.services.RestfulRegisteredServiceProxyPolicy",
     "endpoint":"http://localhost:9222",
     "headers": {
-        "@class":"java.util.LinkedHashMap",
-        "header": "value"
+      "@class":"java.util.LinkedHashMap",
+      "header": "value"
     }
+  }
 }
 ```
 
