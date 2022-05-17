@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
-
     @BeforeEach
     public void setup() {
         super.setup();
@@ -45,6 +44,7 @@ public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
     @Test
     public void verifyCustom() {
         val service = RegisteredServiceTestUtils.getService();
+        service.getAttributes().clear();
         val registeredService = getRegisteredService(service.getId(), UUID.randomUUID().toString(), CLIENT_SECRET);
         service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(registeredService.getClientId()));
         

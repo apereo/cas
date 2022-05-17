@@ -38,13 +38,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         CasProtocolConstants.PARAMETER_TICKET,
         CasProtocolConstants.PARAMETER_FORMAT);
 
-    /**
-     * Build new web application service simple web application service.
-     *
-     * @param request      the request
-     * @param serviceToUse the service to use
-     * @return the simple web application service
-     */
     protected AbstractWebApplicationService newWebApplicationService(
         final HttpServletRequest request, final String serviceToUse) {
         val artifactId = Optional.ofNullable(request)
@@ -58,6 +51,9 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         newService.setSource(source);
         if (request != null) {
             populateAttributes(newService, request);
+            if (StringUtils.isNotBlank(source)) {
+                newService.getAttributes().put(source, CollectionUtils.wrap(id));
+            }
         }
         return newService;
     }
@@ -121,12 +117,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         return newWebApplicationService(request, id);
     }
 
-    /**
-     * Gets requested service.
-     *
-     * @param request the request
-     * @return the requested service
-     */
     protected String getRequestedService(final HttpServletRequest request) {
         val targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
         val service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);

@@ -82,6 +82,7 @@ public class OAuth20AuthenticationServiceSelectionStrategyTests extends Abstract
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val service = strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org"));
         assertNotNull(service);
-        assertTrue(service.getAttributes().isEmpty());
+        assertEquals(1, service.getAttributes().size());
+        assertTrue(service.getAttributes().containsKey(CasProtocolConstants.PARAMETER_SERVICE));
     }
 }
