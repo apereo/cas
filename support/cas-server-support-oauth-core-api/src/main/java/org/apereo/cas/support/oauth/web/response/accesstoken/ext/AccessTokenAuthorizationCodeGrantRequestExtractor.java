@@ -52,7 +52,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val requestedScopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         LOGGER.debug("Requested scopes are [{}]", requestedScopes);
         val token = getOAuthTokenFromRequest(context);
-        ensureThatTheTicketGrantingTicketIsNotExpired(token);
+        ensureTicketGrantingTicketIsNotExpired(token);
 
         val scopes = extractRequestedScopesByToken(requestedScopes, token, context);
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
@@ -94,7 +94,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @param token the token
      * @return the boolean
      */
-    protected boolean ensureThatTheTicketGrantingTicketIsNotExpired(final OAuth20Token token) {
+    protected boolean ensureTicketGrantingTicketIsNotExpired(final OAuth20Token token) {
         return token.isCode() && getConfigurationContext().getCentralAuthenticationService()
                                      .getTicket(token.getTicketGrantingTicket().getId()) != null;
     }
