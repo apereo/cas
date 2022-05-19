@@ -29,9 +29,7 @@ import java.util.LinkedHashMap;
 @Slf4j
 public abstract class BaseUmaTokenAuthenticator implements Authenticator {
     private final CentralAuthenticationService centralAuthenticationService;
-
     private final JwtBuilder accessTokenJwtBuilder;
-
     @Override
     public void validate(final Credentials creds, final WebContext webContext, final SessionStore sessionStore) {
         val credentials = (TokenCredentials) creds;

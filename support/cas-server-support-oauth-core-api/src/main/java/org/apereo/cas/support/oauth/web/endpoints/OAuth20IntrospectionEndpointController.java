@@ -20,7 +20,6 @@ import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,9 +83,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @param response the response
      * @return the response entity
      */
-    @GetMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
+    @GetMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handleRequest(final HttpServletRequest request,
                                                                                  final HttpServletResponse response) {
         return handlePostRequest(request, response);
@@ -99,9 +96,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @param response the response
      * @return the response entity
      */
-    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
+    @PostMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
                                                                                      final HttpServletResponse response) {
         ResponseEntity<OAuth20IntrospectionAccessTokenResponse> result;
@@ -150,7 +145,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         }
         return result;
     }
-    
+
     protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20Token ticket) {
         val introspect = new OAuth20IntrospectionAccessTokenResponse();
         introspect.setScope("CAS");

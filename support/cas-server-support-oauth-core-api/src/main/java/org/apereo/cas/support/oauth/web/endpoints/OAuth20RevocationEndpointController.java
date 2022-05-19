@@ -65,7 +65,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
      * @return the response entity
      * @throws Exception the exception
      */
-    @PostMapping(path = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.REVOCATION_URL,
+    @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.REVOCATION_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Exception {
