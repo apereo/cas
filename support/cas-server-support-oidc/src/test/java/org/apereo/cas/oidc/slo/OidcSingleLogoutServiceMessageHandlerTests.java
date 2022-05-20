@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.slo;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -26,11 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
-
     private static final String LOGOUT_URL_OK = "https://mocky.io/post";
-
     private static final String LOGOUT_URL_BAD = "https://unknown-1234-unknown.xyz";
-
     @Autowired
     @Qualifier("oidcSingleLogoutServiceMessageHandler")
     private SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler;
@@ -60,6 +58,7 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
         registeredService.setLogoutType(type);
         registeredService.setLogoutUrl(logoutUrl);
         val service = RegisteredServiceTestUtils.getService(logoutUrl + "?client_id=" + registeredService.getClientId());
+        service.getAttributes().remove(CasProtocolConstants.PARAMETER_SERVICE);
         servicesManager.save(registeredService);
 
         val executionRequest = SingleLogoutExecutionRequest.builder()
