@@ -1,6 +1,9 @@
 package org.apereo.cas.support.oauth.web.response.introspection;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +17,11 @@ import lombok.Setter;
 @Setter
 public class OAuth20IntrospectionAccessTokenResponse {
 
+	/**
+	 * According to rfc7662 Introspection Response - active REQUIRED.
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc7662#section-2.2"> Introspection Response</a>
+	 */
+    @JsonInclude(Include.ALWAYS)
     private boolean active;
 
     private String sub;
