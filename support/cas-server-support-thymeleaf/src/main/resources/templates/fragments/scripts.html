@@ -15,7 +15,7 @@
     if (typeof resourceLoadedSuccessfully === "function") {
         resourceLoadedSuccessfully();
     }
-    $(function() {
+    $(() => {
         typeof cssVars === "function" && cssVars({onlyLegacy: true});
     })
 </script>
