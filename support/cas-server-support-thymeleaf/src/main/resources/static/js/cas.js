@@ -28,12 +28,12 @@ function copyClipboard(element) {
 }
 
 function isValidURL(str) {
-    let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    let pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     return !!pattern.test(str);
 }
 
@@ -41,7 +41,7 @@ function requestGeoPosition() {
     // console.log('Requesting GeoLocation data from the browser...');
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition(showGeoPosition, logGeoLocationError,
-            { maximumAge: 600000, timeout: 8000, enableHighAccuracy: true });
+            {maximumAge: 600000, timeout: 8000, enableHighAccuracy: true});
     } else {
         console.log('Browser does not support Geo Location');
     }
@@ -98,7 +98,7 @@ function preventFormResubmission() {
 }
 
 function writeToSessionStorage(value) {
-    if (typeof(Storage) !== "undefined") {
+    if (typeof (Storage) !== "undefined") {
         window.sessionStorage.removeItem("sessionStorage");
         window.sessionStorage.setItem('sessionStorage', value);
         console.log(`Stored ${value} in session storage`);
@@ -108,7 +108,7 @@ function writeToSessionStorage(value) {
 }
 
 function readFromSessionStorage() {
-    if (typeof(Storage) !== "undefined") {
+    if (typeof (Storage) !== "undefined") {
         let sessionStorage = window.sessionStorage.getItem("sessionStorage");
         console.log(`Read ${sessionStorage} in session storage`);
         window.localStorage.removeItem("sessionStorage");
