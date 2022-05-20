@@ -35,7 +35,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
-        
+
         try (val webServer = new MockWebServer(9316,
             new ByteArrayResource("Y".getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.ACCEPTED)) {
             webServer.start();
@@ -65,6 +65,32 @@ public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
                 MultifactorAuthenticationTestUtils.getRegisteredService(), null,
                 new MockHttpServletRequest());
             assertTrue(res);
+        }
+    }
+
+    @Test
+    public void verifyRestSendsQueryParameters() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
+
+        try (val webServer = new MockWebServer(9316,
+            new ByteArrayResource("Y".getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.ACCEPTED)) {
+            webServer.start();
+
+            val props = new MultifactorAuthenticationProviderBypassProperties();
+            props.getRest.setUrl("http://localhost:9316");
+            val provider = new TestMultifactorAuthenticationProvider();
+            val r = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
+            val request = new MockHttpServletRequest();
+            val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
+            val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
+                registeredService, provider, request);
+            assertEquals("casuser", request.getParameter("principal"));
+            assertEquals(registeredService.getServiceId(), request.getParameter("service"));
+            assertEquals(provider.getId(), request.getParameter("provider"));
         }
     }
 }
