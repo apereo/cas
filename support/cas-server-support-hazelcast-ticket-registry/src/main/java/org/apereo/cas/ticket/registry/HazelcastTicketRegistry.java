@@ -67,6 +67,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         }
     }
 
+    
+
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         val encTicketId = encodeTicketId(ticketId);
@@ -77,6 +79,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         if (metadata != null) {
             val map = getTicketMapInstanceByMetadata(metadata);
             if (map != null) {
+                
                 val ticket = map.get(encTicketId);
                 val result = decodeTicket(ticket);
                 if (predicate.test(result)) {

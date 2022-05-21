@@ -146,7 +146,7 @@ public class CasReportsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
+        final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("defaultSingleLogoutRequestExecutor")
         final ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor,
         final CasConfigurationProperties casProperties) {
