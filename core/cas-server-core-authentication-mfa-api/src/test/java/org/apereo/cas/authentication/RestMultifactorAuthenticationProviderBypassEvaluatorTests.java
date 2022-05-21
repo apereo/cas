@@ -72,12 +72,6 @@ public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
     public void verifyRestSendsQueryParameters() throws Exception {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
-
         try (val webServer = new okhttp3.mockwebserver.MockWebServer()) {
             val port = webServer.getPort();
             val response = new MockResponse().setResponseCode(HttpStatus.ACCEPTED.value());
