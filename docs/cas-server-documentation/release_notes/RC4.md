@@ -51,10 +51,34 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+ 
+### Active Single Sign-on Sessions
 
+The following ticket registry implementations are enhanced to provide dedicated native queries
+and support for fetching active single sign-on sessions for a given username.
+                                                                                
+- [MongoDb Ticket Registry](../ticketing/MongoDb-Ticket-Registry.html)
+- [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html)
+- [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html)
+- [DynamoDb Ticket Registry](../ticketing/DynamoDb-Ticket-Registry.html)
+
+<div class="alert alert-info">
+<strong>Note</strong><br/>Remember that all other registry implemntations support this capability.
+However, their execution and performance may not be as ideal as those that support dedicated queries.
+</div>
+
+Dedicated queries should lead to better performance, though the results may not be immediately obvious
+specially if/when the ticket registry is configured to sign and encrypt tickets.
+
+### Deprecated Modules
+
+The following modules are deprecated and scheduled to be removed in future CAS versions:
+
+- [Infinispan Ticket Registry](../ticketing/Infinispan-Ticket-Registry.html)
 
 ## Other Stuff
 
-
 ## Library Upgrades
 
+- InfluxDb
+- Amazon SDK

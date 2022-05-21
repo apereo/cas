@@ -24,14 +24,15 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated since 6.6 and scheduled for removal.
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "infinispan")
 @AutoConfiguration
+@Deprecated(since = "6.6")
 public class InfinispanTicketRegistryConfiguration {
-
     private static Cache<String, Ticket> getCache(final String cacheName,
-                                                  final EmbeddedCacheManager cacheManager) throws Exception {
+                                                  final EmbeddedCacheManager cacheManager) {
         if (StringUtils.isBlank(cacheName)) {
             return cacheManager.getCache();
         }
