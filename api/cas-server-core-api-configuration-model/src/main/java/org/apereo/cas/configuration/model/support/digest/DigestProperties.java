@@ -15,11 +15,13 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated since 6.6 and scheduled for removal.
  */
 @RequiresModule(name = "cas-server-support-digest-authentication")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "6.6")
 public class DigestProperties implements Serializable {
 
     private static final long serialVersionUID = -7920128284733546444L;

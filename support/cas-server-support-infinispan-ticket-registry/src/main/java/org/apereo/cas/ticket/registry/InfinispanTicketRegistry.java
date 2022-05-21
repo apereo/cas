@@ -20,9 +20,11 @@ import java.util.function.Predicate;
  *
  * @author Misagh Moayyed
  * @since 4.2.0
+ * @deprecated since 6.6 and scheduled for removal.
  */
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated(since = "6.6")
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     private final Cache<String, Ticket> cache;
 

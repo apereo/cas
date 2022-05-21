@@ -14,11 +14,13 @@ import java.io.Serializable;
  *
  * @author Yudhi Karunia Surtan
  * @since 5.2.0
+ * @deprecated since 6.6 and scheduled for removal.
  */
 @RequiresModule(name = "cas-server-support-fortress")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "6.6")
 public class FortressAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 9068259944327425315L;
