@@ -37,8 +37,8 @@ transcoding of the web session state.</p></div>
 
 ## Server-side Sessions
 
-In the event that you wish to use server-side session storage for managing t
-he webflow session, you will need to enable this behavior
+In the event that you wish to use server-side session storage for managing the
+webflow session, you will need to enable this behavior
 via CAS properties. 
 
 {% include_cached casproperties.html properties="cas.webflow.session" 
