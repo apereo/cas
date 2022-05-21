@@ -235,4 +235,16 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     public TicketFactory getTicketFactory() {
         return this.configurationContext.getTicketFactory();
     }
+
+    @Override
+    public Stream<? extends Ticket> getSessionsFor(final String principalId, final long from, final long count) {
+        var st = configurationContext.getTicketRegistry().getSessionsFor(principalId);
+        if (from > 0) {
+            st = st.skip(from);
+        }
+        if (count > 0) {
+            st = st.limit(count);
+        }
+        return st;
+    }
 }

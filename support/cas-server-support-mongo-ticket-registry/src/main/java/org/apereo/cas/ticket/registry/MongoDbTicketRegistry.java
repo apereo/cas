@@ -186,18 +186,25 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         if (isCipherExecutorEnabled()) {
             return super.countSessionsFor(principalId);
         }
+        return getSessionsFor(principalId).count();
+    }
 
+    @Override
+    public Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        if (isCipherExecutorEnabled()) {
+            return super.getSessionsFor(principalId);
+        }
         val ticketDefinitions = ticketCatalog.find(TicketGrantingTicket.class);
-        return ticketDefinitions.stream()
+        return ticketDefinitions
+            .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
-            .mapToLong(map -> {
+            .map(map -> {
                 val criteria = TextCriteria.forDefaultLanguage().matchingAny(principalId);
-                val query = TextQuery.queryText(criteria)
-                    .sortByScore()
-                    .with(PageRequest.of(0, 10));
-                return mongoTemplate.count(query, map);
+                val query = TextQuery.queryText(criteria).sortByScore().with(PageRequest.of(0, 10));
+                return mongoTemplate.stream(query, TicketHolder.class, map);
             })
-            .sum();
+            .flatMap(StreamUtils::createStreamFromIterator)
+            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
     }
 
     @Override

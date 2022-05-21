@@ -15,7 +15,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
 import javax.persistence.spi.PersistenceProvider;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -54,7 +54,7 @@ public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
     }
 
     @Override
-    public Stream<? extends Serializable> streamQuery(final TypedQuery<? extends Serializable> query) {
+    public Stream<? extends Serializable> streamQuery(final Query query) {
         return query.getResultStream();
     }
 

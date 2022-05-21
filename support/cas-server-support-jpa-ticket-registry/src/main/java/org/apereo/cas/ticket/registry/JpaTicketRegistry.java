@@ -178,6 +178,26 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
+    public Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        if (isCipherExecutorEnabled()) {
+            return super.getSessionsFor(principalId);
+        }
+        val factory = getJpaTicketEntityFactory();
+        val md = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
+        val sql = String.format("SELECT t FROM %s t WHERE t.type=:type AND t.principalId=:principalId", factory.getEntityName());
+        val query = this.entityManager.createQuery(sql, factory.getType())
+            .setParameter("principalId", principalId)
+            .setParameter("type", md.getImplementationClass().getName());
+        query.setLockMode(LockModeType.NONE);
+        return jpaBeanFactory
+            .streamQuery(query)
+            .map(BaseTicketEntity.class::cast)
+            .map(factory::toTicket)
+            .map(this::decodeTicket);
+    }
+
+    @Override
+    @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public long serviceTicketCount() {
         val factory = getJpaTicketEntityFactory();
         val md = this.ticketCatalog.find(ServiceTicket.PREFIX);

@@ -145,7 +145,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         when(cas.getTickets(any(Predicate.class))).thenReturn(List.of(new MockTicketGrantingTicket("casuser")));
         when(cas.deleteTicket(anyString())).thenThrow(new RuntimeException());
 
-        val results = new SingleSignOnSessionsEndpoint(new DirectObjectProvider<>(cas),
+        val results = new SingleSignOnSessionsEndpoint(cas,
             casProperties, new DirectObjectProvider<>(defaultSingleLogoutRequestExecutor)).destroySsoSessions(
             SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType(), null,
             0, 1_000,

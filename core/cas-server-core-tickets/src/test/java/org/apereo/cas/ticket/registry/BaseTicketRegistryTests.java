@@ -68,6 +68,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.util.AopTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.ZoneOffset;
@@ -231,8 +232,7 @@ public abstract class BaseTicketRegistryTests {
         assertEquals(ticketGrantingTicketId, ticket.getId(), () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
     }
 
-    @RepeatedTest(1)
-    @Tag("DisableTicketRegistryTestWithEncryption")
+    @RepeatedTest(2)
     public void verifyCountSessionsPerUser() throws Exception {
         assumeTrue(isIterableRegistry());
         val id = UUID.randomUUID().toString();
@@ -241,6 +241,23 @@ public abstract class BaseTicketRegistryTests {
             NeverExpiresExpirationPolicy.INSTANCE));
         val count = ticketRegistry.countSessionsFor(id);
         assertTrue(count > 0);
+    }
+
+    @RepeatedTest(2)
+    @Transactional
+    public void verifyGetSsoSessionsPerUser() throws Exception {
+        assumeTrue(isIterableRegistry());
+        val id = UUID.randomUUID().toString();
+        for (var i = 0; i < 5; i++) {
+            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                .getNewTicketId(TicketGrantingTicket.PREFIX);
+            ticketRegistry.addTicket(new TicketGrantingTicketImpl(tgtId,
+                CoreAuthenticationTestUtils.getAuthentication(id),
+                NeverExpiresExpirationPolicy.INSTANCE));
+        }
+        try (val results = ticketRegistry.getSessionsFor(id)) {
+            assertEquals(5, results.count());
+        }
     }
 
     @RepeatedTest(2)
