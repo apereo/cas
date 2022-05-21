@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.RecordedRequest;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -81,7 +80,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
 
         try (val webServer = new okhttp3.mockwebserver.MockWebServer()) {
             val port = webServer.getPort();
-            MockResponse response = new MockResponse().setResponseCode(HttpStatus.ACCEPTED.value());
+            val response = new MockResponse().setResponseCode(HttpStatus.ACCEPTED.value());
             webServer.enqueue(response);
             webServer.start();
 
