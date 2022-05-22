@@ -7,10 +7,10 @@ category: Planning
 # RC4 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
-you up for unpleasant surprises. A `GA`
-is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS releases are *strictly* time-based
-releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain confidence in a particular
-release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
+you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note 
+that CAS releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics 
+or completion of features. To gain confidence in a particular release, it is strongly recommended that you start 
+early by experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
 
@@ -61,7 +61,7 @@ and support for fetching active single sign-on sessions for a given username.
 - [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html)
 - [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html)
 - [DynamoDb Ticket Registry](../ticketing/DynamoDb-Ticket-Registry.html)
-- [Hazelcast Ticket Registry](../ticketing/Hazelcast-Ticket-Registry.html)
+- [Hazelcast Ticket Registry](../ticketing/Hazelcast-Ticket-Registry.html) using [Hazelcast Jet](https://jet-start.sh/)
 
 <div class="alert alert-info">
 <strong>Note</strong><br/>Remember that all other registry implemntations support this capability.
