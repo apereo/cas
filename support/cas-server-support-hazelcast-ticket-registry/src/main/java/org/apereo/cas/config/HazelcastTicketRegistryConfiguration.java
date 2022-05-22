@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.registry.HazelcastTicketHolder;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -12,6 +12,9 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
+import com.hazelcast.config.IndexConfig;
+import com.hazelcast.config.IndexType;
+import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -67,12 +70,41 @@ public class HazelcastTicketRegistryConfiguration {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         LOGGER.debug("Creating Hazelcast instance for members [{}]", hz.getCluster().getNetwork().getMembers());
         val hazelcastInstance = HazelcastInstanceFactory.getOrCreateHazelcastInstance(HazelcastConfigurationFactory.build(hz));
-        ticketCatalog.findAll()
+        val ticketDefinitions = ticketCatalog.findAll();
+
+        ticketDefinitions
             .stream()
-            .map(TicketDefinition::getProperties)
-            .peek(p -> LOGGER.debug("Created Hazelcast map configuration for [{}]", p))
-            .map(p -> HazelcastConfigurationFactory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
+            .map(defn -> {
+                LOGGER.debug("Creating Hazelcast map configuration for [{}]", defn.getProperties());
+                val props = defn.getProperties();
+                val cfg = HazelcastConfigurationFactory.buildMapConfig(hz, props.getStorageName(), props.getStorageTimeout());
+                if (cfg instanceof MapConfig) {
+                    val mapConfig = (MapConfig) cfg;
+                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "id"));
+                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "type"));
+                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));
+                }
+                return cfg;
+            })
             .forEach(map -> HazelcastConfigurationFactory.setConfigMap(map, hazelcastInstance.getConfig()));
+
+        if (hz.getCore().isEnableJet()) {
+            ticketDefinitions.forEach(defn -> {
+                val builder = new StringBuilder(String.format("CREATE MAPPING \"%s\" ", defn.getProperties().getStorageName()));
+                builder.append("TYPE IMap ");
+                builder.append("OPTIONS (");
+                builder.append("'keyFormat' = 'java',");
+                builder.append("'keyJavaClass' = 'java.lang.String',");
+                builder.append("'valueFormat' = 'java',");
+                builder.append(String.format("'valueJavaClass' = '%s'", HazelcastTicketHolder.class.getName()));
+                builder.append(')');
+                val query = builder.toString();
+                LOGGER.trace("Creating mapping for [{}] via [{}]", defn.getPrefix(), query);
+                try (val results = hazelcastInstance.getSql().execute(query)) {
+                    LOGGER.debug("Created mapping for [{}]", defn.getPrefix());
+                }
+            });
+        }
         return hazelcastInstance;
     }
 

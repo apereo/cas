@@ -93,6 +93,8 @@ public class HazelcastConfigurationFactory {
         val config = new Config();
 
         config.setLicenseKey(hz.getCore().getLicenseKey());
+        config.getJetConfig().setEnabled(hz.getCore().isEnableJet());
+
         if (cluster.getCore().getCpMemberCount() > 0) {
             config.getCPSubsystemConfig().setCPMemberCount(cluster.getCore().getCpMemberCount());
         }
@@ -102,7 +104,7 @@ public class HazelcastConfigurationFactory {
         val networkConfig = new NetworkConfig()
             .setPort(cluster.getNetwork().getPort())
             .setPortAutoIncrement(cluster.getNetwork().isPortAutoIncrement());
-        
+
         buildNetworkSslConfig(networkConfig, hz);
 
         if (StringUtils.hasText(cluster.getNetwork().getNetworkInterfaces())) {
@@ -332,6 +334,7 @@ public class HazelcastConfigurationFactory {
                 .setSplitBrainProtectionName(mapName.concat("-SplitBrainProtection"))
                 .setMergePolicyConfig(mergePolicyConfig);
         }
+
         return new MapConfig()
             .setName(mapName)
             .setStatisticsEnabled(true)

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -21,6 +22,7 @@ import org.jooq.lambda.Unchecked;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -301,6 +303,19 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return items.map(this::decodeTicket);
     }
 
+    /**
+     * Gets principal id from ticket.
+     *
+     * @param ticket the ticket
+     * @return the principal id from
+     */
+    protected static String getPrincipalIdFrom(final Ticket ticket) {
+        return ticket instanceof AuthenticationAwareTicket
+            ? Optional.ofNullable(((AuthenticationAwareTicket) ticket).getAuthentication())
+            .map(auth -> auth.getPrincipal().getId()).orElse(StringUtils.EMPTY)
+            : StringUtils.EMPTY;
+    }
+    
     protected boolean isCipherExecutorEnabled() {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
     }

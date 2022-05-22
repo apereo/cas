@@ -14,11 +14,13 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.6
  */
 @RequiresModule(name = "cas-server-support-couchbase-ticket-registry")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "6.6")
 public class CouchbaseTicketRegistryProperties extends BaseCouchbaseProperties {
 
     private static final long serialVersionUID = 2123040809519673836L;

@@ -34,9 +34,11 @@ import java.util.stream.Collectors;
  * @author Fredrik Jönsson "fjo@kth.se"
  * @author Misagh Moayyed
  * @since 4.2.0
+ * @deprecated Since 6.6
  */
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated(since = "6.6")
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
