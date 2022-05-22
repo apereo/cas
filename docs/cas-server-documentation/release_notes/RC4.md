@@ -61,6 +61,7 @@ and support for fetching active single sign-on sessions for a given username.
 - [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html)
 - [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html)
 - [DynamoDb Ticket Registry](../ticketing/DynamoDb-Ticket-Registry.html)
+- [Hazelcast Ticket Registry](../ticketing/Hazelcast-Ticket-Registry.html)
 
 <div class="alert alert-info">
 <strong>Note</strong><br/>Remember that all other registry implemntations support this capability.
@@ -75,6 +76,7 @@ specially if/when the ticket registry is configured to sign and encrypt tickets.
 The following modules are deprecated and scheduled to be removed in future CAS versions:
 
 - [Infinispan Ticket Registry](../ticketing/Infinispan-Ticket-Registry.html)
+- [Couchbase Ticket Registry](../ticketing/Couchbase-Ticket-Registry.html)
 
 ## Other Stuff
 

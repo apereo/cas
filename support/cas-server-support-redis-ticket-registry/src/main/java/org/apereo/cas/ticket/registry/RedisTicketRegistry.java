@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.redis.core.CasRedisTemplate;
-import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -12,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -91,13 +89,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         }
     }
 
-    private static String getPrincipalIdFrom(final Ticket ticket) {
-        return ticket instanceof AuthenticationAwareTicket
-            ? Optional.ofNullable(((AuthenticationAwareTicket) ticket).getAuthentication())
-                .map(auth -> auth.getPrincipal().getId()).orElse(StringUtils.EMPTY)
-            : StringUtils.EMPTY;
-    }
-
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
@@ -106,7 +97,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 .map(key -> client.boundValueOps(key).get())
                 .filter(Objects::nonNull)
                 .map(this::decodeTicket)
-                .filter(predicate::test)
+                .filter(predicate)
                 .findFirst()
                 .orElse(null);
         } catch (final Exception e) {

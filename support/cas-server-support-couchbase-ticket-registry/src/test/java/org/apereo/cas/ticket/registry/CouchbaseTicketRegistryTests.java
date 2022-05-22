@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated 6.6
  */
 @Tag("Couchbase")
 @EnabledIfListeningOnPort(port = 8091)
@@ -49,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SpringBootDependencyInjectionTestExecutionListener.class,
     CouchbaseTicketRegistryTests.DisposingTestExecutionListener.class
 })
+@Deprecated(since = "6.6")
 public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)

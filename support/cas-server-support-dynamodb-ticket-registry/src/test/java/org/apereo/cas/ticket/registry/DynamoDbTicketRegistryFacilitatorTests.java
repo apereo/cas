@@ -36,7 +36,7 @@ public class DynamoDbTicketRegistryFacilitatorTests {
             val ticket = new MockTicketGrantingTicket("casuser",
                     CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                     CollectionUtils.wrap("name", "CAS"));
-            val map = dynamoDbTicketRegistryFacilitator.buildTableAttributeValuesMapFromTicket(ticket, ticket);
+            val map = dynamoDbTicketRegistryFacilitator.buildTableAttributeValuesMapFromTicket(ticket, ticket, "casuser");
             assertFalse(map.isEmpty());
             Arrays.stream(DynamoDbTicketRegistryFacilitator.ColumnNames.values())
                     .forEach(c -> assertTrue(map.containsKey(c.getColumnName())));
@@ -48,14 +48,13 @@ public class DynamoDbTicketRegistryFacilitatorTests {
             val ticket = new MockTicketGrantingTicket("casuser",
                     CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                     CollectionUtils.wrap("name", "CAS"));
-            dynamoDbTicketRegistryFacilitator.put(ticket, ticket);
+            dynamoDbTicketRegistryFacilitator.put(ticket, ticket, "casuser");
             val col = dynamoDbTicketRegistryFacilitator.getAll();
             assertFalse(col.isEmpty());
             val ticketFetched = dynamoDbTicketRegistryFacilitator.get(ticket.getId(), ticket.getId());
             assertEquals(ticket, ticketFetched);
             assertFalse(dynamoDbTicketRegistryFacilitator.delete("badticket", "badticket"));
             assertTrue(dynamoDbTicketRegistryFacilitator.deleteAll() > 0);
-
         }
     }
 
@@ -77,5 +76,4 @@ public class DynamoDbTicketRegistryFacilitatorTests {
             });
         }
     }
-
 }
