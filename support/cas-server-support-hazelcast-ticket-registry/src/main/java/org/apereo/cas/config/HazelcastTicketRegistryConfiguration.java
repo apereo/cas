@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketHolder;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
@@ -90,22 +91,26 @@ public class HazelcastTicketRegistryConfiguration {
 
         if (hz.getCore().isEnableJet()) {
             ticketDefinitions.forEach(defn -> {
-                val builder = new StringBuilder(String.format("CREATE MAPPING \"%s\" ", defn.getProperties().getStorageName()));
-                builder.append("TYPE IMap ");
-                builder.append("OPTIONS (");
-                builder.append("'keyFormat' = 'java',");
-                builder.append("'keyJavaClass' = 'java.lang.String',");
-                builder.append("'valueFormat' = 'java',");
-                builder.append(String.format("'valueJavaClass' = '%s'", HazelcastTicketHolder.class.getName()));
-                builder.append(')');
-                val query = builder.toString();
+                val query = buildCreateMappingQuery(defn);
                 LOGGER.trace("Creating mapping for [{}] via [{}]", defn.getPrefix(), query);
-                try (val results = hazelcastInstance.getSql().execute(query)) {
-                    LOGGER.debug("Created mapping for [{}]", defn.getPrefix());
+                try (val createResults = hazelcastInstance.getSql().execute(query)) {
+                    LOGGER.info("Created Hazelcast SQL mapping for [{}]", defn.getPrefix());
                 }
             });
         }
         return hazelcastInstance;
+    }
+    
+    private static String buildCreateMappingQuery(final TicketDefinition defn) {
+        val builder = new StringBuilder(String.format("CREATE MAPPING IF NOT EXISTS \"%s\" ", defn.getProperties().getStorageName()));
+        builder.append("TYPE IMap ");
+        builder.append("OPTIONS (");
+        builder.append("'keyFormat' = 'java',");
+        builder.append("'keyJavaClass' = 'java.lang.String',");
+        builder.append("'valueFormat' = 'java',");
+        builder.append(String.format("'valueJavaClass' = '%s'", HazelcastTicketHolder.class.getName()));
+        builder.append(')');
+        return builder.toString();
     }
 
     @Bean
