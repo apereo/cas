@@ -14,15 +14,18 @@ import org.springframework.core.io.Resource;
 import java.io.Serializable;
 
 /**
- * Encapsulates hazelcast properties exposed by CAS via properties file property source in a type-safe manner.
+ * Encapsulates infinispan properties exposed
+ * by CAS via properties file property source in a type-safe manner.
  *
  * @author Dmitriy Kopylenko
  * @since 4.2.0
+ * @deprecated since 6.6 and scheduled for removal.
  */
 @RequiresModule(name = "cas-server-support-infinispan-ticket-registry")
 @Getter
 @Accessors(chain = true)
 @Setter
+@Deprecated(since = "6.6")
 public class InfinispanProperties implements Serializable {
 
     private static final long serialVersionUID = 1974626726565626634L;

@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import org.jooq.lambda.Unchecked;
 
@@ -162,4 +164,16 @@ public interface TicketRegistry {
      * @return the count
      */
     long countSessionsFor(String principalId);
+
+    /**
+     * Gets sessions for principal.
+     *
+     * @param principalId the principal id
+     * @return the sessions for
+     */
+    default Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        return getTickets(ticket -> ticket instanceof TicketGrantingTicket
+                                    && !ticket.isExpired()
+                                    && ((AuthenticationAwareTicket) ticket).getAuthentication().getPrincipal().getId().equals(principalId));
+    }
 }

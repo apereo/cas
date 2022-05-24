@@ -233,4 +233,12 @@ public interface CentralAuthenticationService {
      * @return the ticket factory
      */
     TicketFactory getTicketFactory();
+
+    /**
+     * Gets sessions for principal.
+     *
+     * @param principalId the principal id
+     * @return the sessions for
+     */
+    Stream<? extends Ticket> getSessionsFor(String principalId, long from, long count);
 }

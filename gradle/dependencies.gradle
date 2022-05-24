@@ -617,6 +617,10 @@ ext.libraries = [
         ],
         hazelcast               : [
                 dependencies.create("com.hazelcast:hazelcast:$hazelcastVersion") {
+                },
+                dependencies.create("com.hazelcast:hazelcast-sql:$hazelcastVersion") {
+                    exclude(group: "com.hazelcast", module: "hazelcast")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         hazelcastaws            : [
@@ -747,7 +751,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 }
         ],
         aws                     : [

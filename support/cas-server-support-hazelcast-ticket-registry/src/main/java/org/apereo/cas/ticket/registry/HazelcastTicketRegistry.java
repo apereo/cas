@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -14,12 +15,13 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
@@ -60,7 +62,14 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         val metadata = this.ticketCatalog.find(ticket);
         val ticketMap = getTicketMapInstanceByMetadata(metadata);
         if (ticketMap != null) {
-            ticketMap.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
+            val holder = HazelcastTicketHolder.builder()
+                .id(encTicket.getId())
+                .type(metadata.getImplementationClass().getName())
+                .principal(encodeTicketId(getPrincipalIdFrom(ticket)))
+                .timeToLive(ttl)
+                .ticket(encTicket)
+                .build();
+            ticketMap.set(encTicket.getId(), holder, ttl, TimeUnit.SECONDS);
             LOGGER.debug("Added ticket [{}] with ttl [{}s]", encTicket.getId(), ttl);
         } else {
             LOGGER.warn("Unable to locate ticket map for ticket metadata [{}]", metadata);
@@ -77,10 +86,12 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         if (metadata != null) {
             val map = getTicketMapInstanceByMetadata(metadata);
             if (map != null) {
-                val ticket = map.get(encTicketId);
-                val result = decodeTicket(ticket);
-                if (predicate.test(result)) {
-                    return result;
+                val ticketHolder = map.get(encTicketId);
+                if (ticketHolder != null && ticketHolder.getTicket() != null) {
+                    val result = decodeTicket(ticketHolder.getTicket());
+                    if (predicate != null && predicate.test(result)) {
+                        return result;
+                    }
                 }
                 return null;
             } else {
@@ -121,12 +132,46 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
             .flatMap(tickets -> {
                 if (pageSize > 0) {
-                    return tickets.stream().limit(pageSize).collect(Collectors.toList()).stream();
+                    return tickets.stream()
+                        .limit(pageSize)
+                        .map(HazelcastTicketHolder::getTicket)
+                        .collect(Collectors.toList())
+                        .stream();
                 }
-                return new ArrayList<>(tickets).stream();
+                return tickets
+                    .stream()
+                    .map(HazelcastTicketHolder::getTicket);
             })
             .map(this::decodeTicket)
             .collect(Collectors.toSet());
+    }
+
+    @Override
+    public long countSessionsFor(final String principalId) {
+        if (hazelcastInstance.getJet().getConfig().isEnabled()) {
+            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
+            val sql = String.format("SELECT COUNT(*) FROM %s WHERE principal=?", md.getProperties().getStorageName());
+            LOGGER.debug("Executing SQL query [{}]", sql);
+            val results = hazelcastInstance.getSql().execute(sql, encodeTicketId(principalId));
+            return results.iterator().next().getObject(0);
+        }
+        return super.countSessionsFor(principalId);
+    }
+
+    @Override
+    public Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        if (hazelcastInstance.getJet().getConfig().isEnabled()) {
+            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
+            val sql = String.format("SELECT * FROM %s WHERE principal=?", md.getProperties().getStorageName());
+            LOGGER.debug("Executing SQL query [{}]", sql);
+            val results = hazelcastInstance.getSql().execute(sql, encodeTicketId(principalId));
+            return StreamSupport.stream(results.spliterator(), false)
+                .map(row -> {
+                    val ticket = (Ticket) row.getObject("ticket");
+                    return decodeTicket(ticket);
+                });
+        }
+        return super.getSessionsFor(principalId);
     }
 
     /**
@@ -151,15 +196,17 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         shutdown();
     }
 
-    private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
+    private IMap<String, HazelcastTicketHolder> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
         val mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating map name [{}] for ticket definition [{}]", mapName, metadata);
         return getTicketMapInstance(mapName);
     }
 
-    private IMap<String, Ticket> getTicketMapInstance(@NonNull final String mapName) {
+    private IMap<String, HazelcastTicketHolder> getTicketMapInstance(
+        @NonNull
+        final String mapName) {
         try {
-            val inst = hazelcastInstance.<String, Ticket>getMap(mapName);
+            val inst = hazelcastInstance.<String, HazelcastTicketHolder>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {

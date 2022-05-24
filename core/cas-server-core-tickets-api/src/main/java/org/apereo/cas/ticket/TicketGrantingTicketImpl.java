@@ -156,11 +156,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         this.services.clear();
     }
 
-    /**
-     * Return if the TGT has no parent.
-     *
-     * @return if the TGT has no parent.
-     */
     @Override
     public boolean isRoot() {
         return this.getTicketGrantingTicket() == null;

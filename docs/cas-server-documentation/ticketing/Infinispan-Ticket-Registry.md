@@ -10,6 +10,10 @@ category: Ticketing
 
 Infinispan integration is enabled by including the following dependency in the WAR overlay:
 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-infinispan-ticket-registry" %}
 
 {% include_cached casproperties.html properties="cas.ticket.registry.infinispan" %}

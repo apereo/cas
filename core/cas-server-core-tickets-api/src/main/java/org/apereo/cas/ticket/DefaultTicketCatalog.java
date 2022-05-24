@@ -25,7 +25,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     @Override
     public TicketDefinition find(final String ticketId) {
         val index = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
-        val prefix = index != -1 ? ticketId.substring(0, index) : ticketId;
+        val prefix = index == -1 ? ticketId : ticketId.substring(0, index);
 
         val definition = ticketMetadataMap.values()
             .stream()

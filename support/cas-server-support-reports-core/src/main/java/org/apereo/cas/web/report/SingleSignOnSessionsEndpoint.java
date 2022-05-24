@@ -56,12 +56,12 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
 
-    private final ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
 
     private final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
 
     public SingleSignOnSessionsEndpoint(
-        final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
+        final CentralAuthenticationService centralAuthenticationService,
         final CasConfigurationProperties casProperties,
         final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
         super(casProperties);
@@ -189,9 +189,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
         if (StringUtils.isNotBlank(username)) {
             val sessionsMap = new HashMap<String, Object>(1);
-            val tickets = centralAuthenticationService.getObject().getTickets(
-                ticket -> ticket instanceof TicketGrantingTicket
-                          && ((TicketGrantingTicket) ticket).getAuthentication().getPrincipal().getId().equalsIgnoreCase(username));
+            val tickets = centralAuthenticationService.getSessionsFor(username, from, count);
             tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
             return sessionsMap;
         }
@@ -294,8 +292,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     }
 
     private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(final long from, final long count) {
-        return centralAuthenticationService.getObject()
-            .getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired(), from, count);
+        return centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired(), from, count);
     }
 
 }

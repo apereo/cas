@@ -9,7 +9,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
 import javax.persistence.spi.PersistenceProvider;
 import java.io.Serializable;
 import java.util.stream.Stream;
@@ -71,5 +71,5 @@ public interface JpaBeanFactory {
      * @param query the query
      * @return the stream
      */
-    Stream<? extends Serializable> streamQuery(TypedQuery<? extends Serializable> query);
+    Stream<? extends Serializable> streamQuery(Query query);
 }

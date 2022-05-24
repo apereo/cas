@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * This is {@link DynamoDbTicketRegistry}.
@@ -23,12 +24,18 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     private final DynamoDbTicketRegistryFacilitator dbTableService;
 
     @Override
+    public Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        return this.dbTableService.getSessionsFor(encodeTicketId(principalId));
+    }
+
+    @Override
     public void addTicketInternal(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(),
                 ticket.getExpirationPolicy().getTimeToLive());
             val encTicket = encodeTicket(ticket);
-            this.dbTableService.put(ticket, encTicket);
+            val principal = encodeTicketId(getPrincipalIdFrom(ticket));
+            this.dbTableService.put(ticket, encTicket, principal);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

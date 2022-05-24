@@ -7,6 +7,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -46,8 +47,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         return ttl;
     }
 
-    private static String getTicketRedisKey(final String ticketId) {
-        return CAS_TICKET_PREFIX + ticketId;
+    private static String getTicketRedisKey(final String ticketId, final String user) {
+        return CAS_TICKET_PREFIX
+               + StringUtils.defaultIfBlank(ticketId.trim(), "*")
+               + ':'
+               + StringUtils.defaultIfBlank(user.trim(), "*");
     }
 
     private static String getPatternTicketRedisKey() {
@@ -65,8 +69,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        val redisKey = getTicketRedisKey(encodeTicketId(ticketId));
-        this.client.delete(redisKey);
+        val redisKey = getTicketRedisKey(encodeTicketId(ticketId), StringUtils.EMPTY);
+        getKeysStream(redisKey).forEach(client::delete);
         return true;
     }
 
@@ -74,7 +78,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public void addTicketInternal(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket);
-            val redisKey = getTicketRedisKey(encodeTicketId(ticket.getId()));
+            val userId = getPrincipalIdFrom(ticket);
+            val redisKey = getTicketRedisKey(encodeTicketId(ticket.getId()), encodeTicketId(userId));
             val encodeTicket = encodeTicket(ticket);
             val timeout = getTimeout(ticket);
             this.client.boundValueOps(redisKey).set(encodeTicket, timeout, TimeUnit.SECONDS);
@@ -87,17 +92,14 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
-            val redisKey = getTicketRedisKey(encodeTicketId(ticketId));
-            val t = this.client.boundValueOps(redisKey).get();
-            if (t != null) {
-                val result = decodeTicket(t);
-                if (predicate.test(result)) {
-                    return result;
-                }
-                LOGGER.trace("The condition enforced by [{}] cannot successfully accept/test the ticket id [{}]", ticketId,
-                    predicate.getClass().getSimpleName());
-                return null;
-            }
+            val redisKey = getTicketRedisKey(encodeTicketId(ticketId), StringUtils.EMPTY);
+            return getKeysStream(redisKey)
+                .map(key -> client.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .map(this::decodeTicket)
+                .filter(predicate)
+                .findFirst()
+                .orElse(null);
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}]", ticketId);
             LoggingUtils.error(LOGGER, e);
@@ -132,8 +134,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         try {
             LOGGER.debug("Updating ticket [{}]", ticket);
-            val encodeTicket = this.encodeTicket(ticket);
-            val redisKey = getTicketRedisKey(encodeTicketId(ticket.getId()));
+            val encodeTicket = encodeTicket(ticket);
+
+            val userId = getPrincipalIdFrom(ticket);
+            val redisKey = getTicketRedisKey(encodeTicketId(ticket.getId()), encodeTicketId(userId));
             LOGGER.debug("Fetched redis key [{}] for ticket [{}]", redisKey, ticket);
 
             val timeout = getTimeout(ticket);
@@ -146,12 +150,26 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         return null;
     }
 
+    @Override
+    public Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        val redisKey = getTicketRedisKey(StringUtils.EMPTY, encodeTicketId(principalId));
+        return getKeysStream(redisKey)
+            .map(key -> client.boundValueOps(key).get())
+            .filter(Objects::nonNull)
+            .map(this::decodeTicket)
+            .filter(Objects::nonNull);
+    }
+
     /**
      * Get a stream of all CAS-related keys from Redis DB.
      *
      * @return stream of all CAS-related keys from Redis DB
      */
     private Stream<String> getKeysStream() {
-        return client.keys(getPatternTicketRedisKey(), this.scanCount);
+        return getKeysStream(getPatternTicketRedisKey());
+    }
+
+    private Stream<String> getKeysStream(final String key) {
+        return client.keys(key, this.scanCount);
     }
 }

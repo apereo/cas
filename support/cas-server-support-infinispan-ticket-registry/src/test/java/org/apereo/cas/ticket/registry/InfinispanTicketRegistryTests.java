@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * This is {@link InfinispanTicketRegistryTests}.
  *
  * @since 4.2.0
+ * @deprecated since 6.6 and scheduled for removal.
  */
 @SpringBootTest(classes = {
     InfinispanTicketRegistryConfiguration.class,
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 @Tag("Infinispan")
 @Getter
+@Deprecated(since = "6.6")
 public class InfinispanTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
