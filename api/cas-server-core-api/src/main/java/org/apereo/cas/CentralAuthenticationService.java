@@ -238,6 +238,8 @@ public interface CentralAuthenticationService {
      * Gets sessions for principal.
      *
      * @param principalId the principal id
+     * @param from        the from
+     * @param count       the count
      * @return the sessions for
      */
     Stream<? extends Ticket> getSessionsFor(String principalId, long from, long count);
