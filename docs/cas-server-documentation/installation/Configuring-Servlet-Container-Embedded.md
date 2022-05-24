@@ -26,7 +26,7 @@ java -jar /path/to/cas.war
 ```
 
 <div class="alert alert-info"><strong>Note</strong>
-<p>If you are using the cas-overlay-template repository to build your cas.war, in order to produce a fully executable web application it might be necessary to modify/add <code>executable=true</code> to your `gradle.properties`.</p></div>
+ <p>If you are using the cas-overlay-template repository to build your <code>cas.war</code>, in order to produce a fully executable web application it might be necessary to modify/add <code>executable=true</code> to your <code>gradle.properties</code>.</p></div>
 
 Additionally, it is also possible to run CAS as a fully executable web application:
 
