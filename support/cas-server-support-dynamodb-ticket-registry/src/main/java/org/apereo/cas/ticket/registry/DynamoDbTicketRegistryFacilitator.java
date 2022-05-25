@@ -187,6 +187,7 @@ public class DynamoDbTicketRegistryFacilitator {
      *
      * @param ticket    the ticket
      * @param encTicket the encoded ticket
+     * @param principal the principal
      * @return the map
      */
     public Map<String, AttributeValue> buildTableAttributeValuesMapFromTicket(
