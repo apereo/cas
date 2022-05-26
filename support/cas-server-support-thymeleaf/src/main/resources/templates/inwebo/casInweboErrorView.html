@@ -47,10 +47,10 @@
             </div>
             <script th:inline="javascript">
                 /*<![CDATA[*/
-                var siteAlias = /*[[${siteAlias}]]*/ '';
-                var siteDescription = /*[[${siteDescription}]]*/ '';
+                let siteAlias = /*[[${siteAlias}]]*/ '';
+                let siteDescription = /*[[${siteDescription}]]*/ '';
 
-                window.onload = function () {
+                window.onload = () => {
                     neon = new Neon.Neon(siteAlias, siteDescription);
                     neon.initOnline()
                         .then(logins => {
@@ -61,8 +61,8 @@
                 };
 
                 function doEnroll() {
-                    var code = document.getElementById('code').value;
-                    var pin = document.getElementById('pin').value;
+                    let code = document.getElementById('code').value;
+                    let pin = document.getElementById('pin').value;
                     if (code !== '' && pin !== '') {
                         neon.activateWithPin(code, pin)
                             .then(login => {
@@ -79,38 +79,47 @@
             <div class="form-wrapper">
                 <form>
                     <section class="cas-field form-group my-3">
-                        <div class="mdc-text-field  d-flex">
-                            <input type="text"
-                                    class="mdc-text-field__input form-control"
-                                    id="code"
-                                    name="code"
-                                    tabindex="0"
-                                    size="25"
-                                    maxlength="10"
-                                    required
-                                    autocomplete="off"
-                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                    autocapitalize="none"
-                                    spellcheck="false" />
-                            <label for="code" class="mdc-floating-label" th:utext="#{cas.inwebo.enroll.code}">Activation code</label>
-                        </div>
+                        <label class="mdc-text-field mdc-text-field--outlined control-label">
+                            <input class="mdc-text-field__input form-control"
+                                   id="code"
+                                   name="code"
+                                   size="25"
+                                   type="text"
+                                   th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                   autocomplete="off" required
+                                   autocapitalize="none"
+                                   spellcheck="false" />
+                            <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label"
+                                              th:text="#{cas.inwebo.enroll.code}">Activation Code</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                        </label>
                     </section>
+                    
                     <section class="cas-field form-group my-3">
-                        <div class="mdc-text-field  d-flex">
-                            <input type="text"
-                                    class="mdc-text-field__input form-control"
-                                    id="pin"
-                                    name="pin"
-                                    tabindex="0"
-                                    size="25"
-                                    maxlength="10"
-                                    required
-                                    autocomplete="off"
-                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                    autocapitalize="none"
-                                    spellcheck="false" />
-                            <label for="pin" class="mdc-floating-label" th:utext="#{cas.inwebo.pin}">PIN code</label>
-                        </div>
+                        <label class="mdc-text-field mdc-text-field--outlined control-label">
+                            <input class="mdc-text-field__input form-control"
+                                   id="pin"
+                                   name="pin"
+                                   size="6"
+                                   maxlength="6"
+                                   type="text"
+                                   autocomplete="off" required
+                                   autocapitalize="none"
+                                   spellcheck="false" />
+                            <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label"
+                                              th:text="#{cas.inwebo.pin}">Activation Code</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                        </label>
                     </section>
                     <button class="mdc-button mdc-button--raised btn btn-primary"
                             name="enroll"
