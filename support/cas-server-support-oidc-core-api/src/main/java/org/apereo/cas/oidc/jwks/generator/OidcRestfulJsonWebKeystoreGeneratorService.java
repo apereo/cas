@@ -62,7 +62,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     @Override
     public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Exception {
         val rest = oidcProperties.getJwks().getRest();
-        val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.putAll(rest.getHeaders());
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .basicAuthPassword(rest.getBasicAuthPassword())

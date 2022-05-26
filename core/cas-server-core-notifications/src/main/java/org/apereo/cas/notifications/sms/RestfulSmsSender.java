@@ -30,7 +30,7 @@ public class RestfulSmsSender implements SmsSender {
     public boolean send(final String from, final String to, final String message) {
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             val holder = ClientInfoHolder.getClientInfo();
             if (holder != null) {
                 parameters.put("clientIpAddress", holder.getClientIpAddress());
@@ -39,7 +39,7 @@ public class RestfulSmsSender implements SmsSender {
             parameters.put("from", from);
             parameters.put("to", to);
 
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())

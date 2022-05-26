@@ -34,7 +34,7 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
         try {
             val rest = adaptiveAuthenticationProperties.getIpIntel().getRest();
 
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             parameters.put("clientIpAddress", clientIpAddress);
 
             val exec = HttpUtils.HttpExecutionRequest.builder()

@@ -43,7 +43,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         val restProperties = getProperties().getAuthn().getMfa().getWebAuthn().getRest();
         HttpResponse response = null;
         try {
-            val parameters = CollectionUtils.<String, Object>wrap("username", username);
+            val parameters = CollectionUtils.<String, String>wrap("username", username);
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
@@ -96,9 +96,9 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         val restProperties = getProperties().getAuthn().getMfa().getWebAuthn().getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());
-            val parameters = CollectionUtils.<String, Object>wrap("username", username);
+            val parameters = CollectionUtils.<String, String>wrap("username", username);
             val jsonRecords = FunctionUtils.doUnchecked(() -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records)));
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())

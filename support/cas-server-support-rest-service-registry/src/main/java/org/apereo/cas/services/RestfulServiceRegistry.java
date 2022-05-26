@@ -44,8 +44,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         this.serializer = new RegisteredServiceJsonSerializer(applicationContext);
     }
 
-    private static Map<String, Object> getRequestHeaders(final RestfulServiceRegistryProperties properties) {
-        val headers = new HashMap<String, Object>();
+    private static Map<String, String> getRequestHeaders(final RestfulServiceRegistryProperties properties) {
+        val headers = new HashMap<String, String>();
         headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
         headers.putAll(properties.getHeaders());

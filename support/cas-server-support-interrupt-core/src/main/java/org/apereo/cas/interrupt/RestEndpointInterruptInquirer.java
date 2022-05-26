@@ -49,7 +49,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
                                              final RequestContext requestContext) {
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             parameters.put("username", authentication.getPrincipal().getId());
 
             if (service != null) {
@@ -59,7 +59,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
                 parameters.put("registeredService", registeredService.getServiceId());
             }
 
-            val headers = new HashMap<String, Object>();
+            val headers = new HashMap<String, String>();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val acceptedLanguage = request.getHeader("accept-language");
             if (StringUtils.isNotBlank(acceptedLanguage)) {

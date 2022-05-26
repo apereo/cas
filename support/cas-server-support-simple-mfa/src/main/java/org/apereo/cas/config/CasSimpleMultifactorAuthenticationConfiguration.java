@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.bucket4j.consumer.DefaultBucketConsumer;
 import org.apereo.cas.bucket4j.producer.BucketStore;
@@ -14,12 +13,12 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketImpl;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
 import org.apereo.cas.mfa.simple.ticket.DefaultCasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
@@ -64,11 +63,8 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
 @AutoConfiguration
 public class CasSimpleMultifactorAuthenticationConfiguration {
-
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
-
     private static final BeanCondition CONDITION_BUCKET4J_ENABLED = BeanCondition.on("cas.authn.mfa.simple.bucket4j.enabled");
-
     @Configuration(value = "CasSimpleMultifactorAuthenticationActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSimpleMultifactorAuthenticationActionConfiguration {
@@ -77,13 +73,11 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action mfaSimpleMultifactorSendTokenAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(TicketFactory.BEAN_NAME)
-            final TicketFactory ticketFactory,
+            @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+            final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
             @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
             final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             @Qualifier("mfaSimpleMultifactorBucketConsumer")
@@ -93,8 +87,8 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> {
                     val simple = casProperties.getAuthn().getMfa().getSimple();
-                    return new CasSimpleMultifactorSendTokenAction(centralAuthenticationService,
-                        communicationsManager, ticketFactory, simple,
+                    return new CasSimpleMultifactorSendTokenAction(
+                        communicationsManager, casSimpleMultifactorAuthenticationService, simple,
                         mfaSimpleMultifactorTokenCommunicationStrategy,
                         mfaSimpleMultifactorBucketConsumer);
                 })
@@ -102,7 +96,6 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
                 .build()
                 .get();
         }
-
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketConsumer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -120,7 +113,6 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
                 .otherwise(BucketConsumer::permitAll)
                 .get();
         }
-
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketStore")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -137,11 +129,9 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
                 .get();
         }
     }
-
     @Configuration(value = "CasSimpleMultifactorAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSimpleMultifactorAuthenticationPlanConfiguration {
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaSimpleCasWebflowExecutionPlanConfigurer")
@@ -151,7 +141,6 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             return plan -> plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer);
         }
     }
-
     @Configuration(value = "CasSimpleMultifactorAuthenticationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSimpleMultifactorAuthenticationBaseConfiguration {
@@ -215,7 +204,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UniqueTicketIdGenerator casSimpleMultifactorAuthenticationUniqueTicketIdGenerator(final CasConfigurationProperties casProperties) {
-            val simple = casProperties.getAuthn().getMfa().getSimple();
+            val simple = casProperties.getAuthn().getMfa().getSimple().getToken().getCore();
             return new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator(simple.getTokenLength());
         }
     }

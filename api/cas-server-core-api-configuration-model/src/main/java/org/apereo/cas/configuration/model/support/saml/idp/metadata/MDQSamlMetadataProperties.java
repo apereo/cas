@@ -9,9 +9,6 @@ import lombok.experimental.Accessors;
 import org.springframework.http.MediaType;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link MDQSamlMetadataProperties}.
@@ -39,10 +36,8 @@ public class MDQSamlMetadataProperties implements Serializable {
 
     /**
      * Supported content types in case the metadata instance is connecting to an MDQ server.
-     * {@link MediaType#APPLICATION_XML_VALUE} and {@link MediaType#TEXT_XML_VALUE}
-     * are supported by default.
+     * {@link MediaType#TEXT_XML_VALUE} is supported by default.
      */
-    private List<String> supportedContentTypes =
-        Stream.of(MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_XML_VALUE).collect(Collectors.toList());
-    
+    private String supportedContentType = MediaType.TEXT_XML_VALUE;
+
 }

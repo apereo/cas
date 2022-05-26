@@ -24,6 +24,7 @@ import lombok.val;
 @Getter
 public class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<TransientSessionTicket> {
     private static final long serialVersionUID = -3597980180617072826L;
+
     /**
      * The Cas properties.
      */
@@ -46,6 +47,6 @@ public class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder imp
      */
     public ExpirationPolicy toTicketExpirationPolicy() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
-        return new HardTimeoutExpirationPolicy(simple.getTimeToKillInSeconds());
+        return new HardTimeoutExpirationPolicy(simple.getToken().getCore().getTimeToKillInSeconds());
     }
 }

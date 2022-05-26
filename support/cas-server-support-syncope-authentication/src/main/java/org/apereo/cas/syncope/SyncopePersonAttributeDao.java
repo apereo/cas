@@ -139,7 +139,7 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
                                  + "rest/users/?page=1&size=1&details=true&fiql=" + fiql;
             LOGGER.debug("Executing Syncope search via [{}]", syncopeRestUrl);
 
-            val requestHeaders = new LinkedHashMap<String, Object>();
+            val requestHeaders = new LinkedHashMap<String, String>();
             requestHeaders.put("X-Syncope-Domain", properties.getDomain());
             requestHeaders.putAll(properties.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()

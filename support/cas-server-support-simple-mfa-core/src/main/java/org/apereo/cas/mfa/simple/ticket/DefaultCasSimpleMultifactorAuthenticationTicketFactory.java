@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -27,8 +28,13 @@ public class DefaultCasSimpleMultifactorAuthenticationTicketFactory implements C
     @Override
     public CasSimpleMultifactorAuthenticationTicket create(final Service service, final Map<String, Serializable> properties) {
         val id = ticketIdGenerator.getNewTicketId(CasSimpleMultifactorAuthenticationTicket.PREFIX);
+        return create(id, service, properties);
+    }
+
+    @Override
+    public CasSimpleMultifactorAuthenticationTicket create(final String id, final Service service, final Map<String, Serializable> properties) {
         val expirationPolicy = CasSimpleMultifactorAuthenticationTicketFactory.buildExpirationPolicy(this.expirationPolicyBuilder, properties);
-        return new CasSimpleMultifactorAuthenticationTicketImpl(id, expirationPolicy, service, properties);
+        return new CasSimpleMultifactorAuthenticationTicketImpl(StringUtils.remove(id, "\""), expirationPolicy, service, properties);
     }
 
     @Override

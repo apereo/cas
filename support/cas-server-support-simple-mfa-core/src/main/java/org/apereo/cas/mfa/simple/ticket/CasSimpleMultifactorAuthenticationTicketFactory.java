@@ -40,4 +40,14 @@ public interface CasSimpleMultifactorAuthenticationTicketFactory extends TicketF
      */
     CasSimpleMultifactorAuthenticationTicket create(Service service, Map<String, Serializable> properties);
 
+    /**
+     * Create cas simple multifactor authentication ticket.
+     *
+     * @param id         the id
+     * @param service    the service
+     * @param properties the properties
+     * @return the cas simple multifactor authentication ticket
+     */
+    CasSimpleMultifactorAuthenticationTicket create(String id, Service service, Map<String, Serializable> properties);
+
 }

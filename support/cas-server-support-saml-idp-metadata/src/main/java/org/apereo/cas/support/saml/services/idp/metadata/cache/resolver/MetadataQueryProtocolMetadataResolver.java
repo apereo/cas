@@ -88,8 +88,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     protected HttpResponse fetchMetadata(final SamlRegisteredService service,
         final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         val metadata = samlIdPProperties.getMetadata().getMdq();
-        val headers = new LinkedHashMap<String, Object>();
-        headers.put("Content-Type", metadata.getSupportedContentTypes());
+        val headers = new LinkedHashMap<String, String>();
+        headers.put("Content-Type", metadata.getSupportedContentType());
         headers.put("Accept", "*/*");
         val path = backupFile.toPath();
         if (Files.exists(path)) {

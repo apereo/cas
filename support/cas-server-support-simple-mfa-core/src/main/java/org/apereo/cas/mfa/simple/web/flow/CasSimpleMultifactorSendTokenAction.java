@@ -1,22 +1,17 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
-import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
-import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -25,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -44,11 +40,9 @@ import java.util.Optional;
 public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuthenticationAction<CasSimpleMultifactorAuthenticationProvider> {
     private static final String MESSAGE_MFA_TOKEN_SENT = "cas.mfa.simple.label.tokensent";
 
-    private final CentralAuthenticationService centralAuthenticationService;
-
     private final CommunicationsManager communicationsManager;
 
-    private final TicketFactory ticketFactory;
+    private final CasSimpleMultifactorAuthenticationService multifactorAuthenticationService;
 
     private final CasSimpleMultifactorAuthenticationProperties properties;
 
@@ -129,7 +123,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getInProgressAuthentication();
         val principal = resolvePrincipal(authentication.getPrincipal());
         val token = getOrCreateToken(requestContext, principal);
@@ -146,7 +140,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                                && isNotificationSent(communicationsManager, principal, token);
 
         if (smsSent || emailSent || notificationSent) {
-            addOrUpdateToken(token);
+            multifactorAuthenticationService.store(token);
             LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", strategy, principal.getId());
             WebUtils.addInfoMessageToContext(requestContext, MESSAGE_MFA_TOKEN_SENT);
             val attributes = new LocalAttributeMap<Object>("token", token.getId());
@@ -157,24 +151,6 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         return error();
     }
 
-    /**
-     * Add or update token.
-     *
-     * @param token the token
-     */
-    protected void addOrUpdateToken(final CasSimpleMultifactorAuthenticationTicket token) {
-        token.update();
-        FunctionUtils.doAndHandle(ticket -> {
-            LOGGER.debug("Updating existing token [{}] to registry", token.getId());
-            val trackingToken = centralAuthenticationService.getTicket(ticket.getId());
-            centralAuthenticationService.updateTicket(trackingToken);
-        }, throwable -> {
-            LOGGER.trace(throwable.getMessage(), throwable);
-            LOGGER.debug("Adding token [{}] to registry", token.getId());
-            centralAuthenticationService.addTicket(token);
-            return token;
-        }).accept(token);
-    }
 
     /**
      * Get or create a token.
@@ -187,14 +163,11 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         val currentToken = WebUtils.getSimpleMultifactorAuthenticationToken(requestContext, CasSimpleMultifactorAuthenticationTicket.class);
         return Optional.ofNullable(currentToken)
             .filter(token -> !token.isExpired())
-            .orElseGet(() -> {
+            .orElseGet(Unchecked.supplier(() -> {
                 WebUtils.removeSimpleMultifactorAuthenticationToken(requestContext);
                 val service = WebUtils.getService(requestContext);
-                val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory) ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
-                val token = mfaFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
-                LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
-                return token;
-            });
+                return multifactorAuthenticationService.generate(principal, service);
+            }));
     }
 
     private String getThrottledRequestKeyFor(final Authentication authentication) {

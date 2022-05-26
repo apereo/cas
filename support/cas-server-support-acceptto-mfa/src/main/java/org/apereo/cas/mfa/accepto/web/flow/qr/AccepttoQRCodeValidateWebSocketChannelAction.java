@@ -65,7 +65,7 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends BaseCasWebflow
         val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "get_user_by_websocket_channel";
 
         LOGGER.trace("Contacting API [{}] to fetch email address", url);
-        val parameters = CollectionUtils.<String, Object>wrap(
+        val parameters = CollectionUtils.<String, String>wrap(
             "uid", acceptto.getApplicationId(),
             "secret", acceptto.getSecret(),
             "websocket_channel", channel);

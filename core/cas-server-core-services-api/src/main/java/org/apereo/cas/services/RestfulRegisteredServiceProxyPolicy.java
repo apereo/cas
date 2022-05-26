@@ -51,7 +51,7 @@ public class RestfulRegisteredServiceProxyPolicy implements RegisteredServicePro
 
     private String endpoint;
 
-    private Map<String, Object> headers = new TreeMap<>();
+    private Map<String, String> headers = new TreeMap<>();
 
     @JsonIgnore
     @Override
