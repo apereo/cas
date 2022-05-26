@@ -70,7 +70,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
             }
             val principal = Principal.class.cast(properties.get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL));
             if (!principal.equals(authentication.getPrincipal())) {
-                LOGGER.warn("Principal assigned to token [{}] is unauthorized for of token [{}]", principal.getId(), tokenId);
+                LOGGER.warn("Principal assigned to token [{}] is unauthorized for token [{}]", principal.getId(), tokenId);
                 deleteToken(acct);
                 throw new FailedLoginException("Failed to authenticate code " + tokenId);
             }
