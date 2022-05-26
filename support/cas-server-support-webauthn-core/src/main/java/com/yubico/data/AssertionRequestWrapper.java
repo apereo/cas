@@ -25,6 +25,7 @@
 package com.yubico.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yubico.webauthn.AssertionRequest;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions;
 import lombok.NonNull;
@@ -33,34 +34,28 @@ import lombok.Value;
 import java.util.Optional;
 
 @Value
+@SuppressWarnings("NullableOnContainingClass")
 public class AssertionRequestWrapper {
 
     @NonNull
-    private final ByteArray requestId;
+    ByteArray requestId;
 
     @NonNull
-    private final PublicKeyCredentialRequestOptions publicKeyCredentialRequestOptions;
+    PublicKeyCredentialRequestOptions publicKeyCredentialRequestOptions;
 
     @NonNull
-    private final Optional<String> username;
+    Optional<String> username;
 
     @NonNull
     @JsonIgnore
-    private final transient com.yubico.webauthn.AssertionRequest request;
+    AssertionRequest request;
 
     public AssertionRequestWrapper(
-        @NonNull
-        final
-        ByteArray requestId,
-        @NonNull
-        final
-        com.yubico.webauthn.AssertionRequest request
-    ) {
+        @NonNull final ByteArray requestId,
+        @NonNull final AssertionRequest request) {
         this.requestId = requestId;
         this.publicKeyCredentialRequestOptions = request.getPublicKeyCredentialRequestOptions();
         this.username = request.getUsername();
         this.request = request;
-
     }
-
 }

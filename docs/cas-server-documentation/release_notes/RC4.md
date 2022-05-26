@@ -79,8 +79,15 @@ The following modules are deprecated and scheduled to be removed in future CAS v
 - [Couchbase Ticket Registry](../ticketing/Couchbase-Ticket-Registry.html)
 
 ## Other Stuff
+            
+- The token introspection for [OAuth](../protocol/OAuth-Protocol.html) and [OpenID Connect](../protocol/OIDC-Protocol.html) is now fixed to show the correct 
+  response for invalid/unknown tokens.
 
 ## Library Upgrades
 
 - InfluxDb
 - Amazon SDK
+- ErrorProne
+- Gradle
+- MariaDb Driver
+- PostgreSQL Driver

@@ -70,7 +70,7 @@ public class ValidateLdapConnectionCommand {
         return false;
     }
 
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings({"JdkObsolete", "BanJNDI"})
     private static boolean connect(final String ldapUrl,
                                    final String bindDn,
                                    final String bindCredential,
