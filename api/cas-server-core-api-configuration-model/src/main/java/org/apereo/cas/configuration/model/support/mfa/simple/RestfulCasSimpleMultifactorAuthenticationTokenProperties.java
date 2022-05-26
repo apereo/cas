@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.mfa.simple;
 
-import org.apereo.cas.configuration.model.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 

@@ -154,7 +154,7 @@ public class AccepttoApiUtils {
             "remote_ip_address", request.getRemoteAddr(),
             "message", acceptto.getMessage(),
             "session_id", sessionId,
-            "timeout", acceptto.getTimeout(),
+            "timeout", String.valueOf(acceptto.getTimeout()),
             "email", email);
 
         CookieUtils.getCookieFromRequest("jwt", request)
