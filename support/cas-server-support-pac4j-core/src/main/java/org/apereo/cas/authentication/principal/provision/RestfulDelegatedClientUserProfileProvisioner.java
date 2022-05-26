@@ -33,12 +33,12 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
                         final BaseClient client, final Credential credential) {
         HttpResponse response = null;
         try {
-            val headers = new HashMap<String, Object>();
+            val headers = new HashMap<String, String>();
             headers.put("principalId", principal.getId());
-            headers.put("principalAttributes", principal.getAttributes());
+            headers.put("principalAttributes", principal.getAttributes().toString());
             headers.put("profileId", profile.getId());
             headers.put("profileTypedId", profile.getTypedId());
-            headers.put("profileAttributes", profile.getAttributes());
+            headers.put("profileAttributes", profile.getAttributes().toString());
             headers.put("clientName", client.getName());
             headers.putAll(restProperties.getHeaders());
             

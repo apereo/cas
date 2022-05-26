@@ -30,6 +30,6 @@ public class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilderTest
     @Test
     public void verifyTicketType() {
         val builder = new CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(casProperties);
-        assertEquals(TransientSessionTicket.class, builder.getTicketType());
+        assertSame(TransientSessionTicket.class, builder.getTicketType());
     }
 }

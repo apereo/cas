@@ -40,7 +40,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     public Optional<String> findToken(final String username) {
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             parameters.put("username", username);
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
@@ -68,7 +68,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     public void deleteTokens(final String username) {
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             parameters.put("username", username);
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
@@ -87,7 +87,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     public void deleteToken(final String username, final String token) {
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -107,7 +107,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     public void saveToken(final String username, final String token) {
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
             val exec = HttpUtils.HttpExecutionRequest.builder()

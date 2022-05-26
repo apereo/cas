@@ -48,7 +48,7 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         HttpResponse response = null;
         try {
             val rest = samlIdPProperties.getMetadata().getRest();
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_XML_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_XML_VALUE);
             headers.putAll(rest.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()

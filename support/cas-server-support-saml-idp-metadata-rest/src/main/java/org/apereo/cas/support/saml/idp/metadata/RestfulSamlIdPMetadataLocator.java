@@ -50,7 +50,7 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
         val url = StringUtils.appendIfMissing(properties.getUrl(), "/").concat("idp");
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             registeredService.ifPresent(service -> parameters.put("appliesTo",
                 SamlIdPMetadataGenerator.getAppliesToFor(registeredService)));
             val exec = HttpUtils.HttpExecutionRequest.builder()

@@ -51,7 +51,7 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
      * @param headers the headers
      * @return the map
      */
-    protected Map<String, Object> findAccountViaRestApi(final Map<String, Object> headers) {
+    protected Map<String, Object> findAccountViaRestApi(final Map<String, String> headers) {
         HttpResponse response = null;
         try {
             headers.putAll(properties.getHeaders());

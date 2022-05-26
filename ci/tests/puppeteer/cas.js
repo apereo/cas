@@ -8,6 +8,7 @@ const colors = require('colors');
 const fs = require("fs");
 const {ImgurClient} = require('imgur');
 const path = require("path");
+const mockServer = require('mock-json-server');
 const { Buffer } = require('buffer');
 const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 const ps = require("ps-node");
@@ -474,6 +475,12 @@ exports.assertTextContentStartsWith = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
     let header = await this.textContent(page, selector);
     assert(header.startsWith(value));
+}
+
+exports.mockJsonServer = async(pathMappings, port = 8000) => {
+    let app = mockServer(pathMappings, port, "localhost");
+    await app.start();
+    return app;
 }
 
 exports.httpServer = async(root, port = 5432) => {

@@ -45,7 +45,7 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
         val rest = casProperties.getView().getRest();
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val themeName = this.themeResolver.resolveThemeName(request);
-        val headers = new LinkedHashMap<String, Object>();
+        val headers = new LinkedHashMap<String, String>();
         headers.put("owner", ownerTemplate);
         headers.put("template", template);
         headers.put("resource", resourceName);

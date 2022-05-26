@@ -117,7 +117,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
             val rest = casProperties.getAuthn().getMfa().getTriggers().getRest();
             val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
 
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(rest.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
