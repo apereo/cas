@@ -34,10 +34,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
  * @since 5.2.0
+ * @deprecated Since 6.6.
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "swivel")
 @AutoConfiguration
+@Deprecated(since = "6.6")
 public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Bean

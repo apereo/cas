@@ -204,6 +204,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
                 casWebflowConfigurationContext,
                 principalAttributeMultifactorAuthenticationTrigger);
         }
+        /**
+         * @deprecated Since 6.6.
+         */
         @ConditionalOnMissingBean(name = "scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -251,6 +254,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
                 casWebflowConfigurationContext, authenticationAttributeMultifactorAuthenticationTrigger);
         }
+        /**
+         * @deprecated Since 6.6.
+         */
         @Bean
         @ConditionalOnMissingBean(name = "scriptedRegisteredServiceMultifactorAuthenticationTrigger")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

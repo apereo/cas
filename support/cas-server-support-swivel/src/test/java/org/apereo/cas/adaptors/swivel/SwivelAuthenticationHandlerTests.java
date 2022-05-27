@@ -31,6 +31,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Since 6.6.
  */
 @SpringBootTest(classes = BaseSwivelAuthenticationTests.SharedTestConfiguration.class,
     properties = {
@@ -39,6 +40,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
         "cas.authn.mfa.swivel.ignore-ssl-errors=true"
     })
 @Tag("MFAProvider")
+@Deprecated(since = "6.6")
 public class SwivelAuthenticationHandlerTests {
     @Autowired
     @Qualifier("swivelAuthenticationHandler")

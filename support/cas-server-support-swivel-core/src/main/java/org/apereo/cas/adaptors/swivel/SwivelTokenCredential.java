@@ -13,12 +13,14 @@ import lombok.ToString;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated since 6.6
  */
 @ToString
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@Deprecated(since = "6.6")
 public class SwivelTokenCredential extends OneTimeTokenCredential {
     private static final long serialVersionUID = 361318678073819595L;
 

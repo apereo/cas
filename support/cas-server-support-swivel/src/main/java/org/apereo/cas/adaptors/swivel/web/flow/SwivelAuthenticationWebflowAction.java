@@ -12,11 +12,12 @@ import org.springframework.webflow.execution.RequestContext;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 6.6.
  */
+@Deprecated(since = "6.6")
 @RequiredArgsConstructor
 public class SwivelAuthenticationWebflowAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver casWebflowEventResolver;
-
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         return this.casWebflowEventResolver.resolveSingle(requestContext);

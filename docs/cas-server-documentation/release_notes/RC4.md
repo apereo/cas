@@ -51,7 +51,28 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
- 
+    
+### Jakarta API Migrations
+
+The following projects, used internally by CAS, are now converted to use the Jakarta APIs:
+
+- [Person Directory](https://github.com/apereo/person-directory)
+- [Inspektr](https://github.com/apereo/inspektr)
+- [Spring Webflow](https://github.com/apereo/spring-webflow)
+              
+For some projects, the migration also upgrades the baseline Java requirement to JDK `17` and 
+moves the project to use the Spring framework `6.x` as necessary. 
+
+The Pac4j project has also published [relevant artifacts](https://www.pac4j.org/blog/jakartaee_is_coming.html) based on Jakarta APIs. 
+
+<div class="alert alert-info">
+<strong>Note</strong><br/>The CAS project is not switching to Jakarta APIs just yet; this is just to ensure
+that the fundamentals and dependant libraries are prepared to handle the migration, when the time comes.
+The impact of the migration would be minimal to the end-user configuration, except perhaps when it comes to 
+deployment environment requirements such as JDK and servlet containers. Additional details would 
+be published as necessary in due time.
+</div>
+
 ### Single Sign-on Sessions
 
 The following ticket registry implementations are enhanced to provide dedicated native queries
@@ -77,6 +98,7 @@ The following modules are deprecated and scheduled to be removed in future CAS v
 
 - [Infinispan Ticket Registry](../ticketing/Infinispan-Ticket-Registry.html)
 - [Couchbase Ticket Registry](../ticketing/Couchbase-Ticket-Registry.html)
+- [SwivelSecure Multifactor Authentication](../mfa/SwivelSecure-Authentication.html)
 
 ## Other Stuff
             

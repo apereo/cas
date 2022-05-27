@@ -48,7 +48,9 @@ import org.springframework.context.annotation.Import;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.6.
  */
+@Deprecated(since = "6.6")
 public abstract class BaseSwivelAuthenticationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
