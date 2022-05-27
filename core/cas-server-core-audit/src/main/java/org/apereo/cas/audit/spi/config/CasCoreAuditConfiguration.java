@@ -22,10 +22,10 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.serialization.MessageSanitizationUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.text.MessageSanitizer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -143,10 +143,12 @@ public class CasCoreAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver messageBundleAwareResourceResolver(
+            @Qualifier(MessageSanitizer.BEAN_NAME)
+            final MessageSanitizer messageSanitizer,
             final ConfigurableApplicationContext applicationContext) {
             val resolver = new MessageBundleAwareResourceResolver(applicationContext);
             resolver.setResourcePostProcessor(inputs -> Arrays.stream(inputs)
-                .map(MessageSanitizationUtils::sanitize)
+                .map(messageSanitizer::sanitize)
                 .toArray(String[]::new));
             return resolver;
         }
@@ -168,10 +170,12 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "nullableReturnValueResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditResourceResolver nullableReturnValueResourceResolver() {
+        public AuditResourceResolver nullableReturnValueResourceResolver(
+            @Qualifier(MessageSanitizer.BEAN_NAME)
+            final MessageSanitizer messageSanitizer) {
             val resolver = new NullableReturnValueAuditResourceResolver(new ShortenedReturnValueAsStringAuditResourceResolver());
             resolver.setResourcePostProcessor(inputs -> Arrays.stream(inputs)
-                .map(MessageSanitizationUtils::sanitize)
+                .map(messageSanitizer::sanitize)
                 .toArray(String[]::new));
             return resolver;
         }

@@ -1,29 +1,21 @@
-package org.apereo.cas.util.serialization;
+package org.apereo.cas.util.text;
 
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.InetAddressUtils;
 
-import lombok.experimental.UtilityClass;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Pattern;
 
 /**
- * This is {@link MessageSanitizationUtils} which attempts to remove
- * sensitive ticket ids from a given String.
+ * This is {@link DefaultMessageSanitizer}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 6.6.0
  */
-@UtilityClass
-public class MessageSanitizationUtils {
-    private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(?:(?:" + TicketGrantingTicket.PREFIX + '|'
-        + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
-        + '|' + "OC" + '|' + "AT" + '|' + "RT"
-        + ")-\\d+-)([\\w.-]+)");
-
+@RequiredArgsConstructor
+public class DefaultMessageSanitizer implements MessageSanitizer {
     private static final Pattern SENSITIVE_TEXT_PATTERN =
         Pattern.compile("(clientSecret|password|token|credential|secret)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
 
@@ -33,9 +25,9 @@ public class MessageSanitizationUtils {
      * Specifies the ending tail length of the ticket id that would still be visible in the output
      * for troubleshooting purposes.
      */
-    private static final int VISIBLE_TAIL_LENGTH = 10;
+    private static final int VISIBLE_TAIL_LENGTH = 7;
 
-    private static final int OBFUSCATION_LENGTH = 5;
+    private static final int OBFUSCATION_LENGTH = 8;
 
     /**
      * The obfuscated text that would be the replacement for sensitive text.
@@ -48,16 +40,13 @@ public class MessageSanitizationUtils {
      */
     private static final int HOST_NAME_LENGTH = InetAddressUtils.getCasServerHostName().length();
 
-    /**
-     * Remove ticket id from the message.
-     *
-     * @param msg the message
-     * @return the modified message with tgt id removed
-     */
-    public static String sanitize(final String msg) {
+    private final Pattern ticketIdPattern;
+
+    @Override
+    public String sanitize(final String msg) {
         var modifiedMessage = msg;
         if (StringUtils.isNotBlank(msg) && !CAS_TICKET_ID_SANITIZE_SKIP) {
-            val matcher = TICKET_ID_PATTERN.matcher(msg);
+            val matcher = ticketIdPattern.matcher(msg);
             while (matcher.find()) {
                 val match = matcher.group();
                 val group = matcher.group(1);

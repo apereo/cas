@@ -35,7 +35,7 @@ public interface CasSimpleMultifactorAuthenticationService {
      * @param token the token
      * @throws Exception the exception
      */
-    void store(CasSimpleMultifactorAuthenticationTicket token) throws Exception ;
+    void store(CasSimpleMultifactorAuthenticationTicket token) throws Exception;
 
     /**
      * Validate MFA the credential.
