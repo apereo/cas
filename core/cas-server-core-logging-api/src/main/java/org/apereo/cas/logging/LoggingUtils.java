@@ -1,6 +1,6 @@
 package org.apereo.cas.logging;
 
-import org.apereo.cas.util.serialization.MessageSanitizationUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -24,8 +24,10 @@ public class LoggingUtils {
      * @param logEvent the log event
      * @return the log event
      */
-    public static LogEvent prepareLogEvent(final LogEvent logEvent) {
-        val messageModified = MessageSanitizationUtils.sanitize(logEvent.getMessage().getFormattedMessage());
+    public LogEvent prepareLogEvent(final LogEvent logEvent) {
+        val messageModified = ApplicationContextProvider.getMessagSanitizer()
+            .map(sanitizer -> sanitizer.sanitize(logEvent.getMessage().getFormattedMessage()))
+            .orElseGet(() -> logEvent.getMessage().getFormattedMessage());
         val message = new SimpleMessage(messageModified);
         val newLogEventBuilder = Log4jLogEvent.newBuilder()
             .setLevel(logEvent.getLevel())

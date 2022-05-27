@@ -10,7 +10,7 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.serialization.MessageSanitizationUtils;
+import org.apereo.cas.util.text.MessageSanitizer;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 /**
@@ -34,8 +33,9 @@ import java.time.Instant;
 @Slf4j
 public class CasAuthenticationAuthenticationEventListener implements CasAuthenticationEventListener {
 
-    @NotNull
     private final CasEventRepository casEventRepository;
+
+    private final MessageSanitizer messageSanitizer;
 
     private static CasEvent prepareCasEvent(final AbstractCasEvent event) {
         val dto = new CasEvent();
@@ -61,7 +61,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) throws Exception {
         val dto = prepareCasEvent(event);
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-        dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+        dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         this.casEventRepository.save(dto);
     }
@@ -70,7 +70,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
     public void handleCasTicketGrantingTicketDeletedEvent(final CasTicketGrantingTicketDestroyedEvent event) throws Exception {
         val dto = prepareCasEvent(event);
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-        dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+        dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         this.casEventRepository.save(dto);
     }

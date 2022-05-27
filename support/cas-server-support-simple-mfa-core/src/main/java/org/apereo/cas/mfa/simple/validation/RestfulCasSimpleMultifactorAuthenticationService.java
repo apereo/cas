@@ -41,12 +41,12 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimpleMultifactorAuthenticationService {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .singleValueAsArray(true).defaultTypingEnabled(true).build().toObjectMapper();
+
     private final RestfulCasSimpleMultifactorAuthenticationTokenProperties properties;
 
     private final TicketFactory ticketFactory;
-
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .singleValueAsArray(true).defaultTypingEnabled(true).build().toObjectMapper();
 
     @Override
     public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Exception {
@@ -56,7 +56,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
 
             val parameters = new LinkedHashMap<String, String>();
             Optional.ofNullable(service).ifPresent(s -> parameters.put("service", s.getId()));
-            
+
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .headers(properties.getHeaders())
