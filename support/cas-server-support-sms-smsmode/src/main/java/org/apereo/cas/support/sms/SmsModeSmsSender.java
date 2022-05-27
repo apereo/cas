@@ -50,7 +50,7 @@ public class SmsModeSmsSender implements SmsSender {
             parameters.put(properties.getToAttribute(), to);
             parameters.put(properties.getMessageAttribute(), message);
 
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.TEXT_PLAIN);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.TEXT_PLAIN_VALUE);
             headers.putAll(properties.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
