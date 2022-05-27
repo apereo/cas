@@ -59,7 +59,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         try {
             val headers = CollectionUtils.<String, String>wrap(
                 "Content-Type", MediaType.APPLICATION_JSON_VALUE,
-                "id",  String.valueOf(id));
+                "id", String.valueOf(id));
             headers.putAll(rest.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
