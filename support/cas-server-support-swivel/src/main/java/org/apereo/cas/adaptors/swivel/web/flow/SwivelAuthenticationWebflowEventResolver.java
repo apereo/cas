@@ -17,7 +17,9 @@ import java.util.Set;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.6.
  */
+@Deprecated(since = "6.6")
 public class SwivelAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     public SwivelAuthenticationWebflowEventResolver(

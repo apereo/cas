@@ -16,8 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.3.0
+ * @deprecated since 6.6
  */
 @Tag("CasConfiguration")
+@Deprecated(since = "6.6")
 @SpringBootTest(classes = BaseSwivelAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.swivel.bypass.principal-attribute-name=nothing",

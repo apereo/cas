@@ -41,10 +41,12 @@ import org.springframework.webflow.execution.Action;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 6.6.
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "swivel")
 @AutoConfiguration
+@Deprecated(since = "6.6")
 public class SwivelConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 

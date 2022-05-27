@@ -21,7 +21,9 @@ import java.util.Optional;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 6.6.
  */
+@Deprecated(since = "6.6")
 public class SwivelMultifactorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
 
     /**

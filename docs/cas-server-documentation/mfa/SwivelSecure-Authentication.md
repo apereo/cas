@@ -11,6 +11,10 @@ category: Multifactor Authentication
 Swivel Secure offers a wide range of authentication factors, allowing the use of 2FA 
 and image based authentication. To learn more, please refer to [the official website](https://swivelsecure.com/).
 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
 CAS supports Swivel Secure's TURing-image based authentication. TURing uses the PINsafe 
 protocol to provide a One Time Code for authentication. Each image is unique for that session. 
 

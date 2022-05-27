@@ -24,6 +24,7 @@ import static org.springframework.http.HttpStatus.OK;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.6.
  */
 @SpringBootTest(classes = BaseSwivelAuthenticationTests.SharedTestConfiguration.class,
     properties = {
@@ -33,6 +34,7 @@ import static org.springframework.http.HttpStatus.OK;
         "cas.authn.mfa.swivel.ignore-ssl-errors=true"
     })
 @Tag("MFAProvider")
+@Deprecated(since = "6.6")
 public class SwivelTuringImageGeneratorControllerTests {
     @Autowired
     @Qualifier("swivelTuringImageGeneratorController")

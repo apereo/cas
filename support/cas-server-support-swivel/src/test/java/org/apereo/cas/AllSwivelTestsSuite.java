@@ -15,6 +15,7 @@ import org.junit.platform.suite.api.Suite;
  *
  * @author Misagh Moayyed
  * @since 4.2.0
+ * @deprecated Since 6.6.
  */
 @SelectClasses({
     SwivelAuthenticationHandlerTests.class,
@@ -25,5 +26,6 @@ import org.junit.platform.suite.api.Suite;
     SwivelMultifactorWebflowConfigurerTests.class
 })
 @Suite
+@Deprecated(since = "6.6")
 public class AllSwivelTestsSuite {
 }

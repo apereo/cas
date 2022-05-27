@@ -13,12 +13,14 @@ import lombok.experimental.Accessors;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated since 6.6
  */
 @RequiresModule(name = "cas-server-support-swivel")
 @Getter
 @Setter
 @Accessors(chain = true)
 @JsonFilter("SwivelMultifactorProperties")
+@Deprecated(since = "6.6")
 public class SwivelMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**

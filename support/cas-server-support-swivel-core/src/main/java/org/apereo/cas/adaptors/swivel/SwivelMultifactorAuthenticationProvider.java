@@ -21,10 +21,12 @@ import java.net.URL;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated since 6.6
  */
 @Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated(since = "6.6")
 public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 498455080794156917L;

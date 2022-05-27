@@ -123,6 +123,9 @@ public class SurrogateWebflowConfigurerTests {
         }
     }
 
+    /**
+     * @deprecated Since 6.6.
+     */
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import({

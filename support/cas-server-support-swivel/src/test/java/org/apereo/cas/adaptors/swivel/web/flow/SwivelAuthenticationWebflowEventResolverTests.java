@@ -37,8 +37,10 @@ import static org.mockito.Mockito.*;
  *
  * @author Misagh Moayyed
  * @since 6.3.0
+ * @deprecated Since 6.6.
  */
 @Tag("WebflowEvents")
+@Deprecated(since = "6.6")
 @SpringBootTest(classes = BaseSwivelAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.swivel.swivel-url=http://localhost:9191",
