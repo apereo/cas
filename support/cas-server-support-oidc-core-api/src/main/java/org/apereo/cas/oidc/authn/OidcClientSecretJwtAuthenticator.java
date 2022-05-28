@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -33,13 +34,15 @@ import java.util.List;
 @Slf4j
 public class OidcClientSecretJwtAuthenticator extends BaseOidcJwtAuthenticator {
 
-    public OidcClientSecretJwtAuthenticator(final ServicesManager servicesManager,
-                                            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                            final TicketRegistry ticketRegistry,
-                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                            final CasConfigurationProperties casProperties,
-                                            final ApplicationContext applicationContext) {
-        super(servicesManager, registeredServiceAccessStrategyEnforcer,
+    public OidcClientSecretJwtAuthenticator(
+        final OidcIssuerService issuerService,
+        final ServicesManager servicesManager,
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        final TicketRegistry ticketRegistry,
+        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+        final CasConfigurationProperties casProperties,
+        final ApplicationContext applicationContext) {
+        super(issuerService, servicesManager, registeredServiceAccessStrategyEnforcer,
             ticketRegistry, webApplicationServiceServiceFactory, casProperties, applicationContext);
     }
 

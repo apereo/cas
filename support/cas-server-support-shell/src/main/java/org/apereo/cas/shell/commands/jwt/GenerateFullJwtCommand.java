@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.jwt;
 
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.hjson.JsonValue;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
@@ -66,12 +68,21 @@ public class GenerateFullJwtCommand {
         final String sub) throws Exception {
 
         val jwtClaims = new JwtClaims();
-        jwtClaims.setJwtId(RandomUtils.randomAlphanumeric(16));
+        jwtClaims.setJwtId(RandomUtils.randomAlphanumeric(8));
         jwtClaims.setIssuer(iss);
         jwtClaims.setAudience(aud);
-        val expirationDate = NumericDate.now();
-        expirationDate.addSeconds(Long.parseLong(exp));
-        jwtClaims.setExpirationTime(expirationDate);
+
+        if (NumberUtils.isParsable(exp)) {
+            val expireInSeconds = Long.parseLong(exp);
+            if (expireInSeconds > 0) {
+                val expirationDate = NumericDate.now();
+                expirationDate.addSeconds(expireInSeconds);
+                jwtClaims.setExpirationTime(expirationDate);
+            }
+        } else {
+            val expirationDate = NumericDate.fromMilliseconds(Beans.newDuration(exp).toSeconds());
+            jwtClaims.setExpirationTime(expirationDate);
+        }
         jwtClaims.setIssuedAtToNow();
         jwtClaims.setNotBeforeMinutesInThePast(1);
         jwtClaims.setSubject(sub);
