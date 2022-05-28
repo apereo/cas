@@ -24,10 +24,6 @@
 
 package com.yubico.data;
 
-import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.data.AuthenticatorTransport;
@@ -36,7 +32,6 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.With;
 
-import java.net.URL;
 import java.time.Instant;
 import java.util.SortedSet;
 
