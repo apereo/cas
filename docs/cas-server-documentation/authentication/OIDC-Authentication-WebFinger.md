@@ -100,10 +100,10 @@ response status back to the relying party.
 ### Custom UserInfo Repository
 
 It is possible to design and inject your own version of webfinger user repositories into CAS. First, you will need to design
-a `@Configuration` class to contain your own `OidcWebFingerUserInfoRepository` implementation:
+a `@AutoConfiguration` class to contain your own `OidcWebFingerUserInfoRepository` implementation:
 
 ```java
-@Configuration(value = "customWebFingerUserInfoConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CustomWebFingerUserInfoConfiguration {
 

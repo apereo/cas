@@ -58,13 +58,13 @@ public class MyAuthenticationHandler extends AbstractUsernamePasswordAuthenticat
 ## Register
 
 Once the handler is designed, it needs to be registered with CAS and put into the authentication engine.
-This is done via the magic of `@Configuration` classes that are picked up automatically at runtime, per your approval,
+This is done via the magic of `@AutoConfiguration` classes that are picked up automatically at runtime, per your approval,
 whose job is to understand how to dynamically modify the application context.
 
 ```java
 package com.example.cas;
 
-@Configuration(value = "MyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyAuthenticationEventExecutionPlanConfiguration
                     implements AuthenticationEventExecutionPlanConfigurer {

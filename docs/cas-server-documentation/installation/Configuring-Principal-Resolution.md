@@ -29,7 +29,7 @@ You may also design and register your own principal resolution strategy by suppl
 the `PrincipalResolver` component and registering it with the runtime context:
 
 ```java
-@Configuration(value = "MyConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public static class MyConfiguration {
 
     @Bean

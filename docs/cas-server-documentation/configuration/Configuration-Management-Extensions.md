@@ -61,7 +61,7 @@ as <code>CasConfigurationProperties</code> and others.</p></div>
 
 ### Register
 
-How are `@Configuration` components picked up? Each CAS module declares its set of configuration components as such, 
+How are `@AutoConfiguration` components picked up? Each CAS module declares its set of configuration components as such, 
 per guidelines [laid out by Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/):
 
 - Create a `src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` file
@@ -92,7 +92,10 @@ need to study the CAS codebase to find the correct configuration classes and bea
 
 ## CAS Properties
 
-The collection of CAS-provided settings are all encapsulated inside a `CasConfigurationProperties` component. This is a parent class that brings all elements of the entire CAS platform together and binds values to the relevant fields inside in a very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
+The collection of CAS-provided settings are all encapsulated inside a `CasConfigurationProperties` component. This 
+is a parent class that brings all elements of the entire CAS platform together and binds values to the relevant 
+fields inside in a very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is 
+typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
 
 <div class="alert alert-info"><strong>Prefix Notation</strong><p>Note that all CAS-provided settings 
 exclusively begin with the prefix <code>cas</code>. Other frameworks and packages upon which CAS

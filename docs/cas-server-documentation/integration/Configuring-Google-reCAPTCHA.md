@@ -60,7 +60,7 @@ basis via [dedicated properties](../services/Configuring-Service-Custom-Properti
 
 reCAPTCHA activation strategy is generally controlled via CAS settings. It is also possible to design and 
 inject your own activation strategy into CAS using the following `@Bean` that would 
-be registered in a `@Configuration` class:
+be registered in a `@AutoConfiguration` class:
 
 ```java
 @Bean

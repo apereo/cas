@@ -42,7 +42,7 @@ case of an emergency, client applications should be able to use any of the keys 
 ### Custom
 
 It is possible to design and inject your own key rotation and revocation 
-strategy into CAS using the following `@Bean` that would be registered in a `@Configuration` class:
+strategy into CAS using the following `@Bean` that would be registered in a `@AutoConfiguration` class:
 
 ```java
 @Bean
