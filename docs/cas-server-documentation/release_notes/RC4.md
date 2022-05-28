@@ -118,6 +118,11 @@ Operations that handle token management, validation and generation for
 the [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) 
 flow can now be outsourced to an external REST API, and need not be controlled or owned by CAS. 
 
+### CAS Commandline Shell
+
+[CAS Commandline Shell](../installation/Configuring-Commandline-Shell.html) is now able to generate 
+signed JWTs using a given JSON Webkeystore.
+
 ## Other Stuff
             
 - The token introspection for [OAuth](../protocol/OAuth-Protocol.html) and [OpenID Connect](../protocol/OIDC-Protocol.html) is now fixed to show the correct 
