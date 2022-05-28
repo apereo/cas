@@ -7,7 +7,7 @@ category: Installation
 
 # WAR Overlay Initializr
 
-[Apereo CAS Initializr][initializr] is a relatively new addition to the Apereo CAS ecosystem that allows
+[Apereo CAS Initializr][initializr] is a components in the Apereo CAS ecosystem that allows
 you as the deployer to generate CAS WAR Overlay projects on the fly with just what you need to start quickly.
 
 To get started with a CAS deployment, adopters typically
@@ -21,7 +21,7 @@ and automation without affecting the baseline template.
 
 To address such scenarios, the [CAS WAR Overlay Initializr][initializr] offers a fast way to pull
 in all the dependencies and modules needed for a CAS deployment and
-provides friendly and programmatic curl-friendly API to generate
+provides friendly and programmatic curl-friendly APIs to generate
 an overlay structure and required build files.
 
 The underlying framework that handles the project generation
@@ -35,12 +35,7 @@ can be tailored to the user’s experience based on that input and the
 conditions that follow to generate additional references, files, starting
 templates, and more in the same project to make the deployment process more comfortable.
 
-CAS Initializr at this point is mainly a backend service and a few APIs.
-However, one could imagine that a graphical and modern user interface
-could be built on top of available APIs to help with the project
-generation task, especially for project newcomers.
-
-Managing and maintaining a separate overlay projects and keeping them
+Managing and maintaining separate overlay projects and keeping them
 in sync with various CAS versions can be a costly maintenance task.
 CAS Initializr allows the project developers to automate the
 maintenance task, keep everything in the same repository
@@ -105,11 +100,11 @@ the CAS Initializr, the following strategies can be used.
 
 ### Heroku
 
-The CAS projects provides a public **free** instance of the CAS Initializr on [Heroku][initializr], paid for by the
+The CAS projects provides a public **paid-for-by-Apereo-members** instance of the CAS Initializr on [Heroku][initializr], paid for by the
 Apereo CAS support subscribers. To get started with this instance, a simple way might be to include the following function in your bash profile:
 
 ```bash
-function getcas(){
+function getcas() {
   url="https://casinit.herokuapp.com/starter.tgz"
   projectType="cas-overlay"
   dependencies=""
