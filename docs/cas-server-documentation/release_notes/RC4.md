@@ -106,6 +106,18 @@ The following modules are deprecated and scheduled to be removed in future CAS v
 - [Couchbase Ticket Registry](../ticketing/Couchbase-Ticket-Registry.html)
 - [SwivelSecure Multifactor Authentication](../mfa/SwivelSecure-Authentication.html)
 
+### Log Message Sanitation
+
+Ticket identifiers included in CAS log messages are typically sanitized and obfuscated prior to the logging task. In this release,
+this behavior applies to all ticket definitions that are registered with the CAS ticket catalog. The syntax of the obfuscated ticket
+in the log message is also slightly changed to hide a few more characters in the ticket identifier.
+
+### Simple Multifactor Authentication
+
+Operations that handle token management, validation and generation for 
+the [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) 
+flow can now be outsourced to an external REST API, and need not be controlled or owned by CAS. 
+
 ## Other Stuff
             
 - The token introspection for [OAuth](../protocol/OAuth-Protocol.html) and [OpenID Connect](../protocol/OIDC-Protocol.html) is now fixed to show the correct 
