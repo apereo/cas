@@ -34,6 +34,7 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupportTests;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryTests;
 import org.apereo.cas.ticket.registry.DistributedTicketRegistryTests;
 import org.apereo.cas.ticket.serialization.DefaultTicketStringSerializationManagerTests;
+import org.apereo.cas.util.DefaultMessageSanitizerTests;
 import org.apereo.cas.util.DefaultUniqueTicketIdGeneratorTests;
 import org.apereo.cas.util.GroovyUniqueTicketIdGeneratorTests;
 import org.apereo.cas.util.InternalTicketValidatorTests;
@@ -83,6 +84,7 @@ import org.junit.platform.suite.api.Suite;
     NeverExpiresExpirationPolicyTests.class,
     DefaultTicketRegistryCleanerTests.class,
     TicketSerializersTests.class,
+    DefaultMessageSanitizerTests.class,
     InternalTicketValidatorTests.class,
     Cas20ProxyHandlerTests.class,
     GroovyUniqueTicketIdGeneratorTests.class,
