@@ -68,7 +68,7 @@ the configuration registration is sampled and summarized below:
 ```java
 package org.example.cas;
 
-@Configuration(value = "CustomAuthenticatorSubsystemConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 public class CustomAuthenticatorSubsystemConfiguration {
     ...
     @Bean

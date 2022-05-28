@@ -90,7 +90,7 @@ You will then need to register your newly-designed component into the CAS applic
 ```java
 package org.example.something;
 
-@Configuration(Value = "somethingConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer {
 
