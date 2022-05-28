@@ -32,7 +32,21 @@ public class GenerateFullJwtCommandTests extends BaseCasShellCommandTests {
         assertDoesNotThrow(() -> {
             val jwks = new ClassPathResource("jwks.json").getFile().getAbsolutePath();
             val result = shell.evaluate(() -> "generate-full-jwt --sub casuser "
-                                              + "--claims {'name':'CAS','clients':['1234']} "
+                                              + "--claims {'client_id':'client'} "
+                                              + "--jwks " + jwks);
+            assertNotNull(result);
+        });
+    }
+
+    @Test
+    public void verifySignedNeverExpires() throws Exception {
+        assertDoesNotThrow(() -> {
+            val jwks = new ClassPathResource("jwks.json").getFile().getAbsolutePath();
+            val result = shell.evaluate(() -> "generate-full-jwt --sub casuser "
+                                              + "--exp INFINITE "
+                                              + "--aud client "
+                                              + "--iss https://localhost:8443/cas/oidc "
+                                              + "--claims {'client_id':'client'} "
                                               + "--jwks " + jwks);
             assertNotNull(result);
         });

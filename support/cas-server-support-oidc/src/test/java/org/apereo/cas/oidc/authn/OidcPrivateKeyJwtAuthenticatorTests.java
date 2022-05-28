@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.authn;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
@@ -32,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,34 +51,30 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyAction() throws Exception {
-        val auth = new OidcPrivateKeyJwtAuthenticator(servicesManager,
-            registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties, applicationContext);
+        val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
-        val audience = casProperties.getServer().getPrefix()
-            .concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
-
         val registeredService = getOidcRegisteredService();
         registeredService.setClientId(UUID.randomUUID().toString());
-        
+
         val file = File.createTempFile("jwks-service", ".jwks");
         val core = casProperties.getAuthn().getOidc().getJwks().getCore();
         val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(
             core.getJwksType(), core.getJwksKeySize(), OidcJsonWebKeyUsage.SIGNING);
         jsonWebKey.setKeyId("cas-kid");
-        
+
         val jsonWebKeySet = new JsonWebKeySet(jsonWebKey);
         val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         FileUtils.write(file, data, StandardCharsets.UTF_8);
         registeredService.setJwks("file://" + file.getAbsolutePath());
         servicesManager.save(registeredService);
 
-        val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
-            registeredService.getClientId(), audience);
+        val claims = getClaims(registeredService.getClientId(),
+            oidcIssuerService.determineIssuer(Optional.of(registeredService)),
+            registeredService.getClientId(), registeredService.getClientId());
         val webKeys = oidcServiceJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING)).get();
         val key = (PublicJsonWebKey) webKeys.getJsonWebKeys().get(0);
@@ -93,9 +89,7 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyBadUser() throws Exception {
-        val auth = new OidcPrivateKeyJwtAuthenticator(servicesManager,
-            registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties, applicationContext);
+        val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -110,9 +104,7 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyBadCred() {
-        val auth = new OidcPrivateKeyJwtAuthenticator(servicesManager,
-            registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties, applicationContext);
+        val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -121,6 +113,12 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, null);
         auth.validate(credentials, context, JEESessionStore.INSTANCE);
         assertNull(credentials.getUserProfile());
+    }
+
+    private OidcPrivateKeyJwtAuthenticator getAuthenticator() {
+        return new OidcPrivateKeyJwtAuthenticator(oidcIssuerService, servicesManager,
+            registeredServiceAccessStrategyEnforcer, ticketRegistry,
+            webApplicationServiceFactory, casProperties, applicationContext);
     }
 
     private UsernamePasswordCredentials getCredential(final MockHttpServletRequest request,

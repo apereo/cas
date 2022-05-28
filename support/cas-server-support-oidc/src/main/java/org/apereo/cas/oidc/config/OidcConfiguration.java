@@ -451,6 +451,8 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthenticationClientProvider oidcPrivateKeyJwtClientProvider(
+            @Qualifier(OidcIssuerService.BEAN_NAME)
+            final OidcIssuerService oidcIssuerService,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
@@ -463,6 +465,7 @@ public class OidcConfiguration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return () -> {
                 val privateKeyJwtClient = new DirectFormClient(new OidcPrivateKeyJwtAuthenticator(
+                    oidcIssuerService,
                     servicesManager,
                     registeredServiceAccessStrategyEnforcer,
                     ticketRegistry,
@@ -480,6 +483,8 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthenticationClientProvider oidcClientSecretJwtClientProvider(
+            @Qualifier(OidcIssuerService.BEAN_NAME)
+            final OidcIssuerService oidcIssuerService,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
@@ -492,7 +497,7 @@ public class OidcConfiguration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return () -> {
                 val client = new DirectFormClient(new OidcClientSecretJwtAuthenticator(
-                    servicesManager, registeredServiceAccessStrategyEnforcer,
+                    oidcIssuerService, servicesManager, registeredServiceAccessStrategyEnforcer,
                     ticketRegistry, webApplicationServiceFactory,
                     casProperties, applicationContext));
                 client.setName(OidcConstants.CAS_OAUTH_CLIENT_CLIENT_SECRET_JWT_AUTHN);

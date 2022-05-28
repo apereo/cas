@@ -3,7 +3,7 @@ const axios = require('axios');
 const https = require('https');
 const {spawn} = require('child_process');
 const waitOn = require('wait-on');
-const jwt = require('jsonwebtoken');
+const JwtOps = require('jsonwebtoken');
 const colors = require('colors');
 const fs = require("fs");
 const {ImgurClient} = require('imgur');
@@ -414,9 +414,15 @@ exports.recordScreen = async(page) => {
     return recorder;
 }
 
+exports.createJwt = async (payload, key, alg = "RS256") => {
+    const token = JwtOps.sign(payload, key, { algorithm: alg}, undefined);
+    console.log(`Created JWT:\n${colors.green(token)}\n`);
+    return token;
+}
+
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
-    let decoded = jwt.decode(token, {complete: complete});
+    let decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
         console.log(`Decoded token header: ${colors.green(decoded.header)}`);
         console.log("Decoded token payload:");

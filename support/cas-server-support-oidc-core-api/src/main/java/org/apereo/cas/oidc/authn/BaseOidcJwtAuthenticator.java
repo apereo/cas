@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -34,6 +35,10 @@ import org.springframework.context.ApplicationContext;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOidcJwtAuthenticator implements Authenticator {
+    /**
+     * OIDC issuer service.
+     */
+    protected final OidcIssuerService issuerService;
 
     /**
      * Services Manager.
@@ -99,9 +104,8 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator {
         val code = webContext.getRequestParameter(OAuth20Constants.CODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val oauthCode = ticketRegistry.getTicket(code, OAuth20Code.class);
-        val clientId = oauthCode.getClientId();
-        val registeredService = (OidcRegisteredService)
-            OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        val clientId = oauthCode == null ? webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).get() : oauthCode.getClientId();
+        val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         val audit = AuditableContext.builder()
             .registeredService(registeredService)
             .build();

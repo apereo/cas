@@ -4,7 +4,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.services.ServicesManager;
@@ -36,13 +36,14 @@ import java.util.Optional;
 public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
 
     public OidcPrivateKeyJwtAuthenticator(
+        final OidcIssuerService oidcIssuerService,
         final ServicesManager servicesManager,
         final AuditableExecution registeredServiceAccessStrategyEnforcer,
         final TicketRegistry ticketRegistry,
         final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
         final CasConfigurationProperties casProperties,
         final ApplicationContext applicationContext) {
-        super(servicesManager, registeredServiceAccessStrategyEnforcer,
+        super(oidcIssuerService, servicesManager, registeredServiceAccessStrategyEnforcer,
             ticketRegistry, webApplicationServiceServiceFactory, casProperties, applicationContext);
     }
 
@@ -67,9 +68,6 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
             return;
         }
 
-        val clientId = registeredService.getClientId();
-        val audience = casProperties.getServer().getPrefix().concat('/'
-                                                                    + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
             applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING));
         keys.ifPresent(Unchecked.consumer(jwks ->
@@ -77,12 +75,11 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
                 .forEach(Unchecked.consumer(jsonWebKey -> {
                     val consumer = new JwtConsumerBuilder()
                         .setVerificationKey(jsonWebKey.getKey())
-                        .setRequireSubject()
-                        .setExpectedSubject(clientId)
                         .setRequireJwtId()
                         .setRequireExpirationTime()
-                        .setExpectedIssuer(true, clientId)
-                        .setExpectedAudience(true, audience)
+                        .setRequireSubject()
+                        .setExpectedIssuer(true, issuerService.determineIssuer(Optional.of(registeredService)))
+                        .setExpectedAudience(true, registeredService.getClientId())
                         .build();
                     determineUserProfile(credentials, consumer);
                 }))));

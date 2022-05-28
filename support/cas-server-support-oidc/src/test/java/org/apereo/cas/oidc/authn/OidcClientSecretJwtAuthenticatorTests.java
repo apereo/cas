@@ -45,16 +45,14 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyBadAlgAction() throws Exception {
-        val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
-            registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties, applicationContext);
+        val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+                                                                    + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val registeredService = getOidcRegisteredService();
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
             registeredService.getClientId(), audience);
@@ -70,18 +68,22 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         assertNull(credentials.getUserProfile());
     }
 
-    @Test
-    public void verifyAction() throws Exception {
-        val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
+    private OidcClientSecretJwtAuthenticator getAuthenticator() {
+        return new OidcClientSecretJwtAuthenticator(oidcIssuerService, servicesManager,
             registeredServiceAccessStrategyEnforcer, ticketRegistry,
             webApplicationServiceFactory, casProperties, applicationContext);
+    }
+
+    @Test
+    public void verifyAction() throws Exception {
+        val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+                                                                    + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val registeredService = getOidcRegisteredService();
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
             registeredService.getClientId(), audience);
@@ -98,16 +100,14 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyDisabledServiceAction() throws Exception {
-        val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
-            registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties, applicationContext);
+        val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+                                                                    + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
         servicesManager.save(registeredService);
@@ -127,9 +127,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyNoUserAction() throws Exception {
-        val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
-            registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties, applicationContext);
+        val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -143,9 +141,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyBadJwt() throws Exception {
-        val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
-            registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties, applicationContext);
+        val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
