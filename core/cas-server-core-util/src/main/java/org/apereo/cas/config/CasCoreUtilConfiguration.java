@@ -22,6 +22,7 @@ import org.apereo.cas.util.text.TicketCatalogMessageSanitationContributor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -145,10 +146,9 @@ public class CasCoreUtilConfiguration {
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")
         public MessageSanitationContributor defaultMessageSanitationContributor(
             @Qualifier(TicketCatalog.BEAN_NAME)
-            final TicketCatalog ticketCatalog) {
+            final ObjectProvider<TicketCatalog> ticketCatalog) {
             return new TicketCatalogMessageSanitationContributor(ticketCatalog);
         }
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "proxyGrantingTicketIouMessageSanitationContributor")
