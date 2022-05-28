@@ -8,6 +8,8 @@ import org.apereo.cas.shell.commands.jasypt.JasyptEncryptPropertyCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptListAlgorithmsCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptListProvidersCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptTestAlgorithmsCommandTests;
+import org.apereo.cas.shell.commands.jwt.GenerateFullJwtCommandTests;
+import org.apereo.cas.shell.commands.jwt.GenerateJwtCommandTests;
 import org.apereo.cas.shell.commands.oidc.GenerateOidcJsonWebKeystoreCommandTests;
 import org.apereo.cas.shell.commands.properties.AddPropertiesToConfigurationCommandTests;
 import org.apereo.cas.shell.commands.properties.ExportPropertiesCommandTests;
@@ -16,7 +18,6 @@ import org.apereo.cas.shell.commands.saml.GenerateSamlIdPMetadataCommandTests;
 import org.apereo.cas.shell.commands.services.AnonymousUsernameAttributeProviderCommandTests;
 import org.apereo.cas.shell.commands.services.GenerateYamlRegisteredServiceCommandTests;
 import org.apereo.cas.shell.commands.services.ValidateRegisteredServiceCommandTests;
-import org.apereo.cas.shell.commands.util.GenerateJwtCommandTests;
 import org.apereo.cas.shell.commands.util.ValidateEndpointCommandTests;
 import org.apereo.cas.shell.commands.util.ValidateLdapConnectionCommandTests;
 
@@ -34,6 +35,7 @@ import org.junit.platform.suite.api.Suite;
     GenerateDdlCommandTests.class,
     GenerateJwtCommandTests.class,
     ExitCommandTests.class,
+    GenerateFullJwtCommandTests.class,
     ExportPropertiesCommandTests.class,
     AnonymousUsernameAttributeProviderCommandTests.class,
     GenerateSamlIdPMetadataCommandTests.class,

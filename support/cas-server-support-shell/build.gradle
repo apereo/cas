@@ -35,6 +35,7 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.snakeyaml
     implementation libraries.jasypt
+    implementation libraries.jose4j
     implementation libraries.bouncycastle
     implementation libraries.opensaml
     implementation libraries.dropwizard

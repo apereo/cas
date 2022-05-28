@@ -1,4 +1,4 @@
-package org.apereo.cas.shell.commands.util;
+package org.apereo.cas.shell.commands.jwt;
 
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 

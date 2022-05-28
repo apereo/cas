@@ -1,4 +1,4 @@
-package org.apereo.cas.shell.commands.util;
+package org.apereo.cas.shell.commands.jwt;
 
 import org.apereo.cas.util.RandomUtils;
 
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@ShellCommandGroup("Utilities")
+@ShellCommandGroup("JWT")
 @ShellComponent
 @Slf4j
 public class GenerateJwtCommand {
