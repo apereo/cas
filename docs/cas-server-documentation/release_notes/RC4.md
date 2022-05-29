@@ -91,7 +91,7 @@ and support for fetching active single sign-on sessions for a given username.
 - [Hazelcast Ticket Registry](../ticketing/Hazelcast-Ticket-Registry.html) using [Hazelcast Jet](https://jet-start.sh/)
 
 <div class="alert alert-info">
-<strong>Note</strong><br/>Remember that all other registry implemntations support this capability.
+<strong>Note</strong><br/>Remember that all other registry options support this capability.
 However, their execution and performance may not be as ideal as those that support dedicated queries.
 </div>
 

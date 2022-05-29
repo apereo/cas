@@ -8,8 +8,7 @@ category: Ticketing
 
 # JPA Ticket Registry
 
-The JPA Ticket Registry allows CAS to store client authenticated state
-data (tickets) in a database back-end such as MySQL.
+The JPA Ticket Registry allows CAS to store tickets in a relational database back-end such as MySQL.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Using a relational database as
 the back-end persistence choice for ticket registry state management is a fairly unnecessary and complicated

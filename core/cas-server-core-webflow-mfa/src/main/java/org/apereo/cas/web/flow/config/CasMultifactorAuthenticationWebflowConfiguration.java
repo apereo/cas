@@ -204,8 +204,14 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
                 casWebflowConfigurationContext,
                 principalAttributeMultifactorAuthenticationTrigger);
         }
+
         /**
-         * @deprecated Since 6.6.
+         * Scripted registered service authentication policy webflow event resolver .
+         *
+         * @param scriptedRegisteredServiceMultifactorAuthenticationTrigger the scripted registered service multifactor authentication trigger
+         * @param casWebflowConfigurationContext                            the cas webflow configuration context
+         * @return the cas webflow event resolver
+         * @deprecated Since 6.2.
          */
         @ConditionalOnMissingBean(name = "scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver")
         @Bean
