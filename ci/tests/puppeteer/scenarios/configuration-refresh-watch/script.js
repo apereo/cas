@@ -13,6 +13,7 @@ const path = require('path');
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "p@$$word");
     await cas.assertCookie(page);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     let configFilePath = path.join(__dirname, 'config.yml');
     const file = fs.readFileSync(configFilePath, 'utf8')
@@ -22,10 +23,9 @@ const path = require('path');
 
     console.log("Updating configuration and waiting for changes to reload...")
     await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(8000)
 
     console.log("Attempting to login with new updated credentials...")
-    await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casrefresh", "p@$$word");
     await cas.assertCookie(page);
