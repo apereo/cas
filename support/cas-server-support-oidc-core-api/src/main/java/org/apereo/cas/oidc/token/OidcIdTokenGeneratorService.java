@@ -193,7 +193,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                     LOGGER.trace("Found supported claim [{}]", entry.getKey());
                     return true;
                 }
-                LOGGER.warn("Claim [{}] is not defined as a supported claim among [{}]. Skipping...",
+                LOGGER.debug("Claim [{}] is not defined as a supported claim among [{}]. Skipping...",
                     entry.getKey(), oidc.getDiscovery().getClaims());
                 return false;
             })

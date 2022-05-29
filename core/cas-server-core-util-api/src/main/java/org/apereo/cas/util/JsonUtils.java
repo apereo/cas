@@ -1,5 +1,9 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -20,13 +24,15 @@ import java.util.Map;
  */
 @UtilityClass
 public class JsonUtils {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
+
     /**
      * Render model and view.
      *
      * @param model    the model
      * @param response the response
      */
-    public static void render(final Object model, final HttpServletResponse response) {
+    public void render(final Object model, final HttpServletResponse response) {
         Unchecked.consumer(o -> {
             val jsonConverter = new MappingJackson2HttpMessageConverter();
             jsonConverter.setPrettyPrint(true);
@@ -40,7 +46,7 @@ public class JsonUtils {
      *
      * @param response the response
      */
-    public static void render(final HttpServletResponse response) {
+    public void render(final HttpServletResponse response) {
         val map = new HashMap<String, Object>();
         response.setStatus(HttpServletResponse.SC_OK);
         render(map, response);
@@ -53,7 +59,7 @@ public class JsonUtils {
      * @param ex       the ex
      * @param response the response
      */
-    public static void renderException(final Exception ex, final HttpServletResponse response) {
+    public void renderException(final Exception ex, final HttpServletResponse response) {
         val map = new HashMap<String, Object>();
         map.put("error", ex.getMessage());
         map.put("stacktrace", Arrays.deepToString(ex.getStackTrace()));
@@ -66,10 +72,19 @@ public class JsonUtils {
      * @param model    the model
      * @param response the response
      */
-    private static void renderException(final Map<String, Object> model, final HttpServletResponse response) {
+    private void renderException(final Map<String, Object> model, final HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         model.put("status", HttpServletResponse.SC_BAD_REQUEST);
         render(model, response);
     }
 
+    /**
+     * Is valid json?.
+     *
+     * @param json the json
+     * @return the boolean
+     */
+    public boolean isValidJson(final String json) {
+        return FunctionUtils.doAndHandle(() -> !MAPPER.readTree(json).isEmpty(), t -> false).get();
+    }
 }
