@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
@@ -19,9 +20,13 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -37,7 +42,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OidcPrivateKeyJwtAuthenticatorTests}.
+ * This is {@link OidcJwtAuthenticatorRsaTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -47,7 +52,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oauth.code.time-to-kill-in-seconds=60",
     "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/private-jwks.jwks"
 })
-public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
+public class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
+
+    @Autowired
+    @Qualifier("oidcJwtClientProvider")
+    private OAuth20AuthenticationClientProvider oidcJwtClientProvider;
 
     @Test
     public void verifyAction() throws Exception {
@@ -115,10 +124,9 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         assertNull(credentials.getUserProfile());
     }
 
-    private OidcPrivateKeyJwtAuthenticator getAuthenticator() {
-        return new OidcPrivateKeyJwtAuthenticator(oidcIssuerService, servicesManager,
-            registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties, applicationContext);
+    private Authenticator getAuthenticator() {
+        val c = (BaseClient) oidcJwtClientProvider.createClient();
+        return c.getAuthenticator();
     }
 
     private UsernamePasswordCredentials getCredential(final MockHttpServletRequest request,

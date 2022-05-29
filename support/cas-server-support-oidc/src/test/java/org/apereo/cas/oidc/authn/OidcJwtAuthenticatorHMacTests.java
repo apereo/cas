@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
@@ -15,9 +16,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.keys.AesKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -27,12 +32,13 @@ import java.security.KeyPairGenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OidcClientSecretJwtAuthenticatorTests}.
+ * This is {@link OidcJwtAuthenticatorHMacTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -41,7 +47,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
     "cas.authn.oauth.code.time-to-kill-in-seconds=60"
 )
-public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
+public class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
+    @Autowired
+    @Qualifier("oidcJwtClientProvider")
+    private OAuth20AuthenticationClientProvider oidcJwtClientProvider;
 
     @Test
     public void verifyBadAlgAction() throws Exception {
@@ -51,11 +60,10 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
-        val audience = casProperties.getServer().getPrefix().concat('/'
-                                                                    + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val registeredService = getOidcRegisteredService();
-        val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
-            registeredService.getClientId(), audience);
+        val claims = getClaims(registeredService.getClientId(),
+            oidcIssuerService.determineIssuer(Optional.of(registeredService)),
+            registeredService.getClientId(), registeredService.getClientId());
 
         val keyGen = KeyPairGenerator.getInstance("RSA");
         val pair = keyGen.generateKeyPair();
@@ -68,10 +76,9 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         assertNull(credentials.getUserProfile());
     }
 
-    private OidcClientSecretJwtAuthenticator getAuthenticator() {
-        return new OidcClientSecretJwtAuthenticator(oidcIssuerService, servicesManager,
-            registeredServiceAccessStrategyEnforcer, ticketRegistry,
-            webApplicationServiceFactory, casProperties, applicationContext);
+    private Authenticator getAuthenticator() {
+        val c = (BaseClient) oidcJwtClientProvider.createClient();
+        return c.getAuthenticator();
     }
 
     @Test
@@ -82,13 +89,15 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
-        val audience = casProperties.getServer().getPrefix().concat('/'
-                                                                    + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
-        val registeredService = getOidcRegisteredService();
-        val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
-            registeredService.getClientId(), audience);
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        val claims = getClaims(registeredService.getClientId(),
+            oidcIssuerService.determineIssuer(Optional.of(registeredService)),
+            registeredService.getClientId(), registeredService.getClientId());
 
         val key = EncodingUtils.generateJsonWebKey(512);
+        registeredService.setJwks(key);
+        servicesManager.save(registeredService);
+
         val jwt = EncodingUtils.signJwsHMACSha512(new AesKey(key.getBytes(StandardCharsets.UTF_8)),
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
 
