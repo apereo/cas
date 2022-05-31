@@ -52,7 +52,6 @@ public class AccessTokenRequestContext implements Serializable {
 
     private final boolean expireOldRefreshToken;
 
-    @Nonnull
     private final OAuthRegisteredService registeredService;
 
     @Setter

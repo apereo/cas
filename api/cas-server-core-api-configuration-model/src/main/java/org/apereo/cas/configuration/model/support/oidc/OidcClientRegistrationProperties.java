@@ -42,6 +42,20 @@ public class OidcClientRegistrationProperties implements Serializable {
     private String clientSecretExpiration = "0";
 
     /**
+     * The username used in a basic-auth scheme to request an initial access token
+     * that would then be used to dynamically register clients
+     * in  {@link DynamicClientRegistrationModes#PROTECTED} mode.
+     */
+    private String initialAccessTokenUser;
+
+    /**
+     * The password used in a basic-auth scheme to request an initial access token
+     * that would then be used to dynamically register clients
+     * in  {@link DynamicClientRegistrationModes#PROTECTED} mode.
+     */
+    private String initialAccessTokenPassword;
+
+    /**
      * Dynamic client registration mode.
      */
     public enum DynamicClientRegistrationModes {

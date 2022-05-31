@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
@@ -164,14 +165,14 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected Pair<OAuth20AccessToken, OAuth20RefreshToken> generateAccessTokenOAuthGrantTypes(final AccessTokenRequestContext holder) throws Exception {
         LOGGER.debug("Creating access token for [{}]", holder.getService());
-        val clientId = holder.getRegisteredService().getClientId();
         val authnBuilder = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
             .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
-            .addAttribute(OAuth20Constants.SCOPE, holder.getScopes())
-            .addAttribute(OAuth20Constants.CLIENT_ID, clientId);
+            .addAttribute(OAuth20Constants.SCOPE, holder.getScopes());
 
+        val clientId = Optional.ofNullable(holder.getRegisteredService())
+            .map(OAuthRegisteredService::getClientId).orElse(StringUtils.EMPTY);
         val requestedClaims = holder.getClaims().getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>());
         requestedClaims.forEach(authnBuilder::addAttribute);
         val authentication = authnBuilder.build();
@@ -181,8 +182,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val accessToken = this.accessTokenFactory.create(holder.getService(),
             authentication, ticketGrantingTicket, holder.getScopes(),
             Optional.ofNullable(holder.getToken()).map(Ticket::getId).orElse(null),
-            clientId, holder.getClaims(),
-            holder.getResponseType(), holder.getGrantType());
+            clientId,
+            holder.getClaims(),
+            holder.getResponseType(),
+            holder.getGrantType());
 
         LOGGER.debug("Created access token [{}]", accessToken);
         addTicketToRegistry(accessToken, ticketGrantingTicket);
@@ -234,10 +237,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected void addTicketToRegistry(final Ticket ticket, final TicketGrantingTicket ticketGrantingTicket) throws Exception {
         LOGGER.debug("Adding ticket [{}] to registry", ticket);
-        this.centralAuthenticationService.addTicket(ticket);
+        centralAuthenticationService.addTicket(ticket);
         if (ticketGrantingTicket != null) {
             LOGGER.debug("Updating parent ticket-granting ticket [{}]", ticketGrantingTicket);
-            this.centralAuthenticationService.updateTicket(ticketGrantingTicket);
+            centralAuthenticationService.updateTicket(ticketGrantingTicket);
         }
     }
 

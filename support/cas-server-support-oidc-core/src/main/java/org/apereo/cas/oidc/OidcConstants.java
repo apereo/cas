@@ -135,6 +135,18 @@ public interface OidcConstants {
      * Registration endpoint URL.
      */
     String REGISTRATION_URL = "register";
+
+    /**
+     * Registration endpoint URL to issue initial access tokens.
+     */
+    String REGISTRATION_INITIAL_TOKEN_URL = "oidcInitToken";
+
+    /**
+     * The registration scope assigned to the initial access token,
+     * required to register clients.
+     */
+    String CLIENT_REGISTRATION_SCOPE = "client_registration_scope";
+
     /**
      * Client configuration endpoint URL.
      */
@@ -170,7 +182,7 @@ public interface OidcConstants {
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.
      */
-    String CLIENT_REGISTRATION_SCOPE = "client_registration_scope";
+    String CLIENT_CONFIGURATION_SCOPE = "client_configuration_scope";
 
     /**
      * Parameter used to look up clients by their id.

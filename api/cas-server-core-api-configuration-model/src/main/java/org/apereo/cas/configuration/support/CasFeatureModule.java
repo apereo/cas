@@ -17,7 +17,6 @@ import java.lang.reflect.Field;
  * @since 6.3.0
  */
 public interface CasFeatureModule {
-
     private static String getMethodName(final Field field, final String prefix) {
         return prefix
                + field.getName().substring(0, 1).toUpperCase()

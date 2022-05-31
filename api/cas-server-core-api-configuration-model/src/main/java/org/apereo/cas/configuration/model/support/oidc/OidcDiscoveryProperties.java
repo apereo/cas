@@ -60,8 +60,8 @@ public class OidcDiscoveryProperties implements Serializable {
      * List of supported scopes.
      */
     private List<String> scopes = Stream.of("openid", "profile", "email",
-            "address", "phone", "offline_access", "client_registration_scope",
-            "uma_authorization", "uma_protection")
+            "address", "phone", "offline_access", "client_configuration_scope",
+            "uma_authorization", "uma_protection", "client_registration_scope")
         .collect(Collectors.toList());
 
     /**

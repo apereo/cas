@@ -32,7 +32,7 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);
         val at = getAccessToken();
-        when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+        when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
         auth.validate(credentials, ctx, JEESessionStore.INSTANCE);

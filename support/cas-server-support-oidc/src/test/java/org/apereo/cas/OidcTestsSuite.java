@@ -77,6 +77,7 @@ import org.apereo.cas.oidc.web.controllers.authorize.OidcPushedAuthorizeEndpoint
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationRequestTranslatorTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.dynareg.OidcInitialAccessTokenControllerTests;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksRotationEndpointTests;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerMatcherTests;
@@ -180,6 +181,7 @@ import org.junit.platform.suite.api.Suite;
     OidcCasCallbackUrlResolverTests.class,
     OidcClientSecretValidatorTests.class,
     OidcMessageSanitizerTests.class,
+    OidcInitialAccessTokenControllerTests.class,
     OidcClientRegistrationRequestTranslatorTests.class,
     OidcPushedAuthorizationRequestTests.class,
     OidcDefaultJsonWebKeyStoreListenerTests.class,
