@@ -48,7 +48,7 @@ public class OAuth20JwtAccessTokenEncoder {
      * @return the string
      */
     public String encode() {
-        val oAuthRegisteredService = OAuthRegisteredService.class.cast(this.registeredService);
+        val oAuthRegisteredService = (OAuthRegisteredService) this.registeredService;
         if (shouldEncodeAsJwt(oAuthRegisteredService)) {
             val request = getJwtRequestBuilder(Optional.ofNullable(oAuthRegisteredService), accessToken);
             return accessTokenJwtBuilder.build(request);
@@ -90,12 +90,13 @@ public class OAuth20JwtAccessTokenEncoder {
     /**
      * Gets jwt request builder.
      *
-     * @param oAuthRegisteredService the o auth registered service
-     * @param accessToken            the access token
+     * @param registeredService the o auth registered service
+     * @param accessToken       the access token
      * @return the jwt request builder
      */
-    protected JwtBuilder.JwtRequest getJwtRequestBuilder(final Optional<RegisteredService> oAuthRegisteredService,
-                                                         final OAuth20AccessToken accessToken) {
+    protected JwtBuilder.JwtRequest getJwtRequestBuilder(
+        final Optional<RegisteredService> registeredService,
+        final OAuth20AccessToken accessToken) {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
@@ -109,7 +110,7 @@ public class OAuth20JwtAccessTokenEncoder {
             .subject(authentication.getPrincipal().getId())
             .validUntilDate(DateTimeUtils.dateOf(dt))
             .attributes(attributes)
-            .registeredService(oAuthRegisteredService)
+            .registeredService(registeredService)
             .issuer(StringUtils.defaultIfBlank(this.issuer, casProperties.getServer().getPrefix()))
             .build();
     }
@@ -122,6 +123,6 @@ public class OAuth20JwtAccessTokenEncoder {
      */
     protected boolean shouldEncodeAsJwt(final OAuthRegisteredService oAuthRegisteredService) {
         return casProperties.getAuthn().getOauth().getAccessToken().isCreateAsJwt()
-            || (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken());
+               || (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken());
     }
 }

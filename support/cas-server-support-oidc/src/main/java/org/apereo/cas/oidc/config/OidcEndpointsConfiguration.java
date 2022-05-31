@@ -20,6 +20,7 @@ import org.apereo.cas.oidc.web.controllers.authorize.OidcPushedAuthorizeEndpoint
 import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointController;
+import org.apereo.cas.oidc.web.controllers.dynareg.OidcInitialAccessTokenController;
 import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointController;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksRotationEndpoint;
@@ -360,6 +361,14 @@ public class OidcEndpointsConfiguration {
             return new OidcClientConfigurationEndpointController(oidcConfigurationContext);
         }
 
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcInitialAccessTokenController")
+        @Bean
+        public OidcInitialAccessTokenController oidcInitialAccessTokenController(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final OidcConfigurationContext oidcConfigurationContext) {
+            return new OidcInitialAccessTokenController(oidcConfigurationContext);
+        }
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcJwksController")
         @Bean

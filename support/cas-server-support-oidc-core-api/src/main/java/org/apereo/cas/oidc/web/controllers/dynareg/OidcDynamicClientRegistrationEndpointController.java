@@ -121,7 +121,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
 
         val factory = (OAuth20AccessTokenFactory) getConfigurationContext().getTicketFactory().get(OAuth20AccessToken.class);
         val accessToken = factory.create(service, authn,
-            List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
+            List.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE),
             registeredService.getClientId(),
             OAuth20ResponseTypes.NONE, OAuth20GrantTypes.NONE);
         getConfigurationContext().getTicketRegistry().addTicket(accessToken);

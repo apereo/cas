@@ -57,10 +57,8 @@ public class CasConfigurationPropertiesEnvironmentManager {
      */
     public static ApplicationContext rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
                                                                       final ApplicationContext applicationContext) {
-
-        val appName = applicationContext.getEnvironment().getProperty("spring.application.name");
         val config = applicationContext.getBean(CasConfigurationProperties.class);
-        val name = String.format("%s-%s", appName, config.getClass().getName());
+        val name = String.format("%s-%s", CasConfigurationProperties.PREFIX, config.getClass().getName());
         binder.postProcessBeforeInitialization(config, name);
         val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(config, name);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);

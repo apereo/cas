@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa.gauth;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -20,7 +21,8 @@ import lombok.experimental.Accessors;
 @RequiresModule(name = "cas-server-support-gauth-ldap")
 @Accessors(chain = true)
 @JsonFilter("LdapGoogleAuthenticatorMultifactorProperties")
-public class LdapGoogleAuthenticatorMultifactorProperties extends AbstractLdapSearchProperties {
+public class LdapGoogleAuthenticatorMultifactorProperties extends AbstractLdapSearchProperties
+    implements CasFeatureModule {
     private static final long serialVersionUID = -100556119517414696L;
 
     /**
