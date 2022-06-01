@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.introspection;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Setter
 public class OAuth20IntrospectionAccessTokenResponse {
 
+    @JsonInclude
     private boolean active;
 
     private String sub;
