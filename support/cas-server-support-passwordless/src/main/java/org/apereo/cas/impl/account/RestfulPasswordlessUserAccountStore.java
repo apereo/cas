@@ -38,7 +38,7 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
     public Optional<PasswordlessUserAccount> findUser(final String username) {
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             parameters.put("username", username);
 
             val exec = HttpUtils.HttpExecutionRequest.builder()

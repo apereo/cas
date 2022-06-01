@@ -46,9 +46,9 @@ public class RestfulConsentRepository implements ConsentRepository {
         return FunctionUtils.doUnchecked(() -> {
             HttpResponse response = null;
             try {
-                val headers = new HashMap<String, Object>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON);
-                headers.put("Accept", MediaType.APPLICATION_JSON);
+                val headers = new HashMap<String, String>();
+                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.put("principal", principal);
                 headers.putAll(properties.getHeaders());
 
@@ -76,9 +76,9 @@ public class RestfulConsentRepository implements ConsentRepository {
         return FunctionUtils.doUnchecked(() -> {
             HttpResponse response = null;
             try {
-                val headers = new HashMap<String, Object>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON);
-                headers.put("Accept", MediaType.APPLICATION_JSON);
+                val headers = new HashMap<String, String>();
+                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.putAll(properties.getHeaders());
 
                 val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -106,9 +106,9 @@ public class RestfulConsentRepository implements ConsentRepository {
         return FunctionUtils.doUnchecked(() -> {
             HttpResponse response = null;
             try {
-                val headers = new HashMap<String, Object>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON);
-                headers.put("Accept", MediaType.APPLICATION_JSON);
+                val headers = new HashMap<String, String>();
+                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.put("service", service.getId());
                 headers.put("principal", authentication.getPrincipal().getId());
                 headers.putAll(properties.getHeaders());
@@ -137,9 +137,9 @@ public class RestfulConsentRepository implements ConsentRepository {
         return FunctionUtils.doUnchecked(() -> {
             HttpResponse response = null;
             try {
-                val headers = new HashMap<String, Object>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON);
-                headers.put("Accept", MediaType.APPLICATION_JSON);
+                val headers = new HashMap<String, String>();
+                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.putAll(properties.getHeaders());
 
                 val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -166,7 +166,7 @@ public class RestfulConsentRepository implements ConsentRepository {
         return FunctionUtils.doUnchecked(() -> {
             HttpResponse response = null;
             try {
-                val headers = new HashMap<String, Object>();
+                val headers = new HashMap<String, String>();
                 headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
                 headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.put("principal", principal);
@@ -190,7 +190,7 @@ public class RestfulConsentRepository implements ConsentRepository {
     public void deleteAll() {
         HttpResponse response = null;
         try {
-            val headers = new HashMap<String, Object>();
+            val headers = new HashMap<String, String>();
             headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
@@ -212,7 +212,7 @@ public class RestfulConsentRepository implements ConsentRepository {
         return FunctionUtils.doUnchecked(() -> {
             HttpResponse response = null;
             try {
-                val headers = new HashMap<String, Object>();
+                val headers = new HashMap<String, String>();
                 headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
                 headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.put("principal", principal);

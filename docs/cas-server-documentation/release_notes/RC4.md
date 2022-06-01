@@ -51,8 +51,35 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
- 
-### Active Single Sign-on Sessions
+    
+### Jakarta API Migrations
+
+The following projects, used internally by CAS, are now converted to use the Jakarta APIs:
+
+- [Person Directory](https://github.com/apereo/person-directory)
+- [Inspektr](https://github.com/apereo/inspektr)
+- [Spring Webflow](https://github.com/apereo/spring-webflow)
+              
+For some projects, the migration also upgrades the baseline Java requirement to JDK `17` and 
+moves the project to use the Spring framework `6.x` as necessary. 
+
+The Pac4j project has also published [relevant artifacts](https://www.pac4j.org/blog/jakartaee_is_coming.html) based on Jakarta APIs. 
+
+<div class="alert alert-info">
+<strong>Note</strong><br/>The CAS project is not switching to Jakarta APIs just yet; this is just to ensure
+that the fundamentals and dependant libraries are prepared to handle the migration, when the time comes.
+The impact of the migration would be minimal to the end-user configuration, except perhaps when it comes to 
+deployment environment requirements such as JDK and servlet containers. Additional details would 
+be published as necessary in due time.
+</div>
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover 
+more use cases and scenarios. At the moment, total number of jobs
+stands at approximately `300` distinct scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
+
+### Single Sign-on Sessions
 
 The following ticket registry implementations are enhanced to provide dedicated native queries
 and support for fetching active single sign-on sessions for a given username.
@@ -64,7 +91,7 @@ and support for fetching active single sign-on sessions for a given username.
 - [Hazelcast Ticket Registry](../ticketing/Hazelcast-Ticket-Registry.html) using [Hazelcast Jet](https://jet-start.sh/)
 
 <div class="alert alert-info">
-<strong>Note</strong><br/>Remember that all other registry implemntations support this capability.
+<strong>Note</strong><br/>Remember that all other registry options support this capability.
 However, their execution and performance may not be as ideal as those that support dedicated queries.
 </div>
 
@@ -77,6 +104,24 @@ The following modules are deprecated and scheduled to be removed in future CAS v
 
 - [Infinispan Ticket Registry](../ticketing/Infinispan-Ticket-Registry.html)
 - [Couchbase Ticket Registry](../ticketing/Couchbase-Ticket-Registry.html)
+- [SwivelSecure Multifactor Authentication](../mfa/SwivelSecure-Authentication.html)
+
+### Log Message Sanitation
+
+Ticket identifiers included in CAS log messages are typically sanitized and obfuscated prior to the logging task. In this release,
+this behavior applies to all ticket definitions that are registered with the CAS ticket catalog. The syntax of the obfuscated ticket
+in the log message is also slightly changed to hide a few more characters in the ticket identifier.
+
+### Simple Multifactor Authentication
+
+Operations that handle token management, validation and generation for 
+the [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) 
+flow can now be outsourced to an external REST API, and need not be controlled or owned by CAS. 
+
+### CAS Commandline Shell
+
+[CAS Commandline Shell](../installation/Configuring-Commandline-Shell.html) is now able to generate 
+signed JWTs using a given JSON Webkeystore.
 
 ## Other Stuff
             
@@ -91,3 +136,6 @@ The following modules are deprecated and scheduled to be removed in future CAS v
 - Gradle
 - MariaDb Driver
 - PostgreSQL Driver
+- Amazon SDK
+- Spring Cloud
+- Mockito

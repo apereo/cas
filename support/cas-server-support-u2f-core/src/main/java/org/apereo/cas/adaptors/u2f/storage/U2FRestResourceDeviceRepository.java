@@ -77,7 +77,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             newDevices.put(MAP_KEY_DEVICES, list);
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, newDevices);
 
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             val rest = casProperties.getAuthn().getMfa().getU2f().getRest();
             headers.putAll(rest.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()

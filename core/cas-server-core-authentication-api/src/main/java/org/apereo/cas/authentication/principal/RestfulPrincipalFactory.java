@@ -45,7 +45,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
             val current = super.createPrincipal(id, attributes);
             val entity = MAPPER.writeValueAsString(current);
 
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()

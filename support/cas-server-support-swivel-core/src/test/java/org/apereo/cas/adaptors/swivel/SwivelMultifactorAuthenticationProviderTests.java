@@ -15,8 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.1.0
+ * @deprecated Since 6.6.
  */
 @Tag("MFAProvider")
+@Deprecated(since = "6.6")
 public class SwivelMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {

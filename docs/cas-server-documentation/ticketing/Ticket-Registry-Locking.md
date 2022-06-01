@@ -39,7 +39,7 @@ hash code and the `Lock` is returned.
 To design your own locking implementation, you may inject the following `@Bean` into your CAS configuration:
 
 ```java
-@Bean(LockRepository.BEAN_NAME)
+@Bean
 public LockRepository casTicketRegistryLockRepository() {
     return new MyLockRepository();
 }

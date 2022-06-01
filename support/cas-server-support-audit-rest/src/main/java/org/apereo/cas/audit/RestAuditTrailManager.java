@@ -53,7 +53,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         HttpResponse response = null;
         try {
             val auditJson = serializer.toString(audit);
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE,
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE,
                 "userAgent", StringUtils.defaultString(audit.getUserAgent(), "N/A"));
             headers.putAll(properties.getHeaders());
 
@@ -78,7 +78,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         try {
             val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
             LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", localDate);
-            val parameters = CollectionUtils.<String, Object>wrap("date", String.valueOf(localDate.toEpochDay()));
+            val parameters = CollectionUtils.<String, String>wrap("date", String.valueOf(localDate.toEpochDay()));
             FunctionUtils.doIf(whereClause.containsKey(WhereClauseFields.PRINCIPAL),
                     c -> parameters.put("principial", whereClause.get(WhereClauseFields.PRINCIPAL).toString()))
                 .accept(whereClause);

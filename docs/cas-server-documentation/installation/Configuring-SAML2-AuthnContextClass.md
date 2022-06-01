@@ -57,7 +57,7 @@ def run(final Object... args) {
 ## Custom
 
 It is possible to design and inject your authentication context class builder
-into CAS using the following `@Bean` that would be registered in a `@Configuration` class:
+into CAS using the following `@Bean` that would be registered in a `@AutoConfiguration` class:
 
 ```java
 @Bean

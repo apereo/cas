@@ -171,10 +171,10 @@ public class HttpUtils {
         }
     }
 
-    private static URI buildHttpUri(final String url, final Map<String, Object> parameters) {
+    private static URI buildHttpUri(final String url, final Map<String, String> parameters) {
         return FunctionUtils.doUnchecked(() -> {
             val uriBuilder = new URIBuilder(url);
-            parameters.forEach((k, v) -> uriBuilder.addParameter(k, v.toString()));
+            parameters.forEach(uriBuilder::addParameter);
             return uriBuilder.build();
         });
     }
@@ -213,10 +213,10 @@ public class HttpUtils {
         private final String bearerToken;
 
         @Builder.Default
-        private final Map<String, Object> parameters = new LinkedHashMap<>();
+        private final Map<String, String> parameters = new LinkedHashMap<>();
 
         @Builder.Default
-        private final Map<String, Object> headers = new LinkedHashMap<>();
+        private final Map<String, String> headers = new LinkedHashMap<>();
 
         /**
          * Is basic authentication?

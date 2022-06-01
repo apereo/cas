@@ -13,7 +13,7 @@ If you wish to design your own account store, you may follow the below approach:
 ```java
 package org.apereo.cas.custom;
 
-@Configuration(value = "mySurrogateConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MySurrogateConfiguration {
 

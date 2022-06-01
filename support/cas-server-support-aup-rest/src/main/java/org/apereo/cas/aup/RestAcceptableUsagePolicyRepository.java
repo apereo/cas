@@ -51,7 +51,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val service = WebUtils.getService(requestContext);
-            val parameters = CollectionUtils.wrap(
+            val parameters = CollectionUtils.<String, String>wrap(
                 "username", principal.getId(),
                 "locale", request.getLocale().toString());
             if (service != null) {

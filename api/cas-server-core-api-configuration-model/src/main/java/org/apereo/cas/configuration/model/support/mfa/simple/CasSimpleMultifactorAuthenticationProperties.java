@@ -31,20 +31,17 @@ public class CasSimpleMultifactorAuthenticationProperties extends BaseMultifacto
     private static final long serialVersionUID = -9211748853833491119L;
 
     /**
-     * Time in seconds that CAS tokens should be considered live in CAS server.
-     */
-    private long timeToKillInSeconds = 30;
-
-    /**
-     * The length of the generated token.
-     */
-    private int tokenLength = 6;
-
-    /**
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
-    
+
+    /**
+     * Properties related to token management and policy.
+     */
+    @NestedConfigurationProperty
+    private CasSimpleMultifactorAuthenticationTokenProperties token =
+        new CasSimpleMultifactorAuthenticationTokenProperties();
+
     /**
      * Email settings for notifications.
      */

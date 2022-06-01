@@ -15,6 +15,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.6.
  */
 @SpringBootTest(classes = BaseSwivelAuthenticationTests.SharedTestConfiguration.class,
     properties = {
@@ -25,6 +26,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
 @Tag("WebflowMfaConfig")
+@Deprecated(since = "6.6")
 @Getter
 public class SwivelMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired

@@ -15,7 +15,7 @@ to do this, you will need to design a configuration class that roughly matches t
 ```java
 package org.apereo.cas.consent;
 
-@Configuration(value = "MyConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyConfiguration {
 

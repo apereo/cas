@@ -24,8 +24,10 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 6.6.
  */
 @Slf4j
+@Deprecated(since = "6.6")
 public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     private static final String SWIVEL_ERR_CODE_AUTHN_FAIL = "swivel.server.error";

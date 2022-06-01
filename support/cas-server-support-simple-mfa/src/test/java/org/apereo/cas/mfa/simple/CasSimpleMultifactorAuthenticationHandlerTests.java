@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.validation.DefaultCasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -60,6 +61,8 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     @Qualifier(TicketFactory.BEAN_NAME)
     private TicketFactory defaultTicketFactory;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -120,8 +123,9 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
         val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
         ticket.markTicketExpired();
 
-        val handler = new CasSimpleMultifactorAuthenticationHandler(getClass().getSimpleName(),
-            servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), centralAuthenticationService, 0);
+        val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(centralAuthenticationService, defaultTicketFactory);
+        val handler = new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple(),
+            servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), mfaService);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
     }
 

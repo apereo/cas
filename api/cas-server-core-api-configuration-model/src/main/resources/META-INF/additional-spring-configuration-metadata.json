@@ -1,6 +1,34 @@
 {
   "properties": [
     {
+      "name": "cas.authn.mfa.simple.token-length",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.simple.token.core.token-length",
+        "reason": "This setting should is now moved into a token core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.simple.time-to-kill-in-seconds",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.simple.token.core.time-to-kill-in-seconds",
+        "reason": "This setting should is now moved into a token core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.ticket.registry.ehcache3.terracotta-cluster-uri",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.ticket.registry.ehcache3.terracotta.terracotta-cluster-uri",
+        "reason": "This setting should is now moved into a terracotta sub namespace.",
+        "level": "error"
+      }
+    },
+
+    {
       "name": "cas.ticket.registry.ehcache3.terracotta-cluster-uri",
       "type": "java.lang.String",
       "deprecation": {

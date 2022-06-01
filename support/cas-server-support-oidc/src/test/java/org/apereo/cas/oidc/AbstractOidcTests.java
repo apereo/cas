@@ -35,6 +35,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -521,6 +522,7 @@ public abstract class AbstractOidcTests {
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasOAuth20Configuration.class,
+        OAuth20ProtocolTicketCatalogConfiguration.class,
         CasOAuth20EndpointsConfiguration.class,
         CasThrottlingConfiguration.class,
         CasOAuth20ThrottleConfiguration.class,

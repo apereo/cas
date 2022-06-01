@@ -20,9 +20,11 @@ import java.net.URL;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 6.6.
  */
 @RestController
 @RequiredArgsConstructor
+@Deprecated(since = "6.6")
 public class SwivelTuringImageGeneratorController {
     private final SwivelMultifactorAuthenticationProperties swivel;
 

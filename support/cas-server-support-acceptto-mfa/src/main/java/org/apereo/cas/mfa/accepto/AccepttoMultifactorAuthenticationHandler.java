@@ -73,7 +73,7 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
                 .orElseThrow(() -> new IllegalArgumentException("Unable to determine email address"));
 
             LOGGER.debug("Email determined from attribute [{}] is [{}]", accepttoProperties.getEmailAttribute(), email);
-            val parameters = CollectionUtils.<String, Object>wrap(
+            val parameters = CollectionUtils.<String, String>wrap(
                 "uid", accepttoProperties.getApplicationId(),
                 "secret", accepttoProperties.getSecret(),
                 "email", email,

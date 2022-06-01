@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -15,9 +16,11 @@ import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jose4j.jwk.EcJwkGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.keys.AesKey;
 import org.jose4j.keys.EllipticCurves;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -150,9 +153,17 @@ public class OidcJsonWebKeyStoreUtils {
         return buildJsonWebKeySet(json, keyId, usage);
     }
 
-    private static Optional<JsonWebKeySet> buildJsonWebKeySet(final String json, final Optional<String> keyId,
-                                                              final Optional<OidcJsonWebKeyUsage> usage) throws Exception {
-        return getJsonWebKeyFromJsonWebKeySet(new JsonWebKeySet(json), keyId, usage);
+    private Optional<JsonWebKeySet> buildJsonWebKeySet(
+        final String json, final Optional<String> keyId,
+        final Optional<OidcJsonWebKeyUsage> usage) throws Exception {
+        if (JsonUtils.isValidJson(json)) {
+            return getJsonWebKeyFromJsonWebKeySet(new JsonWebKeySet(json), keyId, usage);
+        }
+        val key = new AesKey(json.getBytes(StandardCharsets.UTF_8));
+        val jsonWebKey = new OctetSequenceJsonWebKey(key);
+        jsonWebKey.setKeyId(keyId.orElse(StringUtils.EMPTY));
+        jsonWebKey.setUse(usage.map(Enum::name).orElse(StringUtils.EMPTY));
+        return Optional.of(new JsonWebKeySet(jsonWebKey));
     }
 
     private static Resource getJsonWebKeySetResource(final OidcRegisteredService service,

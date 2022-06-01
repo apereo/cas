@@ -40,7 +40,7 @@ public class SmsModeSmsSender implements SmsSender {
     public boolean send(final String from, final String to, final String message) {
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             val holder = ClientInfoHolder.getClientInfo();
             if (holder != null) {
                 parameters.put("clientIpAddress", holder.getClientIpAddress());
@@ -50,7 +50,7 @@ public class SmsModeSmsSender implements SmsSender {
             parameters.put(properties.getToAttribute(), to);
             parameters.put(properties.getMessageAttribute(), message);
 
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.TEXT_PLAIN);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.TEXT_PLAIN_VALUE);
             headers.putAll(properties.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)

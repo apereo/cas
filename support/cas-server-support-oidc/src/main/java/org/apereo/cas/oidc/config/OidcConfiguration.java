@@ -14,8 +14,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
-import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticator;
-import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
+import org.apereo.cas.oidc.authn.OidcJwtAuthenticator;
 import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapper;
@@ -450,7 +449,10 @@ public class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OAuth20AuthenticationClientProvider oidcPrivateKeyJwtClientProvider(
+        @ConditionalOnMissingBean(name = "oidcJwtClientProvider")
+        public OAuth20AuthenticationClientProvider oidcJwtClientProvider(
+            @Qualifier(OidcIssuerService.BEAN_NAME)
+            final OidcIssuerService oidcIssuerService,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
@@ -462,13 +464,11 @@ public class OidcConfiguration {
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return () -> {
-                val privateKeyJwtClient = new DirectFormClient(new OidcPrivateKeyJwtAuthenticator(
-                    servicesManager,
-                    registeredServiceAccessStrategyEnforcer,
-                    ticketRegistry,
-                    webApplicationServiceFactory,
-                    casProperties,
-                    applicationContext));
+                val authenticator = new OidcJwtAuthenticator(oidcIssuerService,
+                    servicesManager, registeredServiceAccessStrategyEnforcer,
+                    ticketRegistry, webApplicationServiceFactory,
+                    casProperties, applicationContext);
+                val privateKeyJwtClient = new DirectFormClient(authenticator);
                 privateKeyJwtClient.setName(OidcConstants.CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN);
                 privateKeyJwtClient.setUsernameParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE);
                 privateKeyJwtClient.setPasswordParameter(OAuth20Constants.CLIENT_ASSERTION);
@@ -479,33 +479,8 @@ public class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OAuth20AuthenticationClientProvider oidcClientSecretJwtClientProvider(
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-            return () -> {
-                val client = new DirectFormClient(new OidcClientSecretJwtAuthenticator(
-                    servicesManager, registeredServiceAccessStrategyEnforcer,
-                    ticketRegistry, webApplicationServiceFactory,
-                    casProperties, applicationContext));
-                client.setName(OidcConstants.CAS_OAUTH_CLIENT_CLIENT_SECRET_JWT_AUTHN);
-                client.setUsernameParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE);
-                client.setPasswordParameter(OAuth20Constants.CLIENT_ASSERTION);
-                client.init();
-                return client;
-            };
-        }
-
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Authenticator oAuthAccessTokenAuthenticator(
+        @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")
+        public Authenticator oauthAccessTokenAuthenticator(
             @Qualifier("oidcTokenSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
             @Qualifier("accessTokenJwtBuilder")
@@ -516,8 +491,6 @@ public class OidcConfiguration {
             final ServicesManager servicesManager) throws Exception {
             return new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
         }
-
-
     }
 
     @Configuration(value = "OidcJwtConfiguration", proxyBeanMethods = false)

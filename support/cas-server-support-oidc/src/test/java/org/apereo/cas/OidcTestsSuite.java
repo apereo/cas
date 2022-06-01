@@ -2,8 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticatorTests;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticatorTests;
-import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticatorTests;
-import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticatorTests;
+import org.apereo.cas.oidc.authn.OidcJwtAuthenticatorHMacTests;
+import org.apereo.cas.oidc.authn.OidcJwtAuthenticatorRsaTests;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicyTests;
@@ -55,6 +55,7 @@ import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutorTests;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenEncoderTests;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutorTests;
+import org.apereo.cas.oidc.util.OidcMessageSanitizerTests;
 import org.apereo.cas.oidc.util.OidcRequestSupportTests;
 import org.apereo.cas.oidc.web.DefaultOAuth20RequestParameterResolverTests;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGeneratorTests;
@@ -110,8 +111,8 @@ import org.junit.platform.suite.api.Suite;
     OidcRegisteredServiceUIActionTests.class,
     OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests.class,
     OidcRequestSupportTests.class,
-    OidcPrivateKeyJwtAuthenticatorTests.class,
-    OidcClientSecretJwtAuthenticatorTests.class,
+    OidcJwtAuthenticatorRsaTests.class,
+    OidcJwtAuthenticatorHMacTests.class,
     OidcEchoingWebFingerUserInfoRepositoryTests.class,
     OidcGroovyWebFingerUserInfoRepositoryTests.class,
     OidcServiceRegistryListenerTests.class,
@@ -178,6 +179,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultOAuth20RequestParameterResolverTests.class,
     OidcCasCallbackUrlResolverTests.class,
     OidcClientSecretValidatorTests.class,
+    OidcMessageSanitizerTests.class,
     OidcClientRegistrationRequestTranslatorTests.class,
     OidcPushedAuthorizationRequestTests.class,
     OidcDefaultJsonWebKeyStoreListenerTests.class,

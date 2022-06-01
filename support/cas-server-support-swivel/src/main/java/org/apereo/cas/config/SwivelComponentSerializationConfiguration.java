@@ -18,10 +18,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author Misagh Moayyed
  * @since 6.0.0
+ * @deprecated Since 6.6.
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "swivel")
 @AutoConfiguration
+@Deprecated(since = "6.6")
 public class SwivelComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "swivelComponentSerializationPlanConfigurer")

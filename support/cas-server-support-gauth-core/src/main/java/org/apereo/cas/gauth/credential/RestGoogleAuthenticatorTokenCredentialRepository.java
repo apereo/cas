@@ -45,9 +45,9 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     private final GoogleAuthenticatorMultifactorProperties gauth;
 
     public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-        final GoogleAuthenticatorMultifactorProperties gauth,
-        final CipherExecutor<String, String> tokenCredentialCipher,
-        final CipherExecutor<Number, Number> scratchCodesCipher) {
+                                                            final GoogleAuthenticatorMultifactorProperties gauth,
+                                                            final CipherExecutor<String, String> tokenCredentialCipher,
+                                                            final CipherExecutor<Number, Number> scratchCodesCipher) {
         super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.gauth = gauth;
     }
@@ -57,7 +57,9 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE, "id", id);
+            val headers = CollectionUtils.<String, String>wrap(
+                "Content-Type", MediaType.APPLICATION_JSON_VALUE,
+                "id", String.valueOf(id));
             headers.putAll(rest.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
@@ -93,8 +95,8 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         try {
             val rest = gauth.getRest();
 
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE,
-                "id", id, "username", username);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE,
+                "id", String.valueOf(id), "username", username);
             headers.putAll(rest.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -131,7 +133,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE, "username", username);
             headers.putAll(rest.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -168,7 +170,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, Object>wrap("Accept", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Accept", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(rest.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -210,12 +212,17 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         HttpResponse response = null;
         try {
             val account = encode(accountToUpdate);
-            val headers = new HashMap<String, Object>();
-            headers.put("Accept", MediaType.APPLICATION_JSON);
-            headers.put("username", CollectionUtils.wrap(account.getUsername()));
-            headers.put("validationCode", CollectionUtils.wrap(String.valueOf(account.getValidationCode())));
-            headers.put("secretKey", CollectionUtils.wrap(account.getSecretKey()));
-            headers.put("scratchCodes", account.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList()));
+            val headers = new HashMap<String, String>();
+            headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+            headers.put("username", account.getUsername());
+            headers.put("validationCode", String.valueOf(account.getValidationCode()));
+            headers.put("secretKey", account.getSecretKey());
+
+            val codes = account.getScratchCodes()
+                .stream()
+                .map(Number::toString)
+                .collect(Collectors.joining(","));
+            headers.put("scratchCodes", codes);
 
             headers.putAll(rest.getHeaders());
 
@@ -266,7 +273,9 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            val headers = CollectionUtils.<String, String>wrap(
+                "Accept", MediaType.APPLICATION_JSON_VALUE,
+                "username", username);
             headers.putAll(rest.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
@@ -286,7 +295,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "id", id);
+            val headers = CollectionUtils.<String, String>wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "id", id);
             headers.putAll(rest.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
@@ -306,7 +315,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, Object>wrap("Accept", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Accept", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(rest.getHeaders());
             val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -339,7 +348,8 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, Object>wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            val headers = CollectionUtils.<String, String>wrap(
+                "Accept", MediaType.APPLICATION_JSON_VALUE, "username", username);
             headers.putAll(rest.getHeaders());
 
             val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");

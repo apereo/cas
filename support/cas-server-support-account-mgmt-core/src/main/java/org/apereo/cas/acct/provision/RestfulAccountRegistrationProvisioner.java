@@ -41,9 +41,9 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
     public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Exception {
         HttpResponse response = null;
         try {
-            val headers = new HashMap<String, Object>();
-            headers.put("Content-Type", MediaType.APPLICATION_JSON);
-            headers.put("Accept", MediaType.APPLICATION_JSON);
+            val headers = new HashMap<String, String>();
+            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()

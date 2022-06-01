@@ -97,7 +97,7 @@ public class AccepttoApiUtils {
         }
 
         LOGGER.debug("Principal email address determined from attribute [{}] is [{}]", acceptto.getEmailAttribute(), email);
-        val parameters = CollectionUtils.<String, Object>wrap(
+        val parameters = CollectionUtils.<String, String>wrap(
             "uid", acceptto.getApplicationId(),
             "secret", acceptto.getSecret(),
             "email", email);
@@ -147,14 +147,14 @@ public class AccepttoApiUtils {
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         LOGGER.debug("Principal email address determined from attribute [{}] is [{}]", acceptto.getEmailAttribute(), email);
-        val parameters = CollectionUtils.<String, Object>wrap(
+        val parameters = CollectionUtils.<String, String>wrap(
             "application_uid", acceptto.getApplicationId(),
             "type", "Login",
             "ip_address", ClientInfoHolder.getClientInfo().getClientIpAddress(),
             "remote_ip_address", request.getRemoteAddr(),
             "message", acceptto.getMessage(),
             "session_id", sessionId,
-            "timeout", acceptto.getTimeout(),
+            "timeout", String.valueOf(acceptto.getTimeout()),
             "email", email);
 
         CookieUtils.getCookieFromRequest("jwt", request)
@@ -162,7 +162,7 @@ public class AccepttoApiUtils {
 
         val group = getUserGroup(authentication, acceptto);
         if (!group.isEmpty()) {
-            parameters.put("groups", group);
+            parameters.put("groups", group.get(0));
         }
 
         AccepttoWebflowUtils.getEGuardianUserId(requestContext)
@@ -170,14 +170,14 @@ public class AccepttoApiUtils {
 
         val currentCredential = WebUtils.getCredential(requestContext);
         if (currentCredential instanceof AccepttoEmailCredential) {
-            parameters.put("auth_type", 1);
+            parameters.put("auth_type", "1");
         }
 
         LOGGER.debug("Authentication API parameters are assembled as [{}]", parameters);
         HttpResponse response = null;
         try {
             val authzPayload = buildAuthorizationHeaderPayloadForAuthentication(acceptto);
-            val headers = CollectionUtils.<String, Object>wrap("Authorization", "Bearer " + authzPayload);
+            val headers = CollectionUtils.<String, String>wrap("Authorization", "Bearer " + authzPayload);
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(url)
