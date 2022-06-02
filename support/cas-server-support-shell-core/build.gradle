@@ -1,9 +1,4 @@
-project.ext["mainClassName"] = "org.apereo.cas.CasCommandLineShellApplication"
-project.ext["forceBootifulArtifact"] = true
-
-apply from: rootProject.file("gradle/springboot.gradle")
-
-description = "Apereo CAS Shell Support via Spring Shell"
+description = "Apereo CAS Shell Core Support via Spring Shell"
 
 dependencies {
     api project(":api:cas-server-core-api-services")
@@ -16,7 +11,6 @@ dependencies {
     implementation project(":core:cas-server-core-logging-api")
     implementation project(":core:cas-server-core-configuration-metadata-repository")
 
-    implementation project(":support:cas-server-support-shell-core")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-jpa-hibernate")
     implementation project(":support:cas-server-support-oauth-services")
@@ -28,7 +22,7 @@ dependencies {
     implementation project(":support:cas-server-support-ws-idp-api")
     implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-consent-api")
-    
+
     implementation libraries.springbootconfigmetadata
     implementation libraries.springshell
     implementation libraries.pac4jcore
@@ -41,12 +35,4 @@ dependencies {
     implementation libraries.opensaml
     implementation libraries.dropwizard
     implementation libraries.javaparser
-
-    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
-
-    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

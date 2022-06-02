@@ -5,11 +5,13 @@ import org.apereo.cas.metadata.CasConfigurationMetadataCatalog;
 import org.apereo.cas.metadata.CasReferenceProperty;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.Getter;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -32,6 +34,10 @@ import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -104,6 +110,10 @@ public class CasDocumentationApplication {
         feats.setRequired(false);
         options.addOption(feats);
 
+        var csh = new Option("csh", "shell", true, "Generate data for CAS command-line shell commands and groups");
+        csh.setRequired(false);
+        options.addOption(csh);
+
         new HelpFormatter().printHelp("CAS Documentation", options);
         var cmd = new DefaultParser().parse(options, args);
 
@@ -169,6 +179,71 @@ public class CasDocumentationApplication {
         if (StringUtils.equalsIgnoreCase("true", features)) {
             exportFeatureToggles(dataPath);
         }
+
+        var shell = cmd.getOptionValue("shell", "true");
+        if (StringUtils.equalsIgnoreCase("true", shell)) {
+            exportCommandlineShell(dataPath);
+        }
+    }
+
+    private static void exportCommandlineShell(final File dataPath) {
+        var parentPath = new File(dataPath, "shell");
+        if (parentPath.exists()) {
+            FileUtils.deleteQuietly(parentPath);
+        }
+        parentPath.mkdirs();
+        var urls = new ArrayList<>(ClasspathHelper.forPackage(CasShellCommand.NAMESPACE));
+        var reflections = new Reflections(new ConfigurationBuilder().setUrls(urls));
+        var subTypes = reflections.getTypesAnnotatedWith(ShellComponent.class, true);
+        var properties = new ArrayList<Map<?, ?>>();
+
+        subTypes.forEach(clazz -> {
+            var group = clazz.getAnnotation(ShellCommandGroup.class);
+            var methods = new LinkedHashMap();
+            for (var method : clazz.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(ShellMethod.class)) {
+                    var annotInstance = method.getAnnotation(ShellMethod.class);
+                    var cmd = new ShellCommand();
+
+                    cmd.parameters = new ArrayList<Map<String, String>>();
+                    var parameterAnnotations = method.getParameterAnnotations();
+                    for (var i = 0; i < parameterAnnotations.length; i++) {
+                        for (var j = 0; j < parameterAnnotations[i].length; j++) {
+                            var ann = (ShellOption) parameterAnnotations[i][j];
+                            var option = (ShellOption) ann;
+                            cmd.parameters.add(Map.of(
+                                "name", String.join(",", option.value()),
+                                "help", String.valueOf(option.help()),
+                                "optOut", String.valueOf(option.optOut()),
+                                "defaultValue", option.defaultValue()));
+                        }
+                    }
+
+                    cmd.description = annotInstance.value();
+                    cmd.name = String.join(",", annotInstance.key());
+                    cmd.group = group.value();
+                    methods.put(cmd.name, cmd);
+                }
+            }
+            properties.add(methods);
+        });
+
+        if (!properties.isEmpty()) {
+            var configFile = new File(parentPath, "config.yml");
+            CasConfigurationMetadataCatalog.export(configFile, properties);
+        }
+
+    }
+
+    @Getter
+    private static class ShellCommand {
+        public String name;
+
+        public String description;
+
+        public List parameters;
+
+        public String group;
     }
 
     private static String cleanDescription(final CasReferenceProperty property) {
@@ -208,7 +283,7 @@ public class CasDocumentationApplication {
                         map.put("module", feature.module());
                     }
                     map.put("enabledByDefault", feature.enabledByDefault());
-                    
+
                     map.put("property", propName);
                     properties.add(map);
                 }
