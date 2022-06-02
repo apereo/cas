@@ -7,7 +7,7 @@ const assert = require('assert');
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = `Basic ${buff.toString('base64')}`;
     console.log(`Authorization header: ${authzHeader}`);
-    let body = await cas.doRequest("https://localhost:8443/cas/oidc/oidcInitToken", "GET",
+    let body = await cas.doRequest("https://localhost:8443/cas/oidc/initToken", "GET",
         {
             'Authorization': authzHeader,
             'Content-Type': 'application/json',

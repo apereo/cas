@@ -139,7 +139,7 @@ public interface OidcConstants {
     /**
      * Registration endpoint URL to issue initial access tokens.
      */
-    String REGISTRATION_INITIAL_TOKEN_URL = "oidcInitToken";
+    String REGISTRATION_INITIAL_TOKEN_URL = "initToken";
 
     /**
      * The registration scope assigned to the initial access token,
