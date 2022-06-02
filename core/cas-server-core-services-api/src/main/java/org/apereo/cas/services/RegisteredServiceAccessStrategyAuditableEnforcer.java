@@ -87,6 +87,8 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             val registeredService = providedRegisteredService.get();
             val result = AuditableExecutionResult.builder()
                 .registeredService(registeredService)
+                .service(context.getService().orElse(null))
+                .authentication(context.getAuthentication().orElse(null))
                 .build();
             try {
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
@@ -190,7 +192,11 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             .or(() -> byServiceAndRegisteredService(context))
             .or(() -> byRegisteredService(context))
             .orElseGet(() -> {
-                val result = AuditableExecutionResult.builder().build();
+                val result = AuditableExecutionResult.builder()
+                    .registeredService(context.getRegisteredService().orElse(null))
+                    .service(context.getService().orElse(null))
+                    .authentication(context.getAuthentication().orElse(null))
+                    .build();
                 result.setException(new UnauthorizedServiceException(
                     UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized"));
                 return result;
