@@ -60,3 +60,18 @@ latter being optional, which represent the authenticated principal for CAS:
   }
 }
 ```
+  
+## Custom
+
+You may also define your own multifactor authentication service using the following
+bean definition and by implementing `CasSimpleMultifactorAuthenticationService`:
+
+```java
+@Bean
+public CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService() {
+    return new MyCasSimpleMultifactorAuthenticationService();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn
+more about how to register configurations into the CAS runtime.
