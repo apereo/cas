@@ -26,9 +26,7 @@ public class UmaUpdateResourceSetRegistrationEndpointControllerTests extends Bas
     @Test
     public void verifyRegistrationOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
-
         var body = createUmaResourceRegistrationRequest().toJson();
-
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
