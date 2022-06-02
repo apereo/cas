@@ -13,10 +13,12 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
@@ -55,12 +57,15 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         if (oidcProperties.getRegistration().getDynamicClientRegistrationMode().isProtected()) {
             val authProfile = new CommonProfile();
             val registration = getConfigurationContext().getCasProperties().getAuthn().getOidc().getRegistration();
-            authProfile.setId(registration.getInitialAccessTokenUser());
+            authProfile.setId(StringUtils.defaultIfBlank(registration.getInitialAccessTokenUser(),
+                RandomUtils.randomAlphabetic(8)));
             authProfile.addAttribute(Pac4jConstants.USERNAME, authProfile.getId());
             accessTokenClient.setCredentialsExtractor(new BasicAuthExtractor());
             val authenticator = new InMemoryProfileService<>(objects -> authProfile);
             authenticator.setPasswordEncoder(new SpringSecurityPasswordEncoder(NoOpPasswordEncoder.getInstance()));
-            authenticator.create(authProfile, registration.getInitialAccessTokenPassword());
+            authenticator.create(authProfile,
+                StringUtils.defaultIfBlank(registration.getInitialAccessTokenPassword(),
+                    RandomUtils.randomAlphabetic(8)));
             accessTokenClient.setAuthenticator(authenticator);
             accessTokenClient.setName(UUID.randomUUID().toString());
             accessTokenClient.init();
@@ -97,19 +102,19 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         }
         val results = accessTokenClient.getCredentials(webContext, getConfigurationContext().getSessionStore());
         return results.map(profile -> {
-            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(profile.getUserProfile().getId());
-            val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
-                .createService(casProperties.getServer().getPrefix());
+                val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(profile.getUserProfile().getId());
+                val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
+                    .createService(casProperties.getServer().getPrefix());
 
-            val holder = AccessTokenRequestContext.builder()
-                .authentication(DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build())
-                .service(service)
-                .grantType(OAuth20GrantTypes.NONE)
-                .responseType(OAuth20ResponseTypes.NONE)
-                .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope(),
-                    OidcConstants.CLIENT_REGISTRATION_SCOPE))
-                .build();
-            return generateInitialAccessToken(holder)
+                val holder = AccessTokenRequestContext.builder()
+                    .authentication(DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build())
+                    .service(service)
+                    .grantType(OAuth20GrantTypes.NONE)
+                    .responseType(OAuth20ResponseTypes.NONE)
+                    .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope(),
+                        OidcConstants.CLIENT_REGISTRATION_SCOPE))
+                    .build();
+                return generateInitialAccessToken(holder)
                     .map(accessToken -> {
                         val accessTokenResult = OAuth20TokenGeneratedResult.builder()
                             .registeredService(holder.getRegisteredService())
@@ -131,9 +136,9 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
 
                         return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
                     })
-                .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.BAD_REQUEST));
-        })
-        .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.UNAUTHORIZED));
+                    .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.BAD_REQUEST));
+            })
+            .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.UNAUTHORIZED));
     }
 
     protected ModelAndView getBadRequestResponseEntity(final HttpStatus status) {
