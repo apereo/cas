@@ -117,6 +117,12 @@ in the log message is also slightly changed to hide a few more characters in the
 Operations that handle token management, validation and generation for 
 the [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) 
 flow can now be outsourced to an external REST API, and need not be controlled or owned by CAS. 
+     
+### OpenID Connect Dynamic Client Registration
+
+When using [Dynamic Client Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html) for OpenID Connect
+in `PROTECTED` mode, the registration process now requires an initial access token that is specially authorized to make registration
+requests, where this token can be obtained via the `/oidc/initToken` endpoint.
 
 ### CAS Commandline Shell
 
