@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
@@ -85,10 +86,10 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
         val principal = authentication.getPrincipal();
 
         userProfile.setId(principal.getId());
-
         val attributes = new HashMap<String, Object>(principal.getAttributes());
         attributes.putAll(authentication.getAttributes());
         userProfile.addAttributes(attributes);
+        userProfile.addAttribute(OAuth20Constants.CLIENT_ID, accessToken.getClientId());
 
         LOGGER.trace("Built user profile based on access token [{}] is [{}]", accessToken, userProfile);
         return userProfile;

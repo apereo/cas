@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.web.authn;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
@@ -49,6 +50,7 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator {
         profile.addAttributes(attributes);
         profile.addPermissions(at.getScopes());
         profile.addAttribute(OAuth20AccessToken.class.getName(), at);
+        profile.addAttribute(OAuth20Constants.CLIENT_ID, at.getClientId());
 
         LOGGER.debug("Authenticated access token [{}]", profile);
         credentials.setUserProfile(profile);
