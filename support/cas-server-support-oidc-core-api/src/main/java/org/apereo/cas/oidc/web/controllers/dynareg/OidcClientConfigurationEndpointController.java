@@ -52,7 +52,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleRequestInternal(
-        @RequestParam(name = OidcConstants.CLIENT_REGISTRATION_CLIENT_ID)
+        @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
 
@@ -86,7 +86,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleUpdates(
-        @RequestParam(name = OidcConstants.CLIENT_REGISTRATION_CLIENT_ID)
+        @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         @RequestBody(required = false)
         final String jsonInput,

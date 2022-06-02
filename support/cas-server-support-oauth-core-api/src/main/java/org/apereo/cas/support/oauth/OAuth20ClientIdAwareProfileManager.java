@@ -50,7 +50,8 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
             .stream()
             .filter(it -> {
                 val profile = it.getValue();
-                return StringUtils.equals((String) profile.getAttribute(SESSION_CLIENT_ID), clientId);
+                return StringUtils.isBlank(clientId)
+                       || StringUtils.equals((String) profile.getAttribute(SESSION_CLIENT_ID), clientId);
             })
             .collect(Collectors.toMap(
                 Map.Entry::getKey,

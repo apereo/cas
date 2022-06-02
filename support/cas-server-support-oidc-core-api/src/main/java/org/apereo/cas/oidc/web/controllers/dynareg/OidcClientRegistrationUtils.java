@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.CollectionUtils;
@@ -109,7 +110,7 @@ public class OidcClientRegistrationUtils {
                                                    final String serverPrefix) throws URISyntaxException {
         return new URIBuilder(serverPrefix
             .concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CLIENT_CONFIGURATION_URL))
-            .addParameter(OidcConstants.CLIENT_REGISTRATION_CLIENT_ID, registeredService.getClientId())
+            .addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
             .build()
             .toString();
     }
