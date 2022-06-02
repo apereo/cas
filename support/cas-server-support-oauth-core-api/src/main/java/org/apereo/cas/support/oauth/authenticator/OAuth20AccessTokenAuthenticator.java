@@ -1,11 +1,13 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
@@ -16,6 +18,8 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * This is {@link OAuth20AccessTokenAuthenticator}.
@@ -25,9 +29,14 @@ import java.util.HashMap;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
+@Setter
 public class OAuth20AccessTokenAuthenticator implements Authenticator {
-    private final TicketRegistry ticketRegistry;
+    private final CentralAuthenticationService centralAuthenticationService;
+
     private final JwtBuilder accessTokenJwtBuilder;
+
+    private Set<String> requiredScopes = new LinkedHashSet<>();
 
     private String extractAccessTokenFrom(final TokenCredentials tokenCredentials) {
         return OAuth20JwtAccessTokenEncoder.builder()
@@ -42,11 +51,17 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
         val token = extractAccessTokenFrom(tokenCredentials);
         LOGGER.trace("Received access token [{}] for authentication", token);
 
-        val accessToken = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
+        val accessToken = centralAuthenticationService.getTicket(token, OAuth20AccessToken.class);
         if (accessToken == null || accessToken.isExpired()) {
             LOGGER.error("Provided access token [{}] is either not found in the ticket registry or has expired", token);
             return;
         }
+
+        if (!requiredScopes.isEmpty() && !accessToken.getScopes().containsAll(requiredScopes)) {
+            LOGGER.error("Unable to authenticate access token without required scopes [{}]", requiredScopes);
+            return;
+        }
+
         val profile = buildUserProfile(tokenCredentials, webContext, accessToken);
         if (profile != null) {
             LOGGER.trace("Final user profile based on access token [{}] is [{}]", accessToken, profile);

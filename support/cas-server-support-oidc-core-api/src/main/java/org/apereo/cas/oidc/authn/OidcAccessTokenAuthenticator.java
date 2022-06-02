@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.authn;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -28,20 +28,21 @@ import java.util.Optional;
 @Slf4j
 public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticator {
     private final OAuth20TokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
+
     private final ServicesManager servicesManager;
 
-    public OidcAccessTokenAuthenticator(final TicketRegistry ticketRegistry,
-                                        final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
-                                        final ServicesManager servicesManager,
-                                        final JwtBuilder accessTokenJwtBuilder) {
-        super(ticketRegistry, accessTokenJwtBuilder);
+    public OidcAccessTokenAuthenticator(
+        final CentralAuthenticationService centralAuthenticationService,
+        final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
+        final ServicesManager servicesManager,
+        final JwtBuilder accessTokenJwtBuilder) {
+        super(centralAuthenticationService, accessTokenJwtBuilder);
         this.idTokenSigningAndEncryptionService = signingAndEncryptionService;
         this.servicesManager = servicesManager;
     }
-
     @Override
     protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
-        final WebContext webContext, final OAuth20AccessToken accessToken) {
+                                             final WebContext webContext, final OAuth20AccessToken accessToken) {
         try {
             val profile = super.buildUserProfile(tokenCredentials, webContext, accessToken);
             validateIdTokenIfAny(accessToken, profile);

@@ -424,9 +424,9 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client basicAuthClient(
-            @Qualifier("oAuthClientAuthenticator")
-            final Authenticator oAuthClientAuthenticator) {
-            val basicAuthClient = new DirectBasicAuthClient(oAuthClientAuthenticator);
+            @Qualifier("oauthClientAuthenticator")
+            final Authenticator oauthClientAuthenticator) {
+            val basicAuthClient = new DirectBasicAuthClient(oauthClientAuthenticator);
             basicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
             basicAuthClient.init();
             return basicAuthClient;
@@ -435,9 +435,9 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client directFormClient(
-            @Qualifier("oAuthClientAuthenticator")
-            final Authenticator oAuthClientAuthenticator) {
-            val directFormClient = new DirectFormClient(oAuthClientAuthenticator);
+            @Qualifier("oauthClientAuthenticator")
+            final Authenticator oauthClientAuthenticator) {
+            val directFormClient = new DirectFormClient(oauthClientAuthenticator);
             directFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM);
             directFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
             directFormClient.setPasswordParameter(OAuth20Constants.CLIENT_SECRET);
@@ -485,22 +485,21 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client userFormClient(
-            @Qualifier("oAuthUserAuthenticator")
-            final Authenticator oAuthUserAuthenticator) {
-            val userFormClient = new DirectFormClient(oAuthUserAuthenticator);
+            @Qualifier("oauthUserAuthenticator")
+            final Authenticator oauthUserAuthenticator) {
+            val userFormClient = new DirectFormClient(oauthUserAuthenticator);
             userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
             userFormClient.init();
             return userFormClient;
         }
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client accessTokenClient(
-            @Qualifier("oAuthAccessTokenAuthenticator")
-            final Authenticator oAuthAccessTokenAuthenticator) {
+            @Qualifier("oauthAccessTokenAuthenticator")
+            final Authenticator oauthAccessTokenAuthenticator) {
             val accessTokenClient = new HeaderClient();
             accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
-            accessTokenClient.setAuthenticator(oAuthAccessTokenAuthenticator);
+            accessTokenClient.setAuthenticator(oauthAccessTokenAuthenticator);
             accessTokenClient.setName(Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN);
             accessTokenClient.init();
             return accessTokenClient;
@@ -1300,10 +1299,10 @@ public class CasOAuth20Configuration {
                 oauthRequestParameterResolver, casProperties);
         }
 
-        @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
+        @ConditionalOnMissingBean(name = "oauthClientAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Authenticator oAuthClientAuthenticator(
+        public Authenticator oauthClientAuthenticator(
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -1381,10 +1380,10 @@ public class CasOAuth20Configuration {
                 oauth20ClientSecretValidator);
         }
 
-        @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
+        @ConditionalOnMissingBean(name = "oauthUserAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Authenticator oAuthUserAuthenticator(
+        public Authenticator oauthUserAuthenticator(
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("oauthDistributedSessionStore")
@@ -1406,17 +1405,16 @@ public class CasOAuth20Configuration {
                 oauth20ClientSecretValidator);
         }
 
-        @ConditionalOnMissingBean(name = "oAuthAccessTokenAuthenticator")
+        @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Authenticator oAuthAccessTokenAuthenticator(
+        public Authenticator oauthAccessTokenAuthenticator(
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry) {
-            return new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
+            return new OAuth20AccessTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
         }
-
     }
 
     @Configuration(value = "CasOAuth20AuditConfiguration", proxyBeanMethods = false)

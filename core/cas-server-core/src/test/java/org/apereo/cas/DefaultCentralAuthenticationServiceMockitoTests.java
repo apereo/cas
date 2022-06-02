@@ -155,7 +155,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
                 CipherExecutor.noOpOfStringToString(), true, mock(ServicesManager.class)));
         factory.addTicketFactory(TransientSessionTicket.class,
             new DefaultTransientSessionTicketFactory(neverExpiresExpirationPolicyBuilder()));
-        assertEquals(Ticket.class, factory.getTicketType());
+        assertSame(Ticket.class, factory.getTicketType());
         return factory;
     }
 

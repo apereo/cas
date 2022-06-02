@@ -98,7 +98,7 @@ public class EncodingUtilsTests {
         factory.setAlgorithm(RsaKeyUtil.RSA);
         factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
         factory.setSingleton(false);
-        assertEquals(PrivateKey.class, factory.getObjectType());
+        assertSame(PrivateKey.class, factory.getObjectType());
         return factory.getObject();
     }
 
@@ -106,7 +106,7 @@ public class EncodingUtilsTests {
     private static PublicKey getPublicKey() {
         val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/RSA2048Public.key"), RsaKeyUtil.RSA);
         factory.setSingleton(false);
-        assertEquals(PublicKey.class, factory.getObjectType());
+        assertSame(PublicKey.class, factory.getObjectType());
         return factory.getObject();
     }
 }

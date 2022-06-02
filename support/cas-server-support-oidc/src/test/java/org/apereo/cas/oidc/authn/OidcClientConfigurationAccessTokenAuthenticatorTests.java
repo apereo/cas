@@ -30,28 +30,31 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
     public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);
         val at = getAccessToken();
         when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(credentials, ctx, JEESessionStore.INSTANCE);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
         assertEquals("casuser", userProfile.getId());
     }
 
+    private OidcClientConfigurationAccessTokenAuthenticator getAuthenticator() {
+        return new OidcClientConfigurationAccessTokenAuthenticator(
+            oidcConfigurationContext.getCentralAuthenticationService(), oidcAccessTokenJwtBuilder);
+    }
+
     @Test
     public void verifyFailsOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);
         val at = getAccessToken();
         when(at.getScopes()).thenThrow(new IllegalArgumentException());
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(credentials, ctx, JEESessionStore.INSTANCE);
         val userProfile = credentials.getUserProfile();
         assertNull(userProfile);
     }

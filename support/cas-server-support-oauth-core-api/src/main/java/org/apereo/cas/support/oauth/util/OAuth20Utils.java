@@ -85,8 +85,8 @@ public class OAuth20Utils {
      * @param description the description
      * @return the error response body
      */
-    public static Map<Object, Object> getErrorResponseBody(final String error, final String description) {
-        val model = CollectionUtils.wrap(OAuth20Constants.ERROR, error);
+    public static Map<String, Object> getErrorResponseBody(final String error, final String description) {
+        val model = CollectionUtils.<String, Object>wrap(OAuth20Constants.ERROR, error);
         if (StringUtils.isNotBlank(description)) {
             model.put(OAuth20Constants.ERROR_DESCRIPTION, description);
         }

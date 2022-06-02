@@ -22,7 +22,7 @@ public class ProxyGrantingTicketExpirationPolicyBuilderTests {
         val input = new ProxyGrantingTicketExpirationPolicyBuilder(
             new TicketGrantingTicketExpirationPolicyBuilder(new CasConfigurationProperties()),
             new CasConfigurationProperties());
-        assertEquals(ProxyGrantingTicket.class, input.getTicketType());
+        assertSame(ProxyGrantingTicket.class, input.getTicketType());
         assertNotNull(input.buildTicketExpirationPolicy());
     }
 }

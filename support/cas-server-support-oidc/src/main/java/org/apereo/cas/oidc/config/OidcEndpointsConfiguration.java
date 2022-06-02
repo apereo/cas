@@ -140,13 +140,9 @@ public class OidcEndpointsConfiguration {
         public HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor(
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            val clients = String.join(",",
-                Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
-                Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN,
-                Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
-                Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
-
-            val interceptor = new SecurityInterceptor(oauthSecConfig, clients, JEEHttpActionAdapter.INSTANCE);
+            val interceptor = new SecurityInterceptor(oauthSecConfig,
+                Authenticators.CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN,
+                JEEHttpActionAdapter.INSTANCE);
             interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
             return interceptor;
@@ -369,6 +365,7 @@ public class OidcEndpointsConfiguration {
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcInitialAccessTokenController(oidcConfigurationContext);
         }
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcJwksController")
         @Bean

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -85,6 +86,9 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected ServicesManager servicesManager;
 
     @Autowired
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
+    protected CentralAuthenticationService centralAuthenticationService;
+    @Autowired
     @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     protected AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -105,8 +109,8 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected PrincipalResolver defaultPrincipalResolver;
 
     @Autowired
-    @Qualifier("oAuthClientAuthenticator")
-    protected Authenticator oAuthClientAuthenticator;
+    @Qualifier("oauthClientAuthenticator")
+    protected Authenticator oauthClientAuthenticator;
 
     @Autowired
     @Qualifier("oauth20ClientSecretValidator")

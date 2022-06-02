@@ -35,7 +35,7 @@ public class TransientSessionTicketExpirationPolicyBuilderTests {
     @Test
     public void verifyType() {
         val builder = new TransientSessionTicketExpirationPolicyBuilder(casProperties);
-        assertEquals(TransientSessionTicket.class, builder.getTicketType());
+        assertSame(TransientSessionTicket.class, builder.getTicketType());
         val policy = builder.buildTicketExpirationPolicy();
         assertNotNull(policy);
 
