@@ -30,7 +30,7 @@ public class BeanSupplierTests {
             .alwaysMatch()
             .supply(CipherExecutor::noOp)
             .get();
-        assertEquals(noOp.getClass(), CipherExecutor.noOp().getClass());
+        assertSame(noOp.getClass(), CipherExecutor.noOp().getClass());
     }
 
     @Test
@@ -39,7 +39,7 @@ public class BeanSupplierTests {
             .neverMatch()
             .otherwise(CipherExecutor::noOp)
             .get();
-        assertEquals(noOp.getClass(), CipherExecutor.noOp().getClass());
+        assertSame(noOp.getClass(), CipherExecutor.noOp().getClass());
     }
 
     @Test
@@ -48,7 +48,7 @@ public class BeanSupplierTests {
             .alwaysMatch()
             .supply(CipherExecutor::noOp)
             .get();
-        assertEquals(noOp.getClass(), CipherExecutor.noOp().getClass());
+        assertSame(noOp.getClass(), CipherExecutor.noOp().getClass());
     }
 
     @Test

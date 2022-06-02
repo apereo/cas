@@ -12,6 +12,8 @@ import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,13 +30,11 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val token = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), getClaims());
-        val auth = new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService,
-            servicesManager, oidcAccessTokenJwtBuilder);
         val at = getAccessToken(token, "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
 
-        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(credentials, ctx, JEESessionStore.INSTANCE);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
@@ -46,19 +46,37 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         assertTrue(userProfile.containsAttribute("aud"));
         assertTrue(userProfile.containsAttribute("email"));
 
-        assertEquals(OAuth20AccessToken.class, accessTokenExpirationPolicy.getTicketType());
+        assertSame(OAuth20AccessToken.class, accessTokenExpirationPolicy.getTicketType());
+    }
+
+    private OidcAccessTokenAuthenticator getAuthenticator() {
+        return new OidcAccessTokenAuthenticator(
+            oidcConfigurationContext.getCentralAuthenticationService(), oidcTokenSigningAndEncryptionService,
+            servicesManager, oidcAccessTokenJwtBuilder);
     }
 
     @Test
     public void verifyFailsOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        val auth = new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService,
-            servicesManager, oidcAccessTokenJwtBuilder);
         val at = getAccessToken("helloworld", "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(credentials, ctx, JEESessionStore.INSTANCE);
+        assertNull(credentials.getUserProfile());
+    }
+
+    @Test
+    public void verifyFailsMissingScopes() throws Exception {
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        val token = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), getClaims());
+        val at = getAccessToken(token, "clientid");
+        ticketRegistry.addTicket(at);
+        val credentials = new TokenCredentials(at.getId());
+        val authn = getAuthenticator();
+        authn.setRequiredScopes(Set.of("required-scope"));
+        authn.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNull(credentials.getUserProfile());
     }
 }

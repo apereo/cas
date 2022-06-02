@@ -39,7 +39,7 @@ public class X509CertificateCredentialJsonSerializerTests {
         assertNotNull(obj);
 
         val ser = new X509CertificateCredentialJsonSerializer();
-        assertEquals(X509CertificateCredential.class, ser.handledType());
+        assertSame(X509CertificateCredential.class, ser.handledType());
     }
 
     @Test

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -98,7 +99,9 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      */
     protected ModelAndView generateResponseForAccessToken(final OAuth20AccessTokenResponseResult result) {
         val model = getAccessTokenResponseModel(result);
-        return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
+        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
+        mv.setStatus(HttpStatus.OK);
+        return mv;
     }
 
     /**

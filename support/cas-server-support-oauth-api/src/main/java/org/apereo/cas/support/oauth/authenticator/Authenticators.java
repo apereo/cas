@@ -19,6 +19,12 @@ public interface Authenticators {
      * OAuth authn for access token authn.
      */
     String CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN = "clientAccessTokenAuth";
+
+    /**
+     * OAuth authn for dynamic registration authn in protected mode..
+     */
+    String CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN = "clientDynamicRegistrationAuth";
+
     /**
      * OAuth authn for refresh token authn for public clients.
      */

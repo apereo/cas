@@ -23,7 +23,7 @@ public class BasicX509CredentialFactoryBeanTests {
     @Test
     public void verifyNoCert() {
         val factory = new BasicX509CredentialFactoryBean();
-        assertEquals(BasicX509Credential.class, factory.getObjectType());
+        assertSame(BasicX509Credential.class, factory.getObjectType());
         assertTrue(factory.isSingleton());
         assertThrows(BeanCreationException.class, factory::getObject);
     }

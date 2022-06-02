@@ -9,8 +9,9 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -26,9 +27,10 @@ import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,16 +67,26 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         }
     }
 
+    /**
+     * Handle request..
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
     @GetMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL,
         "/**/" + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity handleRequestInternal(
+    public ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)) {
-            val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
+            val mv = new ModelAndView(new MappingJackson2JsonView(), body);
+            mv.setStatus(HttpStatus.BAD_REQUEST);
+            return mv;
         }
         val casProperties = getConfigurationContext().getCasProperties();
         val oidcProperties = casProperties.getAuthn().getOidc();
@@ -85,37 +97,49 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         }
         val results = accessTokenClient.getCredentials(webContext, getConfigurationContext().getSessionStore());
         return results.map(profile -> {
-                val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(profile.getUserProfile().getId());
-                val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
-                    .createService(casProperties.getServer().getPrefix());
+            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(profile.getUserProfile().getId());
+            val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
+                .createService(casProperties.getServer().getPrefix());
 
-                val holder = AccessTokenRequestContext.builder()
-                    .authentication(DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build())
-                    .service(service)
-                    .grantType(OAuth20GrantTypes.NONE)
-                    .responseType(OAuth20ResponseTypes.NONE)
-                    .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope(),
-                        OidcConstants.CLIENT_REGISTRATION_SCOPE))
-                    .build();
-                return generateInitialAccessToken(holder)
+            val holder = AccessTokenRequestContext.builder()
+                .authentication(DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build())
+                .service(service)
+                .grantType(OAuth20GrantTypes.NONE)
+                .responseType(OAuth20ResponseTypes.NONE)
+                .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope(),
+                    OidcConstants.CLIENT_REGISTRATION_SCOPE))
+                .build();
+            return generateInitialAccessToken(holder)
                     .map(accessToken -> {
-                        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
+                        val accessTokenResult = OAuth20TokenGeneratedResult.builder()
+                            .registeredService(holder.getRegisteredService())
                             .accessToken(accessToken)
+                            .grantType(holder.getGrantType())
+                            .responseType(holder.getResponseType())
+                            .build();
+
+                        val tokenResult = OAuth20AccessTokenResponseResult.builder()
                             .registeredService(holder.getRegisteredService())
                             .service(holder.getService())
-                            .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
-                            .casProperties(casProperties)
-                            .build()
-                            .encode();
-                        return new ResponseEntity<>(encodedAccessToken, HttpStatus.CREATED);
+                            .accessTokenTimeout(accessToken.getExpiresIn())
+                            .responseType(accessToken.getResponseType())
+                            .casProperties(getConfigurationContext().getCasProperties())
+                            .generatedToken(accessTokenResult)
+                            .grantType(accessToken.getGrantType())
+                            .userProfile(profile.getUserProfile())
+                            .build();
+
+                        return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
                     })
-                    .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.BAD_REQUEST));
-            })
-            .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.UNAUTHORIZED));
+                .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.BAD_REQUEST));
+        })
+        .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.UNAUTHORIZED));
     }
 
-    protected ResponseEntity<String> getBadRequestResponseEntity(final HttpStatus status) {
-        return new ResponseEntity<>(status);
+    protected ModelAndView getBadRequestResponseEntity(final HttpStatus status) {
+        val mv = new ModelAndView(new MappingJackson2JsonView());
+        mv.setStatus(status);
+        return mv;
     }
 
     protected Optional<OAuth20AccessToken> generateInitialAccessToken(final AccessTokenRequestContext holder) {

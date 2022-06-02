@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
@@ -38,7 +39,7 @@ public class OidcInitialAccessTokenControllerTests {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.NOT_ACCEPTABLE, entity.getStatusCode());
+            assertEquals(HttpStatus.NOT_ACCEPTABLE, entity.getStatus());
         }
     }
 
@@ -61,7 +62,7 @@ public class OidcInitialAccessTokenControllerTests {
             val response = new MockHttpServletResponse();
             request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
             val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
+            assertEquals(HttpStatus.BAD_REQUEST, entity.getStatus());
         }
 
         @Test
@@ -70,7 +71,8 @@ public class OidcInitialAccessTokenControllerTests {
             val response = new MockHttpServletResponse();
             request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
             val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.CREATED, entity.getStatusCode());
+            assertEquals(HttpStatus.OK, entity.getStatus());
+            assertTrue(entity.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         }
 
         @Test
@@ -79,7 +81,7 @@ public class OidcInitialAccessTokenControllerTests {
             val response = new MockHttpServletResponse();
             request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:unknown"));
             val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
+            assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatus());
         }
 
         @Test
@@ -87,7 +89,7 @@ public class OidcInitialAccessTokenControllerTests {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
+            assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatus());
         }
     }
 }

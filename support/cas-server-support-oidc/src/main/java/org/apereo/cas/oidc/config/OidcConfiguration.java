@@ -130,6 +130,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link OidcConfiguration}.
@@ -435,15 +436,30 @@ public class OidcConfiguration {
         public OAuth20AuthenticationClientProvider oidcClientConfigurationAuthenticationClientProvider(
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry) {
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
             return () -> {
                 val accessTokenClient = new HeaderClient();
                 accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
-                accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder));
+                accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder));
                 accessTokenClient.setName(OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
                 accessTokenClient.init();
                 return accessTokenClient;
+            };
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20AuthenticationClientProvider oidcDynamicRegistrationAuthenticationClientProvider(
+            @Qualifier("oidcDynamicRegistrationAuthenticator")
+            final Authenticator oidcDynamicRegistrationAuthenticator) {
+            return () -> {
+                val registrationClient = new HeaderClient();
+                registrationClient.setCredentialsExtractor(new BearerAuthExtractor());
+                registrationClient.setAuthenticator(oidcDynamicRegistrationAuthenticator);
+                registrationClient.setName(Authenticators.CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN);
+                registrationClient.init();
+                return registrationClient;
             };
         }
 
@@ -485,11 +501,30 @@ public class OidcConfiguration {
             final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) throws Exception {
-            return new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
+            return new OidcAccessTokenAuthenticator(centralAuthenticationService,
+                oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
+        }
+
+        @ConditionalOnMissingBean(name = "oidcDynamicRegistrationAuthenticator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Authenticator oidcDynamicRegistrationAuthenticator(
+            @Qualifier("oidcTokenSigningAndEncryptionService")
+            final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
+            @Qualifier("accessTokenJwtBuilder")
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) throws Exception {
+            val authenticator = new OidcAccessTokenAuthenticator(centralAuthenticationService,
+                oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
+            authenticator.setRequiredScopes(Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+            return authenticator;
         }
     }
 

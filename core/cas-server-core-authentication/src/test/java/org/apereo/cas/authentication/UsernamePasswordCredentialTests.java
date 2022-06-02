@@ -44,7 +44,7 @@ public class UsernamePasswordCredentialTests {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val input = new UsernamePasswordCredential("casuser", "Mellon", StringUtils.EMPTY, Map.of());
         assertTrue(input.isValid());
-        assertEquals(UsernamePasswordCredential.class, input.getClass());
+        assertSame(UsernamePasswordCredential.class, input.getClass());
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
