@@ -5,7 +5,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 
 import lombok.RequiredArgsConstructor;
 
-import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -17,31 +16,30 @@ import java.util.stream.Stream;
  * @since 6.5.0
  */
 @RequiredArgsConstructor
-public abstract class BaseMappableThrottledSubmissionsStore implements ThrottledSubmissionsStore {
+public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledSubmission>
+    implements ThrottledSubmissionsStore<T> {
     /**
      * The backend map that tracks the submission attempts.
      */
-    protected final Map<String, ZonedDateTime> backingMap;
+    protected final Map<String, T> backingMap;
 
     @Override
-    public void put(final String key, final ZonedDateTime value) {
-        backingMap.put(key, value);
+    public void put(final T submission) {
+        backingMap.put(submission.getKey(), submission);
     }
 
     @Override
-    public ZonedDateTime get(final String key) {
+    public T get(final String key) {
         return backingMap.get(key);
     }
 
     @Override
-    public Stream<ThrottledSubmission> entries() {
-        return backingMap.entrySet().stream()
-            .map(entry -> new ThrottledSubmission(entry.getKey(), entry.getValue()));
+    public Stream<T> entries() {
+        return backingMap.values().stream();
     }
 
     @Override
-    public void removeIf(final Predicate<ThrottledSubmission> condition) {
-        backingMap.entrySet()
-            .removeIf(entry -> condition.test(new ThrottledSubmission(entry.getKey(), entry.getValue())));
+    public void removeIf(final Predicate<T> condition) {
+        backingMap.entrySet().removeIf(entry -> condition.test(entry.getValue()));
     }
 }

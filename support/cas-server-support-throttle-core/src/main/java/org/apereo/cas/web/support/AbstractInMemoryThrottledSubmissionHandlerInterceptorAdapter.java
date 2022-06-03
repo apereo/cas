@@ -24,13 +24,13 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
-    private final ThrottledSubmissionsStore submissionsStore;
+    private final ThrottledSubmissionsStore<ThrottledSubmission> submissionsStore;
 
     protected AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(
         final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-        final ThrottledSubmissionsStore ipMap) {
+        final ThrottledSubmissionsStore submissionsStore) {
         super(configurationContext);
-        this.submissionsStore = ipMap;
+        this.submissionsStore = submissionsStore;
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     public void recordSubmissionFailure(final HttpServletRequest request) {
         val key = constructKey(request);
         LOGGER.debug("Recording submission failure [{}]", key);
-        this.submissionsStore.put(key, ZonedDateTime.now(ZoneOffset.UTC));
+        submissionsStore.put(ThrottledSubmission.builder().key(key).build());
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         LOGGER.trace("Throttling threshold key is [{}] with submission threshold [{}]", key, getThresholdRate());
         val last = this.submissionsStore.get(key);
         LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, last);
-        return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate();
+        return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last.getValue()) > getThresholdRate();
     }
 
     @Override

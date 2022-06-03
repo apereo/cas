@@ -86,7 +86,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
                 registeredService, provider, request);
 
             val recordedRequestUrl = webServer.takeRequest().getRequestUrl();
-            assertEquals(recordedRequestUrl.queryParameter("principal"), "casuser");
+            assertEquals("casuser", recordedRequestUrl.queryParameter("principal"));
             assertEquals(recordedRequestUrl.queryParameter("service"), registeredService.getServiceId());
             assertEquals(recordedRequestUrl.queryParameter("provider"), provider.getId());
             assertTrue(res);

@@ -1,11 +1,11 @@
 package org.apereo.cas.throttle;
 
+import org.apereo.cas.web.support.ThrottledSubmission;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +22,7 @@ public class ConcurrentThrottledSubmissionsStoreTests {
     public void verifyOperation() {
         val store = new ConcurrentThrottledSubmissionsStore();
         val key = UUID.randomUUID().toString();
-        store.put(key, ZonedDateTime.now(Clock.systemUTC()));
+        store.put(ThrottledSubmission.builder().key(key).build());
         assertNotNull(store.get(key));
         assertEquals(1, store.entries().count());
         store.removeIf(entry -> entry.getKey().equals(key));
