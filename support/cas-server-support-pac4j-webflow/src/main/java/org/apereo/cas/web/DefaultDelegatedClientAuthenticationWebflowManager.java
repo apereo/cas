@@ -227,17 +227,16 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      */
     protected Map<String, Serializable> buildTicketProperties(final WebContext webContext) {
         val properties = new HashMap<String, Serializable>();
-
         val themeParamName = configContext.getCasProperties().getTheme().getParamName();
         val localParamName = configContext.getCasProperties().getLocale().getParamName();
 
         properties.put(themeParamName, webContext.getRequestParameter(themeParamName)
-            .map(String::valueOf).orElse(StringUtils.EMPTY));
+            .map(String::valueOf).orElse(null));
         properties.put(localParamName, webContext.getRequestParameter(localParamName)
-            .map(String::valueOf).orElse(StringUtils.EMPTY));
+            .map(String::valueOf).orElse(null));
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
             webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)
-                .map(String::valueOf).orElse(StringUtils.EMPTY));
+                .map(String::valueOf).orElse(null));
         LOGGER.debug("Built ticket properties [{}]", properties);
         return properties;
     }
