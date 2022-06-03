@@ -106,8 +106,7 @@ specially if the original attribute is *mapped* to a different name.
 ## InCommon Research and Scholarship
 
 A specific attribute release policy is available to release 
-the [attribute bundles](https://spaces.at.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
-needed for InCommon Research and Scholarship service providers using the entity 
+the attribute bundles needed for InCommon Research and Scholarship service providers using the entity 
 attribute value `http://id.incommon.org/category/research-and-scholarship`:
 
 ```json

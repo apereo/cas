@@ -8,14 +8,13 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
+import okhttp3.mockwebserver.MockResponse;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import okhttp3.mockwebserver.MockResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -76,7 +75,6 @@ public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
             val port = webServer.getPort();
             val response = new MockResponse().setResponseCode(HttpStatus.ACCEPTED.value());
             webServer.enqueue(response);
-            webServer.start();
 
             val props = new MultifactorAuthenticationProviderBypassProperties();
             props.getRest().setUrl("http://localhost:" + port);

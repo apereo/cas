@@ -248,8 +248,8 @@ Provides an opaque identifier for the username.
 ## Anonymous / Persistent
 
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
-of the [eduPersonTargetedID](https://spaces.at.internet2.edu/display/federation/Persistent+Identifier+Support) attribute.
-The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found, the authenticated principal id is used.
+of the `eduPersonTargetedID` attribute. The generated id may be based off of an existing principal
+attribute. If left unspecified or attribute not found, the authenticated principal id is used.
 
 ```json
 {
