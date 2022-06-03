@@ -29,3 +29,48 @@ Be sure to pick the right version of the JCE for your Java version. Java version
 Note that the [WAR Overlay deployment strategy](WAR-Overlay-Installation.html) should already be equipped with this 
 functionality. You should not have to do anything special and extra to interact with the shell. See the relevant 
 overlay documentation for more info on how to invoke and work with the shell.
+
+## Shell Commands
+
+The following commands are available and exposed by the CAS command-line shell.
+
+<div>
+
+{% assign allCommands = site.data[siteDataVersion]["shell"] %}
+{% for cfg in allCommands %}
+    {% assign configBlock = cfg[1] %}
+    {% for config in configBlock %}
+    	{% for cmdBlock in config %}
+			{% assign cmd = cmdBlock[1] %}
+			<h3><code>{{ cmd.name }}</code></h3>
+			<p>{{ cmd.description }}</p>
+			<table class="cas-datatable paginated-table">
+			    <thead>
+			        <tr>
+			          <th>Name</th>
+			          <th>Description</th>
+			          <th>Default</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			        {% for param in cmd.parameters %}
+			        	<tr>
+			                <td>
+			                    <code>{{ param.name }}</code>
+			                </td>
+			                <td>
+			                    <code>{{ param.help }}</code>
+			                </td>
+			                <td>
+			                    <code>{{ param.defaultValue }}</code>
+			                </td>
+			            </tr>
+			        {% endfor %}
+			    </tbody>
+			</table>
+
+    	{% endfor %}
+    {% endfor %}
+{% endfor %}
+
+</div>
