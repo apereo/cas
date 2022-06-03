@@ -1472,6 +1472,8 @@ ext.libraries = [
                     exclude(group: "org.mockito", module: "mockito-core")
                     exclude(group: "org.junit.jupiter", module: "junit-jupiter-api")
                 },
+                dependencies.create("com.squareup.okhttp3:mockwebserver:$okhttp3Version") {
+                },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-params:$junitVersion") {
