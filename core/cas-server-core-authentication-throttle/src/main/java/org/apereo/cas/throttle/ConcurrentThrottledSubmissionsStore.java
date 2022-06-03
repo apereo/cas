@@ -1,5 +1,7 @@
 package org.apereo.cas.throttle;
 
+import org.apereo.cas.web.support.ThrottledSubmission;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -8,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-public class ConcurrentThrottledSubmissionsStore extends BaseMappableThrottledSubmissionsStore {
+public class ConcurrentThrottledSubmissionsStore extends BaseMappableThrottledSubmissionsStore<ThrottledSubmission> {
     public ConcurrentThrottledSubmissionsStore() {
         super(new ConcurrentHashMap<>());
     }

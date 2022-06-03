@@ -1,8 +1,11 @@
 package org.apereo.cas.web.support;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.time.Clock;
 import java.time.ZonedDateTime;
 
 /**
@@ -12,10 +15,12 @@ import java.time.ZonedDateTime;
  * @since 6.5.0
  */
 @Data
+@SuperBuilder
 public class ThrottledSubmission implements Serializable {
     private static final long serialVersionUID = -853401483455717926L;
 
     private final String key;
 
-    private final ZonedDateTime value;
+    @Builder.Default
+    private final ZonedDateTime value = ZonedDateTime.now(Clock.systemUTC());
 }

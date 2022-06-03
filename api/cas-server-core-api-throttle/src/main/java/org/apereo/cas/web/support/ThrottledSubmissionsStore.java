@@ -1,6 +1,5 @@
 package org.apereo.cas.web.support;
 
-import java.time.ZonedDateTime;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -10,21 +9,24 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-public interface ThrottledSubmissionsStore {
+public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
+    /**
+     *Default bean name.
+     */
+    String BEAN_NAME = "throttleSubmissionMap";
     /**
      * Remove element passing the given condition.
      *
      * @param condition the condition
      */
-    void removeIf(Predicate<ThrottledSubmission> condition);
+    void removeIf(Predicate<T> condition);
 
     /**
      * Put.
      *
-     * @param key   the key
-     * @param value the value
+     * @param submission the submission
      */
-    void put(String key, ZonedDateTime value);
+    void put(T submission);
 
     /**
      * Get zoned date time.
@@ -32,12 +34,12 @@ public interface ThrottledSubmissionsStore {
      * @param key the key
      * @return the zoned date time
      */
-    ZonedDateTime get(String key);
+    T get(String key);
 
     /**
      * Get entries.
      *
      * @return the stream
      */
-    Stream<ThrottledSubmission> entries();
+    Stream<T> entries();
 }

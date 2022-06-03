@@ -3,8 +3,8 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.throttle.BaseMappableThrottledSubmissionsStore;
 
 import com.hazelcast.map.IMap;
+import lombok.val;
 
-import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -14,15 +14,14 @@ import java.util.function.Predicate;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-public class HazelcastMapThrottledSubmissionsStore extends BaseMappableThrottledSubmissionsStore {
-    public HazelcastMapThrottledSubmissionsStore(final Map<String, ZonedDateTime> backingMap) {
+public class HazelcastMapThrottledSubmissionsStore<T extends ThrottledSubmission> extends BaseMappableThrottledSubmissionsStore<T> {
+    public HazelcastMapThrottledSubmissionsStore(final Map<String, T> backingMap) {
         super(backingMap);
     }
 
     @Override
-    public void removeIf(final Predicate<ThrottledSubmission> condition) {
-        ((IMap<String, ZonedDateTime>) backingMap).removeAll(
-            (com.hazelcast.query.Predicate<String, ZonedDateTime>)
-                entry -> condition.test(new ThrottledSubmission(entry.getKey(), entry.getValue())));
+    public void removeIf(final Predicate<T> condition) {
+        val hzMap = (IMap<String, T>) backingMap;
+        hzMap.removeAll((com.hazelcast.query.Predicate<String, T>) entry -> condition.test(entry.getValue()));
     }
 }

@@ -287,7 +287,8 @@ public class HazelcastConfigurationFactory {
      * @param timeoutSeconds the timeoutSeconds
      * @return the map config
      */
-    public static NamedConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
+    public static NamedConfig buildMapConfig(final BaseHazelcastProperties hz,
+                                             final String mapName, final long timeoutSeconds) {
         val cluster = hz.getCluster();
 
         val evictionPolicy = EvictionPolicy.valueOf(cluster.getCore().getEvictionPolicy());

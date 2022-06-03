@@ -59,7 +59,7 @@ public class CasThrottlingConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("authenticationThrottlingConfigurationContext")
             final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext,
-            @Qualifier("throttleSubmissionMap")
+            @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
             final ThrottledSubmissionsStore throttleSubmissionMap) {
             val throttle = casProperties.getAuthn().getThrottle();
             if (throttle.getFailure().getRangeSeconds() <= 0 && throttle.getFailure().getThreshold() <= 0) {
@@ -127,7 +127,7 @@ public class CasThrottlingConfiguration {
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "throttleSubmissionMap")
+        @ConditionalOnMissingBean(name = ThrottledSubmissionsStore.BEAN_NAME)
         @Bean
         public ThrottledSubmissionsStore throttleSubmissionMap() {
             return new ConcurrentThrottledSubmissionsStore();

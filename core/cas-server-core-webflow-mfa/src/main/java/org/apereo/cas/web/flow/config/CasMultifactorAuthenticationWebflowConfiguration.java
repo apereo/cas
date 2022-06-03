@@ -260,7 +260,13 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
                 casWebflowConfigurationContext, authenticationAttributeMultifactorAuthenticationTrigger);
         }
+
         /**
+         * Scripted registered service multifactor authentication trigger.
+         *
+         * @param applicationContext the application context
+         * @param casProperties      the cas properties
+         * @return the multifactor authentication trigger
          * @deprecated Since 6.6.
          */
         @Bean

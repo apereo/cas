@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.support.HazelcastMapThrottledSubmissionsStore;
+import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -37,7 +38,7 @@ public class CasHazelcastThrottlingConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "hazelcastThrottleSubmissionMap")
-    public ThrottledSubmissionsStore throttleSubmissionMap(
+    public ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionMap(
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance,
         final CasConfigurationProperties casProperties) {

@@ -11,8 +11,10 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,17 +51,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasHazelcastThrottlingConfigurationTests {
 
     @Autowired
-    @Qualifier("throttleSubmissionMap")
-    private ThrottledSubmissionsStore throttleSubmissionMap;
+    @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
+    private ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionMap;
 
     @Test
     public void verifyOperation() {
         assertNotNull(throttleSubmissionMap);
-        var key = UUID.randomUUID().toString();
-        throttleSubmissionMap.put(key, ZonedDateTime.now(Clock.systemUTC()));
-        assertNotNull(throttleSubmissionMap.get(key));
+        val submission = ThrottledSubmission.builder().key(UUID.randomUUID().toString()).build();
+        throttleSubmissionMap.put(submission);
+        assertNotNull(throttleSubmissionMap.get(submission.getKey()));
         assertNotEquals(0, throttleSubmissionMap.entries().count());
-        throttleSubmissionMap.removeIf(entry -> entry.getKey().equals(key));
+        throttleSubmissionMap.removeIf(entry -> entry.getKey().equals(submission.getKey()));
         assertEquals(0, throttleSubmissionMap.entries().count());
     }
 }
