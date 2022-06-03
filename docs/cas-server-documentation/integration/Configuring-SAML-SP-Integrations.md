@@ -243,8 +243,7 @@ service provider is the presence and definition of metadata. All other settings 
 {% include_cached casproperties.html properties="cas.saml-sp" %}
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to
-filter [the InCommon metadata](https://spaces.at.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds
-can be regular expression patterns and are mapped to
+filter the InCommon metadata. EntityIds can be regular expression patterns and are mapped to
 CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
 
 ## Google Apps

@@ -8,8 +8,7 @@ category: Protocols
 
 # Metadata Query Protocol - SAML2 Metadata Management
 
-CAS also supports the [Metadata Query Protocol](https://spaces.at.internet2.edu/display/MDQ/Metadata+Query+Protocol),
-also known as `MDQ`, which is a REST-like API for requesting and receiving
+CAS also supports the Metadata Query Protocol, also known as `MDQ`, which is a REST-like API for requesting and receiving
 arbitrary metadata. In order to configure a CAS SAML service to retrieve its
 metadata from a Metadata query server, the metadata location must be configured to point to the query server instance.
 
