@@ -56,6 +56,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
                 .url(rest.getUrl())
+                .parameters(parameters)
                 .build();
 
             val response = HttpUtils.execute(exec);
