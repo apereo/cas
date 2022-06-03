@@ -9,6 +9,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.cfg.MapperBuilder;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,6 +51,9 @@ public class JacksonObjectMapperFactory {
     private final boolean defaultViewInclusion = true;
 
     @Builder.Default
+    private final boolean useWrapperNameAsProperty = false;
+
+    @Builder.Default
     private final Map<String, Object> injectableValues = new LinkedHashMap<>();
 
     private final JsonFactory jsonFactory;
@@ -55,8 +64,9 @@ public class JacksonObjectMapperFactory {
      * @param applicationContext the application context
      * @param objectMapper       the mapper
      */
-    public static void configure(final ConfigurableApplicationContext applicationContext,
-                                 final ObjectMapper objectMapper) {
+    public static void configure(
+        final ConfigurableApplicationContext applicationContext,
+        final ObjectMapper objectMapper) {
         objectMapper.registerModule(new JavaTimeModule());
         val serializers = new ArrayList<>(applicationContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values());
         AnnotationAwareOrderComparator.sort(serializers);
@@ -74,7 +84,18 @@ public class JacksonObjectMapperFactory {
      * @return the object mapper
      */
     public ObjectMapper toObjectMapper() {
-        return initialize(new ObjectMapper(this.jsonFactory));
+        val mapper = determineMapperInstance();
+        return initialize(mapper);
+    }
+
+    private MapperBuilder<?, ?> determineMapperInstance() {
+        if (jsonFactory instanceof YAMLFactory) {
+            return YAMLMapper.builder((YAMLFactory) jsonFactory);
+        }
+        if (jsonFactory instanceof XmlFactory) {
+            return XmlMapper.builder((XmlFactory) jsonFactory);
+        }
+        return JsonMapper.builder(jsonFactory);
     }
 
     /**
@@ -83,11 +104,12 @@ public class JacksonObjectMapperFactory {
      * @param mapper the mapper
      * @return the object mapper
      */
-    protected ObjectMapper initialize(final ObjectMapper mapper) {
-        mapper
+    protected ObjectMapper initialize(final MapperBuilder<?, ?> mapper) {
+        val obm = mapper
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, isSingleArrayElementUnwrapped())
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, isDefaultViewInclusion())
+            .configure(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME, isUseWrapperNameAsProperty())
 
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, isFailOnUnknownProperties())
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
@@ -96,7 +118,9 @@ public class JacksonObjectMapperFactory {
 
             .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, isWriteDatesAsTimestamps())
-            .setInjectableValues(new JacksonInjectableValueSupplier(this::getInjectableValues))
+            .build();
+
+        obm.setInjectableValues(new JacksonInjectableValueSupplier(this::getInjectableValues))
             .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
             .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
@@ -104,10 +128,9 @@ public class JacksonObjectMapperFactory {
             .findAndRegisterModules();
 
         if (isDefaultTypingEnabled()) {
-            mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(),
+            obm.activateDefaultTyping(obm.getPolymorphicTypeValidator(),
                 ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         }
-
-        return mapper;
+        return obm;
     }
 }

@@ -46,7 +46,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
                     + "service [{}] and provider [{}] via REST endpoint [{}]",
                 principal.getId(), registeredService, provider, rest.getUrl());
 
-            val parameters = CollectionUtils.wrap("principal", principal.getId(), "provider", provider.getId());
+            val parameters = CollectionUtils.<String, String>wrap("principal", principal.getId(), "provider", provider.getId());
             if (registeredService != null) {
                 parameters.put("service", registeredService.getServiceId());
             }
