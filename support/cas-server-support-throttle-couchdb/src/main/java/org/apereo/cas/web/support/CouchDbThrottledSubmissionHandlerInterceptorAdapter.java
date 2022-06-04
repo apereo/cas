@@ -24,7 +24,7 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
     private final AuditActionContextCouchDbRepository repository;
 
     public CouchDbThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-        final AuditActionContextCouchDbRepository repository) {
+                                                               final AuditActionContextCouchDbRepository repository) {
         super(configurationContext);
         this.repository = repository;
     }
@@ -33,12 +33,13 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
 
         val failures = repository.findByThrottleParams(remoteAddress,
-            getUsernameParameterFromRequest(request),
-            getConfigurationContext().getAuthenticationFailureCode(),
-            getConfigurationContext().getApplicationCode(),
-            LocalDateTime.now(ZoneOffset.UTC).minusSeconds(getConfigurationContext().getFailureRangeInSeconds()))
+                getUsernameParameterFromRequest(request),
+                throttle.getFailure().getCode(),
+                throttle.getCore().getAppCode(),
+                LocalDateTime.now(ZoneOffset.UTC).minusSeconds(throttle.getFailure().getRangeSeconds()))
             .stream().map(AuditActionContext::getWhenActionWasPerformed).collect(Collectors.toList());
 
         return calculateFailureThresholdRateAndCompare(failures);

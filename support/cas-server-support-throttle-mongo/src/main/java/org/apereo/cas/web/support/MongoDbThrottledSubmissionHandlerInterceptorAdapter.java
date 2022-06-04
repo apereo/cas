@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
     private final transient MongoOperations mongoTemplate;
+
     private final String collectionName;
 
     public MongoDbThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
@@ -36,11 +37,12 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
 
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
         val query = new Query()
             .addCriteria(Criteria.where("clientIpAddress").is(remoteAddress)
                 .and("principal").is(getUsernameParameterFromRequest(request))
-                .and("actionPerformed").is(getConfigurationContext().getAuthenticationFailureCode())
-                .and("applicationCode").is(getConfigurationContext().getApplicationCode())
+                .and("actionPerformed").is(throttle.getFailure().getCode())
+                .and("applicationCode").is(throttle.getCore().getAppCode())
                 .and("whenActionWasPerformed").gte(getFailureInRangeCutOffDate()));
         query.with(Sort.by(Sort.Direction.DESC, "whenActionWasPerformed"));
         query.limit(2);

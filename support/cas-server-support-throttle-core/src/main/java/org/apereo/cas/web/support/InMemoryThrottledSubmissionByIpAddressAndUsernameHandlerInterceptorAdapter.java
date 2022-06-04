@@ -24,12 +24,11 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     public String constructKey(final HttpServletRequest request) {
-        val username = request.getParameter(getConfigurationContext().getUsernameParameter());
-
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getCore();
+        val username = request.getParameter(throttle.getUsernameParameter());
         if (StringUtils.isBlank(username)) {
             return request.getRemoteAddr();
         }
-
         return ClientInfoHolder.getClientInfo().getClientIpAddress() + ';' + username.toLowerCase();
     }
 

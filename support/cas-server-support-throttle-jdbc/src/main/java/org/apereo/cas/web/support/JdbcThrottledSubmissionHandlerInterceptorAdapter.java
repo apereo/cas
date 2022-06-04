@@ -42,17 +42,18 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
+
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
-
         val username = getUsernameParameterFromRequest(request);
         val failuresInAudits = this.jdbcTemplate.query(
             this.sqlQueryAudit,
             new Object[]{
                 remoteAddress,
                 username,
-                getConfigurationContext().getAuthenticationFailureCode(),
-                getConfigurationContext().getApplicationCode(),
+                throttle.getFailure().getCode(),
+                throttle.getCore().getAppCode(),
                 getFailureInRangeCutOffDate()},
             new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
             (resultSet, i) -> resultSet.getTimestamp(1));
@@ -71,11 +72,12 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
 
     @Override
     public Collection getRecords() {
-        val failuresInAudits = this.jdbcTemplate.query(
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
+        val failuresInAudits = jdbcTemplate.query(
             JdbcThrottleProperties.SQL_AUDIT_QUERY_ALL,
             new Object[]{
-                getConfigurationContext().getAuthenticationFailureCode(),
-                getConfigurationContext().getApplicationCode(),
+                throttle.getFailure().getCode(),
+                throttle.getCore().getAppCode(),
                 getFailureInRangeCutOffDate()},
             new int[]{Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
             (resultSet, i) -> resultSet.getTimestamp(1));
