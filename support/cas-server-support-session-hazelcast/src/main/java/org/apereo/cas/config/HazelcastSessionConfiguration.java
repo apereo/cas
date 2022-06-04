@@ -13,6 +13,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.session.HazelcastSessionProperties;
 import org.springframework.boot.autoconfigure.session.SessionProperties;
@@ -20,6 +21,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.session.MapSession;
 import org.springframework.session.hazelcast.Hazelcast4IndexedSessionRepository;
@@ -27,6 +29,7 @@ import org.springframework.session.hazelcast.HazelcastSessionSerializer;
 import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
 
 import java.time.Duration;
+import java.util.UUID;
 
 /**
  * This is {@link HazelcastSessionConfiguration}.
@@ -54,6 +57,7 @@ public class HazelcastSessionConfiguration {
      */
     @Bean(destroyMethod = "shutdown")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public HazelcastInstance hazelcastInstance(final CasConfigurationProperties casProperties,
                                                final HazelcastSessionProperties hazelcastSessionProperties,
                                                final SessionProperties sessionProperties,
