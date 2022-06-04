@@ -93,14 +93,9 @@ public class CasThrottlingConfiguration {
             final ThrottledRequestResponseHandler throttledRequestResponseHandler,
             @Qualifier(ThrottledRequestExecutor.DEFAULT_BEAN_NAME)
             final ThrottledRequestExecutor throttledRequestExecutor) {
-            val throttle = casProperties.getAuthn().getThrottle();
             return ThrottledSubmissionHandlerConfigurationContext.builder()
-                .failureThreshold(throttle.getFailure().getThreshold())
-                .failureRangeInSeconds(throttle.getFailure().getRangeSeconds())
-                .usernameParameter(throttle.getCore().getUsernameParameter())
-                .authenticationFailureCode(throttle.getFailure().getCode())
+                .casProperties(casProperties)
                 .auditTrailExecutionPlan(auditTrailExecutionPlan)
-                .applicationCode(throttle.getCore().getAppCode())
                 .throttledRequestResponseHandler(throttledRequestResponseHandler)
                 .throttledRequestExecutor(throttledRequestExecutor)
                 .applicationContext(applicationContext)

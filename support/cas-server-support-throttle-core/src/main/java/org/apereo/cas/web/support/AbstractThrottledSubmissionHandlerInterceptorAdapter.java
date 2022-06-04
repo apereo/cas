@@ -53,7 +53,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
     @Override
     public void afterPropertiesSet() {
-        this.thresholdRate = (double) configurationContext.getFailureThreshold() / configurationContext.getFailureRangeInSeconds();
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getFailure();
+        this.thresholdRate = (double) throttle.getThreshold() / throttle.getRangeSeconds();
         LOGGER.trace("Calculated threshold rate as [{}]", this.thresholdRate);
     }
 
@@ -68,9 +69,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
         val throttled = throttleRequest(request, response) || exceedsThreshold(request);
         if (throttled) {
+            val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getFailure();
             LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
                         + "Authentication attempt exceeds the failure threshold [{}]", request.getRemoteAddr(),
-                this.thresholdRate, configurationContext.getFailureRangeInSeconds(), configurationContext.getFailureThreshold());
+                this.thresholdRate, throttle.getRangeSeconds(), throttle.getThreshold());
 
             recordThrottle(request);
             return configurationContext.getThrottledRequestResponseHandler().handle(request, response);
@@ -173,7 +175,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      * @return the string
      */
     protected String getUsernameParameterFromRequest(final HttpServletRequest request) {
-        return request.getParameter(StringUtils.defaultString(configurationContext.getUsernameParameter(), "username"));
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getCore();
+        return request.getParameter(StringUtils.defaultString(throttle.getUsernameParameter(), "username"));
     }
 
     /**
@@ -182,7 +185,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      * @return the failure in range cut off date
      */
     protected Date getFailureInRangeCutOffDate() {
-        val cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(configurationContext.getFailureRangeInSeconds());
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getFailure();
+        val cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(throttle.getRangeSeconds());
         return DateTimeUtils.timestampOf(cutoff);
     }
 
@@ -195,12 +199,13 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     protected void recordAuditAction(final HttpServletRequest request, final String actionName) {
         val userToUse = getUsernameParameterFromRequest(request);
         val clientInfo = ClientInfoHolder.getClientInfo();
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getCore();
         val resource = StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), "N/A");
         val context = new AuditActionContext(
             userToUse,
             resource,
             actionName,
-            configurationContext.getApplicationCode(),
+            throttle.getAppCode(),
             DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
             clientInfo.getClientIpAddress(),
             clientInfo.getServerIpAddress(),

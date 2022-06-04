@@ -50,9 +50,9 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     public void recordSubmissionFailure(final HttpServletRequest request) {
         val key = constructKey(request);
         LOGGER.debug("Recording submission failure [{}]", key);
-        submissionsStore.put(ThrottledSubmission.builder().key(key).build());
+        val submission = ThrottledSubmission.builder().key(key).build();
+        submissionsStore.put(submission);
     }
-
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val key = constructKey(request);
@@ -61,7 +61,6 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, last);
         return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last.getValue()) > getThresholdRate();
     }
-
     @Override
     public Collection getRecords() {
         return submissionsStore.entries()
