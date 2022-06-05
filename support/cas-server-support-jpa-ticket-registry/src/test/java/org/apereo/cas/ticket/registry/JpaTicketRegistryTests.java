@@ -43,7 +43,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -65,7 +64,6 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("JDBC")
 @Getter
-@DirtiesContext
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 500;

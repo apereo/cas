@@ -14,7 +14,7 @@ import org.springframework.core.Ordered;
  * @see TicketCatalog
  * @since 5.1.0
  */
-public interface TicketDefinition extends Ordered {
+public interface TicketDefinition extends Ordered, Comparable<TicketDefinition> {
     /**
      * Gets prefix.
      *
@@ -28,6 +28,13 @@ public interface TicketDefinition extends Ordered {
      * @return the implementation class
      */
     Class<? extends Ticket> getImplementationClass();
+
+    /**
+     * Gets api class that is implemented via {@link #getImplementationClass()}.
+     *
+     * @return the api class
+     */
+    Class<? extends Ticket> getApiClass();
 
     /**
      * Gets properties.

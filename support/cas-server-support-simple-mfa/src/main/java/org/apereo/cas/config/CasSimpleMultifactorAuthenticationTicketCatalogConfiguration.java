@@ -40,7 +40,8 @@ public class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration {
             @Override
             public void configureTicketCatalog(final TicketCatalog plan, final CasConfigurationProperties casProperties) {
                 LOGGER.trace("Registering ticket definitions...");
-                val definition = buildTicketDefinition(plan, CasSimpleMultifactorAuthenticationTicket.PREFIX, CasSimpleMultifactorAuthenticationTicketImpl.class, Ordered.HIGHEST_PRECEDENCE);
+                val definition = buildTicketDefinition(plan, CasSimpleMultifactorAuthenticationTicket.PREFIX,
+                    CasSimpleMultifactorAuthenticationTicket.class, CasSimpleMultifactorAuthenticationTicketImpl.class, Ordered.HIGHEST_PRECEDENCE);
                 val properties = definition.getProperties();
                 properties.setStorageName("casSimpleMultifactorAuthenticationTicketsCache");
                 val timeToLive = casSimpleMultifactorAuthenticationTicketExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive();

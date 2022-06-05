@@ -32,9 +32,13 @@ public class SamlIdPTicketCatalogConfiguration extends BaseTicketCatalogConfigur
     public void configureTicketCatalog(final TicketCatalog plan, final CasConfigurationProperties casProperties) {
         LOGGER.debug("Registering SAML2 protocol ticket definitions...");
         buildAndRegisterSamlArtifactDefinition(plan,
-            buildTicketDefinition(plan, SamlArtifactTicket.PREFIX, SamlArtifactTicketImpl.class, Ordered.HIGHEST_PRECEDENCE), casProperties);
+            buildTicketDefinition(plan, SamlArtifactTicket.PREFIX,
+                SamlArtifactTicket.class, SamlArtifactTicketImpl.class,
+                Ordered.HIGHEST_PRECEDENCE), casProperties);
         buildAndRegisterSamlAttributeQueryDefinition(plan,
-            buildTicketDefinition(plan, SamlAttributeQueryTicket.PREFIX, SamlAttributeQueryTicketImpl.class, Ordered.HIGHEST_PRECEDENCE), casProperties);
+            buildTicketDefinition(plan, SamlAttributeQueryTicket.PREFIX,
+                SamlAttributeQueryTicket.class, SamlAttributeQueryTicketImpl.class,
+                Ordered.HIGHEST_PRECEDENCE), casProperties);
     }
 
     protected void buildAndRegisterSamlArtifactDefinition(final TicketCatalog plan,

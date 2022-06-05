@@ -40,23 +40,23 @@ public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigur
 
         buildAndRegisterProxyTicketDefinition(plan,
             buildTicketDefinition(plan, ProxyTicket.PROXY_TICKET_PREFIX,
-                ProxyTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
+                ProxyTicket.class, ProxyTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
 
         buildAndRegisterServiceTicketDefinition(plan,
             buildTicketDefinition(plan, ServiceTicket.PREFIX,
-                ServiceTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
+                ServiceTicket.class, ServiceTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
 
         buildAndRegisterProxyGrantingTicketDefinition(plan,
             buildTicketDefinition(plan, ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX,
-                ProxyGrantingTicketImpl.class, Ordered.LOWEST_PRECEDENCE));
+                ProxyGrantingTicket.class, ProxyGrantingTicketImpl.class, Ordered.LOWEST_PRECEDENCE));
 
         buildAndRegisterTicketGrantingTicketDefinition(plan,
             buildTicketDefinition(plan, TicketGrantingTicket.PREFIX,
-                TicketGrantingTicketImpl.class, Ordered.LOWEST_PRECEDENCE));
+                TicketGrantingTicket.class, TicketGrantingTicketImpl.class, Ordered.LOWEST_PRECEDENCE));
 
         buildAndRegisterTransientSessionTicketDefinition(plan,
             buildTicketDefinition(plan, TransientSessionTicket.PREFIX,
-                TransientSessionTicketImpl.class, Ordered.LOWEST_PRECEDENCE));
+                TransientSessionTicket.class, TransientSessionTicketImpl.class, Ordered.LOWEST_PRECEDENCE));
     }
 
     protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {

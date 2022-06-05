@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +35,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
             .orElse(null);
         if (definition == null) {
             LOGGER.error("Ticket definition for [{}] cannot be found in the ticket catalog "
-                + "which only contains the following ticket types: [{}]", ticketId, ticketMetadataMap.keySet());
+                         + "which only contains the following ticket types: [{}]", ticketId, ticketMetadataMap.keySet());
         }
         return definition;
     }
@@ -46,13 +47,24 @@ public class DefaultTicketCatalog implements TicketCatalog {
     }
 
     @Override
-    public Collection<TicketDefinition> find(final Class<? extends Ticket> ticketClass) {
-        val list = ticketMetadataMap.values().stream()
+    public Collection<TicketDefinition> findTicketImplementations(final Class<? extends Ticket> ticketClass) {
+        val list = ticketMetadataMap.values()
+            .stream()
+            .sorted()
             .filter(t -> ticketClass.isAssignableFrom(t.getImplementationClass()))
             .collect(Collectors.toList());
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
         return list;
+    }
+
+    @Override
+    public Optional<TicketDefinition> findTicketDefinition(final Class<? extends Ticket> ticketClass) {
+        return ticketMetadataMap.values()
+            .stream()
+            .sorted()
+            .filter(t -> ticketClass.equals(t.getApiClass()))
+            .findFirst();
     }
 
     @Override

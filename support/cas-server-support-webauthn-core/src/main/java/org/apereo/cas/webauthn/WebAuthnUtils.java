@@ -45,15 +45,15 @@ public class WebAuthnUtils {
     }
 
     @JsonPOJOBuilder(withPrefix = StringUtils.EMPTY)
-    private static class CredentialRegistrationBuilderMixin {
+    private class CredentialRegistrationBuilderMixin {
     }
 
     @JsonDeserialize(builder = RegisteredCredential.RegisteredCredentialBuilder.class)
-    private static class RegisteredCredentialMixin {
+    private class RegisteredCredentialMixin {
     }
 
     @JsonPOJOBuilder(withPrefix = StringUtils.EMPTY)
-    private static class RegisteredCredentialBuilderMixin {
+    private class RegisteredCredentialBuilderMixin {
     }
 
 }
