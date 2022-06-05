@@ -79,7 +79,16 @@ public interface BeanCondition {
      * @return the bean condition
      */
     default BeanCondition isTrue() {
-        return havingValue("true");
+        return havingValue(Boolean.TRUE.toString());
+    }
+
+    /**
+     * Is false bean condition.
+     *
+     * @return the bean condition
+     */
+    default BeanCondition isFalse() {
+        return havingValue(Boolean.FALSE.toString());
     }
 
     /**

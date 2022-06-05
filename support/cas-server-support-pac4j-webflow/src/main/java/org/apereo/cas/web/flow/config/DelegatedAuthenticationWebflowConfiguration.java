@@ -46,6 +46,7 @@ import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationGroov
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationPostProcessor;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -301,12 +302,17 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final Clients builtClients,
             @Qualifier("delegatedClientDistributedSessionStore")
             final SessionStore delegatedClientDistributedSessionStore) {
-            return WebflowActionBeanSupplier.builder()
-                .withApplicationContext(applicationContext)
-                .withProperties(casProperties)
-                .withAction(() -> new DelegatedAuthenticationClientLogoutAction(builtClients, delegatedClientDistributedSessionStore))
-                .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
-                .build()
+            return BeanSupplier.of(Action.class)
+                .when(BeanCondition.on("cas.slo.disabled").isFalse().evenIfMissing()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> WebflowActionBeanSupplier.builder()
+                    .withApplicationContext(applicationContext)
+                    .withProperties(casProperties)
+                    .withAction(() -> new DelegatedAuthenticationClientLogoutAction(builtClients, delegatedClientDistributedSessionStore))
+                    .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
+                    .build()
+                    .get())
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
 
