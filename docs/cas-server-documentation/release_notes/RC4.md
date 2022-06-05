@@ -128,6 +128,24 @@ requests, where this token can be obtained via the `/oidc/initToken` endpoint.
 
 [CAS Commandline Shell](../installation/Configuring-Commandline-Shell.html) is now able to generate 
 signed JWTs using a given JSON Webkeystore.
+ 
+### Integration Testing & Docker Images
+
+The following Docker images, used for integration testing, are now upgraded to their latest version:
+
+- AWS Localstack
+- Apereo CAS
+- Couchbase
+- Apache Cassandra
+- Apache CouchDb
+- Apache Syncope
+- InfluxDb
+- MariaDb
+- MongoDb
+- MySQL
+- PostreSQL
+- Redis
+- SCIM
 
 ## Other Stuff
             
