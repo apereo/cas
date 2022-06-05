@@ -111,7 +111,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         failLoop(3, 200, HttpStatus.SC_LOCKED);
 
         /* Ensure that slowing down relieves throttle  */
-        getThrottle().decrement();
+        getThrottle().release();
         Thread.sleep(1000);
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
     }

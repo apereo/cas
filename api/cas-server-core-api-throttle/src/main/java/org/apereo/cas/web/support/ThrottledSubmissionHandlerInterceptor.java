@@ -56,7 +56,7 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     /**
      * Decrement the the throttle so authentication can resume.
      */
-    default void decrement() {
+    default void release() {
     }
 
     /**

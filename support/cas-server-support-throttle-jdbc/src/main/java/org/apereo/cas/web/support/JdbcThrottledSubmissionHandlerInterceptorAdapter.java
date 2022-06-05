@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.configuration.model.support.throttle.JdbcThrottleProperties;
+import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -12,6 +13,7 @@ import javax.sql.DataSource;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -30,11 +32,13 @@ import java.util.stream.Collectors;
 @SuppressWarnings("JavaUtilDate")
 public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
     private final String sqlQueryAudit;
+
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                            final DataSource dataSource,
-                                                            final String sqlQueryAudit) {
+    public JdbcThrottledSubmissionHandlerInterceptorAdapter(
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+        final DataSource dataSource,
+        final String sqlQueryAudit) {
         super(configurationContext);
         this.sqlQueryAudit = sqlQueryAudit;
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -56,9 +60,12 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
                 throttle.getCore().getAppCode(),
                 getFailureInRangeCutOffDate()},
             new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-            (resultSet, i) -> resultSet.getTimestamp(1));
-        val failures = failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
-        val result = calculateFailureThresholdRateAndCompare(failures);
+            (resultSet, i) -> ThrottledSubmission.builder()
+                .key(UUID.randomUUID().toString())
+                .value(DateTimeUtils.zonedDateTimeOf(resultSet.getTimestamp("AUD_DATE")))
+                .build());
+
+        val result = calculateFailureThresholdRateAndCompare(failuresInAudits);
         if (result) {
             LOGGER.debug("Request from [{}] by user [{}] exceeds threshold", remoteAddress, username);
         }
@@ -67,7 +74,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
 
     @Override
     public String getName() {
-        return "InspektrIpAddressUsernameThrottle";
+        return "JdbcThrottle";
     }
 
     @Override
@@ -80,7 +87,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
                 throttle.getCore().getAppCode(),
                 getFailureInRangeCutOffDate()},
             new int[]{Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-            (resultSet, i) -> resultSet.getTimestamp(1));
+            (resultSet, i) -> resultSet.getTimestamp("AUD_DATE"));
         return failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
     }
 }

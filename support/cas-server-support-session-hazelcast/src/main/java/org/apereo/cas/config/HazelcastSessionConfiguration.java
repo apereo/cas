@@ -29,7 +29,6 @@ import org.springframework.session.hazelcast.HazelcastSessionSerializer;
 import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
 
 import java.time.Duration;
-import java.util.UUID;
 
 /**
  * This is {@link HazelcastSessionConfiguration}.

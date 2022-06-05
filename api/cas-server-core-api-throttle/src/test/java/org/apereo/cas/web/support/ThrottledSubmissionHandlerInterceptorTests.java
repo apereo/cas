@@ -30,7 +30,7 @@ public class ThrottledSubmissionHandlerInterceptorTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                input.decrement();
+                input.release();
                 input.recordSubmissionFailure(new MockHttpServletRequest());
                 input.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), new ModelAndView());
                 input.afterConcurrentHandlingStarted(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object());
