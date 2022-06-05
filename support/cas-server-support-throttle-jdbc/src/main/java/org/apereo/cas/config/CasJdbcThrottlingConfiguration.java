@@ -10,7 +10,6 @@ import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapt
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
-import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,6 +18,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
@@ -47,23 +48,33 @@ public class CasJdbcThrottlingConfiguration {
             .get();
     }
 
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Bean
+    @ConditionalOnMissingBean(name = "inspektrThrottleJdbcTemplate")
+    public JdbcOperations inspektrThrottleJdbcTemplate(
+        @Qualifier("inspektrThrottleDataSource")
+        final DataSource inspektrThrottleDataSource,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        return BeanSupplier.of(JdbcOperations.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> new JdbcTemplate(inspektrThrottleDataSource))
+            .otherwiseProxy()
+            .get();
+    }
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "jdbcAuthenticationThrottle")
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("inspektrThrottleDataSource")
-        final DataSource inspektrThrottleDataSource,
+        @Qualifier("inspektrThrottleJdbcTemplate")
+        final JdbcOperations inspektrThrottleJdbcTemplate,
         @Qualifier("authenticationThrottlingConfigurationContext")
-        final ThrottledSubmissionHandlerConfigurationContext ctx,
-        final CasConfigurationProperties casProperties) {
+        final ThrottledSubmissionHandlerConfigurationContext ctx) {
         return BeanSupplier.of(ThrottledSubmissionHandlerInterceptor.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> {
-                val throttle = casProperties.getAuthn().getThrottle();
-                return new JdbcThrottledSubmissionHandlerInterceptorAdapter(
-                    ctx, inspektrThrottleDataSource, throttle.getJdbc().getAuditQuery());
-            })
+            .supply(() -> new JdbcThrottledSubmissionHandlerInterceptorAdapter(ctx, inspektrThrottleJdbcTemplate))
             .otherwise(ThrottledSubmissionHandlerInterceptor::noOp)
             .get();
     }

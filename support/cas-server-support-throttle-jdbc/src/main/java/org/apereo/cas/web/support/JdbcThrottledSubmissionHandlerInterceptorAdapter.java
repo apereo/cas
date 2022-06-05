@@ -6,6 +6,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,28 +32,24 @@ import java.util.stream.Collectors;
 @Slf4j
 @SuppressWarnings("JavaUtilDate")
 public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final String sqlQueryAudit;
-
-    private final JdbcTemplate jdbcTemplate;
+    private final JdbcOperations jdbcTemplate;
 
     public JdbcThrottledSubmissionHandlerInterceptorAdapter(
         final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-        final DataSource dataSource,
-        final String sqlQueryAudit) {
+        final JdbcOperations jdbcTemplate) {
         super(configurationContext);
-        this.sqlQueryAudit = sqlQueryAudit;
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
-
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
         val username = getUsernameParameterFromRequest(request);
+
         val failuresInAudits = this.jdbcTemplate.query(
-            this.sqlQueryAudit,
+            throttle.getJdbc().getAuditQuery(),
             new Object[]{
                 remoteAddress,
                 username,
