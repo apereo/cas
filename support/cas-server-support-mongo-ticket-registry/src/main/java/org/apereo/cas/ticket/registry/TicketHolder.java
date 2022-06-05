@@ -1,10 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -17,10 +18,11 @@ import java.util.Date;
  * @since 5.1.0
  */
 @Getter
-@AllArgsConstructor
 @ToString
 @Document
 @Setter
+@SuperBuilder
+@NoArgsConstructor(force = true)
 public class TicketHolder implements Serializable {
 
     /**
@@ -43,16 +45,24 @@ public class TicketHolder implements Serializable {
      */
     public static final String FIELD_NAME_ID = "ticketId";
 
+    /**
+     * Field name to hold the principal id.
+     */
+    public static final String FIELD_NAME_PRINCIPAL = "principal";
+
     private static final long serialVersionUID = -4843440028617071224L;
 
     @JsonProperty
-    private final String json;
+    private String json;
 
     @JsonProperty
-    private final String ticketId;
+    private String ticketId;
 
     @JsonProperty
-    private final String type;
+    private String type;
 
-    private final Date expireAt;
+    @JsonProperty
+    private String principal;
+
+    private Date expireAt;
 }

@@ -7,10 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.Date;

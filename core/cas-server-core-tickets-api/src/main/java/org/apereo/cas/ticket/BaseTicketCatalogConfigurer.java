@@ -18,11 +18,12 @@ public abstract class BaseTicketCatalogConfigurer implements TicketCatalogConfig
      * @param order  the order
      * @return the ticket definition
      */
-    protected TicketDefinition buildTicketDefinition(final TicketCatalog plan, final String prefix, final Class impl, final int order) {
+    protected TicketDefinition buildTicketDefinition(final TicketCatalog plan, final String prefix,
+                                                     final Class api, final Class impl, final int order) {
         if (plan.contains(prefix)) {
             return plan.find(prefix);
         }
-        return new DefaultTicketDefinition(impl, prefix, order);
+        return new DefaultTicketDefinition(impl, api, prefix, order);
     }
 
     /**
@@ -33,11 +34,11 @@ public abstract class BaseTicketCatalogConfigurer implements TicketCatalogConfig
      * @param impl   the
      * @return the ticket definition
      */
-    protected TicketDefinition buildTicketDefinition(final TicketCatalog plan, final String prefix, final Class impl) {
+    protected TicketDefinition buildTicketDefinition(final TicketCatalog plan, final String prefix, final Class impl, final Class api) {
         if (plan.contains(prefix)) {
             return plan.find(prefix);
         }
-        return new DefaultTicketDefinition(impl, prefix, Ordered.LOWEST_PRECEDENCE);
+        return new DefaultTicketDefinition(impl, api, prefix, Ordered.LOWEST_PRECEDENCE);
     }
 
     /**

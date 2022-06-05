@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -183,24 +185,19 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long countSessionsFor(final String principalId) {
-        if (isCipherExecutorEnabled()) {
-            return super.countSessionsFor(principalId);
-        }
         return getSessionsFor(principalId).count();
     }
 
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
-        if (isCipherExecutorEnabled()) {
-            return super.getSessionsFor(principalId);
-        }
-        val ticketDefinitions = ticketCatalog.find(TicketGrantingTicket.class);
+        val ticketDefinitions = ticketCatalog.findTicketImplementations(TicketGrantingTicket.class);
         return ticketDefinitions
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .map(map -> {
-                val criteria = TextCriteria.forDefaultLanguage().matchingAny(principalId);
-                val query = TextQuery.queryText(criteria).sortByScore().with(PageRequest.of(0, 10));
+                val query = isCipherExecutorEnabled()
+                    ? new Query(Criteria.where(TicketHolder.FIELD_NAME_PRINCIPAL).is(encodeTicketId(principalId)))
+                    : TextQuery.queryText(TextCriteria.forDefaultLanguage().matchingAny(principalId)).sortByScore().with(PageRequest.of(0, 10));
                 return mongoTemplate.stream(query, TicketHolder.class, map);
             })
             .flatMap(StreamUtils::createStreamFromIterator)
@@ -224,52 +221,53 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return true;
     }
 
-    private long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
-        val ticketDefinitions = ticketCatalog.find(ticketType);
+    protected long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
+        val ticketDefinitions = ticketCatalog.findTicketImplementations(ticketType);
         return ticketDefinitions.stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .mapToLong(map -> mongoTemplate.count(new Query(), map))
             .sum();
     }
 
-    private TicketHolder buildTicketAsDocument(final Ticket ticket) throws Exception {
+    protected TicketHolder buildTicketAsDocument(final Ticket ticket) throws Exception {
         val encTicket = encodeTicket(ticket);
         val json = serializeTicketForMongoDocument(encTicket);
-        if (StringUtils.isNotBlank(json)) {
-            LOGGER.trace("Serialized ticket into a JSON document as \n [{}]", JsonValue.readJSON(json).toString(Stringify.FORMATTED));
-            val expireAt = getExpireAt(ticket);
-            LOGGER.trace("Calculated expiration date for ticket ttl as [{}]", expireAt);
-            return new TicketHolder(json, encTicket.getId(), encTicket.getClass().getName(), expireAt);
-        }
-        throw new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON");
+        FunctionUtils.throwIf(StringUtils.isBlank(json),
+            () -> new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON"));
+        LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
+            JsonValue.readJSON(json).toString(Stringify.FORMATTED));
+        val expireAt = getExpireAt(ticket);
+        LOGGER.trace("Calculated expiration date for ticket ttl as [{}]", expireAt);
+        val principal = getPrincipalIdFrom(ticket);
+        return TicketHolder.builder()
+            .expireAt(expireAt)
+            .type(encTicket.getClass().getName())
+            .ticketId(encTicket.getId())
+            .json(json)
+            .principal(encodeTicketId(principal))
+            .build();
     }
 
-    private String getTicketCollectionInstanceByMetadata(final TicketDefinition metadata) {
+    protected String getTicketCollectionInstanceByMetadata(final TicketDefinition metadata) {
         val mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating collection name [{}] for ticket definition [{}]", mapName, metadata);
-        val c = getTicketCollectionInstance(mapName);
-        if (c != null) {
-            return c.getNamespace().getCollectionName();
-        }
-        throw new IllegalArgumentException("Could not locate MongoDb collection " + mapName);
+        val collection = getTicketCollectionInstance(mapName);
+        return Objects.requireNonNull(collection).getNamespace().getCollectionName();
     }
 
-    private MongoCollection getTicketCollectionInstance(final String mapName) {
-        try {
+    protected MongoCollection getTicketCollectionInstance(final String mapName) {
+        return FunctionUtils.doUnchecked(() -> {
             val inst = this.mongoTemplate.getCollection(mapName);
             LOGGER.debug("Located MongoDb collection instance [{}]", mapName);
             return inst;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+        });
     }
 
-    private String serializeTicketForMongoDocument(final Ticket ticket) {
+    protected String serializeTicketForMongoDocument(final Ticket ticket) {
         return ticketSerializationManager.serializeTicket(ticket);
     }
 
-    private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
+    protected Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
         return ticketSerializationManager.deserializeTicket(holder.getJson(), holder.getType());
     }
 }

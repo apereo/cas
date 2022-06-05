@@ -19,6 +19,8 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
@@ -70,6 +72,15 @@ public class DefaultTicketCatalogTests {
         val tickets = ticketCatalog.findAll();
         assertFalse(tickets.isEmpty());
         assertEquals(5, tickets.size());
+    }
+
+    @Test
+    public void verifyByTicketType() {
+        assertTrue(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).isPresent());
+        assertTrue(ticketCatalog.findTicketDefinition(ProxyGrantingTicket.class).isPresent());
+        assertTrue(ticketCatalog.findTicketDefinition(ProxyTicket.class).isPresent());
+        assertTrue(ticketCatalog.findTicketDefinition(ServiceTicket.class).isPresent());
+        assertTrue(ticketCatalog.findTicketDefinition(TransientSessionTicket.class).isPresent());
     }
 
     @Test
