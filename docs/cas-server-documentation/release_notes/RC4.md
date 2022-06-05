@@ -133,6 +133,7 @@ signed JWTs using a given JSON Webkeystore.
             
 - The token introspection for [OAuth](../protocol/OAuth-Protocol.html) and [OpenID Connect](../protocol/OIDC-Protocol.html) is now fixed to show the correct 
   response for invalid/unknown tokens.
+- Logout operations for [delegated authentication](../integration/Delegate-Authentication.html) are now disabled and skipped if single logout is disabled.
 
 ## Library Upgrades
 
