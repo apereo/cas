@@ -20,13 +20,14 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final transient MongoOperations mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
     private final String collectionName;
 
-    public MongoDbThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                               final MongoOperations mongoTemplate,
-                                                               final String collectionName) {
+    public MongoDbThrottledSubmissionHandlerInterceptorAdapter(
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+        final MongoOperations mongoTemplate,
+        final String collectionName) {
         super(configurationContext);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
@@ -48,10 +49,10 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
         query.limit(2);
         query.fields().include("whenActionWasPerformed");
 
-        LOGGER.debug("Executing MongoDb throttling query [{}]", query.toString());
+        LOGGER.debug("Executing MongoDb throttling query [{}]", query);
         val failures = this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName)
             .stream()
-            .map(AuditActionContext::getWhenActionWasPerformed)
+            .map(this::toThrottledSubmission)
             .collect(Collectors.toList());
         return calculateFailureThresholdRateAndCompare(failures);
     }

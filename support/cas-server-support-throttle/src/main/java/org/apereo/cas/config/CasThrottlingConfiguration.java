@@ -124,8 +124,8 @@ public class CasThrottlingConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = ThrottledSubmissionsStore.BEAN_NAME)
         @Bean
-        public ThrottledSubmissionsStore throttleSubmissionMap() {
-            return new ConcurrentThrottledSubmissionsStore();
+        public ThrottledSubmissionsStore throttleSubmissionMap(final CasConfigurationProperties casProperties) {
+            return new ConcurrentThrottledSubmissionsStore(casProperties);
         }
 
         @Bean

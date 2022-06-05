@@ -42,4 +42,20 @@ public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
      * @return the stream
      */
     Stream<T> entries();
+
+    /**
+     * Exceeds threshold?
+     *
+     * @param key           the key
+     * @param thresholdRate the threshold rate
+     * @return the boolean
+     */
+    boolean exceedsThreshold(final String key, double thresholdRate);
+
+    /**
+     * Release.
+     *
+     * @param thresholdRate the threshold rate
+     */
+    void release(double thresholdRate);
 }

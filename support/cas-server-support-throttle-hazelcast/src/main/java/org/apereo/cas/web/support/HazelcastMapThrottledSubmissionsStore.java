@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.throttle.BaseMappableThrottledSubmissionsStore;
 
 import com.hazelcast.map.IMap;
@@ -15,8 +16,9 @@ import java.util.function.Predicate;
  * @since 6.5.0
  */
 public class HazelcastMapThrottledSubmissionsStore<T extends ThrottledSubmission> extends BaseMappableThrottledSubmissionsStore<T> {
-    public HazelcastMapThrottledSubmissionsStore(final Map<String, T> backingMap) {
-        super(backingMap);
+    public HazelcastMapThrottledSubmissionsStore(final Map<String, T> backingMap,
+                                                 final CasConfigurationProperties casProperties) {
+        super(backingMap, casProperties);
     }
 
     @Override

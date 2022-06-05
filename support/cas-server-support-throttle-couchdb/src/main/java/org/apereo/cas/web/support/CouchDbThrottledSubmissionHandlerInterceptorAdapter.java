@@ -3,7 +3,6 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 
 import lombok.val;
-import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,8 +18,6 @@ import java.util.stream.Collectors;
  */
 public class CouchDbThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
 
-    private static final String NAME = "CouchDbThrottle";
-
     private final AuditActionContextCouchDbRepository repository;
 
     public CouchDbThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
@@ -35,18 +32,21 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
         val remoteAddress = clientInfo.getClientIpAddress();
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
 
+        val username = getUsernameParameterFromRequest(request);
         val failures = repository.findByThrottleParams(remoteAddress,
-                getUsernameParameterFromRequest(request),
+                username,
                 throttle.getFailure().getCode(),
                 throttle.getCore().getAppCode(),
                 LocalDateTime.now(ZoneOffset.UTC).minusSeconds(throttle.getFailure().getRangeSeconds()))
-            .stream().map(AuditActionContext::getWhenActionWasPerformed).collect(Collectors.toList());
+            .stream()
+            .map(this::toThrottledSubmission)
+            .collect(Collectors.toList());
 
         return calculateFailureThresholdRateAndCompare(failures);
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "CouchDbThrottle";
     }
 }

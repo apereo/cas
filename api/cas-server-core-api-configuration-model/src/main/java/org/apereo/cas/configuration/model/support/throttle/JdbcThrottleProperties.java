@@ -23,13 +23,13 @@ public class JdbcThrottleProperties extends AbstractJpaProperties {
     /**
      * SQL throttling query for all failing records.
      */
-    public static final String SQL_AUDIT_QUERY_ALL = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE "
+    public static final String SQL_AUDIT_QUERY_ALL = "SELECT * FROM COM_AUDIT_TRAIL WHERE "
         + "AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
 
     /**
      * SQL throttling query.
      */
-    private static final String SQL_AUDIT_QUERY_BY_USER_AND_IP = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL "
+    private static final String SQL_AUDIT_QUERY_BY_USER_AND_IP = "SELECT * FROM COM_AUDIT_TRAIL "
         + "WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
         + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? "
         + "ORDER BY AUD_DATE DESC";

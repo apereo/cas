@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -22,8 +20,6 @@ import java.util.stream.Collectors;
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter
     implements InMemoryThrottledSubmissionHandlerInterceptor {
 
-    private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
-
     private final ThrottledSubmissionsStore<ThrottledSubmission> submissionsStore;
 
     protected AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(
@@ -33,18 +29,6 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         this.submissionsStore = submissionsStore;
     }
 
-    /**
-     * Computes the instantaneous rate in between two given dates corresponding to two submissions.
-     *
-     * @param a First date.
-     * @param b Second date.
-     * @return Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
-     */
-    private static double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
-        val rate = SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
-        LOGGER.debug("Submitting rate for [{}] and [{}] is [{}]", a, b, rate);
-        return rate;
-    }
 
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
@@ -53,14 +37,14 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         val submission = ThrottledSubmission.builder().key(key).build();
         submissionsStore.put(submission);
     }
+
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val key = constructKey(request);
         LOGGER.trace("Throttling threshold key is [{}] with submission threshold [{}]", key, getThresholdRate());
-        val last = this.submissionsStore.get(key);
-        LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, last);
-        return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last.getValue()) > getThresholdRate();
+        return submissionsStore.exceedsThreshold(key, getThresholdRate());
     }
+
     @Override
     public Collection getRecords() {
         return submissionsStore.entries()
@@ -69,10 +53,12 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     }
 
     @Override
-    public void decrement() {
-        LOGGER.info("Beginning audit cleanup...");
-        val now = ZonedDateTime.now(ZoneOffset.UTC);
-        submissionsStore.removeIf(entry -> submissionRate(now, entry.getValue()) < getThresholdRate());
-        LOGGER.debug("Done decrementing count for throttler.");
+    public void release() {
+        try {
+            LOGGER.info("Beginning audit cleanup...");
+            submissionsStore.release(getThresholdRate());
+        } finally {
+            LOGGER.debug("Done releasing throttled entries.");
+        }
     }
 }

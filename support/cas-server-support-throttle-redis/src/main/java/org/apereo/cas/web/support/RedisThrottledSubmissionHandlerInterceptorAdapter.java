@@ -40,22 +40,22 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
-
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
         val keys = redisTemplate.keys(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*', this.scanCount);
+        val username = getUsernameParameterFromRequest(request);
         val failures = keys
             .map((Function<String, BoundValueOperations>) this.redisTemplate::boundValueOps)
             .map(BoundValueOperations::get)
             .map(AuditActionContext.class::cast)
             .filter(audit ->
-                audit.getPrincipal().equalsIgnoreCase(getUsernameParameterFromRequest(request))
+                audit.getPrincipal().equalsIgnoreCase(username)
                 && audit.getClientIpAddress().equalsIgnoreCase(remoteAddress)
                 && audit.getActionPerformed().equalsIgnoreCase(throttle.getFailure().getCode())
                 && audit.getApplicationCode().equalsIgnoreCase(throttle.getCore().getAppCode())
                 && audit.getWhenActionWasPerformed().compareTo(getFailureInRangeCutOffDate()) >= 0)
             .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed).reversed())
             .limit(2)
-            .map(AuditActionContext::getWhenActionWasPerformed)
+            .map(this::toThrottledSubmission)
             .collect(Collectors.toList());
         return calculateFailureThresholdRateAndCompare(failures);
     }

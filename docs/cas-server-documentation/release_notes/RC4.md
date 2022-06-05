@@ -145,3 +145,5 @@ signed JWTs using a given JSON Webkeystore.
 - Amazon SDK
 - Spring Cloud
 - Mockito
+- Groovy
+- Nimbus OIDC

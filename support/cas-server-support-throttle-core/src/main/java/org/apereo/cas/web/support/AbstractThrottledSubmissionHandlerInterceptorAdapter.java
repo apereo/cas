@@ -15,7 +15,6 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +23,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Abstract implementation of the handler that has all of the logic.  Encapsulates the logic in case we get it wrong!
@@ -36,7 +36,7 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
-    implements ThrottledSubmissionHandlerInterceptor, InitializingBean, AsyncHandlerInterceptor {
+    implements ThrottledSubmissionHandlerInterceptor, InitializingBean {
     /**
      * Throttled login attempt action code used to tag the attempt in audit records.
      */
@@ -61,7 +61,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     @Override
     public final boolean preHandle(final HttpServletRequest request,
                                    final HttpServletResponse response,
-                                   final Object handler) throws Exception {
+                                   final Object handler) {
         if (isRequestIgnoredForThrottling(request, response)) {
             LOGGER.trace("Letting the request through without throttling; No request filters support it");
             return true;
@@ -106,11 +106,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         }
     }
 
-    @Override
-    public void decrement() {
-        LOGGER.debug("Throttling is not activated for this interceptor adapter");
-    }
-
     /**
      * Is request throttled.
      *
@@ -151,19 +146,18 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      * @return true/false
      */
     @SuppressWarnings("JavaUtilDate")
-    protected boolean calculateFailureThresholdRateAndCompare(final List<Date> failures) {
-        if (failures.size() < 2) {
-            return false;
-        }
-        val lastTime = failures.get(0).getTime();
-        val secondToLastTime = failures.get(1).getTime();
-        val difference = lastTime - secondToLastTime;
-        val rate = NUMBER_OF_MILLISECONDS_IN_SECOND / difference;
-        LOGGER.debug("Last attempt was at [{}] and the one before that was at [{}]. Difference is [{}] calculated as rate of [{}]",
-            lastTime, secondToLastTime, difference, rate);
-        if (rate > getThresholdRate()) {
-            LOGGER.warn("Authentication throttling rate [{}] exceeds the defined threshold [{}]", rate, getThresholdRate());
-            return true;
+    protected boolean calculateFailureThresholdRateAndCompare(final List<? extends ThrottledSubmission> failures) {
+        if (failures.size() >= 2) {
+            val lastTime = DateTimeUtils.dateOf(failures.get(0).getValue()).getTime();
+            val secondToLastTime = DateTimeUtils.dateOf(failures.get(1).getValue()).getTime();
+            val difference = lastTime - secondToLastTime;
+            val rate = NUMBER_OF_MILLISECONDS_IN_SECOND / difference;
+            LOGGER.debug("Last attempt was at [{}] and the one before that was at [{}]. Difference is [{}] calculated as rate of [{}]",
+                lastTime, secondToLastTime, difference, rate);
+            if (rate > getThresholdRate()) {
+                LOGGER.warn("Authentication throttling rate [{}] exceeds the defined threshold [{}]", rate, getThresholdRate());
+                return true;
+            }
         }
         return false;
     }
@@ -217,5 +211,19 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     private boolean isRequestIgnoredForThrottling(final HttpServletRequest request, final HttpServletResponse response) {
         val plan = configurationContext.getApplicationContext().getBean(AuthenticationThrottlingExecutionPlan.class);
         return !plan.getAuthenticationThrottleFilter().supports(request, response);
+    }
+
+    /**
+     * To throttled submission.
+     *
+     * @param context the context
+     * @return the throttled submission
+     */
+    protected ThrottledSubmission toThrottledSubmission(
+        final AuditActionContext context) {
+        return ThrottledSubmission.builder()
+            .key(UUID.randomUUID().toString())
+            .value(DateTimeUtils.zonedDateTimeOf(context.getWhenActionWasPerformed()))
+            .build();
     }
 }
