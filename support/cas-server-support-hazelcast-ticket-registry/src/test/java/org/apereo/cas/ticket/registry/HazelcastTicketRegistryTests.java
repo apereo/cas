@@ -6,6 +6,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.DefaultTicketDefinition;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -47,17 +48,18 @@ public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyBadExpPolicyValue() {
         val instance = mock(HazelcastInstance.class);
         val catalog = mock(TicketCatalog.class);
-        val registry = new HazelcastTicketRegistry(instance, catalog, 0);
-        val ticket = new MockTicketGrantingTicket("casuser");
-        ticket.setExpirationPolicy(new HardTimeoutExpirationPolicy(-1));
-        assertThrows(IllegalArgumentException.class,
-            () -> registry.addTicket(ticket));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                registry.shutdown();
-            }
-        });
+        try (val registry = new HazelcastTicketRegistry(instance, catalog, 0)) {
+            val ticket = new MockTicketGrantingTicket("casuser");
+            ticket.setExpirationPolicy(new HardTimeoutExpirationPolicy(-1));
+            assertThrows(IllegalArgumentException.class,
+                () -> registry.addTicket(ticket));
+            assertDoesNotThrow(new Executable() {
+                @Override
+                public void execute() {
+                    registry.shutdown();
+                }
+            });
+        }
     }
 
     @RepeatedTest(1)
@@ -68,17 +70,18 @@ public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
         when(instance.getMap(anyString())).thenThrow(new RuntimeException());
 
         val catalog = mock(TicketCatalog.class);
-        val defn = new DefaultTicketDefinition(ticket.getClass(), ticket.getPrefix(), 0);
+        val defn = new DefaultTicketDefinition(ticket.getClass(), TicketGrantingTicket.class, ticket.getPrefix(), 0);
         defn.getProperties().setStorageName("Tickets");
         when(catalog.find(any(Ticket.class))).thenReturn(defn);
-        val registry = new HazelcastTicketRegistry(instance, catalog, 0);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                registry.addTicket(ticket);
-            }
-        });
-        assertNull(registry.getTicket(ticket.getId()));
+        try (val registry = new HazelcastTicketRegistry(instance, catalog, 0)) {
+            assertDoesNotThrow(new Executable() {
+                @Override
+                public void execute() throws Exception {
+                    registry.addTicket(ticket);
+                }
+            });
+            assertNull(registry.getTicket(ticket.getId()));
+        }
     }
 
 }
