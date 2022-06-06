@@ -6,6 +6,7 @@ import org.apereo.cas.services.ChainingAttributeReleasePolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicyTests;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicyTests;
 import org.apereo.cas.services.GroovyScriptAttributeReleasePolicyTests;
+import org.apereo.cas.services.PatternMatchingAttributeReleasePolicyTests;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicyTests;
@@ -26,6 +27,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 5.3.0
  */
 @SelectClasses({
+    PatternMatchingAttributeReleasePolicyTests.class,
     DenyAllAttributeReleasePolicyTests.class,
     GroovyScriptAttributeReleasePolicyTests.class,
     RegisteredServiceAttributeReleasePolicyTests.class,
