@@ -8,7 +8,7 @@ category: Attributes
 
 # Attribute Release Policies
 
-The attribute release policy decides how attributes are selected and provided to a given application in the final 
+The attribute release policy decides how attributes are selected and provided to a given application in the final
 CAS response. Additionally, each policy has the ability to apply an optional filter to weed out their attributes based on their values.
 
 The following settings are shared by all attribute release policies:
@@ -19,7 +19,7 @@ The following settings are shared by all attribute release policies:
 | `authorizedToReleaseProxyGrantingTicket`      | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../authentication/Configuring-Proxy-Authentication.html).                                                                                                                                         |
 | `excludeDefaultAttributes`                    | Boolean to define whether this policy should exclude the default global bundle of attributes for release.                                                                                                                                                                                                       |
 | `authorizedToReleaseAuthenticationAttributes` | Boolean to define whether this policy should exclude the authentication/protocol attributes for release. Authentication attributes are considered those that are not tied to a specific principal and define extra supplementary metadata about the authentication event itself, such as the commencement date. |
-| `principalIdAttribute`                        | An attribute name of your own choosing that will be stuffed into the final bundle of attributes, carrying the CAS authenticated principal identifier. By default, the principal id is *NOT* released as an attribute.                                                                                           |
+| `principalIdAttribute`                        | An attribute name of your own choosing that will be stuffed into the final bundle of attributes, carrying the CAS authenticated principal identifier.                                                                                                                                                           |
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on 
 the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
@@ -62,10 +62,10 @@ authentication protocol at hand. Remember to verify attribute release capabiliti
 
 ### Default
 
-CAS provides the ability to release a bundle of principal attributes to all services by default. This bundle 
-is not defined on a per-service basis and is always combined with attributes produced by the specific 
-release policy of the service, such that for instance, you can devise rules to always release `givenName` 
-and `cn` to every application, and additionally allow other specific principal attributes for 
+CAS provides the ability to release a bundle of principal attributes to all services by default. This bundle
+is not defined on a per-service basis and is always combined with attributes produced by the specific
+release policy of the service, such that for instance, you can devise rules to always release `givenName`
+and `cn` to every application, and additionally allow other specific principal attributes for
 only some applications per their attribute release policy.
 
 {% include_cached casproperties.html properties="cas.authn.attribute-repository.core.default-attributes-to-release" %}
@@ -144,14 +144,14 @@ Only return the principal attributes that are explicitly allowed by the service 
   }
 }
 ```
-     
+
 Attributes authorized and allowed for release by this policy may not necessarily be available
-as resolved principal attributes and can be resolved on the fly dynamically 
+as resolved principal attributes and can be resolved on the fly dynamically
 using the [attribute definition store](Attribute-Definitions.html).
 
 ### Return Encrypted
 
-Encrypt and encode all all allowed attributes in base-64 using the assigned registered service public key. 
+Encrypt and encode all all allowed attributes in base-64 using the assigned registered service public key.
 
 ```json
 {
@@ -185,8 +185,8 @@ using the [attribute definition store](Attribute-Definitions.html).
 
 ### REST
 
-Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to 
-accept/process `application/json`. The expected response status code is `200` where the body of 
+Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to
+accept/process `application/json`. The expected response status code is `200` where the body of
 the response includes a `Map` of attributes linked to their values.
 
 ```json
@@ -209,7 +209,7 @@ The following parameters are passed to the endpoint:
 | `principal` | The object representing the authenticated principal.                          |
 | `service`   | The object representing the corresponding service definition in the registry. |
 
-The body of the submitted request may also include a `Map` of currently resolved attributes. 
+The body of the submitted request may also include a `Map` of currently resolved attributes.
 
 ### Return Mapped
 
@@ -244,12 +244,12 @@ using the [attribute definition store](Attribute-Definitions.html).
 
 ### Return MultiMapped
 
-The same policy may allow attribute definitions to be renamed and remapped to multiple attribute names, 
+The same policy may allow attribute definitions to be renamed and remapped to multiple attribute names,
 with duplicate attributes values mapped to different names.
 
-For example, the following configuration will recognize the resolved attribute `eduPersonAffiliation` and will then 
-release `affiliation` and `personAffiliation` whose values stem from the original `eduPersonAffiliation` attribute 
-while `groupMembership` is released as `group`. In other words, the `eduPersonAffiliation` attribute is 
+For example, the following configuration will recognize the resolved attribute `eduPersonAffiliation` and will then
+release `affiliation` and `personAffiliation` whose values stem from the original `eduPersonAffiliation` attribute
+while `groupMembership` is released as `group`. In other words, the `eduPersonAffiliation` attribute is
 released twice under two different names each sharing the same value.
 
 ```json
@@ -272,6 +272,40 @@ released twice under two different names each sharing the same value.
 Attributes authorized and allowed for release by this policy may not necessarily be available
 as resolved principal attributes and can be resolved on the fly dynamically
 using the [attribute definition store](Attribute-Definitions.html).
+
+### Pattern Matching
+
+This policy allows the release of defined allowed attributes only if the attrribute value(s)
+matches the given regular expression pattern. If the attribute value is matched successfully, the policy
+is then able to apply transformation rules on the value to extract
+and collect the *matched groups* to then assemble the final attribute value.
+    
+For example, consider an authenticated principal with a `memberOf` attribute 
+which contains values such as `CN=g1,OU=example,DC=org`, and `CN=g2,OU=example,DC=org`. The following policy
+applies the defined pattern and the transformation on each attribute value. The final result would be a `memberOf`
+attribute with values `g1@example.org` and `g2@example.org`.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "attributeReleasePolicy" : {
+    "@class": "org.apereo.cas.services.PatternMatchingAttributeReleasePolicy",
+    "allowedAttributes": {
+        "@class": "java.util.TreeMap",
+        "memberOf": {
+            "@class": "org.apereo.cas.services.PatternMatchingAttributeReleasePolicy$Rule",
+            "pattern": "^CN=(\\w+),\\s*OU=(\\w+),\\s*DC=(\\w+)",
+            "transform": "${1}@${2}/${3}"
+        }
+    }
+  }
+}
+```
+   
+Matched pattern groups typically start at `1`. If you need to refer to the entire matched region, use `${0}`. 
 
 ### Inline Groovy Attributes
 
@@ -338,7 +372,7 @@ The configuration of this component qualifies to use the [Spring Expression Lang
 
 ### Groovy Script
 
-Let an external Groovy script decide how principal attributes should be released. The configuration of this 
+Let an external Groovy script decide how principal attributes should be released. The configuration of this
 component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 ```json
@@ -359,7 +393,7 @@ The script itself may be designed in Groovy as:
 ```groovy
 import java.util.*
 
-def Map<String, List<Object>> run(final Object... args) {
+def run(final Object... args) {
     def currentAttributes = args[0]
     def logger = args[1]
     def principal = args[2]
@@ -385,8 +419,8 @@ The following parameters are passed to the script:
 <p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
 </div>
 
-Use alternative script engine implementations and other programming languages to configure attribute release policies. This approach 
-takes advantage of scripting functionality built into the Java platform via additional libraries and drivers. While Groovy should be 
+Use alternative script engine implementations and other programming languages to configure attribute release policies. This approach
+takes advantage of scripting functionality built into the Java platform via additional libraries and drivers. While Groovy should be
 natively supported by CAS, the following module is required in the overlay to include support for additional languages
 such as Python, etc.
 
@@ -407,10 +441,10 @@ The service definition then may be designed as:
 }
 ```
 
-The configuration of this component qualifies to use 
-the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. The scripts 
+The configuration of this component qualifies to use
+the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. The scripts
 need to design a `run` function that receives a list of parameters. The collection of current attributes in process
-as well as a logger object are passed to this function. The result must produce a map whose `key`s are attributes names 
+as well as a logger object are passed to this function. The result must produce a map whose `key`s are attributes names
 and whose `value`s are a list of attribute values.
 
 As an example, the script itself may be designed in Groovy as:
@@ -452,16 +486,16 @@ has access to the collection of resolved `attributes` as well as a `logger` obje
   }
 }
 ```
-    
+
 ### Attribute Repository Filtering
 
-Attribute release policies can be assigned a `principalAttributesRepository` to consult attribute sources 
+Attribute release policies can be assigned a `principalAttributesRepository` to consult attribute sources
 defined and controlled by [Person Directory](Attribute-Resolution.html) attribute repositories
 to fetch, resolve, cache and release attributes. To learn more about this topic, please [see this guide](Attribute-Release-Caching.html).
 
 ### Chaining Policies
 
-Attribute release policies can be chained together to 
+Attribute release policies can be chained together to
 process multiple rules. [See this guide](Attribute-Release-Policies-Chain.html) to learn more.
 
 ## Attribute Value Filters

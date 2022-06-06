@@ -38,6 +38,7 @@ import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
 import org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.NotPreventedRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
+import org.apereo.cas.services.PatternMatchingAttributeReleasePolicy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
@@ -132,6 +133,8 @@ public class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(GroovyScriptAttributeReleasePolicy.class);
             plan.registerSerializableClass(ScriptedRegisteredServiceAttributeReleasePolicy.class);
             plan.registerSerializableClass(ReturnRestfulAttributeReleasePolicy.class);
+            plan.registerSerializableClass(PatternMatchingAttributeReleasePolicy.class);
+            plan.registerSerializableClass(PatternMatchingAttributeReleasePolicy.Rule.class);
 
             plan.registerSerializableClass(DefaultRegisteredServiceMultifactorPolicy.class);
             plan.registerSerializableClass(GroovyRegisteredServiceMultifactorPolicy.class);
