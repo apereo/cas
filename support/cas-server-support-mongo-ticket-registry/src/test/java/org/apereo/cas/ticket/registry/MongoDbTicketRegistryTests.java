@@ -28,6 +28,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.DefaultTicketDefinition;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
@@ -123,7 +124,7 @@ public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyBadTicketInCatalog() throws Exception {
         val ticket = new MockTicketGrantingTicket("casuser");
         val catalog = mock(TicketCatalog.class);
-        val defn = new DefaultTicketDefinition(ticket.getClass(), ticket.getPrefix(), 0);
+        val defn = new DefaultTicketDefinition(ticket.getClass(), TicketGrantingTicket.class, ticket.getPrefix(), 0);
         
         when(catalog.find(any(Ticket.class))).thenReturn(null);
         val mgr = mock(TicketSerializationManager.class);
