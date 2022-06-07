@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -45,15 +46,15 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
-    private static final int MAX_CONNECTIONS = 200;
+    private final int MAX_CONNECTIONS = 200;
 
-    private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
+    private final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
-    private static final int CONNECT_TIMEOUT_IN_MILLISECONDS = 500;
+    private final int CONNECT_TIMEOUT_IN_MILLISECONDS = 500;
 
-    private static final int CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = 5 * 1000;
+    private final int CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = 5 * 1000;
 
-    private static final int SOCKET_TIMEOUT_IN_MILLISECONDS = 10 * 1000;
+    private final int SOCKET_TIMEOUT_IN_MILLISECONDS = 10 * 1000;
 
     /**
      * Execute http request and produce a response.
@@ -61,11 +62,14 @@ public class HttpUtils {
      * @param execution the request
      * @return the http response
      */
-    public static HttpResponse execute(final HttpExecutionRequest execution) {
+    public HttpResponse execute(final HttpExecutionRequest execution) {
         val uri = buildHttpUri(execution.getUrl().trim(), execution.getParameters());
         val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase().trim(), execution.getEntity(), uri);
         try {
-            execution.getHeaders().forEach((k, v) -> request.addHeader(k, v.toString()));
+            execution.getHeaders().forEach((key, v) -> {
+                val headerValue = SpringExpressionLanguageValueResolver.getInstance().resolve(v);
+                request.addHeader(key, headerValue);
+            });
             prepareHttpRequest(request, execution);
             val builder = getHttpClientBuilder();
             if (StringUtils.isNotBlank(execution.getProxyUrl())) {
@@ -92,7 +96,7 @@ public class HttpUtils {
      *
      * @param response the response to close
      */
-    public static void close(final HttpResponse response) {
+    public void close(final HttpResponse response) {
         if (response instanceof CloseableHttpResponse) {
             val closeableHttpResponse = (CloseableHttpResponse) response;
             try {
@@ -110,7 +114,7 @@ public class HttpUtils {
      * @param basicAuthPassword the basic auth password
      * @return http headers
      */
-    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
+    public org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
                                                                               final String basicAuthPassword) {
         return HttpUtils.createBasicAuthHeaders(basicAuthUser, basicAuthPassword, "US-ASCII");
     }
@@ -123,7 +127,7 @@ public class HttpUtils {
      * @param basicCharset      The charset used to encode auth header
      * @return the org . springframework . http . http headers
      */
-    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
+    public org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
                                                                               final String basicAuthPassword,
                                                                               final String basicCharset) {
         val acceptHeaders = new org.springframework.http.HttpHeaders();
@@ -136,7 +140,7 @@ public class HttpUtils {
         return acceptHeaders;
     }
 
-    private static HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
+    private HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
         if ("post".equalsIgnoreCase(method)) {
             val request = new HttpPost(uri);
             if (StringUtils.isNotBlank(entity)) {
@@ -160,7 +164,7 @@ public class HttpUtils {
      * @param request   the request
      * @param execution the execution request
      */
-    private static void prepareHttpRequest(final HttpUriRequest request,
+    private void prepareHttpRequest(final HttpUriRequest request,
                                            final HttpExecutionRequest execution) {
         if (execution.isBasicAuthentication()) {
             val auth = EncodingUtils.encodeBase64(execution.getBasicAuthUsername() + ':' + execution.getBasicAuthPassword());
@@ -171,7 +175,7 @@ public class HttpUtils {
         }
     }
 
-    private static URI buildHttpUri(final String url, final Map<String, String> parameters) {
+    private URI buildHttpUri(final String url, final Map<String, String> parameters) {
         return FunctionUtils.doUnchecked(() -> {
             val uriBuilder = new URIBuilder(url);
             parameters.forEach(uriBuilder::addParameter);
@@ -195,7 +199,7 @@ public class HttpUtils {
 
     @SuperBuilder
     @Getter
-    public static class HttpExecutionRequest {
+    public class HttpExecutionRequest {
         @NonNull
         private final HttpMethod method;
 
