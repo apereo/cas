@@ -199,7 +199,7 @@ public class HttpUtils {
 
     @SuperBuilder
     @Getter
-    public class HttpExecutionRequest {
+    public static class HttpExecutionRequest {
         @NonNull
         private final HttpMethod method;
 
