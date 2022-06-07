@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,9 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.io.StringWriter;
@@ -29,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Return a collection of allowed attributes for the principal based on an external REST endpoint.
@@ -53,23 +55,26 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
 
     private String endpoint;
 
+    private Map<String, String> headers = new TreeMap<>();
+
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
                                                            final Map<String, List<Object>> attributes) {
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
+            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
-                .url(this.endpoint)
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(endpoint))
                 .parameters(CollectionUtils.wrap("principal", context.getPrincipal().getId(),
                     "service", context.getRegisteredService().getServiceId()))
                 .entity(writer.toString())
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            if (HttpStatus.resolve(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Policy response received: [{}]", result);
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), new TypeReference<>() {

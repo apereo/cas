@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -67,7 +68,7 @@ public class RestfulRegisteredServiceProxyPolicy implements RegisteredServicePro
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .headers(headers)
-                .url(this.endpoint)
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(endpoint))
                 .entity(writer.toString())
                 .parameters(CollectionUtils.wrap("pgtUrl", pgtUrl.toExternalForm()))
                 .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))

@@ -197,7 +197,11 @@ the response includes a `Map` of attributes linked to their values.
   "id" : 100,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy",
-    "endpoint" : "https://somewhere.example.org"
+    "endpoint" : "https://somewhere.example.org",
+    "headers": {
+      "@class": "java.util.LinkedHashMap",
+      "header": "value"
+    }
   }
 }
 ```
