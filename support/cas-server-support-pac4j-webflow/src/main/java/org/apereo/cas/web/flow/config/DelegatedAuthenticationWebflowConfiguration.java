@@ -36,6 +36,7 @@ import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationGroov
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationPostProcessor;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -226,11 +227,14 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action delegatedAuthenticationClientLogoutAction(
+            final CasConfigurationProperties casProperties,
             @Qualifier("builtClients")
             final Clients builtClients,
             @Qualifier("delegatedClientDistributedSessionStore")
             final SessionStore delegatedClientDistributedSessionStore) {
-            return new DelegatedAuthenticationClientLogoutAction(builtClients, delegatedClientDistributedSessionStore);
+            return casProperties.getSlo().isDisabled()
+                ? ConsumerExecutionAction.NONE
+                : new DelegatedAuthenticationClientLogoutAction(builtClients, delegatedClientDistributedSessionStore);
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT)

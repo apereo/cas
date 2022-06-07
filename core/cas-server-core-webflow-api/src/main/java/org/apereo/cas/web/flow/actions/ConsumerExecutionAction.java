@@ -18,6 +18,12 @@ import java.util.function.Consumer;
  */
 @RequiredArgsConstructor
 public class ConsumerExecutionAction implements Action {
+    /**
+     * Consumer action that does nothing and returns null, effectively being a no-op.
+     */
+    public static final Action NONE = new ConsumerExecutionAction(ctx -> {
+    });
+
     private final Consumer<RequestContext> task;
 
     @Setter
