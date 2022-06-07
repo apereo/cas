@@ -128,7 +128,13 @@ requests, where this token can be obtained via the `/oidc/initToken` endpoint.
 
 [CAS Commandline Shell](../installation/Configuring-Commandline-Shell.html) is now able to generate 
 signed JWTs using a given JSON Webkeystore.
- 
+  
+### Pattern Matching Attribute Release Policy
+
+Attribute bundles can now be released to application using a *pattern matching* policy
+that primarily operates on the attribute's value(s), and optionally applies transformation rules
+on each value before assembling the final result. [See this guide](../integration/Attribute-Release-Policies.html) for more.
+
 ### Integration Testing & Docker Images
 
 The following Docker images, used for integration testing, are now upgraded to their latest version:
