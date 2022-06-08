@@ -106,7 +106,7 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     public RegisteredAuthenticationHandlersEndpoint registeredAuthenticationHandlersEndpoint(
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
+        final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan,
         final CasConfigurationProperties casProperties) {
         return new RegisteredAuthenticationHandlersEndpoint(casProperties, authenticationEventExecutionPlan);
     }
@@ -115,7 +115,7 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     public RegisteredAuthenticationPoliciesEndpoint registeredAuthenticationPoliciesEndpoint(
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
+        final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan,
         final CasConfigurationProperties casProperties) {
         return new RegisteredAuthenticationPoliciesEndpoint(casProperties, authenticationEventExecutionPlan);
     }
