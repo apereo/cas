@@ -1,14 +1,12 @@
 package org.apereo.cas.configuration.metadata;
 
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import lombok.val;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,16 +56,19 @@ public class ConfigurationMetadataClassSourceLocator {
         if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
             return cachedPropertiesClasses.get(type.getNameAsString());
         }
-        val urls = new ArrayList<>(ClasspathHelper.forPackage("org.apereo.cas"));
-        val reflections = new Reflections(new ConfigurationBuilder()
-            .filterInputsBy(s -> s != null && s.contains(type.getNameAsString()))
-            .setUrls(urls));
-        val clz = reflections.getSubTypesOf(Serializable.class)
-            .stream()
-            .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
-        cachedPropertiesClasses.put(type.getNameAsString(), clz);
-        return clz;
+
+        try (ScanResult scanResult = new ClassGraph()
+                .acceptPackages("org.apereo.cas")
+                .enableClassInfo()
+                .scan()) {
+            val clz = scanResult.getAllClasses()
+                    .stream()
+                    .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
+                    .findFirst()
+                    .map(ClassInfo::loadClass)
+                    .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
+            cachedPropertiesClasses.put(type.getNameAsString(), clz);
+            return clz;
+        }
     }
 }

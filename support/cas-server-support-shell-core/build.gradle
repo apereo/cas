@@ -35,4 +35,5 @@ dependencies {
     implementation libraries.opensaml
     implementation libraries.dropwizard
     implementation libraries.javaparser
+    implementation libraries.classgraph
 }

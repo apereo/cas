@@ -15,13 +15,11 @@ import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttribut
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.springframework.util.ClassUtils;
 
 import java.util.Collection;
@@ -154,22 +152,25 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     protected void configureAttributeReleasePoliciesByScope() {
         val oidc = casProperties.getAuthn().getOidc();
         val packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
-        val reflections = new Reflections(new ConfigurationBuilder()
-            .filterInputsBy(new FilterBuilder().includePackage(packageName))
-            .setUrls(ClasspathHelper.forPackage(packageName)));
 
-        val subTypes = reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
-        subTypes.forEach(Unchecked.consumer(t -> {
-            if (ClassUtils.hasConstructor(t)) {
-                val ex = t.getDeclaredConstructor().newInstance();
-                if (oidc.getDiscovery().getScopes().contains(ex.getScopeType())) {
-                    LOGGER.trace("Found standard OpenID Connect scope [{}] to filter attributes", ex.getScopeType());
-                    this.attributeReleasePolicies.put(ex.getScopeType(), ex);
-                } else {
-                    LOGGER.debug("OpenID Connect scope [{}] is not configured for use and will be ignored", ex.getScopeType());
+        try (ScanResult scanResult = new ClassGraph()
+                .acceptPackages(packageName)
+                .enableClassInfo()
+                .scan()) {
+            val subTypes = scanResult.getClassesImplementing(BaseOidcScopeAttributeReleasePolicy.class)
+                    .loadClasses(BaseOidcScopeAttributeReleasePolicy.class);
+            subTypes.forEach(Unchecked.consumer(t -> {
+                if (ClassUtils.hasConstructor(t)) {
+                    val ex = t.getDeclaredConstructor().newInstance();
+                    if (oidc.getDiscovery().getScopes().contains(ex.getScopeType())) {
+                        LOGGER.trace("Found standard OpenID Connect scope [{}] to filter attributes", ex.getScopeType());
+                        this.attributeReleasePolicies.put(ex.getScopeType(), ex);
+                    } else {
+                        LOGGER.debug("OpenID Connect scope [{}] is not configured for use and will be ignored", ex.getScopeType());
+                    }
                 }
-            }
-        }));
+            }));
+        }
 
         if (!userScopes.isEmpty()) {
             LOGGER.debug("Configuring attributes release policies for user-defined scopes [{}]", userScopes);
