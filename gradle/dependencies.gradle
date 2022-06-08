@@ -574,16 +574,9 @@ ext.libraries = [
                 dependencies.create("com.google.guava:guava:$guavaVersion") {
                     exclude(group: "com.google.errorprone", module: "error_prone_annotations")
                 },
-                dependencies.create("org.reflections:reflections:$reflectionsVersion") {
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "org.javassist", module: "javassist")
-                    exclude(group: "net.bytebuddy", module: "byte-buddy")
-                },
                 dependencies.create("de.cronn:reflection-util:$reflectionUtilVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
-                },
-                dependencies.create("org.javassist:javassist:$javassistVersion") {
                 },
                 dependencies.create("org.springmodules:spring-modules-cache:0.8") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -614,6 +607,9 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "org.springframework", module: "spring")
                 }
+        ],
+        classgraph               : [
+                dependencies.create("io.github.classgraph:classgraph:$classgraphVersion")
         ],
         hazelcast               : [
                 dependencies.create("com.hazelcast:hazelcast:$hazelcastVersion") {

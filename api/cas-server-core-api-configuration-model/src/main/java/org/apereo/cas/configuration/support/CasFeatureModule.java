@@ -5,10 +5,12 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.reflections.ReflectionUtils;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
 
 /**
  * This is {@link CasFeatureModule}.
@@ -30,7 +32,8 @@ public interface CasFeatureModule {
      */
     @JsonIgnore
     default boolean isDefined() {
-        val fields = ReflectionUtils.getAllFields(getClass(), field -> field.getAnnotation(RequiredProperty.class) != null);
+        val fields = new HashSet<Field>();
+        ReflectionUtils.doWithFields(getClass(), fields::add, field -> AnnotatedElementUtils.isAnnotated(field, RequiredProperty.class));
         return fields
             .stream()
             .allMatch(Unchecked.predicate(field -> {

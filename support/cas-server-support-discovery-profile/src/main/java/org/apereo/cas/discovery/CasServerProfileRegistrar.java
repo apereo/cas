@@ -12,18 +12,17 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.util.CollectionUtils;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.lang.reflect.Modifier;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -52,8 +51,8 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    private static Map<String, Class> locateRegisteredServiceTypesSupported() {
-        final Function<Class, Object> mapper = c -> {
+    private static Map<String, Class<?>> locateRegisteredServiceTypesSupported() {
+        final Function<Class<?>, RegisteredService> mapper = c -> {
             try {
                 return (RegisteredService) c.getDeclaredConstructor().newInstance();
             } catch (final Exception e) {
@@ -65,19 +64,22 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             BaseRegisteredService.class, o -> true, CentralAuthenticationService.NAMESPACE);
     }
 
-    private static Object locateSubtypesByReflection(final Function<Class, Object> mapper,
-                                                     final Collector collector,
-                                                     final Class parentType, final Predicate filter,
-                                                     final String packageNamespace) {
-        val reflections = new Reflections(new ConfigurationBuilder()
-            .setUrls(ClasspathHelper.forPackage(packageNamespace)));
-
-        val subTypes = (Set<Class<?>>) reflections.getSubTypesOf(parentType);
-        return subTypes.stream()
-            .filter(c -> !Modifier.isInterface(c.getModifiers()) && !Modifier.isAbstract(c.getModifiers()) && filter.test(c))
-            .map(mapper)
-            .filter(Objects::nonNull)
-            .collect(collector);
+    private static <T, R> R locateSubtypesByReflection(final Function<Class<?>, T> mapper,
+                                                       final Collector<T, ?, R> collector,
+                                                       final Class<?> parentType, final Predicate<Class<?>> filter,
+                                                       final String packageNamespace) {
+        try (ScanResult scanResult = new ClassGraph()
+                .acceptPackages(packageNamespace)
+                .scan()) {
+            val subTypes = scanResult.getSubclasses(parentType);
+            return subTypes.stream()
+                    .filter(c -> !c.isInterface() && !c.isAbstract())
+                    .map(ClassInfo::loadClass)
+                    .filter(filter)
+                    .map(mapper)
+                    .filter(Objects::nonNull)
+                    .collect(collector);
+        }
     }
 
     /**
