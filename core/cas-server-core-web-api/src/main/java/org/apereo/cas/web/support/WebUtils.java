@@ -1992,4 +1992,14 @@ public class WebUtils {
     public List getMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
     }
+
+    /**
+     * Put delegated authentication.
+     *
+     * @param requestContext the request context
+     * @param disabled       the disabled
+     */
+    public static void putDelegatedAuthenticationDisabled(final RequestContext requestContext, final boolean disabled) {
+        requestContext.getFlowScope().put("delegatedAuthenticationDisabled", disabled);
+    }
 }

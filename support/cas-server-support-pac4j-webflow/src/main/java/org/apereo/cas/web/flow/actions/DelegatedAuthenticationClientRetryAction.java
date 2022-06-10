@@ -1,6 +1,6 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

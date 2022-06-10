@@ -14,6 +14,11 @@ import java.util.Optional;
 @FunctionalInterface
 public interface DelegatedClientAuthenticationFailureEvaluator {
     /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "delegatedClientAuthenticationFailureEvaluator";
+
+    /**
      * Evaluate failure.
      *
      * @param request the request

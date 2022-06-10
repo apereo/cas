@@ -1,7 +1,8 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.error;
 
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

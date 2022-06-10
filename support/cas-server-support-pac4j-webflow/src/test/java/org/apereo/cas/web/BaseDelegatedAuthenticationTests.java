@@ -23,6 +23,8 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.Pac4jDelegatedAuthenticationSerializationConfiguration;
@@ -33,8 +35,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
-import org.apereo.cas.web.flow.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration;
-import org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;

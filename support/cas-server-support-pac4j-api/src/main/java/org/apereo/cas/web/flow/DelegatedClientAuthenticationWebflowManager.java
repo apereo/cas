@@ -28,12 +28,14 @@ public interface DelegatedClientAuthenticationWebflowManager {
     /**
      * Store.
      *
-     * @param webContext the web context
-     * @param client     the client
+     * @param requestContext the request context
+     * @param webContext     the web context
+     * @param client         the client
      * @return the transient session ticket
      * @throws Exception the exception
      */
-    TransientSessionTicket store(JEEContext webContext, Client client) throws Exception;
+    TransientSessionTicket store(RequestContext requestContext,
+                                 JEEContext webContext, Client client) throws Exception;
 
     /**
      * Retrieve.

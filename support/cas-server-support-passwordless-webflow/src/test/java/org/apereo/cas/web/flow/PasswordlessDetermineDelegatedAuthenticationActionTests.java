@@ -25,13 +25,13 @@ import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DetermineDelegatedAuthenticationActionTests}.
+ * This is {@link PasswordlessDetermineDelegatedAuthenticationActionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("WebflowAuthenticationActions")
-public class DetermineDelegatedAuthenticationActionTests {
+public class PasswordlessDetermineDelegatedAuthenticationActionTests {
     @Nested
     @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
     @TestPropertySource(properties = {

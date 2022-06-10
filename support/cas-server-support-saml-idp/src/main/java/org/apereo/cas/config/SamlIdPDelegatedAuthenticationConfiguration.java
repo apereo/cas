@@ -7,7 +7,6 @@ import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomize
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.web.idp.delegation.SamlIdPDelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
-import org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration;
 
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;

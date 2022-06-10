@@ -113,7 +113,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         config.setSecret(UUID.randomUUID().toString());
         val client = new OidcClient(config);
         client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
@@ -127,7 +127,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         config.setSecret(UUID.randomUUID().toString());
         val client = new OAuth20Client();
         client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
@@ -141,7 +141,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         config.setSecret(UUID.randomUUID().toString());
         val client = new OAuth10Client();
         client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
@@ -157,7 +157,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val client = new CasClient();
         client.setConfiguration(config);
         httpServletRequest.addParameter("locale", "de");
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
@@ -169,7 +169,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     public void verifySamlStoreOperation() throws Exception {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
 
@@ -189,7 +189,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         httpServletRequest.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
         val pair = setupTestContextFor(File.createTempFile("sp-metadata", ".xml").getAbsolutePath(), "cas.example.sp");
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, pair.getLeft());
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
 
@@ -213,7 +213,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         httpServletRequest.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
         val pair = setupTestContextFor(File.createTempFile("sp-metadata", ".xml").getAbsolutePath(), "cas.example.sp");
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, pair.getLeft());
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
 
@@ -231,7 +231,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     public void verifyExpiredTicketOperation() throws Exception {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context,
             SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
@@ -241,7 +241,8 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
             () -> delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client));
     }
 
-    private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
+    private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath,
+                                                                       final String spEntityId) throws Exception {
         val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
         val saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);

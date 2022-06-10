@@ -135,7 +135,7 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     let result = (element != null && await element.boundingBox() != null);
-    console.log(`Checking visibility for ${selector} while on page ${page.url()}: ${result}`);
+    console.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
     return result;
 }
 
@@ -145,8 +145,9 @@ exports.assertVisibility = async (page, selector) => {
 
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
-    console.log(`Checking element invisibility for ${selector}`);
-    assert(element == null || await element.boundingBox() == null);
+    let result = element == null || await element.boundingBox() == null;
+    console.log(`Checking element invisibility for ${selector} while on page ${page.url()}:${result}`);
+    assert(result);
 }
 
 
@@ -489,7 +490,10 @@ exports.mockJsonServer = async(pathMappings, port = 8000) => {
     return app;
 }
 
-exports.httpServer = async(root, port = 5432) => {
+exports.httpServer = async(root, port = 5432,
+                           authEnabled = true,
+                           authUser = "restapi",
+                           authPassword = "YdCP05HvuhOH^*Z") => {
     const config = {
         nodeStatic: {
             root: root
@@ -501,9 +505,9 @@ exports.httpServer = async(root, port = 5432) => {
             }
         },
         auth: {
-            enabled: true,
-            name: "restapi",
-            pass: "YdCP05HvuhOH^*Z"
+            enabled: authEnabled,
+            name: authUser,
+            pass: authPassword
         },
         logger: {
             use: true,
