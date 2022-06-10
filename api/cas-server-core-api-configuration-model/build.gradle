@@ -8,7 +8,6 @@ dependencies {
     implementation libraries.bouncycastle
 
     implementation libraries.springbootconfigmetadata
-    implementation libraries.classgraph
 
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-protocol")

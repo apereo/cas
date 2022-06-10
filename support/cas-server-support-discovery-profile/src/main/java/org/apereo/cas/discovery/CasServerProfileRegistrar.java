@@ -11,10 +11,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ReflectionUtils;
 
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ScanResult;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
@@ -23,6 +21,8 @@ import org.pac4j.core.client.Clients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -68,18 +68,15 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                                                        final Collector<T, ?, R> collector,
                                                        final Class<?> parentType, final Predicate<Class<?>> filter,
                                                        final String packageNamespace) {
-        try (ScanResult scanResult = new ClassGraph()
-                .acceptPackages(packageNamespace)
-                .scan()) {
-            val subTypes = scanResult.getSubclasses(parentType);
-            return subTypes.stream()
-                    .filter(c -> !c.isInterface() && !c.isAbstract())
-                    .map(ClassInfo::loadClass)
-                    .filter(filter)
-                    .map(mapper)
-                    .filter(Objects::nonNull)
-                    .collect(collector);
-        }
+
+        Collection<? extends Class<?>> subTypes = ReflectionUtils.findSubclassesInPackage(parentType, packageNamespace);
+
+        return subTypes.stream()
+                .filter(c -> !c.isInterface() && !Modifier.isAbstract(c.getModifiers()))
+                .filter(filter)
+                .map(mapper)
+                .filter(Objects::nonNull)
+                .collect(collector);
     }
 
     /**
