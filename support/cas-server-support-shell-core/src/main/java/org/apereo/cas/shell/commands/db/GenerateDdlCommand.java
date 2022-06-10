@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands.db;
 
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ScanResult;
+import org.apereo.cas.util.ReflectionUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -45,6 +45,7 @@ import javax.persistence.MappedSuperclass;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -166,15 +167,11 @@ public class GenerateDdlCommand {
 
         LOGGER.info("Collecting entity metadata sources...");
         val metadata = new MetadataSources(svcRegistry.build());
-        try (ScanResult scanResult = new ClassGraph()
-                .acceptPackages("org.apereo.cas")
-                .enableAnnotationInfo()
-                .scan()) {
-            scanResult.getClassesWithAnnotation(MappedSuperclass.class)
-                    .forEach(ci -> metadata.addAnnotatedClass(ci.loadClass()));
-            scanResult.getClassesWithAnnotation(Entity.class)
-                    .forEach(ci -> metadata.addAnnotatedClass(ci.loadClass()));
-        }
+        ReflectionUtils.findClassesWithAnnotationsInPackage(
+                        Set.of(MappedSuperclass.class, Entity.class),
+                        "org.apereo.cas")
+                .forEach(metadata::addAnnotatedClass);
+
         val metadataSources = metadata.buildMetadata();
 
         val export = new SchemaExport();

@@ -35,7 +35,6 @@ dependencies {
     implementation libraries.pac4jcas
     implementation libraries.jose4j
     implementation libraries.nimbus
-    implementation libraries.classgraph
 
     testImplementation project(":support:cas-server-support-oauth-webflow")
     testImplementation project(":core:cas-server-core-util")
