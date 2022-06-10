@@ -10,11 +10,11 @@ import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -32,15 +32,19 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     private final long expireTokensInSeconds;
 
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
+
+    private final TransactionTemplate transactionTemplate;
 
     @Override
     public void cleanInternal() {
-        val count = this.entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
-            + " r WHERE r.issuedDateTime>= :expired")
-            .setParameter("expired", LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds))
-            .executeUpdate();
-        LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);
+        transactionTemplate.executeWithoutResult(status -> {
+            val count = entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
+                                                       + " r WHERE r.issuedDateTime>= :expired")
+                .setParameter("expired", LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds))
+                .executeUpdate();
+            LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);
+        });
     }
 
     @SneakyThrows
@@ -56,7 +60,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
             return this.entityManager.createQuery("SELECT r FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
-                + " r WHERE r.userId = :userId and r.token = :token", JpaGoogleAuthenticatorToken.class)
+                                                  + " r WHERE r.userId = :userId and r.token = :token", JpaGoogleAuthenticatorToken.class)
                 .setParameter("userId", uid.trim().toLowerCase())
                 .setParameter("token", otp)
                 .getSingleResult();
@@ -69,7 +73,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public void remove(final String uid, final Integer otp) {
         val count = this.entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
-            + " r WHERE r.userId = :userId and r.token = :token")
+                                                   + " r WHERE r.userId = :userId and r.token = :token")
             .setParameter("userId", uid.trim().toLowerCase())
             .setParameter("token", otp)
             .executeUpdate();
@@ -95,13 +99,13 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public void removeAll() {
         this.entityManager.createQuery("DELETE FROM "
-            + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r").executeUpdate();
+                                       + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r").executeUpdate();
     }
 
     @Override
     public long count(final String uid) {
         val count = (Number) this.entityManager.createQuery("SELECT COUNT(r.userId) FROM "
-            + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
+                                                            + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
             .setParameter("userId", uid.trim().toLowerCase())
             .getSingleResult();
         LOGGER.debug("Counted [{}] token record(s) for [{}]", count, uid);
