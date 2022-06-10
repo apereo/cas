@@ -22,14 +22,17 @@ public interface CasWebflowConstants {
      * Bean name for login flow registry.
      */
     String BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY = "loginFlowRegistry";
+
     /**
      * Bean name for logout flow registry.
      */
     String BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY = "logoutFlowRegistry";
+
     /**
      * Bean name for flow builder services.
      */
     String BEAN_NAME_FLOW_BUILDER_SERVICES = "flowBuilderServices";
+
     /**
      * Bean name for flow builder.
      */
@@ -238,6 +241,16 @@ public interface CasWebflowConstants {
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
+
+    /**
+     * The transition state 'generate'.
+     */
+    String TRANSITION_ID_GENERATE = "generate";
+
+    /**
+     * Transition id 'delegatedAuthenticationRedirect' .
+     */
+    String TRANSITION_ID_DELEGATED_AUTHENTICATION_REDIRECT = "delegatedAuthenticationRedirect";
 
     /**
      * Transition id 'redirect' .
@@ -683,7 +696,23 @@ public interface CasWebflowConstants {
     /**
      * State id 'redirectToDelegatedAuthnProviderView'.
      */
-    String STATE_ID_REDIRECT_TO_DELEGATED_AUTHN_PROVIDER_VIEW = "redirectToDelegatedAuthnProviderView";
+    String STATE_ID_DELEGATED_AUTHENTICATION_REDIRECT_TO_AUTHN_PROVIDER = "redirectToDelegatedAuthnProviderView";
+
+    /**
+     * State id 'delegatedAuthenticationStoreWebflowState'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_STORE = "delegatedAuthenticationStoreWebflowState";
+
+    /**
+     * State id 'delegatedAuthenticationClientSubflow'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_SUBFLOW = "delegatedAuthenticationClientSubflow";
+
+
+    /**
+     * State id 'delegatedAuthenticationClientRedirect'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_REDIRECT = "delegatedAuthenticationClientRedirect";
 
     /**
      * State id 'delegatedAuthenticationDynamicDiscoveryView'.
@@ -1144,6 +1173,16 @@ public interface CasWebflowConstants {
     String ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION = "delegatedAuthenticationProviderDynamicDiscoveryExecutionAction";
 
     /**
+     * Action id 'delegatedAuthenticationRedirectToClientAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_REDIRECT = "delegatedAuthenticationRedirectToClientAction";
+
+    /**
+     * Action id 'delegatedAuthenticationStoreWebflowAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_STORE_WEBFLOW_STATE = "delegatedAuthenticationStoreWebflowAction";
+
+    /**
      * Action id 'multifactorProviderSelectedAction'.
      */
     String ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED = "multifactorProviderSelectedAction";
@@ -1357,6 +1396,11 @@ public interface CasWebflowConstants {
      * Action id `delegatedAuthenticationAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
+     * Action id `delegatedAuthenticationCreateClientsAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS = "delegatedAuthenticationCreateClientsAction";
 
     /**
      * Action id `delegatedAuthenticationFailureAction`.

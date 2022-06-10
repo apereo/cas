@@ -7,10 +7,10 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
+import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -23,6 +23,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +63,6 @@ public class DelegatedClientAuthenticationConfigurationContext {
     private final SessionStore sessionStore;
 
     private final DelegatedClientNameExtractor delegatedClientNameExtractor;
-    
-    private final DelegatedAuthenticationAccessStrategyHelper delegatedAuthenticationAccessStrategyHelper;
 
     private final CasConfigurationProperties casProperties;
 
@@ -85,6 +84,13 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final TicketFactory ticketFactory;
 
+    private final ConfigurableApplicationContext applicationContext;
+
     @Builder.Default
     private List<DelegatedClientAuthenticationRequestCustomizer> delegatedClientAuthenticationRequestCustomizers = new ArrayList<>();
+
+    @Builder.Default
+    private List<DelegatedClientIdentityProviderAuthorizer> delegatedClientIdentityProviderAuthorizers = new ArrayList<>();
+
+    private final DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy;
 }

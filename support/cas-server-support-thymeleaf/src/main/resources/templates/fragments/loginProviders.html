@@ -54,30 +54,23 @@
                             th:each="entry: ${delegatedAuthenticationProviderConfigurations}"
                             th:switch="${entry.type}">
 
-                            <a class="mdc-button mdc-button--raised btn btn-primary d-block"
-                               th:id="${entry.name}"
-                               th:classappend="'mdc-button-' + ${entry.type}"
-                               th:href="@{${entry.redirectUrl}}"
-                               th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)}"
-                               th:inline="text"
-                               th:title="${entry.name + ' ' + entry.type}">
+                            <form method="post" th:id="${'form' + entry.name}" th:action="@{/login}">
+                                <button class="mdc-button mdc-button--raised me-2 btn btn-primary d-block w-100"
+                                        name="submitButton"
+                                        id="submitButton"
+                                        type="submit"
+                                        th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)},redirectUrl=@{${entry.redirectUrl}}"
+                                        th:title="${entry.name + ' ' + entry.type}"
+                                        th:id="${entry.name}"
+                                        th:classappend="'mdc-button-' + ${entry.type}"
+                                        accesskey="s">
+                                    <span class="mdc-button__label">[[${#strings.defaultString(entry.title,entry.name)}]]</span>
+                                </button>
 
-                                <span th:case="twitter" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-twitter')}"></span>
-                                <span th:case="windowslive" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-windows')}"></span>
-                                <span th:case="yahoo" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-yahoo')}"></span>
-                                <span th:case="bitbucket" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-bitbucket')}"></span>
-                                <span th:case="wordpress" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-wordpress')}"></span>
-                                <span th:case="google2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-google-plus')}"></span>
-                                <span th:case="github" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-github')}"></span>
-                                <span th:case="dropbox" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-dropbox')}"></span>
-                                <span th:case="linkedin2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-linkedin')}"></span>
-                                <span th:case="facebook" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-facebook')}"></span>
-                                <span th:case="oidc" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-openid')}"></span>
-                                <span th:case="saml2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-account-key')}"></span>
-                                <span th:case="cas" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-login')}"></span>
-                                <span th:case="*" class="mdi mdi-account-key"></span>
-                                [[${#strings.defaultString(entry.title,entry.name)}]]
-                            </a>
+                                <input type="hidden" name="client_name" th:value="${entry.name}" />
+                                <input type="hidden" name="_eventId" value="delegatedAuthenticationRedirect" />
+                                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                            </form>
 
                             <script th:inline="javascript">
                                 /*<![CDATA[*/
@@ -88,7 +81,7 @@
                                 });
 
                                 function jqueryReady() {
-                                    $("#fm1 #username").on("focusout", function () {
+                                    $("#fm1 #username").on("focusout", () => {
                                         let user = $("#fm1 #username").val();
                                         /*
                                         if (user.endsWith("@example.org")) {
@@ -160,16 +153,20 @@
                 /*<![CDATA[*/
 
                 let primaryUrl = /*[[${delegatedAuthenticationProviderPrimary?.redirectUrl}]]*/;
-                const redirectTo = $("a[autoRedirectType=client]").attr("href");
+                let primaryName = /*[[${delegatedAuthenticationProviderPrimary?.name}]]*/;
+
+                const redirectTo = $("button[autoRedirectType=client]").attr("id");
                 if (primaryUrl != null) {
-                    console.log(`Navigating to primary provider URL ${primaryUrl}`)
-                    window.location.href = primaryUrl;
+                    console.log(`Redirecting to primary identity provider ${primaryName} via URL ${primaryUrl}`)
+                    let form = document.getElementById(`form${primaryName}`);
+                    form.submit();
                 }
                 else if (redirectTo !== null && redirectTo !== undefined) {
-                    console.log(`Navigating to provider URL ${redirectTo}`)
-                    window.location.href = redirectTo;
+                    console.log(`Redirecting to identity provider URL ${redirectTo}`)
+                    let form = document.getElementById(`form${redirectTo}`);
+                    form.submit();
                 } else {
-                    console.log("Unable to locate provider with auto-redirect");
+                    console.log("No identity provider is configured for auto redirection.");
                 }
                 /*]]>*/
             </script>

@@ -65,7 +65,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new CasMultifactorWebflowCustomizer() {
                     @Override
-                    public List<String> getMultifactorWebflowAttributeMappings() {
+                    public List<String> getWebflowAttributeMappings() {
                         return List.of(WebUtils.REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE);
                     }
                 })

@@ -118,7 +118,7 @@ public class SurrogateWebflowConfigurerTests {
             var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());
 
-            val mappings = surrogateCasMultifactorWebflowCustomizer.getMultifactorWebflowAttributeMappings();
+            val mappings = surrogateCasMultifactorWebflowCustomizer.getWebflowAttributeMappings();
             assertTrue(mappings.contains(WebUtils.REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE));
         }
     }

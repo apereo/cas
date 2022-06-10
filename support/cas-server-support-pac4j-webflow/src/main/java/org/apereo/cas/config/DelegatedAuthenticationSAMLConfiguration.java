@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.config;
+package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @AutoConfiguration
 public class DelegatedAuthenticationSAMLConfiguration {
 
-    @ConditionalOnClass(value = HazelcastInstance.class)
+    @ConditionalOnClass(HazelcastInstance.class)
     @Configuration(value = "DelegatedAuthenticationSAMLHazelcastConfiguration", proxyBeanMethods = false)
     public static class DelegatedAuthenticationSAMLHazelcastConfiguration {
         @Bean

@@ -1,12 +1,14 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.delegation;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
+import org.apereo.cas.web.flow.BasePasswordlessCasWebflowAction;
+import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
@@ -24,14 +26,19 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiredArgsConstructor
 @Slf4j
-public class DetermineDelegatedAuthenticationAction extends BaseCasWebflowAction implements DisposableBean {
-    private final CasConfigurationProperties casProperties;
-
+public class DetermineDelegatedAuthenticationAction extends BasePasswordlessCasWebflowAction implements DisposableBean {
     private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;
 
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
+
+    public DetermineDelegatedAuthenticationAction(final CasConfigurationProperties casProperties,
+                                                  final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer,
+                                                  final WatchableGroovyScriptResource watchableScript) {
+        super(casProperties);
+        this.providerConfigurationProducer = providerConfigurationProducer;
+        this.watchableScript = watchableScript;
+    }
 
     @Override
     public void destroy() {
@@ -53,17 +60,20 @@ public class DetermineDelegatedAuthenticationAction extends BaseCasWebflowAction
         }
         if (!isDelegatedAuthenticationActiveFor(requestContext, user)) {
             LOGGER.debug("User [{}] is not activated to use CAS delegated authentication to external identity providers. "
-                + "You may wish to re-examine your CAS configuration to enable and allow for delegated authentication to be "
-                + "combined with passwordless authentication", user);
+                         + "You may wish to re-examine your CAS configuration to enable and allow for delegated authentication to be "
+                         + "combined with passwordless authentication", user);
+            WebUtils.putDelegatedAuthenticationDisabled(requestContext, true);
             return success();
         }
-
+        WebUtils.putDelegatedAuthenticationDisabled(requestContext, false);
         val providerResult = determineDelegatedIdentityProviderConfiguration(requestContext, user, clients);
         if (providerResult.isPresent()) {
-            val resolvedId = providerResult.get();
-            requestContext.getFlashScope().put("delegatedClientIdentityProvider", resolvedId);
-            return new EventFactorySupport().event(this,
-                CasWebflowConstants.TRANSITION_ID_REDIRECT, "delegatedClientIdentityProvider", resolvedId);
+            val clientConfig = providerResult.get();
+            if (clientConfig instanceof DelegatedClientIdentityProviderConfiguration) {
+                requestContext.getFlashScope().put("delegatedClientIdentityProvider", clientConfig);
+                return new EventFactorySupport().event(this,
+                    CasWebflowConstants.TRANSITION_ID_REDIRECT, "delegatedClientIdentityProvider", clientConfig);
+            }
         }
         LOGGER.trace("Delegated identity provider could not be determined for [{}] based on [{}]", user, clients);
         return success();
@@ -85,24 +95,4 @@ public class DetermineDelegatedAuthenticationAction extends BaseCasWebflowAction
         return Optional.ofNullable(watchableScript.execute(args, Serializable.class));
     }
 
-    /**
-     * Should delegate authentication for user?
-     *
-     * @param requestContext the request context
-     * @param user           the user
-     * @return true/false
-     */
-    protected boolean isDelegatedAuthenticationActiveFor(final RequestContext requestContext,
-                                                         final PasswordlessUserAccount user) {
-        val status = user.getDelegatedAuthenticationEligible();
-        if (status.isTrue()) {
-            LOGGER.trace("Passwordless account [{}] is eligible for delegated authentication", user);
-            return true;
-        }
-        if (status.isFalse()) {
-            LOGGER.trace("Passwordless account [{}] is not eligible for delegated authentication", user);
-            return false;
-        }
-        return casProperties.getAuthn().getPasswordless().getCore().isDelegatedAuthenticationActivated();
-    }
 }

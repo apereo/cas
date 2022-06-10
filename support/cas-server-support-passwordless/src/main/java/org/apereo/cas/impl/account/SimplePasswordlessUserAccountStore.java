@@ -16,7 +16,10 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public class SimplePasswordlessUserAccountStore implements PasswordlessUserAccountStore {
-    private final Map<String, PasswordlessUserAccount> accounts;
+    /**
+     * Map of all passwordless accounts read from resources.
+     */
+    protected final Map<String, PasswordlessUserAccount> accounts;
 
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {
