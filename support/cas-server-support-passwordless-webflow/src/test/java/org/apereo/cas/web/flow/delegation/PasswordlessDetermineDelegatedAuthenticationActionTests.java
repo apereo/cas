@@ -1,7 +1,11 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.delegation;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
+import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -21,6 +25,8 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -99,7 +105,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .build();
             WebUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, determineDelegatedAuthenticationAction.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, determineDelegatedAuthenticationAction.execute(context).getId());
         }
 
         @Test
@@ -132,7 +138,25 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .build();
             WebUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, determineDelegatedAuthenticationAction.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, determineDelegatedAuthenticationAction.execute(context).getId());
+        }
+
+        @Test
+        public void verifyActionByUserDisallowed() throws Exception {
+            val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+            val context = new MockRequestContext(exec);
+            val request = new MockHttpServletRequest();
+            val account = PasswordlessUserAccount.builder()
+                .email("email")
+                .phone("phone")
+                .delegatedAuthenticationEligible(TriStateBoolean.TRUE)
+                .allowedDelegatedClients(List.of("UnknownClient"))
+                .username("casuser")
+                .name("casuser")
+                .build();
+            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineDelegatedAuthenticationAction.execute(context).getId());
         }
 
         @Test

@@ -21,20 +21,21 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link DetermineDelegatedAuthenticationAction}.
+ * This is {@link PasswordlessDetermineDelegatedAuthenticationAction}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Slf4j
-public class DetermineDelegatedAuthenticationAction extends BasePasswordlessCasWebflowAction implements DisposableBean {
+public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePasswordlessCasWebflowAction implements DisposableBean {
     private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;
 
     private final WatchableGroovyScriptResource watchableScript;
 
-    public DetermineDelegatedAuthenticationAction(final CasConfigurationProperties casProperties,
-                                                  final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer,
-                                                  final WatchableGroovyScriptResource watchableScript) {
+    public PasswordlessDetermineDelegatedAuthenticationAction(
+        final CasConfigurationProperties casProperties,
+        final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer,
+        final WatchableGroovyScriptResource watchableScript) {
         super(casProperties);
         this.providerConfigurationProducer = providerConfigurationProducer;
         this.watchableScript = watchableScript;
@@ -70,9 +71,8 @@ public class DetermineDelegatedAuthenticationAction extends BasePasswordlessCasW
         if (providerResult.isPresent()) {
             val clientConfig = providerResult.get();
             if (clientConfig instanceof DelegatedClientIdentityProviderConfiguration) {
-                requestContext.getFlashScope().put("delegatedClientIdentityProvider", clientConfig);
-                return new EventFactorySupport().event(this,
-                    CasWebflowConstants.TRANSITION_ID_REDIRECT, "delegatedClientIdentityProvider", clientConfig);
+                WebUtils.putDelegatedAuthenticationProviderPrimary(requestContext, clientConfig);
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
             }
         }
         LOGGER.trace("Delegated identity provider could not be determined for [{}] based on [{}]", user, clients);
