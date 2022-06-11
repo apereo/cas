@@ -8,6 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
 
     implementation libraries.kryo
+    implementation libraries.jodatime
 
     provided project(":support:cas-server-support-memcached-spy")
     

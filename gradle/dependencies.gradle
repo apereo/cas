@@ -1194,12 +1194,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 },
-                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion") {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
-                },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")

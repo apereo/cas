@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
-import org.joda.time.DateTimeUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -242,7 +241,6 @@ public abstract class AbstractServiceRegistryTests {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(1)));
         val r2 = this.serviceRegistry.save(r);
-        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         this.serviceRegistry.load();
         val svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc);
@@ -277,7 +275,6 @@ public abstract class AbstractServiceRegistryTests {
         val r2 = this.serviceRegistry.save(r);
         val svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc, () -> "1: " + registeredServiceClass.getName());
-        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         val svc2 = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc2, () -> "2: " + registeredServiceClass.getName());
     }
