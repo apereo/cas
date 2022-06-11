@@ -6,18 +6,18 @@ import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationControllerTest
 import org.apereo.cas.web.DelegatedClientIdentityProviderRedirectionStrategyTests;
 import org.apereo.cas.web.flow.DefaultDelegatedClientAuthenticationWebflowManagerTests;
 import org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurationProducerTests;
-import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientFinishLogoutActionTests;
-import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientLogoutActionTests;
-import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryActionTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolverTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSAMLConfigurationTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationActionTests;
-import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests;
-import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationFailureActionTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationPostProcessorTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducerTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientFinishLogoutActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientLogoutActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationFailureActionTests;
 import org.apereo.cas.web.flow.authz.DefaultDelegatedClientIdentityProviderAuthorizerTests;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataControllerTests;
 

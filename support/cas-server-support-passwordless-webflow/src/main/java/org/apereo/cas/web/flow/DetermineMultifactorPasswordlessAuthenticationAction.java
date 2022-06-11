@@ -11,10 +11,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,22 +29,34 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiredArgsConstructor
 @Slf4j
-public class DetermineMultifactorPasswordlessAuthenticationAction extends BaseCasWebflowAction {
+public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePasswordlessCasWebflowAction {
     private final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     private final PrincipalFactory passwordlessPrincipalFactory;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
-    private final CasConfigurationProperties casProperties;
+
+    public DetermineMultifactorPasswordlessAuthenticationAction(final CasConfigurationProperties casProperties,
+                                                                final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+                                                                final PrincipalFactory passwordlessPrincipalFactory,
+                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
+        super(casProperties);
+        this.multifactorTriggerSelectionStrategy = multifactorTriggerSelectionStrategy;
+        this.passwordlessPrincipalFactory = passwordlessPrincipalFactory;
+        this.authenticationSystemSupport = authenticationSystemSupport;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");
+            return error();
+        }
+        if (StringUtils.isBlank(user.getPhone()) && StringUtils.isBlank(user.getEmail())) {
+            WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.invalid.user");
             return error();
         }
         if (multifactorTriggerSelectionStrategy.getMultifactorAuthenticationTriggers().isEmpty()) {
@@ -120,27 +130,5 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BaseCa
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
-    }
-
-    /**
-     * Should activate multifactor authentication for user?
-     *
-     * @param requestContext the request context
-     * @param user           the user
-     * @return true/false
-     */
-    protected boolean shouldActivateMultifactorAuthenticationFor(final RequestContext requestContext,
-                                                                 final PasswordlessUserAccount user) {
-        val status = user.getMultifactorAuthenticationEligible();
-        if (status.isTrue()) {
-            LOGGER.trace("Passwordless account [{}] is eligible for multifactor authentication", user);
-            return true;
-        }
-        if (status.isFalse()) {
-            LOGGER.trace("Passwordless account [{}] is not eligible for multifactor authentication", user);
-            return false;
-        }
-        return casProperties.getAuthn().getPasswordless().getCore().isMultifactorAuthenticationActivated();
-
     }
 }
