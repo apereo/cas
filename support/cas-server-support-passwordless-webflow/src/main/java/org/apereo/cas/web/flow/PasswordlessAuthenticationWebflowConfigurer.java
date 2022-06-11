@@ -115,8 +115,10 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
             CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
             CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_REDIRECT, "redirectToDelegatedIdentityProviderView");
-        createEndState(flow, "redirectToDelegatedIdentityProviderView", "flashScope.delegatedClientIdentityProvider.redirectUrl", true);
+
+        val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        val transition = state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_PROMPT, transition.getTargetStateId());
     }
 
     /**

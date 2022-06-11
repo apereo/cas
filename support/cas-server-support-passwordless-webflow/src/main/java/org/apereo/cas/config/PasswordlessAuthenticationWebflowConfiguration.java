@@ -229,6 +229,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
             return new PasswordlessDelegatedClientAuthenticationWebflowStateContributor();
         }
 
+        @ConditionalOnMissingBean(name = "passwordlessDelegatedClientIdentityProviderAuthorizer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DelegatedClientIdentityProviderAuthorizer passwordlessDelegatedClientIdentityProviderAuthorizer(
