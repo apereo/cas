@@ -518,6 +518,9 @@ exports.httpServer = async(root, port = 5432,
     new NodeStaticAuth(config);
 }
 
+exports.randomNumber = async(min = 1, max=100) =>
+    Math.floor(Math.random() * (max - min + 1)) + min
+
 exports.killProcess = async(command, arguments) => {
     ps.lookup({
         command: command,
