@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -32,13 +33,17 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;
 
+    private final TransactionTemplate transactionTemplate;
+
     @Override
     public void cleanInternal() {
-        val count = entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
-                                              + " r WHERE r.issuedDateTime>= :expired")
-            .setParameter("expired", LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds))
-            .executeUpdate();
-        LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);
+        transactionTemplate.executeWithoutResult(status -> {
+            val count = entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
+                                                  + " r WHERE r.issuedDateTime>= :expired")
+                .setParameter("expired", LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds))
+                .executeUpdate();
+            LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);
+        });
     }
 
     @Override
@@ -47,15 +52,15 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
             val gToken = new JpaGoogleAuthenticatorToken();
             BeanUtils.copyProperties(gToken, token);
             gToken.setUserId(gToken.getUserId().trim().toLowerCase());
-            this.entityManager.merge(gToken);
+            entityManager.merge(gToken);
         });
     }
 
     @Override
     public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
-            return this.entityManager.createQuery("SELECT r FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
-                                                  + " r WHERE r.userId = :userId and r.token = :token", JpaGoogleAuthenticatorToken.class)
+            return entityManager.createQuery("SELECT r FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
+                                             + " r WHERE r.userId = :userId and r.token = :token", JpaGoogleAuthenticatorToken.class)
                 .setParameter("userId", uid.trim().toLowerCase())
                 .setParameter("token", otp)
                 .getSingleResult();
@@ -99,8 +104,8 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
 
     @Override
     public long count(final String uid) {
-        val count = (Number) this.entityManager.createQuery("SELECT COUNT(r.userId) FROM "
-                                                            + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
+        val count = (Number) entityManager.createQuery("SELECT COUNT(r.userId) FROM "
+                                                       + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
             .setParameter("userId", uid.trim().toLowerCase())
             .getSingleResult();
         LOGGER.debug("Counted [{}] token record(s) for [{}]", count, uid);
@@ -109,7 +114,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
 
     @Override
     public long count() {
-        val count = (Number) this.entityManager.createQuery("SELECT COUNT(r.userId) FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r").getSingleResult();
+        val count = (Number) entityManager.createQuery("SELECT COUNT(r.userId) FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r").getSingleResult();
         LOGGER.debug("Counted [{}] token record(s)", count);
         return count.longValue();
     }
