@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
@@ -37,10 +36,6 @@ public class DelegatedClientAuthenticationStoreWebflowStateActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_STORE_WEBFLOW_STATE)
     private Action delegatedAuthenticationStoreWebflowAction;
-
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    private ServicesManager servicesManager;
 
     @Test
     public void verifyMissingClient() throws Exception {
