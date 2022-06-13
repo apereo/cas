@@ -1100,9 +1100,9 @@ public interface CasWebflowConstants {
     String VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW = "delegated-authn/casDelegatedAuthnErrorView";
 
     /**
-     * The view state 'casPac4jStopWebflow'.
+     * The view state 'casDelegatedAuthnStopWebflow'.
      */
-    String VIEW_ID_PAC4J_STOP_WEBFLOW = "delegated-authn/casDelegatedAuthnStopWebflow";
+    String VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW = "delegated-authn/casDelegatedAuthnStopWebflow";
 
     /**
      * The view state 'casSessionStorageWriteView'.

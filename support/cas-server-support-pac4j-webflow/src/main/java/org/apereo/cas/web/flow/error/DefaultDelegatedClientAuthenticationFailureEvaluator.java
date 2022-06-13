@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.error;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +35,9 @@ public class DefaultDelegatedClientAuthenticationFailureEvaluator implements Del
     @Override
     public Optional<ModelAndView> evaluate(final HttpServletRequest request, final int status) {
         val params = request.getParameterMap();
-        if (Stream.of("error", "error_code", "error_description", "error_message").anyMatch(params::containsKey)) {
+        val foundError = Stream.of("error", "error_code", "error_description", "error_message")
+                             .anyMatch(params::containsKey) || HttpStatus.resolve(status).isError();
+        return FunctionUtils.doIf(foundError, () -> {
             val model = new HashMap<String, Object>();
             if (params.containsKey("error_code")) {
                 model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
@@ -52,10 +56,11 @@ public class DefaultDelegatedClientAuthenticationFailureEvaluator implements Del
             configContext.getDelegatedClientNameExtractor().extract(request)
                 .map(StringEscapeUtils::escapeHtml4)
                 .ifPresent(name -> model.put("client", name));
-
+            model.entrySet().removeIf(e -> e.getValue() == null);
             LOGGER.debug("Delegation request has failed. Details are [{}]", model);
-            return Optional.of(new ModelAndView(CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW, model));
-        }
-        return Optional.empty();
+            return Optional.of(new ModelAndView(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW, model));
+        },
+            Optional::<ModelAndView>empty)
+        .get();
     }
 }

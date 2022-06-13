@@ -6,10 +6,8 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DelegatedAuthenticationClientRetryActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY)

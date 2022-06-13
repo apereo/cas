@@ -38,11 +38,9 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT)
     private Action delegatedAuthenticationClientFinishLogoutAction;
-
     @Autowired
     @Qualifier("builtClients")
     private Clients builtClients;
-
     @Test
     public void verifyOperationWithRedirect() throws Exception {
         val context = new MockRequestContext();

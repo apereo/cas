@@ -40,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -133,10 +132,6 @@ public class WebUtils {
      * @return the http servlet request
      */
     public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext(final RequestContext context) {
-        Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
-            "Cannot obtain HttpServletRequest from event of type: "
-            + context.getExternalContext().getClass().getName());
-
         return (HttpServletRequest) context.getExternalContext().getNativeRequest();
     }
 
@@ -161,8 +156,6 @@ public class WebUtils {
      * @return the http servlet response
      */
     public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext(final RequestContext context) {
-        Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
-            "Cannot obtain HttpServletResponse from event of type: " + context.getExternalContext().getClass().getName());
         return (HttpServletResponse) context.getExternalContext().getNativeResponse();
     }
 
