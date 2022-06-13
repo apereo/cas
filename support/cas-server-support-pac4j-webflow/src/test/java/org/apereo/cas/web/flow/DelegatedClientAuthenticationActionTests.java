@@ -23,7 +23,6 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -97,6 +96,10 @@ public class DelegatedClientAuthenticationActionTests {
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
+    private Action delegatedAuthenticationCreateClientsAction;
+
+    @Autowired
     @Qualifier("builtClients")
     private Clients builtClients;
 
@@ -115,12 +118,12 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    public void verifyStartAuthenticationNoService() {
+    public void verifyStartAuthenticationNoService() throws Exception {
         assertStartAuthentication(null);
     }
 
     @Test
-    public void verifyStartAuthenticationWithService() {
+    public void verifyStartAuthenticationWithService() throws Exception {
         val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId()));
         assertStartAuthentication(service);
@@ -199,7 +202,7 @@ public class DelegatedClientAuthenticationActionTests {
 
 
         val event = delegatedAuthenticationAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, event.getId());
     }
 
     @Test
@@ -359,7 +362,7 @@ public class DelegatedClientAuthenticationActionTests {
         setExternalContext(context.getExternalContext());
 
         val event = delegatedAuthenticationAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, event.getId());
     }
 
     @Test
@@ -376,7 +379,11 @@ public class DelegatedClientAuthenticationActionTests {
         setRequestContext(context);
         setExternalContext(context.getExternalContext());
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, delegatedAuthenticationAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, delegatedAuthenticationAction.execute(context).getId());
+
+        val generated = delegatedAuthenticationCreateClientsAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, generated.getId());
+
         assertEquals(HttpStatus.FOUND.value(), response.getStatus());
         assertEquals(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT + "?client_name=CasClient",
             response.getHeader("Location"));
@@ -415,8 +422,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(tgt.getId()));
     }
 
-    @SneakyThrows
-    private void assertStartAuthentication(final Service service) {
+    private void assertStartAuthentication(final Service service) throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val flow = new Flow("mockFlow");
@@ -446,7 +452,10 @@ public class DelegatedClientAuthenticationActionTests {
 
         LOGGER.debug("Initializing action with request parameters [{}]", webContext.getRequestParameters());
         val event = delegatedAuthenticationAction.execute(requestContext);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, event.getId());
+
+        val generated = delegatedAuthenticationCreateClientsAction.execute(requestContext);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, generated.getId());
 
         delegatedClientAuthenticationWebflowManager.retrieve(requestContext, webContext, client);
 
@@ -457,7 +466,6 @@ public class DelegatedClientAuthenticationActionTests {
             WebUtils.getDelegatedAuthenticationProviderConfigurations(requestContext);
 
         assertFalse(urls.isEmpty());
-        assertSame(4, urls.size());
         urls.stream()
             .map(url -> {
                 LOGGER.debug("Redirect URL [{}]", url.getRedirectUrl());

@@ -31,7 +31,10 @@ import org.apereo.cas.config.Pac4jDelegatedAuthenticationSerializationConfigurat
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.DelegatedClientWebflowCustomizer;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -39,6 +42,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.BaseClient;
@@ -69,6 +73,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,21 +140,31 @@ public abstract class BaseDelegatedAuthenticationTests {
     @TestConfiguration(value = "Saml2ClientMetadataControllerTestConfiguration", proxyBeanMethods = false)
     public static class DelegatedAuthenticationWebflowTestConfiguration {
         @Bean
+        public DelegatedClientWebflowCustomizer surrogateCasMultifactorWebflowCustomizer() {
+            return BeanSupplier.of(DelegatedClientWebflowCustomizer.class)
+                .otherwiseProxy().get();
+        }
+        
+        @Bean
+        public DelegatedClientAuthenticationRequestCustomizer testDelegatedClientAuthenticationRequestCustomizer() {
+            return BeanSupplier.of(DelegatedClientAuthenticationRequestCustomizer.class)
+                .otherwiseProxy()
+                .get();
+        }
+        @Bean
         public Clients builtClients() throws Exception {
-            val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
-            val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
-            val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
-
-            val saml2Config = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
-            saml2Config.setServiceProviderEntityId("cas:example:sp");
-            saml2Config.setServiceProviderMetadataPath(spMetadataPath);
-            saml2Config.setAuthnRequestBindingType("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
-            saml2Config.init();
-
+            val saml2Config = getSAML2Configuration();
             val saml2Client = new SAML2Client(saml2Config);
             saml2Client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.CLIENT);
             saml2Client.setCallbackUrl("http://callback.example.org");
             saml2Client.init();
+
+            val saml2PostConfig = getSAML2Configuration();
+            saml2Config.setAuthnRequestBindingType(SAMLConstants.SAML2_POST_BINDING_URI);
+            val saml2PostClient = new SAML2Client(saml2PostConfig);
+            saml2PostClient.setCallbackUrl("http://callback.example.org");
+            saml2PostClient.setName("SAML2ClientPostBinding");
+            saml2PostClient.init();
 
             val casClient = new CasClient(new CasConfiguration("https://sso.example.org/cas/login"));
             casClient.setCallbackUrl("http://callback.example.org");
@@ -191,7 +206,19 @@ public abstract class BaseDelegatedAuthenticationTests {
             doThrow(new IllegalArgumentException("Unable to init")).when(failingClient).init();
 
             return new Clients("https://cas.login.com", List.of(saml2Client, casClient,
-                facebookClient, oidcClient, mockClientNoCredentials, failingClient));
+                facebookClient, oidcClient, mockClientNoCredentials, failingClient, saml2PostClient));
+        }
+
+        private static SAML2Configuration getSAML2Configuration() throws IOException {
+            val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
+            val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
+            val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+            val saml2Config = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
+            saml2Config.setServiceProviderEntityId("cas:example:sp");
+            saml2Config.setServiceProviderMetadataPath(spMetadataPath);
+            saml2Config.setAuthnRequestBindingType("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
+            saml2Config.init();
+            return saml2Config;
         }
     }
 }

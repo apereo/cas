@@ -53,6 +53,6 @@ public class DelegatedAuthenticationErrorViewResolverTests {
     public void verifyOperationWithoutEx() {
         val request = new MockHttpServletRequest();
         val mv = resolver.resolveErrorView(request, HttpStatus.INTERNAL_SERVER_ERROR, Map.of());
-        assertEquals("error/500", mv.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW, mv.getViewName());
     }
 }
