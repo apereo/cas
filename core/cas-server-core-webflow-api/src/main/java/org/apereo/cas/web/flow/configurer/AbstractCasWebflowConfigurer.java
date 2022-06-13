@@ -642,6 +642,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * Create mapper to subflow state.
      *
      * @param mappings the mappings
+     * @param flow     the flow
      * @return the mapper
      */
     public Mapper createFlowInputMapper(final List<DefaultMapping> mappings,
