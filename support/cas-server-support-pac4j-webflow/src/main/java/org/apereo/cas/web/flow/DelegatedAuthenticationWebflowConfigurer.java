@@ -1,15 +1,16 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationDynamicDiscoveryExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
+import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -18,9 +19,9 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The {@link DelegatedAuthenticationWebflowConfigurer} is responsible for
@@ -185,24 +186,11 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .collect(Collectors.toList());
 
-        val subflowMappings = Stream.of(
-                CasWebflowConstants.ATTRIBUTE_SERVICE,
-                CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
-            .map(attr -> new DefaultMapping(createExpression("flowScope." + attr), createExpression(attr)))
-            .collect(Collectors.toList());
-        subflowMappings.add(new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.VAR_ID_CREDENTIAL),
-            createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
-        customizers.forEach(c -> c.getWebflowAttributeMappings()
-            .forEach(key -> subflowMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
-        val inputMapper = createFlowInputMapper(subflowMappings);
-        val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
-        subflowState.setAttributeMapper(subflowMapper);
-        
-        val flowMappings = Stream.of(
-                CasWebflowConstants.ATTRIBUTE_SERVICE,
-                CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
-            .map(attr -> new DefaultMapping(createExpression(attr), createExpression("flowScope." + attr)))
-            .collect(Collectors.toList());
+        val mapping = new DefaultMapping(createExpression(CasWebflowConstants.ATTRIBUTE_SERVICE),
+            createExpression("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE));
+        mapping.setTypeConverter(new RuntimeBindingConversionExecutor(Service.class,
+            flowBuilderServices.getConversionService()));
+        val flowMappings = List.of(mapping);
         customizers.forEach(c -> c.getWebflowAttributeMappings()
             .forEach(key -> flowMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
         createFlowInputMapper(flowMappings, redirectFlow);

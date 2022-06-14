@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowStateContributor;
 import org.apereo.cas.web.support.WebUtils;
@@ -89,7 +90,7 @@ public class DefaultDelegatedClientAuthenticationWebflowStateContributor impleme
         val service = ticket.getService();
         LOGGER.trace("Restoring requested service [{}] back in the authentication flow", service);
         WebUtils.putServiceIntoFlowScope(requestContext, service);
-        webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
+        webContext.setRequestAttribute(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
 
         val themeParamName = configContext.getCasProperties().getTheme().getParamName();
         val localParamName = configContext.getCasProperties().getLocale().getParamName();
