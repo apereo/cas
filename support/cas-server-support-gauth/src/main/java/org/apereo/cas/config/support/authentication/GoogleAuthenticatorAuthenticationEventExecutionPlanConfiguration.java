@@ -98,6 +98,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationHandler googleAuthenticatorAuthenticationHandler(
+            @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
             final CasConfigurationProperties casProperties,
             @Qualifier("googlePrincipalFactory")
             final PrincipalFactory googlePrincipalFactory,
@@ -107,7 +109,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             final ServicesManager servicesManager) {
             val gauth = casProperties.getAuthn().getMfa().getGauth();
             return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(), servicesManager,
-                googlePrincipalFactory, googleAuthenticatorOneTimeTokenCredentialValidator, gauth.getOrder());
+                googlePrincipalFactory, googleAuthenticatorOneTimeTokenCredentialValidator,
+                gauth.getOrder(), multifactorAuthenticationProvider);
         }
 
     }
@@ -197,10 +200,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
-            final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
             val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
             return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
-                googleAuthenticatorMultifactorAuthenticationProvider, servicesManager);
+                multifactorAuthenticationProvider, servicesManager);
         }
     }
 

@@ -20,6 +20,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -50,10 +51,10 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("swivelMultifactorAuthenticationProvider")
-        final MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
-            swivelMultifactorAuthenticationProvider, servicesManager);
+            multifactorAuthenticationProvider, servicesManager);
     }
 
     @Bean
@@ -81,13 +82,16 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationHandler")
     public AuthenticationHandler swivelAuthenticationHandler(
+        @Qualifier("swivelMultifactorAuthenticationProvider")
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         final CasConfigurationProperties casProperties,
         @Qualifier("swivelPrincipalFactory")
         final PrincipalFactory swivelPrincipalFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
-        return new SwivelAuthenticationHandler(swivel.getName(), servicesManager, swivelPrincipalFactory, swivel);
+        return new SwivelAuthenticationHandler(swivel.getName(),
+            servicesManager, swivelPrincipalFactory, swivel, multifactorAuthenticationProvider);
     }
 
     @Bean

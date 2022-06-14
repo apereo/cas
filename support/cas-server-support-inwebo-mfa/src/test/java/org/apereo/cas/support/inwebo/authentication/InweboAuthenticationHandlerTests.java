@@ -1,11 +1,13 @@
 package org.apereo.cas.support.inwebo.authentication;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -35,7 +37,8 @@ public class InweboAuthenticationHandlerTests {
         when(inweboService.authenticateExtended(anyString(), anyString())).thenReturn(response);
         val handler = new InweboAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(),
-            new InweboMultifactorAuthenticationProperties(), inweboService);
+            new InweboMultifactorAuthenticationProperties(),
+            inweboService, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         val credential = new InweboCredential("token");
         credential.setOtp("otp");
         val result = handler.authenticate(credential);
@@ -56,7 +59,8 @@ public class InweboAuthenticationHandlerTests {
         when(inweboService.authenticateExtended(anyString(), anyString())).thenReturn(response);
         val handler = new InweboAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(),
-            new InweboMultifactorAuthenticationProperties(), inweboService);
+            new InweboMultifactorAuthenticationProperties(), inweboService,
+            new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         val credential = new InweboCredential("token");
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
     }

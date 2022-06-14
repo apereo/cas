@@ -22,6 +22,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.yubico.u2f.U2F;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,7 +50,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("u2fMultifactorAuthenticationProvider")
-        final MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> u2fMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
             u2fMultifactorAuthenticationProvider, servicesManager);
@@ -74,12 +75,13 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     public PrincipalFactory u2fPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
-
     @ConditionalOnMissingBean(name = "u2fAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationHandler u2fAuthenticationHandler(
         final CasConfigurationProperties casProperties,
+        @Qualifier("u2fMultifactorAuthenticationProvider")
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         @Qualifier("u2fPrincipalFactory")
         final PrincipalFactory u2fPrincipalFactory,
         @Qualifier("u2fService")
@@ -90,7 +92,8 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
         final U2FDeviceRepository u2fDeviceRepository) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         return new U2FAuthenticationHandler(u2f.getName(), servicesManager,
-            u2fPrincipalFactory, u2fDeviceRepository, u2fService, u2f.getOrder());
+            u2fPrincipalFactory, u2fDeviceRepository, u2fService, u2f.getOrder(),
+            multifactorAuthenticationProvider);
     }
 
     @ConditionalOnMissingBean(name = "u2fMultifactorAuthenticationProvider")

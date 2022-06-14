@@ -31,6 +31,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -144,6 +145,8 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "radiusTokenAuthenticationHandler")
         public AuthenticationHandler radiusTokenAuthenticationHandler(
+            @Qualifier("radiusMultifactorAuthenticationProvider")
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("radiusTokenPrincipalFactory")
@@ -158,7 +161,8 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
                     val radius = casProperties.getAuthn().getMfa().getRadius();
                     return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager,
                         radiusTokenPrincipalFactory, radiusTokenServers.toList(), radius.isFailoverOnException(),
-                        radius.isFailoverOnAuthenticationFailure(), radius.getOrder());
+                        radius.isFailoverOnAuthenticationFailure(),
+                        radius.getOrder(), multifactorAuthenticationProvider);
                 })
                 .otherwiseProxy()
                 .get();
@@ -177,10 +181,10 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("radiusMultifactorAuthenticationProvider")
-            final MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider) {
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
             val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
             return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
-                radiusMultifactorAuthenticationProvider, servicesManager);
+                multifactorAuthenticationProvider, servicesManager);
         }
 
         @Bean
