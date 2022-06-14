@@ -101,6 +101,7 @@ public class CasCoreWebflowConfiguration {
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return new ServiceTicketRequestWebflowEventResolver(casWebflowConfigurationContext);
         }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CipherExecutor webflowCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -245,6 +246,7 @@ public class CasCoreWebflowConfiguration {
                 .build()
                 .get();
         }
+
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INJECT_RESPONSE_HEADERS)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
