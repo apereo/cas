@@ -17,6 +17,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -101,7 +102,7 @@ public class U2FJpaConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "u2fEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory u2fEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> u2fEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceU2f")
             final DataSource dataSourceU2f,
@@ -117,7 +118,7 @@ public class U2FJpaConfiguration {
                 .persistenceUnitName("jpaU2fRegistryContext")
                 .jpaVendorAdapter(jpaU2fVendorAdapter).build();
             return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                casProperties.getAuthn().getMfa().getU2f().getJpa()).getObject();
+                casProperties.getAuthn().getMfa().getU2f().getJpa());
         }
 
     }
