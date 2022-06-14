@@ -60,10 +60,13 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new JEEContext(request, response);
         val properties = ticket.getProperties();
-        webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN,
-            properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN));
-        webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE,
-            properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE));
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
+        }
+
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
+        }
 
         Optional.ofNullable(ticket.getService())
             .ifPresent(service -> configureWebContextForRegisteredService(webContext, ticket));

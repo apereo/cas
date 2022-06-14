@@ -2,9 +2,11 @@ package org.apereo.cas.adaptors.yubikey;
 
 import org.apereo.cas.adaptors.yubikey.registry.PermissiveYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.client.v2.ResponseStatus;
@@ -66,13 +68,18 @@ public class YubiKeyAuthenticationHandlerTests {
         setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
-        val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
+        val handler = getHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
         assertThrows(NullPointerException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
+    }
+
+    private static YubiKeyAuthenticationHandler getHandler(final YubicoClient client) {
+        return new YubiKeyAuthenticationHandler(client,
+            new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
     }
 
     @Test
     public void checkDefaultAccountRegistry() {
-        val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
+        val handler = getHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
         assertNotNull(handler.getRegistry());
     }
 
@@ -82,7 +89,7 @@ public class YubiKeyAuthenticationHandlerTests {
         val response = mock(VerificationResponse.class);
         when(response.getStatus()).thenReturn(ResponseStatus.OK);
         when(client.verify(anyString())).thenReturn(response);
-        val handler = new YubiKeyAuthenticationHandler(client);
+        val handler = getHandler(client);
         val result = handler.authenticate(new YubiKeyCredential(OTP));
         assertNotNull(result);
     }
@@ -91,20 +98,20 @@ public class YubiKeyAuthenticationHandlerTests {
     public void checkFailsVerificationAuthn() throws Exception {
         val client = mock(YubicoClient.class);
         when(client.verify(anyString())).thenThrow(new YubicoVerificationException("fails"));
-        val handler = new YubiKeyAuthenticationHandler(client);
+        val handler = getHandler(client);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
     }
 
 
     @Test
     public void checkReplayedAuthn() {
-        val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
+        val handler = getHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
         assertThrows(FailedLoginException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
     }
 
     @Test
     public void checkBadConfigAuthn() {
-        val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
+        val handler = getHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential("casuser")));
     }
 
@@ -116,7 +123,7 @@ public class YubiKeyAuthenticationHandlerTests {
         val handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
             null, PrincipalFactoryUtils.newPrincipalFactory(),
             YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
-            registry, null);
+            registry, null, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
     }
 

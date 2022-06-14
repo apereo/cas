@@ -11,6 +11,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link MultifactorAuthenticationProviderMetadataPopulator}.
@@ -23,7 +24,7 @@ import lombok.val;
 public class MultifactorAuthenticationProviderMetadataPopulator extends BaseAuthenticationMetaDataPopulator {
     private final String authenticationContextAttribute;
 
-    private final MultifactorAuthenticationProvider provider;
+    private final ObjectProvider<? extends MultifactorAuthenticationProvider> provider;
 
     private final ServicesManager servicesManager;
 
@@ -31,15 +32,16 @@ public class MultifactorAuthenticationProviderMetadataPopulator extends BaseAuth
     public void populateAttributes(final AuthenticationBuilder builder,
                                    final AuthenticationTransaction transaction) {
         val registeredService = servicesManager.findServiceBy(transaction.getService());
-        val failureEval = provider.getFailureModeEvaluator();
+        val failureEval = provider.getObject().getFailureModeEvaluator();
         val bypass = failureEval != null
-                     && failureEval.evaluate(registeredService, provider) == MultifactorAuthenticationProviderFailureModes.PHANTOM
-                     && !provider.isAvailable(registeredService);
-        FunctionUtils.doIf(bypass, unused -> builder.mergeAttribute(authenticationContextAttribute, provider.getId())).accept(provider);
+                     && failureEval.evaluate(registeredService, provider.getObject()) == MultifactorAuthenticationProviderFailureModes.PHANTOM
+                     && !provider.getObject().isAvailable(registeredService);
+        FunctionUtils.doIf(bypass, unused -> builder.mergeAttribute(authenticationContextAttribute,
+            provider.getObject().getId())).accept(provider);
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return provider.getFailureModeEvaluator() != null && credential != null;
+        return provider.getObject().getFailureModeEvaluator() != null && credential != null;
     }
 }

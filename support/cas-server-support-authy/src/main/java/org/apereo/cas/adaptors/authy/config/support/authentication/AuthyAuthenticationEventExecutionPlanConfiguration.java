@@ -27,6 +27,7 @@ import com.authy.AuthyApiClient;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -79,6 +80,8 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("authyPrincipalFactory")
         final PrincipalFactory authyPrincipalFactory,
+        @Qualifier("authyAuthenticatorMultifactorAuthenticationProvider")
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         @Qualifier("authyClientInstance")
         final AuthyClientInstance authyClientInstance,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -89,7 +92,8 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
                 val authy = casProperties.getAuthn().getMfa().getAuthy();
                 val forceVerification = authy.isForceVerification();
                 return new AuthyAuthenticationHandler(authy.getName(), servicesManager,
-                    authyPrincipalFactory, authyClientInstance, forceVerification, authy.getOrder());
+                    authyPrincipalFactory, authyClientInstance,
+                    forceVerification, authy.getOrder(), multifactorAuthenticationProvider);
             })
             .otherwiseProxy()
             .get();
@@ -135,10 +139,10 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("authyAuthenticatorMultifactorAuthenticationProvider")
-        final MultifactorAuthenticationProvider authyMultifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
-            authyMultifactorAuthenticationProvider, servicesManager);
+            multifactorAuthenticationProvider, servicesManager);
     }
 
     @Bean

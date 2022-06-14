@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
@@ -21,6 +22,7 @@ import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
@@ -100,7 +102,8 @@ public abstract class BaseActionTests {
 
         val authenticationEventExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
         authenticationEventExecutionPlan.registerAuthenticationHandler(new InweboAuthenticationHandler(mock(ServicesManager.class),
-            PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorAuthenticationProperties(), service));
+            PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorAuthenticationProperties(), service,
+            new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class))));
         authenticationEventExecutionPlan.registerAuthenticationMetadataPopulator(new InweboAuthenticationDeviceMetadataPopulator());
         val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan,
             true, applicationContext);
