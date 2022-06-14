@@ -165,6 +165,8 @@ The following Docker images, used for integration testing, are now upgraded to t
 - Amazon SDK
 - ErrorProne
 - Gradle
+- Hazelcast
+- JGit
 - MariaDb Driver
 - PostgreSQL Driver
 - Amazon SDK
