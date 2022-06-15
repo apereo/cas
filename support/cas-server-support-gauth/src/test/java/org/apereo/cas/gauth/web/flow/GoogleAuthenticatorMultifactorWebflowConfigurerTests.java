@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
@@ -29,9 +30,12 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMu
     @Qualifier("googleAuthenticatorFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Override
     protected String getMultifactorEventId() {
-        return GoogleAuthenticatorMultifactorWebflowConfigurer.MFA_GAUTH_EVENT_ID;
+        return casProperties.getAuthn().getMfa().getGauth().getId();
     }
 
 }
