@@ -174,3 +174,5 @@ The following Docker images, used for integration testing, are now upgraded to t
 - Mockito
 - Groovy
 - Nimbus OIDC
+- Spring
+- Spring Boot
