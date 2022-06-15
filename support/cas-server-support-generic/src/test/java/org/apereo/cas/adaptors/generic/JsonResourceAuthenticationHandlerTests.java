@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -23,6 +25,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -160,6 +163,21 @@ public class JsonResourceAuthenticationHandlerTests {
         assertFalse(result.getPrincipal().getAttributes().isEmpty());
         assertTrue(result.getPrincipal().getAttributes().containsKey("firstName"));
         assertEquals("Apereo", result.getPrincipal().getAttributes().get("firstName").get(0));
+    }
+
+    @Test
+    public void verifyOkAccountFromExternalFileWithEncodedPassword() throws Exception {
+        val resource = new ClassPathResource("sample-users.json");
+        val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
+
+        val p = new PasswordEncoderProperties();
+        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
+        p.setEncodingAlgorithm("MD5");
+        p.setCharacterEncoding("UTF-8");
+        jsonHandler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(p, mock(ApplicationContext.class)));
+
+        assertNotNull(jsonHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmd5", "Mellon")));
     }
 
     @Test
