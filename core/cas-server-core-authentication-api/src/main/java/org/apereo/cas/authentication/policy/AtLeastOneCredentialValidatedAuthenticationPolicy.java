@@ -49,7 +49,7 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
             val sum = authn.getSuccesses().size() + authn.getFailures().size();
             if (authenticationHandlers.size() != sum) {
                 LOGGER.warn("Credentials count [{}] does not match the sum of authentication successes and failures [{}]",
-                    authn.getCredentials().size(), sum);
+                    authenticationHandlers.size(), sum);
                 return AuthenticationPolicyExecutionResult.failure();
             }
             LOGGER.debug("Authentication policy is satisfied with all authentication transactions");
