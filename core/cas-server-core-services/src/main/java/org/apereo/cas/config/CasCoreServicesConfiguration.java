@@ -157,7 +157,7 @@ public class CasCoreServicesConfiguration {
             return new RegisteredServicePublicKeyCipherExecutor();
         }
 
-        @ConditionalOnMissingBean(name = "registeredServiceAccessStrategyEnforcer")
+        @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditableExecution registeredServiceAccessStrategyEnforcer(final CasConfigurationProperties casProperties) {

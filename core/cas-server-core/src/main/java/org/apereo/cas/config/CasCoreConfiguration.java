@@ -107,7 +107,7 @@ public class CasCoreConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("authenticationPolicyFactory")
             final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,

@@ -145,7 +145,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
@@ -190,7 +190,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)

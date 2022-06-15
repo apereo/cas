@@ -142,7 +142,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
         public Action surrogateAuthorizationCheck(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)

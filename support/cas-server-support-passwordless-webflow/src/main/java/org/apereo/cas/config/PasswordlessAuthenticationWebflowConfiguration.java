@@ -237,7 +237,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         public DelegatedClientIdentityProviderAuthorizer passwordlessDelegatedClientIdentityProviderAuthorizer(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return new PasswordlessDelegatedClientIdentityProviderAuthorizer(servicesManager,
                 registeredServiceAccessStrategyEnforcer);

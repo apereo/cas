@@ -190,7 +190,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
             createExpression(CasWebflowConstants.ATTRIBUTE_SERVICE));
         val attrMappings = CollectionUtils.wrapList(attrMapping);
         customizers.forEach(c -> c.getWebflowAttributeMappings()
-            .forEach(key -> attrMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
+            .forEach(key -> attrMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
         val attributeMapper = createFlowInputMapper(attrMappings);
         val subflowMapper = createSubflowAttributeMapper(attributeMapper, null);
         subflowState.setAttributeMapper(subflowMapper);

@@ -203,7 +203,7 @@ public class SamlConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return new SamlValidateEndpoint(casProperties, servicesManager,
                 authenticationSystemSupport, webApplicationServiceFactory, PrincipalFactoryUtils.newPrincipalFactory(),
