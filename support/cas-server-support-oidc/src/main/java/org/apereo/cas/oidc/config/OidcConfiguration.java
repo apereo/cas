@@ -477,7 +477,7 @@ public class OidcConfiguration {
             final ServicesManager servicesManager,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return () -> {
                 val authenticator = new OidcJwtAuthenticator(oidcIssuerService,
@@ -628,7 +628,7 @@ public class OidcConfiguration {
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
                 .discoverySettings(oidcServerDiscoverySettings)

@@ -25,7 +25,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -95,7 +94,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> samlMetadataIdPEntityManagerFactory(
+        public EntityManagerFactory samlMetadataIdPEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaSamlMetadataIdPVendorAdapter")
@@ -106,7 +105,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             final BeanContainer<String> jpaSamlMetadataIdPPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
-            return BeanSupplier.of(FactoryBean.class)
+            return BeanSupplier.of(EntityManagerFactory.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
@@ -115,7 +114,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
                         .persistenceUnitName("jpaSamlMetadataIdPContext")
                         .dataSource(dataSourceSamlMetadataIdP)
                         .packagesToScan(jpaSamlMetadataIdPPackagesToScan.toSet()).build();
-                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa());
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa()).getObject();
                 }))
                 .otherwiseProxy()
                 .get();
@@ -134,11 +133,11 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             final EntityManagerFactory emf) {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> {
+                .supply(Unchecked.supplier(() -> {
                     val mgmr = new JpaTransactionManager();
                     mgmr.setEntityManagerFactory(emf);
                     return mgmr;
-                })
+                }))
                 .otherwise(PseudoTransactionManager::new)
                 .get();
         }

@@ -32,7 +32,7 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
     private final TransactionOperations transactionTemplate;
 
     @PersistenceContext(unitName = "samlMetadataIdPEntityManagerFactory")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     public JpaSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
                                        final TransactionOperations transactionTemplate) {

@@ -204,7 +204,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         public DelegatedClientIdentityProviderAuthorizer delegatedClientIdentityProviderAuthorizer(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer) {
             return new DefaultDelegatedClientIdentityProviderAuthorizer(servicesManager,
                 registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
@@ -465,7 +465,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
         public DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext(
-            @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
             @Qualifier("serviceTicketRequestWebflowEventResolver")
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
@@ -496,7 +496,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final SessionStore delegatedClientDistributedSessionStore,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("delegatedClientIdentityProviderRedirectionStrategy")
             final DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy,

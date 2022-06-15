@@ -281,7 +281,7 @@ public abstract class AbstractOidcTests {
     protected OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
 
     @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
     protected AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Autowired

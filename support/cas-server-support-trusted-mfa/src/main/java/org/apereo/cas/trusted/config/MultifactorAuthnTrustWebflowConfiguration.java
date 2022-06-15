@@ -41,7 +41,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator(
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
+        @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         return new DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator(registeredServiceAccessStrategyEnforcer);
     }
@@ -58,7 +58,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
         final DeviceFingerprintStrategy deviceFingerprintStrategy,
         @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
         final MultifactorAuthenticationTrustStorage mfaTrustEngine,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
+        @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
@@ -83,7 +83,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
         final DeviceFingerprintStrategy deviceFingerprintStrategy,
         @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
         final MultifactorAuthenticationTrustStorage mfaTrustEngine,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
+        @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
@@ -110,7 +110,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
         final MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy,
         @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
         final MultifactorAuthenticationTrustStorage mfaTrustEngine,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
+        @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         final AuditableExecution registeredServiceAccessStrategyEnforcer,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
