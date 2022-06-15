@@ -17,7 +17,6 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-import org.apereo.cas.web.DefaultDelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;

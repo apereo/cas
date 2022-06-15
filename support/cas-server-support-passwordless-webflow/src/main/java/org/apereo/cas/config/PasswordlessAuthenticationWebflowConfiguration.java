@@ -42,6 +42,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -219,6 +220,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @Configuration(value = "PasswordlessDelegatedAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
+    @ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
     public static class PasswordlessDelegatedAuthenticationConfiguration {
 
         @Bean
@@ -235,11 +237,11 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         public DelegatedClientIdentityProviderAuthorizer passwordlessDelegatedClientIdentityProviderAuthorizer(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-            return new PasswordlessDelegatedClientIdentityProviderAuthorizer(servicesManager, registeredServiceAccessStrategyEnforcer);
+            return new PasswordlessDelegatedClientIdentityProviderAuthorizer(servicesManager,
+                registeredServiceAccessStrategyEnforcer);
         }
-
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)

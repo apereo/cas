@@ -3,8 +3,8 @@ package org.apereo.cas.web.flow.delegation;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.pac4j.client.authz.BaseDelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.flow.authz.BaseDelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;

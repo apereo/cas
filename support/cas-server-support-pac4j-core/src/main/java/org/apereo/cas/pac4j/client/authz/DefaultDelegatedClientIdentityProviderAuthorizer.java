@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.authz;
+package org.apereo.cas.pac4j.client.authz;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.services.ServicesManager;

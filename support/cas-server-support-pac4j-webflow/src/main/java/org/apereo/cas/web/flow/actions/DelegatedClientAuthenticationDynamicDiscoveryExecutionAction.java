@@ -19,11 +19,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 public class DelegatedClientAuthenticationDynamicDiscoveryExecutionAction extends BaseCasWebflowAction {
-    /**
-     * Attribute name in the request scope to indicate the direct url.
-     */
-    public static final String REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL = "delegatedAuthProviderRedirectUrl";
-
     private final DelegatedClientAuthenticationConfigurationContext configContext;
 
     private final DelegatedAuthenticationDynamicDiscoveryProviderLocator selector;
@@ -47,7 +42,7 @@ public class DelegatedClientAuthenticationDynamicDiscoveryExecutionAction extend
         }
         configContext.getDelegatedClientIdentityProvidersProducer().produce(requestContext, client.get())
             .ifPresent(cfg -> requestContext.getRequestScope()
-                .put(REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL, cfg.getRedirectUrl()));
+                .put(DelegatedAuthenticationDynamicDiscoveryProviderLocator.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL, cfg.getRedirectUrl()));
         return new Event(this, CasWebflowConstants.STATE_ID_REDIRECT,
             new LocalAttributeMap<>("client", client.get()));
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProviderLocator;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -51,7 +52,7 @@ public class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, result.getId());
         assertTrue(context.getRequestScope()
-            .contains(DelegatedClientAuthenticationDynamicDiscoveryExecutionAction.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL, String.class));
+            .contains(DelegatedAuthenticationDynamicDiscoveryProviderLocator.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL, String.class));
     }
 
     @Test
