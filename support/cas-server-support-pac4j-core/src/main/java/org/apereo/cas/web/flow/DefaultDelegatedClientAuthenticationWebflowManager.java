@@ -1,4 +1,4 @@
-package org.apereo.cas.web;
+package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -6,9 +6,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
-import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
-import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowStateContributor;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -156,7 +155,8 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
 
     protected TransientSessionTicket storeDelegatedClientAuthenticationRequest(
         final JEEContext webContext, final RequestContext requestContext, final Client client) throws Exception {
-        val originalService = configContext.getArgumentExtractor().extractService(webContext.getNativeRequest());
+        val originalService = Optional.ofNullable(configContext.getArgumentExtractor().extractService(webContext.getNativeRequest()))
+            .orElseGet(() -> WebUtils.getService(requestContext));
 
         val properties = new LinkedHashMap<>();
         getWebflowStateContributors().forEach(

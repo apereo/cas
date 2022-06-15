@@ -25,6 +25,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -94,7 +95,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory samlMetadataIdPEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> samlMetadataIdPEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaSamlMetadataIdPVendorAdapter")
@@ -105,7 +106,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             final BeanContainer<String> jpaSamlMetadataIdPPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
-            return BeanSupplier.of(EntityManagerFactory.class)
+            return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
@@ -114,8 +115,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
                         .persistenceUnitName("jpaSamlMetadataIdPContext")
                         .dataSource(dataSourceSamlMetadataIdP)
                         .packagesToScan(jpaSamlMetadataIdPPackagesToScan.toSet()).build();
-                    val factory = jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa());
-                    return factory.getObject();
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa());
                 }))
                 .otherwiseProxy()
                 .get();

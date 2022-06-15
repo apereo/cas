@@ -2,8 +2,9 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProviderLocator;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationDynamicDiscoveryExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
@@ -19,7 +20,6 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -149,8 +149,8 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createRedirectToProviderViewState(final Flow flow) {
-        var factory = createExternalRedirectViewFactory("requestScope."
-                                                        + DelegatedClientAuthenticationDynamicDiscoveryExecutionAction.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL);
+        var factory = createExternalRedirectViewFactory(
+            "requestScope." + DelegatedAuthenticationDynamicDiscoveryProviderLocator.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL);
         createViewState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_REDIRECT_TO_AUTHN_PROVIDER, factory);
     }
 
@@ -186,11 +186,20 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .collect(Collectors.toList());
 
+        val attrMapping = new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE),
+            createExpression(CasWebflowConstants.ATTRIBUTE_SERVICE));
+        val attrMappings = CollectionUtils.wrapList(attrMapping);
+        customizers.forEach(c -> c.getWebflowAttributeMappings()
+            .forEach(key -> attrMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
+        val attributeMapper = createFlowInputMapper(attrMappings);
+        val subflowMapper = createSubflowAttributeMapper(attributeMapper, null);
+        subflowState.setAttributeMapper(subflowMapper);
+
         val mapping = new DefaultMapping(createExpression(CasWebflowConstants.ATTRIBUTE_SERVICE),
             createExpression("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE));
         mapping.setTypeConverter(new RuntimeBindingConversionExecutor(Service.class,
             flowBuilderServices.getConversionService()));
-        val flowMappings = List.of(mapping);
+        val flowMappings = CollectionUtils.wrapList(mapping);
         customizers.forEach(c -> c.getWebflowAttributeMappings()
             .forEach(key -> flowMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
         createFlowInputMapper(flowMappings, redirectFlow);

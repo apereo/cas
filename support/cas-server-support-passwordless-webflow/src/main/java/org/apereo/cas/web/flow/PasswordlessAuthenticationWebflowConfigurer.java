@@ -95,8 +95,14 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
             CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN);
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR,
             CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
-            CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);
+
+        if (applicationContext.containsBean(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)) {
+            createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);
+        } else {
+            createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
+        }
 
         val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         val transition = state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
