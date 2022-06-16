@@ -5,11 +5,9 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,6 @@ import java.util.Optional;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Transactional(transactionManager = "ticketTransactionManager")
 @RequiredArgsConstructor
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
@@ -33,7 +30,7 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
-        val state = this.ticketRegistry.getTicket(ticketId, Ticket.class);
+        val state = ticketRegistry.getTicket(ticketId, Ticket.class);
         return state == null || state.isExpired() ? null : state;
     }
 
@@ -42,7 +39,7 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
         if (StringUtils.isBlank(ticketGrantingTicketId)) {
             return null;
         }
-        val tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        val tgt = (TicketGrantingTicket) getTicket(ticketGrantingTicketId);
         return tgt == null || tgt.isExpired() ? null : tgt;
     }
 
@@ -70,10 +67,10 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     @Override
     public void updateAuthentication(final String ticketGrantingTicketId, final Authentication authentication) throws Exception {
         if (StringUtils.isNotBlank(ticketGrantingTicketId)) {
-            val tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            val tgt = (TicketGrantingTicket) getTicket(ticketGrantingTicketId);
             if (tgt != null && !tgt.isExpired()) {
                 tgt.getAuthentication().update(authentication);
-                this.ticketRegistry.updateTicket(tgt);
+                ticketRegistry.updateTicket(tgt);
             }
         }
     }

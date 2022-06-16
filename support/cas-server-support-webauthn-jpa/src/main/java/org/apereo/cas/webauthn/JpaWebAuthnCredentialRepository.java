@@ -42,7 +42,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
     private final PlatformTransactionManager transactionManager;
 
     @PersistenceContext(unitName = "webAuthnEntityManagerFactory")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     public JpaWebAuthnCredentialRepository(
         final CasConfigurationProperties properties,

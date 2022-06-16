@@ -25,7 +25,6 @@ import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.LinkedHashMap;
@@ -42,7 +41,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Getter
-@Transactional(transactionManager = "ticketTransactionManager")
 public class DefaultDelegatedClientAuthenticationWebflowManager implements DelegatedClientAuthenticationWebflowManager {
 
     private static final String OIDC_CLIENT_ID_SESSION_KEY = "OIDC_CLIENT_ID";

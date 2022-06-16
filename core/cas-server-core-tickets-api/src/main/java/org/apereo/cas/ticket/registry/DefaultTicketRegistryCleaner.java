@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {

@@ -29,7 +29,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
@@ -59,7 +58,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected final CentralAuthenticationServiceContext configurationContext;
 
-    @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
     public Ticket getTicket(final @NonNull String ticketId) throws InvalidTicketException {
         val ticket = configurationContext.getTicketRegistry().getTicket(ticketId);
@@ -75,7 +73,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * access to critical section. The reason is that cache pulls serialized data and
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
-    @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
     public <T extends Ticket> T getTicket(final @NonNull String ticketId, final Class<T> clazz) throws InvalidTicketException {
         val ticket = configurationContext.getTicketRegistry().getTicket(ticketId, clazz);
@@ -83,7 +80,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return (T) ticket;
     }
 
-    @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
         try (val ticketsStream = configurationContext.getTicketRegistry().stream().filter(predicate)) {
@@ -91,7 +87,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
-    @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public Stream<? extends Ticket> getTickets(final Predicate<Ticket> predicate, final long from, final long count) {
         return configurationContext.getTicketRegistry().stream().filter(predicate).skip(from).limit(count);
@@ -101,7 +96,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         action = AuditableActions.TICKET_DESTROYED,
         actionResolverName = AuditActionResolvers.DESTROY_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.DESTROY_TICKET_RESOURCE_RESOLVER)
-    @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public int deleteTicket(final String ticketId) throws Exception {
         return StringUtils.isNotBlank(ticketId)
