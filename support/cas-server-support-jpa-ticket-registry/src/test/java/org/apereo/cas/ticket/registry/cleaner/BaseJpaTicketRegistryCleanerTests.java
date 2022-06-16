@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.cleaner;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -25,6 +25,9 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
@@ -33,12 +36,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
@@ -55,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link JpaTicketRegistryCleanerTests}.
+ * This is {@link BaseJpaTicketRegistryCleanerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -65,10 +64,8 @@ import static org.mockito.Mockito.*;
         "spring.integration.jdbc.initialize-schema=ALWAYS",
         "cas.ticket.registry.jpa.ddl-auto=create-drop"
     })
-@Tag("JDBC")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
-public class JpaTicketRegistryCleanerTests {
+public abstract class BaseJpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier(TicketFactory.BEAN_NAME)
     protected TicketFactory ticketFactory;
@@ -95,7 +92,6 @@ public class JpaTicketRegistryCleanerTests {
     }
 
     @Test
-    @Order(10)
     public void verifyOperation() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
@@ -124,7 +120,6 @@ public class JpaTicketRegistryCleanerTests {
     }
 
     @Test
-    @Order(10)
     public void verifyTransientTicketCleaning() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
@@ -149,7 +144,6 @@ public class JpaTicketRegistryCleanerTests {
     }
 
     @RepeatedTest(2)
-    @Order(1)
     public void verifyOauthOperation() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
@@ -180,7 +174,6 @@ public class JpaTicketRegistryCleanerTests {
     }
 
     @Test
-    @Order(10)
     public void verifyDeviceCodeAndUserCleaning() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
@@ -211,7 +204,6 @@ public class JpaTicketRegistryCleanerTests {
     }
 
     @Test
-    @Order(100)
     public void verifyConcurrentCleaner() throws Exception {
         val registryTask = new TimerTask() {
             @Override
