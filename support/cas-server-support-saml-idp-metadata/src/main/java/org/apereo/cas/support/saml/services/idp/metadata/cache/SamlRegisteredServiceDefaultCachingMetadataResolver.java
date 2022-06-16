@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -22,7 +24,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
-import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,8 +38,6 @@ import java.util.Optional;
 @Slf4j
 public class SamlRegisteredServiceDefaultCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
 
-    private static final int MAX_CACHE_SIZE = 10_000;
-
     private final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> chainingMetadataResolverCacheLoader;
 
     private final LoadingCache<SamlRegisteredServiceCacheKey, MetadataResolver> cache;
@@ -47,13 +46,16 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     private final OpenSamlConfigBean openSamlConfigBean;
 
     public SamlRegisteredServiceDefaultCachingMetadataResolver(
-        final Duration metadataCacheExpiration,
+        final CasConfigurationProperties casProperties,
         final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> loader,
         final OpenSamlConfigBean openSamlConfigBean) {
         this.openSamlConfigBean = openSamlConfigBean;
         this.chainingMetadataResolverCacheLoader = loader;
+
+        val core = casProperties.getAuthn().getSamlIdp().getMetadata().getCore();
+        val metadataCacheExpiration = Beans.newDuration(core.getCacheExpiration());
         this.cache = Caffeine.newBuilder()
-            .maximumSize(MAX_CACHE_SIZE)
+            .maximumSize(core.getCacheMaximumSize())
             .recordStats()
             .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpiration))
             .build(this.chainingMetadataResolverCacheLoader);

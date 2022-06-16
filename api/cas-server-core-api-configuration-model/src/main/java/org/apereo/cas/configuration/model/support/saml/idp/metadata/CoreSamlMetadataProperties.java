@@ -32,6 +32,15 @@ public class CoreSamlMetadataProperties implements Serializable {
     private boolean failFast = true;
 
     /**
+     * Specifies the maximum number of entries the cache may contain. Note that the cache <b>may evict
+     * an entry before this limit is exceeded or temporarily exceed the threshold while evicting</b>.
+     * As the cache size grows close to the maximum, the cache evicts entries that are less likely to
+     * be used again. For example, the cache may evict an entry because it hasn't been used recently
+     * or very often.
+     */
+    private long cacheMaximumSize = 10_000L;
+
+    /**
      * How long should metadata be cached.
      */
     @DurationCapable
@@ -47,17 +56,20 @@ public class CoreSamlMetadataProperties implements Serializable {
      * should support SSO service POST binding.
      */
     private boolean ssoServicePostBindingEnabled = true;
+
     /**
      * Whether metadata generation process
      * should support SSO service POST SimpleSign binding.
      */
 
     private boolean ssoServicePostSimpleSignBindingEnabled = true;
+
     /**
      * Whether metadata generation process
      * should support SSO service REDIRECT binding.
      */
     private boolean ssoServiceRedirectBindingEnabled = true;
+
     /**
      * Whether metadata generation process
      * should support SSO service SOAP binding.
@@ -69,10 +81,11 @@ public class CoreSamlMetadataProperties implements Serializable {
      * should support SLO service POST binding.
      */
     private boolean sloServicePostBindingEnabled = true;
+
     /**
      * Whether metadata generation process
      * should support SLO service REDIRECT binding.
      */
     private boolean sloServiceRedirectBindingEnabled = true;
-    
+
 }
