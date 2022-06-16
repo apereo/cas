@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -42,7 +43,7 @@ import java.util.stream.StreamSupport;
 public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataResolver {
 
     public MetadataQueryProtocolMetadataResolver(final SamlIdPProperties samlIdPProperties,
-        final OpenSamlConfigBean configBean) {
+                                                 final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
     }
 
@@ -86,19 +87,18 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
 
     @Override
     protected HttpResponse fetchMetadata(final SamlRegisteredService service,
-        final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
+                                         final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         val metadata = samlIdPProperties.getMetadata().getMdq();
         val headers = new LinkedHashMap<String, String>();
         headers.put("Content-Type", metadata.getSupportedContentType());
         headers.put("Accept", "*/*");
         val path = backupFile.toPath();
-        if (Files.exists(path)) {
-            Unchecked.consumer(store -> {
+        FunctionUtils.doAndHandle(p -> {
+            if (Files.exists(path)) {
                 val etag = new String((byte[]) Files.getAttribute(path, "user:ETag"), StandardCharsets.UTF_8).trim();
                 headers.put("If-None-Match", etag);
-            }).accept(path);
-        }
-
+            }
+        });
         LOGGER.trace("Fetching metadata via MDQ for [{}]", metadataLocation);
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .basicAuthPassword(metadata.getBasicAuthnPassword())

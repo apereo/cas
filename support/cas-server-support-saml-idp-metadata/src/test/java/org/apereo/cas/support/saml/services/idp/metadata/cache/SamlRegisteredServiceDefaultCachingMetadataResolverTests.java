@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -12,6 +11,7 @@ import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -20,6 +20,9 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -144,6 +147,38 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
+    public void verfifyAggregatedCacheLoading() throws Exception {
+        val resolver = getResolver("PT5M");
+
+        val service1 = getSamlRegisteredService(1, ".*", "classpath:aggregate-md.xml");
+        assertNotNull(resolver.resolve(service1, getCriteriaFor("https://issues.shibboleth.net/shibboleth")));
+        assertNotNull(resolver.resolve(service1, getCriteriaFor("https://mfa-auth.dev.phenoapp.com/Saml2")));
+        assertNotNull(resolver.resolve(service1, getCriteriaFor("https://gitlab.com")));
+        assertEquals(1, resolver.getCacheStatistics().loadSuccessCount());
+
+        for (int i = 0; i < 5; i++) {
+            val resource = new ClassPathResource("placeholder-sp.xml");
+            val data = FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8)
+                .replace("%ENTITY_ID%", "https://gitlab.com");
+            val mdFile = Files.createTempFile("samplesp", ".xml").toFile();
+            FileUtils.writeStringToFile(mdFile, data, StandardCharsets.UTF_8);
+            val service2 = getSamlRegisteredService(i, ".*", "file://" + mdFile.getAbsolutePath());
+            assertNotNull(resolver.resolve(service2, getCriteriaFor("https://gitlab.com")));
+            assertEquals(1, resolver.getCacheStatistics().loadSuccessCount());
+            assertTrue(mdFile.delete());
+        }
+
+    }
+
+    @Test
+    public void verifyMissingMetadataInMDQ() {
+        val criteriaSet1 = getCriteriaFor("https://shib-sp-test-preprod.dartmouth.edu/shibboleth");
+        val service = getSamlRegisteredService(1, ".*", "https://mdq.incommon.org/entities/{0}");
+        val resolver = getResolver("PT5M");
+        assertNull(resolver.resolve(service, criteriaSet1));
+    }
+
+    @Test
     public void verifyDynamicMetadata() {
         val criteriaSet1 = getCriteriaFor("urn:mace:incommon:internet2.edu");
 
@@ -165,7 +200,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         val stats2 = resolver.getCacheStatistics();
         assertEquals(1, stats2.missCount());
         assertEquals(1, stats2.loadSuccessCount());
-        assertEquals(1, stats2.hitCount());
+        assertEquals(0, stats2.hitCount());
 
         val criteriaSet2 = getCriteriaFor("https://vbushib.einsteinmed.org/idp/");
 
@@ -173,20 +208,20 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         val stats3 = resolver.getCacheStatistics();
         assertEquals(2, stats3.missCount());
         assertEquals(2, stats3.loadSuccessCount());
-        assertEquals(1, stats3.hitCount());
+        assertEquals(0, stats3.hitCount());
     }
 
     private SamlRegisteredServiceDefaultCachingMetadataResolver getResolver(final String duration) {
         val resolutionPlan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
+        val props = casProperties.getAuthn().getSamlIdp();
         resolutionPlan.registerMetadataResolver(
-            new UrlResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean));
+            new UrlResourceMetadataResolver(props, openSamlConfigBean));
         resolutionPlan.registerMetadataResolver(
-            new MetadataQueryProtocolMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean));
+            new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean));
         resolutionPlan.registerMetadataResolver(
-            new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean));
+            new ClasspathResourceMetadataResolver(props, openSamlConfigBean));
         val cacheLoader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, resolutionPlan);
-        val props = new CasConfigurationProperties();
-        props.getAuthn().getSamlIdp().getMetadata().getCore().setCacheExpiration(duration);
-        return new SamlRegisteredServiceDefaultCachingMetadataResolver(props, cacheLoader, openSamlConfigBean);
+        casProperties.getAuthn().getSamlIdp().getMetadata().getCore().setCacheExpiration(duration);
+        return new SamlRegisteredServiceDefaultCachingMetadataResolver(casProperties, cacheLoader, openSamlConfigBean);
     }
 }
