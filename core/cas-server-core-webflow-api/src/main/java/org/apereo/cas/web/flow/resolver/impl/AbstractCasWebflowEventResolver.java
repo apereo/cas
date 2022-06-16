@@ -24,6 +24,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -122,7 +123,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
         if (event.getAttributes() instanceof MutableAttributeMap) {
             val attributes = (MutableAttributeMap) event.getAttributes();
-            attributes.put("flowId", context.getActiveFlow().getId());
+            Optional.ofNullable(context.getActiveFlow())
+                .ifPresent(flow -> attributes.put("flowId", flow.getId()));
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             val queryParams = StringUtils.isNotBlank(request.getQueryString())
                 ? '?' + request.getQueryString() : StringUtils.EMPTY;

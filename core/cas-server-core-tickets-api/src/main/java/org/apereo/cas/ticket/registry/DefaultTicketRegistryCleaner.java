@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
@@ -20,6 +21,7 @@ import org.jooq.lambda.Unchecked;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(transactionManager = "ticketTransactionManager")
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private final LockRepository lockRepository;
 
@@ -54,12 +56,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
             return ticketRegistry.deleteTicket(ticket);
         })).orElseThrow();
     }
-
-    /**
-     * Clean tickets.
-     *
-     * @return the int
-     */
+    
     protected int cleanInternal() {
         try (val expiredTickets = ticketRegistry.stream().filter(Ticket::isExpired)) {
             val ticketsDeleted = expiredTickets

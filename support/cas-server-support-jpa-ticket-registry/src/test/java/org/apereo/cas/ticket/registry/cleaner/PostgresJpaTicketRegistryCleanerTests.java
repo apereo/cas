@@ -1,5 +1,6 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.cleaner;
 
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
@@ -20,5 +21,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
-public class PostgresJpaTicketRegistryCleanerTests extends JpaTicketRegistryCleanerTests {
+public class PostgresJpaTicketRegistryCleanerTests extends BaseJpaTicketRegistryCleanerTests {
 }
