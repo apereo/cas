@@ -312,8 +312,7 @@ public class SamlIdPMetadataConfiguration {
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlRegisteredServiceDefaultCachingMetadataResolver(
-                Beans.newDuration(casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getCacheExpiration()),
-                chainingMetadataResolverCacheLoader, openSamlConfigBean);
+                casProperties, chainingMetadataResolverCacheLoader, openSamlConfigBean);
         }
     }
 
