@@ -83,7 +83,7 @@ public class DefaultAuthenticationManagerTests {
      * @return New mock authentication handler instance.
      */
     private static AuthenticationHandler newMockHandler(final boolean success, final boolean error) {
-        val name = "MockAuthenticationHandler" + UUID.randomUUID().toString();
+        val name = "MockAuthenticationHandler" + UUID.randomUUID();
         return newMockHandler(name, success, error);
     }
 
@@ -273,11 +273,7 @@ public class DefaultAuthenticationManagerTests {
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy(true));
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
             false, applicationContext);
-
-        val auth = manager.authenticate(transaction);
-        assertEquals(1, auth.getSuccesses().size());
-        assertEquals(1, auth.getFailures().size());
-        assertEquals(2, map.size());
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
 
     @Test
