@@ -120,6 +120,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         list.add("java.management/sun.management=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+        list.add("-agentpath:/Applications/YourKit-Java-Profiler-2021.11.app/Contents/Resources/bin/mac/libyjpagent.dylib=disablestacktelemetry,exceptions=disable,delay=10000")
 
         if (rootProject.enableRemoteDebugging) {
             def port = findAvailableTcpPort(5000..5010)

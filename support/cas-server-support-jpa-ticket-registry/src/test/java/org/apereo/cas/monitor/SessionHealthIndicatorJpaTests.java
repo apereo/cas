@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
@@ -41,11 +42,15 @@ public class SessionHealthIndicatorJpaTests {
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     @Autowired
+    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+    private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
+
+    @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry jpaRegistry;
 
-    private static void addTicketsToRegistry(final TicketRegistry registry,
-                                             final int tgtCount, final int stCount) throws Exception {
+    private void addTicketsToRegistry(final TicketRegistry registry,
+                                      final int tgtCount, final int stCount) throws Exception {
         for (var i = 0; i < tgtCount; i++) {
             val ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"),
                 CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
@@ -53,9 +58,8 @@ public class SessionHealthIndicatorJpaTests {
             val testService = RegisteredServiceTestUtils.getService("junit");
             for (var j = 0; j < stCount; j++) {
                 registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"),
-                    testService,
-                    TEST_EXP_POLICY,
-                    false, true));
+                    testService, TEST_EXP_POLICY,
+                    false, serviceTicketSessionTrackingPolicy));
             }
         }
     }

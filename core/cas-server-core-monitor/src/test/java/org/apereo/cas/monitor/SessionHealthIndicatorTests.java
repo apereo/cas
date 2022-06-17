@@ -3,7 +3,10 @@ package org.apereo.cas.monitor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
@@ -47,8 +50,14 @@ public class SessionHealthIndicatorTests {
         if (ticket[0] != null) {
             val testService = getService("junit");
             IntStream.range(0, stCount).forEach(Unchecked.intConsumer(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
-                testService, TEST_EXP_POLICY, false, true))));
+                testService, TEST_EXP_POLICY, false, getTrackingPolicy()))));
         }
+    }
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
     }
 
     public static AbstractWebApplicationService getService(final String name) {

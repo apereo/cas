@@ -15,7 +15,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,11 +27,11 @@ import static org.mockito.Mockito.*;
  * @author Timur Duehr
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
+@Import({
     CasCouchDbCoreConfiguration.class,
-    CouchDbTicketRegistryConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-},
+    CouchDbTicketRegistryConfiguration.class
+})
+@TestPropertySource(
     properties = {
         "cas.ticket.registry.couch-db.username=cas",
         "cas.ticket.registry.couch-db.caching=false",

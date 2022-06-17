@@ -9,8 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration;
 import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.EnableJms;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link JmsTicketRegistryTests}.
@@ -18,12 +19,12 @@ import org.springframework.jms.annotation.EnableJms;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = {
+@Import({
     ActiveMQAutoConfiguration.class,
     JmsAutoConfiguration.class,
-    JmsTicketRegistryConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-},
+    JmsTicketRegistryConfiguration.class
+})
+@TestPropertySource(
     properties = {
         "spring.activemq.pool.enabled=false",
         "spring.activemq.packages.trust-all=true"
