@@ -114,7 +114,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+    public long deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         val definition = this.ticketCatalog.find(ticketIdToDelete);
@@ -126,7 +126,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             .setSerialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))
             .setTimeout(Beans.newDuration(properties.getTimeout()));
         cassandraSessionFactory.getCqlTemplate().execute(delete);
-        return true;
+        return 1;
     }
 
     @Override

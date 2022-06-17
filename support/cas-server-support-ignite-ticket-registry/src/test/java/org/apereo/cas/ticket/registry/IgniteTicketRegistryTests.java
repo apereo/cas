@@ -80,7 +80,7 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
         val registry = new IgniteTicketRegistry(catalog, igniteConfiguration,
             casProperties.getTicket().getRegistry().getIgnite());
         registry.initialize();
-        assertTrue(registry.deleteSingleTicket("unknownticket"));
+        assertTrue(registry.deleteSingleTicket("unknownticket") > 0);
         registry.destroy();
     }
 }

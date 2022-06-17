@@ -7,6 +7,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
@@ -68,10 +69,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
+    public long deleteSingleTicket(final String ticketId) {
         val redisKey = getTicketRedisKey(encodeTicketId(ticketId), StringUtils.EMPTY);
-        getKeysStream(redisKey).forEach(client::delete);
-        return true;
+        return getKeysStream(redisKey).mapToInt(id -> BooleanUtils.toBoolean(client.delete(id)) ? 1 : 0).sum();
     }
 
     @Override

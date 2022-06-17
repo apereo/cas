@@ -154,10 +154,10 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+    public long deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.trace("Deleting ticket [{}]", ticketId);
-        return couchbase.bucketRemoveFromDefaultCollection(ticketId).isPresent();
+        return couchbase.bucketRemoveFromDefaultCollection(ticketId).isPresent() ? 1 : 0;
     }
 
     private String getQueryForAllTickets() {
