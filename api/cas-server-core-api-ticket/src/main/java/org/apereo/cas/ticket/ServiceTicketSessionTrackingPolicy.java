@@ -9,6 +9,9 @@ package org.apereo.cas.ticket;
 @FunctionalInterface
 public interface ServiceTicketSessionTrackingPolicy {
 
+    /**
+     * Default bean name.
+     */
     String BEAN_NAME = "serviceTicketSessionTrackingPolicy";
 
     /**

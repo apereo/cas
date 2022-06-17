@@ -12,5 +12,10 @@ import java.util.Map;
  */
 public interface AuthenticatedServicesAwareTicketGrantingTicket extends TicketGrantingTicket {
 
+    /**
+     * Keeps track of authenticated service per their session id.
+     *
+     * @return authenticated services.
+     */
     Map<String, Service> getAuthenticatedServices();
 }
