@@ -7,7 +7,7 @@ import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 /**
  * Unit test for {@link EhCache3TicketRegistry}.
@@ -15,10 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author Hal Deadman
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
+@Import({
     Ehcache3TicketRegistryConfiguration.class,
-    Ehcache3TicketRegistryTicketCatalogConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
+    Ehcache3TicketRegistryTicketCatalogConfiguration.class
 })
 @Tag("Ehcache")
 @Getter

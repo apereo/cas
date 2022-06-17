@@ -191,7 +191,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected int deleteChildren(final TicketGrantingTicket ticket) {
         val count = new AtomicLong(0);
-        val services = ticket.getServices();
+        val services = ticket.getAuthenticatedServices();
         if (services != null && !services.isEmpty()) {
             services.keySet().forEach(ticketId -> {
                 val deleteCount = deleteSingleTicket(ticketId);

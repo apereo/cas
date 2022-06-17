@@ -40,9 +40,9 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -57,7 +57,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
+@Import(JpaTicketRegistryTests.SharedTestConfiguration.class)
+@TestPropertySource(
     properties = {
         "cas.jdbc.show-sql=false",
         "cas.ticket.registry.jpa.ddl-auto=create-drop"
@@ -95,7 +96,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(2)
     public void verifyLargeDataset() throws Exception {
         val ticketGrantingTickets = Stream.generate(() -> {
-            var ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+            val ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
             return new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
@@ -149,12 +150,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
         this.newTicketRegistry.deleteTicket(tgt.getId());
         assertNull(this.newTicketRegistry.getTicket(oAuthCode.getId()));
     }
-
-    @ImportAutoConfiguration({
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
+    
     @Import({
         JpaTicketRegistryTicketCatalogConfiguration.class,
         JpaTicketRegistryConfiguration.class,

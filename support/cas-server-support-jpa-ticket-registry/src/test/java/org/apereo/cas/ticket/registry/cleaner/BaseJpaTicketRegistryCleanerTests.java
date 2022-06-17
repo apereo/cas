@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
@@ -66,6 +67,11 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
 public abstract class BaseJpaTicketRegistryCleanerTests {
+
+    @Autowired
+    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+    protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
+
     @Autowired
     @Qualifier(TicketFactory.BEAN_NAME)
     protected TicketFactory ticketFactory;
@@ -215,9 +221,9 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
                             new HardTimeoutExpirationPolicy(1));
                         ticketRegistry.addTicket(tgt);
 
-                        val st = tgt.grantServiceTicket(ServiceTicket.PREFIX + '-'
-                                                        + RandomUtils.randomAlphabetic(16), RegisteredServiceTestUtils.getService(),
-                            new HardTimeoutExpirationPolicy(1), true, false);
+                        val st = tgt.grantServiceTicket(
+                            ServiceTicket.PREFIX + '-' + RandomUtils.randomAlphabetic(16), RegisteredServiceTestUtils.getService(),
+                            new HardTimeoutExpirationPolicy(1), true, serviceTicketSessionTrackingPolicy);
                         ticketRegistry.addTicket(st);
                         ticketRegistry.updateTicket(tgt);
                     });
