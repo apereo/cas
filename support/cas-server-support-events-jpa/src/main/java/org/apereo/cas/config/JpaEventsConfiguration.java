@@ -17,6 +17,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -94,7 +95,7 @@ public class JpaEventsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory eventsEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> eventsEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaEventVendorAdapter")
@@ -105,7 +106,7 @@ public class JpaEventsConfiguration {
             final BeanContainer<String> jpaEventPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
-            return BeanSupplier.of(EntityManagerFactory.class)
+            return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
@@ -115,7 +116,7 @@ public class JpaEventsConfiguration {
                         .packagesToScan(jpaEventPackagesToScan.toSet())
                         .build();
                     return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                        casProperties.getEvents().getJpa()).getObject();
+                        casProperties.getEvents().getJpa());
                 }))
                 .otherwiseProxy()
                 .get();

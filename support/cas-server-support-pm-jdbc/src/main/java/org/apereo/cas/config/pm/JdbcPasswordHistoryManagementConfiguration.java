@@ -16,6 +16,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -70,7 +71,7 @@ public class JdbcPasswordHistoryManagementConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory passwordHistoryEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> passwordHistoryEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaPasswordHistoryVendorAdapter")
@@ -81,14 +82,16 @@ public class JdbcPasswordHistoryManagementConfiguration {
             final DataSource jdbcPasswordManagementDataSource,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
-            return BeanSupplier.of(EntityManagerFactory.class)
+            return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
-                    val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaPasswordHistoryVendorAdapter)
-                        .persistenceUnitName("jpaPasswordHistoryContext").dataSource(jdbcPasswordManagementDataSource)
+                    val ctx = JpaConfigurationContext.builder()
+                        .jpaVendorAdapter(jpaPasswordHistoryVendorAdapter)
+                        .persistenceUnitName("jpaPasswordHistoryContext")
+                        .dataSource(jdbcPasswordManagementDataSource)
                         .packagesToScan(jpaPasswordHistoryPackagesToScan.toSet()).build();
                     return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                        casProperties.getAuthn().getPm().getJdbc()).getObject();
+                        casProperties.getAuthn().getPm().getJdbc());
                 }))
                 .otherwiseProxy()
                 .get();
@@ -103,14 +106,14 @@ public class JdbcPasswordHistoryManagementConfiguration {
         public PlatformTransactionManager transactionManagerPasswordHistory(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("passwordHistoryEntityManagerFactory")
-            final EntityManagerFactory emf) {
+            final FactoryBean<EntityManagerFactory> emf) throws Exception {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> {
+                .supply(Unchecked.supplier(() -> {
                     val mgmr = new JpaTransactionManager();
-                    mgmr.setEntityManagerFactory(emf);
+                    mgmr.setEntityManagerFactory(emf.getObject());
                     return mgmr;
-                })
+                }))
                 .otherwiseProxy()
                 .get();
         }

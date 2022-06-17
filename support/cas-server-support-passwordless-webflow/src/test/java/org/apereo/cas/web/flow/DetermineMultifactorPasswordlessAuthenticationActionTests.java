@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -25,8 +26,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
@@ -34,6 +37,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DetermineMultifactorPasswordlessAuthenticationActionTests}.
@@ -148,6 +152,20 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
+        }
+
+        @Test
+        @Order(4)
+        public void verifyUserHasNoContactInfo() throws Exception {
+            val context = mock(RequestContext.class);
+            when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
+            when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+
+            val account = PasswordlessUserAccount.builder()
+                .username("casuser")
+                .build();
+            WebUtils.putPasswordlessAuthenticationAccount(context, account);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
 

@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -32,14 +33,14 @@ import java.util.List;
 public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
     implements MultifactorAuthenticationHandler {
     @Getter
-    private final DuoSecurityMultifactorAuthenticationProvider multifactorAuthenticationProvider;
+    private final ObjectProvider<? extends DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
     public DuoSecurityAuthenticationHandler(final String name,
                                             final ServicesManager servicesManager,
                                             final PrincipalFactory principalFactory,
-                                            final DuoSecurityMultifactorAuthenticationProvider multifactorAuthenticationProvider,
+                                            final ObjectProvider<DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider,
                                             final Integer order,
                                             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
         super(name, servicesManager, principalFactory, order);
@@ -51,7 +52,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     public boolean supports(final Credential credential) {
         if (credential instanceof MultifactorAuthenticationCredential) {
             val id = ((MultifactorAuthenticationCredential) credential).getProviderId();
-            return multifactorAuthenticationProvider.matches(id);
+            return multifactorAuthenticationProvider.getObject().matches(id);
         }
         return false;
     }
@@ -101,7 +102,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     @SneakyThrows
     private AuthenticationHandlerExecutionResult authenticateDuoPasscodeCredential(final Credential credential) {
         try {
-            val duoAuthenticationService = multifactorAuthenticationProvider.getDuoAuthenticationService();
+            val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
             val creds = DuoSecurityPasscodeCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(creds).isSuccess()) {
                 val principal = principalFactory.createPrincipal(creds.getId());
@@ -116,7 +117,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     @SneakyThrows
     private AuthenticationHandlerExecutionResult authenticateDuoUniversalPromptCredential(final Credential c) {
         try {
-            val duoAuthenticationService = multifactorAuthenticationProvider.getDuoAuthenticationService();
+            val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
             val credential = (DuoSecurityUniversalPromptCredential) c;
             val result = duoAuthenticationService.authenticate(credential);
             if (result.isSuccess()) {
@@ -132,7 +133,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
 
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
-            val duoAuthenticationService = multifactorAuthenticationProvider.getDuoAuthenticationService();
+            val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
             val creds = DuoSecurityDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(creds).isSuccess()) {
                 val principal = resolvePrincipal(creds.getPrincipal());
@@ -150,10 +151,10 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             val duoCredential = (DuoSecurityCredential) credential;
             if (!duoCredential.isValid()) {
                 throw new GeneralSecurityException("Duo credential validation failed. Ensure a username "
-                    + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
+                                                   + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
             }
 
-            val duoAuthenticationService = multifactorAuthenticationProvider.getDuoAuthenticationService();
+            val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
             val userId = duoAuthenticationService.authenticate(duoCredential).getUsername();
             LOGGER.debug("Verified Duo authentication for user [{}]", userId);
             val primaryCredentialsUsername = duoCredential.getUsername();
@@ -166,7 +167,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
             throw new FailedLoginException("Duo authentication username "
-                + primaryCredentialsUsername + " does not match Duo response: " + userId);
+                                           + primaryCredentialsUsername + " does not match Duo response: " + userId);
 
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

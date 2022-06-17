@@ -138,7 +138,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         return new WebApplicationServiceFactory().createService(request);
     }
 
-    private static TicketFactory getTicketFactory() {
+    private TicketFactory getTicketFactory() {
         val factory = new DefaultTicketFactory();
         factory.addTicketFactory(ProxyGrantingTicket.class,
             new DefaultProxyGrantingTicketFactory(null,
@@ -148,11 +148,11 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
                 null, CipherExecutor.noOpOfSerializableToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(ServiceTicket.class,
             new DefaultServiceTicketFactory(neverExpiresExpirationPolicyBuilder(),
-                new HashMap<>(0), false,
+                new HashMap<>(0), serviceTicketSessionTrackingPolicy,
                 CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(ProxyTicket.class,
             new DefaultProxyTicketFactory(null, new HashMap<>(0),
-                CipherExecutor.noOpOfStringToString(), true, mock(ServicesManager.class)));
+                CipherExecutor.noOpOfStringToString(), serviceTicketSessionTrackingPolicy, mock(ServicesManager.class)));
         factory.addTicketFactory(TransientSessionTicket.class,
             new DefaultTransientSessionTicketFactory(neverExpiresExpirationPolicyBuilder()));
         assertSame(Ticket.class, factory.getTicketType());
@@ -319,7 +319,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
 
         val svcId = svcTicket.getService().getId();
         when(tgtMock.grantServiceTicket(anyString(), argThat(new VerifyServiceByIdMatcher(svcId)),
-            any(ExpirationPolicy.class), anyBoolean(), anyBoolean())).thenReturn(svcTicket);
+            any(ExpirationPolicy.class), anyBoolean(), any())).thenReturn(svcTicket);
         when(tgtMock.getRoot()).thenReturn(root);
         when(tgtMock.getChainedAuthentications()).thenReturn(chainedAuthnList);
         when(tgtMock.getAuthentication()).thenReturn(this.authentication);

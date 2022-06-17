@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -15,6 +16,7 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -72,7 +74,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             servicesManager,
             PrincipalFactoryUtils.newPrincipalFactory(),
             new GoogleAuthenticatorOneTimeTokenCredentialValidator(googleAuthenticator, tokenRepository, tokenCredentialRepository),
-            null);
+            null, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

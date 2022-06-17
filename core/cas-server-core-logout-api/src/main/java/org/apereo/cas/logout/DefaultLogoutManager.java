@@ -57,7 +57,7 @@ public class DefaultLogoutManager implements LogoutManager {
     private List<SingleLogoutRequestContext> performLogoutForTicket(final SingleLogoutExecutionRequest context) {
         val ticketToBeLoggedOut = context.getTicketGrantingTicket();
         val streamServices = Stream.concat(
-            Stream.of(ticketToBeLoggedOut.getServices()),
+            Stream.of(ticketToBeLoggedOut.getAuthenticatedServices()),
             Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
         val logoutServices = streamServices
             .map(Map::entrySet)

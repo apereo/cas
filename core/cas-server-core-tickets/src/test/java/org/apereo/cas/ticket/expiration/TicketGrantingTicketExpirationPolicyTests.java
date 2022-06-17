@@ -1,8 +1,12 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -51,7 +55,8 @@ public class TicketGrantingTicketExpirationPolicyTests {
         val creationTime = this.ticketGrantingTicket.getCreationTime();
 
         this.expirationPolicy.setClock(Clock.fixed(creationTime.plusSeconds(HARD_TIMEOUT).minusNanos(1).toInstant(), ZoneOffset.UTC));
-        ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
+        ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(),
+            expirationPolicy, false, getTrackingPolicy());
         assertFalse(ticketGrantingTicket.isExpired());
 
         this.expirationPolicy.setClock(Clock.fixed(creationTime.plusSeconds(HARD_TIMEOUT).plusNanos(1).toInstant(), ZoneOffset.UTC));
@@ -60,7 +65,8 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     @Test
     public void verifyTgtIsExpiredBySlidingWindow() {
-        ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
+        ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(),
+            expirationPolicy, false, getTrackingPolicy());
 
         this.expirationPolicy.setClock(Clock.fixed(this.ticketGrantingTicket.getLastTimeUsed().plusSeconds(SLIDING_TIMEOUT).minusNanos(1).toInstant(), ZoneOffset.UTC));
         assertFalse(ticketGrantingTicket.isExpired());
@@ -82,5 +88,11 @@ public class TicketGrantingTicketExpirationPolicyTests {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, TicketGrantingTicketExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
+    }
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
     }
 }

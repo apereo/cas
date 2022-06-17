@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationSAMLConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
-import org.apereo.cas.web.flow.config.DelegatedAuthenticationSAMLConfiguration;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;

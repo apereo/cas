@@ -21,6 +21,7 @@ import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.apereo.inspektr.common.Cleanable;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -73,7 +74,7 @@ public class CasSupportJdbcAuditConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "inspektrAuditEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory inspektrAuditEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> inspektrAuditEntityManagerFactory(
             @Qualifier("inspektrAuditJpaVendorAdapter")
             final JpaVendorAdapter inspektrAuditJpaVendorAdapter,
             final ConfigurableApplicationContext applicationContext,
@@ -82,7 +83,7 @@ public class CasSupportJdbcAuditConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
-            return BeanSupplier.of(EntityManagerFactory.class)
+            return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
@@ -91,7 +92,7 @@ public class CasSupportJdbcAuditConfiguration {
                         .dataSource(inspektrAuditTrailDataSource)
                         .packagesToScan(CollectionUtils.wrapSet(AuditTrailEntity.class.getPackage().getName()))
                         .build();
-                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc()).getObject();
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
                 }))
                 .otherwiseProxy()
                 .get();

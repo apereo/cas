@@ -113,9 +113,9 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                     .collect(Collectors.toList());
                 subflowMappings.add(new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.VAR_ID_CREDENTIAL),
                     createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
-                multifactorAuthenticationFlowCustomizers.forEach(c -> c.getMultifactorWebflowAttributeMappings()
+                multifactorAuthenticationFlowCustomizers.forEach(c -> c.getWebflowAttributeMappings()
                     .forEach(key -> subflowMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
-                val inputMapper = createMapperToSubflowState(subflowMappings);
+                val inputMapper = createFlowInputMapper(subflowMappings);
                 val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
                 subflowState.setAttributeMapper(subflowMapper);
 
@@ -126,10 +126,9 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                     .collect(Collectors.toList());
                 flowMappings.add(new DefaultMapping(createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)),
                     createExpression("flowScope.parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
-                multifactorAuthenticationFlowCustomizers.forEach(c -> c.getMultifactorWebflowAttributeMappings()
+                multifactorAuthenticationFlowCustomizers.forEach(c -> c.getWebflowAttributeMappings()
                     .forEach(key -> flowMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
-                val flowInputMapper = createMapperToSubflowState(flowMappings);
-                mfaFlow.setInputMapper(flowInputMapper);
+                createFlowInputMapper(flowMappings, mfaFlow);
 
                 val states = getCandidateStatesForMultifactorAuthentication();
                 registerMultifactorAuthenticationSubflowWithStates(flow, subflowState, states);

@@ -35,8 +35,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
 
@@ -49,7 +50,7 @@ import static org.mockito.Mockito.*;
  * @author Middleware Services
  * @since 3.0.0
  */
-@SpringBootTest(classes = {
+@Import({
     MemcachedTicketRegistryConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
@@ -57,9 +58,9 @@ import static org.mockito.Mockito.*;
     CasCoreServicesComponentSerializationConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-},
+    MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class
+})
+@TestPropertySource(
     properties = {
         "cas.ticket.registry.memcached.servers=localhost:11211",
         "cas.ticket.registry.memcached.failure-mode=Redistribute",
@@ -144,7 +145,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @TestConfiguration(value = "MemcachedTicketRegistryTestConfiguration", proxyBeanMethods = false)
-        public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
+    public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
         @Override
         public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
             plan.registerSerializableClass(MockTicketGrantingTicket.class);

@@ -181,4 +181,20 @@
             <EmailAddress>mailto:security@osu.edu</EmailAddress>
         </ContactPerson>
     </EntityDescriptor>
+    <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_be859801-b271-4a17-98ae-3a799d2452a4"
+                         entityID="https://gitlab.com">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:NameIDFormat>
+                urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+            </md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://git.dartmouth.edu/users/auth/saml/callback" index="0" isDefault="true"/>
+            <md:AttributeConsumingService index="1" isDefault="true">
+                <md:ServiceName xml:lang="en">Required attributes</md:ServiceName>
+                <md:RequestedAttribute FriendlyName="Email address" Name="email" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+                <md:RequestedAttribute FriendlyName="Full name" Name="name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+                <md:RequestedAttribute FriendlyName="Given name" Name="first_name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+                <md:RequestedAttribute FriendlyName="Family name" Name="last_name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+            </md:AttributeConsumingService>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
 </EntitiesDescriptor>

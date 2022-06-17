@@ -1,9 +1,11 @@
 package org.apereo.cas.mfa.accepto.web.flow.qr;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.mfa.accepto.BaseAccepttoMultifactorAuthenticationTests;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +34,9 @@ import static org.mockito.Mockito.*;
 public class AccepttoQRCodeAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {
-        val handler = new AccepttoQRCodeAuthenticationHandler(mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory());
+        val handler = new AccepttoQRCodeAuthenticationHandler(mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         assertTrue(handler.supports(AccepttoEmailCredential.class));
         val credential = new AccepttoEmailCredential("cas@example.org");
         assertTrue(handler.supports(credential));

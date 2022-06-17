@@ -3,6 +3,7 @@ package org.apereo.cas.impl.account;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
@@ -15,8 +16,12 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
+@Getter
 public class SimplePasswordlessUserAccountStore implements PasswordlessUserAccountStore {
-    private final Map<String, PasswordlessUserAccount> accounts;
+    /**
+     * Map of all passwordless accounts read from resources.
+     */
+    protected final Map<String, PasswordlessUserAccount> accounts;
 
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {

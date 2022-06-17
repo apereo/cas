@@ -144,11 +144,11 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
+    public long deleteSingleTicket(final String ticketId) {
         val ticket = getTicket(ticketId, ticket1 -> true);
         if (ticket == null) {
             LOGGER.debug("Ticket [{}] cannot be retrieved from the cache", ticketId);
-            return true;
+            return 0;
         }
 
         val metadata = this.ticketCatalog.find(ticket);
@@ -157,7 +157,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         if (cache.remove(encodeTicketId(ticket.getId()))) {
             LOGGER.debug("Ticket [{}] is removed", ticket.getId());
         }
-        return true;
+        return 1;
     }
 
     private Ehcache getTicketCacheFor(final TicketDefinition metadata) {

@@ -27,6 +27,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -69,6 +70,8 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler(
+        @Qualifier("casSimpleMultifactorAuthenticationProvider")
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         @Qualifier("casSimpleMultifactorPrincipalFactory")
         final PrincipalFactory casSimpleMultifactorPrincipalFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -79,7 +82,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         val props = casProperties.getAuthn().getMfa().getSimple();
         return new CasSimpleMultifactorAuthenticationHandler(props,
             servicesManager, casSimpleMultifactorPrincipalFactory,
-            casSimpleMultifactorAuthenticationService);
+            casSimpleMultifactorAuthenticationService, multifactorAuthenticationProvider);
     }
 
     @Bean
@@ -125,10 +128,10 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("casSimpleMultifactorAuthenticationProvider")
-        final MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
-            casSimpleMultifactorAuthenticationProvider, servicesManager);
+            multifactorAuthenticationProvider, servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorPrincipalFactory")

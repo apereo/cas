@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(transactionManager = "ticketTransactionManager")
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private final LockRepository lockRepository;
 
@@ -45,6 +45,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     @Override
     public int cleanTicket(final Ticket ticket) {
+
         return lockRepository.execute(ticket.getId(), Unchecked.supplier(() -> {
             if (ticket instanceof TicketGrantingTicket) {
                 LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
@@ -56,12 +57,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
             return ticketRegistry.deleteTicket(ticket);
         })).orElseThrow();
     }
-
-    /**
-     * Clean tickets.
-     *
-     * @return the int
-     */
+    
     protected int cleanInternal() {
         try (val expiredTickets = ticketRegistry.stream().filter(Ticket::isExpired)) {
             val ticketsDeleted = expiredTickets

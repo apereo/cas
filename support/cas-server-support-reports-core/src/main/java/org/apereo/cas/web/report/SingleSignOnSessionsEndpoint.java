@@ -285,7 +285,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
                         sso.put(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey(), Boolean.FALSE);
                     }
                 }
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.getAttributeKey(), tgt.getServices());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.getAttributeKey(), tgt.getAuthenticatedServices());
                 return sso;
             })
             .collect(Collectors.toList());

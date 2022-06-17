@@ -210,7 +210,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+    public long deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         val metadata = this.ticketCatalog.find(ticketIdToDelete);
@@ -218,7 +218,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId));
         val res = this.mongoTemplate.remove(query, collectionName);
         LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
-        return true;
+        return res.getDeletedCount();
     }
 
     protected long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {

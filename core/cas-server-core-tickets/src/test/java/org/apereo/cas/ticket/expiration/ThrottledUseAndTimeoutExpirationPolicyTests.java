@@ -1,8 +1,12 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -62,7 +66,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     @Test
     public void verifyTicketUsedButWithTimeout() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
-            true);
+            getTrackingPolicy());
         expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
         expirationPolicy.setTimeInBetweenUsesInSeconds(-10);
         assertFalse(this.ticket.isExpired());
@@ -71,7 +75,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     @Test
     public void verifyThrottleNotTriggeredWithinOneSecond() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
-                true);
+                getTrackingPolicy());
         val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusMillis(999), ZoneOffset.UTC);
         expirationPolicy.setClock(clock);
         assertFalse(this.ticket.isExpired());
@@ -80,7 +84,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     @Test
     public void verifyNotWaitingEnoughTime() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
-            true);
+            getTrackingPolicy());
         val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(1), ZoneOffset.UTC);
         expirationPolicy.setClock(clock);
         assertTrue(this.ticket.isExpired());
@@ -98,5 +102,11 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, ThrottledUseAndTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
+    }
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
     }
 }

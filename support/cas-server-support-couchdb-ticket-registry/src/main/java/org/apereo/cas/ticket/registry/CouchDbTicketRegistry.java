@@ -31,7 +31,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     private final int conflictRetries;
 
     @Override
-    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+    public long deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketIdToDelete);
         var exception = (DbAccessException) null;
@@ -61,7 +61,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.warn("Could not delete [{}] - failed.", ticketId);
         }
 
-        return success;
+        return success ? 1 : 0;
     }
 
     @Override

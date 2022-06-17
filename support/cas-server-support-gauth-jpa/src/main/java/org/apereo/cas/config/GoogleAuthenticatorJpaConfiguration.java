@@ -18,6 +18,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,6 +32,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -83,8 +85,13 @@ public class GoogleAuthenticatorJpaConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(final CasConfigurationProperties casProperties) {
-            return new GoogleAuthenticatorJpaTokenRepository(casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
+        public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("transactionManagerGoogleAuthenticator")
+            final PlatformTransactionManager transactionManagerGoogleAuthenticator) {
+            val stepSize = casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize();
+            val template = new TransactionTemplate(transactionManagerGoogleAuthenticator);
+            return new GoogleAuthenticatorJpaTokenRepository(stepSize, template);
         }
 
     }
@@ -124,7 +131,7 @@ public class GoogleAuthenticatorJpaConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public EntityManagerFactory googleAuthenticatorEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> googleAuthenticatorEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaGoogleAuthenticatorVendorAdapter")
             final JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter,
@@ -141,7 +148,7 @@ public class GoogleAuthenticatorJpaConfiguration {
                 .packagesToScan(jpaPackagesToScanGoogleAuthenticator.toSet())
                 .build();
             return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                casProperties.getAuthn().getMfa().getGauth().getJpa()).getObject();
+                casProperties.getAuthn().getMfa().getGauth().getJpa());
         }
 
     }

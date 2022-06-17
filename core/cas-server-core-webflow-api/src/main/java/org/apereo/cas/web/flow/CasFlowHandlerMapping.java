@@ -12,6 +12,6 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 public class CasFlowHandlerMapping extends FlowHandlerMapping implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
-        super.initApplicationContext();
+        initApplicationContext();
     }
 }

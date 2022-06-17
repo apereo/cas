@@ -60,7 +60,7 @@ class Ansi {
 
 Object.metaClass.ansi = new Ansi()
 
-tasks.withType(Javadoc) {
+tasks.withType(Javadoc).configureEach {
     def exceptions = []
     doFirst {
         gradle.services.get(LoggingOutputInternal).addOutputEventListener(new OutputEventListener() {
@@ -78,7 +78,8 @@ tasks.withType(Javadoc) {
     }
 }
 
-task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies") {
+tasks.register('pathingJar', Jar) {
+    description = "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies"
     dependsOn configurations.runtimeClasspath
     archiveAppendix.set("pathing")
 
@@ -93,28 +94,32 @@ task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest
     }
 }
 
-task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
+tasks.register('testJar', Jar) {
+    dependsOn testClasses
+    description = "archive the testClasses"
     archiveBaseName.set("${project.archivesBaseName}-tests")
     archiveClassifier.set("tests")
     from sourceSets.test.output
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
     archiveClassifier.set("sources")
     from sourceSets.main.allSource
 }
 
-task resourcesJar(type: Jar) {
+tasks.register('resourcesJar', Jar) {
     classifier "resources"
     from project.file("src/main/resources")
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     archiveClassifier.set("javadoc")
     from javadoc.destinationDir
 }
 
-task showConfiguration {
+tasks.register('showConfiguration') {
     description "Shows the configuration used by the build"
     doLast() {
         def cfg = project.hasProperty("configuration") ? project.property("configuration") : "compile"
@@ -122,7 +127,7 @@ task showConfiguration {
     }
 }
 
-task downloadDependencies {
+tasks.register('downloadDependencies') {
     description "Pre-download project dependencies for all configurations"
     doLast {
         configurations.getAsMap().each { name, config ->
@@ -136,7 +141,8 @@ task downloadDependencies {
     }
 }
 
-task outputDependenciesWithoutLicense(description: "Output dependencies without approved license") {
+tasks.register('outputDependenciesWithoutLicense') {
+    description = "Output dependencies without approved license"
     doLast {
         def results = file("${project.buildDir}/licenses/dependencies-without-allowed-license.json")
         if (results.exists()) {

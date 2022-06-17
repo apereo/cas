@@ -16,6 +16,12 @@ import java.util.Optional;
 public interface DelegatedAuthenticationDynamicDiscoveryProviderLocator {
 
     /**
+     * Attribute name in the request scope to indicate the direct url.
+     */
+    String REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL = "delegatedAuthProviderRedirectUrl";
+
+
+    /**
      * Locate.
      *
      * @param request the request

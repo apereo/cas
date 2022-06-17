@@ -3,14 +3,12 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,16 +24,23 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiredArgsConstructor
 @Slf4j
-public class DisplayBeforePasswordlessAuthenticationAction extends BaseCasWebflowAction {
+public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordlessCasWebflowAction {
     private final PasswordlessTokenRepository passwordlessTokenRepository;
 
     private final PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     private final CommunicationsManager communicationsManager;
 
-    private final PasswordlessAuthenticationProperties passwordlessProperties;
+    public DisplayBeforePasswordlessAuthenticationAction(final CasConfigurationProperties casProperties,
+                                                         final PasswordlessTokenRepository passwordlessTokenRepository,
+                                                         final PasswordlessUserAccountStore passwordlessUserAccountStore,
+                                                         final CommunicationsManager communicationsManager) {
+        super(casProperties);
+        this.passwordlessTokenRepository = passwordlessTokenRepository;
+        this.passwordlessUserAccountStore = passwordlessUserAccountStore;
+        this.communicationsManager = communicationsManager;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -61,6 +66,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BaseCasWebflo
         val token = passwordlessTokenRepository.createToken(user.getUsername());
 
         communicationsManager.validate();
+        val passwordlessProperties = casProperties.getAuthn().getPasswordless();
         if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
             val mail = passwordlessProperties.getTokens().getMail();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);

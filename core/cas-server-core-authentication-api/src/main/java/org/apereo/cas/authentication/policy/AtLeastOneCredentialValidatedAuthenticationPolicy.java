@@ -46,10 +46,13 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
                                                              final ConfigurableApplicationContext applicationContext,
                                                              final Optional<Serializable> assertion) throws Exception {
         if (this.tryAll) {
-            val sum = authn.getSuccesses().size() + authn.getFailures().size();
-            if (authenticationHandlers.size() != sum) {
-                LOGGER.warn("Credentials count [{}] does not match the sum of authentication successes and failures [{}]",
-                    authn.getCredentials().size(), sum);
+            val match = authenticationHandlers.stream()
+                .allMatch(handler -> authn.getSuccesses().containsKey(handler.getName()));
+            if (!match) {
+                LOGGER.warn("Authentication handlers qualified to handle this transaction, [{}], "
+                            + "have not all completed a successful authentication event. Successful "
+                            + "authentication events recorded currently are [{}]",
+                    authenticationHandlers, authn.getSuccesses().keySet());
                 return AuthenticationPolicyExecutionResult.failure();
             }
             LOGGER.debug("Authentication policy is satisfied with all authentication transactions");

@@ -1,8 +1,12 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -69,7 +73,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     public void verifyTicketIsExpiredByCount() {
         IntStream.range(0, NUMBER_OF_USES)
             .forEach(i -> this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(),
-                NeverExpiresExpirationPolicy.INSTANCE, false, true));
+                NeverExpiresExpirationPolicy.INSTANCE, false, getTrackingPolicy()));
         assertTrue(this.ticket.isExpired());
     }
 
@@ -85,5 +89,11 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, MultiTimeUseOrTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
+    }
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
     }
 }

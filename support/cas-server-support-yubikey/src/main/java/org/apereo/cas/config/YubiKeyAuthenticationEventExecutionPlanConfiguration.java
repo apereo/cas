@@ -74,7 +74,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("yubikeyMultifactorAuthenticationProvider")
-        final MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> yubikeyMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
             yubikeyMultifactorAuthenticationProvider, servicesManager);
@@ -125,11 +125,14 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         final YubicoClient yubicoClient,
         @Qualifier("yubiKeyAccountRegistry")
         final YubiKeyAccountRegistry yubiKeyAccountRegistry,
+        @Qualifier("yubikeyMultifactorAuthenticationProvider")
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         return new YubiKeyAuthenticationHandler(yubi.getName(), servicesManager,
-            yubikeyPrincipalFactory, yubicoClient, yubiKeyAccountRegistry, yubi.getOrder());
+            yubikeyPrincipalFactory, yubicoClient, yubiKeyAccountRegistry,
+            yubi.getOrder(), multifactorAuthenticationProvider);
     }
 
     @Bean

@@ -41,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.keys.RsaKeyUtil;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -213,11 +214,14 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationHandler casAccepttoQRCodeAuthenticationHandler(
+            @Qualifier("casAccepttoMultifactorAuthenticationProvider")
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
             @Qualifier("casAccepttoQRCodePrincipalFactory")
             final PrincipalFactory casAccepttoQRCodePrincipalFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new AccepttoQRCodeAuthenticationHandler(servicesManager, casAccepttoQRCodePrincipalFactory);
+            return new AccepttoQRCodeAuthenticationHandler(servicesManager,
+                casAccepttoQRCodePrincipalFactory, multifactorAuthenticationProvider);
         }
     }
 
@@ -232,10 +236,10 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("casAccepttoMultifactorAuthenticationProvider")
-            final MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider) {
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
             val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
             return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
-                casAccepttoMultifactorAuthenticationProvider, servicesManager);
+                multifactorAuthenticationProvider, servicesManager);
         }
 
         @Bean
@@ -247,7 +251,8 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             final AuthenticationHandler casAccepttoQRCodeAuthenticationHandler,
             @Qualifier("casAccepttoMultifactorAuthenticationProvider")
             final MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider) {
-            return new AuthenticationContextAttributeMetaDataPopulator(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
+            return new AuthenticationContextAttributeMetaDataPopulator(
+                casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
                 casAccepttoQRCodeAuthenticationHandler,
                 casAccepttoMultifactorAuthenticationProvider.getId());
         }
