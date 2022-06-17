@@ -7,8 +7,8 @@ import org.apereo.cas.ticket.Ticket;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Julien Gribonvald
  * @since 6.1.0
  */
-@SpringBootTest(classes = {
-    RedisTicketRegistryConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-})
+@Import(RedisTicketRegistryConfiguration.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Getter

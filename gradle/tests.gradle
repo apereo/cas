@@ -89,7 +89,8 @@ enum TestCategories {
 }
 
 if (rootProject.tasks.findByName("testCategories") == null) {
-    rootProject.tasks.create(name: "testCategories", description: "Display all available test categories") {
+    rootProject.tasks.register("testCategories") {
+        description = "Display all available test categories"
         doLast {
             def categoryMatchPattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
             def result = TestCategories.values()
@@ -104,7 +105,8 @@ if (rootProject.tasks.findByName("testCategories") == null) {
 }
 
 if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
-    rootProject.tasks.create(name: "puppeteerScenarios", description: "Display all available puppeteer scenarios") {
+    rootProject.tasks.register("puppeteerScenarios") {
+        description = "Display all available puppeteer scenarios"
         doLast {
             def scenarios = []
             def scenarioMatchPattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
@@ -128,9 +130,10 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
 TestCategories.values().each({ category ->
     if (hasTestsOfCategory(project, category.name())) {
         def taskName = "test${category.name()}"
-        if (tasks.findByName(taskName) == null) {
+        if (!tasks.getNames().contains(taskName)) {
             // println "Creating task ${taskName} for ${project.name}"
-            tasks.create(name: taskName, type: Test, description: "Testing category ${category.name()}") {
+            tasks.register(taskName, Test) {
+                description = "Testing category ${category.name()}"
                 enabled = shouldTest(project, category.name())
                 //finalizedBy jacocoTestReport
                 useJUnitPlatform {
@@ -141,14 +144,14 @@ TestCategories.values().each({ category ->
     }
 })
 
-test {
+tasks.named('test') {
     enabled = false
     onlyIf = {
         false
     }
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000

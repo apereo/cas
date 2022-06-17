@@ -220,6 +220,8 @@ public class WebAuthnConfiguration {
             final PrincipalFactory webAuthnPrincipalFactory,
             @Qualifier("webAuthnCredentialRepository")
             final WebAuthnCredentialRepository webAuthnCredentialRepository,
+            @Qualifier("webAuthnMultifactorAuthenticationProvider")
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
             @Qualifier("webAuthnSessionManager")
             final SessionManager webAuthnSessionManager,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -228,8 +230,10 @@ public class WebAuthnConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
-                    return new WebAuthnAuthenticationHandler(webAuthn.getName(), servicesManager, webAuthnPrincipalFactory,
-                        webAuthnCredentialRepository, webAuthnSessionManager, webAuthn.getOrder());
+                    return new WebAuthnAuthenticationHandler(webAuthn.getName(),
+                        servicesManager, webAuthnPrincipalFactory,
+                        webAuthnCredentialRepository, webAuthnSessionManager,
+                        webAuthn.getOrder(), multifactorAuthenticationProvider);
                 })
                 .otherwiseProxy()
                 .get();
@@ -247,10 +251,10 @@ public class WebAuthnConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
-            final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider) {
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
             val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
             return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
-                webAuthnMultifactorAuthenticationProvider, servicesManager);
+                multifactorAuthenticationProvider, servicesManager);
         }
 
         @Bean

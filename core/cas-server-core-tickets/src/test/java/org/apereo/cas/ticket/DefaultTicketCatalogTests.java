@@ -67,6 +67,10 @@ public class DefaultTicketCatalogTests {
     @Qualifier(TicketCatalog.BEAN_NAME)
     private TicketCatalog ticketCatalog;
 
+    @Autowired
+    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+    private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
+
     @Test
     public void verifyFindAll() {
         val tickets = ticketCatalog.findAll();
@@ -98,7 +102,7 @@ public class DefaultTicketCatalogTests {
         assertNotNull(ticketCatalog.find(tgt));
         assertNotNull(ticketCatalog.find(tgt.getId()));
         assertNotNull(tgt.getClass());
-        val st = tgt.grantServiceTicket(CoreAuthenticationTestUtils.getService());
+        val st = tgt.grantServiceTicket(CoreAuthenticationTestUtils.getService(), serviceTicketSessionTrackingPolicy);
         assertTrue(ticketCatalog.contains(st.getPrefix()));
         assertNotNull(ticketCatalog.find(st));
         assertNotNull(ticketCatalog.find(st.getId()));

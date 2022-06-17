@@ -520,7 +520,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

@@ -19,6 +19,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -132,7 +133,7 @@ public class JpaServiceRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "serviceEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory serviceEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> serviceEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceService")
@@ -145,7 +146,7 @@ public class JpaServiceRegistryConfiguration {
             final BeanContainer<String> jpaServicePackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
-            return BeanSupplier.of(EntityManagerFactory.class)
+            return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
@@ -155,7 +156,8 @@ public class JpaServiceRegistryConfiguration {
                         .persistenceProvider(jpaServicePersistenceProvider)
                         .packagesToScan(jpaServicePackagesToScan.toSet())
                         .build();
-                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa()).getObject();
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                        casProperties.getServiceRegistry().getJpa());
                 }))
                 .otherwiseProxy()
                 .get();
@@ -185,8 +187,9 @@ public class JpaServiceRegistryConfiguration {
         @ConditionalOnMissingBean(name = "jdbcServiceRegistryTransactionTemplate")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public TransactionOperations jdbcServiceRegistryTransactionTemplate(final CasConfigurationProperties casProperties,
-                                                                            final ConfigurableApplicationContext applicationContext) {
+        public TransactionOperations jdbcServiceRegistryTransactionTemplate(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(TransactionOperations.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {

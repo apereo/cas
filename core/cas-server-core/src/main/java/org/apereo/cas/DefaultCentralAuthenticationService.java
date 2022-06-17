@@ -50,7 +50,6 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -65,7 +64,6 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 public class DefaultCentralAuthenticationService extends AbstractCentralAuthenticationService {
     private static final long serialVersionUID = -8943828074939533986L;

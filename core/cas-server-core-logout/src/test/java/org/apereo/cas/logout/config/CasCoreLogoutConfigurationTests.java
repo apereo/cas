@@ -21,6 +21,7 @@ import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
@@ -68,7 +69,9 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = "cas.logout.remove-descendant-tickets=true")
 @Tag("CasConfiguration")
 public class CasCoreLogoutConfigurationTests {
-
+    @Autowired
+    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+    private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
     @Autowired
     @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
     private LogoutManager logoutManager;
@@ -88,7 +91,7 @@ public class CasCoreLogoutConfigurationTests {
         servicesManager.save(registeredService);
         
         val tgt = new MockTicketGrantingTicket("casuser");
-        val st = tgt.grantServiceTicket(service);
+        val st = tgt.grantServiceTicket(service, serviceTicketSessionTrackingPolicy);
         tgt.getDescendantTickets().add(st.getId());
         val results = logoutManager.performLogout(
             SingleLogoutExecutionRequest.builder()

@@ -50,13 +50,14 @@ public class GoogleAuthenticatorConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorFlowRegistry")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FlowDefinitionRegistry googleAuthenticatorFlowRegistry(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
             final FlowBuilder flowBuilder) {
             val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-            builder.addFlowBuilder(flowBuilder, GoogleAuthenticatorMultifactorWebflowConfigurer.MFA_GAUTH_EVENT_ID);
+            builder.addFlowBuilder(flowBuilder, casProperties.getAuthn().getMfa().getGauth().getId());
             return builder.build();
         }
 

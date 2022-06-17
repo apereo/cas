@@ -15,6 +15,7 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -93,7 +94,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory samlMetadataEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> samlMetadataEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaSamlMetadataVendorAdapter")
             final JpaVendorAdapter jpaSamlMetadataVendorAdapter,
@@ -107,7 +108,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
             val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataVendorAdapter)
                 .persistenceUnitName("jpaSamlMetadataContext").dataSource(dataSourceSamlMetadata)
                 .packagesToScan(jpaSamlMetadataPackagesToScan.toSet()).build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa()).getObject();
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa());
         }
     }
 

@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorAuthenticationProperties;
@@ -14,6 +15,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -21,13 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -40,20 +42,26 @@ import java.util.Map;
  * @since 6.0.0
  */
 @Slf4j
+@Getter
 public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+
     private final AccepttoMultifactorAuthenticationProperties accepttoProperties;
 
-    public AccepttoMultifactorAuthenticationHandler(final ServicesManager servicesManager,
-                                                    final PrincipalFactory principalFactory,
-                                                    final AccepttoMultifactorAuthenticationProperties accepttoProperties) {
+    public AccepttoMultifactorAuthenticationHandler(
+        final ServicesManager servicesManager,
+        final PrincipalFactory principalFactory,
+        final AccepttoMultifactorAuthenticationProperties accepttoProperties,
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(accepttoProperties.getName(),
             servicesManager,
             principalFactory,
             accepttoProperties.getOrder());
+        this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
         this.accepttoProperties = accepttoProperties;
     }
 

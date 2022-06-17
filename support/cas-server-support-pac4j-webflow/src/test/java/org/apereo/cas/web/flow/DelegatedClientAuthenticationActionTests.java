@@ -17,12 +17,11 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-import org.apereo.cas.web.DefaultDelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -96,6 +95,10 @@ public class DelegatedClientAuthenticationActionTests {
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
+    private Action delegatedAuthenticationCreateClientsAction;
+
+    @Autowired
     @Qualifier("builtClients")
     private Clients builtClients;
 
@@ -114,12 +117,12 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    public void verifyStartAuthenticationNoService() {
+    public void verifyStartAuthenticationNoService() throws Exception {
         assertStartAuthentication(null);
     }
 
     @Test
-    public void verifyStartAuthenticationWithService() {
+    public void verifyStartAuthenticationWithService() throws Exception {
         val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId()));
         assertStartAuthentication(service);
@@ -132,17 +135,17 @@ public class DelegatedClientAuthenticationActionTests {
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
-        val client = builtClients.findClient("FacebookClient").get();
         var response = new MockHttpServletResponse();
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        val webContext = new JEEContext(request, response);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
-        request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         setRequestContext(context);
         setExternalContext(context.getExternalContext());
+
+        val client = builtClients.findClient("FacebookClient").get();
+        val webContext = new JEEContext(request, response);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
+        request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
         val event = delegatedAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_STOP, event.getId());
@@ -155,16 +158,17 @@ public class DelegatedClientAuthenticationActionTests {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
-        val client = builtClients.findClient("FacebookClient").get();
-        val webContext = new JEEContext(request, new MockHttpServletResponse());
-        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
-        request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
         val context = new MockRequestContext();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         setRequestContext(context);
         setExternalContext(context.getExternalContext());
+
+        val client = builtClients.findClient("FacebookClient").get();
+        val webContext = new JEEContext(request, new MockHttpServletResponse());
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
+        request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
         assertThrows(UnauthorizedServiceException.class,
             () -> delegatedAuthenticationAction.execute(context));
@@ -186,18 +190,18 @@ public class DelegatedClientAuthenticationActionTests {
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
-        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
-        request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-        request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "https://httpbin.org/post");
-
         val context = new MockRequestContext();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         setRequestContext(context);
         setExternalContext(context.getExternalContext());
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
+        request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
+        request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "https://httpbin.org/post");
+
 
         val event = delegatedAuthenticationAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, event.getId());
     }
 
     @Test
@@ -212,16 +216,16 @@ public class DelegatedClientAuthenticationActionTests {
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
-        val client = builtClients.findClient("FacebookClient").get();
-        val webContext = new JEEContext(request, new MockHttpServletResponse());
-        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
-        request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-
         val context = new MockRequestContext();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         setRequestContext(context);
         setExternalContext(context.getExternalContext());
+
+        val client = builtClients.findClient("FacebookClient").get();
+        val webContext = new JEEContext(request, new MockHttpServletResponse());
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
+        request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
         val event = delegatedAuthenticationAction.execute(context);
 
@@ -274,7 +278,7 @@ public class DelegatedClientAuthenticationActionTests {
         registeredService.setAuthenticationPolicy(authenticationPolicy);
         servicesManager.save(registeredService);
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
         request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -296,7 +300,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         val client = builtClients.findClient("FacebookClient").get();
         val webContext = new JEEContext(request, new MockHttpServletResponse());
-        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
         request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
         request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
@@ -323,7 +327,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         val client = builtClients.findClient("FacebookClient").get();
         val webContext = new JEEContext(request, new MockHttpServletResponse());
-        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
         request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
         request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
@@ -357,7 +361,7 @@ public class DelegatedClientAuthenticationActionTests {
         setExternalContext(context.getExternalContext());
 
         val event = delegatedAuthenticationAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, event.getId());
     }
 
     @Test
@@ -374,7 +378,11 @@ public class DelegatedClientAuthenticationActionTests {
         setRequestContext(context);
         setExternalContext(context.getExternalContext());
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, delegatedAuthenticationAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, delegatedAuthenticationAction.execute(context).getId());
+
+        val generated = delegatedAuthenticationCreateClientsAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, generated.getId());
+
         assertEquals(HttpStatus.FOUND.value(), response.getStatus());
         assertEquals(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT + "?client_name=CasClient",
             response.getHeader("Location"));
@@ -391,7 +399,7 @@ public class DelegatedClientAuthenticationActionTests {
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         val client = builtClients.findClient("FacebookClient").get();
         val webContext = new JEEContext(request, new MockHttpServletResponse());
-        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
         request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
@@ -413,8 +421,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(tgt.getId()));
     }
 
-    @SneakyThrows
-    private void assertStartAuthentication(final Service service) {
+    private void assertStartAuthentication(final Service service) throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val flow = new Flow("mockFlow");
@@ -439,12 +446,15 @@ public class DelegatedClientAuthenticationActionTests {
         val client = builtClients.findClient("SAML2Client").get();
         val webContext = new JEEContext(request, response);
 
-        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, webContext, client);
         request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
         LOGGER.debug("Initializing action with request parameters [{}]", webContext.getRequestParameters());
         val event = delegatedAuthenticationAction.execute(requestContext);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, event.getId());
+
+        val generated = delegatedAuthenticationCreateClientsAction.execute(requestContext);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, generated.getId());
 
         delegatedClientAuthenticationWebflowManager.retrieve(requestContext, webContext, client);
 
@@ -455,7 +465,6 @@ public class DelegatedClientAuthenticationActionTests {
             WebUtils.getDelegatedAuthenticationProviderConfigurations(requestContext);
 
         assertFalse(urls.isEmpty());
-        assertSame(4, urls.size());
         urls.stream()
             .map(url -> {
                 LOGGER.debug("Redirect URL [{}]", url.getRedirectUrl());
@@ -468,7 +477,7 @@ public class DelegatedClientAuthenticationActionTests {
 
                 val serviceName = uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE);
                 if (service != null) {
-                    assertEquals(1, serviceName.size());
+                    assertEquals(1, serviceName.size(), () -> service.getId() + " must be exactly 1");
                     assertTrue(serviceName.contains(EncodingUtils.urlEncode(RegisteredServiceTestUtils.CONST_TEST_URL)));
                 } else {
                     assertNull(serviceName);

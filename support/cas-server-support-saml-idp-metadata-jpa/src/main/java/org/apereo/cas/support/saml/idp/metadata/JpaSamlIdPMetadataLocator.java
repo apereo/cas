@@ -32,7 +32,7 @@ import java.util.Optional;
 @Getter
 public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     @PersistenceContext(unitName = "samlMetadataIdPEntityManagerFactory")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     public JpaSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
                                      final Cache<String, SamlIdPMetadataDocument> metadataCache) {

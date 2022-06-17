@@ -101,6 +101,7 @@ public class CasCoreWebflowConfiguration {
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return new ServiceTicketRequestWebflowEventResolver(casWebflowConfigurationContext);
         }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CipherExecutor webflowCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -157,7 +158,7 @@ public class CasCoreWebflowConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
@@ -245,6 +246,7 @@ public class CasCoreWebflowConfiguration {
                 .build()
                 .get();
         }
+
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INJECT_RESPONSE_HEADERS)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

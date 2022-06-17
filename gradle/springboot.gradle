@@ -33,11 +33,11 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
 
     if (plugins.hasPlugin("war")) {
         
-        javadoc {
+        tasks.named('javadoc') {
             enabled false
         }
 
-        bootWar {
+        tasks.named('bootWar') {
             mainClass.set(project.ext.mainClassName)
             manifest {
                 attributes(
@@ -59,7 +59,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         }
 
     } else {
-        bootJar {
+        tasks.named('bootJar') {
             mainClass.set(project.ext.mainClassName)
             if (project.ext.has("archiveFileName")) {
                 archiveFileName = project.ext.archiveFileName
@@ -89,7 +89,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         }
     }
 
-    bootRun {
+    tasks.named('bootRun') {
         mainClass.set(project.ext.mainClassName)
         
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
