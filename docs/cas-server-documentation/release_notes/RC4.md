@@ -76,8 +76,8 @@ be published as necessary in due time.
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover 
-more use cases and scenarios. At the moment, total number of jobs
-stands at approximately `300` distinct scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
+more use cases and scenarios. At the moment, total number of jobs stands at approximately `303` distinct 
+scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 
 ### Single Sign-on Sessions
 
@@ -111,6 +111,18 @@ The following modules are deprecated and scheduled to be removed in future CAS v
 Ticket identifiers included in CAS log messages are typically sanitized and obfuscated prior to the logging task. In this release,
 this behavior applies to all ticket definitions that are registered with the CAS ticket catalog. The syntax of the obfuscated ticket
 in the log message is also slightly changed to hide a few more characters in the ticket identifier.
+   
+### Passwordless Authentication
+
+[Passwordless authentication](../authentication/Passwordless-Authentication.html), when it comes to handling and suppprting delegation,
+is now able decorate the passwordless account with a list of authorized identity providers, and is able to handle auto redirects correctly
+when there are multiple candidate identity providers.
+
+### Refreshable JDBC/JPA Integrations
+
+CAS modules that offer an integration with a relational database, such as [JPA Service Registry](../services/JPA-Service-Management.html), 
+are now extensively enhanced and tested to ensure the underlying components can correctly respond to *refresh* events, when 
+the application context is reloaded once a property is changed.
 
 ### Simple Multifactor Authentication
 
@@ -157,6 +169,8 @@ The following Docker images, used for integration testing, are now upgraded to t
             
 - The token introspection for [OAuth](../protocol/OAuth-Protocol.html) and [OpenID Connect](../protocol/OIDC-Protocol.html) is now fixed to show the correct 
   response for invalid/unknown tokens.
+- Multifactor authentication with [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) can now support a customizable identifier and does 
+  not have to be limited to `mfa-gauth`.
 - Logout operations for [delegated authentication](../integration/Delegate-Authentication.html) are now disabled and skipped if single logout is disabled.
 
 ## Library Upgrades
@@ -174,5 +188,10 @@ The following Docker images, used for integration testing, are now upgraded to t
 - Mockito
 - Groovy
 - Nimbus OIDC
+- Font Awesome
+- Swagger
+- Micrometer
+- Netty
+- Twilio
 - Spring
 - Spring Boot
