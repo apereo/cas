@@ -1,0 +1,30 @@
+
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "serviceId": ".*",
+  "name": "Sample",
+  "id": 1,
+  "description": "The name says it all.",
+  "evaluationOrder": 1,
+  "clientSecret": "secret",
+  "clientId": "client",
+  "multifactorPolicy":
+  {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders":
+    [
+      "java.util.HashSet",
+      [
+        "mfa-duo"
+      ]
+    ]
+  },
+  "scopes":
+  [
+    "java.util.HashSet",
+    [
+      "profile",
+      "email"
+    ]
+  ]
+}

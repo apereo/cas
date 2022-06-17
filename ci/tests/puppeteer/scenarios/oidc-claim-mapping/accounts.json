@@ -1,0 +1,19 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "duobypass" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "Mellon",
+    "attributes" : {
+      "@class" : "java.util.LinkedHashMap",
+      "email" : [ "java.util.List", ["casuser@example.org"]]
+    }
+  },
+  "casuser" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "Mellon",
+    "attributes" : {
+      "@class" : "java.util.LinkedHashMap",
+      "email" : [ "java.util.List", ["casuser@example.org"]]
+    }
+  }
+}

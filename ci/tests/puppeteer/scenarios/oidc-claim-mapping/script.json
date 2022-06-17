@@ -1,0 +1,34 @@
+{
+  "dependencies": "generic,oidc,duo",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=debug",
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.accept.enabled=false",
+
+    "--cas.authn.mfa.duo[0].duo-integration-key=DIOXVRQD3UMZ8XXMNFQ7",
+    "--cas.authn.mfa.duo[0].duo-secret-key=cGKL3OndjtknbmVOWaFKosiqinNFEKXHxgXCJEBr",
+    "--cas.authn.mfa.duo[0].duo-api-host=api-d2e616a3.duosecurity.com",
+    "--cas.authn.mfa.duo[0].name=Duo Security Universal Prompt",
+
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email",
+    "--cas.authn.oidc.discovery.claims=sub,name,email",
+
+    "--cas.authn.oidc.core.claims-map.name=cn",
+    "--cas.authn.oidc.core.claims-map.email=mail",
+
+    "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+
+
+
