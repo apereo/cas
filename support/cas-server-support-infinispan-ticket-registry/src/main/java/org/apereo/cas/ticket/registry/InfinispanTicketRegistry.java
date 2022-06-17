@@ -62,9 +62,9 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
+    public long deleteSingleTicket(final String ticketId) {
         this.cache.remove(encodeTicketId(ticketId));
-        return true;
+        return 1;
     }
 
     @Override

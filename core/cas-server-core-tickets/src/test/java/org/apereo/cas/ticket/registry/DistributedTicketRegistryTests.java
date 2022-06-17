@@ -154,8 +154,8 @@ public class DistributedTicketRegistryTests {
         }
 
         @Override
-        public boolean deleteSingleTicket(final String ticketId) {
-            return this.tickets.remove(ticketId) != null;
+        public long deleteSingleTicket(final String ticketId) {
+            return this.tickets.remove(ticketId) != null ? 1 : 0;
         }
 
         @Override

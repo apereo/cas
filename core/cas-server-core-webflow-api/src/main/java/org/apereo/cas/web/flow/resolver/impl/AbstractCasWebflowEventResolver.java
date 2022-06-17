@@ -14,17 +14,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -120,17 +117,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         val event = events.iterator().next();
         LOGGER.debug("Resolved single event [{}] via [{}] for this context",
             event.getId(), event.getSource().getClass().getName());
-
-        if (event.getAttributes() instanceof MutableAttributeMap) {
-            val attributes = (MutableAttributeMap) event.getAttributes();
-            Optional.ofNullable(context.getActiveFlow())
-                .ifPresent(flow -> attributes.put("flowId", flow.getId()));
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            val queryParams = StringUtils.isNotBlank(request.getQueryString())
-                ? '?' + request.getQueryString() : StringUtils.EMPTY;
-            val url = request.getRequestURL() + queryParams;
-            attributes.put("executionUrl", url);
-        }
         return event;
     }
 

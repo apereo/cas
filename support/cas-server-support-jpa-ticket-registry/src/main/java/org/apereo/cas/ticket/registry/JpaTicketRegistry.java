@@ -207,7 +207,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+    public long deleteSingleTicket(final String ticketIdToDelete) {
         val result = transactionTemplate.execute(transactionStatus -> {
             val factory = getJpaTicketEntityFactory();
             val encTicketId = encodeTicketId(ticketIdToDelete);
@@ -222,7 +222,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 query.setParameter("id", encTicketId);
                 totalCount = query.executeUpdate();
             }
-            return totalCount != 0;
+            return totalCount;
         });
         return Objects.requireNonNull(result);
     }

@@ -35,7 +35,7 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
+    public long deleteSingleTicket(final String ticketId) {
         val result = super.deleteSingleTicket(ticketId);
         LOGGER.trace("Publishing delete command for id [{}] and ticket [{}]", id, ticketId);
         ticketPublisher.publishMessageToQueue(new DeleteTicketMessageQueueCommand(id, ticketId));
