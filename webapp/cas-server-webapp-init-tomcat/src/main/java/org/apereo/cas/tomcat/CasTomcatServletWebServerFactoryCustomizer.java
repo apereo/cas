@@ -202,7 +202,9 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             if (http.getRedirectPort() > 0) {
                 connector.setRedirectPort(http.getRedirectPort());
             }
-            connector.setScheme("http");
+            connector.setScheme(http.getScheme());
+            connector.setSecure(http.isSecure());
+            
             LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
             connector.addUpgradeProtocol(new Http2Protocol());
 
