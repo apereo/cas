@@ -71,13 +71,12 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
         val map = readAccountsFromResource();
         val username = credential.getUsername();
-        val password = credential.getPassword();
         if (!map.containsKey(username)) {
             throw new AccountNotFoundException();
         }
 
         val account = map.get(username);
-        if (matches(password, account.getPassword())) {
+        if (matches(originalPassword, account.getPassword())) {
             switch (account.getStatus()) {
                 case DISABLED:
                     throw new AccountDisabledException();

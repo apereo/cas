@@ -10,5 +10,15 @@
     "status" : "OK",
     "expirationDate" : "2050-01-19",
     "warnings" : [ "java.util.ArrayList", [ "warning.code1" ] ]
+  },
+  "casmd5" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "9414f9301cdb492b4dcd83f8c711d8bb",
+    "attributes" : {
+      "@class" : "java.util.LinkedHashMap",
+      "firstName" : [ "java.util.List", ["Apereo"] ],
+      "lastName" : [ "java.util.List", ["CAS"] ]
+    },
+    "status" : "OK"
   }
 }
