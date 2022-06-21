@@ -75,15 +75,17 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     @Override
     protected void postProcessContext(final Context context) {
-        val http = casProperties.getServer().getTomcat().getHttp();
-        if (http.getRedirectPort() > 0) {
-            val securityConstraint = new SecurityConstraint();
-            securityConstraint.setUserConstraint("CONFIDENTIAL");
-            val collection = new SecurityCollection();
-            collection.addPattern("/*");
-            securityConstraint.addCollection(collection);
-            context.addConstraint(securityConstraint);
-        }
+        casProperties.getServer().getTomcat().getHttp()
+            .stream()
+            .filter(http -> http.getRedirectPort() > 0)
+            .forEach(http -> {
+                val securityConstraint = new SecurityConstraint();
+                securityConstraint.setUserConstraint("CONFIDENTIAL");
+                val collection = new SecurityCollection();
+                collection.addPattern("/*");
+                securityConstraint.addCollection(collection);
+                context.addConstraint(securityConstraint);
+            });
     }
 
     private void configureConnectorForApr() {
