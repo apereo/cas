@@ -17,5 +17,5 @@ public interface AuthenticatedServicesAwareTicketGrantingTicket extends TicketGr
      *
      * @return authenticated services.
      */
-    Map<String, Service> getAuthenticatedServices();
+    Map<String, Service> getServices();
 }
