@@ -51,7 +51,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
                               final TransactionOperations transactionTemplate) {
         super(applicationContext, serviceRegistryListeners);
         this.transactionTemplate = transactionTemplate;
-        this.serializer = new RegisteredServiceJsonSerializer(getApplicationContext());
+        this.serializer = new RegisteredServiceJsonSerializer(applicationContext);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public Collection<RegisteredService> load() {
         val query = String.format("SELECT r FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
-        val list = this.entityManager.createQuery(query, JpaRegisteredServiceEntity.class).getResultList();
+        val list = entityManager.createQuery(query, JpaRegisteredServiceEntity.class).getResultList();
         return list
             .stream()
             .map(this::toRegisteredService)

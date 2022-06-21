@@ -235,7 +235,8 @@ public class JpaServiceRegistryConfiguration {
             return BeanSupplier.of(ServiceRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new JpaServiceRegistry(applicationContext,
-                    Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), jdbcServiceRegistryTransactionTemplate))
+                    Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new),
+                    jdbcServiceRegistryTransactionTemplate))
                 .otherwiseProxy()
                 .get();
         }
