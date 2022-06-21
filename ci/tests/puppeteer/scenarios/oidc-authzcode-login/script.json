@@ -24,6 +24,8 @@
     "--cas.authn.oidc.core.claims-map.name=identity-name",
     "--cas.authn.oidc.core.claims-map.family_name=lastname",
 
+    "--cas.authn.oauth.core.user-profile-view-type=FLAT",
+    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]

@@ -53,5 +53,20 @@ const assert = require('assert');
     assert(decoded["common-name"] !== null)
     assert(decoded["lastname"] !== null)
 
+
+    let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
+    console.log(`Calling user profile ${profileUrl}`);
+
+    await cas.doPost(profileUrl, "", {
+        'Content-Type': "application/json"
+    }, res => {
+        console.log(res.data);
+        assert(res.data["common-name"] != null)
+        assert(res.data["lastname"] != null)
+        assert(res.data.sub != null)
+    }, error => {
+        throw `Operation failed: ${error}`;
+    });
+
     await browser.close();
 })();
