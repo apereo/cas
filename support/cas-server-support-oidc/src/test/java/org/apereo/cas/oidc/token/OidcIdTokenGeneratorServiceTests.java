@@ -87,7 +87,7 @@ public class OidcIdTokenGeneratorServiceTests {
                            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
             val service = new WebApplicationServiceFactory().createService(callback);
-            when(tgt.getAuthenticatedServices()).thenReturn(CollectionUtils.wrap("service", service));
+            when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
 
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
@@ -146,7 +146,7 @@ public class OidcIdTokenGeneratorServiceTests {
                            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
             val service = new WebApplicationServiceFactory().createService(callback);
-            when(tgt.getAuthenticatedServices()).thenReturn(CollectionUtils.wrap("service", service));
+            when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
 
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
@@ -203,7 +203,7 @@ public class OidcIdTokenGeneratorServiceTests {
                            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
             val service = new WebApplicationServiceFactory().createService(callback);
-            when(tgt.getAuthenticatedServices()).thenReturn(CollectionUtils.wrap("service", service));
+            when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
 
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
@@ -253,7 +253,7 @@ public class OidcIdTokenGeneratorServiceTests {
                            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
             val service = new WebApplicationServiceFactory().createService(callback);
-            when(tgt.getAuthenticatedServices()).thenReturn(CollectionUtils.wrap("service", service));
+            when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
 
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
@@ -299,7 +299,7 @@ public class OidcIdTokenGeneratorServiceTests {
 
             val mfa = casProperties.getAuthn().getMfa();
 
-            when(tgt.getAuthenticatedServices()).thenReturn(new HashMap<>());
+            when(tgt.getServices()).thenReturn(new HashMap<>());
             val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
                 CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                     OAuth20Constants.NONCE, List.of("some-nonce"),
@@ -337,7 +337,7 @@ public class OidcIdTokenGeneratorServiceTests {
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
             val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getAuthenticatedServices()).thenReturn(new HashMap<>());
+            when(tgt.getServices()).thenReturn(new HashMap<>());
             val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
                 CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                     OAuth20Constants.NONCE, List.of("some-nonce")));

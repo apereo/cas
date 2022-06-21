@@ -119,7 +119,7 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
             : null;
 
         if (ticket != null) {
-            servicesToMatch.addAll(ticket.getAuthenticatedServices().values());
+            servicesToMatch.addAll(ticket.getServices().values());
         }
         return servicesToMatch;
     }

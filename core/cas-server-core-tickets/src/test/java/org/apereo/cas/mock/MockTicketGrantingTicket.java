@@ -54,7 +54,7 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
 
     private final Authentication authentication;
 
-    private final Map<String, Service> authenticatedServices = new HashMap<>();
+    private final Map<String, Service> services = new HashMap<>();
 
     private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
 

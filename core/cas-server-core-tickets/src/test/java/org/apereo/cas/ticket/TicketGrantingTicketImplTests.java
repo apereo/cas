@@ -196,12 +196,12 @@ public class TicketGrantingTicketImplTests {
         t.grantServiceTicket(ID_GENERATOR
                 .getNewTicketId(ServiceTicket.PREFIX), testService,
             NeverExpiresExpirationPolicy.INSTANCE, false, getTrackingPolicy(true));
-        val services = t.getAuthenticatedServices();
+        val services = t.getServices();
         assertEquals(1, services.size());
         val ticketId = services.keySet().iterator().next();
         assertEquals(testService, services.get(ticketId));
         t.removeAllServices();
-        val services2 = t.getAuthenticatedServices();
+        val services2 = t.getServices();
         assertEquals(0, services2.size());
     }
 
@@ -236,7 +236,7 @@ public class TicketGrantingTicketImplTests {
             false,
             getTrackingPolicy(true));
 
-        assertEquals(1, t.getAuthenticatedServices().size());
+        assertEquals(1, t.getServices().size());
     }
 
     @Test
@@ -257,7 +257,7 @@ public class TicketGrantingTicketImplTests {
             false,
             getTrackingPolicy(true));
 
-        assertEquals(1, t.getAuthenticatedServices().size());
+        assertEquals(1, t.getServices().size());
     }
 
     @Test
@@ -278,7 +278,7 @@ public class TicketGrantingTicketImplTests {
             false,
             getTrackingPolicy(true));
 
-        assertEquals(1, t.getAuthenticatedServices().size());
+        assertEquals(1, t.getServices().size());
     }
 
     @Test
@@ -299,7 +299,7 @@ public class TicketGrantingTicketImplTests {
             false,
             getTrackingPolicy(false));
 
-        assertEquals(2, t.getAuthenticatedServices().size());
+        assertEquals(2, t.getServices().size());
     }
 
     @Test
@@ -320,7 +320,7 @@ public class TicketGrantingTicketImplTests {
             false,
             getTrackingPolicy(true));
 
-        assertEquals(2, t.getAuthenticatedServices().size());
+        assertEquals(2, t.getServices().size());
     }
 
     @Test
@@ -341,7 +341,7 @@ public class TicketGrantingTicketImplTests {
             false,
             getTrackingPolicy(true));
 
-        assertEquals(2, t.getAuthenticatedServices().size());
+        assertEquals(2, t.getServices().size());
     }
 
     private static ServiceTicketSessionTrackingPolicy getTrackingPolicy(final boolean trackMostRecent) {
