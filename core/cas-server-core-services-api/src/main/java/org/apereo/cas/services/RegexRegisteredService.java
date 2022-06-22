@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Deprecated(since = "6.6.0", forRemoval = true)
+@Deprecated(since = "6.6.0")
 @Slf4j
 public class RegexRegisteredService extends BaseRegisteredService {
     private static final long serialVersionUID = -8258660210826975771L;
@@ -27,5 +28,11 @@ public class RegexRegisteredService extends BaseRegisteredService {
                     + "used for CAS-enabled applications, and MUST be replaced with [{}] instead. We STRONGLY advise "
                     + "that you update your service definitions and make the replacement to faciliate future CAS upgrades.",
             CasRegisteredService.class.getName());
+    }
+
+    @JsonIgnore
+    @Override
+    public String getFriendlyName() {
+        return CasRegisteredService.FRIENDLY_NAME;
     }
 }
