@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -24,11 +25,18 @@ public class DefaultServiceRegistryInitializerEventListenerTests {
 
     @Test
     public void verifyOperation() {
-        val listener = new DefaultServiceRegistryInitializerEventListener(mock(ServiceRegistryInitializer.class));
+        val initializer = mock(ServiceRegistryInitializer.class);
+        val listener = new DefaultServiceRegistryInitializerEventListener(new DirectObjectProvider<>(initializer));
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
                 listener.handleConfigurationModifiedEvent(new CasConfigurationModifiedEvent(this, true));
+            }
+        });
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() {
+                listener.handleEnvironmentChangeEvent(new EnvironmentChangeEvent(Set.of()));
             }
         });
         assertDoesNotThrow(new Executable() {

@@ -94,6 +94,11 @@ while (( "$#" )); do
     RERUN="true"
     shift 1;
     ;;
+  --hb)
+    export HEADLESS="true"
+    REBUILD="true"
+    shift 1;
+    ;;
   --hbo)
     export HEADLESS="true"
     REBUILD="true"

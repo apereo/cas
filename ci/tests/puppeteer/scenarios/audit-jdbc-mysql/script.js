@@ -3,6 +3,19 @@ const cas = require('../../cas.js');
 const YAML = require("yaml");
 const fs = require("fs");
 const path = require("path");
+const assert = require("assert");
+
+async function callRegisteredServices() {
+    const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
+    await cas.doGet(baseUrl, res => {
+        assert(res.status === 200)
+        console.log(`Services found: ${res.data[1].length}`);
+    }, err => {
+        throw err;
+    }, {
+        'Content-Type': 'application/json'
+    })
+}
 
 async function callAuditLog() {
     await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
@@ -18,7 +31,7 @@ async function callAuditLog() {
     let configFilePath = path.join(__dirname, 'config.yml');
     const file = fs.readFileSync(configFilePath, 'utf8')
     const configFile = YAML.parse(file);
-    
+
     const browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
@@ -42,12 +55,15 @@ async function callAuditLog() {
 
     console.log("Testing authentication after refresh...")
     page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
     await cas.loginWith(page, "casuser", "Mellon");
+    await cas.assertTicketParameter(page);
+
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertCookie(page);
 
     await callAuditLog();
-
+    await callRegisteredServices();
     await browser.close();
 
 })();

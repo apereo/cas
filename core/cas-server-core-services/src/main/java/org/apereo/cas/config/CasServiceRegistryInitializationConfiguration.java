@@ -79,7 +79,7 @@ public class CasServiceRegistryInitializationConfiguration {
         public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistryInitializer")
-            final ServiceRegistryInitializer serviceRegistryInitializer) {
+            final ObjectProvider<ServiceRegistryInitializer> serviceRegistryInitializer) {
             return BeanSupplier.of(ServiceRegistryInitializerEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new DefaultServiceRegistryInitializerEventListener(serviceRegistryInitializer))
