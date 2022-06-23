@@ -44,8 +44,7 @@ cas.version=6.6.0-RC5
 ```
 
 <div class="alert alert-info">
-<strong>System Requirements</strong><br/>There are no changes to the 
-minimum system/platform requirements for this release.
+<strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
 
 ## New & Noteworthy
@@ -63,3 +62,5 @@ The following items are new improvements and enhancements presented in this rele
 - Google Firebase
 - Spring Data
 - Spring Boot
+- Spring Integration
+- Dropwizard

@@ -566,7 +566,6 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-tomcat")
                 },
-                dependencies.create("org.webjars:webjars-locator-core:$locatorCoreVersion"),
                 dependencies.create("org.webjars:sockjs-client:$socketJsClientVersion"),
                 dependencies.create("org.webjars:stomp-websocket:$stompWebSocketVersion")
         ],
