@@ -1,9 +1,10 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.core.web.LocaleProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import lombok.val;
@@ -104,8 +105,10 @@ public class CasLocaleChangeInterceptorTests {
     }
 
     private CasLocaleChangeInterceptor getInterceptor(final boolean force) {
-        val props = new LocaleProperties().setDefaultValue("fr").setForceDefaultLocale(force);
-        return new CasLocaleChangeInterceptor(props, argumentExtractor, servicesManager);
+        val props = new CasConfigurationProperties();
+        props.getLocale().setDefaultValue("fr").setForceDefaultLocale(force);
+        return new CasLocaleChangeInterceptor(new DirectObjectProvider<>(props),
+            new DirectObjectProvider<>(argumentExtractor), new DirectObjectProvider<>(servicesManager));
     }
 
 }

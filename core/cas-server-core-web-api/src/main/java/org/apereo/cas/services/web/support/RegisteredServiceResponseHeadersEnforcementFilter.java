@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,13 +31,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseHeadersEnforcementFilter {
-    private final ServicesManager servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final ArgumentExtractor argumentExtractor;
+    private final ObjectProvider<ArgumentExtractor> argumentExtractor;
 
-    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     private static String getStringProperty(final Optional<Object> result,
                                             final RegisteredServiceProperties property) {
@@ -73,7 +74,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
                                                            final HttpServletRequest httpServletRequest,
                                                            final Optional<Object> result) {
 
-        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result, RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY);
+        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result,
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY);
 
         if (shouldInject.isPresent()) {
             if (shouldInject.get()) {
@@ -90,7 +92,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     protected void decideInsertXSSProtectionHeader(final HttpServletResponse httpServletResponse,
                                                    final HttpServletRequest httpServletRequest,
                                                    final Optional<Object> result) {
-        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result, RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION);
+        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result,
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION);
         if (shouldInject.isPresent()) {
             if (shouldInject.get()) {
                 super.insertXSSProtectionHeader(httpServletResponse, httpServletRequest);
@@ -107,7 +110,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
                                                    final HttpServletRequest httpServletRequest,
                                                    final Optional<Object> result) {
 
-        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result, RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS);
+        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result,
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS);
 
         if (shouldInject.isPresent()) {
             if (shouldInject.get()) {
@@ -125,7 +129,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     protected void decideInsertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse,
                                                          final HttpServletRequest httpServletRequest,
                                                          final Optional<Object> result) {
-        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result, RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS);
+        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result,
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS);
         if (shouldInject.isPresent()) {
             if (shouldInject.get()) {
                 super.insertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest);
@@ -141,7 +146,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     protected void decideInsertCacheControlHeader(final HttpServletResponse httpServletResponse,
                                                   final HttpServletRequest httpServletRequest,
                                                   final Optional<Object> result) {
-        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result, RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
+        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result,
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
         if (shouldInject.isPresent()) {
             if (shouldInject.get()) {
                 super.insertCacheControlHeader(httpServletResponse, httpServletRequest);
@@ -157,7 +163,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     protected void decideInsertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse,
                                                              final HttpServletRequest httpServletRequest,
                                                              final Optional<Object> result) {
-        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result, RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
+        val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result,
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
         if (shouldInject.isPresent()) {
             if (shouldInject.get()) {
                 super.insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
@@ -199,16 +206,16 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
      * @return the registered service from request
      */
     private Optional<Object> getRegisteredServiceFromRequest(final HttpServletRequest request) {
-        val service = this.argumentExtractor.extractService(request);
+        val service = argumentExtractor.getObject().extractService(request);
         if (service != null) {
             LOGGER.trace("Attempting to resolve service for [{}]", service);
-            val resolved = authenticationRequestServiceSelectionStrategies.resolveService(service);
-            val registeredService = this.servicesManager.findServiceBy(resolved);
+            val resolved = authenticationRequestServiceSelectionStrategies.getObject().resolveService(service);
+            val registeredService = servicesManager.getObject().findServiceBy(resolved);
             val audit = AuditableContext.builder()
                 .registeredService(registeredService)
                 .service(service)
                 .build();
-            val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
             accessResult.throwExceptionIfNeeded();
             return Optional.of(registeredService);
         }
