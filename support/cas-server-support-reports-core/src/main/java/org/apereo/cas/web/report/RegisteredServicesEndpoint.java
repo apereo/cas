@@ -216,7 +216,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     @Operation(summary = "Export registered services as a zip file")
     public ResponseEntity<Resource> export() {
         val serializer = new RegisteredServiceJsonSerializer(applicationContext.getObject());
-        val resource = CompressionUtils.toZipFile(servicesManager.stream(),
+        val resource = CompressionUtils.toZipFile(servicesManager.getObject().stream(),
             Unchecked.function(entry -> {
                 val service = (RegisteredService) entry;
                 val fileName = String.format("%s-%s", service.getName(), service.getId());
