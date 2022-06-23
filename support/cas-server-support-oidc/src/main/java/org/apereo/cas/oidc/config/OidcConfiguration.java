@@ -255,7 +255,7 @@ public class OidcConfiguration {
         interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator.getObject(),
-                ticketRegistry.getObject(), centralAuthenticationService.getObject());
+            ticketRegistry.getObject(), centralAuthenticationService.getObject());
         interceptor.setSecurityLogic(logic);
         return interceptor;
     }
@@ -281,7 +281,6 @@ public class OidcConfiguration {
     public PrincipalFactory oidcPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME)
@@ -289,19 +288,16 @@ public class OidcConfiguration {
         val mappings = casProperties.getAuthn().getOidc().getCore().getClaimsMap();
         return new OidcDefaultAttributeToScopeClaimMapper(mappings);
     }
-
     @Bean
     @RefreshScope
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
         return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), casProperties, oidcAttributeReleasePolicyFactory());
     }
-
     @Bean
     @ConditionalOnMissingBean(name = "oidcServiceRegistryListener")
     public ServiceRegistryListener oidcServiceRegistryListener() {
         return new OidcServiceRegistryListener(oidcAttributeReleasePolicyFactory());
     }
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcAttributeReleasePolicyFactory")
@@ -311,17 +307,16 @@ public class OidcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oidcServicesManagerRegisteredServiceLocator")
-    public ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator() {
-        return new OidcServicesManagerRegisteredServiceLocator();
+    public ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator(
+        final CasConfigurationProperties casProperties) {
+        return new OidcServicesManagerRegisteredServiceLocator(casProperties);
     }
-
     @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
     @Bean
     @RefreshScope
     public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer() {
         return new OidcClientRegistrationRequestSerializer();
     }
-
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "oidcWebFingerDiscoveryService")
@@ -329,7 +324,6 @@ public class OidcConfiguration {
         return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(),
             oidcServerDiscoverySettingsFactory().getObject());
     }
-
     @Bean
     @ConditionalOnMissingBean(name = "oidcWebFingerUserInfoRepository")
     public OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository() {
@@ -344,9 +338,9 @@ public class OidcConfiguration {
         }
 
         LOGGER.info("Using [{}] to locate webfinger resources, which is NOT appropriate for production purposes, "
-            + "as it will always echo back the given username/email address and is only useful for testing/demo purposes. "
-            + "Consider choosing and configuring a different repository implementation for locating and fetching user information "
-            + "for webfinger resources, etc.", OidcEchoingWebFingerUserInfoRepository.class.getSimpleName());
+                    + "as it will always echo back the given username/email address and is only useful for testing/demo purposes. "
+                    + "Consider choosing and configuring a different repository implementation for locating and fetching user information "
+                    + "for webfinger resources, etc.", OidcEchoingWebFingerUserInfoRepository.class.getSimpleName());
         return new OidcEchoingWebFingerUserInfoRepository();
     }
 

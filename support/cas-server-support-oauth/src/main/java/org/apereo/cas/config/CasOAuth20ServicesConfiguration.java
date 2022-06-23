@@ -52,8 +52,9 @@ public class CasOAuth20ServicesConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oauthServicesManagerRegisteredServiceLocator")
-    public ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator() {
-        return new OAuth20ServicesManagerRegisteredServiceLocator();
+    public ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator(
+        final CasConfigurationProperties casProperties) {
+        return new OAuth20ServicesManagerRegisteredServiceLocator(casProperties);
     }
 
     @Bean

@@ -57,6 +57,9 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         newService.setSource(source);
         if (request != null) {
             populateAttributes(newService, request);
+            if (StringUtils.isNotBlank(source)) {
+                newService.getAttributes().put(source, CollectionUtils.wrap(id));
+            }
         }
         return newService;
     }
