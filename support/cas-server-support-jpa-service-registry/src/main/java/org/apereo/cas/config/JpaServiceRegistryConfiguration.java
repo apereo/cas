@@ -189,11 +189,13 @@ public class JpaServiceRegistryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TransactionOperations jdbcServiceRegistryTransactionTemplate(
             final CasConfigurationProperties casProperties,
+            @Qualifier("transactionManagerServiceReg")
+            final PlatformTransactionManager transactionManagerServiceReg,
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(TransactionOperations.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val t = new TransactionTemplate(applicationContext.getBean(JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, PlatformTransactionManager.class));
+                    val t = new TransactionTemplate(transactionManagerServiceReg);
                     t.setIsolationLevelName(casProperties.getServiceRegistry().getJpa().getIsolationLevelName());
                     t.setPropagationBehaviorName(casProperties.getServiceRegistry().getJpa().getPropagationBehaviorName());
                     return t;

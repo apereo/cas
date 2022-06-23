@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -71,17 +72,17 @@ public class CasThemesConfiguration {
     public ThemeResolver themeResolver(
         @Qualifier("serviceThemeResolverSupportedBrowsers")
         final Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers,
-        final CasConfigurationProperties casProperties,
+        final ObjectProvider<CasConfigurationProperties> casProperties,
         @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+        final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        val defaultThemeName = casProperties.getTheme().getDefaultThemeName();
+        final ObjectProvider<ServicesManager> servicesManager) {
+        val defaultThemeName = casProperties.getObject().getTheme().getDefaultThemeName();
         val fixedResolver = new FixedThemeResolver();
         fixedResolver.setDefaultThemeName(defaultThemeName);
         val sessionThemeResolver = new SessionThemeResolver();
         sessionThemeResolver.setDefaultThemeName(defaultThemeName);
-        val tgc = casProperties.getTgc();
+        val tgc = casProperties.getObject().getTgc();
         val cookieThemeResolver = new CookieThemeResolver();
         cookieThemeResolver.setDefaultThemeName(defaultThemeName);
         cookieThemeResolver.setCookieDomain(tgc.getDomain());
@@ -91,9 +92,12 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
         val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
             authenticationRequestServiceSelectionStrategies, casProperties,
-            serviceThemeResolverSupportedBrowsers.get().entrySet().stream().collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue)));
+            serviceThemeResolverSupportedBrowsers.get()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue)));
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
-        val header = new RequestHeaderThemeResolver(casProperties.getTheme().getParamName());
+        val header = new RequestHeaderThemeResolver(casProperties.getObject().getTheme().getParamName());
         header.setDefaultThemeName(defaultThemeName);
         val chainingThemeResolver = new ChainingThemeResolver();
         chainingThemeResolver.addResolver(cookieThemeResolver)

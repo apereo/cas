@@ -15,6 +15,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -235,8 +236,9 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         service.setProperties(props1);
         servicesManager.save(service);
 
-        return new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager, argumentExtractor,
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()));
+        return new RegisteredServiceResponseHeadersEnforcementFilter(new DirectObjectProvider<>(servicesManager),
+            new DirectObjectProvider<>(argumentExtractor),
+            new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
+            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties())));
     }
 }
