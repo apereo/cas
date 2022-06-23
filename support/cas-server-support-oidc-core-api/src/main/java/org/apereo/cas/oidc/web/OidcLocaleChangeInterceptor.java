@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.web.LocaleProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;

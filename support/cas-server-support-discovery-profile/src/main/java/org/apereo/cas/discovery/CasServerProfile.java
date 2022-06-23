@@ -23,7 +23,7 @@ public class CasServerProfile implements Serializable {
     /**
      * The type of registered services that <i>are</i> supported by this CAS instance.
      */
-    private Map<String, Class> registeredServiceTypesSupported;
+    private Set<String> registeredServiceTypesSupported;
 
     /**
      * The type of multifactor authentication providers that <i>are</i> supported by this CAS instance.
