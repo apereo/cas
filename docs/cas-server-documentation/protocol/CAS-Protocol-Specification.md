@@ -1738,7 +1738,7 @@ following SAML Logout Request XML document:
       @NOT_USED@
     </saml:NameID>
     <samlp:SessionIndex>[SESSION IDENTIFIER]</samlp:SessionIndex>
-  </samlp:LogoutRequest>`
+  </samlp:LogoutRequest>
 ```
 
 
