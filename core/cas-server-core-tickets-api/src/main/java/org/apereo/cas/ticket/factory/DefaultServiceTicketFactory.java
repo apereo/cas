@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -39,7 +40,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
-    private final boolean trackMostRecentSession;
+    private final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     private final CipherExecutor<String, String> cipherExecutor;
 
@@ -90,7 +91,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             service,
             expirationPolicyToUse,
             credentialProvided,
-            trackMostRecentSession);
+            serviceTicketSessionTrackingPolicy);
 
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result

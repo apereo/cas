@@ -19,6 +19,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,13 +47,17 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler(
+            @Qualifier("casAccepttoMultifactorAuthenticationProvider")
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
             final CasConfigurationProperties casProperties,
             @Qualifier("casAccepttoMultifactorPrincipalFactory")
             final PrincipalFactory casAccepttoMultifactorPrincipalFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             val props = casProperties.getAuthn().getMfa().getAcceptto();
-            return new AccepttoMultifactorAuthenticationHandler(servicesManager, casAccepttoMultifactorPrincipalFactory, props);
+            return new AccepttoMultifactorAuthenticationHandler(servicesManager,
+                casAccepttoMultifactorPrincipalFactory,
+                props, multifactorAuthenticationProvider);
         }
     }
 

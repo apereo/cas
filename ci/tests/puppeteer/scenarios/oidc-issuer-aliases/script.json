@@ -1,8 +1,8 @@
 {
   "dependencies": "oidc",
   "properties": [
-    "--cas.server.tomcat.http.enabled=true",
-    "--cas.server.tomcat.http.port=8282",
+    "--cas.server.tomcat.http[0].enabled=true",
+    "--cas.server.tomcat.http[0].port=8282",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

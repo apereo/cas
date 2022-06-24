@@ -1,12 +1,10 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -17,9 +15,14 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
-public class VerifyPasswordlessAccountAuthenticationAction extends BaseCasWebflowAction {
+public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordlessCasWebflowAction {
     private final PasswordlessUserAccountStore passwordlessUserAccountStore;
+
+    public VerifyPasswordlessAccountAuthenticationAction(final CasConfigurationProperties casProperties,
+                                                         final PasswordlessUserAccountStore passwordlessUserAccountStore) {
+        super(casProperties);
+        this.passwordlessUserAccountStore = passwordlessUserAccountStore;
+    }
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
@@ -32,11 +35,9 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BaseCasWebflo
         val user = account.get();
         if (user.isRequestPassword()) {
             WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+            val isDelegationActive = isDelegatedAuthenticationActiveFor(requestContext, user);
+            WebUtils.putDelegatedAuthenticationDisabled(requestContext, !isDelegationActive);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
-        }
-        if (StringUtils.isBlank(user.getPhone()) && StringUtils.isBlank(user.getEmail())) {
-            WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.invalid.user");
-            return error();
         }
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
         return success();

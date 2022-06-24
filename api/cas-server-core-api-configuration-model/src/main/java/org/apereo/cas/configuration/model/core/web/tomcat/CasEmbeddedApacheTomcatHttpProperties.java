@@ -50,6 +50,16 @@ public class CasEmbeddedApacheTomcatHttpProperties implements Serializable {
     private String protocol = "org.apache.coyote.http11.Http11NioProtocol";
 
     /**
+     * Scheme used for the connector.
+     */
+    private String scheme = "http";
+
+    /**
+     * Whether connector should run in secure mode.
+     */
+    private boolean secure;
+
+    /**
      * Additional attributes to be set on the connector.
      */
     private Map<String, String> attributes = new LinkedHashMap<>(0);

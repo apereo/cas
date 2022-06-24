@@ -5,8 +5,8 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.audit.engine.enabled=false",
 
-    "--cas.server.tomcat.http.enabled=true",
-    "--cas.server.tomcat.http.port=8080",
+    "--cas.server.tomcat.http[0].enabled=true",
+    "--cas.server.tomcat.http[0].port=8080",
 
     "--cas.tgc.crypto.enabled=false",
     "--cas.tgc.secure=false",

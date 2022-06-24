@@ -30,6 +30,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuth
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
@@ -88,7 +89,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                     val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
                     val p1 = new AuthenticationContextAttributeMetaDataPopulator(
                         casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
-                        authenticationHandler, authenticationHandler.getMultifactorAuthenticationProvider().getId());
+                        authenticationHandler, authenticationHandler.getMultifactorAuthenticationProvider().getObject().getId());
                     val p2 = new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
                         authenticationHandler.getMultifactorAuthenticationProvider(),
                         applicationContext.getBean(ServicesManager.class, ServicesManager.class));
@@ -121,7 +122,9 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                         .map(props -> {
                             val provider = duoProviderBean.getProvider(props.getId());
                             return new DuoSecurityAuthenticationHandler(props.getName(),
-                                servicesManager, duoPrincipalFactory, provider, props.getOrder(), resolvers);
+                                servicesManager, duoPrincipalFactory,
+                                new DirectObjectProvider<>(provider),
+                                props.getOrder(), resolvers);
                         })
                         .sorted(Comparator.comparing(DuoSecurityAuthenticationHandler::getOrder))
                         .collect(Collectors.toList()));

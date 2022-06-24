@@ -27,7 +27,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
 import java.util.HashMap;
@@ -41,12 +42,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("DynamoDb")
-@SpringBootTest(classes = {
+@Import({
     DynamoDbTicketRegistryConfiguration.class,
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,
-    OAuth20ProtocolTicketCatalogConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-},
+    OAuth20ProtocolTicketCatalogConfiguration.class
+})
+@TestPropertySource(
     properties = {
         "cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",
         "cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",

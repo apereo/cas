@@ -109,7 +109,8 @@ public class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTest
         WebUtils.putServiceIntoFlowScope(this.requestContext, RegisteredServiceTestUtils.getService("https://app2.com/"));
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.grantServiceTicket(RegisteredServiceTestUtils.getService("https://google.com/"));
+        tgt.grantServiceTicket(RegisteredServiceTestUtils.getService("https://google.com/"),
+            serviceTicketSessionTrackingPolicy);
 
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
         this.httpRequest.setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
@@ -124,7 +125,8 @@ public class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTest
         WebUtils.putServiceIntoFlowScope(this.requestContext, RegisteredServiceTestUtils.getService("https://app2.com/"));
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.grantServiceTicket(RegisteredServiceTestUtils.getService("https://www.google.com/"));
+        tgt.grantServiceTicket(RegisteredServiceTestUtils.getService("https://www.google.com/"),
+            serviceTicketSessionTrackingPolicy);
 
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
         this.httpRequest.setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));

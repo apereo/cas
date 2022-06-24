@@ -1,5 +1,18 @@
 package org.apereo.cas.oidc.claims.mapping;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 /**
  * This is {@link OidcAttributeToScopeClaimMapper}.
  *
@@ -7,6 +20,8 @@ package org.apereo.cas.oidc.claims.mapping;
  * @since 5.1.0
  */
 public interface OidcAttributeToScopeClaimMapper {
+    Logger LOGGER = LoggerFactory.getLogger(OidcAttributeToScopeClaimMapper.class);
+
     /**
      * The bean name of the default implementation.
      */
@@ -27,4 +42,42 @@ public interface OidcAttributeToScopeClaimMapper {
      * @return true/false
      */
     boolean containsMappedAttribute(String claim);
+
+    /**
+     * Map the claim to the mapped-name, or itself.
+     *
+     * @param claimName the claim name
+     * @return the string
+     */
+    default String toMappedClaimName(final String claimName) {
+        return containsMappedAttribute(claimName)
+            ? getMappedAttribute(claimName)
+            : claimName;
+    }
+
+    /**
+     * Map claim and return values.
+     *
+     * @param claimName    the claim name
+     * @param principal    the principal
+     * @param defaultValue the default value
+     * @return the list of values
+     */
+    default List<Object> mapClaim(final String claimName,
+                                  final Principal principal,
+                                  final Object defaultValue) {
+        val attribute = toMappedClaimName(claimName);
+        val attributeValues = principal.getAttributes().containsKey(attribute)
+            ? principal.getAttributes().get(attribute)
+            : defaultValue;
+
+        LOGGER.trace("Handling claim [{}] with value(s) [{}]", attribute, attributeValues);
+        return CollectionUtils.toCollection(attributeValues)
+            .stream()
+            .map(value -> {
+                val bool = BooleanUtils.toBooleanObject(value.toString());
+                return Objects.requireNonNullElse(bool, value);
+            })
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
 }

@@ -1,12 +1,14 @@
 package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -130,7 +132,9 @@ public class AccepttoMultifactorAuthenticationHandlerTests {
 
     private AccepttoMultifactorAuthenticationHandler buildHandler() {
         val handler = new AccepttoMultifactorAuthenticationHandler(mock(ServicesManager.class),
-            PrincipalFactoryUtils.newPrincipalFactory(), casProperties.getAuthn().getMfa().getAcceptto());
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            casProperties.getAuthn().getMfa().getAcceptto(),
+            new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

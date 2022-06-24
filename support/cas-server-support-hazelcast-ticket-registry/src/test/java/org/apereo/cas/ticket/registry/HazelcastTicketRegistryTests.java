@@ -17,7 +17,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,15 +29,17 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
-@SpringBootTest(classes = {
+@Import({
     HazelcastTicketRegistryConfiguration.class,
     HazelcastTicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = {
-    "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
-    "cas.ticket.registry.hazelcast.cluster.network.port=5703",
-    "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalhostinstance"
 })
+@TestPropertySource(
+    properties = {
+        "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
+        "cas.ticket.registry.hazelcast.cluster.network.port=5703",
+        "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalhostinstance"
+    })
 @Tag("Hazelcast")
 @Getter
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {

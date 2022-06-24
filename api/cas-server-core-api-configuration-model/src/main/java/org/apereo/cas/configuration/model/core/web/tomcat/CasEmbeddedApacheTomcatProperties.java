@@ -9,6 +9,8 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatProperties}.
@@ -46,8 +48,7 @@ public class CasEmbeddedApacheTomcatProperties implements Serializable {
     /**
      * Embedded container HTTP port settings as an additional option.
      */
-    @NestedConfigurationProperty
-    private CasEmbeddedApacheTomcatHttpProperties http = new CasEmbeddedApacheTomcatHttpProperties();
+    private List<CasEmbeddedApacheTomcatHttpProperties> http = new ArrayList<>();
 
     /**
      * Embedded container tomcat clustering options.

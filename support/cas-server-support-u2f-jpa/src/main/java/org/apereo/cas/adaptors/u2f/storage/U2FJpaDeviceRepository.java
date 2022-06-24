@@ -32,7 +32,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     private static final String SELECT_QUERY = "SELECT r from U2FJpaDeviceRegistration r ";
 
     @PersistenceContext(unitName = "u2fEntityManagerFactory")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     public U2FJpaDeviceRepository(final LoadingCache<String, String> requestStorage,
                                   final CasConfigurationProperties casProperties,

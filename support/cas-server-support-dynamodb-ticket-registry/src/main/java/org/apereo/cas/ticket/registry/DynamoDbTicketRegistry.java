@@ -73,8 +73,8 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+    public long deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
-        return this.dbTableService.delete(ticketIdToDelete, ticketId);
+        return dbTableService.delete(ticketIdToDelete, ticketId) ? 1 : 0;
     }
 }

@@ -23,6 +23,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -80,6 +81,8 @@ public class InweboAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationHandler inweboAuthenticationHandler(
+            @Qualifier("inweboMultifactorAuthenticationProvider")
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
             final CasConfigurationProperties casProperties,
             @Qualifier("inweboPrincipalFactory")
             final PrincipalFactory inweboPrincipalFactory,
@@ -88,7 +91,8 @@ public class InweboAuthenticationConfiguration {
             @Qualifier("inweboService")
             final InweboService inweboService) {
             return new InweboAuthenticationHandler(servicesManager,
-                inweboPrincipalFactory, casProperties.getAuthn().getMfa().getInwebo(), inweboService);
+                inweboPrincipalFactory, casProperties.getAuthn().getMfa().getInwebo(),
+                inweboService, multifactorAuthenticationProvider);
         }
 
     }
@@ -104,10 +108,10 @@ public class InweboAuthenticationConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("inweboMultifactorAuthenticationProvider")
-            final MultifactorAuthenticationProvider inweboMultifactorAuthenticationProvider) {
+            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
             val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
             return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
-                inweboMultifactorAuthenticationProvider, servicesManager);
+                multifactorAuthenticationProvider, servicesManager);
         }
 
         @Bean

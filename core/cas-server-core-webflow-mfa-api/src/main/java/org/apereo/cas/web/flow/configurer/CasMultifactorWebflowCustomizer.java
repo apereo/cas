@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow.configurer;
 
-import org.springframework.core.Ordered;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -11,7 +9,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-public interface CasMultifactorWebflowCustomizer extends Ordered {
+public interface CasMultifactorWebflowCustomizer extends CasWebflowCustomizer {
     /**
      * Gets candidate states for multifactor authentication.
      *
@@ -19,19 +17,5 @@ public interface CasMultifactorWebflowCustomizer extends Ordered {
      */
     default Collection<String> getCandidateStatesForMultifactorAuthentication() {
         return List.of();
-    }
-
-    /**
-     * Gets multifactor webflow attribute mappings.
-     *
-     * @return the multifactor webflow attribute mappings
-     */
-    default List<String> getMultifactorWebflowAttributeMappings() {
-        return List.of();
-    }
-
-    @Override
-    default int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
     }
 }

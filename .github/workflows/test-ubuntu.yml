@@ -11,7 +11,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   JDK_CURRENT: 11
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: ".*" # Use this to limit which tests run
+  CATEGORY_REGEX: ".*" # Limit which test categories run
 
 ##########################################################################
 

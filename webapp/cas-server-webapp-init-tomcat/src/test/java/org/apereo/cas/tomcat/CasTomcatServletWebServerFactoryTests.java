@@ -51,9 +51,9 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
         "cas.server.tomcat.http-proxy.redirect-port=1234",
         "cas.server.tomcat.http-proxy.proxy-port=1212",
 
-        "cas.server.tomcat.http.enabled=true",
-        "cas.server.tomcat.http.port=0",
-        "cas.server.tomcat.http.redirect-port=9890",
+        "cas.server.tomcat.http[0].enabled=true",
+        "cas.server.tomcat.http[0].port=0",
+        "cas.server.tomcat.http[0].redirect-port=9890",
 
         "cas.server.tomcat.ajp.enabled=true",
         "cas.server.tomcat.ajp.port=9944",

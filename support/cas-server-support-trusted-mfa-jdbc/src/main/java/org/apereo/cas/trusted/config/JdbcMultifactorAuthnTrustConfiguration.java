@@ -15,6 +15,7 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -84,7 +85,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory mfaTrustedAuthnEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> mfaTrustedAuthnEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceMfaTrustedAuthn")
             final DataSource dataSourceMfaTrustedAuthn,
@@ -99,7 +100,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
                 .persistenceUnitName("jpaMfaTrustedAuthnContext")
                 .jpaVendorAdapter(jpaMfaTrustedAuthnVendorAdapter).build();
             return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                casProperties.getAuthn().getMfa().getTrusted().getJpa()).getObject();
+                casProperties.getAuthn().getMfa().getTrusted().getJpa());
         }
 
     }

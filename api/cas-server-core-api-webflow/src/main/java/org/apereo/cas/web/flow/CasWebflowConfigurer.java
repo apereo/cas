@@ -31,6 +31,12 @@ import java.util.Map;
  * @since 5.0.0
  */
 public interface CasWebflowConfigurer extends Ordered {
+
+    /**
+     * Flow id for delegated authentication redirect.
+     */
+    String FLOW_ID_DELEGATION_REDIRECT = "clientredirect";
+
     /**
      * Flow id for password reset.
      */

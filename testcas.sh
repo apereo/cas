@@ -246,7 +246,7 @@ while (( "$#" )); do
             mfa)
                 task+="testMFA "
                 ;;
-            mfaprovider|duo|gauth|webauthn|authy|fido|u2f|swivel|acceptto)
+            mfaprovider|gauth|webauthn|authy|fido|u2f|swivel|acceptto)
                 task+="testMFAProvider "
                 ;;
             mfatrigger)
@@ -273,7 +273,7 @@ while (( "$#" )); do
             samllogout)
                 task+="testSAMLLogout "
                 ;;
-            jmx|jmx)
+            jmx)
                 task+="testJMX "
                 ;;
             restfulapiauthentication|restfulauthn|restauthn)

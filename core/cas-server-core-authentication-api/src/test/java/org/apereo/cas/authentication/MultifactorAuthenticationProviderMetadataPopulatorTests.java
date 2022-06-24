@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderM
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -31,7 +32,8 @@ public class MultifactorAuthenticationProviderMetadataPopulatorTests {
         when(provider.isAvailable(any())).thenReturn(false);
 
         val servicesManager = mock(ServicesManager.class);
-        val populator = new MultifactorAuthenticationProviderMetadataPopulator("contextClass", provider, servicesManager);
+        val populator = new MultifactorAuthenticationProviderMetadataPopulator("contextClass",
+             new DirectObjectProvider<>(provider), servicesManager);
         assertTrue(populator.supports(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();

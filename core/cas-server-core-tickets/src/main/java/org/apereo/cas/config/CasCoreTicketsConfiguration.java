@@ -7,9 +7,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
@@ -86,10 +88,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
 @AutoConfiguration
 public class CasCoreTicketsConfiguration {
-
     @Configuration(value = "CasCoreTicketsBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketsBaseConfiguration {
+
+        @ConditionalOnMissingBean(name = ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            final CasConfigurationProperties casProperties) {
+            return new DefaultServiceTicketSessionTrackingPolicy(casProperties, ticketRegistry);
+        }
 
         @ConditionalOnMissingBean(name = TicketRegistrySupport.BEAN_NAME)
         @Bean
@@ -99,7 +110,6 @@ public class CasCoreTicketsConfiguration {
             final TicketRegistry ticketRegistry) {
             return new DefaultTicketRegistrySupport(ticketRegistry);
         }
-
     }
 
     @Configuration(value = "CasCoreTicketsAuthenticationPlanConfiguration", proxyBeanMethods = false)
@@ -295,27 +305,24 @@ public class CasCoreTicketsConfiguration {
     @Configuration(value = "CasCoreServiceTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServiceTicketFactoryConfiguration {
-
         @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketFactory defaultServiceTicketFactory(
+            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY)
             final ExpirationPolicyBuilder serviceTicketExpirationPolicy,
-            final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("uniqueIdGeneratorsMap")
             final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap) {
-            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
             return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy,
-                uniqueIdGeneratorsMap, onlyTrackMostRecentSession,
+                uniqueIdGeneratorsMap, serviceTicketSessionTrackingPolicy,
                 protocolTicketCipherExecutor, servicesManager);
         }
-
-
     }
 
     @Configuration(value = "CasCoreProxyTicketFactoryConfiguration", proxyBeanMethods = false)
@@ -325,18 +332,18 @@ public class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public ProxyTicketFactory defaultProxyTicketFactory(
+            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_PROXY_TICKET_EXPIRATION_POLICY)
             final ExpirationPolicyBuilder proxyTicketExpirationPolicy,
-            final CasConfigurationProperties casProperties,
             @Qualifier("uniqueIdGeneratorsMap")
             final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
             return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy, uniqueIdGeneratorsMap,
-                protocolTicketCipherExecutor, onlyTrackMostRecentSession, servicesManager);
+                protocolTicketCipherExecutor, serviceTicketSessionTrackingPolicy, servicesManager);
         }
     }
 

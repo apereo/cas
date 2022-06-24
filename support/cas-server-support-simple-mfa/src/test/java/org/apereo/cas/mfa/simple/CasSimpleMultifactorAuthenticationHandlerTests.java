@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -12,6 +13,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -34,6 +36,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationHandlerTests}.
@@ -125,7 +128,8 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
 
         val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(centralAuthenticationService, defaultTicketFactory);
         val handler = new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple(),
-            servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), mfaService);
+            servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
+            new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
     }
 

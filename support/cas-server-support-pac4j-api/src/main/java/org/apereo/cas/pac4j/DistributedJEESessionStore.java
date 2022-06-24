@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -28,7 +27,6 @@ import java.util.UUID;
  * @author Jerome LELEU
  * @since 6.1.0
  */
-@Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 @RequiredArgsConstructor
 public class DistributedJEESessionStore implements SessionStore {

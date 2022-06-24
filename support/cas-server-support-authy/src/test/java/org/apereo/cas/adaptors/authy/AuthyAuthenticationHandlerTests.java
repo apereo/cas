@@ -1,9 +1,11 @@
 package org.apereo.cas.adaptors.authy;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.authy.AuthyApiClient;
@@ -52,9 +54,7 @@ public class AuthyAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {
         val authyInstance = configureAuthyClientInstance(200, 200, Token.VALID_TOKEN_MESSAGE);
-        val handler = new AuthyAuthenticationHandler("Authy", mock(ServicesManager.class),
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            authyInstance, true, 0);
+        val handler = getAuthyAuthenticationHandler(authyInstance);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -73,9 +73,7 @@ public class AuthyAuthenticationHandlerTests {
     @Test
     public void verifyFailsOperation() throws Exception {
         val authyInstance = configureAuthyClientInstance(400, 200, Token.VALID_TOKEN_MESSAGE);
-        val handler = new AuthyAuthenticationHandler("Authy", mock(ServicesManager.class),
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            authyInstance, true, 0);
+        val handler = getAuthyAuthenticationHandler(authyInstance);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -91,9 +89,7 @@ public class AuthyAuthenticationHandlerTests {
     @Test
     public void verifyFailsVerify() throws Exception {
         val authyInstance = configureAuthyClientInstance(200, 400, "Bad");
-        val handler = new AuthyAuthenticationHandler("Authy", mock(ServicesManager.class),
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            authyInstance, true, 0);
+        val handler = getAuthyAuthenticationHandler(authyInstance);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -102,5 +98,12 @@ public class AuthyAuthenticationHandlerTests {
         RequestContextHolder.setRequestContext(context);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(new AuthyTokenCredential("token")));
+    }
+
+    private static AuthyAuthenticationHandler getAuthyAuthenticationHandler(final AuthyClientInstance authyInstance) {
+        return new AuthyAuthenticationHandler("Authy", mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            authyInstance, true, 0,
+            new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
     }
 }

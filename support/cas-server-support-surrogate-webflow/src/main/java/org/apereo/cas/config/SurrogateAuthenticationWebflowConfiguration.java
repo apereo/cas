@@ -65,7 +65,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new CasMultifactorWebflowCustomizer() {
                     @Override
-                    public List<String> getMultifactorWebflowAttributeMappings() {
+                    public List<String> getWebflowAttributeMappings() {
                         return List.of(WebUtils.REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE);
                     }
                 })
@@ -142,7 +142,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
         public Action surrogateAuthorizationCheck(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)

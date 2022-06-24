@@ -22,10 +22,19 @@ public class CasMultifactorWebflowCustomizerTests {
         val input = mock(CasMultifactorWebflowCustomizer.class);
         when(input.getCandidateStatesForMultifactorAuthentication()).thenCallRealMethod();
         when(input.getOrder()).thenCallRealMethod();
-        when(input.getMultifactorWebflowAttributeMappings()).thenCallRealMethod();
-        
+        when(input.getWebflowAttributeMappings()).thenCallRealMethod();
+
         assertTrue(input.getCandidateStatesForMultifactorAuthentication().isEmpty());
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
-        assertTrue(input.getMultifactorWebflowAttributeMappings().isEmpty());
+        assertTrue(input.getWebflowAttributeMappings().isEmpty());
+    }
+
+    @Test
+    public void verifyDefaultOperation() {
+        val input = mock(CasWebflowCustomizer.class);
+        when(input.getOrder()).thenCallRealMethod();
+        when(input.getWebflowAttributeMappings()).thenCallRealMethod();
+        assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
+        assertTrue(input.getWebflowAttributeMappings().isEmpty());
     }
 }
