@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
@@ -28,6 +29,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContextHolder;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,11 +52,11 @@ import java.util.regex.Pattern;
 @Slf4j
 @RequiredArgsConstructor
 public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
-    private final ServicesManager servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
-    private final CasConfigurationProperties casProperties;
+    private final ObjectProvider<CasConfigurationProperties> casProperties;
 
     /**
      * This sets a flag on the request called "isMobile" and also
@@ -65,7 +67,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     private final Map<Pattern, String> overrides;
 
     @Override
-    public String resolveThemeName(final HttpServletRequest request) {
+    public String resolveThemeName(@Nonnull final HttpServletRequest request) {
         val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         if (StringUtils.isNotBlank(userAgent)) {
             overrides.entrySet()
@@ -80,13 +82,13 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         
         val context = RequestContextHolder.getRequestContext();
         val serviceContext = WebUtils.getService(context);
-        val service = this.authenticationRequestServiceSelectionStrategies.resolveService(serviceContext);
+        val service = authenticationRequestServiceSelectionStrategies.getObject().resolveService(serviceContext);
         if (service == null) {
             LOGGER.trace("No service is found in the request context. Falling back to the default theme [{}]", getDefaultThemeName());
             return rememberThemeName(request);
         }
 
-        val rService = (WebBasedRegisteredService) servicesManager.findServiceBy(service);
+        val rService = (WebBasedRegisteredService) servicesManager.getObject().findServiceBy(service);
         if (rService == null || !rService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.warn("No registered service is found to match [{}] or access is denied. Using default theme [{}]", service, getDefaultThemeName());
             return rememberThemeName(request);
@@ -101,7 +103,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     }
 
     @Override
-    public void setThemeName(final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
+    public void setThemeName(@Nonnull final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
     }
 
     /**
@@ -175,7 +177,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
      * @return the remembered theme
      */
     protected String rememberThemeName(final HttpServletRequest request, final String themeName) {
-        val attributeName = casProperties.getTheme().getParamName();
+        val attributeName = casProperties.getObject().getTheme().getParamName();
         LOGGER.trace("Storing theme [{}] as a request attribute under [{}]", themeName, attributeName);
         request.setAttribute(attributeName, themeName);
         return themeName;

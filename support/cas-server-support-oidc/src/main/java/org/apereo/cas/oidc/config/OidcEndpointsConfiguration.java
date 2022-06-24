@@ -245,11 +245,12 @@ public class OidcEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oidcLocaleChangeInterceptor(
             @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
+            final ObjectProvider<ArgumentExtractor> argumentExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            final CasConfigurationProperties casProperties) {
-            val interceptor = new OidcLocaleChangeInterceptor(casProperties.getLocale(), argumentExtractor, servicesManager);
+            final ObjectProvider<ServicesManager> servicesManager,
+            final ObjectProvider<CasConfigurationProperties> casProperties) {
+            val interceptor = new OidcLocaleChangeInterceptor(casProperties,
+                argumentExtractor, servicesManager);
             interceptor.setParamName(OidcConstants.UI_LOCALES);
             return interceptor;
         }

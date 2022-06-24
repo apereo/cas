@@ -199,14 +199,15 @@ public class CasWebflowContextConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "localeChangeInterceptor")
         public LocaleChangeInterceptor localeChangeInterceptor(
-            final CasConfigurationProperties casProperties,
+            final ObjectProvider<CasConfigurationProperties> casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            final ObjectProvider<ServicesManager> servicesManager,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor) {
-            val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale(),
+            final ObjectProvider<ArgumentExtractor> argumentExtractor) {
+            val localeProperties = casProperties.getObject().getLocale();
+            val interceptor = new CasLocaleChangeInterceptor(casProperties,
                 argumentExtractor, servicesManager);
-            interceptor.setParamName(casProperties.getLocale().getParamName());
+            interceptor.setParamName(localeProperties.getParamName());
             interceptor.setSupportedFlows(List.of(
                 CasWebflowConfigurer.FLOW_ID_LOGOUT,
                 CasWebflowConfigurer.FLOW_ID_LOGIN));

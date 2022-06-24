@@ -66,7 +66,7 @@ public class DefaultCentralAuthenticationServiceLockingTests {
                 }
             }
             val ticket = getCentralAuthenticationService().getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
-            assertEquals(serviceTicketIds.size(), ticket.getAuthenticatedServices().size());
+            assertEquals(serviceTicketIds.size(), ticket.getServices().size());
         }
     }
 
@@ -108,7 +108,7 @@ public class DefaultCentralAuthenticationServiceLockingTests {
                 }
             }
             val ticket = getCentralAuthenticationService().getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
-            assertNotEquals(serviceTicketIds.size(), ticket.getAuthenticatedServices().size());
+            assertNotEquals(serviceTicketIds.size(), ticket.getServices().size());
         }
     }
 }

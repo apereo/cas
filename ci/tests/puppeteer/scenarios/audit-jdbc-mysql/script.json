@@ -6,6 +6,7 @@
   "properties": [
     "--cas.jdbc.show-sql=true",
     
+    "--logging.level.org.apereo.cas=debug",
     "--logging.level.org.hibernate=warn",
     "--logging.level.org.springframework.orm=warn",
 
@@ -23,6 +24,8 @@
     "--cas.audit.jdbc.dialect=org.hibernate.dialect.MySQL8Dialect",
 
     "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    
     "--cas.service-registry.jpa.ddl-auto=create",
     "--cas.service-registry.jpa.user=root",
     "--cas.service-registry.jpa.password=password",
