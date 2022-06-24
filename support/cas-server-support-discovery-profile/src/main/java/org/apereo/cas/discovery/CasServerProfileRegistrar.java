@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ReflectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -22,14 +23,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Modifier;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -52,32 +49,18 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     private static Set<String> locateRegisteredServiceTypesSupported() {
-        final Function<Class, Object> mapper = c -> {
-            try {
-                val service = (RegisteredService) c.getDeclaredConstructor().newInstance();
-                return service.getFriendlyName() + '@' + service.getClass().getName();
-            } catch (final Exception e) {
-                return null;
-            }
-        };
-        return (Set) locateSubtypesByReflection(mapper, Collectors.toSet(),
-            BaseRegisteredService.class, o -> true, CentralAuthenticationService.NAMESPACE);
-    }
 
-    private static <T, R> R locateSubtypesByReflection(final Function<Class<?>, T> mapper,
-                                                       final Collector<T, ?, R> collector,
-                                                       final Class<?> parentType, final Predicate<Class<?>> filter,
-                                                       final String packageNamespace) {
-
-        val subTypes = ReflectionUtils.findSubclassesInPackage(parentType, packageNamespace);
-
+        val subTypes = ReflectionUtils.findSubclassesInPackage(BaseRegisteredService.class, CentralAuthenticationService.NAMESPACE);
         return subTypes.stream()
-                .filter(c -> !c.isInterface() && !Modifier.isAbstract(c.getModifiers()))
-                .filter(filter)
-                .map(mapper)
-                .filter(Objects::nonNull)
-                .collect(collector);
+            .filter(type -> !type.isInterface() && !Modifier.isAbstract(type.getModifiers()))
+            .map(type -> FunctionUtils.doAndHandle(() -> {
+                val service = (RegisteredService) type.getDeclaredConstructor().newInstance();
+                return service.getFriendlyName() + '@' + service.getClass().getName();
+            }))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
+
 
     /**
      * Gets profile.
@@ -115,10 +98,9 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     }
 
     private Set<String> locateDelegatedClientTypesSupported() {
-        if (clients == null) {
-            return new LinkedHashSet<>(0);
-        }
-        return clients.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
+        return clients == null
+            ? new LinkedHashSet<>(0)
+            : clients.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
     }
 
     private Set<String> locateAvailableAuthenticationHandlers() {

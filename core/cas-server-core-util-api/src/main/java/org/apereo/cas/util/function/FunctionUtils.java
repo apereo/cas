@@ -266,6 +266,22 @@ public class FunctionUtils {
      *
      * @param <R>      the type parameter
      * @param function the function
+     * @return the r
+     */
+    public static <R> R doAndHandle(final CheckedSupplier<R> function) {
+        try {
+            return function.get();
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+        return null;
+    }
+
+    /**
+     * Do and handle.
+     *
+     * @param <R>      the type parameter
+     * @param function the function
      */
     public static <R> void doAndHandle(final CheckedConsumer<R> function) {
         try {
