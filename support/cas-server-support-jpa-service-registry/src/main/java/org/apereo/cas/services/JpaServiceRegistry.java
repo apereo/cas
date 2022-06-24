@@ -8,8 +8,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionOperations;
 
 import javax.persistence.EntityManager;
@@ -29,16 +27,9 @@ import java.util.stream.LongStream;
  * @author Dmitriy Kopylenko
  * @since 3.1
  */
-@EnableTransactionManagement(proxyTargetClass = false)
-@Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER)
 @ToString
 @Slf4j
 public class JpaServiceRegistry extends AbstractServiceRegistry {
-    /**
-     * Transaction manager name.
-     */
-    public static final String BEAN_NAME_TRANSACTION_MANAGER = "transactionManagerServiceReg";
-
     private final TransactionOperations transactionTemplate;
 
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
@@ -51,40 +42,45 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
                               final TransactionOperations transactionTemplate) {
         super(applicationContext, serviceRegistryListeners);
         this.transactionTemplate = transactionTemplate;
-        this.serializer = new RegisteredServiceJsonSerializer(getApplicationContext());
+        this.serializer = new RegisteredServiceJsonSerializer(applicationContext);
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        val entity = fromRegisteredService(registeredService);
-
-        if (entityManager.contains(entity)) {
-            entityManager.remove(entity);
-        } else {
-            entityManager.remove(entityManager.merge(entity));
-        }
+        transactionTemplate.executeWithoutResult(status -> {
+            val entity = fromRegisteredService(registeredService);
+            if (entityManager.contains(entity)) {
+                entityManager.remove(entity);
+            } else {
+                entityManager.remove(entityManager.merge(entity));
+            }
+        });
         return true;
+
     }
 
     @Override
     public void deleteAll() {
-        val query = String.format("DELETE FROM %s s", JpaRegisteredServiceEntity.ENTITY_NAME);
-        entityManager.createQuery(query).executeUpdate();
+        transactionTemplate.executeWithoutResult(status -> {
+            val query = String.format("DELETE FROM %s s", JpaRegisteredServiceEntity.ENTITY_NAME);
+            entityManager.createQuery(query).executeUpdate();
+        });
     }
 
     @Override
-    @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public Collection<RegisteredService> load() {
-        val query = String.format("SELECT r FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
-        val list = this.entityManager.createQuery(query, JpaRegisteredServiceEntity.class).getResultList();
-        return list
-            .stream()
-            .map(this::toRegisteredService)
-            .sorted()
-            .map(this::invokeServiceRegistryListenerPostLoad)
-            .filter(Objects::nonNull)
-            .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)))
-            .collect(Collectors.toList());
+        return transactionTemplate.execute(status -> {
+            val query = String.format("SELECT r FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
+            val list = entityManager.createQuery(query, JpaRegisteredServiceEntity.class).getResultList();
+            return list
+                .stream()
+                .map(this::toRegisteredService)
+                .sorted()
+                .map(this::invokeServiceRegistryListenerPostLoad)
+                .filter(Objects::nonNull)
+                .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)))
+                .collect(Collectors.toList());
+        });
     }
 
     @Override
@@ -103,74 +99,78 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        return this.transactionTemplate.execute(status -> saveInternal(registeredService));
+        return transactionTemplate.execute(status -> saveInternal(registeredService));
     }
 
     @Override
-    @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public RegisteredService findServiceById(final long id) {
-        return Optional.ofNullable(this.entityManager.find(JpaRegisteredServiceEntity.class, id))
-            .map(this::toRegisteredService)
-            .stream()
-            .peek(this::invokeServiceRegistryListenerPostLoad)
-            .findFirst()
-            .orElse(null);
+        return transactionTemplate.execute(status ->
+            Optional.ofNullable(this.entityManager.find(JpaRegisteredServiceEntity.class, id))
+                .map(this::toRegisteredService)
+                .stream()
+                .peek(this::invokeServiceRegistryListenerPostLoad)
+                .findFirst()
+                .orElse(null));
     }
 
     @Override
-    @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public RegisteredService findServiceBy(final String id) {
-        val query = String.format("SELECT r FROM %s r WHERE r.serviceId LIKE :serviceId", JpaRegisteredServiceEntity.ENTITY_NAME);
-        val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
-            .setParameter("serviceId", '%' + id + '%')
-            .getResultList();
-        return results
-            .stream()
-            .map(this::toRegisteredService)
-            .sorted()
-            .filter(r -> r.matches(id))
-            .peek(this::invokeServiceRegistryListenerPostLoad)
-            .findFirst()
-            .orElse(null);
+        return transactionTemplate.execute(status -> {
+            val query = String.format("SELECT r FROM %s r WHERE r.serviceId LIKE :serviceId", JpaRegisteredServiceEntity.ENTITY_NAME);
+            val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
+                .setParameter("serviceId", '%' + id + '%')
+                .getResultList();
+            return results
+                .stream()
+                .map(this::toRegisteredService)
+                .sorted()
+                .filter(r -> r.matches(id))
+                .peek(this::invokeServiceRegistryListenerPostLoad)
+                .findFirst()
+                .orElse(null);
+        });
     }
 
     @Override
-    @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public RegisteredService findServiceByExactServiceId(final String id) {
-        val query = String.format("SELECT r FROM %s r WHERE r.serviceId=:serviceId", JpaRegisteredServiceEntity.ENTITY_NAME);
-        val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
-            .setParameter("serviceId", id)
-            .getResultList();
-        return results
-            .stream()
-            .map(this::toRegisteredService)
-            .sorted()
-            .peek(this::invokeServiceRegistryListenerPostLoad)
-            .findFirst()
-            .orElse(null);
+        return transactionTemplate.execute(status -> {
+            val query = String.format("SELECT r FROM %s r WHERE r.serviceId=:serviceId", JpaRegisteredServiceEntity.ENTITY_NAME);
+            val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
+                .setParameter("serviceId", id)
+                .getResultList();
+            return results
+                .stream()
+                .map(this::toRegisteredService)
+                .sorted()
+                .peek(this::invokeServiceRegistryListenerPostLoad)
+                .findFirst()
+                .orElse(null);
+        });
     }
 
     @Override
-    @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public RegisteredService findServiceByExactServiceName(final String name) {
-        val query = String.format("SELECT r FROM %s r WHERE r.name=:name", JpaRegisteredServiceEntity.ENTITY_NAME);
-        val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
-            .setParameter("name", name)
-            .getResultList();
-        return results
-            .stream()
-            .map(this::toRegisteredService)
-            .sorted()
-            .peek(this::invokeServiceRegistryListenerPostLoad)
-            .findFirst()
-            .orElse(null);
+        return transactionTemplate.execute(status -> {
+            val query = String.format("SELECT r FROM %s r WHERE r.name=:name", JpaRegisteredServiceEntity.ENTITY_NAME);
+            val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
+                .setParameter("name", name)
+                .getResultList();
+            return results
+                .stream()
+                .map(this::toRegisteredService)
+                .sorted()
+                .peek(this::invokeServiceRegistryListenerPostLoad)
+                .findFirst()
+                .orElse(null);
+        });
     }
 
     @Override
-    @Transactional(transactionManager = JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public long size() {
-        val query = String.format("SELECT COUNT(r.id) FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
-        return this.entityManager.createQuery(query, Long.class).getSingleResult();
+        return transactionTemplate.execute(status -> {
+            val query = String.format("SELECT COUNT(r.id) FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
+            return entityManager.createQuery(query, Long.class).getSingleResult();
+        });
     }
 
     private RegisteredService saveInternal(final RegisteredService registeredService) {

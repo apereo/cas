@@ -51,7 +51,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements Authenti
     /**
      * The services associated to this ticket.
      */
-    private Map<String, Service> authenticatedServices = new HashMap<>(0);
+    private Map<String, Service> services = new HashMap<>(0);
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
@@ -132,7 +132,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements Authenti
 
     @Override
     public void removeAllServices() {
-        this.authenticatedServices.clear();
+        services.clear();
     }
 
     @Override

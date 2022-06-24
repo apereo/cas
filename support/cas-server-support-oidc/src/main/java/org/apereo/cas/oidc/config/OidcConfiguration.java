@@ -236,11 +236,9 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = "oidcUserProfileDataCreator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileDataCreator oidcUserProfileDataCreator(
-            @Qualifier("profileScopeToAttributesFilter")
-            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            return new OidcUserProfileDataCreator(servicesManager, profileScopeToAttributesFilter);
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcUserProfileDataCreator(oidcConfigurationContext);
         }
     }
 

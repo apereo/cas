@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.report.AuditLogEndpoint;
@@ -36,6 +37,7 @@ import org.apereo.cas.web.report.StatusEndpoint;
 import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -99,16 +101,21 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RegisteredServicesEndpoint registeredServicesReportEndpoint(
-        final ConfigurableApplicationContext applicationContext,
+        final ObjectProvider<ConfigurableApplicationContext> applicationContext,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
+        final ObjectProvider<ServicesManager> servicesManager,
         final CasConfigurationProperties casProperties) {
-        return new RegisteredServicesEndpoint(casProperties, servicesManager,
+        
+        val serializers = CollectionUtils.wrapList(
+            new RegisteredServiceYamlSerializer(applicationContext.getObject()),
+            new RegisteredServiceJsonSerializer(applicationContext.getObject()));
+        return new RegisteredServicesEndpoint(casProperties,
+            servicesManager,
             webApplicationServiceFactory,
-            CollectionUtils.wrapList(new RegisteredServiceYamlSerializer(applicationContext),
-                new RegisteredServiceJsonSerializer(applicationContext)), applicationContext);
+            new DirectObjectProvider<>(serializers),
+            applicationContext);
     }
 
 

@@ -94,6 +94,11 @@ while (( "$#" )); do
     RERUN="true"
     shift 1;
     ;;
+  --hb)
+    export HEADLESS="true"
+    REBUILD="true"
+    shift 1;
+    ;;
   --hbo)
     export HEADLESS="true"
     REBUILD="true"
@@ -272,53 +277,66 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
-  printcyan "Launching build in background to make observing slow builds easier..."
   targetArtifact=./webapp/cas-server-webapp-${project}/build/libs/cas-server-webapp-${project}-${casVersion}.${projectType}
   if [[ -d ./webapp/cas-server-webapp-${project}/build/libs ]]; then
     rm -rf ./webapp/cas-server-webapp-${project}/build/libs
   fi
+
   buildcmd=$(printf '%s' \
       "./gradlew :webapp:cas-server-webapp-${project}:build \
       -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
   echo $buildcmd
-  $buildcmd > build.log 2>&1 &
-  pid=$!
-  sleep 25
-  printgreen "Current Java processes found for PID ${pid}"
-  ps -ef | grep $pid | grep java
-  if [[ $? -ne 0 ]]; then
-    # This check is mainly for running on windows in CI
-    printcyan "Java not running 20 seconds after starting gradlew ... trying again"
-    cat build.log
-    kill $pid
+
+  if [[ "${CI}" == "true" ]]; then
+    printcyan "Launching build in background to make observing slow builds easier..."
     $buildcmd > build.log 2>&1 &
     pid=$!
-  fi
-  printcyan "Waiting for build to finish. Process id is ${pid} - Waiting for ${targetArtifact}"
-  counter=0
-  until [[ -f ${targetArtifact} ]]; do
-     let counter++
-     if [[ $counter -gt 60 ]]; then
-        printred "\nBuild taking longer then 15 minutes, aborting."
-        printred "Build log"
-        cat build.log
-        printred "Build thread dump"
-        jstack $pid || true
-        exit 3
-     fi
-     echo -n '.'
-     sleep 15
-  done
-  wait $pid
-  if [ $? -ne 0 ]; then
-    printred "\nFailed to build CAS web application. Examine the build output."
-    cat build.log
-    exit 2
+    sleep 25
+    printgreen "Current Java processes found for PID ${pid}"
+    ps -ef | grep $pid | grep java
+    if [[ $? -ne 0 ]]; then
+      # This check is mainly for running on windows in CI
+      printcyan "Java not running 20 seconds after starting gradlew ... trying again"
+      cat build.log
+      kill $pid
+      $buildcmd > build.log 2>&1 &
+      pid=$!
+    fi
+    printcyan "Waiting for build to finish. Process id is ${pid} - Waiting for ${targetArtifact}"
+    counter=0
+    until [[ -f ${targetArtifact} ]]; do
+       let counter++
+       if [[ $counter -gt 60 ]]; then
+          printred "\nBuild taking longer then 15 minutes, aborting."
+          printred "Build log"
+          cat build.log
+          printred "Build thread dump"
+          jstack $pid || true
+          exit 3
+       fi
+       echo -n '.'
+       sleep 15
+    done
+    wait $pid
+    if [ $? -ne 0 ]; then
+      printred "\nFailed to build CAS web application. Examine the build output."
+      cat build.log
+      exit 2
+    else
+      printgreen "\nBackground build successful. Build output was:"
+      cat build.log
+      rm build.log
+    fi
   else
-    printgreen "\nBackground build successful. Build output was:"
-    cat build.log
-    rm build.log
+    printcyan "Launching CAS build in a non-CI environment..."
+    $buildcmd
+    pid=$!
+    wait $pid
+    if [ $? -ne 0 ]; then
+      printred "\nFailed to build CAS web application."
+      exit 2
+    fi
   fi
 fi
 

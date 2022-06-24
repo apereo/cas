@@ -51,16 +51,16 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    private static Map<String, Class<?>> locateRegisteredServiceTypesSupported() {
-        final Function<Class<?>, RegisteredService> mapper = c -> {
+    private static Set<String> locateRegisteredServiceTypesSupported() {
+        final Function<Class, Object> mapper = c -> {
             try {
-                return (RegisteredService) c.getDeclaredConstructor().newInstance();
+                val service = (RegisteredService) c.getDeclaredConstructor().newInstance();
+                return service.getFriendlyName() + '@' + service.getClass().getName();
             } catch (final Exception e) {
                 return null;
             }
         };
-        val collector = Collectors.toMap(RegisteredService::getFriendlyName, RegisteredService::getClass);
-        return (Map) locateSubtypesByReflection(mapper, collector,
+        return (Set) locateSubtypesByReflection(mapper, Collectors.toSet(),
             BaseRegisteredService.class, o -> true, CentralAuthenticationService.NAMESPACE);
     }
 
@@ -69,7 +69,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                                                        final Class<?> parentType, final Predicate<Class<?>> filter,
                                                        final String packageNamespace) {
 
-        Collection<? extends Class<?>> subTypes = ReflectionUtils.findSubclassesInPackage(parentType, packageNamespace);
+        val subTypes = ReflectionUtils.findSubclassesInPackage(parentType, packageNamespace);
 
         return subTypes.stream()
                 .filter(c -> !c.isInterface() && !Modifier.isAbstract(c.getModifiers()))
@@ -103,7 +103,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             .stream()
             .collect(Collectors.toMap(TicketDefinition::getPrefix,
                 value -> CollectionUtils.wrap("storageName", value.getProperties().getStorageName(),
-                "storageTimeout", value.getProperties().getStorageTimeout())));
+                    "storageTimeout", value.getProperties().getStorageTimeout())));
     }
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {

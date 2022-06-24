@@ -339,13 +339,10 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier("profileScopeToAttributesFilter")
-            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter) {
-            return new DefaultOAuth20UserProfileDataCreator(servicesManager, profileScopeToAttributesFilter);
+            @Qualifier("oauth20ConfigurationContext")
+            final ObjectProvider<OAuth20ConfigurationContext> context) {
+            return new DefaultOAuth20UserProfileDataCreator(context);
         }
-
     }
 
     @Configuration(value = "CasOAuth20TokenGeneratorConfiguration", proxyBeanMethods = false)
@@ -492,6 +489,7 @@ public class CasOAuth20Configuration {
             userFormClient.init();
             return userFormClient;
         }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client accessTokenClient(

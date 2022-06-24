@@ -22,7 +22,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
@@ -30,9 +29,7 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -103,7 +100,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val jwtId = getJwtId(tgt);
         LOGGER.debug("Calculated ID token jti claim to be [{}]", jwtId);
         claims.setJwtId(jwtId);
-        
+
         claims.setClaim(OidcConstants.CLAIM_SESSION_ID, DigestUtils.sha(jwtId));
 
         claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.empty()));
@@ -218,23 +215,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                               final JwtClaims claims,
                                               final Object defaultValue) {
         val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
-        val attribute = mapper.containsMappedAttribute(claimName)
-            ? mapper.getMappedAttribute(claimName)
-            : claimName;
-
-        val attributeValues = principal.getAttributes().containsKey(attribute)
-            ? principal.getAttributes().get(attribute)
-            : defaultValue;
-
-        LOGGER.trace("Handling claim [{}] with value(s) [{}]", attribute, attributeValues);
-        val collectionValues = CollectionUtils.toCollection(attributeValues)
-            .stream()
-            .map(value -> {
-                val bool = BooleanUtils.toBooleanObject(value.toString());
-                return Objects.requireNonNullElse(bool, value);
-            })
-            .collect(Collectors.toCollection(ArrayList::new));
-
+        val collectionValues = mapper.mapClaim(claimName, principal, defaultValue);
         getConfigurationContext().getIdTokenClaimCollector().collect(claims, claimName, collectionValues);
     }
 
@@ -250,7 +231,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         val oAuthServiceTicket = Stream.concat(
-                tgt.getAuthenticatedServices().entrySet().stream(),
+                tgt.getServices().entrySet().stream(),
                 tgt.getProxyGrantingTickets().entrySet().stream())
             .filter(e -> {
                 val service = getConfigurationContext().getServicesManager().findServiceBy(e.getValue());

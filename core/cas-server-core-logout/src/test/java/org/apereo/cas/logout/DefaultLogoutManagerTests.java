@@ -97,7 +97,7 @@ public class DefaultLogoutManagerTests {
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
         this.simpleWebApplicationServiceImpl = getService(URL);
-        tgt.getAuthenticatedServices().put(ID, this.simpleWebApplicationServiceImpl);
+        tgt.getServices().put(ID, this.simpleWebApplicationServiceImpl);
 
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(singleLogoutServiceMessageHandler);

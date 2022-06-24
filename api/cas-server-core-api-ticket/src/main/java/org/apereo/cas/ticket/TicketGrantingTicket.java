@@ -47,7 +47,7 @@ public interface TicketGrantingTicket extends TicketGrantingTicketAwareTicket {
      *
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
      */
-    Map<String, Service> getAuthenticatedServices();
+    Map<String, Service> getServices();
 
     /**
      * Gets proxy granting tickets created by this TGT.

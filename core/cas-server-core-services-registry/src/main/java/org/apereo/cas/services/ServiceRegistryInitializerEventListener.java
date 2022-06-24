@@ -14,6 +14,15 @@ import org.springframework.scheduling.annotation.Async;
 public interface ServiceRegistryInitializerEventListener extends CasEventListener {
 
     /**
+     * Handle environment change event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    @Async
+    void handleEnvironmentChangeEvent(EnvironmentChangeEvent event);
+
+    /**
      * Handle refresh event when issued to this CAS server locally.
      *
      * @param event the event

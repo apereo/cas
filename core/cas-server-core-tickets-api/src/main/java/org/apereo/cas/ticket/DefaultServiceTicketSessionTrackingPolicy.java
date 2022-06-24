@@ -32,7 +32,7 @@ public class DefaultServiceTicketSessionTrackingPolicy implements ServiceTicketS
         val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
         if (onlyTrackMostRecentSession) {
             val path = normalizePath(serviceTicket.getService());
-            val toRemove = ownerTicket.getAuthenticatedServices()
+            val toRemove = ownerTicket.getServices()
                 .entrySet()
                 .stream()
                 .filter(entry -> {
@@ -42,11 +42,11 @@ public class DefaultServiceTicketSessionTrackingPolicy implements ServiceTicketS
                 .collect(Collectors.toList());
 
             toRemove.forEach(Unchecked.consumer(entry -> {
-                ownerTicket.getAuthenticatedServices().remove(entry.getKey());
+                ownerTicket.getServices().remove(entry.getKey());
                 ticketRegistry.deleteTicket(entry.getKey());
             }));
         }
-        ownerTicket.getAuthenticatedServices().put(serviceTicket.getId(), serviceTicket.getService());
+        ownerTicket.getServices().put(serviceTicket.getId(), serviceTicket.getService());
     }
 
     /**
