@@ -23,7 +23,6 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.LinkedHashSet;
 import java.util.UUID;
 
-import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -139,8 +138,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
             .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
         userCode.markTicketExpired();
-        assertThrowsWithRootCause(IllegalArgumentException.class,
-            InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
+        assertThrows(InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
     }
 
     @Test
@@ -160,8 +158,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
             .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
         token.markTicketExpired();
-        assertThrowsWithRootCause(IllegalArgumentException.class,
-            InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
+        assertThrows(InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
     }
 
     @Test

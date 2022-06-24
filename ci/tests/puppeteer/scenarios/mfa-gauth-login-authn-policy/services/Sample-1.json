@@ -1,0 +1,21 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://apereo.github.io",
+  "name": "Sample",
+  "id": 1,
+  "description": "Sample Service",
+  "evaluationOrder": 10000,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-gauth" ] ],
+    "forceExecution": true
+  },
+  "authenticationPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "JSON", "GoogleAuth", "STATIC" ]],
+    "criteria": {
+      "@class": "org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria",
+      "tryAll": true
+    }
+  }
+}

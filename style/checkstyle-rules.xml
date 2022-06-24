@@ -60,10 +60,10 @@
             <property name="allowMissingParamTags" value="true"/>
         </module>
         <module name="JavadocVariable">
-            <property name="id" value="javadocForAllProtectedAndPublicFields"/>
+            <property name="id" value="javadocForAllPublicFields"/>
             <property name="severity" value="error"/>
-            <property name="scope" value="protected"/>
-            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
+            <property name="scope" value="public"/>
+            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER|casProperties"/>
         </module>
         <module name="JavadocVariable">
             <property name="id" value="javadocForPropertyFields"/>
@@ -696,7 +696,10 @@
     <module name="Translation">
         <property name="severity" value="ignore"/>
     </module>
-    <module name="FileLength"/>
+    <module name="FileLength">
+        <property name="severity" value="error"/>
+        <property name="max" value="2500"/>
+    </module>
     <module name="FileTabCharacter">
         <property name="severity" value="error"/>
     </module>

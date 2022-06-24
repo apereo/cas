@@ -51,9 +51,9 @@ public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePass
     @Test
     public void verifyNoUserInfoAction() throws Exception {
         val context = getRequestContext("nouserinfo");
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
         val account = WebUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
-        assertNull(account);
+        assertNotNull(account);
     }
 
     @Test
@@ -65,7 +65,8 @@ public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePass
     @Test
     public void verifyRequestPassword() throws Exception {
         val context = getRequestContext("needs-password");
-        assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT,
+            verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
     }
 
     @Test

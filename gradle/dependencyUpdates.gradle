@@ -6,7 +6,7 @@ def isNonStable = { String version ->
     return !stableKeyword && !(version ==~ regex)
 }
 
-dependencyUpdates {
+tasks.named('dependencyUpdates') {
     rejectVersionIf {
         isNonStable(it.candidate.version)
     }

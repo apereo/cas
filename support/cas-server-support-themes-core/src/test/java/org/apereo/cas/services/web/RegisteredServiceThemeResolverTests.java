@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -28,11 +29,12 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.File;
 import java.util.Map;
+import java.util.regex.Pattern;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * This is {@link RegisteredServiceThemeResolverTests}.
@@ -62,8 +64,7 @@ public class RegisteredServiceThemeResolverTests {
         val service = RegisteredServiceTestUtils.getService();
         WebUtils.putServiceIntoFlowScope(context, service);
         when(plan.resolveService(any(Service.class))).thenReturn(service);
-        val resolver = new RegisteredServiceThemeResolver(servicesManager, plan,
-            new CasConfigurationProperties(), Map.of(RegexUtils.createPattern("Mozilla"), "Firefox"));
+        val resolver = getResolver(servicesManager, plan, Map.of(RegexUtils.createPattern("Mozilla"), "Firefox"));
         resolver.setDefaultThemeName("example");
         assertEquals("example", resolver.resolveThemeName(request));
         assertNotNull(request.getAttribute("isMobile"));
@@ -87,7 +88,7 @@ public class RegisteredServiceThemeResolverTests {
         val service = RegisteredServiceTestUtils.getService();
         WebUtils.putServiceIntoFlowScope(context, service);
         when(plan.resolveService(any(Service.class))).thenReturn(service);
-        val resolver = new RegisteredServiceThemeResolver(servicesManager, plan, new CasConfigurationProperties(), Map.of());
+        val resolver = getResolver(servicesManager, plan, Map.of());
         resolver.setDefaultThemeName("example");
         assertEquals("example", resolver.resolveThemeName(request));
     }
@@ -113,7 +114,7 @@ public class RegisteredServiceThemeResolverTests {
         val service = RegisteredServiceTestUtils.getService();
         WebUtils.putServiceIntoFlowScope(context, service);
         when(plan.resolveService(any(Service.class))).thenReturn(service);
-        val resolver = new RegisteredServiceThemeResolver(servicesManager, plan, new CasConfigurationProperties(), Map.of());
+        val resolver = getResolver(servicesManager, plan, Map.of());
         resolver.setDefaultThemeName("example");
         assertEquals("some-theme", resolver.resolveThemeName(request));
     }
@@ -134,7 +135,7 @@ public class RegisteredServiceThemeResolverTests {
         val service = RegisteredServiceTestUtils.getService();
         WebUtils.putServiceIntoFlowScope(context, service);
         when(plan.resolveService(any(Service.class))).thenReturn(service);
-        val resolver = new RegisteredServiceThemeResolver(servicesManager, plan, new CasConfigurationProperties(), Map.of());
+        val resolver = getResolver(servicesManager, plan, Map.of());
         resolver.setDefaultThemeName("example");
 
         try (val webServer = new MockWebServer(6315,
@@ -148,6 +149,14 @@ public class RegisteredServiceThemeResolverTests {
             });
             assertEquals("custom-theme", resolver.resolveThemeName(request));
         }
+    }
+
+    private static RegisteredServiceThemeResolver getResolver(final ServicesManager servicesManager,
+                                                              final AuthenticationServiceSelectionPlan plan,
+                                                              final Map<Pattern, String> overrides) {
+        return new RegisteredServiceThemeResolver(new DirectObjectProvider<>(servicesManager),
+            new DirectObjectProvider<>(plan),
+            new DirectObjectProvider(new CasConfigurationProperties()), overrides);
     }
 
     @Test
@@ -166,7 +175,7 @@ public class RegisteredServiceThemeResolverTests {
         val service = RegisteredServiceTestUtils.getService();
         WebUtils.putServiceIntoFlowScope(context, service);
         when(plan.resolveService(any(Service.class))).thenReturn(service);
-        val resolver = new RegisteredServiceThemeResolver(servicesManager, plan, new CasConfigurationProperties(), Map.of());
+        val resolver = getResolver(servicesManager, plan, Map.of());
         resolver.setDefaultThemeName("example");
         assertEquals("custom-theme", resolver.resolveThemeName(request));
     }

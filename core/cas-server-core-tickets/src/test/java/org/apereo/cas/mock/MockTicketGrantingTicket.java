@@ -10,8 +10,10 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -42,7 +44,7 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode(of = "id")
 @SuppressWarnings("JdkObsolete")
-public class MockTicketGrantingTicket implements TicketGrantingTicket {
+public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicketGrantingTicket {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
@@ -113,22 +115,18 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
             principalAttributes);
     }
 
-    @Override
-    public void trackService(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
-        this.services.put(id, service);
-    }
-
-    public ServiceTicket grantServiceTicket(final Service service) {
+    public ServiceTicket grantServiceTicket(final Service service,
+                                            final ServiceTicketSessionTrackingPolicy trackingPolicy) {
         return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null,
-            false, true);
+            false, trackingPolicy);
     }
 
     @Override
     public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
-                                            final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
-        update();
+                                            final boolean credentialProvided,
+                                            final ServiceTicketSessionTrackingPolicy trackingPolicy) {
         val st = new MockServiceTicket(id, service, this, expirationPolicy);
-        trackService(id, service, true);
+        trackingPolicy.track(this, st);
         return st;
     }
 

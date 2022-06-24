@@ -5,8 +5,8 @@
   },
   "properties": [
     "--cas.jdbc.show-sql=true",
-    "--logging.level.org.hibernate=debug",
-    "--logging.level.org.springframework.orm=debug",
+    "--logging.level.org.hibernate=warn",
+    "--logging.level.org.springframework.orm=warn",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -19,6 +19,8 @@
     "--cas.audit.jdbc.driver-class=org.postgresql.Driver",
     "--cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/audit",
     "--cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQL10Dialect",
+
+    "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",

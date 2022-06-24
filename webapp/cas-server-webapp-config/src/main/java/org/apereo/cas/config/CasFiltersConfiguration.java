@@ -20,6 +20,7 @@ import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -48,7 +49,6 @@ import java.util.HashMap;
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebApplication)
 @AutoConfiguration
 public class CasFiltersConfiguration {
-
     @Configuration(value = "CasFiltersEncodingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasFiltersBaseConfiguration {
@@ -77,7 +77,6 @@ public class CasFiltersConfiguration {
         }
 
     }
-
     @Configuration(value = "CasFiltersResponseHeadersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureAfter(CasCoreServicesConfiguration.class)
@@ -100,13 +99,13 @@ public class CasFiltersConfiguration {
         public FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter> responseHeadersSecurityFilter(
             final CasConfigurationProperties casProperties,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
+            final ObjectProvider<ArgumentExtractor> argumentExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
+            final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies) {
             val header = casProperties.getHttpWebRequest().getHeader();
             val initParams = new HashMap<String, String>();
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, BooleanUtils.toStringTrueFalse(header.isCache()));

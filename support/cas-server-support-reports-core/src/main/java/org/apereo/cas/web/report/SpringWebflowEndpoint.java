@@ -98,8 +98,8 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             .collect(Collectors.joining(", "));
     }
 
-    private static Map<String, Object> getStateDetails(final Flow flowDefinition, final String st) {
-        val state = (State) flowDefinition.getState(st);
+    private static Map<String, Object> getStateDetails(final Flow flowDefinition, final String stateId) {
+        val state = (State) flowDefinition.getState(stateId);
         val stateMap = new LinkedHashMap<String, Object>();
 
         if (!state.getAttributes().asMap().isEmpty()) {
@@ -135,12 +135,12 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             stateMap.put("isViewState", state.isViewState());
             stateMap.put("isRedirect", viewState.getRedirect());
 
-            acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
+            acts = StreamSupport.stream(viewState.getRenderActionList().spliterator(), false)
                 .map(Object::toString)
                 .collect(Collectors.toList());
 
             if (!acts.isEmpty()) {
-                stateMap.put("renderActions", viewState.getRenderActionList());
+                stateMap.put("renderActions", acts);
             }
 
             acts = Arrays.stream(viewState.getVariables())
@@ -193,6 +193,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                 stateMap.put("transitions", acts);
             }
         }
+
         return stateMap;
     }
 

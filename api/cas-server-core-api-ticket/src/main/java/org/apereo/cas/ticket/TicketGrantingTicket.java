@@ -27,29 +27,20 @@ public interface TicketGrantingTicket extends TicketGrantingTicketAwareTicket {
     String PREFIX = "TGT";
 
     /**
-     * Update service and track session.
-     *
-     * @param id                         the id
-     * @param service                    the service
-     * @param onlyTrackMostRecentSession the only track most recent session
-     */
-    void trackService(String id, Service service, boolean onlyTrackMostRecentSession);
-
-    /**
      * Grant a ServiceTicket for a specific service.
      *
-     * @param id                         The unique identifier for this ticket.
-     * @param service                    The service for which we are granting a ticket
-     * @param expirationPolicy           the expiration policy.
-     * @param credentialProvided         current credential event for issuing this ticket. Could be null.
-     * @param onlyTrackMostRecentSession track the most recent session by keeping the latest service ticket
+     * @param id                 The unique identifier for this ticket.
+     * @param service            The service for which we are granting a ticket
+     * @param expirationPolicy   the expiration policy.
+     * @param credentialProvided current credential event for issuing this ticket. Could be null.
+     * @param trackingPolicy     the tracking policy
      * @return the service ticket granted to a specific service for the principal of the TicketGrantingTicket
      */
     ServiceTicket grantServiceTicket(String id,
                                      Service service,
                                      ExpirationPolicy expirationPolicy,
                                      boolean credentialProvided,
-                                     boolean onlyTrackMostRecentSession);
+                                     ServiceTicketSessionTrackingPolicy trackingPolicy);
 
     /**
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.

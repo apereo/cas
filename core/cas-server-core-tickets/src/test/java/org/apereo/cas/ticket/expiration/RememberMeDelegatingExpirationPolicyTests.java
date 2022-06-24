@@ -6,8 +6,12 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
@@ -67,7 +71,8 @@ public class RememberMeDelegatingExpirationPolicyTests {
             Collections.singletonMap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(true)));
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false, true);
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(),
+            this.expirationPolicy, false, getTrackingPolicy());
         assertTrue(t.isExpired());
     }
 
@@ -93,7 +98,8 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false, true);
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(),
+            this.expirationPolicy, false, getTrackingPolicy());
         assertTrue(t.isExpired());
     }
 
@@ -102,7 +108,8 @@ public class RememberMeDelegatingExpirationPolicyTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false, true);
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(),
+            this.expirationPolicy, false, getTrackingPolicy());
         assertFalse(t.isExpired());
     }
 
@@ -135,5 +142,11 @@ public class RememberMeDelegatingExpirationPolicyTests {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, RememberMeDelegatingExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
+    }
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
     }
 }

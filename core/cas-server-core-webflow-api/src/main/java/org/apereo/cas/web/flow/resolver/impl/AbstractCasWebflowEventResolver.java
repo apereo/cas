@@ -115,7 +115,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return null;
         }
         val event = events.iterator().next();
-        LOGGER.debug("Resolved single event [{}] via [{}] for this context", event.getId(), event.getSource().getClass().getName());
+        LOGGER.debug("Resolved single event [{}] via [{}] for this context",
+            event.getId(), event.getSource().getClass().getName());
         return event;
     }
 

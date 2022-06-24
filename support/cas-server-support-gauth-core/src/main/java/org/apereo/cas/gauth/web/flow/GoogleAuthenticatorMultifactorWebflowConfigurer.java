@@ -23,12 +23,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
-
-    /**
-     * Webflow event id.
-     */
-    public static final String MFA_GAUTH_EVENT_ID = "mfa-gauth";
-
+    
     public GoogleAuthenticatorMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                            final FlowDefinitionRegistry flowDefinitionRegistry,
@@ -43,7 +38,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
     @Override
     protected void doInitialize() {
         multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
-            val flow = getFlow(registry, MFA_GAUTH_EVENT_ID);
+            val flow = getFlow(registry, casProperties.getAuthn().getMfa().getGauth().getId());
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, GoogleAuthenticatorTokenCredential.class);
 
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
@@ -106,7 +101,8 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
 
         });
 
-        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_GAUTH_EVENT_ID,
+        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(),
+            casProperties.getAuthn().getMfa().getGauth().getId(),
             casProperties.getAuthn().getMfa().getGauth().getId());
     }
 }

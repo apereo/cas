@@ -19,6 +19,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -132,7 +133,7 @@ public class JpaServiceRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "serviceEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory serviceEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> serviceEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceService")
@@ -145,7 +146,7 @@ public class JpaServiceRegistryConfiguration {
             final BeanContainer<String> jpaServicePackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
-            return BeanSupplier.of(EntityManagerFactory.class)
+            return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
@@ -155,7 +156,8 @@ public class JpaServiceRegistryConfiguration {
                         .persistenceProvider(jpaServicePersistenceProvider)
                         .packagesToScan(jpaServicePackagesToScan.toSet())
                         .build();
-                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa()).getObject();
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                        casProperties.getServiceRegistry().getJpa());
                 }))
                 .otherwiseProxy()
                 .get();
@@ -185,12 +187,15 @@ public class JpaServiceRegistryConfiguration {
         @ConditionalOnMissingBean(name = "jdbcServiceRegistryTransactionTemplate")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public TransactionOperations jdbcServiceRegistryTransactionTemplate(final CasConfigurationProperties casProperties,
-                                                                            final ConfigurableApplicationContext applicationContext) {
+        public TransactionOperations jdbcServiceRegistryTransactionTemplate(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("transactionManagerServiceReg")
+            final PlatformTransactionManager transactionManagerServiceReg,
+            final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(TransactionOperations.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val t = new TransactionTemplate(applicationContext.getBean(JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, PlatformTransactionManager.class));
+                    val t = new TransactionTemplate(transactionManagerServiceReg);
                     t.setIsolationLevelName(casProperties.getServiceRegistry().getJpa().getIsolationLevelName());
                     t.setPropagationBehaviorName(casProperties.getServiceRegistry().getJpa().getPropagationBehaviorName());
                     return t;
@@ -232,7 +237,8 @@ public class JpaServiceRegistryConfiguration {
             return BeanSupplier.of(ServiceRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new JpaServiceRegistry(applicationContext,
-                    Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), jdbcServiceRegistryTransactionTemplate))
+                    Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new),
+                    jdbcServiceRegistryTransactionTemplate))
                 .otherwiseProxy()
                 .get();
         }

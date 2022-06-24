@@ -21,6 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -75,17 +76,17 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
 
         if (service == null) {
             LOGGER.debug("No service is available to determine event for principal");
-            return resumeFlow();
+            return resumeFlow(context);
         }
 
         if (StringUtils.isBlank(tgt)) {
             LOGGER.trace("Ticket-granting ticket is blank; proceed with flow normally.");
-            return resumeFlow();
+            return resumeFlow(context);
         }
         val authentication = getConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(tgt);
         if (authentication == null) {
             LOGGER.trace("Ticket-granting ticket has no authentication and is blank; proceed with flow normally.");
-            return resumeFlow();
+            return resumeFlow(context);
         }
 
         val credential = WebUtils.getCredential(context);
@@ -101,14 +102,14 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
             .build();
         if (renewalStrategy.supports(ssoRequest) && !renewalStrategy.isParticipating(ssoRequest)) {
             LOGGER.debug("Cannot proceed with existing authenticated session for [{}] since the single sign-on participation "
-                + "strategy for this request could now allow participation in the current session.", authentication);
-            return resumeFlow();
+                         + "strategy for this request could now allow participation in the current session.", authentication);
+            return resumeFlow(context);
         }
 
-        val event = this.casDelegatingWebflowEventResolver.resolveSingle(context);
+        val event = casDelegatingWebflowEventResolver.resolveSingle(context);
         if (event == null) {
             LOGGER.trace("Request does not indicate a requirement for authentication policy; proceed with flow normally.");
-            return resumeFlow();
+            return resumeFlow(context);
         }
 
         val id = event.getId();
@@ -130,7 +131,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
                 return buildEventForMultifactorProvider(context, service, authentication, id, provider);
             }
             LOGGER.debug("Authentication context is successfully validated by [{}] for service [{}]", id, service);
-            return resumeFlow();
+            return resumeFlow(context);
         }
 
         if (validatedProvider.isPresent()) {
@@ -160,8 +161,10 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         casDelegatingWebflowEventResolver.addDelegate(resolver, index);
     }
 
-    private Set<Event> resumeFlow() {
-        return CollectionUtils.wrapSet(new EventFactorySupport().success(this));
+    protected Set<Event> resumeFlow(final RequestContext context) {
+        val success = new EventFactorySupport().event(this,
+            CasWebflowConstants.TRANSITION_ID_SUCCESS, new LocalAttributeMap<>());
+        return CollectionUtils.wrapSet(success);
     }
 
     private static List<String> getOperableTransitions() {

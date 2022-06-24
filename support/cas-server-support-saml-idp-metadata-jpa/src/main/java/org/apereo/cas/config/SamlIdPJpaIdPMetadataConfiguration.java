@@ -114,8 +114,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
                         .persistenceUnitName("jpaSamlMetadataIdPContext")
                         .dataSource(dataSourceSamlMetadataIdP)
                         .packagesToScan(jpaSamlMetadataIdPPackagesToScan.toSet()).build();
-                    val factory = jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa());
-                    return factory.getObject();
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa()).getObject();
                 }))
                 .otherwiseProxy()
                 .get();
@@ -134,11 +133,11 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             final EntityManagerFactory emf) {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> {
+                .supply(Unchecked.supplier(() -> {
                     val mgmr = new JpaTransactionManager();
                     mgmr.setEntityManagerFactory(emf);
                     return mgmr;
-                })
+                }))
                 .otherwise(PseudoTransactionManager::new)
                 .get();
         }

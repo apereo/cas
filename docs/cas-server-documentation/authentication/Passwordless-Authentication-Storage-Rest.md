@@ -21,6 +21,7 @@ would produce a response body similar to the following:
   "multifactorAuthenticationEligible": "FALSE",  
   "delegatedAuthenticationEligible": "FALSE",  
   "requestPassword": false,
+  "allowedDelegatedClients" : [ "java.util.ArrayList", [ "ClientName1" ] ],
   "attributes":{ "lastName" : ["...", "..."] }
 }
 ```

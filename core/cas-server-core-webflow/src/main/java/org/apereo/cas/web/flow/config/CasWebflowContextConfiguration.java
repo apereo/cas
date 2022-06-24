@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.config;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
@@ -14,7 +16,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.LogoutConversionService;
+import org.apereo.cas.web.flow.FlowBuilderConversionService;
 import org.apereo.cas.web.flow.configurer.DefaultLoginWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DefaultLogoutWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
@@ -197,14 +199,15 @@ public class CasWebflowContextConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "localeChangeInterceptor")
         public LocaleChangeInterceptor localeChangeInterceptor(
-            final CasConfigurationProperties casProperties,
+            final ObjectProvider<CasConfigurationProperties> casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            final ObjectProvider<ServicesManager> servicesManager,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor) {
-            val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale(),
+            final ObjectProvider<ArgumentExtractor> argumentExtractor) {
+            val localeProperties = casProperties.getObject().getLocale();
+            val interceptor = new CasLocaleChangeInterceptor(casProperties,
                 argumentExtractor, servicesManager);
-            interceptor.setParamName(casProperties.getLocale().getParamName());
+            interceptor.setParamName(localeProperties.getParamName());
             interceptor.setSupportedFlows(List.of(
                 CasWebflowConfigurer.FLOW_ID_LOGOUT,
                 CasWebflowConfigurer.FLOW_ID_LOGIN));
@@ -318,6 +321,8 @@ public class CasWebflowContextConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FlowBuilderServices flowBuilderServices(
+            @Qualifier("flowBuilderConversionService")
+            final ConversionService flowBuilderConversionService,
             @Qualifier("viewFactoryCreator")
             final ViewFactoryCreator viewFactoryCreator,
             @Qualifier("expressionParser")
@@ -325,21 +330,24 @@ public class CasWebflowContextConfiguration {
             val builder = new FlowBuilderServicesBuilder();
             builder.setViewFactoryCreator(viewFactoryCreator);
             builder.setExpressionParser(expressionParser);
+            builder.setConversionService(flowBuilderConversionService);
             return builder.build();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ExpressionParser expressionParser(
-            @Qualifier("logoutConversionService")
-            final ConversionService logoutConversionService) {
-            return new WebFlowSpringELExpressionParser(new SpelExpressionParser(), logoutConversionService);
+            @Qualifier("flowBuilderConversionService")
+            final ConversionService flowBuilderConversionService) {
+            return new WebFlowSpringELExpressionParser(new SpelExpressionParser(), flowBuilderConversionService);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConversionService logoutConversionService() {
-            return new LogoutConversionService();
+        public ConversionService flowBuilderConversionService(
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+            return new FlowBuilderConversionService(webApplicationServiceFactory);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

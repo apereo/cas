@@ -30,6 +30,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -90,7 +91,10 @@ import static org.junit.jupiter.api.Assumptions.*;
  */
 @Slf4j
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class,
-    properties = "cas.ticket.registry.cleaner.schedule.enabled=false")
+    properties = {
+        "cas.ticket.tgt.core.only-track-most-recent-session=false",
+        "cas.ticket.registry.cleaner.schedule.enabled=false"
+    })
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;
@@ -100,6 +104,10 @@ public abstract class BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketFactory.BEAN_NAME)
     protected TicketFactory ticketFactory;
+
+    @Autowired
+    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+    protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     protected boolean useEncryption;
 
@@ -309,7 +317,7 @@ public abstract class BaseTicketRegistryTests {
         assertTrue(found.getServices().isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
         tgt.grantServiceTicket("ST1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
-            NeverExpiresExpirationPolicy.INSTANCE, false, false);
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         ticketRegistry.updateTicket(tgt);
 
         val tgtResult = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
@@ -383,7 +391,7 @@ public abstract class BaseTicketRegistryTests {
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
             val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
                 RegisteredServiceTestUtils.getService(),
-                NeverExpiresExpirationPolicy.INSTANCE, false, true);
+                NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
             ticketRegistry.addTicket(ticketGrantingTicket);
@@ -414,7 +422,7 @@ public abstract class BaseTicketRegistryTests {
                 val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + i,
                     auth, NeverExpiresExpirationPolicy.INSTANCE);
                 val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
-                    service, NeverExpiresExpirationPolicy.INSTANCE, false, true);
+                    service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
                 tgts.add(ticketGrantingTicket);
                 sts.add(st);
                 ticketRegistry.addTicket(ticketGrantingTicket);
@@ -446,9 +454,12 @@ public abstract class BaseTicketRegistryTests {
 
         val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
-        val st1 = tgt.grantServiceTicket("ST-11", service, NeverExpiresExpirationPolicy.INSTANCE, false, false);
-        val st2 = tgt.grantServiceTicket("ST-21", service, NeverExpiresExpirationPolicy.INSTANCE, false, false);
-        val st3 = tgt.grantServiceTicket("ST-31", service, NeverExpiresExpirationPolicy.INSTANCE, false, false);
+        val st1 = tgt.grantServiceTicket("ST-11", service,
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        val st2 = tgt.grantServiceTicket("ST-21", service,
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        val st3 = tgt.grantServiceTicket("ST-31", service,
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
 
         ticketRegistry.addTicket(st1);
         ticketRegistry.addTicket(st2);
@@ -492,7 +503,7 @@ public abstract class BaseTicketRegistryTests {
         val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
         LOGGER.trace("Granting service ticket [{}]", serviceTicketId);
         val ticket = (AbstractTicket) tgt.grantServiceTicket(serviceTicketId, service,
-            NeverExpiresExpirationPolicy.INSTANCE, false, true);
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         assertNotNull(ticket, "Service ticket cannot be null");
         ticket.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
@@ -511,12 +522,14 @@ public abstract class BaseTicketRegistryTests {
     @RepeatedTest(2)
     public void verifyDeleteTicketWithPGT() throws Exception {
         val a = CoreAuthenticationTestUtils.getAuthentication();
-        ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, a, NeverExpiresExpirationPolicy.INSTANCE));
+        ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            a, NeverExpiresExpirationPolicy.INSTANCE));
         val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
-        val st1 = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(serviceTicketId, service, NeverExpiresExpirationPolicy.INSTANCE, false, true);
+        val st1 = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(serviceTicketId,
+            service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         ticketRegistry.addTicket(st1);
         ticketRegistry.updateTicket(tgt);
 
@@ -540,7 +553,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyDeleteTicketsWithMultiplePGTs() throws Exception {
+    public void verifyDeleteTicketsWithMultiplePGTs() {
         FunctionUtils.doAndRetry(callback -> {
             val a = CoreAuthenticationTestUtils.getAuthentication();
             ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, a, NeverExpiresExpirationPolicy.INSTANCE));
@@ -549,7 +562,7 @@ public abstract class BaseTicketRegistryTests {
             val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
             IntStream.range(1, 5).forEach(Unchecked.intConsumer(i -> {
                 val st = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(serviceTicketId + '-' + i, service,
-                    NeverExpiresExpirationPolicy.INSTANCE, false, true);
+                    NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
                 ticketRegistry.addTicket(st);
                 ticketRegistry.updateTicket(tgt);
 
@@ -559,8 +572,8 @@ public abstract class BaseTicketRegistryTests {
                 ticketRegistry.updateTicket(st);
             }));
 
-            val c = ticketRegistry.deleteTicket(ticketGrantingTicketId);
-            assertEquals(6, c);
+            val count = ticketRegistry.deleteTicket(ticketGrantingTicketId);
+            assertEquals(9, count);
             return null;
         });
     }

@@ -16,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionOperations;
 
 import javax.persistence.EntityManager;
@@ -38,17 +36,10 @@ import java.util.stream.Stream;
  * @author Marvin S. Addison
  * @since 3.2.1
  */
-@EnableTransactionManagement(proxyTargetClass = false)
-@Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER)
 @Slf4j
 @RequiredArgsConstructor
 @Getter
 public class JpaTicketRegistry extends AbstractTicketRegistry {
-    /**
-     * Bean name of the transaction manager.
-     */
-    public static final String BEAN_NAME_TRANSACTION_MANAGER = "ticketTransactionManager";
-
     private final LockModeType lockType;
 
     private final TicketCatalog ticketCatalog;
@@ -89,65 +80,68 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        try {
-            val encTicketId = encodeTicketId(ticketId);
-            if (StringUtils.isBlank(encTicketId)) {
-                return null;
-            }
-            val factory = getJpaTicketEntityFactory();
-            val sql = String.format("SELECT t FROM %s t WHERE t.id = :id", factory.getEntityName());
-            val query = entityManager.createQuery(sql, factory.getType());
-            query.setParameter("id", encTicketId);
-            query.setLockMode(this.lockType);
-            val ticket = query.getSingleResult();
-            val entity = getJpaTicketEntityFactory().toTicket(ticket);
-            val result = decodeTicket(entity);
-            if (predicate.test(result)) {
-                return result;
+        return transactionTemplate.execute(callback -> {
+            try {
+                val encTicketId = encodeTicketId(ticketId);
+                if (StringUtils.isBlank(encTicketId)) {
+                    return null;
+                }
+                val factory = getJpaTicketEntityFactory();
+                val sql = String.format("SELECT t FROM %s t WHERE t.id = :id", factory.getEntityName());
+                val query = entityManager.createQuery(sql, factory.getType());
+                query.setParameter("id", encTicketId);
+                query.setLockMode(this.lockType);
+                val ticket = query.getSingleResult();
+                val entity = getJpaTicketEntityFactory().toTicket(ticket);
+                val result = decodeTicket(entity);
+                return predicate.test(result) ? result : null;
+            } catch (final NoResultException e) {
+                LOGGER.debug("No record could be found for ticket [{}]", ticketId);
             }
             return null;
-        } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for ticket [{}]", ticketId);
-        }
-        return null;
+        });
     }
 
     @Override
     public int deleteTicket(final String ticketId) throws Exception {
-        return super.deleteTicket(ticketId);
+        return transactionTemplate.execute(callback -> FunctionUtils.doUnchecked(() -> super.deleteTicket(ticketId)));
     }
 
     @Override
     public long deleteAll() {
-        val factory = getJpaTicketEntityFactory();
-        val query = entityManager.createQuery(String.format("DELETE FROM %s", factory.getEntityName()));
-        return query.executeUpdate();
+        return transactionTemplate.execute(status -> {
+            val factory = getJpaTicketEntityFactory();
+            val query = entityManager.createQuery(String.format("DELETE FROM %s", factory.getEntityName()));
+            return Long.valueOf(query.executeUpdate());
+        });
     }
 
     @Override
-    @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public Collection<? extends Ticket> getTickets() {
-        val factory = getJpaTicketEntityFactory();
-        val sql = String.format("SELECT t FROM %s t", factory.getEntityName());
-        val query = entityManager.createQuery(sql, factory.getType());
-        query.setLockMode(this.lockType);
+        return transactionTemplate.execute(status -> {
+            val factory = getJpaTicketEntityFactory();
+            val sql = String.format("SELECT t FROM %s t", factory.getEntityName());
+            val query = entityManager.createQuery(sql, factory.getType());
+            query.setLockMode(this.lockType);
 
-        return query
-            .getResultStream()
-            .map(factory::toTicket)
-            .map(this::decodeTicket)
-            .collect(Collectors.toList());
+            return query
+                .getResultStream()
+                .map(factory::toTicket)
+                .map(this::decodeTicket)
+                .collect(Collectors.toList());
+        });
     }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) throws Exception {
-        LOGGER.trace("Updating ticket [{}]", ticket);
-        val ticketEntity = getTicketEntityFrom(ticket);
-        entityManager.merge(ticketEntity);
-        LOGGER.debug("Updated ticket [{}]", ticketEntity.getId());
-        return encodeTicket(ticket);
+        return transactionTemplate.execute(status -> FunctionUtils.doUnchecked(() -> {
+            LOGGER.trace("Updating ticket [{}]", ticket);
+            val ticketEntity = getTicketEntityFrom(ticket);
+            entityManager.merge(ticketEntity);
+            LOGGER.debug("Updated ticket [{}]", ticketEntity.getId());
+            return encodeTicket(ticket);
+        }));
     }
 
     /**
@@ -170,16 +164,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public long sessionCount() {
-        val factory = getJpaTicketEntityFactory();
-        val sql = String.format("SELECT COUNT(t.id) FROM %s t WHERE t.type=:type", factory.getEntityName());
-        val query = entityManager.createQuery(sql).setParameter("type", getTicketTypeName(TicketGrantingTicket.class));
-        return countToLong(query.getSingleResult());
+        return transactionTemplate.execute(status -> {
+            val factory = getJpaTicketEntityFactory();
+            val sql = String.format("SELECT COUNT(t.id) FROM %s t WHERE t.type=:type", factory.getEntityName());
+            val query = entityManager.createQuery(sql).setParameter("type", getTicketTypeName(TicketGrantingTicket.class));
+            return countToLong(query.getSingleResult());
+        });
     }
 
     @Override
-    @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val factory = getJpaTicketEntityFactory();
 
@@ -202,19 +196,20 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public long serviceTicketCount() {
-        val factory = getJpaTicketEntityFactory();
-        val sql = String.format("SELECT COUNT(t.id) FROM %s t WHERE t.type=:type", factory.getEntityName());
-        val query = entityManager.createQuery(sql)
-            .setParameter("type", getTicketTypeName(ServiceTicket.class));
-        return countToLong(query.getSingleResult());
+        return transactionTemplate.execute(status -> {
+            val factory = getJpaTicketEntityFactory();
+            val sql = String.format("SELECT COUNT(t.id) FROM %s t WHERE t.type=:type", factory.getEntityName());
+            val query = entityManager.createQuery(sql)
+                .setParameter("type", getTicketTypeName(ServiceTicket.class));
+            return countToLong(query.getSingleResult());
+        });
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        val factory = getJpaTicketEntityFactory();
-        val result = this.transactionTemplate.execute(transactionStatus -> {
+    public long deleteSingleTicket(final String ticketIdToDelete) {
+        val result = transactionTemplate.execute(transactionStatus -> {
+            val factory = getJpaTicketEntityFactory();
             val encTicketId = encodeTicketId(ticketIdToDelete);
             var totalCount = 0;
             val md = ticketCatalog.find(ticketIdToDelete);
@@ -227,7 +222,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 query.setParameter("id", encTicketId);
                 totalCount = query.executeUpdate();
             }
-            return totalCount != 0;
+            return totalCount;
         });
         return Objects.requireNonNull(result);
     }
@@ -238,11 +233,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     protected int deleteTicketGrantingTickets(final String ticketId) {
-        val factory = getJpaTicketEntityFactory();
-        var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", factory.getEntityName());
-        LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
-        var query = entityManager.createQuery(sql);
-        query.setParameter("id", ticketId);
-        return query.executeUpdate();
+        return transactionTemplate.execute(status -> {
+            val factory = getJpaTicketEntityFactory();
+            var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", factory.getEntityName());
+            LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
+            var query = entityManager.createQuery(sql);
+            query.setParameter("id", ticketId);
+            return query.executeUpdate();
+        });
     }
 }

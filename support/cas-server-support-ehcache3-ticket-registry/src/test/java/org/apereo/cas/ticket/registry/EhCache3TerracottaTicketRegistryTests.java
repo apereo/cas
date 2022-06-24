@@ -8,7 +8,8 @@ import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * Unit test for {@link EhCache3TicketRegistry}.
@@ -16,11 +17,12 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author Hal Deadman
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
+@Import({
     Ehcache3TicketRegistryConfiguration.class,
     Ehcache3TicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties =
+})
+@TestPropertySource(properties =
     "cas.ticket.registry.ehcache3.terracotta.terracotta-cluster-uri=terracotta://localhost:9410/cas-application")
 @EnabledIfListeningOnPort(port = 9410)
 @Tag("Ehcache")

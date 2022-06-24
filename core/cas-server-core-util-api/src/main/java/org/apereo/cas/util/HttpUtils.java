@@ -46,15 +46,15 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
-    private final int MAX_CONNECTIONS = 200;
+    private static final int MAX_CONNECTIONS = 200;
 
-    private final int MAX_CONNECTIONS_PER_ROUTE = 20;
+    private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
-    private final int CONNECT_TIMEOUT_IN_MILLISECONDS = 500;
+    private static final int CONNECT_TIMEOUT_IN_MILLISECONDS = 500;
 
-    private final int CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = 5 * 1000;
+    private static final int CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = 5 * 1000;
 
-    private final int SOCKET_TIMEOUT_IN_MILLISECONDS = 10 * 1000;
+    private static final int SOCKET_TIMEOUT_IN_MILLISECONDS = 10 * 1000;
 
     /**
      * Execute http request and produce a response.

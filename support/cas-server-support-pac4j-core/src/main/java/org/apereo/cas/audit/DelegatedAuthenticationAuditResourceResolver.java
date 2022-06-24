@@ -29,7 +29,7 @@ public class DelegatedAuthenticationAuditResourceResolver extends ReturnValueAsS
         }
         result.getRegisteredService().ifPresent(service ->
             values.put("registeredService", service.getName() + ':' + service.getServiceId()));
-
+        result.getService().ifPresent(service -> values.put("service", service.getId()));
         return new String[]{auditFormat.serialize(values)};
     }
 }

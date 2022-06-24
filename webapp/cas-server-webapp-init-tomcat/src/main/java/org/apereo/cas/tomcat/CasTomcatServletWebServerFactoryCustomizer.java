@@ -1,6 +1,7 @@
 package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.ResourceUtils;
@@ -188,27 +189,31 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
     }
 
     private void configureHttp(final TomcatServletWebServerFactory tomcat) {
-        val http = casProperties.getServer().getTomcat().getHttp();
-        if (http.isEnabled()) {
-            LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
-            val connector = new Connector(http.getProtocol());
-            var port = http.getPort();
-            if (port <= 0) {
-                LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
-                port = SocketUtils.findAvailableTcpPort();
-            }
-            LOGGER.info("Activated embedded tomcat container HTTP port on [{}]", port);
-            connector.setPort(port);
-            if (http.getRedirectPort() > 0) {
-                connector.setRedirectPort(http.getRedirectPort());
-            }
-            connector.setScheme("http");
-            LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
-            connector.addUpgradeProtocol(new Http2Protocol());
+        casProperties.getServer().getTomcat().getHttp()
+            .stream()
+            .filter(CasEmbeddedApacheTomcatHttpProperties::isEnabled)
+            .forEach(http -> {
+                LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
+                val connector = new Connector(http.getProtocol());
+                var port = http.getPort();
+                if (port <= 0) {
+                    LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
+                    port = SocketUtils.findAvailableTcpPort();
+                }
+                LOGGER.info("Activated embedded tomcat container HTTP port on [{}]", port);
+                connector.setPort(port);
+                if (http.getRedirectPort() > 0) {
+                    connector.setRedirectPort(http.getRedirectPort());
+                }
+                connector.setScheme(http.getScheme());
+                connector.setSecure(http.isSecure());
 
-            http.getAttributes().forEach(connector::setProperty);
-            tomcat.addAdditionalTomcatConnectors(connector);
-        }
+                LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
+                connector.addUpgradeProtocol(new Http2Protocol());
+
+                http.getAttributes().forEach(connector::setProperty);
+                tomcat.addAdditionalTomcatConnectors(connector);
+            });
     }
 
     private void configureHttpProxy(final TomcatServletWebServerFactory tomcat) {

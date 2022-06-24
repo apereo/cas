@@ -47,7 +47,7 @@ public class Pac4jDelegatedAuthenticationConfiguration {
     public static class Pac4jDelegatedAuthenticationBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+        @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
         public AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer() {
             return new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer();
         }
@@ -67,7 +67,7 @@ public class Pac4jDelegatedAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer(
-            @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {

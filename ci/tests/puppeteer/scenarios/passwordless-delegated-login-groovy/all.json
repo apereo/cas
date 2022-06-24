@@ -1,0 +1,29 @@
+[
+  {
+    "accountId": "1",
+    "accountName": "ATP",
+    "authType": "local",
+    "id": 729,
+    "mfaType": "none",
+    "serviceId": "atp-web-prd-release",
+    "userName": "user_1"
+  },
+  {
+    "accountId": "1",
+    "accountName": "ATP",
+    "authType": "CasClient3",
+    "id": 729,
+    "mfaType": "none",
+    "serviceId": "atp-web-prd-release",
+    "userName": "user_1"
+  },
+  {
+    "accountId": "1",
+    "accountName": "ATP",
+    "authType": "CasClient2",
+    "id": 729,
+    "mfaType": "none",
+    "serviceId": "atp-web-prd-release",
+    "userName": "user_1"
+  }
+]

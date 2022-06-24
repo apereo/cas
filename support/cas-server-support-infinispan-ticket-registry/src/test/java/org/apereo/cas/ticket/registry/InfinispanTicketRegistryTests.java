@@ -6,7 +6,7 @@ import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link InfinispanTicketRegistryTests}.
@@ -14,10 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 4.2.0
  * @deprecated since 6.6 and scheduled for removal.
  */
-@SpringBootTest(classes = {
-    InfinispanTicketRegistryConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-})
+@Import(InfinispanTicketRegistryConfiguration.class)
 @Tag("Infinispan")
 @Getter
 @Deprecated(since = "6.6")

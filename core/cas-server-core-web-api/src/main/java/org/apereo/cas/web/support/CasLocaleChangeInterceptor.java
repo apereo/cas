@@ -1,6 +1,6 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.configuration.model.core.web.LocaleProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -27,20 +28,11 @@ import java.util.Locale;
  */
 @RequiredArgsConstructor
 public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
-    /**
-     * The Locale properties.
-     */
-    protected final LocaleProperties localeProperties;
+    protected final ObjectProvider<CasConfigurationProperties> casProperties;
 
-    /**
-     * The Argument extractor.
-     */
-    protected final ArgumentExtractor argumentExtractor;
+    protected final ObjectProvider<ArgumentExtractor> argumentExtractor;
 
-    /**
-     * The Services manager.
-     */
-    protected final ServicesManager servicesManager;
+    protected final ObjectProvider<ServicesManager> servicesManager;
 
     @Setter
     private List<String> supportedFlows = new ArrayList<>();
@@ -71,14 +63,14 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
                              final HttpServletResponse response,
                              final Object handler) throws ServletException {
         val requestUrl = request.getRequestURL().toString();
-        if (localeProperties.isForceDefaultLocale()) {
-            val locale = new Locale(localeProperties.getDefaultValue());
+        if (casProperties.getObject().getLocale().isForceDefaultLocale()) {
+            val locale = new Locale(casProperties.getObject().getLocale().getDefaultValue());
             configureLocale(request, response, locale);
             return true;
         }
-        val service = this.argumentExtractor.extractService(request);
+        val service = argumentExtractor.getObject().extractService(request);
         if (service != null) {
-            val registeredService = servicesManager.findServiceBy(service);
+            val registeredService = servicesManager.getObject().findServiceBy(service);
             if (registeredService instanceof WebBasedRegisteredService) {
                 val webRegisteredService = (WebBasedRegisteredService) registeredService;
                 if (StringUtils.isNotBlank(webRegisteredService.getLocale())) {

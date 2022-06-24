@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.swivel;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorAuthenticationProperties;
@@ -10,9 +11,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.swiveltechnologies.pinsafe.client.agent.AgentXmlRequest;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -28,6 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 @Deprecated(since = "6.6")
+@Getter
 public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     private static final String SWIVEL_ERR_CODE_AUTHN_FAIL = "swivel.server.error";
@@ -35,11 +39,16 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     private final SwivelMultifactorAuthenticationProperties swivelProperties;
 
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+
+
     public SwivelAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                        final PrincipalFactory principalFactory,
-                                       final SwivelMultifactorAuthenticationProperties swivelProperties) {
+                                       final SwivelMultifactorAuthenticationProperties swivelProperties,
+                                       final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(name, servicesManager, principalFactory, swivelProperties.getOrder());
         this.swivelProperties = swivelProperties;
+        this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
     }
 
     private static Map<String, String> createErrorCodeMap() {

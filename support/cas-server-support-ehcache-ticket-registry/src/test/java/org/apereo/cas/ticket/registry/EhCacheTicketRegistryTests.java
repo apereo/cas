@@ -11,9 +11,10 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,12 +26,12 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  * @deprecated Since 6.2
  */
-@SpringBootTest(classes = {
+@Import({
     EhCacheTicketRegistryTests.EhcacheTicketRegistryTestConfiguration.class,
     EhcacheTicketRegistryConfiguration.class,
-    EhcacheTicketRegistryTicketCatalogConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = "cas.ticket.registry.ehcache.shared=true")
+    EhcacheTicketRegistryTicketCatalogConfiguration.class
+})
+@TestPropertySource(properties = "cas.ticket.registry.ehcache.shared=true")
 @Tag("Ehcache")
 @Deprecated(since = "6.2.0")
 @Getter
@@ -42,11 +43,11 @@ public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     public void verifyDeleteNonExistingTicket() throws Exception {
-        assertEquals(1, newTicketRegistry.deleteTicket(new MockTicketGrantingTicket("casuser")));
+        assertEquals(0, newTicketRegistry.deleteTicket(new MockTicketGrantingTicket("casuser")));
     }
 
     @TestConfiguration(value = "EhcacheTicketRegistryTestConfiguration", proxyBeanMethods = false)
-        public static class EhcacheTicketRegistryTestConfiguration {
+    public static class EhcacheTicketRegistryTestConfiguration {
         @Bean
         public CacheReplicator ticketRMISynchronousCacheReplicator() throws Exception {
             val replicator = mock(CacheReplicator.class);

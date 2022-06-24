@@ -9,19 +9,18 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,10 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Couchbase")
 @EnabledIfListeningOnPort(port = 8091)
-@SpringBootTest(classes = {
-    CouchbaseTicketRegistryConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-},
+@Import(CouchbaseTicketRegistryConfiguration.class)
+@TestPropertySource(
     properties = {
         "cas.ticket.registry.couchbase.cluster-password=password",
         "cas.ticket.registry.couchbase.cluster-username=admin",
@@ -45,8 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.ticket.registry.couchbase.bucket=testbucket"
     })
 @Getter
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestExecutionListeners(value = {
+@TestExecutionListeners({
     SpringBootDependencyInjectionTestExecutionListener.class,
     CouchbaseTicketRegistryTests.DisposingTestExecutionListener.class
 })

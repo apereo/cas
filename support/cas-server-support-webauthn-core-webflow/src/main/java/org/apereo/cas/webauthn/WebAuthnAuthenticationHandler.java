@@ -3,6 +3,7 @@ package org.apereo.cas.webauthn;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -10,7 +11,9 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
+import lombok.Getter;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -23,19 +26,24 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@Getter
 public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
     private final RegistrationStorage webAuthnCredentialRepository;
 
     private final SessionManager sessionManager;
 
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+
     public WebAuthnAuthenticationHandler(final String name, final ServicesManager servicesManager,
-        final PrincipalFactory principalFactory,
-        final RegistrationStorage webAuthnCredentialRepository,
-        final SessionManager sessionManager,
-        final Integer order) {
+                                         final PrincipalFactory principalFactory,
+                                         final RegistrationStorage webAuthnCredentialRepository,
+                                         final SessionManager sessionManager,
+                                         final Integer order,
+                                         final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(name, servicesManager, principalFactory, order);
         this.webAuthnCredentialRepository = webAuthnCredentialRepository;
         this.sessionManager = sessionManager;
+        this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
     }
 
     @Override

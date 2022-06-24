@@ -27,6 +27,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
@@ -36,6 +37,7 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -66,6 +68,10 @@ public abstract class BaseCasCoreTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+    protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     public static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
         return new ExpirationPolicyBuilder() {

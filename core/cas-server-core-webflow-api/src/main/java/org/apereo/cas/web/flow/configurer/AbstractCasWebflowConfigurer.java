@@ -372,13 +372,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public SubflowState createSubflowState(final Flow flow, final String id, final String subflow, final Action entryAction) {
-        if (containsFlowState(flow, id)) {
-            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
-            return getTransitionableState(flow, id, SubflowState.class);
+    public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow, final Action entryAction) {
+        if (containsFlowState(flow, stateId)) {
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), stateId);
+            return getTransitionableState(flow, stateId, SubflowState.class);
         }
 
-        val state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.mainFlowDefinitionRegistry));
+        val state = new SubflowState(flow, stateId, new BasicSubflowExpression(subflow, this.mainFlowDefinitionRegistry));
         if (entryAction != null) {
             state.getEntryActionList().add(entryAction);
         }
@@ -386,8 +386,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public SubflowState createSubflowState(final Flow flow, final String id, final String subflow) {
-        return createSubflowState(flow, id, subflow, null);
+    public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow) {
+        return createSubflowState(flow, stateId, subflow, null);
     }
 
     @Override
@@ -642,12 +642,29 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * Create mapper to subflow state.
      *
      * @param mappings the mappings
+     * @param flow     the flow
      * @return the mapper
      */
-    public Mapper createMapperToSubflowState(final List<DefaultMapping> mappings) {
-        val inputMapper = new DefaultMapper();
-        mappings.forEach(inputMapper::addMapping);
-        return inputMapper;
+    public Mapper createFlowInputMapper(final List<DefaultMapping> mappings,
+                                        final Flow flow) {
+        val flowInputMapper = flow.getInputMapper() == null
+            ? new DefaultMapper()
+            : (DefaultMapper) flow.getInputMapper();
+        mappings.forEach(flowInputMapper::addMapping);
+        flow.setInputMapper(flowInputMapper);
+        return flowInputMapper;
+    }
+
+    /**
+     * Create flow input mapper.
+     *
+     * @param mappings the mappings
+     * @return the mapper
+     */
+    public Mapper createFlowInputMapper(final List<DefaultMapping> mappings) {
+        val flowInputMapper = new DefaultMapper();
+        mappings.forEach(flowInputMapper::addMapping);
+        return flowInputMapper;
     }
 
     /**
@@ -659,7 +676,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param type     the type
      * @return the default mapping
      */
-    public DefaultMapping createMappingToSubflowState(final String name, final String value, final boolean required, final Class type) {
+    public DefaultMapping createMappingToSubflowState(final String name, final String value,
+                                                      final boolean required, final Class type) {
         val parser = this.flowBuilderServices.getExpressionParser();
         val source = parser.parseExpression(value, new FluentParserContext());
         val target = parser.parseExpression(name, new FluentParserContext());

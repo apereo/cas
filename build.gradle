@@ -229,7 +229,7 @@ allprojects {
         }
     }
 
-    javadoc {
+    tasks.named('javadoc') {
         options.addBooleanOption('html5', true)
         failOnError = providers.systemProperty("ignoreJavadocFailures").present
         excludes = ['**/generated/**', '**/com/duosecurity/**']
@@ -263,7 +263,7 @@ subprojects {
     }
 
     if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
-        jacocoTestReport {
+        tasks.named('jacocoTestReport') {
             reports {
                 xml.required.set(true)
                 html.required.set(true)
@@ -277,7 +277,7 @@ subprojects {
             getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
         }
 
-        jacocoTestCoverageVerification {
+        tasks.named('jacocoTestCoverageVerification') {
             getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
             afterEvaluate {
                 classDirectories.setFrom(files(classDirectories.files.collect {
@@ -456,7 +456,7 @@ subprojects {
         installLombok.enabled = false
     }
 
-    jar {
+    tasks.named('jar') {
         def projectName = project.name
         def projectGroup = project.group
         def projectVersion = project.version
@@ -547,7 +547,7 @@ subprojects {
 }
 
 if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.publishFlag) {
-    tasks.withType(Javadoc) {
+    tasks.withType(Javadoc).configureEach {
         source subprojects.collect { project -> project.sourceSets.main.allJava }
         destinationDir = new File(buildDir, "javadoc")
         classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
@@ -555,20 +555,24 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
         failOnError = providers.systemProperty("ignoreJavadocFailures").present
     }
 
-    task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
+    tasks.register('aggregateJavadocsIntoJar', Jar) {
+        dependsOn javadoc
+        description = "Aggregate all Javadocs into a single directory"
         archiveClassifier.set("javadoc")
         from javadoc
     }
 }
 
 if (rootProject.publishFlag) {
-    task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
+    tasks.register('rootSourcesJar', Jar) {
+        description = "Build JAR for the root CAS module"
         archiveBaseName.set("${project.archivesBaseName}")
         from rootProject.file("src")
     }
 }
 
-task gradleHome(description: "Display GRADLE_HOME environment variable") {
+tasks.register('gradleHome') {
+    description = "Display GRADLE_HOME environment variable"
     doFirst {
         ansi.green "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
     }
@@ -576,13 +580,13 @@ task gradleHome(description: "Display GRADLE_HOME environment variable") {
 
 if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
     artifacts {
-        archives aggregateJavadocsIntoJar
-        archives rootSourcesJar
+        archives tasks.named('aggregateJavadocsIntoJar')
+        archives tasks.named('rootSourcesJar')
     }
 }
 
 if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
-    task jacocoMerge(type: JacocoMerge) {
+    tasks.register('jacocoMerge', JacocoMerge) {
         subprojects.each { subproject ->
             executionData subproject.tasks.withType(Test)
             dependsOn tasks.withType(Test)
@@ -592,7 +596,7 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
         }
     }
 
-    task jacocoRootReport(type: JacocoReport) {
+    tasks.register('jacocoRootReport', JacocoReport) {
         description = 'Generates an aggregate report from all projects'
 
         subprojects.each {
@@ -623,25 +627,28 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
     }
 }
 
-task casVersion(description: "Display current CAS version") {
+tasks.register('casVersion') {
+    description = "Display current CAS version"
     doLast {
         println rootProject.version
     }
 }
 
-task tomcatVersion(description: "Display current Apache Tomcat version") {
+tasks.register('tomcatVersion') {
+    description = "Display current Apache Tomcat version"
     doLast {
         println "${tomcatVersion}"
     }
 }
 
-task signingKey(description: "Display CAS signing key id") {
+tasks.register('signingKey') {
+    description = "Display CAS signing key id"
     doLast {
         println "Signing key: " + project.findProperty("signing.keyId")
     }
 }
 
-task verifyRequiredJavaVersion {
+tasks.register('verifyRequiredJavaVersion') {
     def requiredVersion = JavaVersion.toVersion(project.targetCompatibility)
     if (!JavaVersion.current().isCompatibleWith(requiredVersion)) {
         throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${requiredVersion}")
