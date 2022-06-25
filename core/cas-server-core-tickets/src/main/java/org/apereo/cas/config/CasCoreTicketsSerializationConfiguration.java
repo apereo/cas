@@ -1,13 +1,13 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.serialization.DefaultTicketSerializationExecutionPlan;
 import org.apereo.cas.ticket.serialization.DefaultTicketStringSerializationManager;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlan;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -32,7 +32,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
 @AutoConfiguration
 public class CasCoreTicketsSerializationConfiguration {
 

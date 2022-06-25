@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.mdui.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.mdui.AbstractMetadataResolverAdapter;
@@ -11,7 +11,7 @@ import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.StaticMetadataResolverAdapter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +45,7 @@ import java.util.Map;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAML)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
 @AutoConfiguration
 public class SamlMetadataUIConfiguration {
 

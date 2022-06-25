@@ -1,7 +1,13 @@
 {
-  "dependencies": "hazelcast-ticket-registry,hazelcast-monitor",
+  "dependencies": "reports,hazelcast-ticket-registry,hazelcast-monitor,hazelcast-discovery-zookeeper",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.ticket.registry.core.enable-locking=true",
+    "--cas.ticket.registry.hazelcast.cluster.discovery.zookeeper.url=localhost:2181",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -10,9 +16,8 @@
     "--cas.tgc.crypto.signing.key=qM-cyy8u3I4pWhJE-6Q8F8x6Obu3jlK7hYpYOVGlSDpAjZQ3JpHAa2p_olwiXffX_efHmcj6AE-Xnrm284hZLg",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-
     "--management.health.hazelcastHealthIndicator.enabled=true",
-    "--management.endpoints.web.exposure.include=health",
+    "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",
 
@@ -25,7 +30,7 @@
 
     "--cas.ticket.registry.hazelcast.crypto.encryption.key=eAeP4KjGe+y2IrQDxOgL8LeEwfo4YmfYq/fW+b3mS4c=",
     "--cas.ticket.registry.hazelcast.crypto.signing.key=LqQXn8X66Oiob-lLAcvOGbDQO8J4PkiybTgKRIDNuyLjis-X-dBsvZNANlDO_VGPnpxdl7Nxfhkbn_lm57MgHQ"
-    
   ],
+  "initScript": "${PWD}/ci/tests/zookeeper/run-zookeeper-server.sh",
   "instances": 2
 }

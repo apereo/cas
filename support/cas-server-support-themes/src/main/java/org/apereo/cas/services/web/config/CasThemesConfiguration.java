@@ -2,14 +2,14 @@ package org.apereo.cas.services.web.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.ChainingThemeResolver;
 import org.apereo.cas.services.web.RegisteredServiceThemeResolver;
 import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties({CasConfigurationProperties.class, ThymeleafProperties.class, WebProperties.class})
 @Slf4j
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Thymeleaf)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Thymeleaf)
 @AutoConfiguration
 public class CasThemesConfiguration {
 

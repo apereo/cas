@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -11,7 +11,7 @@ import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.hazelcast.config.IndexConfig;
 import com.hazelcast.config.IndexType;
@@ -43,7 +43,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "hazelcast")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "hazelcast")
 @AutoConfiguration
 public class HazelcastTicketRegistryConfiguration {
 
@@ -100,7 +100,7 @@ public class HazelcastTicketRegistryConfiguration {
         }
         return hazelcastInstance;
     }
-    
+
     private static String buildCreateMappingQuery(final TicketDefinition defn) {
         val builder = new StringBuilder(String.format("CREATE MAPPING IF NOT EXISTS \"%s\" ", defn.getProperties().getStorageName()));
         builder.append("TYPE IMap ");

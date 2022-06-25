@@ -9,7 +9,7 @@ import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.Getter;
@@ -249,12 +249,12 @@ public class CasDocumentationApplication {
         }
         parentPath.mkdirs();
 
-        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(ConditionalOnFeature.class), CentralAuthenticationService.NAMESPACE);
+        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(ConditionalOnFeatureEnabled.class), CentralAuthenticationService.NAMESPACE);
         var properties = new ArrayList<Map<?, ?>>();
 
         var allToggleProps = new HashSet<String>();
         subTypes.forEach(clazz -> {
-            var features = clazz.getAnnotationsByType(ConditionalOnFeature.class);
+            var features = clazz.getAnnotationsByType(ConditionalOnFeatureEnabled.class);
             Arrays.stream(features).forEach(feature -> {
                 var propName = feature.feature().toProperty(feature.module());
                 if (!allToggleProps.contains(propName)) {

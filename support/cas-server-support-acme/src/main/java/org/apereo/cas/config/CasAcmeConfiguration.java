@@ -7,10 +7,10 @@ import org.apereo.cas.acme.AcmeWellKnownChallengeController;
 import org.apereo.cas.acme.DefaultAcmeCertificateManager;
 import org.apereo.cas.acme.DefaultAcmeChallengeRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,7 +36,7 @@ import java.security.Security;
  */
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ACME)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ACME)
 @AutoConfiguration
 public class CasAcmeConfiguration {
 

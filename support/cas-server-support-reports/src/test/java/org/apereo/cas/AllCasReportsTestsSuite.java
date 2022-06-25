@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.report.AuditLogEndpointTests;
+import org.apereo.cas.web.report.CasFeaturesEndpointTests;
 import org.apereo.cas.web.report.CasInfoEndpointContributorTests;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpointTests;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpointTests;
@@ -30,6 +31,7 @@ import org.junit.platform.suite.api.Suite;
     AuditLogEndpointTests.class,
     SingleSignOnSessionStatusEndpointTests.class,
     RegisteredServicesEndpointTests.class,
+    CasFeaturesEndpointTests.class,
     RegisteredAuthenticationHandlersEndpointTests.class,
     StatusEndpointTests.class,
     StatusEndpointWithHealthTests.class,
