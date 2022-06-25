@@ -33,9 +33,9 @@ public class ReflectionUtils {
     public <T> Collection<Class<? extends T>> findSubclassesInPackage(final Class<T> superclass, final String packageName) {
 
         try (ScanResult scanResult = new ClassGraph()
-                .acceptPackages(packageName)
-                .enableClassInfo()
-                .scan()) {
+            .acceptPackages(packageName)
+            .enableClassInfo()
+            .scan()) {
 
             if (superclass.isInterface()) {
                 return new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass));
@@ -57,9 +57,9 @@ public class ReflectionUtils {
         List<Class<?>> result = new ArrayList<>();
 
         try (ScanResult scanResult = new ClassGraph()
-                .acceptPackages(packageName)
-                .enableAnnotationInfo()
-                .scan()) {
+            .acceptPackages(packageName)
+            .enableAnnotationInfo()
+            .scan()) {
 
             for (var annotation : annotations) {
                 result.addAll(scanResult.getClassesWithAnnotation(annotation).loadClasses());
@@ -79,15 +79,15 @@ public class ReflectionUtils {
      */
     public static Optional<Class<?>> findClassBySimpleNameInPackage(final String simpleName, final String packageName) {
         try (ScanResult scanResult = new ClassGraph()
-                .acceptPackages(packageName)
-                .enableClassInfo()
-                .scan()) {
+            .acceptPackages(packageName)
+            .enableClassInfo()
+            .scan()) {
 
             return scanResult.getAllClasses()
-                    .stream()
-                    .filter(c -> c.getSimpleName().equalsIgnoreCase(simpleName))
-                    .findFirst()
-                    .map(ClassInfo::loadClass);
+                .stream()
+                .filter(c -> c.getSimpleName().equalsIgnoreCase(simpleName))
+                .findFirst()
+                .map(ClassInfo::loadClass);
         }
     }
 }

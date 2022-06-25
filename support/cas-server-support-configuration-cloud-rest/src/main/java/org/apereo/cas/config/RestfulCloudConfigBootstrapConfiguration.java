@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "rest")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "rest")
 @AutoConfiguration
 public class RestfulCloudConfigBootstrapConfiguration {
 

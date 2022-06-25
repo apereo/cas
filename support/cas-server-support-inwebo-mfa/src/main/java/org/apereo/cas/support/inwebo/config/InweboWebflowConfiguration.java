@@ -1,7 +1,7 @@
 package org.apereo.cas.support.inwebo.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorTrustWebflowConfigurer;
@@ -13,7 +13,7 @@ import org.apereo.cas.support.inwebo.web.flow.actions.InweboPushAuthenticateActi
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -49,7 +49,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "inwebo")
 @AutoConfiguration
 public class InweboWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -170,7 +170,7 @@ public class InweboWebflowConfiguration {
      * The Inwebo multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "inwebo")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "inwebo")
     @Configuration(value = "InweboMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("inweboMultifactorWebflowConfigurer")
     public static class InweboMultifactorTrustConfiguration {

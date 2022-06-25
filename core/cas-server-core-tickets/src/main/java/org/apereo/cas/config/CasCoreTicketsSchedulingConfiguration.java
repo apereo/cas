@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
@@ -11,7 +11,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 @EnableAsync(proxyTargetClass = false)
 @EnableTransactionManagement(proxyTargetClass = false)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
 @AutoConfiguration(after = CasCoreTicketsConfiguration.class)
 public class CasCoreTicketsSchedulingConfiguration {
 

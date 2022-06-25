@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.hazelcast.config.AttributeConfig;
 import com.hazelcast.config.IndexConfig;
@@ -39,7 +39,7 @@ import java.time.Duration;
 @EnableHazelcastHttpSession
 @EnableConfigurationProperties({CasConfigurationProperties.class,
     SessionProperties.class, HazelcastSessionProperties.class, ServerProperties.class})
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SessionManagement, module = "hazelcast")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SessionManagement, module = "hazelcast")
 @AutoConfiguration
 public class HazelcastSessionConfiguration {
 

@@ -1,10 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactory;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryCustomizer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http2.Http2Protocol;
@@ -29,7 +29,7 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ApacheTomcat)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ApacheTomcat)
 @AutoConfiguration(before = ServletWebServerFactoryAutoConfiguration.class)
 public class CasEmbeddedContainerTomcatConfiguration {
 

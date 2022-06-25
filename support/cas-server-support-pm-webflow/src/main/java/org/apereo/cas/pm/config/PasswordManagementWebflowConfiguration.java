@@ -4,7 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
@@ -30,7 +30,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -251,7 +251,7 @@ public class PasswordManagementWebflowConfiguration {
     }
 
     @Configuration(value = "PasswordManagementCaptchaConfiguration", proxyBeanMethods = false)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "captcha")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "captcha")
     public static class PasswordManagementCaptchaConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.google-recaptcha.enabled").isTrue();
 
@@ -347,7 +347,7 @@ public class PasswordManagementWebflowConfiguration {
 
     @Configuration(value = "PasswordManagementAccountProfileConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     public static class PasswordManagementAccountProfileConfiguration {
 
         @Bean

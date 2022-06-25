@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.GitRepositoryBuilder;
 import org.apereo.cas.support.saml.idp.metadata.GitSamlIdPMetadataCipherExecutor;
@@ -15,7 +15,7 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "git")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "git")
 @AutoConfiguration
 public class SamlIdPGitIdPMetadataConfiguration {
     private static final BeanCondition CONDITION_ENABLED = BeanCondition.on("cas.authn.saml-idp.metadata.git.idp-metadata-enabled").isTrue();

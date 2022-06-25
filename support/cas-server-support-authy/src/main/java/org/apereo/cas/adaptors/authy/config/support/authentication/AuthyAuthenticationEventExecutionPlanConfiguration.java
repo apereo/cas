@@ -17,11 +17,11 @@ import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderM
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.authy.AuthyApiClient;
 import lombok.val;
@@ -47,7 +47,7 @@ import java.net.URL;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authy)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authy)
 @AutoConfiguration
 public class AuthyAuthenticationEventExecutionPlanConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.authy.api-key");

@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "grouper")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "grouper")
 @AutoConfiguration
 public class CasPersonDirectoryGrouperConfiguration {
     @Configuration(value = "GrouperAttributeRepositoryConfiguration", proxyBeanMethods = false)

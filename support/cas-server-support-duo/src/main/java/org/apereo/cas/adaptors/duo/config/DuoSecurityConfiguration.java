@@ -12,12 +12,12 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptVal
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -49,7 +49,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
 @AutoConfiguration
 public class DuoSecurityConfiguration {
     @Configuration(value = "DuoSecurityCoreWebflowConfiguration", proxyBeanMethods = false)
@@ -162,7 +162,7 @@ public class DuoSecurityConfiguration {
 
     @Configuration(value = "DuoSecurityAccountProfileWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class DuoSecurityAccountProfileWebflowConfiguration {
         @ConditionalOnMissingBean(name = "duoMultifactorAuthenticationDeviceProviderAction")

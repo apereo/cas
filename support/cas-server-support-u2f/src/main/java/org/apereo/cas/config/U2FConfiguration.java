@@ -9,12 +9,12 @@ import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepository;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yubico.u2f.U2F;
@@ -45,7 +45,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.U2F)
 @AutoConfiguration
 public class U2FConfiguration {
 

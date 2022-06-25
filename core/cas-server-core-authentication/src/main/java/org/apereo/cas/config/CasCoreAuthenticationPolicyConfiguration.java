@@ -7,8 +7,8 @@ import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolic
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
 @AutoConfiguration
 public class CasCoreAuthenticationPolicyConfiguration {
 

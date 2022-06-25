@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
@@ -14,7 +14,7 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -54,7 +54,7 @@ import java.util.Arrays;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "ehcache2")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "ehcache2")
 @AutoConfiguration
 public class EhcacheTicketRegistryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.ehcache.enabled").isTrue().evenIfMissing();

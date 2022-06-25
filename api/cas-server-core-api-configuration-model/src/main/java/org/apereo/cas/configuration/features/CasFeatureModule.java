@@ -1,4 +1,6 @@
-package org.apereo.cas.configuration.support;
+package org.apereo.cas.configuration.features;
+
+import org.apereo.cas.configuration.support.RequiredProperty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.val;
@@ -10,7 +12,10 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * This is {@link CasFeatureModule}.
@@ -337,6 +342,55 @@ public interface CasFeatureModule {
          */
         Reports;
 
+        private static final Set<String> PRESENT_FEATURES = Collections.synchronizedSet(new TreeSet<>());
+
+        /**
+         * Register and keep track of features that are present at runtime.
+         */
+        public void register() {
+            register(StringUtils.EMPTY);
+        }
+
+        /**
+         * Register.
+         *
+         * @param module the module
+         */
+        public void register(final String module) {
+            var featureName = name();
+            if (StringUtils.isNotBlank(module)) {
+                featureName += '.' + module;
+            }
+            PRESENT_FEATURES.add(featureName);
+        }
+
+        public static Set<String> getRegisteredFeatures() {
+            return Set.copyOf(PRESENT_FEATURES);
+        }
+
+        /**
+         * Is registered?
+         *
+         * @param module the module
+         * @return true/false
+         */
+        public boolean isRegistered(final String module) {
+            var featureName = name();
+            if (StringUtils.isNotBlank(module)) {
+                featureName += '.' + module;
+            }
+            return PRESENT_FEATURES.contains(featureName);
+        }
+
+        /**
+         * Is registered?
+         *
+         * @return true/false
+         */
+        public boolean isRegistered() {
+            return isRegistered(StringUtils.EMPTY);
+        }
+
         /**
          * To property name.
          *
@@ -351,5 +405,6 @@ public interface CasFeatureModule {
             propertyName += ".enabled";
             return propertyName;
         }
+
     }
 }

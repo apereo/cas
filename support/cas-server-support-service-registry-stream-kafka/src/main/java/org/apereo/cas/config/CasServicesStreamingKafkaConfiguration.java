@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.kafka.KafkaObjectFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceKafkaDistributedCacheListener;
@@ -12,7 +12,7 @@ import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -50,7 +50,7 @@ import java.util.concurrent.ExecutionException;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @EnableKafka
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistryStreaming, module = "kafka")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistryStreaming, module = "kafka")
 @AutoConfiguration
 public class CasServicesStreamingKafkaConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.stream.core.enabled").isTrue().evenIfMissing();

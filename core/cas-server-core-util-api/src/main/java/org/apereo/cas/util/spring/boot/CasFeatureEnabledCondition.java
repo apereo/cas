@@ -1,6 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,7 +23,7 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext context,
                                             final AnnotatedTypeMetadata metadata) {
-        val attributes = metadata.getAnnotationAttributes(ConditionalOnFeature.class.getName());
+        val attributes = metadata.getAnnotationAttributes(ConditionalOnFeatureEnabled.class.getName());
         val name = attributes.get("feature").toString();
         val module = attributes.get("module").toString();
         val enabledByDefault = BooleanUtils.toBoolean(attributes.get("enabledByDefault").toString());
@@ -46,6 +46,7 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
         }
         val message = "CAS feature " + property + " is set to true.";
         LOGGER.trace(message);
+        feature.register(module);
         return ConditionOutcome.match(message);
     }
 }

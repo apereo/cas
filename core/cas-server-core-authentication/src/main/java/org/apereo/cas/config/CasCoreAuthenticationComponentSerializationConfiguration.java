@@ -19,13 +19,13 @@ import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.ValidationResponseType;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -45,7 +45,7 @@ import javax.security.auth.login.AccountLockedException;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
 @AutoConfiguration
 public class CasCoreAuthenticationComponentSerializationConfiguration {
     @Bean

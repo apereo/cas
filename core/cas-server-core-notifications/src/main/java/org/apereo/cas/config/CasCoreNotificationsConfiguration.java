@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.DefaultCommunicationsManager;
 import org.apereo.cas.notifications.push.DefaultNotificationSender;
@@ -10,7 +10,7 @@ import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigur
 import org.apereo.cas.notifications.sms.GroovySmsSender;
 import org.apereo.cas.notifications.sms.RestfulSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @EnableScheduling
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Notifications)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Notifications)
 @AutoConfiguration
 public class CasCoreNotificationsConfiguration {
     @Bean

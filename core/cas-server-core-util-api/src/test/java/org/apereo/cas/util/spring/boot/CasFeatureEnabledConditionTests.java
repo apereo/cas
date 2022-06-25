@@ -1,7 +1,7 @@
 package org.apereo.cas.util.spring.boot;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class CasFeatureEnabledConditionTests {
 
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy,
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy,
         module = "feature3", enabledByDefault = false)
     @TestConfiguration(value = "CasFeatureModuleDisabledByDefaultTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -37,7 +37,7 @@ public class CasFeatureEnabledConditionTests {
         }
     }
 
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature1")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature1")
     @TestConfiguration(value = "CasFeatureModuleTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasFeatureModuleFeature1TestConfiguration {

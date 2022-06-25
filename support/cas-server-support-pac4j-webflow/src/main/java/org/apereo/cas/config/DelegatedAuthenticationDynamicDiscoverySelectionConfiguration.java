@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pac4j.discovery.DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator;
 import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProviderLocator;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "dynamic-discovery")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "dynamic-discovery")
 @AutoConfiguration
 public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pac4j.core.discovery-selection.selection-type")

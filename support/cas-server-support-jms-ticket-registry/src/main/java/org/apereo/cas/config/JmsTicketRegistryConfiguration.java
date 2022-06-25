@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.registry.JmsTicketRegistry;
 import org.apereo.cas.ticket.registry.JmsTicketRegistryQueuePublisher;
 import org.apereo.cas.ticket.registry.JmsTicketRegistryQueueReceiver;
@@ -9,7 +9,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,7 +41,7 @@ import javax.jms.ConnectionFactory;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableJms
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "jms")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "jms")
 @AutoConfiguration
 public class JmsTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
