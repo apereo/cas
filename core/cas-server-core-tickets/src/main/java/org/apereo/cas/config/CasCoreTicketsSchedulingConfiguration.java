@@ -17,6 +17,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -72,11 +73,11 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnMatchingHostname(name = "cas.ticket.registry.cleaner.schedule.enabled-on-host")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Runnable ticketRegistryCleanerScheduler(
+    public Cleanable ticketRegistryCleanerScheduler(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("ticketRegistryCleaner")
         final TicketRegistryCleaner ticketRegistryCleaner) throws Exception {
-        return BeanSupplier.of(Runnable.class)
+        return BeanSupplier.of(Cleanable.class)
             .when(BeanCondition.on("cas.ticket.registry.cleaner.schedule.enabled").isTrue()
                 .evenIfMissing().given(applicationContext.getEnvironment()))
             .supply(() -> new TicketRegistryCleanerScheduler(ticketRegistryCleaner))
@@ -93,13 +94,13 @@ public class CasCoreTicketsSchedulingConfiguration {
      * with transaction semantics of the cleaner.
      */
     @RequiredArgsConstructor
-    public static class TicketRegistryCleanerScheduler implements Runnable {
+    public static class TicketRegistryCleanerScheduler implements Cleanable {
         private final TicketRegistryCleaner ticketRegistryCleaner;
 
         @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
         @Override
-        public void run() {
+        public void clean() {
             FunctionUtils.doAndHandle(unused -> ticketRegistryCleaner.clean());
         }
     }
