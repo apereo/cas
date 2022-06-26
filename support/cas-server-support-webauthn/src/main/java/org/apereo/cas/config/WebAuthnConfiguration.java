@@ -48,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.Cleanable;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -140,11 +141,11 @@ public class WebAuthnConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnDeviceRepositoryCleanerScheduler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Runnable webAuthnDeviceRepositoryCleanerScheduler(
+        public Cleanable webAuthnDeviceRepositoryCleanerScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("webAuthnCredentialRepository")
             final WebAuthnCredentialRepository webAuthnCredentialRepository) throws Exception {
-            return BeanSupplier.of(Runnable.class)
+            return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.mfa.web-authn.cleaner.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
                 .supply(() -> new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository))
                 .otherwiseProxy()
@@ -153,14 +154,14 @@ public class WebAuthnConfiguration {
     }
 
     @RequiredArgsConstructor
-    public static class WebAuthnDeviceRepositoryCleanerScheduler implements Runnable {
+    public static class WebAuthnDeviceRepositoryCleanerScheduler implements Cleanable {
 
         private final WebAuthnCredentialRepository repository;
 
         @Scheduled(initialDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.start-delay:PT20S}",
             fixedDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.repeat-interval:PT5M}")
         @Override
-        public void run() {
+        public void clean() {
             LOGGER.debug("Starting to clean expired devices from repository");
             repository.clean();
         }
