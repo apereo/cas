@@ -26,6 +26,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -44,6 +46,19 @@ public class JpaWebAuthnConfiguration {
     @Configuration(value = "JpaWebAuthnTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaWebAuthnTransactionConfiguration {
+        @ConditionalOnMissingBean(name = "webAuthnTransactionTemplate")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TransactionOperations webAuthnTransactionTemplate(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("transactionManagerWebAuthn")
+            final PlatformTransactionManager transactionManagerWebAuthn) {
+            val template = new TransactionTemplate(transactionManagerWebAuthn);
+            template.setIsolationLevelName(casProperties.getAuthn().getMfa().getWebAuthn().getJpa().getIsolationLevelName());
+            template.setPropagationBehaviorName(casProperties.getAuthn().getMfa().getWebAuthn().getJpa().getPropagationBehaviorName());
+            return template;
+        }
+        
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerWebAuthn(
@@ -62,13 +77,13 @@ public class JpaWebAuthnConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public WebAuthnCredentialRepository webAuthnCredentialRepository(
+            @Qualifier("webAuthnTransactionTemplate")
+            final TransactionOperations webAuthnTransactionTemplate,
             @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
             final CipherExecutor webAuthnCredentialRegistrationCipherExecutor,
-            final CasConfigurationProperties casProperties,
-            @Qualifier("transactionManagerWebAuthn")
-            final PlatformTransactionManager transactionManager) {
+            final CasConfigurationProperties casProperties) {
             return new JpaWebAuthnCredentialRepository(casProperties,
-                webAuthnCredentialRegistrationCipherExecutor, transactionManager);
+                webAuthnCredentialRegistrationCipherExecutor, webAuthnTransactionTemplate);
         }
 
     }
