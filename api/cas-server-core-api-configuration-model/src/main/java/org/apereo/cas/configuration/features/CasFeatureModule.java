@@ -45,12 +45,14 @@ public interface CasFeatureModule {
                 var getter = getMethodName(field, "get");
                 if (ClassUtils.hasMethod(getClass(), getter)) {
                     val method = ClassUtils.getMethod(getClass(), getter);
+                    method.setAccessible(true);
                     val value = method.invoke(this);
                     return value != null && StringUtils.isNotBlank(value.toString());
                 }
                 getter = getMethodName(field, "is");
                 if (ClassUtils.hasMethod(getClass(), getter)) {
                     val method = ClassUtils.getMethod(getClass(), getter);
+                    method.setAccessible(true);
                     val value = method.invoke(this);
                     return value != null && BooleanUtils.toBoolean(value.toString());
                 }
