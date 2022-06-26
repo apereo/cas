@@ -166,11 +166,10 @@ public class CasFiltersConfiguration {
     @Configuration(value = "CasFiltersCorsConfiguration", proxyBeanMethods = false)
     public static class CasFiltersCorsConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.http-web-request.cors.enabled").isTrue();
-
         @Bean
-        @ConditionalOnMissingBean(name = "corsConfigurationSource")
+        @ConditionalOnMissingBean(name = "corsHttpWebRequestConfigurationSource")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CorsConfigurationSource corsConfigurationSource(
+        public CorsConfigurationSource corsHttpWebRequestConfigurationSource(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
@@ -187,11 +186,10 @@ public class CasFiltersConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<CorsFilter> casCorsFilter(
-            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("corsConfigurationSource")
-            final CorsConfigurationSource corsConfigurationSource) {
-            val bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource));
+            @Qualifier("corsHttpWebRequestConfigurationSource")
+            final CorsConfigurationSource corsHttpWebRequestConfigurationSource) {
+            val bean = new FilterRegistrationBean<>(new CorsFilter(corsHttpWebRequestConfigurationSource));
             bean.setName("casCorsFilter");
             bean.setAsyncSupported(true);
             bean.setOrder(0);
