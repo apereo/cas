@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Deprecated(since = "6.6.0")
 @Slf4j
-public class RegexRegisteredService extends BaseRegisteredService {
+public class RegexRegisteredService extends BaseWebBasedRegisteredService {
     private static final long serialVersionUID = -8258660210826975771L;
 
     public RegexRegisteredService() {

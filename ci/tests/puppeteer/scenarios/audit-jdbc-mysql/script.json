@@ -15,6 +15,10 @@
     "--cas.audit.engine.enabled=true",
     "--cas.audit.slf4j.enabled=false",
 
+    "--cas.audit.jdbc.schedule.enabled=true",
+    "--cas.audit.jdbc.schedule.start-delay=PT10S",
+    "--cas.audit.jdbc.schedule.repeat-interval=PT10S",
+    
     "--cas.audit.jdbc.leak-threshold=10000",
     "--cas.audit.jdbc.ddl-auto=create",
     "--cas.audit.jdbc.user=root",
