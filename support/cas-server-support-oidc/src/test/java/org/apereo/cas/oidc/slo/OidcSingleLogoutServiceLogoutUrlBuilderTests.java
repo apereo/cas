@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,10 +39,6 @@ public class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTe
         val request = new MockHttpServletRequest();
         val service = RegisteredServiceTestUtils.getService("https://somewhere.org");
         assertFalse(singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request), Optional.of(new MockHttpServletResponse())));
-
-        request.addParameter(OAuth20Constants.CLIENT_ID, id);
-        assertTrue(singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(
-            RegisteredServiceTestUtils.getService(), Optional.of(request), Optional.of(new MockHttpServletResponse())));
     }
 
 }

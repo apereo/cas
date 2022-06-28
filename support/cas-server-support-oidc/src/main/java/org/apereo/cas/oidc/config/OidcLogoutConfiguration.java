@@ -14,7 +14,6 @@ import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreator;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
@@ -39,7 +38,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
 @AutoConfiguration
 public class OidcLogoutConfiguration {
-
     @Configuration(value = "OidcLogoutBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcLogoutBuilderConfiguration {
@@ -48,14 +46,11 @@ public class OidcLogoutConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleLogoutServiceLogoutUrlBuilderConfigurer oidcSingleLogoutServiceLogoutUrlBuilderConfigurer(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator) {
-            return () -> new OidcSingleLogoutServiceLogoutUrlBuilder(servicesManager,
-                urlValidator, oauthRequestParameterResolver);
+            return () -> new OidcSingleLogoutServiceLogoutUrlBuilder(servicesManager, urlValidator);
         }
     }
 
