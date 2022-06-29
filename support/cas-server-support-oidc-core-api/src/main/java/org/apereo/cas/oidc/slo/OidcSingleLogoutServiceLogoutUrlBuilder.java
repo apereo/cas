@@ -38,20 +38,7 @@ public class OidcSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogoutSer
                             final WebApplicationService singleLogoutService,
                             final Optional<HttpServletRequest> httpRequest) {
         return super.supports(registeredService, singleLogoutService, httpRequest)
-            && registeredService instanceof OidcRegisteredService;
-    }
-
-    @Override
-    public boolean isServiceAuthorized(final WebApplicationService service,
-                                       final Optional<HttpServletRequest> requestOpt) {
-        if (requestOpt.isPresent()) {
-            val request = requestOpt.get();
-            val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-            if (StringUtils.isNotBlank(clientId)) {
-                val foundService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-                return supports(foundService, service, requestOpt);
-            }
-        }
-        return false;
+            && registeredService instanceof OidcRegisteredService
+            && OAuth20Utils.checkCallbackValid(registeredService, singleLogoutService.getOriginalUrl());
     }
 }
