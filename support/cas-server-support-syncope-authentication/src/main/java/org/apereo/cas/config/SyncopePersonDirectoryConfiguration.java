@@ -8,15 +8,17 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+
+import java.util.List;
 
 /**
  * This is {@link SyncopePersonDirectoryConfiguration}.
@@ -26,7 +28,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "SyncopePersonDirectoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty("cas.authn.attribute-repository.syncope.url")
 public class SyncopePersonDirectoryConfiguration {
 
     @ConditionalOnMissingBean(name = "syncopePersonAttributeDaos")
@@ -36,10 +37,13 @@ public class SyncopePersonDirectoryConfiguration {
         final CasConfigurationProperties casProperties) {
 
         val properties = casProperties.getAuthn().getAttributeRepository().getSyncope();
-        val dao = new SyncopePersonAttributeDao(properties);
-        dao.setOrder(properties.getOrder());
-        FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
-        return BeanContainer.of(CollectionUtils.wrapList(dao));
+        if (StringUtils.isNotBlank(properties.getUrl()) && StringUtils.isNotBlank(properties.getSearchFilter())) {
+            val dao = new SyncopePersonAttributeDao(properties);
+            dao.setOrder(properties.getOrder());
+            FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
+            return BeanContainer.of(CollectionUtils.wrapList(dao));
+        }
+        return BeanContainer.of(List.of());
     }
 
     @ConditionalOnMissingBean(name = "syncopeAttributeRepositoryPlanConfigurer")

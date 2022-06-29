@@ -6,7 +6,6 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.ldap[0]", value = "ldap-url")
 @Configuration(value = "CasPersonDirectoryLdapConfiguration", proxyBeanMethods = false)
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)

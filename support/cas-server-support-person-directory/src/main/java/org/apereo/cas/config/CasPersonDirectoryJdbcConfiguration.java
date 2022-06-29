@@ -9,7 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,7 +39,6 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 @ConditionalOnClass(value = JpaBeans.class)
-@ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.jdbc[0]", value = "sql")
 @Configuration(value = "CasPersonDirectoryJdbcConfiguration", proxyBeanMethods = false)
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
