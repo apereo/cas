@@ -61,6 +61,7 @@ the application context is reloaded once a property is changed.
      
 - The configuration for the embedded Apache Tomcat is now allowed to create multiple connectors and ports. The `secure` and `scheme` attributes are also 
   customizable.
+- Rules for redirecting to a service after a logout operation are now tightened to make sure protocol cross-over is not possible.
 - The OpenID Connect userinfo endpoint is now able to correctly process mapped claims defined in CAS configuration.
 
 
@@ -72,3 +73,6 @@ the application context is reloaded once a property is changed.
 - Spring Boot
 - Spring Integration
 - Dropwizard
+- Gradle
+- Amazon SDK
+- Okio
