@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.Ticket;
@@ -14,7 +14,7 @@ import org.apereo.cas.util.lock.DefaultLockRepository;
 import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,7 +37,7 @@ import org.springframework.integration.support.locks.LockRegistry;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "redis")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "redis")
 @AutoConfiguration
 public class RedisTicketRegistryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.redis.enabled").isTrue().evenIfMissing();
@@ -99,7 +99,7 @@ public class RedisTicketRegistryConfiguration {
 
     @Configuration(value = "RedisTicketRegistryLockingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistryLocking, module = "redis")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistryLocking, module = "redis")
     public static class RedisTicketRegistryLockingConfiguration {
         private static final BeanCondition CONDITION_LOCKING =
             BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing();

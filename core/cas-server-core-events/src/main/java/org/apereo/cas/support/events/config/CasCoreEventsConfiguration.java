@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.NoOpCasEventRepository;
 import org.apereo.cas.support.events.listener.CasAuthenticationAuthenticationEventListener;
@@ -9,7 +9,7 @@ import org.apereo.cas.support.events.listener.CasAuthenticationEventListener;
 import org.apereo.cas.support.events.web.CasEventsReportEndpoint;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.text.MessageSanitizer;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Events)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Events)
 @AutoConfiguration
 public class CasCoreEventsConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.events.core.enabled").isTrue().evenIfMissing();

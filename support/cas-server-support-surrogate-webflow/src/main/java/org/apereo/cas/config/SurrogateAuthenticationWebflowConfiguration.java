@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.SurrogateAuthenticationException;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -58,7 +58,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnClass(DuoSecurityAuthenticationService.class)
-        @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
         public CasMultifactorWebflowCustomizer surrogateCasMultifactorWebflowCustomizer(
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(CasMultifactorWebflowCustomizer.class)
@@ -88,7 +88,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
         }
 
         @Bean
-        @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnClass(DuoSecurityAuthenticationService.class)
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
@@ -199,7 +199,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
     @ConditionalOnClass(DuoSecurityAuthenticationService.class)
     public static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
         @Bean

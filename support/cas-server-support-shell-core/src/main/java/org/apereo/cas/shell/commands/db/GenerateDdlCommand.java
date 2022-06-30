@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.db;
 
+import org.apereo.cas.util.ReflectionUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -33,7 +35,6 @@ import org.hibernate.dialect.SQLServer2012Dialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.schema.TargetType;
-import org.reflections.Reflections;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -44,6 +45,7 @@ import javax.persistence.MappedSuperclass;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -57,8 +59,6 @@ import java.util.TreeMap;
 @Slf4j
 public class GenerateDdlCommand {
     private static final Map<String, String> DIALECTS_MAP = new TreeMap<>();
-
-    private static final Reflections REFLECTIONS = new Reflections("org.apereo.cas");
 
     static {
         DIALECTS_MAP.put("MYSQL", MySQLDialect.class.getName());
@@ -167,8 +167,11 @@ public class GenerateDdlCommand {
 
         LOGGER.info("Collecting entity metadata sources...");
         val metadata = new MetadataSources(svcRegistry.build());
-        REFLECTIONS.getTypesAnnotatedWith(MappedSuperclass.class).forEach(metadata::addAnnotatedClass);
-        REFLECTIONS.getTypesAnnotatedWith(Entity.class).forEach(metadata::addAnnotatedClass);
+        ReflectionUtils.findClassesWithAnnotationsInPackage(
+                        Set.of(MappedSuperclass.class, Entity.class),
+                        "org.apereo.cas")
+                .forEach(metadata::addAnnotatedClass);
+
         val metadataSources = metadata.buildMetadata();
 
         val export = new SchemaExport();

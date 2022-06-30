@@ -1,6 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Conditional;
@@ -13,7 +13,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This is {@link ConditionalOnFeature}.
+ * This is {@link ConditionalOnFeatureEnabled}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
@@ -21,9 +21,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Documented
-@Repeatable(ConditionalOnFeatures.class)
+@Repeatable(ConditionalOnFeaturesEnabled.class)
 @Conditional(CasFeatureEnabledCondition.class)
-public @interface ConditionalOnFeature {
+public @interface ConditionalOnFeatureEnabled {
     /**
      * Feature.
      *

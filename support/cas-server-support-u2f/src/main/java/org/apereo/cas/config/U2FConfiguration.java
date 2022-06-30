@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.u2f.U2FAuthenticationRegistrationRecordCipherExecutor;
+import org.apereo.cas.adaptors.u2f.U2FDeviceRepositoryCleanerScheduler;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FGroovyResourceDeviceRepository;
@@ -9,19 +10,19 @@ import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepository;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yubico.u2f.U2F;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,7 +32,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.U2F)
 @AutoConfiguration
 public class U2FConfiguration {
 
@@ -131,32 +131,18 @@ public class U2FConfiguration {
     @Configuration(value = "U2FCleanerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class U2FCleanerConfiguration {
-        @ConditionalOnMissingBean(name = "u2fDeviceRepositoryCleanerScheduler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Runnable u2fDeviceRepositoryCleanerScheduler(
+        public Cleanable u2fDeviceRepositoryCleanerScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("u2fDeviceRepository")
-            final U2FDeviceRepository storage) throws Exception {
-            return BeanSupplier.of(Runnable.class)
-                .when(BeanCondition.on("cas.authn.mfa.u2f.cleaner.schedule.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
+            final U2FDeviceRepository storage) {
+            return BeanSupplier.of(Cleanable.class)
+                .when(BeanCondition.on("cas.authn.mfa.u2f.cleaner.schedule.enabled")
+                    .isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
                 .supply(() -> new U2FDeviceRepositoryCleanerScheduler(storage))
                 .otherwiseProxy()
                 .get();
-        }
-
-    }
-
-    @RequiredArgsConstructor
-    public static class U2FDeviceRepositoryCleanerScheduler implements Runnable {
-        private final U2FDeviceRepository repository;
-
-        @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.start-delay:PT20S}",
-            fixedDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.repeat-interval:PT5M}")
-        @Override
-        public void run() {
-            LOGGER.debug("Starting to clean expired U2F devices from repository");
-            this.repository.clean();
         }
     }
 }

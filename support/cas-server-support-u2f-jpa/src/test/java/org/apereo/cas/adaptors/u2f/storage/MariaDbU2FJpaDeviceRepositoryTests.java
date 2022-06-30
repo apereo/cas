@@ -12,11 +12,11 @@ import org.springframework.test.context.TestPropertySource;
  * @since 5.2.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.saml-idp.metadata.jpa.user=root",
-    "cas.authn.saml-idp.metadata.jpa.password=mypass",
-    "cas.authn.saml-idp.metadata.jpa.driver-class=org.mariadb.jdbc.Driver",
-    "cas.authn.saml-idp.metadata.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.authn.saml-idp.metadata.jpa.dialect=org.hibernate.dialect.MariaDB106Dialect"
+    "cas.authn.mfa.u2f.jpa.user=root",
+    "cas.authn.mfa.u2f.jpa.password=mypass",
+    "cas.authn.mfa.u2f.jpa.driver-class=org.mariadb.jdbc.Driver",
+    "cas.authn.mfa.u2f.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "cas.authn.mfa.u2f.jpa.dialect=org.hibernate.dialect.MariaDB106Dialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")

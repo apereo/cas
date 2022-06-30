@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa.gauth;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 

@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.web.FilterInvocation;
@@ -77,6 +78,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
      */
     public HttpSecurity configureHttpSecurity(final HttpSecurity http) throws Exception {
         http
+            .cors(Customizer.withDefaults())
             .csrf()
             .disable()
             .headers()

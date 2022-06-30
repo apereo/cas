@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.logging.LoggingInitialization;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
@@ -10,10 +11,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.springframework.boot.Banner;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
 import org.springframework.core.metrics.ApplicationStartup;
@@ -40,11 +37,8 @@ public class CasEmbeddedContainerUtils {
     public static Optional<LoggingInitialization> getLoggingInitialization() {
         return FunctionUtils.doUnchecked(() -> {
             val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-            val reflections = new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(new FilterBuilder().includePackage(packageName))
-                .setUrls(ClasspathHelper.forPackage(packageName)));
 
-            val subTypes = reflections.getSubTypesOf(LoggingInitialization.class);
+            val subTypes = ReflectionUtils.findSubclassesInPackage(LoggingInitialization.class, packageName);
             return subTypes.isEmpty()
                 ? Optional.empty()
                 : Optional.of(subTypes.iterator().next().getDeclaredConstructor().newInstance());
@@ -58,12 +52,8 @@ public class CasEmbeddedContainerUtils {
      */
     public static Banner getCasBannerInstance() {
         val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-        val reflections = new Reflections(new ConfigurationBuilder()
-            .filterInputsBy(new FilterBuilder().includePackage(packageName))
-            .setExpandSuperTypes(true)
-            .setUrls(ClasspathHelper.forPackage(packageName)));
-        
-        val subTypes = reflections.getSubTypesOf(AbstractCasBanner.class);
+
+        val subTypes = ReflectionUtils.findSubclassesInPackage(AbstractCasBanner.class, packageName);
         subTypes.remove(DefaultCasBanner.class);
 
         if (subTypes.isEmpty()) {

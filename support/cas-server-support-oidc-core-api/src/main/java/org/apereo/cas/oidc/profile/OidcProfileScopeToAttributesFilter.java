@@ -14,14 +14,11 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.ReflectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.springframework.util.ClassUtils;
 
 import java.util.Collection;
@@ -154,11 +151,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     protected void configureAttributeReleasePoliciesByScope() {
         val oidc = casProperties.getAuthn().getOidc();
         val packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
-        val reflections = new Reflections(new ConfigurationBuilder()
-            .filterInputsBy(new FilterBuilder().includePackage(packageName))
-            .setUrls(ClasspathHelper.forPackage(packageName)));
 
-        val subTypes = reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
+        Collection<Class<? extends BaseOidcScopeAttributeReleasePolicy>> subTypes = ReflectionUtils.findSubclassesInPackage(BaseOidcScopeAttributeReleasePolicy.class, packageName);
+
         subTypes.forEach(Unchecked.consumer(t -> {
             if (ClassUtils.hasConstructor(t)) {
                 val ex = t.getDeclaredConstructor().newInstance();

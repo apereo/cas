@@ -1,13 +1,13 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.util.lock.DefaultLockRepository;
 import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -38,7 +38,7 @@ public class HazelcastZooKeeperConfiguration {
     @Configuration(value = "HazelcastTicketRegistryZooKeeperLockingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(HazelcastTicketRegistry.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistryLocking, module = "hazelcast")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistryLocking, module = "hazelcast")
     public static class HazelcastTicketRegistryZooKeeperLockingConfiguration {
         private static final int CONNECTION_TIMEOUT_MILLIS = 3000;
         private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing();

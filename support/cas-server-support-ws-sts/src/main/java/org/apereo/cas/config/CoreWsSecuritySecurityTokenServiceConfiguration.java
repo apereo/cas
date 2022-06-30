@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.DefaultSecurityTokenServiceTokenFetcher;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.claims.CustomNamespaceWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.NonWSFederationClaimsClaimsHandler;
@@ -23,7 +23,7 @@ import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.val;
@@ -91,7 +91,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
 @ImportResource(locations = "classpath:jaxws-realms.xml")
 @AutoConfiguration
 public class CoreWsSecuritySecurityTokenServiceConfiguration {

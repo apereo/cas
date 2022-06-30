@@ -58,7 +58,7 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUserHandle(final ByteArray handle) {
         return stream()
-            .filter(credentialRegistration -> handle.equals(credentialRegistration.getUserIdentity().getId()))
+            .filter(registration -> handle.equals(registration.getUserIdentity().getId()))
             .collect(Collectors.toList());
     }
 

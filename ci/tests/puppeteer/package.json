@@ -1,8 +1,9 @@
 {
   "dependencies": {
-    "axios": "^0.26.1",
+    "axios": "^0.27.2",
     "colors": "1.4.0",
-    "imgur": "^2.1.4",
+    "express": "^4.18.1",
+    "imgur": "^2.2.0",
     "jsonpath-plus": "^6.0.1",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.5",
@@ -10,7 +11,7 @@
     "node-static-auth": "^1.0.6",
     "perf_hooks": "^0.0.1",
     "ps-node": "^0.1.6",
-    "puppeteer": "^14.4.0",
+    "puppeteer": "^15.2.0",
     "puppeteer-loadtest": "^2.2.1",
     "puppeteer-screen-recorder": "^2.0.2",
     "request": "^2.88.2",

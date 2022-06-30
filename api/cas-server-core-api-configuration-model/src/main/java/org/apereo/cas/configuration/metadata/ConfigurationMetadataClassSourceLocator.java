@@ -1,14 +1,11 @@
 package org.apereo.cas.configuration.metadata;
 
+import org.apereo.cas.util.ReflectionUtils;
+
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import lombok.val;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,15 +55,9 @@ public class ConfigurationMetadataClassSourceLocator {
         if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
             return cachedPropertiesClasses.get(type.getNameAsString());
         }
-        val urls = new ArrayList<>(ClasspathHelper.forPackage("org.apereo.cas"));
-        val reflections = new Reflections(new ConfigurationBuilder()
-            .filterInputsBy(s -> s != null && s.contains(type.getNameAsString()))
-            .setUrls(urls));
-        val clz = reflections.getSubTypesOf(Serializable.class)
-            .stream()
-            .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
+
+        val clz = ReflectionUtils.findClassBySimpleNameInPackage(type.getNameAsString(), "org.apereo.cas")
+                .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
         cachedPropertiesClasses.put(type.getNameAsString(), clz);
         return clz;
     }
