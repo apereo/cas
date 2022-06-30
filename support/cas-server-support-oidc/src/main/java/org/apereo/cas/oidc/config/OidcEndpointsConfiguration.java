@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
@@ -39,7 +39,7 @@ import org.apereo.cas.support.oauth.validator.authorization.OAuth20Authorization
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
@@ -93,7 +93,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
 @AutoConfiguration
 public class OidcEndpointsConfiguration {
 

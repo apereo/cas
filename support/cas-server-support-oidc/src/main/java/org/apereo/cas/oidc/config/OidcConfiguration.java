@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -90,7 +90,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -140,7 +140,7 @@ import java.util.Set;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
 @AutoConfiguration
 public class OidcConfiguration {
 

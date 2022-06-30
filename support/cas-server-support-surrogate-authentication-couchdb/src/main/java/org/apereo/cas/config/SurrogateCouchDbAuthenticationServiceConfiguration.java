@@ -4,14 +4,14 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCouchDbAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCouchDbProfileAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultProfileCouchDbRepository;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.couchdb.surrogate.SurrogateAuthorizationCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.ektorp.CouchDbConnector;
@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication, module = "couchdb")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication, module = "couchdb")
 @AutoConfiguration
 public class SurrogateCouchDbAuthenticationServiceConfiguration {
 

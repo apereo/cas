@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -10,7 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.tokens.JwtServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.tokens.JwtTicketGrantingTicketResourceEntityResponseFactory;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.RestProtocol, module = "tokens")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.RestProtocol, module = "tokens")
 @AutoConfiguration
 public class CasRestTokensConfiguration {
 

@@ -2,13 +2,13 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SpnegoCredentialsAction;
 import org.apereo.cas.web.flow.SpnegoNegotiateCredentialsAction;
@@ -41,7 +41,7 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SPNEGO)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SPNEGO)
 @AutoConfiguration
 public class SpnegoWebflowActionsConfiguration {
 
@@ -95,7 +95,7 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Configuration(value = "SpnegoLdapWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SPNEGO, module = "ldap")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SPNEGO, module = "ldap")
     public static class SpnegoLdapWebflowActionsConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.spnego.ldap.ldap-url");
 

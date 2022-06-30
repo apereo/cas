@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.MongoDbPropertySourceLocator;
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +22,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "mongo")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "mongo")
 @AutoConfiguration
 public class MongoDbCloudConfigBootstrapConfiguration {
     /**

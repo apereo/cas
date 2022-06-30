@@ -16,9 +16,9 @@ import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderM
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.yubico.u2f.U2F;
 import lombok.val;
@@ -39,7 +39,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.U2F)
 @AutoConfiguration
 public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Bean

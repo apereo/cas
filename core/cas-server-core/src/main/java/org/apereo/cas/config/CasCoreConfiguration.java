@@ -14,14 +14,14 @@ import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.lock.LockRepository;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -49,7 +49,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Core)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
 @AutoConfiguration(after = CasCoreServicesConfiguration.class)
 public class CasCoreConfiguration {
 

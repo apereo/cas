@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.gauth.credential.JpaGoogleAuthenticatorTokenCredentialRepository;
@@ -14,7 +14,7 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
@@ -46,7 +46,7 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableScheduling
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator, module = "jpa")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator, module = "jpa")
 @AutoConfiguration
 public class GoogleAuthenticatorJpaConfiguration {
 

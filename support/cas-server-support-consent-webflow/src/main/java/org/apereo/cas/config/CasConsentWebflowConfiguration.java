@@ -3,14 +3,14 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnBean(name = ConsentRepository.BEAN_NAME)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Consent)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Consent)
 @AutoConfiguration
 public class CasConsentWebflowConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.consent.core.enabled").isTrue().evenIfMissing();
@@ -152,7 +152,7 @@ public class CasConsentWebflowConfiguration {
     }
     @Configuration(value = "CasConsentAccountProfileConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     public static class CasConsentAccountProfileConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

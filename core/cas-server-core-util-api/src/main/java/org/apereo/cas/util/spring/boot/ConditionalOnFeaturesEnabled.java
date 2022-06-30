@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This is {@link ConditionalOnFeatures}.
+ * This is {@link ConditionalOnFeaturesEnabled}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
@@ -15,11 +15,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-public @interface ConditionalOnFeatures {
+public @interface ConditionalOnFeaturesEnabled {
     /**
      * Conditionals grouped together.
      *
      * @return conditionals
      */
-    ConditionalOnFeature[] value();
+    ConditionalOnFeatureEnabled[] value();
 }

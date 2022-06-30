@@ -8,6 +8,7 @@ import org.apereo.cas.util.crypto.CertUtils;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.Getter;
 import lombok.val;
+import org.apereo.inspektr.common.Cleanable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -52,7 +53,7 @@ public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTest
 
     @Autowired
     @Qualifier("u2fDeviceRepositoryCleanerScheduler")
-    private Runnable cleanerScheduler;
+    private Cleanable cleanerScheduler;
 
     @Test
     public void verifyOperation() {
@@ -64,7 +65,7 @@ public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTest
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                cleanerScheduler.run();
+                cleanerScheduler.clean();
             }
         });
     }

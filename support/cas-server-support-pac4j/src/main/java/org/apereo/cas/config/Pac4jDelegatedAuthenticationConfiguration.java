@@ -3,10 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
@@ -38,7 +38,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 @AutoConfiguration
 public class Pac4jDelegatedAuthenticationConfiguration {
 

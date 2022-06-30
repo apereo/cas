@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
@@ -15,7 +15,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -54,7 +54,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "jpa")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "jpa")
 @AutoConfiguration
 public class JpaServiceRegistryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.jpa.enabled").isTrue().evenIfMissing();

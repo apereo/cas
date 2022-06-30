@@ -10,7 +10,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
@@ -26,7 +26,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -53,7 +53,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Electrofence)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Electrofence)
 @AutoConfiguration
 public class ElectronicFenceConfiguration {
 

@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataCipherExecutor;
@@ -16,7 +16,7 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider, module = "redis")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider, module = "redis")
 @AutoConfiguration
 public class SamlIdPRedisIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition

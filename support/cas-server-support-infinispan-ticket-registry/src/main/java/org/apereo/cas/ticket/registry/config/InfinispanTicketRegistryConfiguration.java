@@ -1,12 +1,12 @@
 package org.apereo.cas.ticket.registry.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.InfinispanTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @deprecated since 6.6 and scheduled for removal.
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "infinispan")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "infinispan")
 @AutoConfiguration
 @Deprecated(since = "6.6")
 public class InfinispanTicketRegistryConfiguration {

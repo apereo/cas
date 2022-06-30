@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceHazelcastDistributedCacheManager;
@@ -12,7 +12,7 @@ import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistryStreaming)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistryStreaming)
 @AutoConfiguration
 public class CasServicesStreamingHazelcastConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.stream.core.enabled").isTrue().evenIfMissing();

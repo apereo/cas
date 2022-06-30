@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SpringBootAdmin)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SpringBootAdmin)
 @AutoConfiguration
 public class CasSpringBootAdminServerSecurityConfiguration {
     private final AdminServerProperties adminServerProperties;

@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 import org.apereo.cas.throttle.ConcurrentThrottledSubmissionsStore;
@@ -11,7 +11,7 @@ import org.apereo.cas.throttle.DefaultThrottledRequestResponseHandler;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
@@ -45,7 +45,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Throttling)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Throttling)
 @AutoConfiguration
 public class CasThrottlingConfiguration {
 

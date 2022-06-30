@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.web.idp.delegation.SamlIdPDelegatedClientAuthenticationRequestCustomizer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,8 +26,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 @AutoConfiguration
 public class SamlIdPDelegatedAuthenticationConfiguration {
 

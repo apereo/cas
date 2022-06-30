@@ -1,10 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,7 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "jpa")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "jpa")
 @AutoConfiguration
 public class JpaTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
     @Override

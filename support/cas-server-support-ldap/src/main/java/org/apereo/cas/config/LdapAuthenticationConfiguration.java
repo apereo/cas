@@ -6,11 +6,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,7 +38,7 @@ import java.util.HashSet;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.LDAP, module = "authentication")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.LDAP, module = "authentication")
 @AutoConfiguration
 public class LdapAuthenticationConfiguration {
 

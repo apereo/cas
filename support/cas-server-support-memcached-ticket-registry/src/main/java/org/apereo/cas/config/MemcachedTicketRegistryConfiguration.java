@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;
@@ -10,7 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import net.spy.memcached.transcoders.Transcoder;
@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "memcached")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "memcached")
 @AutoConfiguration
 public class MemcachedTicketRegistryConfiguration {
 

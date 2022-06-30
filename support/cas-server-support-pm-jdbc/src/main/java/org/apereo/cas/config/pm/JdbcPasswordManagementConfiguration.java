@@ -2,13 +2,13 @@ package org.apereo.cas.config.pm;
 
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +36,7 @@ import javax.sql.DataSource;
  */
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "jdbc")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "jdbc")
 @AutoConfiguration
 public class JdbcPasswordManagementConfiguration {
 

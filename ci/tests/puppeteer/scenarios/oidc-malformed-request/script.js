@@ -14,5 +14,11 @@ const assert = require('assert');
     console.log(`${response.status()} ${response.statusText()}`)
     assert(response.status() === 403)
 
+    console.log("Checking for unauthorized logout redirect...")
+    response = await cas.goto(page, "https://localhost:8443/cas/logout?client_id=client&service=https://upgrade.badssl.com");
+    await page.waitForTimeout(1000)
+    console.log(`${response.status()} ${response.statusText()}`)
+    assert(response.status() === 403)
+    
     await browser.close();
 })();

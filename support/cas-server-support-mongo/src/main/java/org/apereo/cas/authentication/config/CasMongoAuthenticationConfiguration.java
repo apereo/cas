@@ -10,10 +10,10 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,7 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "mongo")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "mongo")
 @AutoConfiguration
 public class CasMongoAuthenticationConfiguration {
 

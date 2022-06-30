@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasGoogleAnalyticsCookieGenerator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasGoogleAnalyticsWebflowConfigurer;
@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.Action;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Metrics)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Metrics)
 @AutoConfiguration
 public class CasGoogleAnalyticsConfiguration {
 

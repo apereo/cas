@@ -9,9 +9,9 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
@@ -45,7 +45,7 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -91,7 +91,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableAsync(proxyTargetClass = false)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
 @AutoConfiguration
 public class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesResponseLocatorConfiguration", proxyBeanMethods = false)

@@ -114,8 +114,8 @@ in the log message is also slightly changed to hide a few more characters in the
    
 ### Passwordless Authentication
 
-[Passwordless authentication](../authentication/Passwordless-Authentication.html), when it comes to handling and suppprting delegation,
-is now able decorate the passwordless account with a list of authorized identity providers, and is able to handle auto redirects correctly
+[Passwordless authentication](../authentication/Passwordless-Authentication.html), when it comes to handling and suppporting delegation,
+is now able to decorate the passwordless account with a list of authorized identity providers, and is able to handle auto redirects correctly
 when there are multiple candidate identity providers.
 
 ### Refreshable JDBC/JPA Integrations

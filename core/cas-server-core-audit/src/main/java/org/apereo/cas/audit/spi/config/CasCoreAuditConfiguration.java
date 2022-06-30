@@ -20,11 +20,11 @@ import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.text.MessageSanitizer;
 
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +75,7 @@ import java.util.List;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Audit)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Audit)
 @AutoConfiguration(after = CasCoreServicesConfiguration.class)
 public class CasCoreAuditConfiguration {
     private static final BeanCondition CONDITION_AUDIT = BeanCondition.on("cas.audit.engine.enabled").isTrue().evenIfMissing();

@@ -11,10 +11,10 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
@@ -44,7 +44,7 @@ import java.net.URL;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "aws-cognito")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "aws-cognito")
 @AutoConfiguration
 public class AmazonCognitoAuthenticationConfiguration {
 

@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.uma.ticket.permission.DefaultUmaPermissionTicket;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth, module = "uma")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth, module = "uma")
 @AutoConfiguration
 public class CasOAuthUmaTicketSerializationConfiguration {
 

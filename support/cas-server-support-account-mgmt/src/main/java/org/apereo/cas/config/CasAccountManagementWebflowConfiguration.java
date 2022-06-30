@@ -29,7 +29,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -39,7 +39,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -79,7 +79,7 @@ import java.util.stream.Collectors;
  * @since 6.5.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountRegistration)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration)
 @AutoConfiguration
 public class CasAccountManagementWebflowConfiguration {
 
@@ -178,7 +178,7 @@ public class CasAccountManagementWebflowConfiguration {
     @ConditionalOnClass(PrincipalProvisioner.class)
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "scim")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "scim")
     public static class CasAccountManagementScimProvisioningConfiguration {
         @ConditionalOnMissingBean(name = "scimAccountRegistrationProvisionerConfigurer")
         @Bean
@@ -344,7 +344,7 @@ public class CasAccountManagementWebflowConfiguration {
 
     }
 
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "captcha")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "captcha")
     @Configuration(value = "CasAccountManagementRegistrationCaptchaConfiguration", proxyBeanMethods = false)
     public static class CasAccountManagementRegistrationCaptchaConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.account-registration.google-recaptcha.enabled").isTrue();

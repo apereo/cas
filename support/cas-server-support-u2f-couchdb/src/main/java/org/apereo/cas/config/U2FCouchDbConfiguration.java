@@ -2,12 +2,12 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.u2f.storage.U2FCouchDbDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F, module = "couchdb")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.U2F, module = "couchdb")
 @AutoConfiguration
 public class U2FCouchDbConfiguration {
 

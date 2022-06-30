@@ -2,9 +2,9 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.DefaultTokenRequestExtractor;
 import org.apereo.cas.web.TokenRequestExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "token")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "token")
 @AutoConfiguration
 public class TokenAuthenticationWebflowConfiguration {
 

@@ -4,7 +4,7 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.consent.AttributeConsentReportEndpoint;
 import org.apereo.cas.consent.AttributeReleaseConsentCipherExecutor;
 import org.apereo.cas.consent.ConsentActivationStrategy;
@@ -21,7 +21,7 @@ import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -49,7 +49,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Consent)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Consent)
 @AutoConfiguration
 public class CasConsentCoreConfiguration {
     @Configuration(value = "CasConsentCoreEngineConfiguration", proxyBeanMethods = false)

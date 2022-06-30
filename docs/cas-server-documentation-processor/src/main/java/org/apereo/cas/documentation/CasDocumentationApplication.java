@@ -7,8 +7,9 @@ import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.Getter;
@@ -21,9 +22,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -53,17 +51,7 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -192,9 +180,7 @@ public class CasDocumentationApplication {
             FileUtils.deleteQuietly(parentPath);
         }
         parentPath.mkdirs();
-        var urls = new ArrayList<>(ClasspathHelper.forPackage(CasShellCommand.NAMESPACE));
-        var reflections = new Reflections(new ConfigurationBuilder().setUrls(urls));
-        var subTypes = reflections.getTypesAnnotatedWith(ShellComponent.class, true);
+        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(ShellComponent.class), CasShellCommand.NAMESPACE);
         var properties = new ArrayList<Map<?, ?>>();
 
         subTypes.forEach(clazz -> {
@@ -263,14 +249,12 @@ public class CasDocumentationApplication {
         }
         parentPath.mkdirs();
 
-        var urls = new ArrayList<>(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE));
-        var reflections = new Reflections(new ConfigurationBuilder().setUrls(urls));
-        var subTypes = reflections.getTypesAnnotatedWith(ConditionalOnFeature.class, true);
+        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(ConditionalOnFeatureEnabled.class), CentralAuthenticationService.NAMESPACE);
         var properties = new ArrayList<Map<?, ?>>();
 
         var allToggleProps = new HashSet<String>();
         subTypes.forEach(clazz -> {
-            var features = clazz.getAnnotationsByType(ConditionalOnFeature.class);
+            var features = clazz.getAnnotationsByType(ConditionalOnFeatureEnabled.class);
             Arrays.stream(features).forEach(feature -> {
                 var propName = feature.feature().toProperty(feature.module());
                 if (!allToggleProps.contains(propName)) {
@@ -303,12 +287,7 @@ public class CasDocumentationApplication {
         }
         parentPath.mkdirs();
 
-        var urls = new ArrayList<>(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE));
-        urls.addAll(ClasspathHelper.forPackage("org.springframework.boot"));
-        urls.addAll(ClasspathHelper.forPackage("org.springframework.cloud"));
-        urls.addAll(ClasspathHelper.forPackage("org.springframework.data"));
-        var reflections = new Reflections(new ConfigurationBuilder().setUrls(urls));
-        var subTypes = reflections.getTypesAnnotatedWith(RestControllerEndpoint.class, true);
+        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(RestControllerEndpoint.class), "org");
         subTypes.forEach(clazz -> {
             var properties = new ArrayList<Map<?, ?>>();
             var endpoint = clazz.getAnnotation(RestControllerEndpoint.class);
@@ -479,7 +458,7 @@ public class CasDocumentationApplication {
             }
         });
 
-        subTypes = reflections.getTypesAnnotatedWith(Endpoint.class, true);
+        subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(Endpoint.class), "org");
         subTypes.forEach(clazz -> {
             var properties = new ArrayList<Map<?, ?>>();
             var endpoint = clazz.getAnnotation(Endpoint.class);

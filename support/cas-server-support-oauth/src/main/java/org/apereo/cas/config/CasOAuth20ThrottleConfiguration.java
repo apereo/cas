@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
@@ -13,7 +13,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGran
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
@@ -53,7 +53,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.*;
  * @since 5.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
 public class CasOAuth20ThrottleConfiguration {
 

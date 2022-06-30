@@ -1,10 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "jdbc")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "jdbc")
 @AutoConfiguration
 public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLocator {
 

@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -16,7 +16,7 @@ import org.apereo.cas.ticket.device.OAuth20DeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -32,7 +32,7 @@ import org.springframework.core.Ordered;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
 public class OAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
 

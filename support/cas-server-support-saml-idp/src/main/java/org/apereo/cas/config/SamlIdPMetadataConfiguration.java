@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.DefaultSamlIdPCasEventListener;
@@ -46,7 +46,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -85,7 +85,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 @AutoConfiguration
 public class SamlIdPMetadataConfiguration {
 

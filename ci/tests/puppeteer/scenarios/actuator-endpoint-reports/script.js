@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -9,6 +8,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     let tgc = await cas.assertCookie(page);
+    await browser.close();
 
     const endpoints = [
         "info",
@@ -36,6 +36,7 @@ const cas = require('../../cas.js');
         "ssoSessions",
         `sso?tgc=${tgc.value}`,
         "casModules",
+        "casFeatures",
         "ticketExpirationPolicies?serviceId=10000001",
         "springWebflow",
         "statistics",
@@ -53,6 +54,5 @@ const cas = require('../../cas.js');
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
         }, 200);
     }
-    await browser.close();
 })();
 

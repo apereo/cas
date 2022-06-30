@@ -1,14 +1,14 @@
 package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.DynamoDbMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.DynamoDbMultifactorTrustEngineFacilitator;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "dynamodb")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "dynamodb")
 @AutoConfiguration
 public class DynamoDbMultifactorAuthenticationTrustConfiguration {
 

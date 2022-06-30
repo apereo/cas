@@ -51,10 +51,19 @@ cas.version=6.6.0-RC5
 
 The following items are new improvements and enhancements presented in this release.
 
+### Refreshable JDBC/JPA Integrations
+
+CAS modules that offer an integration with a relational database, such as [JPA Service Registry](../services/JPA-Service-Management.html), 
+are now extensively enhanced and tested to ensure the underlying components can correctly respond to *refresh* events, when 
+the application context is reloaded once a property is changed.
+
 ## Other Stuff
      
 - The configuration for the embedded Apache Tomcat is now allowed to create multiple connectors and ports. The `secure` and `scheme` attributes are also 
   customizable.
+- Rules for redirecting to a service after a logout operation are now tightened to make sure protocol cross-over is not possible.
+- The OpenID Connect userinfo endpoint is now able to correctly process mapped claims defined in CAS configuration.
+
 
 ## Library Upgrades
 
@@ -64,3 +73,6 @@ The following items are new improvements and enhancements presented in this rele
 - Spring Boot
 - Spring Integration
 - Dropwizard
+- Gradle
+- Amazon SDK
+- Okio

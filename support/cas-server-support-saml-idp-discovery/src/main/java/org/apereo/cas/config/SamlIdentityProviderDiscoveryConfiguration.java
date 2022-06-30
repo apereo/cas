@@ -1,14 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
 import org.apereo.cas.services.DefaultSamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.SamlIdentityProviderDiscoveryFeedController;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 @AutoConfiguration
 public class SamlIdentityProviderDiscoveryConfiguration {
 

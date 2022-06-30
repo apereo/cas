@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionSt
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.rest.authentication.DefaultRestAuthenticationService;
 import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
@@ -13,7 +13,7 @@ import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import java.util.List;
  * @since 6.4.0
  */
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.RestProtocol)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.RestProtocol)
 @AutoConfiguration
 public class CasCoreRestConfiguration {
 

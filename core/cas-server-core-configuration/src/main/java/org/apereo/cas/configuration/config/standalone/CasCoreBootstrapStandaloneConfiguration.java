@@ -4,9 +4,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,7 +35,7 @@ import java.util.Optional;
  */
 @SuppressWarnings("ConditionalOnProperty")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false", matchIfMissing = true)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
 public class CasCoreBootstrapStandaloneConfiguration {
 

@@ -4,9 +4,9 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesReposit
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
@@ -60,7 +60,7 @@ import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilt
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -76,7 +76,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
 @AutoConfiguration
 public class CasCoreServicesComponentSerializationConfiguration {
     @Bean

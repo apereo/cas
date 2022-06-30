@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ProxyTicketImpl;
@@ -15,7 +15,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -30,7 +30,7 @@ import org.springframework.core.Ordered;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
 @AutoConfiguration
 public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
     @Override

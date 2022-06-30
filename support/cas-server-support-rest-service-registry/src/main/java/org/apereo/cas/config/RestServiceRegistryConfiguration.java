@@ -1,14 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.RestfulServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,7 +35,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "rest")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "rest")
 @AutoConfiguration
 public class RestServiceRegistryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.rest.url").isUrl();

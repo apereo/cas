@@ -4,14 +4,14 @@ import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -29,7 +29,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -41,14 +42,26 @@ import javax.sql.DataSource;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = false)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F, module = "jpa")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.U2F, module = "jpa")
 @AutoConfiguration
 public class U2FJpaConfiguration {
 
     @Configuration(value = "U2FJpaTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class U2FJpaTransactionConfiguration {
+
+        @ConditionalOnMissingBean(name = "u2fTransactionTemplate")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TransactionOperations u2fTransactionTemplate(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("transactionManagerU2f")
+            final PlatformTransactionManager transactionManagerU2f) {
+            val template = new TransactionTemplate(transactionManagerU2f);
+            template.setIsolationLevelName(casProperties.getAuthn().getMfa().getU2f().getJpa().getIsolationLevelName());
+            template.setPropagationBehaviorName(casProperties.getAuthn().getMfa().getU2f().getJpa().getPropagationBehaviorName());
+            return template;
+        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -68,15 +81,17 @@ public class U2FJpaConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public U2FDeviceRepository u2fDeviceRepository(
-            @Qualifier("transactionManagerU2f")
-            final PlatformTransactionManager mgr, final CasConfigurationProperties casProperties,
+            @Qualifier("u2fTransactionTemplate")
+            final TransactionOperations u2fTransactionTemplate,
+            final CasConfigurationProperties casProperties,
             @Qualifier("u2fRegistrationRecordCipherExecutor")
             final CipherExecutor u2fRegistrationRecordCipherExecutor) {
             val u2f = casProperties.getAuthn().getMfa().getU2f();
             final LoadingCache<String, String> requestStorage =
                 Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(),
                     u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);
-            return new U2FJpaDeviceRepository(requestStorage, casProperties, u2fRegistrationRecordCipherExecutor);
+            return new U2FJpaDeviceRepository(requestStorage, casProperties,
+                u2fRegistrationRecordCipherExecutor, u2fTransactionTemplate);
         }
 
     }
@@ -111,7 +126,7 @@ public class U2FJpaConfiguration {
             @Qualifier("jpaU2fVendorAdapter")
             final JpaVendorAdapter jpaU2fVendorAdapter,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceU2f)
                 .packagesToScan(jpaU2fPackagesToScan.toSet())

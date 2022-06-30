@@ -11,8 +11,8 @@ import org.apereo.cas.authentication.audit.SurrogateAuthenticationEligibilityAud
 import org.apereo.cas.authentication.audit.SurrogateEligibilitySelectionAuditResourceResolver;
 import org.apereo.cas.authentication.audit.SurrogateEligibilityVerificationAuditResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
 @AutoConfiguration
 public class SurrogateAuthenticationAuditConfiguration {
 
