@@ -7,7 +7,6 @@ import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 
 import lombok.Getter;
 import lombok.val;
-import org.joda.time.DateTimeUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,8 +60,6 @@ public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAcc
         repository.saveToken(uid, token);
         assertTrue(repository.findToken(uid).isPresent());
 
-        val tt = ZonedDateTime.now(ZoneOffset.UTC).plusHours(5).toInstant().toEpochMilli();
-        DateTimeUtils.setCurrentMillisFixed(tt);
         repository.clean();
 
         assertTrue(repository.findToken(uid).isEmpty());

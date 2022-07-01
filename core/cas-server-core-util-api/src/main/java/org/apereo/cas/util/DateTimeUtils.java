@@ -4,8 +4,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.joda.time.DateTime;
-import org.joda.time.ReadableInstant;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -176,16 +174,6 @@ public class DateTimeUtils {
     }
 
     /**
-     * Gets ZonedDateTime for ReadableInstant.
-     *
-     * @param time Time object to be converted.
-     * @return ZonedDateTime representing time
-     */
-    public static ZonedDateTime zonedDateTimeOf(final ReadableInstant time) {
-        return zonedDateTimeOf(Instant.ofEpochMilli(time.getMillis()));
-    }
-
-    /**
      * Utility for creating a ZonedDateTime object from a millisecond timestamp.
      *
      * @param time Milliseconds since Epoch UTC
@@ -224,26 +212,6 @@ public class DateTimeUtils {
      */
     public static ZonedDateTime zonedDateTimeOf(final Calendar time) {
         return ZonedDateTime.ofInstant(time.toInstant(), time.getTimeZone().toZoneId());
-    }
-
-    /**
-     * Gets DateTime for Instant.
-     *
-     * @param time Time object to be converted.
-     * @return DateTime representing time
-     */
-    public static DateTime dateTimeOf(final Instant time) {
-        return new DateTime(time.toEpochMilli());
-    }
-
-    /**
-     * Gets DateTime for ZonedDateTime.
-     *
-     * @param time Time object to be converted.
-     * @return DateTime representing time
-     */
-    public static DateTime dateTimeOf(final ChronoZonedDateTime time) {
-        return dateTimeOf(time.toInstant());
     }
 
     /**

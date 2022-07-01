@@ -514,7 +514,6 @@ subprojects {
         api libraries.slf4j
         api libraries.guava
         api libraries.commons
-        api libraries.jodatime
         api libraries.inspektr
         api libraries.persondirectory
         api libraries.spring
