@@ -50,11 +50,11 @@ public class AccountProfilePasswordChangeRequestActionTests extends BasePassword
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putTicketGrantingTicket(context, tgt);
-        centralAuthenticationService.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
 
         val result = accountProfilePasswordChangeRequestAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         assertNotNull(WebUtils.getServiceRedirectUrl(context));
-        assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(tgt.getId()));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(tgt.getId()));
     }
 }

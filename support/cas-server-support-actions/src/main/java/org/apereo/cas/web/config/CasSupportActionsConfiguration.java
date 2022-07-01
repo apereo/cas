@@ -15,6 +15,7 @@ import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -97,6 +98,8 @@ public class CasSupportActionsConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FETCH_TICKET_GRANTING_TICKET)
         public Action fetchTicketGrantingTicketAction(
             final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
@@ -106,8 +109,7 @@ public class CasSupportActionsConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new FetchTicketGrantingTicketAction(centralAuthenticationService,
-                    ticketGrantingTicketCookieGenerator))
+                .withAction(() -> new FetchTicketGrantingTicketAction(ticketRegistry, ticketGrantingTicketCookieGenerator))
                 .withId(CasWebflowConstants.ACTION_ID_FETCH_TICKET_GRANTING_TICKET)
                 .build()
                 .get();
@@ -176,6 +178,8 @@ public class CasSupportActionsConfiguration {
         @Bean
         public Action sendTicketGrantingTicketAction(
             final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
@@ -187,7 +191,7 @@ public class CasSupportActionsConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new SendTicketGrantingTicketAction(centralAuthenticationService,
+                .withAction(() -> new SendTicketGrantingTicketAction(ticketRegistry,
                     ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy))
                 .withId(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
                 .build()
@@ -225,12 +229,14 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new FinishLogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+                .withAction(() -> new FinishLogoutAction(ticketRegistry, ticketGrantingTicketCookieGenerator,
                     argumentExtractor, servicesManager, logoutExecutionPlan, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_FINISH_LOGOUT)
                 .build()
@@ -251,12 +257,14 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new LogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+                .withAction(() -> new LogoutAction(ticketRegistry, ticketGrantingTicketCookieGenerator,
                     argumentExtractor, servicesManager, logoutExecutionPlan, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_LOGOUT)
                 .build()
@@ -393,6 +401,8 @@ public class CasSupportActionsConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
         public Action genericSuccessViewAction(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -403,7 +413,7 @@ public class CasSupportActionsConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new GenericSuccessViewAction(centralAuthenticationService, servicesManager,
+                .withAction(() -> new GenericSuccessViewAction(ticketRegistry, servicesManager,
                     webApplicationServiceFactory, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
                 .build()
@@ -491,13 +501,15 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan) {
 
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new FrontChannelLogoutAction(centralAuthenticationService,
+                .withAction(() -> new FrontChannelLogoutAction(ticketRegistry,
                     ticketGrantingTicketCookieGenerator, argumentExtractor,
                     servicesManager, logoutExecutionPlan, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_FRONT_CHANNEL_LOGOUT)
@@ -509,6 +521,8 @@ public class CasSupportActionsConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action ticketGrantingTicketCheckAction(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -516,7 +530,7 @@ public class CasSupportActionsConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new TicketGrantingTicketCheckAction(centralAuthenticationService))
+                .withAction(() -> new TicketGrantingTicketCheckAction(ticketRegistry))
                 .withId(CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK)
                 .build()
                 .get();
@@ -563,13 +577,15 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(LogoutExecutionPlan.BEAN_NAME)
             final LogoutExecutionPlan logoutExecutionPlan) {
 
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new ConfirmLogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+                .withAction(() -> new ConfirmLogoutAction(ticketRegistry, ticketGrantingTicketCookieGenerator,
                     argumentExtractor, servicesManager, logoutExecutionPlan, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_CONFIRM_LOGOUT)
                 .build()
@@ -588,6 +604,8 @@ public class CasSupportActionsConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(LogoutExecutionPlan.BEAN_NAME)
@@ -596,7 +614,7 @@ public class CasSupportActionsConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new LogoutViewSetupAction(centralAuthenticationService,
+                .withAction(() -> new LogoutViewSetupAction(ticketRegistry,
                     ticketGrantingTicketCookieGenerator, argumentExtractor,
                     servicesManager, logoutExecutionPlan, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
@@ -656,6 +674,8 @@ public class CasSupportActionsConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
@@ -665,7 +685,7 @@ public class CasSupportActionsConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new PrepareAccountProfileViewAction(centralAuthenticationService,
+                .withAction(() -> new PrepareAccountProfileViewAction(ticketRegistry,
                     servicesManager, casProperties, auditTrailExecutionPlan))
                 .withId(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
                 .build()

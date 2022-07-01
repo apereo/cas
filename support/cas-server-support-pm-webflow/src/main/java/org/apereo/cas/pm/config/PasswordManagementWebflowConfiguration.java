@@ -86,12 +86,10 @@ public class PasswordManagementWebflowConfiguration {
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new PasswordManagementSingleSignOnParticipationStrategy(
-                servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan, centralAuthenticationService);
+                servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan);
         }
 
         @Bean
@@ -211,10 +209,12 @@ public class PasswordManagementWebflowConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
             final PasswordManagementService passwordManagementService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
             return new VerifyPasswordResetRequestAction(casProperties,
-                passwordManagementService, centralAuthenticationService);
+                passwordManagementService, ticketRegistry);
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_EXPIRATION_HANDLE_WARNINGS)
@@ -241,11 +241,13 @@ public class PasswordManagementWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action validatePasswordResetTokenAction(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
             final PasswordManagementService passwordManagementService,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            return new ValidatePasswordResetTokenAction(passwordManagementService, centralAuthenticationService);
+            return new ValidatePasswordResetTokenAction(passwordManagementService, ticketRegistry);
         }
 
     }
@@ -364,11 +366,11 @@ public class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST)
         public Action accountProfilePasswordChangeRequestAction(
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
             final PasswordResetUrlBuilder passwordResetUrlBuilder) {
-            return new AccountProfilePasswordChangeRequestAction(centralAuthenticationService, passwordResetUrlBuilder);
+            return new AccountProfilePasswordChangeRequestAction(ticketRegistry, passwordResetUrlBuilder);
         }
 
         @Bean

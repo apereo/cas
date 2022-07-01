@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.duo.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEventResolver;
@@ -124,8 +123,8 @@ public class DuoSecurityConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("duoAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("duoProviderBean")
@@ -136,7 +135,7 @@ public class DuoSecurityConfiguration {
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> new DuoSecurityUniversalPromptValidateLoginAction(
-                        duoAuthenticationWebflowEventResolver, centralAuthenticationService,
+                        duoAuthenticationWebflowEventResolver, ticketRegistry,
                         duoProviderBean, authenticationSystemSupport))
                     .otherwiseProxy()
                     .get())

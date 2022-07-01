@@ -64,7 +64,7 @@ public class DelegatedAuthenticationSingleSignOnEvaluator {
             LOGGER.trace("No ticket-granting ticket could be located in the webflow context");
             return Optional.empty();
         }
-        val ticket = configurationContext.getCentralAuthenticationService().getTicket(tgtId, TicketGrantingTicket.class);
+        val ticket = configurationContext.getTicketRegistry().getTicket(tgtId, TicketGrantingTicket.class);
         LOGGER.trace("Located a valid ticket-granting ticket");
         return Optional.of(ticket.getAuthentication());
     }

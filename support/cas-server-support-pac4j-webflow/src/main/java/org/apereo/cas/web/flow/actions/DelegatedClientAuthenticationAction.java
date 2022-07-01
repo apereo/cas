@@ -101,7 +101,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 val resolvedService = ssoEvaluator.resolveServiceFromRequestContext(context);
                 LOGGER.debug("Single sign-on session in unauthorized for service [{}]", resolvedService);
                 val tgt = WebUtils.getTicketGrantingTicketId(context);
-                configContext.getCentralAuthenticationService().deleteTicket(tgt);
+                configContext.getTicketRegistry().deleteTicket(tgt);
             }
 
             if (failureEvaluator.evaluate(request, response.getStatus()).isPresent()) {

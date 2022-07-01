@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.authn;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -32,11 +32,11 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
     private final ServicesManager servicesManager;
 
     public OidcAccessTokenAuthenticator(
-        final CentralAuthenticationService centralAuthenticationService,
+        final TicketRegistry ticketRegistry,
         final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
         final ServicesManager servicesManager,
         final JwtBuilder accessTokenJwtBuilder) {
-        super(centralAuthenticationService, accessTokenJwtBuilder);
+        super(ticketRegistry, accessTokenJwtBuilder);
         this.idTokenSigningAndEncryptionService = signingAndEncryptionService;
         this.servicesManager = servicesManager;
     }

@@ -1,12 +1,12 @@
 package org.apereo.cas.web.flow.account;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -40,7 +40,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final ServicesManager servicesManager;
 
@@ -52,7 +52,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
         val ticketGrantingTicket = FunctionUtils.doAndHandle(
-            () -> Optional.of(centralAuthenticationService.getTicket(tgt, TicketGrantingTicket.class)),
+            () -> Optional.of(ticketRegistry.getTicket(tgt, TicketGrantingTicket.class)),
             throwable -> Optional.<TicketGrantingTicket>empty()).get();
 
         ticketGrantingTicket.ifPresent(ticket -> {

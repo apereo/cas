@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -53,14 +52,10 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverWithComp
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasDelegatingWebflowEventResolver resolver;
 
-    @Autowired
-    @Qualifier(CentralAuthenticationService.BEAN_NAME)
-    private CentralAuthenticationService cas;
-
     @BeforeEach
     public void setup() {
         super.setup();
-        this.servicesManager.deleteAll();
+        servicesManager.deleteAll();
     }
 
     @Test
@@ -72,7 +67,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverWithComp
 
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        cas.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(Map.of());
         val multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();

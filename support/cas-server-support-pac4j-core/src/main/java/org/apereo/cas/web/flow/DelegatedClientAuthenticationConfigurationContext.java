@@ -11,6 +11,7 @@ import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStr
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -85,6 +86,8 @@ public class DelegatedClientAuthenticationConfigurationContext {
     private final TicketFactory ticketFactory;
 
     private final ConfigurableApplicationContext applicationContext;
+
+    private final TicketRegistry ticketRegistry;
 
     @Builder.Default
     private List<DelegatedClientAuthenticationRequestCustomizer> delegatedClientAuthenticationRequestCustomizers = new ArrayList<>();

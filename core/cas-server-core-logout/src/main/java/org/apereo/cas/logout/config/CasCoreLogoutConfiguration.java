@@ -1,6 +1,5 @@
 package org.apereo.cas.logout.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
@@ -243,12 +242,12 @@ public class CasCoreLogoutConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor(
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
             final LogoutManager logoutManager,
             final ConfigurableApplicationContext applicationContext) {
-            return new DefaultSingleLogoutRequestExecutor(centralAuthenticationService, logoutManager, applicationContext);
+            return new DefaultSingleLogoutRequestExecutor(ticketRegistry, logoutManager, applicationContext);
         }
     }
 }

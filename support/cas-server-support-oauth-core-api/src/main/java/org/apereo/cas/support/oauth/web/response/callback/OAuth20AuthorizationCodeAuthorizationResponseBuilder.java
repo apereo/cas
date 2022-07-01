@@ -51,10 +51,10 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             holder.getClientId(), holder.getClaims(),
             holder.getResponseType(), holder.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
-        configurationContext.getCentralAuthenticationService().addTicket(code);
+        configurationContext.getTicketRegistry().addTicket(code);
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         Optional.ofNullable(ticketGrantingTicket).ifPresent(tgt -> FunctionUtils.doAndHandle(ticket -> {
-            configurationContext.getCentralAuthenticationService().updateTicket(ticket);
+            configurationContext.getTicketRegistry().updateTicket(ticket);
         }, (CheckedFunction<Throwable, TicketGrantingTicket>) throwable -> {
             LOGGER.error("Unable to update ticket-granting-ticket [{}]", ticketGrantingTicket, throwable);
             return null;

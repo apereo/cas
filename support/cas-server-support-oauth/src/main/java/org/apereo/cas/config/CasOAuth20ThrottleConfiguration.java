@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
@@ -56,7 +55,6 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
 public class CasOAuth20ThrottleConfiguration {
-
     @Configuration(value = "CasOAuth20ThrottlePlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
@@ -80,7 +78,6 @@ public class CasOAuth20ThrottleConfiguration {
             };
         }
     }
-
     @Configuration(value = "CasOAuth20ThrottleMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ThrottleMvcConfiguration {
@@ -129,7 +126,6 @@ public class CasOAuth20ThrottleConfiguration {
             };
         }
     }
-
     @Configuration(value = "CasOAuth20ThrottleInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ThrottleInterceptorConfiguration {
@@ -142,19 +138,16 @@ public class CasOAuth20ThrottleConfiguration {
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final TicketRegistry ticketRegistry) {
             val interceptor = new SecurityInterceptor(oauthSecConfig,
                 Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
             interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
 
-            val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+            val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
             interceptor.setSecurityLogic(logic);
             return interceptor;
         }
-
         @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

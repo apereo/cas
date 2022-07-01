@@ -1,11 +1,11 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -35,7 +35,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
 
     private final PasswordManagementService passwordManagementService;
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -49,7 +49,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
 
         var passwordResetTicket = (TransientSessionTicket) null;
         try {
-            passwordResetTicket = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
+            passwordResetTicket = ticketRegistry.getTicket(transientTicket, TransientSessionTicket.class);
             passwordResetTicket.update();
 
             val token = passwordResetTicket.getProperties().get(PasswordManagementService.PARAMETER_TOKEN).toString();
@@ -83,7 +83,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             return error();
         } finally {
             if (passwordResetTicket != null && passwordResetTicket.isExpired()) {
-                centralAuthenticationService.deleteTicket(passwordResetTicket);
+                ticketRegistry.deleteTicket(passwordResetTicket);
             }
         }
     }

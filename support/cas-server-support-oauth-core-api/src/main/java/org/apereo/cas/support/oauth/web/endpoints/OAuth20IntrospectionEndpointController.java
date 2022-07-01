@@ -130,7 +130,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
                 OAuth20Token ticket = null;
                 try {
                     val token = extractAccessTokenFrom(accessToken);
-                    ticket = getConfigurationContext().getCentralAuthenticationService().getTicket(token, OAuth20Token.class);
+                    ticket = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
                 } catch (final InvalidTicketException e) {
                     LOGGER.trace(e.getMessage(), e);
                     LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());

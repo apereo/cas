@@ -239,21 +239,6 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             () -> this.cas.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(SVC1_ID), getAuthenticationContext()));
     }
 
-    @Test
-    public void getTicketGrantingTicketIfTicketIdIsNull() {
-        assertThrows(NullPointerException.class, () -> this.cas.getTicket(null, TicketGrantingTicket.class));
-    }
-
-    @Test
-    public void getTicketGrantingTicketIfTicketIdIsMissing() {
-        assertThrows(InvalidTicketException.class, () -> this.cas.getTicket("TGT-9000", TicketGrantingTicket.class));
-    }
-
-    @Test
-    public void getTicketsWithNoPredicate() {
-        val c = this.cas.getTickets(ticket -> true);
-        assertEquals(c.size(), this.ticketRegMock.getTickets().size());
-    }
 
     @Test
     public void verifyChainedAuthenticationsOnValidation() {

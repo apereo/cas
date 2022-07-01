@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -22,6 +21,7 @@ import org.apereo.cas.mfa.simple.validation.DefaultCasSimpleMultifactorAuthentic
 import org.apereo.cas.mfa.simple.validation.RestfulCasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -56,13 +56,13 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier(TicketFactory.BEAN_NAME)
         final TicketFactory ticketFactory,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService) {
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final TicketRegistry ticketRegistry) {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         return BeanSupplier.of(CasSimpleMultifactorAuthenticationService.class)
             .when(BeanCondition.on("cas.authn.mfa.simple.token.rest.url").isUrl().given(applicationContext.getEnvironment()))
             .supply(() -> new RestfulCasSimpleMultifactorAuthenticationService(simple.getToken().getRest(), ticketFactory))
-            .otherwise(() -> new DefaultCasSimpleMultifactorAuthenticationService(centralAuthenticationService, ticketFactory))
+            .otherwise(() -> new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, ticketFactory))
             .get();
     }
 

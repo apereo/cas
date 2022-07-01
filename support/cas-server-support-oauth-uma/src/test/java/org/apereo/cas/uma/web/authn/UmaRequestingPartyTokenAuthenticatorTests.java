@@ -26,10 +26,10 @@ public class UmaRequestingPartyTokenAuthenticatorTests extends BaseUmaEndpointCo
 
     @Test
     public void verifyOperation() throws Exception {
-        val input = new UmaRequestingPartyTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
+        val input = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
         val token = getAccessToken();
         val credentials = new TokenCredentials(token.getId());
-        centralAuthenticationService.addTicket(token);
+        ticketRegistry.addTicket(token);
         assertThrows(CredentialsException.class, new Executable() {
             @Override
             public void execute() {

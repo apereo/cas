@@ -51,7 +51,7 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
 
     private OidcAccessTokenAuthenticator getAuthenticator() {
         return new OidcAccessTokenAuthenticator(
-            oidcConfigurationContext.getCentralAuthenticationService(), oidcTokenSigningAndEncryptionService,
+            oidcConfigurationContext.getTicketRegistry(), oidcTokenSigningAndEncryptionService,
             servicesManager, oidcAccessTokenJwtBuilder);
     }
 

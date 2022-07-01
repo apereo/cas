@@ -135,16 +135,16 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
                 if (StringUtils.isNotBlank(ticketGrantingTicket)) {
                     LOGGER.trace("Removing existing ticket-granting ticket [{}]", ticketGrantingTicket);
-                    configurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
+                    configurationContext.getTicketRegistry().deleteTicket(ticketGrantingTicket);
                 }
 
                 LOGGER.trace("Attempting to issue a new ticket-granting ticket...");
                 return configurationContext.getCentralAuthenticationService().createTicketGrantingTicket(authenticationResult);
             }
             LOGGER.debug("Updating the existing ticket-granting ticket [{}]...", ticketGrantingTicket);
-            val tgt = configurationContext.getCentralAuthenticationService().getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
+            val tgt = configurationContext.getTicketRegistry().getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
             tgt.getAuthentication().update(authentication);
-            configurationContext.getCentralAuthenticationService().updateTicket(tgt);
+            configurationContext.getTicketRegistry().updateTicket(tgt);
             return tgt;
         } catch (final PrincipalException e) {
             LoggingUtils.error(LOGGER, e);
@@ -172,7 +172,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
         if (authenticationFromTgt == null) {
             LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
             if (StringUtils.isNotBlank(ticketGrantingTicket)) {
-                configurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
+                configurationContext.getTicketRegistry().deleteTicket(ticketGrantingTicket);
             }
             return true;
         }

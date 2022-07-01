@@ -95,7 +95,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the boolean
      */
     protected boolean ensureTicketGrantingTicketIsNotExpired(final OAuth20Token token) {
-        return token.isCode() && getConfigurationContext().getCentralAuthenticationService()
+        return token.isCode() && getConfigurationContext().getTicketRegistry()
                                      .getTicket(token.getTicketGrantingTicket().getId()) != null;
     }
 
@@ -162,7 +162,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     protected OAuth20Token getOAuthTokenFromRequest(final WebContext context) {
         val id = getOAuthParameter(context);
-        return getConfigurationContext().getCentralAuthenticationService().getTicket(id, OAuth20Token.class);
+        return getConfigurationContext().getTicketRegistry().getTicket(id, OAuth20Token.class);
     }
 
     /**

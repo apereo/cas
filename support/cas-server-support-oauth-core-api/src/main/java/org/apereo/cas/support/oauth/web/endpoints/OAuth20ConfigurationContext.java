@@ -145,7 +145,7 @@ public class OAuth20ConfigurationContext {
         return Optional.ofNullable(ticketGrantingTicket)
             .orElseGet(() -> getSessionStore()
                 .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
-                .map(ticketId -> getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                .map(ticketId -> getTicketRegistry().getTicket(ticketId.toString(), TicketGrantingTicket.class))
                 .orElse(null));
     }
 }

@@ -30,6 +30,7 @@ import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactoryCustomi
 import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -90,11 +91,13 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
             val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
             if (replicate) {
-                return new DistributedJEESessionStore(centralAuthenticationService,
+                return new DistributedJEESessionStore(ticketRegistry,
                     ticketFactory, delegatedClientDistributedSessionCookieGenerator);
             }
             return JEESessionStore.INSTANCE;

@@ -19,6 +19,7 @@ import org.apereo.cas.pac4j.client.authz.DefaultDelegatedClientIdentityProviderA
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
@@ -492,6 +493,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier("delegatedClientDistributedSessionStore")
             final SessionStore delegatedClientDistributedSessionStore,
             @Qualifier(TicketFactory.BEAN_NAME)
@@ -527,6 +530,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
                 .serviceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver)
                 .adaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy)
                 .clients(builtClients)
+                .ticketRegistry(ticketRegistry)
                 .applicationContext(applicationContext)
                 .servicesManager(servicesManager)
                 .delegatedAuthenticationPolicyEnforcer(registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer)

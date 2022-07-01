@@ -1,9 +1,9 @@
 package org.apereo.cas.oidc.authn;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -22,9 +22,9 @@ import org.pac4j.core.profile.CommonProfile;
 @Slf4j
 public class OidcClientConfigurationAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticator {
     public OidcClientConfigurationAccessTokenAuthenticator(
-        final CentralAuthenticationService centralAuthenticationService,
+        final TicketRegistry ticketRegistry,
         final JwtBuilder accessTokenJwtBuilder) {
-        super(centralAuthenticationService, accessTokenJwtBuilder);
+        super(ticketRegistry, accessTokenJwtBuilder);
     }
 
     @Override

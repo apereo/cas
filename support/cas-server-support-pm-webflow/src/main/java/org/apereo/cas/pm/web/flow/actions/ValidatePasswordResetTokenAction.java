@@ -1,8 +1,8 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class ValidatePasswordResetTokenAction extends BaseCasWebflowAction {
     private final PasswordManagementService passwordManagementService;
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -34,7 +34,7 @@ public class ValidatePasswordResetTokenAction extends BaseCasWebflowAction {
             val transientTicket = requestContext.getRequestParameters()
                 .get(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
             if (StringUtils.isNotBlank(transientTicket)) {
-                val tst = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
+                val tst = ticketRegistry.getTicket(transientTicket, TransientSessionTicket.class);
                 val token = tst.getProperties().get(PasswordManagementService.PARAMETER_TOKEN).toString();
                 val username = passwordManagementService.parseToken(token);
                 if (StringUtils.isBlank(username)) {

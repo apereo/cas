@@ -15,6 +15,9 @@
     "--cas.audit.engine.enabled=true",
     "--cas.audit.slf4j.enabled=false",
 
+    "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
+    "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ",
+    
     "--cas.audit.jdbc.schedule.enabled=true",
     "--cas.audit.jdbc.schedule.start-delay=PT10S",
     "--cas.audit.jdbc.schedule.repeat-interval=PT5S",

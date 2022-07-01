@@ -1,6 +1,5 @@
 package org.apereo.cas.mfa.simple;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -51,11 +50,6 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     @Autowired
     @Qualifier("casSimpleMultifactorAuthenticationHandler")
     private AuthenticationHandler casSimpleMultifactorAuthenticationHandler;
-
-    @Autowired
-    @Qualifier(CentralAuthenticationService.BEAN_NAME)
-    private CentralAuthenticationService centralAuthenticationService;
-
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
@@ -126,7 +120,7 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
         val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
         ticket.markTicketExpired();
 
-        val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(centralAuthenticationService, defaultTicketFactory);
+        val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, defaultTicketFactory);
         val handler = new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple(),
             servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));

@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
-import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
@@ -51,7 +51,7 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
             LOGGER.info("Authentication is at a public workstation. SSO cookie will not be generated");
         } else if (this.singleSignOnParticipationStrategy.supports(ssoRequest)) {
             val createCookie = singleSignOnParticipationStrategy.isCreateCookieOnRenewedAuthentication(ssoRequest) == TriStateBoolean.TRUE
-                || this.singleSignOnParticipationStrategy.isParticipating(ssoRequest);
+                               || this.singleSignOnParticipationStrategy.isParticipating(ssoRequest);
             if (createCookie) {
                 LOGGER.debug("Setting ticket-granting cookie for current session linked to [{}].", ticketGrantingTicketId);
                 val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
@@ -60,13 +60,13 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
                     CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), ticketGrantingTicketId);
             } else {
                 LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
-                    + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");
+                            + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");
             }
         }
 
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {
             LOGGER.debug("Ticket-granting ticket from ticket-granting cookie does not match the ticket-granting ticket from context");
-            this.centralAuthenticationService.deleteTicket(ticketGrantingTicketValueFromCookie);
+            ticketRegistry.deleteTicket(ticketGrantingTicketValueFromCookie);
         }
 
         return success();

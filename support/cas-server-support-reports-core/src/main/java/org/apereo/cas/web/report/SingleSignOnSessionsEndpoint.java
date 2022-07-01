@@ -1,11 +1,11 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.util.LoggingUtils;
@@ -56,16 +56,16 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
 
     public SingleSignOnSessionsEndpoint(
-        final CentralAuthenticationService centralAuthenticationService,
+        final TicketRegistry ticketRegistry,
         final CasConfigurationProperties casProperties,
         final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
         super(casProperties);
-        this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketRegistry = ticketRegistry;
         this.singleLogoutRequestExecutor = singleLogoutRequestExecutor;
     }
 
@@ -189,7 +189,13 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
         if (StringUtils.isNotBlank(username)) {
             val sessionsMap = new HashMap<String, Object>(1);
-            val tickets = centralAuthenticationService.getSessionsFor(username, from, count);
+            var tickets = ticketRegistry.getSessionsFor(username);
+            if (from >= 0) {
+                tickets = tickets.skip(from);
+            }
+            if (count >= 0) {
+                tickets = tickets.limit(count);
+            }
             tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
             return sessionsMap;
         }
@@ -292,7 +298,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     }
 
     private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(final long from, final long count) {
-        return centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired(), from, count);
+        var tickets = ticketRegistry.getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
+        if (from >= 0) {
+            tickets = tickets.skip(from);
+        }
+        if (count >= 0) {
+            tickets = tickets.limit(count);
+        }
+        return tickets;
     }
 
 }

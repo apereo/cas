@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.Authentication;
@@ -11,6 +10,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -37,7 +37,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     static final String REQUEST_PARAMETER_STATE = "state";
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final MultifactorAuthenticationProviderBean<
         DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean;
@@ -46,11 +46,11 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     public DuoSecurityUniversalPromptValidateLoginAction(
         final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-        final CentralAuthenticationService centralAuthenticationService,
+        final TicketRegistry ticketRegistry,
         final MultifactorAuthenticationProviderBean duoProviderBean,
         final AuthenticationSystemSupport authenticationSystemSupport) {
         super(duoAuthenticationWebflowEventResolver);
-        this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketRegistry = ticketRegistry;
         this.duoProviderBean = duoProviderBean;
         this.authenticationSystemSupport = authenticationSystemSupport;
     }
@@ -63,7 +63,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             LOGGER.trace("Received Duo Security state [{}]", duoState);
             var ticket = (TransientSessionTicket) null;
             try {
-                ticket = centralAuthenticationService.getTicket(duoState, TransientSessionTicket.class);
+                ticket = ticketRegistry.getTicket(duoState, TransientSessionTicket.class);
                 val authentication = ticket.getProperty(Authentication.class.getSimpleName(), Authentication.class);
                 populateContextWithCredential(requestContext, ticket, authentication);
                 populateContextWithAuthentication(requestContext, ticket);
@@ -79,7 +79,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                     val credential = ticket.getProperty(Credential.class.getSimpleName(), Credential.class);
                     WebUtils.putCredential(requestContext, credential);
                 }
-                centralAuthenticationService.deleteTicket(duoState);
+                ticketRegistry.deleteTicket(duoState);
             }
         }
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP);

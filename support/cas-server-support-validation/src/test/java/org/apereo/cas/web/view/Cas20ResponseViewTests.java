@@ -71,6 +71,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
+            .ticketRegistry(getTicketRegistry())
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
             .servicesManager(getServicesManager())

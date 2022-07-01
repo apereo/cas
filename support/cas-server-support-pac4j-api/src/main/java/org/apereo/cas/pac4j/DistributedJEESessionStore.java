@@ -1,9 +1,9 @@
 package org.apereo.cas.pac4j;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -37,7 +37,7 @@ public class DistributedJEESessionStore implements SessionStore {
 
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final TicketFactory ticketFactory;
 
@@ -82,14 +82,14 @@ public class DistributedJEESessionStore implements SessionStore {
         val ticket = getTransientSessionTicketForSession(context);
         if (value == null && ticket != null) {
             ticket.getProperties().remove(key);
-            FunctionUtils.doUnchecked(s -> this.centralAuthenticationService.updateTicket(ticket));
+            FunctionUtils.doUnchecked(s -> ticketRegistry.updateTicket(ticket));
         } else if (ticket == null) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val created = transientFactory.create(sessionId, properties);
-            FunctionUtils.doUnchecked(s -> this.centralAuthenticationService.addTicket(created));
+            FunctionUtils.doUnchecked(s -> ticketRegistry.addTicket(created));
         } else {
             ticket.getProperties().putAll(properties);
-            FunctionUtils.doUnchecked(s -> this.centralAuthenticationService.updateTicket(ticket));
+            FunctionUtils.doUnchecked(s -> ticketRegistry.updateTicket(ticket));
         }
     }
 
@@ -98,7 +98,7 @@ public class DistributedJEESessionStore implements SessionStore {
         val sessionId = fetchSessionIdFromContext(webContext);
         if (sessionId != null) {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
-            FunctionUtils.doUnchecked(s -> centralAuthenticationService.deleteTicket(ticketId));
+            FunctionUtils.doUnchecked(s -> ticketRegistry.deleteTicket(ticketId));
 
             val context = JEEContext.class.cast(webContext);
             cookieGenerator.removeCookie(context.getNativeResponse());
@@ -149,7 +149,7 @@ public class DistributedJEESessionStore implements SessionStore {
                 val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
 
                 LOGGER.trace("fetching ticket: [{}]", ticketId);
-                return centralAuthenticationService.getTicket(ticketId, TransientSessionTicket.class);
+                return ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
             }
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

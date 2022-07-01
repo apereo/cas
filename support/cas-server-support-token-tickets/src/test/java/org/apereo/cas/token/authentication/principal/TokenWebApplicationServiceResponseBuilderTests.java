@@ -1,7 +1,6 @@
 package org.apereo.cas.token.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -32,6 +31,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -108,8 +108,8 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired
-    @Qualifier(CentralAuthenticationService.BEAN_NAME)
-    private CentralAuthenticationService cas;
+    @Qualifier(TicketRegistry.BEAN_NAME)
+    private TicketRegistry ticketRegistry;
 
     @Test
     public void verifyDecrypt() {
@@ -133,8 +133,8 @@ public class TokenWebApplicationServiceResponseBuilderTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(user);
         val tgt = new MockTicketGrantingTicket(authentication);
         val st = new MockServiceTicket("ST-123456", service, tgt);
-        cas.addTicket(tgt);
-        cas.addTicket(st);
+        ticketRegistry.addTicket(tgt);
+        ticketRegistry.addTicket(st);
 
         val result = responseBuilder.build(service, st.getId(), authentication);
         assertNotNull(result);

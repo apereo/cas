@@ -65,7 +65,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
         try {
             val factory = (OAuth20DeviceUserCodeFactory) getConfigurationContext().getTicketFactory().get(OAuth20DeviceUserCode.class);
             val codeId = factory.generateDeviceUserCode(userCode);
-            val deviceUserCode = getConfigurationContext().getCentralAuthenticationService().getTicket(codeId, OAuth20DeviceUserCode.class);
+            val deviceUserCode = getConfigurationContext().getTicketRegistry().getTicket(codeId, OAuth20DeviceUserCode.class);
             if (deviceUserCode.isUserCodeApproved()) {
                 return getModelAndViewForFailure("codeapproved");
             }

@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,7 +9,6 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -45,11 +43,11 @@ import static org.mockito.Mockito.*;
 public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
     private Action genericSuccessViewAction;
-    
+
     @BeforeEach
     public void setup() {
         casProperties.getView().setDefaultRedirectUrl(null);
@@ -68,7 +66,7 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
         val context = new MockRequestContext();
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        getCentralAuthenticationService().addTicket(tgt);
+        getTicketRegistry().addTicket(tgt);
 
         context.setExternalContext(new MockExternalContext());
         RequestContextHolder.setRequestContext(context);
@@ -80,10 +78,9 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
         val list = WebUtils.getAuthorizedServices(context);
         assertEquals(1, list.size());
     }
-    
+
     @Test
     public void verifyRedirect() throws Exception {
-        val cas = mock(CentralAuthenticationService.class);
         val servicesManager = mock(ServicesManager.class);
         val serviceFactory = mock(ServiceFactory.class);
 
@@ -93,7 +90,7 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
         casProperties.getView().setDefaultRedirectUrl(service.getId());
-        val action = new GenericSuccessViewAction(cas, servicesManager, serviceFactory, casProperties);
+        val action = new GenericSuccessViewAction(getTicketRegistry(), servicesManager, serviceFactory, casProperties);
         val context = new MockRequestContext();
         context.setExternalContext(new MockExternalContext());
         RequestContextHolder.setRequestContext(context);
@@ -106,7 +103,6 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
 
     @Test
     public void verifyAuthn() throws Exception {
-        val cas = mock(CentralAuthenticationService.class);
         val servicesManager = mock(ServicesManager.class);
         val serviceFactory = mock(ServiceFactory.class);
 
@@ -115,14 +111,14 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
-        val action = new GenericSuccessViewAction(cas, servicesManager, serviceFactory, casProperties);
+        val action = new GenericSuccessViewAction(getTicketRegistry(), servicesManager, serviceFactory, casProperties);
         val context = new MockRequestContext();
         context.setExternalContext(new MockExternalContext());
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val tgt = new MockTicketGrantingTicket(CoreAuthenticationTestUtils.getAuthentication());
-        when(cas.getTicket(any(String.class), any())).thenReturn(tgt);
+        getTicketRegistry().addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
         val result = action.execute(context);
@@ -131,8 +127,7 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyValidPrincipal() throws InvalidTicketException {
-        val cas = mock(CentralAuthenticationService.class);
+    public void verifyValidPrincipal() throws Exception {
         val mgr = mock(ServicesManager.class);
         val factory = mock(ServiceFactory.class);
 
@@ -141,8 +136,8 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(authn);
 
-        when(cas.getTicket(any(String.class), any())).thenReturn(tgt);
-        val action = new GenericSuccessViewAction(cas, mgr, factory, casProperties);
+        getTicketRegistry().addTicket(tgt);
+        val action = new GenericSuccessViewAction(getTicketRegistry(), mgr, factory, casProperties);
         val p = action.getAuthentication("TGT-1");
         assertNotNull(p);
         assertTrue(p.isPresent());
@@ -150,12 +145,10 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyPrincipalCanNotBeDetermined() throws InvalidTicketException {
-        val cas = mock(CentralAuthenticationService.class);
+    public void verifyPrincipalCanNotBeDetermined() throws Exception {
         val mgr = mock(ServicesManager.class);
         val factory = mock(ServiceFactory.class);
-        when(cas.getTicket(any(String.class), any())).thenThrow(new InvalidTicketException("TGT-1"));
-        val action = new GenericSuccessViewAction(cas, mgr, factory, casProperties);
+        val action = new GenericSuccessViewAction(getTicketRegistry(), mgr, factory, casProperties);
         val p = action.getAuthentication("TGT-1");
         assertNotNull(p);
         assertFalse(p.isPresent());

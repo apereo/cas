@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
@@ -23,7 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class FetchTicketGrantingTicketAction extends BaseCasWebflowAction {
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
@@ -34,7 +34,7 @@ public class FetchTicketGrantingTicketAction extends BaseCasWebflowAction {
         Optional.ofNullable(cookie).ifPresent(c -> {
             LOGGER.debug("Attempting to locate ticket-granting ticket from cookie value [{}]", cookie);
             val ticket = FunctionUtils.doAndHandle(
-                () -> centralAuthenticationService.getTicket(c, TicketGrantingTicket.class), throwable -> null).get();
+                () -> ticketRegistry.getTicket(c, TicketGrantingTicket.class), throwable -> null).get();
             if (ticket != null) {
                 LOGGER.debug("Found ticket-granting ticket [{}]", ticket.getId());
                 WebUtils.putTicketGrantingTicket(requestContext, ticket);

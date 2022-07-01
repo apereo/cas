@@ -22,6 +22,7 @@ import org.apereo.cas.support.saml.web.SamlValidateEndpoint;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -222,6 +223,8 @@ public class SamlConfiguration {
             final ProxyHandler proxy20Handler,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("requestedContextValidator")
@@ -233,6 +236,7 @@ public class SamlConfiguration {
             @Qualifier("serviceValidationAuthorizers")
             final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
             val context = ServiceValidateConfigurationContext.builder()
+                .ticketRegistry(ticketRegistry)
                 .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)

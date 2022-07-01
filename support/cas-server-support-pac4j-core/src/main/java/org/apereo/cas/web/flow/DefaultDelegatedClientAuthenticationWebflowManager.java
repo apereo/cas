@@ -84,7 +84,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         val ticket = retrieveSessionTicketViaClientId(webContext, clientId);
         restoreDelegatedAuthenticationRequest(requestContext, webContext, ticket, client);
         LOGGER.debug("Removing delegated client identifier [{}] from registry", ticket.getId());
-        configContext.getCentralAuthenticationService().deleteTicket(ticket.getId());
+        configContext.getTicketRegistry().deleteTicket(ticket.getId());
         return ticket.getService();
 
     }
@@ -165,7 +165,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
 
         LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
             ticket.getId(), ticket.getService(), ticket.getProperties());
-        configContext.getCentralAuthenticationService().addTicket(ticket);
+        configContext.getTicketRegistry().addTicket(ticket);
         webContext.setRequestAttribute(PARAMETER_CLIENT_ID, ticket.getId());
 
         if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
@@ -228,7 +228,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      */
     protected TransientSessionTicket retrieveSessionTicketViaClientId(final WebContext webContext, final String clientId) {
         try {
-            val ticket = configContext.getCentralAuthenticationService().getTicket(clientId, TransientSessionTicket.class);
+            val ticket = configContext.getTicketRegistry().getTicket(clientId, TransientSessionTicket.class);
             LOGGER.debug("Located delegated authentication client identifier as [{}]", ticket.getId());
             return ticket;
         } catch (final Exception e) {

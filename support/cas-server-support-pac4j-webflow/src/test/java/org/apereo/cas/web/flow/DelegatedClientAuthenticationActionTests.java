@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -14,6 +13,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
@@ -91,9 +91,8 @@ public class DelegatedClientAuthenticationActionTests {
     private DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Autowired
-    @Qualifier(CentralAuthenticationService.BEAN_NAME)
-    private CentralAuthenticationService centralAuthenticationService;
-
+    @Qualifier(TicketRegistry.BEAN_NAME)
+    private TicketRegistry ticketRegistry;
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
     private Action delegatedAuthenticationCreateClientsAction;
@@ -286,10 +285,10 @@ public class DelegatedClientAuthenticationActionTests {
         setExternalContext(context.getExternalContext());
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        centralAuthenticationService.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, delegatedAuthenticationAction.execute(context).getId());
-        assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(tgt.getId()));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(tgt.getId()));
     }
 
     @Test
@@ -313,7 +312,7 @@ public class DelegatedClientAuthenticationActionTests {
         setExternalContext(context.getExternalContext());
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        centralAuthenticationService.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, delegatedAuthenticationAction.execute(context).getId());
     }
@@ -340,7 +339,7 @@ public class DelegatedClientAuthenticationActionTests {
         setExternalContext(context.getExternalContext());
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        centralAuthenticationService.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket("otheruser"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_STOP, delegatedAuthenticationAction.execute(context).getId());
     }
@@ -414,11 +413,11 @@ public class DelegatedClientAuthenticationActionTests {
 
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
             Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of("FacebookClient")));
-        centralAuthenticationService.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
         assertThrows(UnauthorizedServiceException.class, () -> delegatedAuthenticationAction.execute(context).getId());
-        assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(tgt.getId()));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(tgt.getId()));
     }
 
     private void assertStartAuthentication(final Service service) throws Exception {

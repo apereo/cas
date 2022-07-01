@@ -1,9 +1,10 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -38,7 +39,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends Abstract
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Mock
-    private CentralAuthenticationService centralAuthenticationService;
+    private TicketRegistry ticketRegistry;
 
     @BeforeEach
     public void initialize() {
@@ -47,29 +48,27 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends Abstract
 
     @Test
     public void verifyLoadWithBadTicketInSession() {
-        when(centralAuthenticationService.getTicket(anyString(), any())).thenThrow(new InvalidTicketException("bad ticket"));
+        when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenThrow(new InvalidTicketException("bad ticket"));
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, new BasicUserProfile(), false);
         JEESessionStore.INSTANCE.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, UUID.randomUUID().toString());
-        val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator,
-            ticketRegistry, centralAuthenticationService);
+        val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
         assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
     }
 
     @Test
     public void verifyLoadWithValidTicket() {
-        when(centralAuthenticationService.getTicket(anyString(), any())).thenReturn(new MockTicketGrantingTicket("casuser"));
+        when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenReturn(new MockTicketGrantingTicket("casuser"));
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, new BasicUserProfile(), false);
         JEESessionStore.INSTANCE.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, UUID.randomUUID().toString());
-        val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator,
-            ticketRegistry, centralAuthenticationService);
+        val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
         assertFalse(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
     }
 
@@ -81,8 +80,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends Abstract
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, new BasicUserProfile(), false);
-        val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator,
-            ticketRegistry, centralAuthenticationService);
+        val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
         assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
     }
 }

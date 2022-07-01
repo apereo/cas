@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
@@ -45,6 +46,8 @@ public class ServiceValidateConfigurationContext {
     private final CasConfigurationProperties casProperties;
 
     private final ServiceValidationViewFactory validationViewFactory;
+
+    private final TicketRegistry ticketRegistry;
 
     private ProxyHandler proxyHandler;
 }

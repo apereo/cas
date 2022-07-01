@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.web;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -32,9 +31,8 @@ public class OidcAuthenticationAuthorizeSecurityLogic extends OAuth20TicketGrant
 
     public OidcAuthenticationAuthorizeSecurityLogic(final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                                     final TicketRegistry ticketRegistry,
-                                                    final CentralAuthenticationService centralAuthenticationService,
                                                     final OAuth20RequestParameterResolver parameterResolver) {
-        super(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+        super(ticketGrantingTicketCookieGenerator, ticketRegistry);
         this.oauthRequestParameterResolver = parameterResolver;
     }
 
