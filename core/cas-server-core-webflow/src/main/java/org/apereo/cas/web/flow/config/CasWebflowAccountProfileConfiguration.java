@@ -51,12 +51,14 @@ public class CasWebflowAccountProfileConfiguration {
     public CasWebflowConfigurer accountProfileWebflowConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry accountProfileFlowRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         return new AccountProfileWebflowConfigurer(flowBuilderServices,
-            accountProfileFlowRegistry, applicationContext, casProperties);
+            accountProfileFlowRegistry, loginFlowRegistry, applicationContext, casProperties);
     }
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -238,7 +238,7 @@ public class CasCoreLogoutConfiguration {
     @Configuration(value = "CasCoreLogoutExecutorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreLogoutExecutorConfiguration {
-        @ConditionalOnMissingBean(name = "defaultSingleLogoutRequestExecutor")
+        @ConditionalOnMissingBean(name = SingleLogoutRequestExecutor.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor(

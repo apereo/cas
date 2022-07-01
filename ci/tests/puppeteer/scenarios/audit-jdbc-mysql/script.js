@@ -66,7 +66,7 @@ async function callAuditLog() {
     await callRegisteredServices();
 
     console.log("Waiting for audit log cleaner to resume...")
-    await cas.sleep(5000);
+    await cas.sleep(2000);
     
     await browser.close();
 

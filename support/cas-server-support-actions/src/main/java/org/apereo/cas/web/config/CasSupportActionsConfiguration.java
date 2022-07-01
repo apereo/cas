@@ -15,6 +15,7 @@ import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -68,6 +69,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
 
+import java.util.List;
+
 /**
  * This is {@link CasSupportActionsConfiguration}.
  *
@@ -102,9 +105,7 @@ public class CasSupportActionsConfiguration {
             final TicketRegistry ticketRegistry,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
-            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
 
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
@@ -183,8 +184,6 @@ public class CasSupportActionsConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy) {
 
@@ -225,8 +224,6 @@ public class CasSupportActionsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(TicketRegistry.BEAN_NAME)
@@ -253,8 +250,6 @@ public class CasSupportActionsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(TicketRegistry.BEAN_NAME)
@@ -407,9 +402,7 @@ public class CasSupportActionsConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -454,14 +447,14 @@ public class CasSupportActionsConfiguration {
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
-            final PrincipalElectionStrategy principalElectionStrategy) {
-
+            final PrincipalElectionStrategy principalElectionStrategy,
+            final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService,
                     ticketRegistrySupport, authenticationRequestServiceSelectionStrategies,
-                    servicesManager, principalElectionStrategy))
+                    servicesManager, principalElectionStrategy, serviceTicketAuthorities))
                 .withId(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
                 .build()
                 .get();
@@ -497,8 +490,6 @@ public class CasSupportActionsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(TicketRegistry.BEAN_NAME)
@@ -524,9 +515,7 @@ public class CasSupportActionsConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -550,7 +539,7 @@ public class CasSupportActionsConfiguration {
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("defaultSingleLogoutRequestExecutor")
+            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
             final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
@@ -602,8 +591,6 @@ public class CasSupportActionsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
@@ -637,12 +624,13 @@ public class CasSupportActionsConfiguration {
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
-            final PrincipalElectionStrategy principalElectionStrategy) {
+            final PrincipalElectionStrategy principalElectionStrategy,
+            final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
-                    ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy))
+                    ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy, serviceTicketAuthorities))
                 .withId(CasWebflowConstants.ACTION_ID_SERVICE_WARNING)
                 .build()
                 .get();
@@ -678,9 +666,7 @@ public class CasSupportActionsConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            final CasConfigurationProperties casProperties,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final CasConfigurationProperties casProperties) {
 
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)

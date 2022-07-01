@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -322,6 +323,13 @@ public class CasCoreTicketsConfiguration {
             return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy,
                 uniqueIdGeneratorsMap, serviceTicketSessionTrackingPolicy,
                 protocolTicketCipherExecutor, servicesManager);
+        }
+
+        @ConditionalOnMissingBean(name = "defaultServiceTicketGeneratorAuthority")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceTicketGeneratorAuthority defaultServiceTicketGeneratorAuthority() {
+            return ServiceTicketGeneratorAuthority.allow();
         }
     }
 

@@ -192,7 +192,7 @@ public class CasRestConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
             final RestAuthenticationService restAuthenticationService,
-            @Qualifier("defaultSingleLogoutRequestExecutor")
+            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
             final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
             return new TicketGrantingTicketResource(restAuthenticationService,
                 centralAuthenticationService, ticketGrantingTicketResourceEntityResponseFactory,

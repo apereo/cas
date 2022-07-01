@@ -13,6 +13,12 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface SingleLogoutRequestExecutor {
+
+    /**
+     * Bean name for default impl.
+     */
+    String BEAN_NAME = "defaultSingleLogoutRequestExecutor";
+
     /**
      * Execute.
      *

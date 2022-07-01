@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Julien Huon
  * @since 6.3.0
  */
-@Tag("WebflowConfig")
+@Tag("Webflow")
 public class PasswordManagementSingleSignOnParticipationStrategyTests extends BasePasswordManagementActionTests {
 
     @Autowired
