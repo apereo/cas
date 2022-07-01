@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.bypass.audit.MultifactorAuthenticationProvi
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeaturesEnabled;
 
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -23,8 +24,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Audit)
+@ConditionalOnFeaturesEnabled({
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Audit),
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication)
+})
 @AutoConfiguration
 public class CasCoreMultifactorAuthenticationAuditConfiguration {
     @Bean
