@@ -25,6 +25,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 public class CasFeatureEnabledConditionTests {
+    @ConditionalOnFeaturesEnabled({
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature3"),
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature4")
+    })
+    @TestConfiguration(value = "CasFeatureModuleMultipleConditionsTestConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasFeatureModuleMultipleConditionsTestConfiguration {
+        @Bean
+        public String beanMultiple() {
+            return "beanMultiple";
+        }
+    }
 
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy,
         module = "feature3", enabledByDefault = false)
@@ -113,5 +125,24 @@ public class CasFeatureEnabledConditionTests {
         }
     }
 
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @SpringBootTest(classes = {
+        RefreshAutoConfiguration.class,
+        CasFeatureModuleMultipleConditionsTestConfiguration.class
+    })
+    @TestPropertySource(properties = {
+        "CasFeatureModule.AcceptableUsagePolicy.feature3.enabled=true",
+        "CasFeatureModule.AcceptableUsagePolicy.feature4.enabled=true"
+    })
+    public class FeatureMultipleConditionsTests {
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+
+        @Test
+        public void verifyOperation() {
+            assertTrue(applicationContext.containsBean("beanMultiple"));
+        }
+    }
 
 }
