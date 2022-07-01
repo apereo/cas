@@ -1,12 +1,19 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +32,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AccountProfilePreparePasswordManagementActionTests}.
@@ -42,8 +50,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasWebflowAccountProfileConfiguration.class)
 public class AccountProfilePreparePasswordManagementActionTests extends BasePasswordManagementActionTests {
     @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)
     private Action prepareAccountProfilePasswordMgmtAction;
+
+    @Autowired
+    @Qualifier("accountProfileServiceTicketGeneratorAuthority")
+    private ServiceTicketGeneratorAuthority accountProfileServiceTicketGeneratorAuthority;
 
     @Test
     public void verifyOperation() throws Exception {
@@ -62,5 +77,14 @@ public class AccountProfilePreparePasswordManagementActionTests extends BasePass
         assertNull(result);
         assertTrue(WebUtils.isPasswordManagementEnabled(context));
         assertNotNull(PasswordManagementWebflowUtils.getPasswordResetQuestions(context, Map.class));
+
+        assertEquals(0, accountProfileServiceTicketGeneratorAuthority.getOrder());
+        assertFalse(accountProfileServiceTicketGeneratorAuthority.shouldGenerate(
+            mock(AuthenticationResult.class), mock(Service.class)));
+        val url = StringUtils.appendIfMissing(casProperties.getServer().getPrefix(), "/")
+            .concat(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        val service = RegisteredServiceTestUtils.getService(url);
+        assertTrue(accountProfileServiceTicketGeneratorAuthority.supports(
+            mock(AuthenticationResult.class), service));
     }
 }

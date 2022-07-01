@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.login;
 
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -36,7 +35,7 @@ public class TicketGrantingTicketCheckAction extends BaseCasWebflowAction {
             val ticket = ticketRegistry.getTicket(tgtId, Ticket.class);
             LOGGER.trace("Located ticket with id [{}]", ticket.getId());
             return new Event(this, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID);
-        } catch (final AbstractTicketException e) {
+        } catch (final Exception e) {
             LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e.getMessage());
         }
         return new Event(this, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_INVALID);

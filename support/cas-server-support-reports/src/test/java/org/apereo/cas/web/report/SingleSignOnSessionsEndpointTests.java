@@ -45,7 +45,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     private SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint;
 
     @Autowired
-    @Qualifier("defaultSingleLogoutRequestExecutor")
+    @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
     private SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor;
 
     @Autowired

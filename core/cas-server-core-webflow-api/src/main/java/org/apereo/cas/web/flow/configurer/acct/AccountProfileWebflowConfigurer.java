@@ -1,13 +1,17 @@
 package org.apereo.cas.web.flow.configurer.acct;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
@@ -17,12 +21,15 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 6.6.0
  */
 public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigurer {
+    private final FlowDefinitionRegistry loginFlowRegistry;
     public AccountProfileWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                            final FlowDefinitionRegistry mainFlowDefinitionRegistry,
+                                           final FlowDefinitionRegistry loginFlowRegistry,
                                            final ConfigurableApplicationContext applicationContext,
                                            final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, mainFlowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder());
+        this.loginFlowRegistry = loginFlowRegistry;
     }
 
     @Override
@@ -50,11 +57,18 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         createTransitionForState(validate, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID, myAccountView.getId());
         createStateDefaultTransition(validate, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN);
 
-        val view = createExternalRedirectViewFactory(String.format("'%s'", casProperties.getServer().getLoginUrl()));
+        val loginFlow = getFlow(loginFlowRegistry, CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val serviceUrl = StringUtils.appendIfMissing(casProperties.getServer().getPrefix(), "/").concat(accountFlow.getId());
+        val view = createExternalRedirectViewFactory(String.format("'%s?%s=%s'",
+            loginFlow.getId(), CasProtocolConstants.PARAMETER_SERVICE, serviceUrl));
         createEndState(accountFlow, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN, view);
 
         accountFlow.setStartState(validate);
         mainFlowDefinitionRegistry.registerFlowDefinition(accountFlow);
+        
+        val successView = getState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS, EndState.class);
+        val expression = createExpression(String.format("'%s'", accountFlow.getId()));
+        successView.getEntryActionList().add(new ExternalRedirectAction(expression));
     }
 
 }

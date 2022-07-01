@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.acct.AccountProfileServiceTicketGeneratorAuthority;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -25,6 +26,7 @@ import org.apereo.cas.pm.web.flow.actions.ValidatePasswordResetTokenAction;
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsAction;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -351,6 +353,14 @@ public class PasswordManagementWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     public static class PasswordManagementAccountProfileConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "accountProfileServiceTicketGeneratorAuthority")
+        public ServiceTicketGeneratorAuthority accountProfileServiceTicketGeneratorAuthority(
+            final CasConfigurationProperties casProperties) {
+            return new AccountProfileServiceTicketGeneratorAuthority(casProperties);
+        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

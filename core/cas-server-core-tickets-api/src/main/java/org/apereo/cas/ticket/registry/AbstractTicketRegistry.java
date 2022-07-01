@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.EncodedTicket;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -56,21 +57,27 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        return getTicket(ticketId, ticket -> {
-            if (ticket != null && ticket.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and is now removed from the ticket registry", ticket.getId());
+        val ticketResult = getTicket(ticketId, ticket -> {
+            if (ticket.isExpired()) {
+                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticket.getId());
                 deleteSingleTicket(ticketId);
                 return false;
             }
             return true;
         });
+        if (ticketResult == null) {
+            LOGGER.debug("Ticket [{}] cannot be found in the ticket registry.", ticketId);
+            throw new InvalidTicketException(ticketId);
+        }
+        return ticketResult;
     }
 
     @Override
     public <T extends Ticket> T getTicket(final String ticketId, final @NonNull Class<T> clazz) {
         val ticket = getTicket(ticketId);
         if (ticket == null) {
-            return null;
+            LOGGER.debug("Ticket [{}] with type [{}] cannot be found", ticketId, clazz.getSimpleName());
+            throw new InvalidTicketException(ticketId);
         }
         if (!clazz.isAssignableFrom(ticket.getClass())) {
             throw new ClassCastException("Ticket [" + ticket.getId() + " is of type "

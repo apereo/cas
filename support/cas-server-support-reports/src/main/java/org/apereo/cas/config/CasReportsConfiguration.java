@@ -163,7 +163,7 @@ public class CasReportsConfiguration {
         final TicketRegistry ticketRegistry,
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("defaultSingleLogoutRequestExecutor")
+        @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
         final ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor,
         final CasConfigurationProperties casProperties) {
         return new SingleSignOnSessionsEndpoint(ticketRegistry,

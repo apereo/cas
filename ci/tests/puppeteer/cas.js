@@ -9,8 +9,8 @@ const fs = require("fs");
 const {ImgurClient} = require('imgur');
 const path = require("path");
 const mockServer = require('mock-json-server');
-const { Buffer } = require('buffer');
-const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
+const {Buffer} = require('buffer');
+const {PuppeteerScreenRecorder} = require('puppeteer-screen-recorder');
 const ps = require("ps-node");
 const NodeStaticAuth = require("node-static-auth");
 const operativeSystemModule = require("os");
@@ -31,19 +31,19 @@ exports.browserOptions = (opt) => ({
     ...opt
 });
 
-exports.logy = async(text) => {
+exports.logy = async (text) => {
     console.log(colors.yellow(text));
 }
 
-exports.logb = async(text) => {
+exports.logb = async (text) => {
     console.log(colors.blue(text));
 }
 
-exports.logg = async(text) => {
+exports.logg = async (text) => {
     console.log(colors.green(text));
 }
 
-exports.logr = async(text) => {
+exports.logr = async (text) => {
     console.log(colors.red(text));
 }
 
@@ -66,7 +66,7 @@ exports.click = async (page, button) => {
     }, button);
 }
 
-exports.asciiart = async(text) => {
+exports.asciiart = async (text) => {
     await this.logb(figlet.textSync(text));
 }
 
@@ -126,7 +126,7 @@ exports.loginWith = async (page, user, password,
 
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password);
-    
+
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 }
@@ -158,7 +158,7 @@ exports.assertInvisibility = async (page, selector) => {
 }
 
 
-exports.assertCookie = async (page, present= true, cookieName = "TGC") => {
+exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
     const theCookie = (await page.cookies()).filter(value => {
         console.log(`Checking cookie ${value.name}`)
         return value.name === cookieName
@@ -203,7 +203,7 @@ exports.newPage = async (browser) => {
                 this.logg(`Console ${message.type()}: ${message.text()}`)
             }
         })
-        .on('pageerror', ({ message }) => this.logr(`Console: ${message}`));
+        .on('pageerror', ({message}) => this.logr(`Console: ${message}`));
     return page;
 }
 
@@ -227,14 +227,18 @@ exports.sleep = async (ms) =>
         setTimeout(resolve, ms);
     })
 
-exports.assertTicketParameter = async (page) => {
+exports.assertTicketParameter = async (page, found = true) => {
     console.log(`Page URL: ${page.url()}`);
     let result = new URL(page.url());
-    assert(result.searchParams.has("ticket"))
-    let ticket = result.searchParams.get("ticket");
-    console.log(`Ticket: ${ticket}`);
-    assert(ticket != null);
-    return ticket;
+    if (found) {
+        assert(result.searchParams.has("ticket"))
+        let ticket = result.searchParams.get("ticket");
+        console.log(`Ticket: ${ticket}`);
+        assert(ticket != null);
+        return ticket;
+    }
+    assert(result.searchParams.has("ticket") === false)
+    return null;
 }
 
 exports.doRequest = async (url, method = "GET", headers = {},
@@ -278,7 +282,7 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         })
     });
     let config = {
-      headers: headers
+        headers: headers
     };
     if (responseType !== undefined) {
         config["responseType"] = responseType
@@ -334,7 +338,7 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         });
 }
 
-exports.runGradle = async(workdir, opts = [], exitFunc) => {
+exports.runGradle = async (workdir, opts = [], exitFunc) => {
     let gradleCmd = './gradlew';
     if (operativeSystemModule.type() === 'Windows_NT') {
         gradleCmd = 'gradlew.bat';
@@ -360,7 +364,7 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     });
 }
 
-exports.stopGradleApp = async (gradleDir, deleteDir= true) => {
+exports.stopGradleApp = async (gradleDir, deleteDir = true) => {
     let args = ['appStop', '-q', '--no-daemon'];
     await this.logg(`Stopping process in ${gradleDir} with ${args}`);
     return this.runGradle(gradleDir, args, (code) => {
@@ -403,7 +407,7 @@ exports.assertPageTitle = async (page, value) => {
     assert(title === value)
 }
 
-exports.recordScreen = async(page) => {
+exports.recordScreen = async (page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = path.join(__dirname, `/recording-${index}.mp4`)
     const config = {
@@ -422,7 +426,7 @@ exports.recordScreen = async(page) => {
 }
 
 exports.createJwt = async (payload, key, alg = "RS256") => {
-    const token = JwtOps.sign(payload, key, { algorithm: alg}, undefined);
+    const token = JwtOps.sign(payload, key, {algorithm: alg}, undefined);
     console.log(`Created JWT:\n${colors.green(token)}\n`);
     return token;
 }
@@ -453,7 +457,7 @@ exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
 
 exports.fetchDuoSecurityBypassCode = async (user = "casuser") => await this.fetchDuoSecurityBypassCode(user)[0]
 
-exports.base64Decode = async(data) => {
+exports.base64Decode = async (data) => {
     let buff = Buffer.from(data, 'base64');
     return buff.toString('ascii');
 }
@@ -470,7 +474,7 @@ exports.screenshot = async (page) => {
             await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
             console.log(`Screenshot saved at ${colors.green(filePath)}`);
             await this.uploadImage(filePath);
-        } catch (e)  {
+        } catch (e) {
             console.log(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
         }
     } else {
@@ -490,16 +494,16 @@ exports.assertTextContentStartsWith = async (page, selector, value) => {
     assert(header.startsWith(value));
 }
 
-exports.mockJsonServer = async(pathMappings, port = 8000) => {
+exports.mockJsonServer = async (pathMappings, port = 8000) => {
     let app = mockServer(pathMappings, port, "localhost");
     await app.start();
     return app;
 }
 
-exports.httpServer = async(root, port = 5432,
-                           authEnabled = true,
-                           authUser = "restapi",
-                           authPassword = "YdCP05HvuhOH^*Z") => {
+exports.httpServer = async (root, port = 5432,
+                            authEnabled = true,
+                            authUser = "restapi",
+                            authPassword = "YdCP05HvuhOH^*Z") => {
     const config = {
         nodeStatic: {
             root: root
@@ -524,10 +528,10 @@ exports.httpServer = async(root, port = 5432,
     new NodeStaticAuth(config);
 }
 
-exports.randomNumber = async(min = 1, max=100) =>
+exports.randomNumber = async (min = 1, max = 100) =>
     Math.floor(Math.random() * (max - min + 1)) + min
 
-exports.killProcess = async(command, arguments) => {
+exports.killProcess = async (command, arguments) => {
     ps.lookup({
         command: command,
         arguments: arguments
@@ -556,12 +560,12 @@ exports.goto = async (page, url, retryCount = 5) => {
     let attempts = 0;
     const timeout = 2000;
 
-    while(response === null && attempts < retryCount) {
+    while (response === null && attempts < retryCount) {
         attempts += 1;
         try {
             console.log(`Navigating to: ${colors.green(url)}`)
             response = await page.goto(url);
-            assert (await page.evaluate(() => document.title) !== null);
+            assert(await page.evaluate(() => document.title) !== null);
         } catch (err) {
             console.log(colors.red(`#${attempts}: Failed to goto to ${url}.`));
             console.log(colors.red(err.message));
@@ -628,4 +632,5 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
     }
 }
 
+console.clear();
 this.asciiart("Apereo CAS - Puppeteer")
