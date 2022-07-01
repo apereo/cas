@@ -26,6 +26,8 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentia
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -144,6 +146,10 @@ public class OidcResponseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oidcPushedAuthorizationRequestValidator(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
@@ -156,7 +162,7 @@ public class OidcResponseConfiguration {
             final CentralAuthenticationService centralAuthenticationService) {
             return new OidcPushedAuthorizationRequestValidator(servicesManager,
                 webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
-                centralAuthenticationService, oauthRequestParameterResolver);
+                ticketRegistry, ticketFactory, oauthRequestParameterResolver);
         }
     }
 
@@ -190,7 +196,6 @@ public class OidcResponseConfiguration {
                 oauthAuthorizationModelAndViewBuilder);
         }
     }
-
     @Configuration(value = "OidcResponseResourceOwnerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcResponseResourceOwnerConfiguration {
@@ -207,11 +212,9 @@ public class OidcResponseConfiguration {
                 oauthAuthorizationModelAndViewBuilder);
         }
     }
-
     @Configuration(value = "OidcResponseTokenGenerationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcResponseTokenGenerationConfiguration {
-
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
         @Bean

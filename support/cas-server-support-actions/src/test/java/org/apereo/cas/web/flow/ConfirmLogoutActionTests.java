@@ -49,7 +49,7 @@ public class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
             new MockHttpServletRequest(), new MockHttpServletResponse()));
 
         val ticket = new MockTicketGrantingTicket("casuser");
-        getCentralAuthenticationService().addTicket(ticket);
+        getTicketRegistry().addTicket(ticket);
         WebUtils.putTicketGrantingTicketInScopes(context, ticket);
         
         val result = action.execute(context);
@@ -70,7 +70,7 @@ public class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val ticket = new MockTicketGrantingTicket("casuser");
-        getCentralAuthenticationService().addTicket(ticket);
+        getTicketRegistry().addTicket(ticket);
 
         val c = getTicketGrantingTicketCookieGenerator().addCookie(request, response, ticket.getId());
         request.setCookies(c);

@@ -91,7 +91,6 @@ import java.time.Duration;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 @AutoConfiguration
 public class SamlIdPConfiguration {
-
     @Configuration(value = "SamlIdPProfileBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPProfileBuilderConfiguration {
@@ -550,7 +549,6 @@ public class SamlIdPConfiguration {
         }
 
     }
-
     @Configuration(value = "SamlIdPTicketFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPTicketFactoryPlanConfiguration {
@@ -572,7 +570,6 @@ public class SamlIdPConfiguration {
             return () -> samlArtifactTicketFactory;
         }
     }
-
     @Configuration(value = "SamlIdPTicketExpirationPolicyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPTicketExpirationPolicyConfiguration {
@@ -590,7 +587,6 @@ public class SamlIdPConfiguration {
             return new SamlArtifactTicketExpirationPolicyBuilder(casProperties);
         }
     }
-
     @Configuration(value = "SamlIdPTicketConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPTicketConfiguration {
@@ -618,9 +614,9 @@ public class SamlIdPConfiguration {
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory) {
-            return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy, openSamlConfigBean, samlIdPServiceFactory);
+            return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy,
+                openSamlConfigBean, samlIdPServiceFactory);
         }
-
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SAMLArtifactMap samlArtifactMap(
@@ -633,18 +629,14 @@ public class SamlIdPConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
-            final SessionStore samlIdPDistributedSessionStore,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final SessionStore samlIdPDistributedSessionStore) {
             val map = new CasSamlArtifactMap(ticketRegistry, ticketFactory,
-                ticketGrantingTicketCookieGenerator, samlIdPDistributedSessionStore, centralAuthenticationService);
+                ticketGrantingTicketCookieGenerator, samlIdPDistributedSessionStore);
             val expirationPolicy = samlArtifactTicketExpirationPolicy.buildTicketExpirationPolicy();
             map.setArtifactLifetime(Duration.ofSeconds(expirationPolicy.getTimeToLive()));
             return map;
         }
-
     }
-
     @Configuration(value = "SamlIdPLogoutConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPLogoutConfiguration {
@@ -670,7 +662,6 @@ public class SamlIdPConfiguration {
             return () -> samlSingleLogoutServiceLogoutUrlBuilder;
         }
     }
-
     @Configuration(value = "SamlIdPCryptoConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPCryptoConfiguration {
@@ -696,7 +687,6 @@ public class SamlIdPConfiguration {
             return new DefaultSamlIdPObjectSigner(casSamlIdPMetadataResolver, casProperties, samlIdPMetadataLocator);
         }
     }
-
     @Configuration(value = "SamlIdPAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPAuditConfiguration {

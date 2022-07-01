@@ -3,6 +3,7 @@
     "axios": "^0.27.2",
     "colors": "1.4.0",
     "express": "^4.18.1",
+    "figlet": "^1.5.2",
     "imgur": "^2.2.0",
     "jsonpath-plus": "^6.0.1",
     "jsonwebtoken": "^8.5.1",

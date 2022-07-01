@@ -1,7 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Getter
 public class AccountProfilePasswordChangeRequestAction extends BaseCasWebflowAction {
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final PasswordResetUrlBuilder passwordResetUrlBuilder;
 
@@ -36,7 +36,7 @@ public class AccountProfilePasswordChangeRequestAction extends BaseCasWebflowAct
             WebUtils.putServiceRedirectUrl(requestContext, url);
             return success(url);
         } finally {
-            centralAuthenticationService.deleteTicket(tgt);
+            ticketRegistry.deleteTicket(tgt);
         }
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -21,6 +20,7 @@ import org.apereo.cas.qr.web.flow.QRAuthenticationGenerateCodeAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationValidateTokenAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -76,10 +76,10 @@ public class QRAuthenticationConfiguration {
             final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository,
             @Qualifier("tokenTicketJwtBuilder")
             final JwtBuilder tokenTicketJwtBuilder,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
             return new DefaultQRAuthenticationTokenValidatorService(tokenTicketJwtBuilder,
-                centralAuthenticationService, casProperties, qrAuthenticationDeviceRepository);
+                ticketRegistry, casProperties, qrAuthenticationDeviceRepository);
         }
 
         @Bean

@@ -27,6 +27,7 @@ import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -158,9 +159,9 @@ public class CasRestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketStatusResource ticketStatusResource(
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
-            return new TicketStatusResource(centralAuthenticationService);
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
+            return new TicketStatusResource(ticketRegistry);
         }
 
         @Bean

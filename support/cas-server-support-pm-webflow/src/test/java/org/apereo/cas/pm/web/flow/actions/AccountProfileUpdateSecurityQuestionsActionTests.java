@@ -78,7 +78,7 @@ public class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswo
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putTicketGrantingTicket(context, tgt);
-        centralAuthenticationService.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
     }
 
     @Test

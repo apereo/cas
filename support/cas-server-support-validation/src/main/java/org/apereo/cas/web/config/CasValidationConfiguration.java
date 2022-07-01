@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -451,6 +452,8 @@ public class CasValidationConfiguration {
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
@@ -460,6 +463,7 @@ public class CasValidationConfiguration {
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory) {
             val context = ServiceValidateConfigurationContext.builder()
+                .ticketRegistry(ticketRegistry)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)
@@ -486,6 +490,8 @@ public class CasValidationConfiguration {
             final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -498,6 +504,7 @@ public class CasValidationConfiguration {
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory) {
             val context = ServiceValidateConfigurationContext.builder()
+                .ticketRegistry(ticketRegistry)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)
@@ -529,6 +536,8 @@ public class CasValidationConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("proxyValidateControllerValidationSpecification")
@@ -536,6 +545,7 @@ public class CasValidationConfiguration {
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory) {
             val context = ServiceValidateConfigurationContext.builder()
+                .ticketRegistry(ticketRegistry)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)
@@ -567,6 +577,8 @@ public class CasValidationConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("v3ProxyValidateControllerValidationSpecification")
@@ -574,6 +586,7 @@ public class CasValidationConfiguration {
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory) {
             val context = ServiceValidateConfigurationContext.builder()
+                .ticketRegistry(ticketRegistry)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)
@@ -603,6 +616,8 @@ public class CasValidationConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("requestedContextValidator")
@@ -612,6 +627,7 @@ public class CasValidationConfiguration {
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory) {
             val context = ServiceValidateConfigurationContext.builder()
+                .ticketRegistry(ticketRegistry)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)

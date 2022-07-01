@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.acct.AccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.AccountRegistrationRequestAuditPrincipalIdResolver;
 import org.apereo.cas.acct.AccountRegistrationService;
@@ -237,15 +236,15 @@ public class CasAccountManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
         public Action validateAccountRegistrationTokenAction(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
             @Qualifier(AccountRegistrationService.BEAN_NAME)
-            final AccountRegistrationService accountMgmtRegistrationService,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final AccountRegistrationService accountMgmtRegistrationService) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new ValidateAccountRegistrationTokenAction(centralAuthenticationService, accountMgmtRegistrationService))
+                .withAction(() -> new ValidateAccountRegistrationTokenAction(ticketRegistry, accountMgmtRegistrationService))
                 .withId(CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
                 .build()
                 .get();

@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
@@ -158,12 +159,14 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint(
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final TicketRegistry ticketRegistry,
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("defaultSingleLogoutRequestExecutor")
         final ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor,
         final CasConfigurationProperties casProperties) {
-        return new SingleSignOnSessionsEndpoint(centralAuthenticationService,
+        return new SingleSignOnSessionsEndpoint(ticketRegistry,
             casProperties, defaultSingleLogoutRequestExecutor);
     }
 
@@ -182,10 +185,12 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public StatisticsEndpoint statisticsReportEndpoint(
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final ObjectProvider<TicketRegistry> ticketRegistry,
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
         final CasConfigurationProperties casProperties) {
-        return new StatisticsEndpoint(centralAuthenticationService, casProperties);
+        return new StatisticsEndpoint(ticketRegistry, casProperties);
     }
 
     @Bean

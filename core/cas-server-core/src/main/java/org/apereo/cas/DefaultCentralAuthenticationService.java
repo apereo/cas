@@ -102,7 +102,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             Unchecked.supplier(new CheckedSupplier<ServiceTicket>() {
                 @Override
                 public ServiceTicket get() throws Throwable {
-                    val ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+                    val ticketGrantingTicket = configurationContext.getTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
                     val selectedService = resolveServiceFromAuthenticationRequest(service);
                     val registeredService = configurationContext.getServicesManager().findServiceBy(selectedService);
 
@@ -149,7 +149,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     public ProxyTicket grantProxyTicket(final String proxyGrantingTicket, final Service service)
         throws AbstractTicketException {
 
-        val proxyGrantingTicketObject = getTicket(proxyGrantingTicket, ProxyGrantingTicket.class);
+        val proxyGrantingTicketObject = configurationContext.getTicketRegistry().getTicket(proxyGrantingTicket, ProxyGrantingTicket.class);
         val registeredService = configurationContext.getServicesManager().findServiceBy(service);
 
         try {
@@ -341,7 +341,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         } finally {
             FunctionUtils.doUnchecked(s -> {
                 if (serviceTicket.isExpired()) {
-                    deleteTicket(serviceTicketId);
+                    configurationContext.getTicketRegistry().deleteTicket(serviceTicketId);
                 } else {
                     configurationContext.getTicketRegistry().updateTicket(serviceTicket);
                 }

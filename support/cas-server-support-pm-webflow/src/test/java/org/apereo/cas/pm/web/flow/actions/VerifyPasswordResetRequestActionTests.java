@@ -64,7 +64,7 @@ public class VerifyPasswordResetRequestActionTests {
             request.addParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, ticket.getId());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordResetRequestAction.execute(context).getId());
-            assertNotNull(centralAuthenticationService.getTicket(ticket.getId()));
+            assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         }
     }
 
@@ -133,7 +133,7 @@ public class VerifyPasswordResetRequestActionTests {
             assertTrue(PasswordManagementWebflowUtils.isPasswordResetSecurityQuestionsEnabled(context));
             assertNotNull(PasswordManagementWebflowUtils.getPasswordResetUsername(context));
             assertNotNull(PasswordManagementWebflowUtils.getPasswordResetToken(context));
-            assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(ticket.getId()));
+            assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticket.getId()));
         }
 
         @Test

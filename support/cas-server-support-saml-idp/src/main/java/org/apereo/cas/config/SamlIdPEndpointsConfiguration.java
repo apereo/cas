@@ -479,13 +479,14 @@ public class SamlIdPEndpointsConfiguration {
             final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
             @Qualifier("webflowCipherExecutor")
             final CipherExecutor webflowCipherExecutor,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
             if (type == SamlIdPCoreProperties.SessionStorageTypes.TICKET_REGISTRY) {
-                return new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, samlIdPDistributedSessionCookieGenerator);
+                return new DistributedJEESessionStore(ticketRegistry,
+                    ticketFactory, samlIdPDistributedSessionCookieGenerator);
             }
             if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
                 return new BrowserWebStorageSessionStore(webflowCipherExecutor);

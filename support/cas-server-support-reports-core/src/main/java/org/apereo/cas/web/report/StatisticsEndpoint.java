@@ -1,8 +1,8 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,12 +29,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-    private final ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+    private final ObjectProvider<TicketRegistry> ticketRegistry;
 
-    public StatisticsEndpoint(final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
+    public StatisticsEndpoint(final ObjectProvider<TicketRegistry> ticketRegistry,
                               final CasConfigurationProperties casProperties) {
         super(casProperties);
-        this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketRegistry = ticketRegistry;
     }
 
     /**
@@ -60,18 +60,18 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
         val expiredTgts = new AtomicInteger();
         val expiredSts = new AtomicInteger();
 
-        val tickets = this.centralAuthenticationService.getObject().getTickets(ticket -> true);
+        val tickets = ticketRegistry.getObject().getTickets(ticket -> true);
         tickets.forEach(Unchecked.consumer(ticket -> {
             if (ticket instanceof ServiceTicket) {
                 if (ticket.isExpired()) {
-                    this.centralAuthenticationService.getObject().deleteTicket(ticket.getId());
+                    ticketRegistry.getObject().deleteTicket(ticket.getId());
                     expiredSts.incrementAndGet();
                 } else {
                     unexpiredSts.incrementAndGet();
                 }
             } else {
                 if (ticket.isExpired()) {
-                    this.centralAuthenticationService.getObject().deleteTicket(ticket.getId());
+                    ticketRegistry.getObject().deleteTicket(ticket.getId());
                     expiredTgts.incrementAndGet();
                 } else {
                     unexpiredTgts.incrementAndGet();

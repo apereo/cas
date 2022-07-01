@@ -32,7 +32,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActions
     @Test
     public void verifyNullTicket() throws Exception {
         val ctx = new MockRequestContext();
-        val action = new TicketGrantingTicketCheckAction(getCentralAuthenticationService());
+        val action = new TicketGrantingTicketCheckAction(getTicketRegistry());
         val event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_NOT_EXISTS, event.getId());
     }
@@ -42,7 +42,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActions
         val ctx = new MockRequestContext();
         val tgt = new MockTicketGrantingTicket("user");
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        val action = new TicketGrantingTicketCheckAction(getCentralAuthenticationService());
+        val action = new TicketGrantingTicketCheckAction(getTicketRegistry());
         val event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_INVALID, event.getId());
     }
@@ -53,7 +53,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActions
         val ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
         val tgt = getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        val action = new TicketGrantingTicketCheckAction(getCentralAuthenticationService());
+        val action = new TicketGrantingTicketCheckAction(getTicketRegistry());
         val event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID, event.getId());
     }

@@ -97,7 +97,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
                 LOGGER.debug("CAS has determined ticket-granting ticket [{}] is invalid and must be destroyed", ticketGrantingTicket);
-                centralAuthenticationService.deleteTicket(ticketGrantingTicket);
+                ticketRegistrySupport.getTicketRegistry().deleteTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
                 LOGGER.debug("Request indicates that it is gateway. Routing result to [{}] state", CasWebflowConstants.TRANSITION_ID_GATEWAY);

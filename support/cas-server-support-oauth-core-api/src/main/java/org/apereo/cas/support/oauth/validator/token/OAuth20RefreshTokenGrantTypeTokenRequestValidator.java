@@ -44,7 +44,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
         var refreshToken = (OAuth20RefreshToken) null;
         val token = refreshTokenResult.get();
         try {
-            refreshToken = getConfigurationContext().getCentralAuthenticationService().getTicket(token, OAuth20RefreshToken.class);
+            refreshToken = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20RefreshToken.class);
             LOGGER.trace("Found valid refresh token [{}] in the registry", refreshToken);
         } catch (final InvalidTicketException e) {
             LOGGER.warn("Provided refresh token [{}] cannot be found in the registry or has expired", token);

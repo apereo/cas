@@ -92,7 +92,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     public ProxyGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
         throws AuthenticationException, AbstractTicketException {
-        val serviceTicket = serviceValidateConfigurationContext.getCentralAuthenticationService().getTicket(serviceTicketId, ServiceTicket.class);
+        val serviceTicket = serviceValidateConfigurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
         val authenticationResult = serviceValidateConfigurationContext.getAuthenticationSystemSupport()
             .finalizeAuthenticationTransaction(serviceTicket.getService(), credential);
         val proxyGrantingTicketId = serviceValidateConfigurationContext.getCentralAuthenticationService()

@@ -79,13 +79,13 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
 
         val ticketId = jwt.getJwtId();
         assertNotNull(ticketId);
-        assertNotNull(this.ticketRegistry.getTicket(ticketId, OAuth20AccessToken.class));
+        assertNotNull(ticketRegistry.getTicket(ticketId, OAuth20AccessToken.class));
     }
 
     @Test
     public void verifySlowDown() throws Exception {
         val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
-            defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, centralAuthenticationService, casProperties);
+            defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
             RegisteredServiceTestUtils.getService("https://device.oauth.org"));
         ticketRegistry.addTicket(token);
@@ -103,7 +103,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     @Test
     public void verifyUnapproved() throws Exception {
         val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
-            defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, centralAuthenticationService, casProperties);
+            defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
             RegisteredServiceTestUtils.getService("https://device.oauth.org"));
         ticketRegistry.addTicket(token);
@@ -123,7 +123,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     @Test
     public void verifyExpiredUserCode() throws Exception {
         val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
-            defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, centralAuthenticationService, casProperties);
+            defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
             RegisteredServiceTestUtils.getService("https://device.oauth.org"));
         ticketRegistry.addTicket(token);
@@ -144,7 +144,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     @Test
     public void verifyDeviceCodeExpired() throws Exception {
         val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
-            defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, centralAuthenticationService, casProperties);
+            defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
             RegisteredServiceTestUtils.getService("https://device.oauth.org"));
         ticketRegistry.addTicket(token);

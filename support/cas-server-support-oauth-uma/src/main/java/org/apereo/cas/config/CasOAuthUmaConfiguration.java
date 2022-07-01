@@ -201,11 +201,11 @@ public class CasOAuthUmaConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
-            val authenticator = new UmaRequestingPartyTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
+            val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH", oauthDistributedSessionStore, casProperties);
         }
 
@@ -215,11 +215,11 @@ public class CasOAuthUmaConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
-            val authenticator = new UmaAuthorizationApiTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
+            val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH",
                 oauthDistributedSessionStore, casProperties);
         }

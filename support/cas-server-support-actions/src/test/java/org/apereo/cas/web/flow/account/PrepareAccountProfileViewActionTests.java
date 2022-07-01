@@ -59,7 +59,7 @@ public class PrepareAccountProfileViewActionTests extends AbstractWebflowActions
         val context = new MockRequestContext();
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        getCentralAuthenticationService().addTicket(tgt);
+        getTicketRegistry().addTicket(tgt);
 
         context.setExternalContext(new MockExternalContext());
         RequestContextHolder.setRequestContext(context);

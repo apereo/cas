@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
@@ -39,8 +38,6 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 
     private final SessionStore samlIdPDistributedSessionStore;
 
-    private final CentralAuthenticationService centralAuthenticationService;
-
     @Override
     public void put(final String artifact, final String relyingPartyId,
                     final String issuerId, final SAMLObject samlMessage) throws IOException {
@@ -53,7 +50,7 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
         if (ticketGrantingTicket == null) {
             ticketGrantingTicket = samlIdPDistributedSessionStore
                 .get(new JEEContext(request, response), WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
-                .map(ticketId -> centralAuthenticationService.getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
                 .orElse(null);
         }
 

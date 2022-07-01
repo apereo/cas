@@ -57,7 +57,7 @@ public class AccountProfilePreparePasswordManagementActionTests extends BasePass
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putTicketGrantingTicket(context, tgt);
-        centralAuthenticationService.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
         val result = prepareAccountProfilePasswordMgmtAction.execute(context);
         assertNull(result);
         assertTrue(WebUtils.isPasswordManagementEnabled(context));

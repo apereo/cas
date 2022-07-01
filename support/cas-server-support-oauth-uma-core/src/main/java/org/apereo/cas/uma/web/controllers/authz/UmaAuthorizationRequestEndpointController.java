@@ -79,7 +79,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             if (StringUtils.isBlank(umaRequest.getTicket())) {
                 return new ResponseEntity("Unable to accept authorization request; ticket parameter is missing", HttpStatus.BAD_REQUEST);
             }
-            val permissionTicket = getUmaConfigurationContext().getCentralAuthenticationService()
+            val permissionTicket = getUmaConfigurationContext().getTicketRegistry()
                 .getTicket(umaRequest.getTicket(), UmaPermissionTicket.class);
             val resourceSet = permissionTicket.getResourceSet();
             if (resourceSet == null || resourceSet.getPolicies() == null || resourceSet.getPolicies().isEmpty()) {
@@ -205,10 +205,10 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator()
             .generate(accessToken, timeout, userProfile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
         accessToken.setIdToken(idToken);
-        getUmaConfigurationContext().getCentralAuthenticationService().updateTicket(accessToken);
+        getUmaConfigurationContext().getTicketRegistry().updateTicket(accessToken);
 
         if (StringUtils.isNotBlank(umaRequest.getRpt())) {
-            getUmaConfigurationContext().getCentralAuthenticationService().deleteTicket(umaRequest.getRpt());
+            getUmaConfigurationContext().getTicketRegistry().deleteTicket(umaRequest.getRpt());
         }
 
         val model = CollectionUtils.wrap("rpt", encodedAccessToken, "code", HttpStatus.CREATED);

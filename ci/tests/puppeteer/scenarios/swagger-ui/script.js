@@ -15,6 +15,6 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000)
     console.log(`${response.status()} ${response.statusText()}`)
     assert(response.ok())
-    
+
     await browser.close();
 })();

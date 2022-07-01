@@ -172,7 +172,6 @@ import java.util.Optional;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
 public class CasOAuth20Configuration {
-
     @Configuration(value = "CasOAuth20JwtConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20JwtConfiguration {
@@ -360,16 +359,14 @@ public class CasOAuth20Configuration {
             final OAuth20RefreshTokenFactory defaultRefreshTokenFactory,
             @Qualifier("defaultAccessTokenFactory")
             final OAuth20AccessTokenFactory defaultAccessTokenFactory,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultTokenGenerator(
                 defaultAccessTokenFactory, defaultDeviceTokenFactory,
                 defaultDeviceUserCodeFactory, defaultRefreshTokenFactory,
-                centralAuthenticationService, casProperties);
+                ticketRegistry, casProperties);
         }
-
-
         @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -639,14 +636,14 @@ public class CasOAuth20Configuration {
         public SessionStore oauthDistributedSessionStore(
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier("oauthDistributedSessionCookieGenerator")
             final CasCookieBuilder oauthDistributedSessionCookieGenerator,
             final CasConfigurationProperties casProperties) {
             val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
             if (replicate) {
-                return new DistributedJEESessionStore(centralAuthenticationService,
+                return new DistributedJEESessionStore(ticketRegistry,
                     ticketFactory, oauthDistributedSessionCookieGenerator);
             }
             return JEESessionStore.INSTANCE;
@@ -1409,9 +1406,9 @@ public class CasOAuth20Configuration {
         public Authenticator oauthAccessTokenAuthenticator(
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
-            return new OAuth20AccessTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
+            return new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
         }
     }
 

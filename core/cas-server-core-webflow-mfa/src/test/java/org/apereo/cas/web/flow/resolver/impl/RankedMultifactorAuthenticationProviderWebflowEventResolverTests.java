@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -52,15 +51,10 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     @Autowired
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasDelegatingWebflowEventResolver resolver;
-
-    @Autowired
-    @Qualifier(CentralAuthenticationService.BEAN_NAME)
-    private CentralAuthenticationService cas;
-
     @BeforeEach
     public void setup() {
         super.setup();
-        this.servicesManager.deleteAll();
+        servicesManager.deleteAll();
     }
     
     @Test
@@ -99,7 +93,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
 
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        cas.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
 
         WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
@@ -120,7 +114,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
 
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        cas.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
 
         WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
@@ -141,7 +135,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
 
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        cas.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         WebUtils.putCredential(context,
@@ -165,7 +159,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
             Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), List.of(TestMultifactorAuthenticationProvider.ID)));
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        cas.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         WebUtils.putCredential(context,
@@ -192,7 +186,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
             Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), List.of(TestMultifactorAuthenticationProvider.ID)));
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        cas.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         WebUtils.putCredential(context,

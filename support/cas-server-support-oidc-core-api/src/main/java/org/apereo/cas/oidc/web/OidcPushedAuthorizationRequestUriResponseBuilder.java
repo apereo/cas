@@ -67,13 +67,12 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
         val builder = super.toAuthorizationRequest(context, authentication, service, registeredService).get();
         return requestUri
             .map(Unchecked.function(uri -> {
-                val cas = configurationContext.getCentralAuthenticationService();
-                val factory = (OidcPushedAuthorizationRequestFactory) cas.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
-                val request = cas.getTicket(uri, OidcPushedAuthorizationRequest.class);
+                val factory = (OidcPushedAuthorizationRequestFactory) configurationContext.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
+                val request = configurationContext.getTicketRegistry().getTicket(uri, OidcPushedAuthorizationRequest.class);
                 val tokenRequest = factory.toAccessTokenRequest(request);
                 request.update();
-                FunctionUtils.doIf(request.isExpired(), Unchecked.consumer(r -> cas.deleteTicket(request)),
-                    Unchecked.consumer(r -> cas.updateTicket(request))).accept(request);
+                FunctionUtils.doIf(request.isExpired(), Unchecked.consumer(r -> configurationContext.getTicketRegistry().deleteTicket(request)),
+                    Unchecked.consumer(r -> configurationContext.getTicketRegistry().updateTicket(request))).accept(request);
                 val tgt = configurationContext.fetchTicketGrantingTicketFrom((JEEContext) context);
                 tokenRequest.setTicketGrantingTicket(tgt);
                 return Optional.of(builder.accessTokenRequest(tokenRequest)

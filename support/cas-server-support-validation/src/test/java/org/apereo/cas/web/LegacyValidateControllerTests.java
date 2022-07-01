@@ -38,6 +38,7 @@ public class LegacyValidateControllerTests extends AbstractServiceValidateContro
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
             .casProperties(casProperties)
+            .ticketRegistry(getTicketRegistry())
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
             .servicesManager(getServicesManager())

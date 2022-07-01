@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
@@ -37,17 +36,12 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
 
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
-    private CentralAuthenticationService centralAuthenticationService;
-
     private TicketGrantingTicket ticketGrantingTicket;
 
     @BeforeEach
     public void initialize() throws Exception {
         super.initialize();
-
         ticketGrantingTicketCookieGenerator = mock(CasCookieBuilder.class);
-        centralAuthenticationService = mock(CentralAuthenticationService.class);
-
         ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(ticketGrantingTicket);
     }
@@ -63,7 +57,7 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, new BasicUserProfile(), false);
         val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
-            ticketRegistry, centralAuthenticationService, oauthRequestParameterResolver);
+            ticketRegistry, oauthRequestParameterResolver);
         assertFalse(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
         request.setQueryString("prompt=login");
         assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
@@ -86,7 +80,7 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
 
         profileManager.save(true, profile, false);
         val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
-            ticketRegistry, centralAuthenticationService, oauthRequestParameterResolver);
+            ticketRegistry, oauthRequestParameterResolver);
         assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
     }
 
@@ -99,7 +93,7 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, new BasicUserProfile(), false);
         val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
-            ticketRegistry, centralAuthenticationService, oauthRequestParameterResolver);
+            ticketRegistry, oauthRequestParameterResolver);
         assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.web;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
@@ -9,6 +8,8 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,15 +28,20 @@ import java.util.Map;
  */
 @Slf4j
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
+
+    private final TicketFactory ticketFactory;
+
     private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
                                            final SessionStore sessionStore,
-                                           final CentralAuthenticationService centralAuthenticationService,
+                                           final TicketRegistry ticketRegistry,
+                                           final TicketFactory ticketFactory,
                                            final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
         super(casProperties, sessionStore);
-        this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketRegistry = ticketRegistry;
+        this.ticketFactory = ticketFactory;
         this.oauthRequestParameterResolver = oauthRequestParameterResolver;
     }
 
@@ -74,8 +80,8 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             val requestedScopes = oauthRequestParameterResolver.resolveRequestedScopes(webContext);
             val userInfoClaims = oauthRequestParameterResolver.resolveUserInfoRequestClaims(webContext);
             webContext.getRequestParameter(OidcConstants.REQUEST_URI).ifPresent(Unchecked.consumer(uri -> {
-                val authzRequest = centralAuthenticationService.getTicket(uri, OidcPushedAuthorizationRequest.class);
-                val uriFactory = (OidcPushedAuthorizationRequestFactory) centralAuthenticationService.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
+                val authzRequest = ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class);
+                val uriFactory = (OidcPushedAuthorizationRequestFactory) ticketFactory.get(OidcPushedAuthorizationRequest.class);
                 val holder = uriFactory.toAccessTokenRequest(authzRequest);
                 userInfoClaims.addAll(holder.getClaims().keySet());
                 requestedScopes.addAll(holder.getScopes());

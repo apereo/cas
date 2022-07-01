@@ -151,7 +151,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         return FunctionUtils.doAndHandle(() -> {
             val accessTokenResult = getConfigurationContext().getAccessTokenGenerator().generate(holder);
             val accessToken = accessTokenResult.getAccessToken().get();
-            getConfigurationContext().getCentralAuthenticationService().addTicket(accessToken);
+            getConfigurationContext().getTicketRegistry().addTicket(accessToken);
             return Optional.of(accessToken);
         }, e -> Optional.<OAuth20AccessToken>empty()).get();
     }

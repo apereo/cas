@@ -177,11 +177,9 @@ public class OidcConfiguration {
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final TicketRegistry ticketRegistry) {
             return new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
-                ticketRegistry, centralAuthenticationService, oauthRequestParameterResolver);
+                ticketRegistry, oauthRequestParameterResolver);
         }
 
         @Bean
@@ -191,7 +189,8 @@ public class OidcConfiguration {
             final SecurityLogic oidcAuthorizationSecurityLogic,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            val interceptor = new SecurityInterceptor(oauthSecConfig, Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
+            val interceptor = new SecurityInterceptor(oauthSecConfig,
+                Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
             interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
             interceptor.setSecurityLogic(oidcAuthorizationSecurityLogic);
@@ -210,7 +209,8 @@ public class OidcConfiguration {
             final OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory) throws Exception {
-            return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository, oidcServerDiscoverySettingsFactory.getObject());
+            return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository,
+                oidcServerDiscoverySettingsFactory.getObject());
         }
 
     }
@@ -253,7 +253,8 @@ public class OidcConfiguration {
             @Qualifier("oidcAttributeReleasePolicyFactory")
             final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory,
             final CasConfigurationProperties casProperties) {
-            return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory, casProperties, oidcAttributeReleasePolicyFactory);
+            return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory,
+                casProperties, oidcAttributeReleasePolicyFactory);
         }
 
     }
@@ -344,13 +345,17 @@ public class OidcConfiguration {
         public ConsentApprovalViewResolver consentApprovalViewResolver(
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             final CasConfigurationProperties casProperties) {
             return new OidcConsentApprovalViewResolver(casProperties,
-                oauthDistributedSessionStore, centralAuthenticationService, oauthRequestParameterResolver);
+                oauthDistributedSessionStore,
+                ticketRegistry, ticketFactory,
+                oauthRequestParameterResolver);
         }
     }
 
@@ -434,12 +439,13 @@ public class OidcConfiguration {
         public OAuth20AuthenticationClientProvider oidcClientConfigurationAuthenticationClientProvider(
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
             return () -> {
                 val accessTokenClient = new HeaderClient();
                 accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
-                accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder));
+                accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(
+                    ticketRegistry, accessTokenJwtBuilder));
                 accessTokenClient.setName(OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
                 accessTokenClient.init();
                 return accessTokenClient;
@@ -499,11 +505,11 @@ public class OidcConfiguration {
             final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) throws Exception {
-            return new OidcAccessTokenAuthenticator(centralAuthenticationService,
+            return new OidcAccessTokenAuthenticator(ticketRegistry,
                 oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
         }
 
@@ -515,11 +521,11 @@ public class OidcConfiguration {
             final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) throws Exception {
-            val authenticator = new OidcAccessTokenAuthenticator(centralAuthenticationService,
+            val authenticator = new OidcAccessTokenAuthenticator(ticketRegistry,
                 oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
             authenticator.setRequiredScopes(Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
             return authenticator;

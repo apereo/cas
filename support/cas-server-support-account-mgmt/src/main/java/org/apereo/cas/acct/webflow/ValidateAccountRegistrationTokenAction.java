@@ -1,10 +1,10 @@
 package org.apereo.cas.acct.webflow;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.authentication.RootCasException;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction {
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final AccountRegistrationService accountRegistrationService;
 
@@ -34,7 +34,7 @@ public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction
         try {
             val activationToken = requestContext.getRequestParameters()
                 .getRequired(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN);
-            accountRegTicket = centralAuthenticationService.getTicket(activationToken, TransientSessionTicket.class);
+            accountRegTicket = ticketRegistry.getTicket(activationToken, TransientSessionTicket.class);
             val token = accountRegTicket.getProperty(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, String.class);
             val registrationRequest = accountRegistrationService.validateToken(token);
             accountRegTicket.update();
@@ -51,7 +51,7 @@ public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction
             return error(e);
         } finally {
             if (accountRegTicket != null && accountRegTicket.isExpired()) {
-                centralAuthenticationService.deleteTicket(accountRegTicket);
+                ticketRegistry.deleteTicket(accountRegTicket);
             }
         }
     }

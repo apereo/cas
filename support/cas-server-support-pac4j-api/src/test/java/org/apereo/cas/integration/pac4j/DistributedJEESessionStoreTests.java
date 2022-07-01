@@ -1,9 +1,9 @@
 package org.apereo.cas.integration.pac4j;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.val;
@@ -33,14 +33,14 @@ public class DistributedJEESessionStoreTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(CentralAuthenticationService.BEAN_NAME)
-    private CentralAuthenticationService centralAuthenticationService;
-
+    
     @Autowired
     @Qualifier(TicketFactory.BEAN_NAME)
     private TicketFactory ticketFactory;
+
+    @Autowired
+    @Qualifier(TicketRegistry.BEAN_NAME)
+    private TicketRegistry ticketRegistry;
 
     @Test
     public void verifyTracking() {
@@ -50,7 +50,7 @@ public class DistributedJEESessionStoreTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val store = new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, cookieGenerator);
+        val store = new DistributedJEESessionStore(ticketRegistry, ticketFactory, cookieGenerator);
         val context = new JEEContext(request, response);
 
         assertNotNull(request.getSession());
@@ -68,7 +68,7 @@ public class DistributedJEESessionStoreTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val store = new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, cookieGenerator);
+        val store = new DistributedJEESessionStore(ticketRegistry, ticketFactory, cookieGenerator);
         val context = new JEEContext(request, response);
 
         assertTrue(store.getSessionId(context, false).isEmpty());

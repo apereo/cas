@@ -14,6 +14,7 @@ const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 const ps = require("ps-node");
 const NodeStaticAuth = require("node-static-auth");
 const operativeSystemModule = require("os");
+const figlet = require("figlet")
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -25,15 +26,17 @@ const BROWSER_OPTIONS = {
 };
 
 exports.browserOptions = () => BROWSER_OPTIONS;
-exports.browserOptions = (opt) => {
-    return {
-        ...BROWSER_OPTIONS,
-        ...opt
-    };
-};
+exports.browserOptions = (opt) => ({
+    ...BROWSER_OPTIONS,
+    ...opt
+});
 
 exports.logy = async(text) => {
     console.log(colors.yellow(text));
+}
+
+exports.logb = async(text) => {
+    console.log(colors.blue(text));
 }
 
 exports.logg = async(text) => {
@@ -61,6 +64,10 @@ exports.click = async (page, button) => {
         console.log(`Clicking element ${button} with link ${buttonNode.href}`);
         buttonNode.click();
     }, button);
+}
+
+exports.asciiart = async(text) => {
+    await this.logb(figlet.textSync(text));
 }
 
 exports.clickLast = async (page, button) => {
@@ -181,7 +188,6 @@ exports.type = async (page, selector, value, obfuscate = false) => {
 }
 
 exports.newPage = async (browser) => {
-    console.clear();
     let page = (await browser.pages())[0];
     if (page === undefined) {
         page = await browser.newPage();
@@ -621,3 +627,5 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
         }
     }
 }
+
+this.asciiart("Apereo CAS - Puppeteer")

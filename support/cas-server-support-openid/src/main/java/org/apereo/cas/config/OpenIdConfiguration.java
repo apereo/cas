@@ -12,6 +12,7 @@ import org.apereo.cas.support.openid.web.mvc.SmartOpenIdController;
 import org.apereo.cas.support.openid.web.mvc.YadisController;
 import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.CasProtocolViewFactory;
@@ -117,6 +118,8 @@ public class OpenIdConfiguration {
         final ServiceValidationViewFactory serviceValidationViewFactory,
         @Qualifier("proxy20Handler")
         final ProxyHandler proxy20Handler,
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final TicketRegistry ticketRegistry,
         @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor,
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -132,6 +135,7 @@ public class OpenIdConfiguration {
         @Qualifier("serviceValidationAuthorizers")
         final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         val context = ServiceValidateConfigurationContext.builder()
+            .ticketRegistry(ticketRegistry)
             .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))
             .authenticationSystemSupport(authenticationSystemSupport)
             .servicesManager(servicesManager)

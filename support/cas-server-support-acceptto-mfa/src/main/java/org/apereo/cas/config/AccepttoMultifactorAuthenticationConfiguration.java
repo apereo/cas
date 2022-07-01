@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -27,6 +26,7 @@ import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeValidateWebSocketCha
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -75,7 +75,6 @@ import java.util.Objects;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "acceptto")
 @AutoConfiguration
 public class AccepttoMultifactorAuthenticationConfiguration {
-
     @Configuration(value = "AccepttoMultifactorAuthenticationCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationCoreConfiguration {
@@ -100,7 +99,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
     }
-
     @Configuration(value = "AccepttoMultifactorAuthenticationWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationWebflowConfiguration {
@@ -146,7 +144,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         }
 
     }
-
     @Configuration(value = "AccepttoMultifactorAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationWebflowPlanConfiguration {
@@ -160,27 +157,23 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         }
 
     }
-
     @Configuration(value = "AccepttoMultifactorAuthenticationSessionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationSessionConfiguration {
-
         @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SessionStore mfaAccepttoDistributedSessionStore(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val cookie = casProperties.getSessionReplication().getCookie();
             val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
-            return new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, cookieGenerator);
+            return new DistributedJEESessionStore(ticketRegistry, ticketFactory, cookieGenerator);
         }
-
     }
-
     @Configuration(value = "AccepttoMultifactorAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationPlanConfiguration {
@@ -206,7 +199,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         }
 
     }
-
     @Configuration(value = "AccepttoMultifactorAuthenticationHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationHandlerConfiguration {
@@ -224,7 +216,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
                 casAccepttoQRCodePrincipalFactory, multifactorAuthenticationProvider);
         }
     }
-
     @Configuration(value = "AccepttoMultifactorAuthenticationMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationMetadataConfiguration {
@@ -258,7 +249,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         }
 
     }
-
     @Configuration(value = "AccepttoMultifactorAuthenticationActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationActionsConfiguration {

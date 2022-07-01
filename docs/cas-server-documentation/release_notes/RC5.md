@@ -57,6 +57,12 @@ CAS modules that offer an integration with a relational database, such as [JPA S
 are now extensively enhanced and tested to ensure the underlying components can correctly respond to *refresh* events, when 
 the application context is reloaded once a property is changed.
 
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover
+more use cases and scenarios. At the moment, total number of jobs stands at approximately `306` distinct
+scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
+
 ## Other Stuff
      
 - The configuration for the embedded Apache Tomcat is now allowed to create multiple connectors and ports. The `secure` and `scheme` attributes are also 
@@ -76,3 +82,7 @@ the application context is reloaded once a property is changed.
 - Gradle
 - Amazon SDK
 - Okio
+- Acme4j
+- Twilio
+- CosmosDb
+- MariaDb

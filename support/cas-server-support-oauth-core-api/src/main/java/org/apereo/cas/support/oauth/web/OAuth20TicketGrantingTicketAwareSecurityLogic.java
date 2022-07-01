@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -34,8 +33,6 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
 
     private final TicketRegistry ticketRegistry;
 
-    private final CentralAuthenticationService centralAuthenticationService;
-
     @Override
     protected List<UserProfile> loadProfiles(final ProfileManager manager, final WebContext context,
                                              final SessionStore sessionStore, final List<Client> clients) {
@@ -47,7 +44,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
             try {
                 ticketGrantingTicket = sessionStore
                     .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
-                    .map(ticketId -> centralAuthenticationService.getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                    .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
                     .orElse(null);
             } catch (final Exception e) {
                 LOGGER.trace("Cannot find active ticket-granting-ticket: [{}]", e.getMessage());

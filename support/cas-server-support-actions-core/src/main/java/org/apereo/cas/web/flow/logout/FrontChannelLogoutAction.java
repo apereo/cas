@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.logout;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutHttpMessage;
@@ -8,6 +7,7 @@ import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -33,13 +33,13 @@ import java.util.HashMap;
 @Slf4j
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
-    public FrontChannelLogoutAction(final CentralAuthenticationService centralAuthenticationService,
+    public FrontChannelLogoutAction(final TicketRegistry ticketRegistry,
                                     final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                     final ArgumentExtractor argumentExtractor,
                                     final ServicesManager servicesManager,
                                     final LogoutExecutionPlan logoutExecutionPlan,
                                     final CasConfigurationProperties casProperties) {
-        super(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+        super(ticketRegistry, ticketGrantingTicketCookieGenerator,
             argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
     }
 
