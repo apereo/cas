@@ -57,7 +57,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        val ticketResult = getTicket(ticketId, ticket -> {
+        return getTicket(ticketId, ticket -> {
             if (ticket.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticket.getId());
                 deleteSingleTicket(ticketId);
@@ -65,11 +65,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             }
             return true;
         });
-        if (ticketResult == null) {
-            LOGGER.debug("Ticket [{}] cannot be found in the ticket registry.", ticketId);
-            throw new InvalidTicketException(ticketId);
-        }
-        return ticketResult;
     }
 
     @Override
