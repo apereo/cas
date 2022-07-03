@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaConfig")
 @Getter
 @Import(CasWebflowAccountProfileConfiguration.class)
+@TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 public class MultifactorAuthenticationAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)

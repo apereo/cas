@@ -60,7 +60,7 @@ the application context is reloaded once a property is changed.
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover
-more use cases and scenarios. At the moment, total number of jobs stands at approximately `306` distinct
+more use cases and scenarios. At the moment, total number of jobs stands at approximately `310` distinct
 scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 
 ## Other Stuff
@@ -69,6 +69,10 @@ scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
   customizable.
 - Rules for redirecting to a service after a logout operation are now tightened to make sure protocol cross-over is not possible.
 - The OpenID Connect userinfo endpoint is now able to correctly process mapped claims defined in CAS configuration.
+- [Account Profile Management](../registration/Account-Management-Overview.html) is now able to allow entry access when CAS is set to disallow missing 
+  `service` parameters.
+- Certain ticket-related operations are now removed from the `CentralAuthenticationService` interface, as all transaction-bound operations should now be 
+  moved inside the `TicketRegistry` interface.
 
 
 ## Library Upgrades

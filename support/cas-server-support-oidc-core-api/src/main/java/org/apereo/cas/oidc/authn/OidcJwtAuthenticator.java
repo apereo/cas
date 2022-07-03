@@ -81,13 +81,6 @@ public class OidcJwtAuthenticator implements Authenticator {
      */
     protected final ApplicationContext applicationContext;
 
-    /**
-     * Verify credentials and fetch oidc registered service.
-     *
-     * @param credentials the credentials
-     * @param webContext  the web context
-     * @return the oidc registered service
-     */
     protected OidcRegisteredService verifyCredentials(final UsernamePasswordCredentials credentials,
                                                       final WebContext webContext) {
         if (!StringUtils.equalsIgnoreCase(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
@@ -114,7 +107,10 @@ public class OidcJwtAuthenticator implements Authenticator {
 
         val code = webContext.getRequestParameter(OAuth20Constants.CODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val oauthCode = ticketRegistry.getTicket(code, OAuth20Code.class);
+        val oauthCode = FunctionUtils.doAndHandle(() -> {
+            val state = ticketRegistry.getTicket(code, OAuth20Code.class);
+            return state == null || state.isExpired() ? null : state;
+        });
         val clientId = oauthCode == null ? webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).get() : oauthCode.getClientId();
         val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         val audit = AuditableContext.builder()
@@ -170,6 +166,7 @@ public class OidcJwtAuthenticator implements Authenticator {
 
     protected boolean validateJwtAlgorithm(final Algorithm alg) {
         return JWSAlgorithm.Family.HMAC_SHA.contains(alg)
-               || JWSAlgorithm.Family.RSA.contains(alg) || JWSAlgorithm.Family.EC.contains(alg);
+               || JWSAlgorithm.Family.RSA.contains(alg)
+               || JWSAlgorithm.Family.EC.contains(alg);
     }
 }

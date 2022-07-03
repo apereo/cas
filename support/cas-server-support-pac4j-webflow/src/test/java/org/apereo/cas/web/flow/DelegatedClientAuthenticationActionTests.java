@@ -13,6 +13,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockServletContext;
@@ -265,7 +266,7 @@ public class DelegatedClientAuthenticationActionTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val client = builtClients.findClient("FacebookClient").get();
+        val client = builtClients.findClient("FacebookClient").orElse(null);
         val webContext = new JEEContext(request, new MockHttpServletResponse());
 
         request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
@@ -288,7 +289,7 @@ public class DelegatedClientAuthenticationActionTests {
         ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, delegatedAuthenticationAction.execute(context).getId());
-        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(tgt.getId()));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class));
     }
 
     @Test
@@ -297,7 +298,7 @@ public class DelegatedClientAuthenticationActionTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val client = builtClients.findClient("FacebookClient").get();
+        val client = builtClients.findClient("FacebookClient").orElse(null);
         val webContext = new JEEContext(request, new MockHttpServletResponse());
         val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
         request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());

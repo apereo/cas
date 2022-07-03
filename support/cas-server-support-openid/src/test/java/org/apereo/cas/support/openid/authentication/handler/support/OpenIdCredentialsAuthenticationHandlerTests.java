@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
@@ -42,36 +43,35 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     @Test
     public void verifySupports() {
-        assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential(TGT_ID, USERNAME)));
-        assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredential()));
+        assertTrue(openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential(TGT_ID, USERNAME)));
+        assertFalse(openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
     public void verifyTGTWithSameId() throws Exception {
-        val c = new OpenIdCredential(TGT_ID, USERNAME);
+        val credential = new OpenIdCredential(TGT_ID, USERNAME);
         val t = getTicketGrantingTicket();
-        this.ticketRegistry.addTicket(t);
+        ticketRegistry.addTicket(t);
 
-        assertEquals(TGT_ID, this.openIdCredentialsAuthenticationHandler.authenticate(c).getPrincipal().getId());
+        assertEquals(TGT_ID, openIdCredentialsAuthenticationHandler.authenticate(credential).getPrincipal().getId());
     }
 
     @Test
     public void verifyTGTThatIsExpired() throws Exception {
-        val c = new OpenIdCredential(TGT_ID, USERNAME);
+        val credential = new OpenIdCredential(TGT_ID, USERNAME);
         val t = getTicketGrantingTicket();
-        this.ticketRegistry.addTicket(t);
+        ticketRegistry.addTicket(t);
         t.markTicketExpired();
-        this.ticketRegistry.updateTicket(t);
-        assertThrows(FailedLoginException.class, () -> this.openIdCredentialsAuthenticationHandler.authenticate(c));
+        ticketRegistry.updateTicket(t);
+        assertThrows(InvalidTicketException.class, () -> openIdCredentialsAuthenticationHandler.authenticate(credential));
     }
 
     @Test
     public void verifyTGTWithDifferentId() throws Exception {
-        val c = new OpenIdCredential(TGT_ID, "test1");
+        val credential = new OpenIdCredential(TGT_ID, "test1");
         val t = getTicketGrantingTicket();
-        this.ticketRegistry.addTicket(t);
-
-        assertThrows(FailedLoginException.class, () -> this.openIdCredentialsAuthenticationHandler.authenticate(c));
+        ticketRegistry.addTicket(t);
+        assertThrows(FailedLoginException.class, () -> openIdCredentialsAuthenticationHandler.authenticate(credential));
     }
 
     private static TicketGrantingTicket getTicketGrantingTicket() {

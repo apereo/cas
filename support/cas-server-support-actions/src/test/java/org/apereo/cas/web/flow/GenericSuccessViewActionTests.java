@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -9,7 +8,6 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -130,22 +128,17 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     public void verifyValidPrincipal() throws Exception {
         val mgr = mock(ServicesManager.class);
         val factory = mock(ServiceFactory.class);
-
-        val authn = mock(Authentication.class);
-        when(authn.getPrincipal()).thenReturn(CoreAuthenticationTestUtils.getPrincipal("cas"));
-        val tgt = mock(TicketGrantingTicket.class);
-        when(tgt.getAuthentication()).thenReturn(authn);
-
+        val tgt = new MockTicketGrantingTicket(CoreAuthenticationTestUtils.getAuthentication("cas"));
         getTicketRegistry().addTicket(tgt);
         val action = new GenericSuccessViewAction(getTicketRegistry(), mgr, factory, casProperties);
-        val p = action.getAuthentication("TGT-1");
+        val p = action.getAuthentication(tgt.getId());
         assertNotNull(p);
         assertTrue(p.isPresent());
         assertEquals("cas", p.get().getPrincipal().getId());
     }
 
     @Test
-    public void verifyPrincipalCanNotBeDetermined() throws Exception {
+    public void verifyPrincipalCanNotBeDetermined() {
         val mgr = mock(ServicesManager.class);
         val factory = mock(ServiceFactory.class);
         val action = new GenericSuccessViewAction(getTicketRegistry(), mgr, factory, casProperties);

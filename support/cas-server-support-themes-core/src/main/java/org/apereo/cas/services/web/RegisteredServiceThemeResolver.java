@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
@@ -32,12 +31,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.regex.Pattern;
 
 /**
  * ThemeResolver to determine the theme for CAS based on the service provided.
@@ -58,28 +52,11 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     private final ObjectProvider<CasConfigurationProperties> casProperties;
 
-    /**
-     * This sets a flag on the request called "isMobile" and also
-     * provides the custom flag called browserType which can be mapped into the theme.
-     * <p>
-     * Themes that understand isMobile should provide an alternative stylesheet.
-     */
-    private final Map<Pattern, String> overrides;
-
+    @Nonnull
     @Override
-    public String resolveThemeName(@Nonnull final HttpServletRequest request) {
-        val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
-        if (StringUtils.isNotBlank(userAgent)) {
-            overrides.entrySet()
-                .stream()
-                .filter(entry -> entry.getKey().matcher(userAgent).matches())
-                .findFirst()
-                .ifPresent(entry -> {
-                    request.setAttribute("isMobile", Boolean.TRUE.toString());
-                    request.setAttribute("browserType", entry.getValue());
-                });
-        }
-        
+    public String resolveThemeName(
+        @Nonnull
+        final HttpServletRequest request) {
         val context = RequestContextHolder.getRequestContext();
         val serviceContext = WebUtils.getService(context);
         val service = authenticationRequestServiceSelectionStrategies.getObject().resolveService(serviceContext);
@@ -103,17 +80,11 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     }
 
     @Override
-    public void setThemeName(@Nonnull final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
+    public void setThemeName(
+        @Nonnull
+        final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
     }
 
-    /**
-     * Determine theme name to choose.
-     *
-     * @param request  the request
-     * @param service  the service
-     * @param rService the r service
-     * @return the string
-     */
     protected String determineThemeNameToChoose(final HttpServletRequest request,
                                                 final Service service,
                                                 final WebBasedRegisteredService rService) {
@@ -142,15 +113,13 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
                     return StringUtils.defaultIfBlank(result, getDefaultThemeName());
                 }
             }
-            val messageSource = new CasThemeResourceBundleMessageSource();
-            val theme = SpringExpressionLanguageValueResolver.getInstance().resolve(rService.getTheme());
-            messageSource.setBasename(theme);
-            if (messageSource.doGetBundle(theme, request.getLocale()) != null) {
+            val theme = resolveThemeForService(rService, request);
+            if (theme != null) {
                 LOGGER.trace("Found custom theme [{}] for service [{}]", theme, rService);
                 return theme;
             }
             LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...",
-                rService.getTheme(), rService);
+                rService.getTheme(), rService.getName());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
@@ -159,23 +128,10 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         return getDefaultThemeName();
     }
 
-    /**
-     * Remember/save the theme in the request.
-     *
-     * @param request the HTTP request
-     * @return the remembered theme
-     */
     protected String rememberThemeName(final HttpServletRequest request) {
         return rememberThemeName(request, getDefaultThemeName());
     }
 
-    /**
-     * Remember/save the theme in the request.
-     *
-     * @param request   the HTTP request
-     * @param themeName the theme to remember
-     * @return the remembered theme
-     */
     protected String rememberThemeName(final HttpServletRequest request, final String themeName) {
         val attributeName = casProperties.getObject().getTheme().getParamName();
         LOGGER.trace("Storing theme [{}] as a request attribute under [{}]", themeName, attributeName);
@@ -183,22 +139,27 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         return themeName;
     }
 
-    /**
-     * An extension of the default where the exceptions are logged
-     * so CAS can fall back onto default themes.
-     */
-    private static class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {
-        @Override
-        protected ResourceBundle doGetBundle(final String basename, final Locale locale) {
-            try {
-                val bundle = ResourceBundle.getBundle(basename, locale, getBundleClassLoader());
-                if (bundle != null && !bundle.keySet().isEmpty()) {
-                    return bundle;
-                }
-            } catch (final Exception e) {
-                LOGGER.debug(e.getMessage(), e);
-            }
-            return null;
+    protected String resolveThemeForService(final WebBasedRegisteredService registeredService,
+                                            final HttpServletRequest request) {
+        val messageSource = new CasThemeResourceBundleMessageSource();
+        val theme = SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getTheme());
+        messageSource.setBasename(theme);
+
+        if (casProperties.getObject().getView().getTemplatePrefixes()
+            .stream()
+            .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(theme).concat(".properties"))
+            .anyMatch(ResourceUtils::doesResourceExist)) {
+            LOGGER.trace("Found custom extrnal theme [{}] for service [{}]", theme, registeredService.getName());
+            return theme;
         }
+
+        if (messageSource.doGetBundle(theme, request.getLocale()) != null) {
+            LOGGER.trace("Found custom theme [{}] for service [{}]", theme, registeredService.getName());
+            return theme;
+        }
+        
+        LOGGER.warn("Theme [{}] for service [{}] cannot be located", theme, registeredService.getName());
+        return null;
     }
+
 }
