@@ -16,6 +16,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 
@@ -345,7 +346,8 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         result.markTicketExpired();
         result = getTicketRegistry().updateTicket(result);
         assertTrue(result.isExpired());
-        assertThrows(InvalidTicketException.class, () -> getTicketRegistry().getTicket(ticketGrantingTicket.getId()));
+        assertThrows(InvalidTicketException.class,
+            () -> getTicketRegistry().getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class));
     }
 
     @Test

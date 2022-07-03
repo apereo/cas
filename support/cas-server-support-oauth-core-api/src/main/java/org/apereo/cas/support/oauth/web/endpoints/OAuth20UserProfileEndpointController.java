@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,12 +37,6 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         this.expiredAccessTokenResponseEntity = buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
     }
 
-    /**
-     * Build unauthorized response entity.
-     *
-     * @param code the code
-     * @return the response entity
-     */
     protected static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
         val map = new LinkedMultiValueMap<String, String>(1);
         map.add(OAuth20Constants.ERROR, code);
@@ -84,17 +79,18 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             LOGGER.error("Missing [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
         }
-        val accessTokenTicket = getConfigurationContext().getTicketRegistry()
-            .getTicket(accessToken, OAuth20AccessToken.class);
+        return FunctionUtils.doAndHandle(() -> {
+            val accessTokenTicket = getConfigurationContext().getTicketRegistry().getTicket(accessToken, OAuth20AccessToken.class);
+            if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
+                LOGGER.error("Access token [{}] cannot be found in the ticket registry or has expired.", accessToken);
+                return expiredAccessTokenResponseEntity;
+            }
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(accessTokenTicket.getAuthentication());
+            updateAccessTokenUsage(accessTokenTicket);
+            val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
+            return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
+        });
 
-        if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-            LOGGER.error("Access token [{}] cannot be found in the ticket registry or has expired.", accessToken);
-            return expiredAccessTokenResponseEntity;
-        }
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(accessTokenTicket.getAuthentication());
-        updateAccessTokenUsage(accessTokenTicket);
-        val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
-        return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
     }
 
     /**

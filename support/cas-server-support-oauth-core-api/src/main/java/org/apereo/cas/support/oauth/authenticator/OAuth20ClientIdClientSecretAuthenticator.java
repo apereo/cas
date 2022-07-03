@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -151,8 +152,11 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
 
         if (code.isPresent()) {
             LOGGER.debug("Checking if the OAuth code issued contains code challenge");
-            val token = this.ticketRegistry.getTicket(code.get(), OAuth20Code.class);
-
+            val token = FunctionUtils.doAndHandle(() -> {
+                val state = ticketRegistry.getTicket(code.get(), OAuth20Code.class);
+                return state == null || state.isExpired() ? null : state;
+            });
+            
             if (token != null && StringUtils.isNotEmpty(token.getCodeChallenge())) {
                 LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Authentication", code.get());
                 return false;

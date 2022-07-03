@@ -45,14 +45,14 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
             val foundCode = IntStream.range(0, this.basenames.length)
                 .filter(i -> {
                     val filename = this.basenames[i] + '_' + locale;
-                    LOGGER.trace("Examining language bundle [{}] for the code [{}]", filename, code);
+                    LOGGER.trace("Examining bundle [{}] for the key [{}]", filename, code);
                     val holder = this.getProperties(filename);
                     return holder != null && holder.getProperties() != null && holder.getProperty(code) != null;
                 })
                 .findFirst()
                 .isPresent();
             if (!foundCode) {
-                LOGGER.trace("The code [{}] cannot be found in the language bundle for the locale [{}]", code, locale);
+                LOGGER.trace("The key [{}] cannot be found in the bundle for the locale [{}]", code, locale);
             }
         }
         return super.getMessageInternal(code, args, locale);
