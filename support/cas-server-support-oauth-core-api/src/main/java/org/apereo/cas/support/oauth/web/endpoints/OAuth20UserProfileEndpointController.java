@@ -89,7 +89,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             updateAccessTokenUsage(accessTokenTicket);
             val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
             return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
-        });
+        }, e -> expiredAccessTokenResponseEntity).get();
 
     }
 

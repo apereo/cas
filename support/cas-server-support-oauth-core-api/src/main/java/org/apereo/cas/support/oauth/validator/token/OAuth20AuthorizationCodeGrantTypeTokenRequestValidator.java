@@ -8,6 +8,8 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -53,7 +55,10 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         val valid = redirectUri.isPresent() && code.isPresent() && OAuth20Utils.checkCallbackValid(registeredService, redirectUri.get());
 
         if (valid) {
-            val token = getConfigurationContext().getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
+            val token = FunctionUtils.doAndHandle(() -> {
+                val state = getConfigurationContext().getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
+                return state == null || state.isExpired() ? null : state;
+            });
             val removeTokens = getConfigurationContext().getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
             if (token == null || token.isExpired()) {
                 if (removeTokens) {

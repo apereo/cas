@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.ticket.InvalidTicketException;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -100,7 +101,6 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
         assertNotNull(accessTokenRequest.getResponseType());
         assertNotNull(accessTokenRequest.getGrantType());
         assertNotNull(accessTokenRequest.getTicketGrantingTicket());
-        ticket = ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class);
-        assertNull(ticket);
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class));
     }
 }
