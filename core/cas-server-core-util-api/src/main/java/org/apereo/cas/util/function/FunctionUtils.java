@@ -1,5 +1,6 @@
 package org.apereo.cas.util.function;
 
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.experimental.UtilityClass;
@@ -271,6 +272,8 @@ public class FunctionUtils {
     public static <R> R doAndHandle(final CheckedSupplier<R> function) {
         try {
             return function.get();
+        } catch (final InvalidTicketException e) {
+            LOGGER.debug(e.getMessage(), e);
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
         }

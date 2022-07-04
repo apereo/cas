@@ -475,10 +475,10 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.updateTicket(tgt);
         assertSame(4, ticketRegistry.deleteTicket(tgt.getId()));
 
-        assertNull(ticketRegistry.getTicket(ticketGrantingTicketId + '1', TicketGrantingTicket.class));
-        assertNull(ticketRegistry.getTicket("ST-11", ServiceTicket.class));
-        assertNull(ticketRegistry.getTicket("ST-21", ServiceTicket.class));
-        assertNull(ticketRegistry.getTicket("ST-31", ServiceTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticketGrantingTicketId + '1', TicketGrantingTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST-11", ServiceTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST-21", ServiceTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST-31", ServiceTicket.class));
     }
 
     @RepeatedTest(2)

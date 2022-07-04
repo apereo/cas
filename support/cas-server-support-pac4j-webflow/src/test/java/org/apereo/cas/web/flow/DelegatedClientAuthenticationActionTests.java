@@ -418,7 +418,7 @@ public class DelegatedClientAuthenticationActionTests {
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
         assertThrows(UnauthorizedServiceException.class, () -> delegatedAuthenticationAction.execute(context).getId());
-        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(tgt.getId()));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class));
     }
 
     private void assertStartAuthentication(final Service service) throws Exception {
