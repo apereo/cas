@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.code.OAuth20DefaultCode;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DigestUtils;
@@ -53,7 +54,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class,
+        assertThrows(InvalidTicketException.class,
             () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
     }
 

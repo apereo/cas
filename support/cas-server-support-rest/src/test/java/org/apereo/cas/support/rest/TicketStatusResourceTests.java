@@ -3,6 +3,7 @@ package org.apereo.cas.support.rest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
@@ -54,7 +55,7 @@ public class TicketStatusResourceTests {
     @Test
     public void verifyStatus() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
-        when(ticketRegistry.getTicket(anyString())).thenReturn(tgt);
+        when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenReturn(tgt);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isOk())
             .andExpect(content().string(tgt.getId()));
@@ -62,7 +63,7 @@ public class TicketStatusResourceTests {
 
     @Test
     public void verifyStatusNotFound() throws Exception {
-        when(ticketRegistry.getTicket(anyString())).thenThrow(InvalidTicketException.class);
+        when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenThrow(InvalidTicketException.class);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isNotFound());
     }

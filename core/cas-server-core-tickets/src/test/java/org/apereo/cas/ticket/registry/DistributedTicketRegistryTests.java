@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.RenewableServiceTicket;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -126,9 +127,9 @@ public class DistributedTicketRegistryTests {
         assertEquals(a, pgt.getAuthentication());
         ticketRegistry.addTicket(pgt);
         assertSame(3, ticketRegistry.deleteTicket(tgt.getId()));
-        assertNull(ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
-        assertNull(ticketRegistry.getTicket("ST1", ServiceTicket.class));
-        assertNull(ticketRegistry.getTicket("PGT-1", ProxyGrantingTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("PGT-1", ProxyGrantingTicket.class));
     }
 
     @RequiredArgsConstructor

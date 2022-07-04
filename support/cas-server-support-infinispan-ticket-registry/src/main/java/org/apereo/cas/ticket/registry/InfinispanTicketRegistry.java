@@ -55,7 +55,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
             return null;
         }
         val result = decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
-        if (predicate.test(result)) {
+        if (result != null && predicate.test(result)) {
             return result;
         }
         return null;

@@ -58,8 +58,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId) {
         return getTicket(ticketId, ticket -> {
-            if (ticket.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticket.getId());
+            if (ticket == null || ticket.isExpired()) {
+                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticketId);
                 deleteSingleTicket(ticketId);
                 return false;
             }

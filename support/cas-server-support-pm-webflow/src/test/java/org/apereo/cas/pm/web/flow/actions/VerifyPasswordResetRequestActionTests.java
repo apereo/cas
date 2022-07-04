@@ -125,7 +125,7 @@ public class VerifyPasswordResetRequestActionTests {
             val service = webApplicationServiceFactory.createService(serverPrefix);
             val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementService.PARAMETER_TOKEN, token);
             val ticket = transientFactory.create(service, properties);
-            this.ticketRegistry.addTicket(ticket);
+            ticketRegistry.addTicket(ticket);
             request.addParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, ticket.getId());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordResetRequestAction.execute(context).getId());
@@ -133,7 +133,7 @@ public class VerifyPasswordResetRequestActionTests {
             assertTrue(PasswordManagementWebflowUtils.isPasswordResetSecurityQuestionsEnabled(context));
             assertNotNull(PasswordManagementWebflowUtils.getPasswordResetUsername(context));
             assertNotNull(PasswordManagementWebflowUtils.getPasswordResetToken(context));
-            assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticket.getId()));
+            assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticket.getId(), TransientSessionTicket.class));
         }
 
         @Test
