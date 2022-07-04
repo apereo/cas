@@ -48,9 +48,9 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
             return null;
         }
         LOGGER.debug("Retrieving ticket [{}]", ticketId);
-        val ticket = this.dbTableService.get(ticketId, encTicketId);
+        val ticket = dbTableService.get(ticketId, encTicketId);
         val decodedTicket = decodeTicket(ticket);
-        if (predicate.test(decodedTicket)) {
+        if (decodedTicket != null && predicate.test(decodedTicket)) {
             return decodedTicket;
         }
         return null;

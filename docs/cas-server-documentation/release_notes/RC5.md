@@ -90,3 +90,6 @@ scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 - Twilio
 - CosmosDb
 - MariaDb
+- Apache Log4j
+- Apache Curator
+- Spring Boot Admin
