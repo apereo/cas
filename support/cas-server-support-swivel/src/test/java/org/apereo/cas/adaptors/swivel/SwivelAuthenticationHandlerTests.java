@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.swivel;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -24,6 +25,7 @@ import javax.security.auth.login.FailedLoginException;
 
 import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.webflow.execution.RequestContextHolder.*;
 
 /**
@@ -52,7 +54,6 @@ public class SwivelAuthenticationHandlerTests {
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword().getCredentialClass()));
         assertTrue(swivelAuthenticationHandler.supports(new SwivelTokenCredential("123456")));
     }
-
     @Test
     public void verifyAuthn() throws Exception {
         val data = "<?xml version=\"1.0\" ?>"
@@ -74,7 +75,7 @@ public class SwivelAuthenticationHandlerTests {
             ExternalContextHolder.setExternalContext(context.getExternalContext());
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
             setRequestContext(context);
-            assertNotNull(swivelAuthenticationHandler.authenticate(c));
+            assertNotNull(swivelAuthenticationHandler.authenticate(c, mock(Service.class)));
         }
     }
 
@@ -99,7 +100,7 @@ public class SwivelAuthenticationHandlerTests {
             ExternalContextHolder.setExternalContext(context.getExternalContext());
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
             setRequestContext(context);
-            assertThrows(FailedLoginException.class, () -> swivelAuthenticationHandler.authenticate(c));
+            assertThrows(FailedLoginException.class, () -> swivelAuthenticationHandler.authenticate(c, mock(Service.class)));
         }
     }
 }

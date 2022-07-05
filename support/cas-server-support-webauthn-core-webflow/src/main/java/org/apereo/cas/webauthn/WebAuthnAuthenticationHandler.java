@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -57,7 +58,7 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
         val webAuthnCredential = (WebAuthnCredential) credential;
         val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication(),
             "CAS has no reference to an authentication event to locate a principal");

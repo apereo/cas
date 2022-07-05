@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -66,7 +67,7 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential)
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service)
         throws GeneralSecurityException {
         try {
             val url = StringUtils.appendIfMissing(accepttoProperties.getApiUrl(), "/") + "check";

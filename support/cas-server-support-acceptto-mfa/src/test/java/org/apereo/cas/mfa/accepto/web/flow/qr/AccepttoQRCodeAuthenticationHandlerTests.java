@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.accepto.web.flow.qr;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.mfa.accepto.BaseAccepttoMultifactorAuthenticationTests;
 import org.apereo.cas.services.ServicesManager;
@@ -40,6 +41,6 @@ public class AccepttoQRCodeAuthenticationHandlerTests {
         assertTrue(handler.supports(AccepttoEmailCredential.class));
         val credential = new AccepttoEmailCredential("cas@example.org");
         assertTrue(handler.supports(credential));
-        assertNotNull(handler.authenticate(credential));
+        assertNotNull(handler.authenticate(credential, mock(Service.class)));
     }
 }

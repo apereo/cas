@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -51,6 +52,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RestAuthenticationHandlerTests}.
@@ -103,7 +105,7 @@ public class RestAuthenticationHandlerTests {
 
         try (val webServer = new MockWebServer(8081, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser"), headers, HttpStatus.OK)) {
             webServer.start();
-            val res = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            val res = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class));
             assertEquals("casuser", res.getPrincipal().getId());
         }
     }
@@ -113,7 +115,7 @@ public class RestAuthenticationHandlerTests {
         try (val webServer = new MockWebServer(8081, StringUtils.EMPTY)) {
             webServer.start();
             assertThrows(FailedLoginException.class,
-                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
         }
     }
 
@@ -122,7 +124,7 @@ public class RestAuthenticationHandlerTests {
         try (val webServer = new MockWebServer(8081, HttpStatus.FORBIDDEN)) {
             webServer.start();
             assertThrows(AccountDisabledException.class,
-                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
         }
     }
 
@@ -131,7 +133,7 @@ public class RestAuthenticationHandlerTests {
         try (val webServer = new MockWebServer(8081, HttpStatus.UNAUTHORIZED)) {
             webServer.start();
             assertThrows(FailedLoginException.class,
-                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
         }
     }
 
@@ -140,7 +142,7 @@ public class RestAuthenticationHandlerTests {
         try (val webServer = new MockWebServer(8081, HttpStatus.REQUEST_TIMEOUT)) {
             webServer.start();
             assertThrows(FailedLoginException.class,
-                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
         }
     }
 
@@ -149,7 +151,7 @@ public class RestAuthenticationHandlerTests {
         try (val webServer = new MockWebServer(8081, HttpStatus.LOCKED)) {
             webServer.start();
             assertThrows(AccountLockedException.class,
-                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
         }
     }
 
@@ -158,7 +160,7 @@ public class RestAuthenticationHandlerTests {
         try (val webServer = new MockWebServer(8081, HttpStatus.PRECONDITION_REQUIRED)) {
             webServer.start();
             assertThrows(AccountPasswordMustChangeException.class,
-                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
         }
     }
 
@@ -167,7 +169,7 @@ public class RestAuthenticationHandlerTests {
         try (val webServer = new MockWebServer(8081, HttpStatus.PRECONDITION_FAILED)) {
             webServer.start();
             assertThrows(AccountExpiredException.class,
-                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
         }
     }
 
@@ -176,7 +178,7 @@ public class RestAuthenticationHandlerTests {
         try (val webServer = new MockWebServer(8081, HttpStatus.NOT_FOUND)) {
             webServer.start();
             assertThrows(AccountNotFoundException.class,
-                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
         }
     }
 }

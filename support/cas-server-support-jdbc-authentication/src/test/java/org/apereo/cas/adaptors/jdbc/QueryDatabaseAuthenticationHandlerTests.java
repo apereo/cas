@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is tests for {@link QueryDatabaseAuthenticationHandler}.
@@ -95,7 +97,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
         assertThrows(AccountNotFoundException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1")));
+            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"), mock(Service.class)));
     }
 
     @Test
@@ -104,7 +106,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
         assertThrows(FailedLoginException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11")));
+            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"), mock(Service.class)));
     }
 
     @Test
@@ -113,7 +115,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
         assertThrows(FailedLoginException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0")));
+            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), mock(Service.class)));
     }
 
     @Test
@@ -122,7 +124,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
         assertThrows(PreventedException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0")));
+            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), mock(Service.class)));
     }
 
     @Test
@@ -132,7 +134,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, CollectionUtils.wrap(map));
         val result = q.authenticate(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3"));
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3"), mock(Service.class));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());
         assertTrue(result.getPrincipal().getAttributes().containsKey("phoneNumber"));
@@ -144,7 +146,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
         assertThrows(AccountPasswordMustChangeException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20")));
+            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20"), mock(Service.class)));
     }
 
     @Test
@@ -153,7 +155,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
         assertThrows(AccountDisabledException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21")));
+            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21"), mock(Service.class)));
     }
 
     /**
@@ -169,7 +171,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
             this.dataSource, new HashMap<>(0));
         q.setPasswordEncoder(encoder);
         assertThrows(FailedLoginException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "pswbc1")));
+            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "pswbc1"), mock(Service.class)));
     }
 
     /**
@@ -185,7 +187,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
             this.dataSource, new HashMap<>(0));
 
         q.setPasswordEncoder(encoder);
-        assertNotNull(q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2")));
+        assertNotNull(q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2"), mock(Service.class)));
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)

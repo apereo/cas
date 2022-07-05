@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
@@ -31,7 +32,7 @@ public class GroovyAuthenticationHandler extends AbstractAuthenticationHandler {
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) {
         val args = new Object[]{this, credential, getServicesManager(), getPrincipalFactory(), LOGGER};
         return watchableScript.execute("authenticate", AuthenticationHandlerExecutionResult.class, args);
     }

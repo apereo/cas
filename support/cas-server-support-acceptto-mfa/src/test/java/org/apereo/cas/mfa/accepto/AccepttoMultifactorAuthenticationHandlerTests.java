@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -73,7 +74,7 @@ public class AccepttoMultifactorAuthenticationHandlerTests {
             val credential = new AccepttoMultifactorTokenCredential("test-channel");
             assertTrue(handler.supports(credential));
             assertTrue(handler.supports(AccepttoMultifactorTokenCredential.class));
-            val result = handler.authenticate(credential);
+            val result = handler.authenticate(credential, mock(Service.class));
             assertNotNull(result.getPrincipal());
         }
     }
@@ -87,7 +88,7 @@ public class AccepttoMultifactorAuthenticationHandlerTests {
             val handler = buildHandler();
 
             val credential = new AccepttoMultifactorTokenCredential("test-channel");
-            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
         }
     }
 
@@ -100,7 +101,7 @@ public class AccepttoMultifactorAuthenticationHandlerTests {
             val handler = buildHandler();
 
             val credential = new AccepttoMultifactorTokenCredential("test-channel");
-            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
         }
     }
 
@@ -113,7 +114,7 @@ public class AccepttoMultifactorAuthenticationHandlerTests {
             val handler = buildHandler();
 
             val credential = new AccepttoMultifactorTokenCredential("test-channel");
-            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
         }
     }
 
@@ -126,7 +127,7 @@ public class AccepttoMultifactorAuthenticationHandlerTests {
             val handler = buildHandler();
 
             val credential = new AccepttoMultifactorTokenCredential("test-channel");
-            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
         }
     }
 

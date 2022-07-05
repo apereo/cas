@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAu
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) {
         LOGGER.debug("Trusting credential for: [{}]", credential);
         val bearingCredential = (PrincipalBearingCredential) credential;
         return new DefaultAuthenticationHandlerExecutionResult(this, bearingCredential, bearingCredential.getPrincipal());

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
@@ -63,7 +64,7 @@ public class AuthyAuthenticationHandlerTests {
         RequestContextHolder.setRequestContext(context);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
 
-        val result = handler.authenticate(new AuthyTokenCredential("token"));
+        val result = handler.authenticate(new AuthyTokenCredential("token"), mock(Service.class));
         assertNotNull(result);
 
         assertTrue(handler.supports(new AuthyTokenCredential("token")));
@@ -81,9 +82,9 @@ public class AuthyAuthenticationHandlerTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
 
-        assertThrows(NullPointerException.class, () -> handler.authenticate(new AuthyTokenCredential("token")));
+        assertThrows(NullPointerException.class, () -> handler.authenticate(new AuthyTokenCredential("token"), mock(Service.class)));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        assertThrows(FailedLoginException.class, () -> handler.authenticate(new AuthyTokenCredential("token")));
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(new AuthyTokenCredential("token"), mock(Service.class)));
     }
 
     @Test
@@ -97,7 +98,7 @@ public class AuthyAuthenticationHandlerTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        assertThrows(FailedLoginException.class, () -> handler.authenticate(new AuthyTokenCredential("token")));
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(new AuthyTokenCredential("token"), mock(Service.class)));
     }
 
     private static AuthyAuthenticationHandler getAuthyAuthenticationHandler(final AuthyClientInstance authyInstance) {
