@@ -9,6 +9,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.awaitility.Awaitility.*;
 
 /**
  * This is {@link GroovyPasswordlessUserAccountStoreTests}.
@@ -57,8 +59,7 @@ public class JsonPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
                 val account = PasswordlessUserAccount.builder().username("casuser").build();
                 val json = MAPPER.writeValueAsString(CollectionUtils.wrap("casuser", account));
                 FileUtils.writeStringToFile(file, json, StandardCharsets.UTF_8);
-                Thread.sleep(5_000);
-                assertFalse(resource.getAccounts().isEmpty());
+                await().untilAsserted(() -> assertFalse(resource.getAccounts().isEmpty()));
             }
         });
     }
