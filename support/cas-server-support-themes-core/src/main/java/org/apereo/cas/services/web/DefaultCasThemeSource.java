@@ -1,30 +1,20 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.web.view.CasReloadableMessageBundle;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.MessageSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.context.support.StaticMessageSource;
-import org.springframework.ui.context.Theme;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 /**
  * This is {@link DefaultCasThemeSource}.
