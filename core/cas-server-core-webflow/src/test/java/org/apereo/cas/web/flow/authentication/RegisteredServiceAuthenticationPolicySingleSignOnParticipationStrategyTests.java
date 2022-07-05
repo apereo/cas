@@ -88,6 +88,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(strategy.isParticipating(ssoRequest));
@@ -112,6 +113,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertFalse(strategy.supports(ssoRequest));
@@ -145,6 +147,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(strategy.supports(ssoRequest));
@@ -177,6 +180,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(strategy.supports(ssoRequest));
@@ -210,6 +214,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(strategy.supports(ssoRequest));

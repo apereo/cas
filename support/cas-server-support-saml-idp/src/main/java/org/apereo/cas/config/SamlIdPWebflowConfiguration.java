@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
+import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -118,13 +120,19 @@ public class SamlIdPWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategy")
         public SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy(
+            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
+            final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+            @Qualifier(MultifactorAuthenticationContextValidator.BEAN_NAME)
+            final MultifactorAuthenticationContextValidator authenticationContextValidator,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan selectionStrategies) {
-            return new SamlIdPSingleSignOnParticipationStrategy(servicesManager, ticketRegistrySupport, selectionStrategies);
+            return new SamlIdPSingleSignOnParticipationStrategy(servicesManager,
+                ticketRegistrySupport, selectionStrategies,
+                authenticationContextValidator, multifactorTriggerSelectionStrategy);
         }
     }
 
@@ -198,6 +206,10 @@ public class SamlIdPWebflowConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPConsentSingleSignOnParticipationStrategyConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleSignOnParticipationStrategyConfigurer samlIdPConsentSingleSignOnParticipationStrategyConfigurer(
+            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
+            final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+            @Qualifier(MultifactorAuthenticationContextValidator.BEAN_NAME)
+            final MultifactorAuthenticationContextValidator authenticationContextValidator,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -207,7 +219,8 @@ public class SamlIdPWebflowConfiguration {
             @Qualifier(ConsentActivationStrategy.BEAN_NAME)
             final ConsentActivationStrategy consentActivationStrategy) {
             val ssoStrategy = new SamlIdPConsentSingleSignOnParticipationStrategy(servicesManager,
-                ticketRegistrySupport, authenticationServiceSelectionPlan, consentActivationStrategy);
+                ticketRegistrySupport, authenticationServiceSelectionPlan,
+                consentActivationStrategy, authenticationContextValidator, multifactorTriggerSelectionStrategy);
             return chain -> chain.addStrategy(ssoStrategy);
         }
     }

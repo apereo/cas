@@ -13,6 +13,10 @@ import java.util.Optional;
  */
 @FunctionalInterface
 public interface MultifactorAuthenticationContextValidator {
+    /**
+     * Default impl bean name.
+     */
+    String BEAN_NAME = "authenticationContextValidator";
 
     /**
      * Validate the authentication context.

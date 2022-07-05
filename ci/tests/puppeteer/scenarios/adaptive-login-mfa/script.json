@@ -6,6 +6,7 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+    "--logging.level.org.apereo.cas=debug",
 
     "--cas.events.core.track-geolocation=true",
 
@@ -15,7 +16,6 @@
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
-    "--logging.level.org.apereo=debug",
 
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
