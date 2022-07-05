@@ -116,13 +116,12 @@ public class DefaultAuthenticationManagerTests {
         when(mock.getState()).thenCallRealMethod();
         if (success) {
             val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("nobody");
-
             val result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
-            when(mock.authenticate(any(Credential.class), mock(Service.class))).thenReturn(result);
+            when(mock.authenticate(any(Credential.class), any(Service.class))).thenReturn(result);
         } else if (!error) {
-            when(mock.authenticate(any(Credential.class), mock(Service.class))).thenThrow(new FailedLoginException());
+            when(mock.authenticate(any(Credential.class), any(Service.class))).thenThrow(new FailedLoginException());
         } else {
-            when(mock.authenticate(any(Credential.class), mock(Service.class))).thenThrow(new PreventedException("failure"));
+            when(mock.authenticate(any(Credential.class), any(Service.class))).thenThrow(new PreventedException("failure"));
         }
         return mock;
     }
