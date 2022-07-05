@@ -91,7 +91,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
-            @Qualifier("authenticationContextValidator")
+            @Qualifier(MultifactorAuthenticationContextValidator.BEAN_NAME)
             final MultifactorAuthenticationContextValidator authenticationContextValidator,
             @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy) {
@@ -408,7 +408,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         }
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "defaultMultifactorTriggerSelectionStrategy")
+        @ConditionalOnMissingBean(name = MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
         public MultifactorAuthenticationTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy(
             final List<MultifactorAuthenticationTrigger> triggers) {
             val activeTriggers = triggers.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList());

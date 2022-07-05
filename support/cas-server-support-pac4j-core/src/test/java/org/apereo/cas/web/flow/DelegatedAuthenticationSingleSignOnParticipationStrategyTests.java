@@ -92,6 +92,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
 
@@ -137,6 +138,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(strategy.supports(ssoRequest));
@@ -173,6 +175,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(strategy.supports(ssoRequest));

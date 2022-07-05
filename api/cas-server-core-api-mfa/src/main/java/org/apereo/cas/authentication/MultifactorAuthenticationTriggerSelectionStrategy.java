@@ -16,6 +16,10 @@ import java.util.Optional;
  * @since 5.0.0
  */
 public interface MultifactorAuthenticationTriggerSelectionStrategy {
+    /**
+     * Default Bean name.
+     */
+    String BEAN_NAME = "defaultMultifactorTriggerSelectionStrategy";
 
     /**
      * Resolve the multifactor authentication provider id.

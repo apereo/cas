@@ -50,7 +50,7 @@ public class CasCoreRestConfiguration {
         public RestAuthenticationService restAuthenticationService(
             @Qualifier("restHttpRequestCredentialFactory")
             final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
-            @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
             final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,

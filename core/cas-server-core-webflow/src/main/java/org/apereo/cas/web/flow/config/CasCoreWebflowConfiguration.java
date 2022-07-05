@@ -146,7 +146,7 @@ public class CasCoreWebflowConfiguration {
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("authenticationContextValidator")
+            @Qualifier(MultifactorAuthenticationContextValidator.BEAN_NAME)
             final MultifactorAuthenticationContextValidator authenticationContextValidator,
             @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
             final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,

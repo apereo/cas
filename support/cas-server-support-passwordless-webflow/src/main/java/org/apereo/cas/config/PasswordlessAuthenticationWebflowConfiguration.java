@@ -94,7 +94,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         final PrincipalFactory passwordlessPrincipalFactory,
         @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
         final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+        @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
         final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy) {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.Serializable;
@@ -38,6 +39,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
     public void verifyStrategyWithANonPmRequest() {
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
+            .httpServletResponse(new MockHttpServletResponse())
             .requestContext(new MockRequestContext())
             .build();
         assertFalse(strategy.supports(ssoRequest));
@@ -50,6 +52,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
+            .httpServletResponse(new MockHttpServletResponse())
             .requestContext(ctx)
             .build();
         assertTrue(strategy.isParticipating(ssoRequest));
@@ -69,6 +72,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
+            .httpServletResponse(new MockHttpServletResponse())
             .requestContext(ctx)
             .build();
         assertFalse(strategy.isParticipating(ssoRequest));

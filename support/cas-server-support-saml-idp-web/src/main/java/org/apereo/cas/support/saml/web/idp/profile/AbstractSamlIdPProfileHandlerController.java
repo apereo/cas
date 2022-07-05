@@ -452,18 +452,19 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             return Optional.empty();
         }
 
-        val authn = ticketGrantingTicket.getAuthentication();
-        LOGGER.debug("Located single sign-on authentication for principal [{}]", authn.getPrincipal());
+        val authentication = ticketGrantingTicket.getAuthentication();
+        LOGGER.debug("Located single sign-on authentication for principal [{}]", authentication.getPrincipal());
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(issuer);
         val registeredService = configurationContext.getServicesManager().findServiceBy(service);
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .build()
             .attribute(Service.class.getName(), service)
             .attribute(RegisteredService.class.getName(), registeredService)
             .attribute(Issuer.class.getName(), issuer)
-            .attribute(Authentication.class.getName(), authn)
+            .attribute(Authentication.class.getName(), authentication)
             .attribute(TicketGrantingTicket.class.getName(), cookie)
             .attribute(AuthnRequest.class.getName(), authnRequest);
         val ssoStrategy = configurationContext.getSingleSignOnParticipationStrategy();

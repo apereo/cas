@@ -53,6 +53,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertFalse(strategy.isParticipating(ssoRequest));
@@ -73,6 +74,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(strategy.isParticipating(ssoRequest)
@@ -93,6 +95,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertFalse(strategy.isParticipating(ssoRequest));
@@ -119,6 +122,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(strategy.isParticipating(ssoRequest));
@@ -145,6 +149,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertFalse(strategy.isParticipating(ssoRequest));
@@ -172,6 +177,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         val create = strategy.isCreateCookieOnRenewedAuthentication(ssoRequest);
@@ -204,6 +210,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertFalse(strategy.isParticipating(ssoRequest));
@@ -237,6 +244,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(strategy.isParticipating(ssoRequest));
@@ -271,6 +279,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertFalse(strategy.isParticipating(ssoRequest));
