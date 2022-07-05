@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Events, module = "couchDb")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Events, module = "couchdb")
 @AutoConfiguration
 public class CouchDbEventsConfiguration {
 

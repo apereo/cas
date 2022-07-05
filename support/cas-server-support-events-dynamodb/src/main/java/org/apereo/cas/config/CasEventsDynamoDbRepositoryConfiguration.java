@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @since 6.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Events, module = "dynamoDb")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Events, module = "dynamodb")
 @AutoConfiguration
 public class CasEventsDynamoDbRepositoryConfiguration {
 

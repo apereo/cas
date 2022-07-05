@@ -33,7 +33,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "hazelcast")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "dynamodb")
 @AutoConfiguration
 public class DynamoDbServiceRegistryConfiguration {
 
