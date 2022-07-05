@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +37,7 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws GeneralSecurityException {
         val otp = (OneTimePasswordCredential) credential;
         val valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(valueOnRecord)) {

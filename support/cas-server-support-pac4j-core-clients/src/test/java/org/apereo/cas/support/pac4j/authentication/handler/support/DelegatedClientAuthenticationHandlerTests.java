@@ -3,6 +3,7 @@ package org.apereo.cas.support.pac4j.authentication.handler.support;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.services.ServicesManager;
 
@@ -50,15 +51,15 @@ public class DelegatedClientAuthenticationHandlerTests {
 
     @BeforeEach
     public void initialize() {
-        this.fbClient = new FacebookClient();
+        fbClient = new FacebookClient();
         val clients = new Clients(CALLBACK_URL, fbClient);
-        this.handler = new DelegatedClientAuthenticationHandler(StringUtils.EMPTY, 0,
+        handler = new DelegatedClientAuthenticationHandler(StringUtils.EMPTY, 0,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
             DelegatedClientUserProfileProvisioner.noOp(), JEESessionStore.INSTANCE);
-        this.handler.setTypedIdUsed(true);
+        handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);
-        this.clientCredential = new ClientCredential(credentials, fbClient.getName());
+        clientCredential = new ClientCredential(credentials, fbClient.getName());
         val mock = new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse());
         ExternalContextHolder.setExternalContext(mock);
@@ -68,8 +69,8 @@ public class DelegatedClientAuthenticationHandlerTests {
     public void verifyOk() throws GeneralSecurityException, PreventedException {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        this.fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
-        val result = this.handler.authenticate(this.clientCredential);
+        fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+        val result = handler.authenticate(clientCredential, mock(Service.class));
         val principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
     }
@@ -78,20 +79,20 @@ public class DelegatedClientAuthenticationHandlerTests {
     public void verifyMissingClient() {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        this.fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+        fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
 
         val cc = new ClientCredential(new AnonymousCredentials(), "UnknownClient");
-        assertThrows(PreventedException.class, () -> this.handler.authenticate(cc));
+        assertThrows(PreventedException.class, () -> handler.authenticate(cc, mock(Service.class)));
     }
 
     @Test
-    public void verifyOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
-        this.handler.setTypedIdUsed(false);
+    public void verifyOkWithSimpleIdentifier() throws Exception {
+        handler.setTypedIdUsed(false);
 
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        this.fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
-        val result = this.handler.authenticate(this.clientCredential);
+        fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+        val result = handler.authenticate(clientCredential, mock(Service.class));
         val principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
     }
@@ -99,8 +100,8 @@ public class DelegatedClientAuthenticationHandlerTests {
     @Test
     public void verifyNoProfile() {
         assertThrows(PreventedException.class, () -> {
-            this.fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.empty());
-            this.handler.authenticate(this.clientCredential);
+            fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.empty());
+            handler.authenticate(clientCredential, mock(Service.class));
         });
     }
 }

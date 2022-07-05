@@ -3,6 +3,7 @@ package org.apereo.cas.redis;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -46,6 +47,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RedisAuthenticationHandlerTests}.
@@ -112,7 +114,7 @@ public class RedisAuthenticationHandlerTests {
 
     @Test
     public void verifySuccessful() throws Exception {
-        val result = authenticationHandler.authenticate(new UsernamePasswordCredential("casuser", "caspassword"));
+        val result = authenticationHandler.authenticate(new UsernamePasswordCredential("casuser", "caspassword"), mock(Service.class));
         assertNotNull(result);
         val principal = result.getPrincipal();
         assertNotNull(principal);
@@ -124,30 +126,30 @@ public class RedisAuthenticationHandlerTests {
     @Test
     public void verifyNotFound() {
         assertThrows(AccountNotFoundException.class,
-            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("123456", "caspassword")));
+            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("123456", "caspassword"), mock(Service.class)));
     }
 
     @Test
     public void verifyInvalid() {
         assertThrows(FailedLoginException.class,
-            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casuser", "badpassword")));
+            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casuser", "badpassword"), mock(Service.class)));
     }
 
     @Test
     public void verifyExpired() {
         assertThrows(AccountExpiredException.class,
-            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casexpired", "caspassword")));
+            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casexpired", "caspassword"), mock(Service.class)));
     }
 
     @Test
     public void verifyLocked() {
         assertThrows(AccountLockedException.class,
-            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caslocked", "caspassword")));
+            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caslocked", "caspassword"), mock(Service.class)));
     }
 
     @Test
     public void verifyChangePsw() {
         assertThrows(AccountPasswordMustChangeException.class,
-            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caschangepsw", "caspassword")));
+            () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caschangepsw", "caspassword"), mock(Service.class)));
     }
 }

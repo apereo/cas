@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -51,7 +52,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws GeneralSecurityException {
         val httpCredential = (HttpBasedServiceCredential) credential;
         if (!httpCredential.getService().getProxyPolicy()
             .isAllowedProxyCallbackUrl(httpCredential.getService(), httpCredential.getCallbackUrl())) {

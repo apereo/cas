@@ -3,6 +3,7 @@ package org.apereo.cas.azure.ad.authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.azure.ad.config.AzureActiveDirectoryAuthenticationConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -49,6 +50,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AzureActiveDirectoryAuthenticationHandlerTests}.
@@ -112,7 +114,7 @@ public class AzureActiveDirectoryAuthenticationHandlerTests {
         assertFalse(microsoftAzureActiveDirectoryAttributeRepositories.isEmpty());
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "castest@hotmail.onmicrosoft.com", "1234567890");
-        assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
@@ -125,7 +127,7 @@ public class AzureActiveDirectoryAuthenticationHandlerTests {
 
             val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
                 "castest@hotmail.onmicrosoft.com", "1234567890");
-            assertNotNull(handler.authenticate(c));
+            assertNotNull(handler.authenticate(c, mock(Service.class)));
         }
     }
 
@@ -139,7 +141,7 @@ public class AzureActiveDirectoryAuthenticationHandlerTests {
 
             val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
                 "castest@hotmail.onmicrosoft.com", "1234567890");
-            assertThrows(FailedLoginException.class, () -> handler.authenticate(c));
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(c, mock(Service.class)));
         }
     }
 

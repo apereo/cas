@@ -4,6 +4,7 @@ import org.apereo.cas.BaseRemoteAddressTests;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.security.auth.login.FailedLoginException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RemoteAddressAuthenticationHandlerTests}.
@@ -38,7 +40,7 @@ public class RemoteAddressAuthenticationHandlerTests {
     @Test
     public void verifyAccount() throws Exception {
         val c = new RemoteAddressCredential("192.168.1.7");
-        val result = remoteAddressAuthenticationHandler.authenticate(c);
+        val result = remoteAddressAuthenticationHandler.authenticate(c, mock(Service.class));
         assertNotNull(result);
         assertEquals(c.getId(), result.getPrincipal().getId());
     }
@@ -46,7 +48,7 @@ public class RemoteAddressAuthenticationHandlerTests {
     @Test
     public void verifyAccountFails() throws Exception {
         val c = new RemoteAddressCredential("---");
-        assertThrows(FailedLoginException.class, () -> remoteAddressAuthenticationHandler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> remoteAddressAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
@@ -54,7 +56,7 @@ public class RemoteAddressAuthenticationHandlerTests {
         val c = new RemoteAddressCredential("---");
         val handler = new RemoteAddressAuthenticationHandler("Handler1", servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.configureIpNetworkRange("abc/def");
-        assertThrows(FailedLoginException.class, () -> remoteAddressAuthenticationHandler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> remoteAddressAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test

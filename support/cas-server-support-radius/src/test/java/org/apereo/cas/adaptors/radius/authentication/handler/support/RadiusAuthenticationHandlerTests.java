@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.radius.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -37,6 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RadiusAuthenticationHandlerTests}.
@@ -84,7 +86,7 @@ public class RadiusAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        val result = radiusAuthenticationHandler.authenticate(c);
+        val result = radiusAuthenticationHandler.authenticate(c, mock(Service.class));
         assertNotNull(result);
     }
 }

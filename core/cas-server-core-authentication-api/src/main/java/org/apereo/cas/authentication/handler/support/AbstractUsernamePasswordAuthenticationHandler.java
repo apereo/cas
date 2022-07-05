@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -76,7 +77,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
         val originalUserPass = (UsernamePasswordCredential) credential;
         val userPass = FunctionUtils.doUnchecked(() -> (UsernamePasswordCredential) credential.getClass().getDeclaredConstructor().newInstance());
         FunctionUtils.doUnchecked(u -> BeanUtils.copyProperties(userPass, originalUserPass));

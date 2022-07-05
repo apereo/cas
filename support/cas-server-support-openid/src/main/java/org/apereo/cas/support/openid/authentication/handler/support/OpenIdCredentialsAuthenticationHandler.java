@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -38,7 +39,7 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws GeneralSecurityException {
         val c = (OpenIdCredential) credential;
 
         val t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(), TicketGrantingTicket.class);

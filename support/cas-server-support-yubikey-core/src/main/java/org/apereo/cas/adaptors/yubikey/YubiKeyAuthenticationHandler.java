@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -76,7 +77,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
         val yubiKeyCredential = (YubiKeyCredential) credential;
 
         val otp = yubiKeyCredential.getToken();

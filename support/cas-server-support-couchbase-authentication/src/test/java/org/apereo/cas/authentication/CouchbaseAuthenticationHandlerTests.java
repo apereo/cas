@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.DefaultCouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -47,7 +48,7 @@ public class CouchbaseAuthenticationHandlerTests {
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        val result = handler.authenticate(c);
+        val result = handler.authenticate(c, mock(Service.class));
         assertNotNull(result);
         val attributes = result.getPrincipal().getAttributes();
         assertEquals(2, attributes.size());
@@ -63,7 +64,7 @@ public class CouchbaseAuthenticationHandlerTests {
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
         handler.setPasswordEncoder(new SCryptPasswordEncoder());
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        assertThrows(FailedLoginException.class, () -> handler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(c, mock(Service.class)));
     }
 
     @Test
@@ -74,7 +75,7 @@ public class CouchbaseAuthenticationHandlerTests {
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
         handler.setPasswordEncoder(new SCryptPasswordEncoder());
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nopsw", "Mellon");
-        assertThrows(FailedLoginException.class, () -> handler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(c, mock(Service.class)));
     }
 
     @Test
@@ -84,6 +85,6 @@ public class CouchbaseAuthenticationHandlerTests {
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-missing", "Mellon");
-        assertThrows(AccountNotFoundException.class, () -> handler.authenticate(c));
+        assertThrows(AccountNotFoundException.class, () -> handler.authenticate(c, mock(Service.class)));
     }
 }

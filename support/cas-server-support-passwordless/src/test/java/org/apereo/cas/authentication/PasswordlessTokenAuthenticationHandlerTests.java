@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
 
@@ -31,9 +32,9 @@ public class PasswordlessTokenAuthenticationHandlerTests {
             mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, repository);
         val c = new OneTimePasswordCredential("casuser", "123456");
-        assertNotNull(h.authenticate(c));
+        assertNotNull(h.authenticate(c, mock(Service.class)));
 
-        assertThrows(FailedLoginException.class, () -> h.authenticate(new OneTimePasswordCredential("1", "2")));
+        assertThrows(FailedLoginException.class, () -> h.authenticate(new OneTimePasswordCredential("1", "2"), mock(Service.class)));
 
         assertTrue(h.supports(c));
         assertTrue(h.supports(c.getCredentialClass()));

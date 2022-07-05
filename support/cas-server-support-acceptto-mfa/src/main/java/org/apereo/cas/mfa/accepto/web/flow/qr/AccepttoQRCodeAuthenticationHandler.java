@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.services.ServicesManager;
 
@@ -35,7 +36,7 @@ public class AccepttoQRCodeAuthenticationHandler extends AbstractPreAndPostProce
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) {
         val tokenCredential = (AccepttoEmailCredential) credential;
         LOGGER.debug("Received token [{}]", tokenCredential.getId());
         val principal = this.principalFactory.createPrincipal(tokenCredential.getId());

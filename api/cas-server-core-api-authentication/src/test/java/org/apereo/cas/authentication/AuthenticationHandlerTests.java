@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 
 import lombok.val;
@@ -22,7 +23,7 @@ public class AuthenticationHandlerTests {
     public void verifyOperation() {
         val input = new AuthenticationHandler() {
             @Override
-            public AuthenticationHandlerExecutionResult authenticate(final Credential credential) {
+            public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) {
                 return null;
             }
         };
@@ -41,7 +42,7 @@ public class AuthenticationHandlerTests {
         assertFalse(input.supports(mock(Credential.class)));
         assertFalse(input.supports(Credential.class));
         assertNotNull(input.getName());
-        assertThrows(PreventedException.class, () -> input.authenticate(mock(Credential.class)));
+        assertThrows(PreventedException.class, () -> input.authenticate(mock(Credential.class), mock(Service.class)));
     }
 
 }

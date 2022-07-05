@@ -2,6 +2,7 @@ package org.apereo.cas.support.inwebo.authentication;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.service.InweboService;
@@ -41,7 +42,7 @@ public class InweboAuthenticationHandlerTests {
             inweboService, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         val credential = new InweboCredential("token");
         credential.setOtp("otp");
-        val result = handler.authenticate(credential);
+        val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         assertNotNull(credential.getDeviceName());
         assertTrue(handler.supports(credential));
@@ -62,7 +63,7 @@ public class InweboAuthenticationHandlerTests {
             new InweboMultifactorAuthenticationProperties(), inweboService,
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         val credential = new InweboCredential("token");
-        assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
 
 }

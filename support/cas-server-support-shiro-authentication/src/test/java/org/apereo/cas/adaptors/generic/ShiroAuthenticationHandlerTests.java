@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.generic;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Handles tests for {@link ShiroAuthenticationHandler}.
@@ -61,7 +63,7 @@ public class ShiroAuthenticationHandlerTests {
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
 
-        assertNotNull(shiro.authenticate(creds));
+        assertNotNull(shiro.authenticate(creds, mock(Service.class)));
     }
 
     @Test
@@ -76,7 +78,7 @@ public class ShiroAuthenticationHandlerTests {
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
 
-        assertNotNull(shiro.authenticate(creds));
+        assertNotNull(shiro.authenticate(creds, mock(Service.class)));
     }
 
     @Test
@@ -90,7 +92,7 @@ public class ShiroAuthenticationHandlerTests {
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
 
-        assertThrows(FailedLoginException.class, () -> shiro.authenticate(creds));
+        assertThrows(FailedLoginException.class, () -> shiro.authenticate(creds, mock(Service.class)));
     }
 
     @Test
@@ -104,7 +106,7 @@ public class ShiroAuthenticationHandlerTests {
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
 
-        assertThrows(FailedLoginException.class, () -> shiro.authenticate(creds));
+        assertThrows(FailedLoginException.class, () -> shiro.authenticate(creds, mock(Service.class)));
     }
 
     @Test
@@ -114,18 +116,18 @@ public class ShiroAuthenticationHandlerTests {
         creds.setPassword("Mellon");
 
         assertThrows(AccountNotFoundException.class,
-            () -> buildShiroHandlerWithAccountStatus(UnknownAccountException.class).authenticate(creds));
+            () -> buildShiroHandlerWithAccountStatus(UnknownAccountException.class).authenticate(creds, mock(Service.class)));
 
         assertThrows(AccountLockedException.class,
-            () -> buildShiroHandlerWithAccountStatus(LockedAccountException.class).authenticate(creds));
+            () -> buildShiroHandlerWithAccountStatus(LockedAccountException.class).authenticate(creds, mock(Service.class)));
 
         assertThrows(CredentialExpiredException.class,
-            () -> buildShiroHandlerWithAccountStatus(ExpiredCredentialsException.class).authenticate(creds));
+            () -> buildShiroHandlerWithAccountStatus(ExpiredCredentialsException.class).authenticate(creds, mock(Service.class)));
 
         assertThrows(AccountDisabledException.class,
-            () -> buildShiroHandlerWithAccountStatus(DisabledAccountException.class).authenticate(creds));
+            () -> buildShiroHandlerWithAccountStatus(DisabledAccountException.class).authenticate(creds, mock(Service.class)));
 
         assertThrows(FailedLoginException.class,
-            () -> buildShiroHandlerWithAccountStatus(AuthenticationException.class).authenticate(creds));
+            () -> buildShiroHandlerWithAccountStatus(AuthenticationException.class).authenticate(creds, mock(Service.class)));
     }
 }

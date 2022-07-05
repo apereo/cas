@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -40,6 +41,7 @@ import java.util.Arrays;
 
 import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
@@ -87,7 +89,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
             () -> ldapAuthenticationHandlers.toList()
-                .forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword())))));
+                .forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword()), mock(Service.class)))));
     }
 
     @Test
@@ -95,7 +97,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
-            val result = h.authenticate(credential);
+            val result = h.authenticate(credential, mock(Service.class));
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());
             val attributes = result.getPrincipal().getAttributes();

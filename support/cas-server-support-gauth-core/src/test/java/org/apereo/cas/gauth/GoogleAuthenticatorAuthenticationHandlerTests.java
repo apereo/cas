@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.gauth.credential.DummyCredentialRepository;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorOneTimeTokenCredentialValidator;
@@ -94,7 +95,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
     @Test
     public void verifyAuthnAccountNotFound() {
         val credential = getGoogleAuthenticatorTokenCredential();
-        assertThrows(AccountNotFoundException.class, () -> handler.authenticate(credential));
+        assertThrows(AccountNotFoundException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
@@ -112,7 +113,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             .build();
         tokenCredentialRepository.save(toSave);
         credential.setAccountId(toSave.getId());
-        assertThrows(AccountExpiredException.class, () -> handler.authenticate(credential));
+        assertThrows(AccountExpiredException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
@@ -127,7 +128,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             .build();
         credential.setAccountId(toSave.getId());
         tokenCredentialRepository.save(toSave);
-        val result = handler.authenticate(credential);
+        val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         assertNotNull(tokenRepository.get("casuser", Integer.valueOf(credential.getToken())));
     }
@@ -145,7 +146,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
         tokenCredentialRepository.save(toSave);
         credential.setAccountId(toSave.getId());
         credential.setToken(Integer.toString(account.getScratchCodes().get(0)));
-        val result = handler.authenticate(credential);
+        val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         val otp = Integer.valueOf(credential.getToken());
         assertNotNull(tokenRepository.get("casuser", otp));
@@ -166,11 +167,11 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             tokenCredentialRepository.save(toSave);
         }
         credential.setAccountId(null);
-        assertThrows(PreventedException.class, () -> handler.authenticate(credential));
+        assertThrows(PreventedException.class, () -> handler.authenticate(credential, mock(Service.class)));
 
         val oneAcct = tokenCredentialRepository.get("casuser").iterator().next();
         credential.setAccountId(oneAcct.getId());
-        val result = handler.authenticate(credential);
+        val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
     }
 
@@ -186,7 +187,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             .build();
         tokenCredentialRepository.save(toSave);
         credential.setAccountId(null);
-        val result = handler.authenticate(credential);
+        val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
     }
 

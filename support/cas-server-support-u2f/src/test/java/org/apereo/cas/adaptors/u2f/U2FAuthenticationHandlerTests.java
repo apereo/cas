@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.u2f.web.flow.BaseU2FWebflowActionTests;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -23,6 +24,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link U2FAuthenticationHandlerTests}.
@@ -75,14 +77,14 @@ public class U2FAuthenticationHandlerTests {
 
         RequestContextHolder.setRequestContext(context);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
-        val result = u2fAuthenticationHandler.authenticate(credential);
+        val result = u2fAuthenticationHandler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
 
         val secondUser = UUID.randomUUID().toString();
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(secondUser), context);
-        assertThrows(PreventedException.class, () -> u2fAuthenticationHandler.authenticate(credential));
+        assertThrows(PreventedException.class, () -> u2fAuthenticationHandler.authenticate(credential, mock(Service.class)));
         u2fDeviceRepository.requestDeviceAuthentication("NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU", secondUser, authnData);
-        assertThrows(PreventedException.class, () -> u2fAuthenticationHandler.authenticate(credential));
+        assertThrows(PreventedException.class, () -> u2fAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
@@ -93,7 +95,7 @@ public class U2FAuthenticationHandlerTests {
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
-        assertThrows(NullPointerException.class, () -> u2fAuthenticationHandler.authenticate(credential));
+        assertThrows(NullPointerException.class, () -> u2fAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
@@ -105,6 +107,6 @@ public class U2FAuthenticationHandlerTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
-        assertThrows(PreventedException.class, () -> u2fAuthenticationHandler.authenticate(credential));
+        assertThrows(PreventedException.class, () -> u2fAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 }

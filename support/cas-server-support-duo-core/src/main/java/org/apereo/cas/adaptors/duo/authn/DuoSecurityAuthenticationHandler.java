@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -64,11 +65,12 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
      * return a blank String or null.
      *
      * @param credential Credential to authenticate.
+     * @param service the requesting service, if any.
      * @return the result of this handler
      * @throws GeneralSecurityException general security exception for errors
      */
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
         if (credential instanceof DuoSecurityPasscodeCredential) {
             LOGGER.debug("Attempting to authenticate credential via duo passcode");
             return authenticateDuoPasscodeCredential(credential);

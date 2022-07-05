@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -30,7 +31,7 @@ public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws GeneralSecurityException {
         val c = (DigestCredential) credential;
         if (StringUtils.isNotBlank(c.getId()) && StringUtils.isNotBlank(c.getHash())) {
             return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));

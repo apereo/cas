@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.NonNull;
@@ -38,23 +39,26 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service)
+        throws GeneralSecurityException, PreventedException {
         if (!preAuthenticate(credential)) {
             throw new FailedLoginException();
         }
-        return postAuthenticate(credential, doAuthentication(credential));
+        return postAuthenticate(credential, doAuthentication(credential, service));
     }
 
     /**
      * Performs the details of authentication and returns an authentication handler result on success.
      *
      * @param credential Credential to authenticate.
+     * @param service    the service
      * @return Authentication handler result on success.
      * @throws GeneralSecurityException On authentication failure that is thrown out to the caller of
-     *                                  {@link #authenticate(Credential)}.
+     *                                  {@link org.apereo.cas.authentication.AuthenticationHandler#authenticate(Credential, Service)}.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract AuthenticationHandlerExecutionResult doAuthentication(Credential credential) throws GeneralSecurityException, PreventedException;
+    protected abstract AuthenticationHandlerExecutionResult doAuthentication(Credential credential, Service service)
+        throws GeneralSecurityException, PreventedException;
 
     /**
      * Helper method to construct a handler result

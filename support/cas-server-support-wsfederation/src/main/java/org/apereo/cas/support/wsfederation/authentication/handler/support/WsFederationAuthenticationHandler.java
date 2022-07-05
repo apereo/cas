@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 
@@ -39,7 +40,7 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
         val wsFederationCredentials = (WsFederationCredential) credential;
         if (wsFederationCredentials != null) {
             val attributes = wsFederationCredentials.getAttributes();

@@ -3,6 +3,7 @@ package org.apereo.cas.support.openid.authentication.handler.support;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import javax.security.auth.login.FailedLoginException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -53,7 +55,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         val t = getTicketGrantingTicket();
         ticketRegistry.addTicket(t);
 
-        assertEquals(TGT_ID, openIdCredentialsAuthenticationHandler.authenticate(credential).getPrincipal().getId());
+        assertEquals(TGT_ID, openIdCredentialsAuthenticationHandler.authenticate(credential, mock(Service.class)).getPrincipal().getId());
     }
 
     @Test
@@ -63,7 +65,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         ticketRegistry.addTicket(t);
         t.markTicketExpired();
         ticketRegistry.updateTicket(t);
-        assertThrows(InvalidTicketException.class, () -> openIdCredentialsAuthenticationHandler.authenticate(credential));
+        assertThrows(InvalidTicketException.class, () -> openIdCredentialsAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
@@ -71,7 +73,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         val credential = new OpenIdCredential(TGT_ID, "test1");
         val t = getTicketGrantingTicket();
         ticketRegistry.addTicket(t);
-        assertThrows(FailedLoginException.class, () -> openIdCredentialsAuthenticationHandler.authenticate(credential));
+        assertThrows(FailedLoginException.class, () -> openIdCredentialsAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     private static TicketGrantingTicket getTicketGrantingTicket() {

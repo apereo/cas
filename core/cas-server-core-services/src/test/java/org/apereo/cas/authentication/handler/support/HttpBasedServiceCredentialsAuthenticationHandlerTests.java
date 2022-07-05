@@ -25,41 +25,45 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @BeforeEach
     public void initialize() {
-        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler(StringUtils.EMPTY, null, null, null, new SimpleHttpClientFactoryBean().getObject());
+        authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler(StringUtils.EMPTY, null, null, null, new SimpleHttpClientFactoryBean().getObject());
     }
 
     @Test
     public void verifySupportsProperUserCredentials() {
-        assertTrue(this.authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
-        assertTrue(this.authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials().getClass()));
+        assertTrue(authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
+        assertTrue(authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials().getClass()));
     }
 
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler.supports(
+        assertFalse(authenticationHandler.supports(
             RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test2")));
     }
 
     @Test
     public void verifyAcceptsProperCertificateCredentials() throws Exception {
-        assertNotNull(this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
+        assertNotNull(authenticationHandler.authenticate(
+            RegisteredServiceTestUtils.getHttpBasedServiceCredentials(), RegisteredServiceTestUtils.getService()));
     }
 
     @Test
     public void verifyRejectsInProperCertificateCredentials() {
-        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials(
-            "https://clearinghouse.ja-sig.org")));
+        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials(
+            "https://clearinghouse.ja-sig.org"), RegisteredServiceTestUtils.getService()));
     }
 
     @Test
     public void verifyAcceptsNonHttpsCredentials() throws Exception {
-        assertNotNull(this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("http://www.google.com")));
+        assertNotNull(authenticationHandler.authenticate(
+            RegisteredServiceTestUtils.getHttpBasedServiceCredentials("http://www.google.com"), RegisteredServiceTestUtils.getService()));
     }
 
     @Test
     public void verifyNoAcceptableStatusCode() {
         assertThrows(FailedLoginException.class,
-            () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
+            () -> authenticationHandler.authenticate(
+                RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"),
+                RegisteredServiceTestUtils.getService()));
     }
 
     @Test
@@ -67,8 +71,10 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         val httpClient = clientFactory.getObject();
-        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler(StringUtils.EMPTY, null, null, null, httpClient);
+        authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler(StringUtils.EMPTY, null, null, null, httpClient);
         assertThrows(FailedLoginException.class,
-            () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org")));
+            () -> authenticationHandler.authenticate(
+                RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"),
+                RegisteredServiceTestUtils.getService()));
     }
 }

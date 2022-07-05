@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.generic;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -30,7 +32,7 @@ public class RejectUsersAuthenticationHandlerTests {
         users.add("scott");
         users.add("dima");
         users.add("bill");
-        this.authenticationHandler = new RejectUsersAuthenticationHandler(StringUtils.EMPTY, null, null, users);
+        authenticationHandler = new RejectUsersAuthenticationHandler(StringUtils.EMPTY, null, null, users);
     }
 
     @Test
@@ -39,13 +41,13 @@ public class RejectUsersAuthenticationHandlerTests {
 
         c.setUsername("fff");
         c.setPassword("rutgers");
-        assertNotNull(this.authenticationHandler.authenticate(c));
+        assertNotNull(authenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
         try {
-            assertFalse(this.authenticationHandler
+            assertFalse(authenticationHandler
                 .supports(new HttpBasedServiceCredential(new URL(
                     "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService())));
         } catch (final MalformedURLException e) {
@@ -60,7 +62,7 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setUsername("scott");
         c.setPassword("rutgers");
 
-        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
@@ -70,7 +72,7 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setUsername("fds");
         c.setPassword("rutgers");
 
-        assertNotNull(this.authenticationHandler.authenticate(c));
+        assertNotNull(authenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
@@ -80,11 +82,11 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setUsername(null);
         c.setPassword("user");
 
-        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
+        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
     public void verifyPassesNullUserNameAndPassword() {
-        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(new UsernamePasswordCredential()));
+        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(new UsernamePasswordCredential(), mock(Service.class)));
     }
 }

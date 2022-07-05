@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.generic;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -28,7 +29,7 @@ public class GroovyAuthenticationHandlerTests {
             PrincipalFactoryUtils.newPrincipalFactory(), resource, 0);
         assertTrue(handler.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         assertTrue(handler.supports(UsernamePasswordCredential.class));
-        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class));
         assertNotNull(result);
     }
 }

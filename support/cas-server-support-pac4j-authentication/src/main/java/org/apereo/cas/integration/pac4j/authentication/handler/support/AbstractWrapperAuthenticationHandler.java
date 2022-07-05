@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -64,7 +65,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
         val credentials = convertToPac4jCredentials((I) credential);
         LOGGER.trace("Credentials converted to [{}]", credentials);
         try {

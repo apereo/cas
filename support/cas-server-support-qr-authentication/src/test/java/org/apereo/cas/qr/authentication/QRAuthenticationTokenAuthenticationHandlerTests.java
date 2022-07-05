@@ -1,6 +1,7 @@
 package org.apereo.cas.qr.authentication;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.qr.BaseQRAuthenticationTokenValidatorServiceTests;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link QRAuthenticationTokenAuthenticationHandlerTests}.
@@ -88,7 +90,7 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
         val jwt = jwtBuilder.build(payload);
         val credential = new QRAuthenticationTokenCredential(jwt, UUID.randomUUID().toString());
         credential.setDeviceId(deviceId);
-        val result = qrAuthenticationTokenAuthenticationHandler.authenticate(credential);
+        val result = qrAuthenticationTokenAuthenticationHandler.authenticate(credential, mock(Service.class));
         assertEquals(tgt.getAuthentication().getPrincipal().getId(), result.getPrincipal().getId());
     }
 
@@ -107,6 +109,6 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
         val jwt = jwtBuilder.build(payload);
         val credential = new QRAuthenticationTokenCredential(jwt, UUID.randomUUID().toString());
         assertThrows(FailedLoginException.class,
-            () -> qrAuthenticationTokenAuthenticationHandler.authenticate(credential));
+            () -> qrAuthenticationTokenAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 }

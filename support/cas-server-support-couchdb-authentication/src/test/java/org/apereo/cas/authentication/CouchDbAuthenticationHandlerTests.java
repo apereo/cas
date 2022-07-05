@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -46,6 +47,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CouchDbAuthenticationHandlerTests}.
@@ -130,7 +132,7 @@ public class CouchDbAuthenticationHandlerTests {
     @Test
     public void verifyAuthentication() throws Exception {
         val result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
-            .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
+            .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"), mock(Service.class));
         assertEquals("u1", result.getPrincipal().getId());
         assertEquals("Chicago", result.getPrincipal().getAttributes().get("loc").get(0));
         assertEquals("Illinois", result.getPrincipal().getAttributes().get("state").get(0));

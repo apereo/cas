@@ -3,6 +3,7 @@ package org.apereo.cas.support.spnego.authentication.handler.support;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.MockJcifsAuthentication;
 import org.apereo.cas.support.spnego.MockUnsuccessfulJcifsAuthentication;
@@ -34,7 +35,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, null, null,
             CollectionUtils.wrapList(new MockJcifsAuthentication()), true, true, null);
-        assertNotNull(authenticationHandler.authenticate(credentials));
+        assertNotNull(authenticationHandler.authenticate(credentials, mock(Service.class)));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
         assertTrue(authenticationHandler.supports(credentials.getClass()));
@@ -45,7 +46,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, null, null,
             CollectionUtils.wrapList(new MockJcifsAuthentication()), false, true, null);
-        assertNotNull(authenticationHandler.authenticate(credentials));
+        assertNotNull(authenticationHandler.authenticate(credentials, mock(Service.class)));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
     }
@@ -62,7 +63,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
     private static void authenticate(final SpnegoCredential credentials, final JcifsSpnegoAuthenticationHandler authenticationHandler) throws PreventedException {
         try {
-            authenticationHandler.authenticate(credentials);
+            authenticationHandler.authenticate(credentials, mock(Service.class));
             throw new AssertionError("An AbstractAuthenticationException should have been thrown");
         } catch (final GeneralSecurityException e) {
             assertNull(credentials.getNextToken());

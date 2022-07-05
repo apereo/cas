@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPrincipalResolvedEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
@@ -181,24 +182,15 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         return processed;
     }
 
-    /**
-     * Authenticate and resolve principal.
-     *
-     * @param builder    the builder
-     * @param credential the credential
-     * @param resolver   the resolver
-     * @param handler    the handler
-     * @throws GeneralSecurityException the general security exception
-     * @throws PreventedException       the prevented exception
-     */
     protected void authenticateAndResolvePrincipal(final AuthenticationBuilder builder,
                                                    final Credential credential,
                                                    final PrincipalResolver resolver,
-                                                   final AuthenticationHandler handler) throws GeneralSecurityException, PreventedException {
+                                                   final AuthenticationHandler handler,
+                                                   final Service service) throws GeneralSecurityException, PreventedException {
 
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
-        val result = handler.authenticate(credential);
+        val result = handler.authenticate(credential, service);
         val authenticationHandlerName = handler.getName();
         builder.addSuccess(authenticationHandlerName, result);
         LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
@@ -299,7 +291,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                         try {
                             val resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
                             LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
-                            authenticateAndResolvePrincipal(builder, credential, resolver, handler);
+                            authenticateAndResolvePrincipal(builder, credential, resolver, handler, transaction.getService());
 
                             val authnResult = builder.build();
                             AuthenticationCredentialsThreadLocalBinder.bindInProgress(authnResult);
@@ -435,9 +427,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     @Getter
     private static class ChainingAuthenticationPolicyExecutionResult {
-        private List<AuthenticationPolicyExecutionResult> results = new ArrayList<>();
+        private final List<AuthenticationPolicyExecutionResult> results = new ArrayList<>();
 
-        private Set<Throwable> failures = new HashSet<>();
+        private final Set<Throwable> failures = new HashSet<>();
 
         /**
          * Indicate success, if no failures are present.

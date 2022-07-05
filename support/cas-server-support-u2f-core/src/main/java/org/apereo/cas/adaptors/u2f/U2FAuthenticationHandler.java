@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -53,7 +54,7 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws PreventedException {
         val tokenCredential = (U2FTokenCredential) credential;
 
         val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication(),

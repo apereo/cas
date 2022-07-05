@@ -4,6 +4,7 @@ import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
         val c = (OneTimePasswordCredential) credential;
         val token = passwordlessTokenRepository.findToken(c.getId());
 
