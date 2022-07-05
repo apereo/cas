@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.services.web.DefaultCasThemeSourceTests;
 import org.apereo.cas.services.web.RegisteredServiceThemeResolverTests;
 import org.apereo.cas.services.web.ServiceThemeResolverTests;
 
@@ -13,6 +14,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.6.0
  */
 @SelectClasses({
+    DefaultCasThemeSourceTests.class,
     RegisteredServiceThemeResolverTests.class,
     ServiceThemeResolverTests.class
 })
