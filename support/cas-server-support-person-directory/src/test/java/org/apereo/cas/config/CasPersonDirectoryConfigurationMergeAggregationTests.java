@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
     "cas.authn.attribute-repository.json[0].order=2",
 
-    "cas.authn.attribute-repository.script[0].location=classpath:/GroovyAttributeRepository.groovy",
+    "cas.authn.attribute-repository.script[0].location=classpath:/ScriptAttributeRepository.groovy",
     "cas.authn.attribute-repository.script[0].order=2",
 
     "cas.authn.attribute-repository.core.aggregation=MERGE",
