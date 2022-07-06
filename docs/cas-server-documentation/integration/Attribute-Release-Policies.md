@@ -186,7 +186,7 @@ using the [attribute definition store](Attribute-Definitions.html).
 ### REST
 
 Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to
-accept/process `application/json`. The expected response status code is `200` where the body of
+accept/process `application/json` and must be able to respond to a `GET` request. The expected response status code is `200` where the body of
 the response includes a `Map` of attributes linked to their values.
 
 ```json

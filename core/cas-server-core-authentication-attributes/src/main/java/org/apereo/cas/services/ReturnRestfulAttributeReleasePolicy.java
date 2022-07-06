@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -66,7 +65,7 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
             headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .method(HttpMethod.POST)
+                .method(HttpMethod.GET)
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(endpoint))
                 .parameters(CollectionUtils.wrap("principal", context.getPrincipal().getId(),
                     "service", context.getRegisteredService().getServiceId()))
@@ -77,7 +76,7 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
             if (HttpStatus.resolve(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Policy response received: [{}]", result);
-                return MAPPER.readValue(JsonValue.readHjson(result).toString(), new TypeReference<>() {
+                return MAPPER.readValue(result, new TypeReference<>() {
                 });
             }
         } catch (final Exception e) {

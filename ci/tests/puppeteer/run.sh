@@ -437,7 +437,7 @@ if [[ "${DRYRUN}" != "true" ]]; then
     clear
   fi
   scriptPath="${scenario}/script.js"
-  echo -e "*************************************"
+  echo -e "**************************************************************************"
   echo -e "Running ${scriptPath}\n"
   export NODE_TLS_REJECT_UNAUTHORIZED=0
   node --unhandled-rejections=strict ${scriptPath} ${config}
@@ -445,7 +445,7 @@ if [[ "${DRYRUN}" != "true" ]]; then
   if [[ $RC -ne 0 ]]; then
     printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"
   fi
-  echo -e "*************************************\n"
+  echo -e "**************************************************************************\n"
 
   exitScript=$(jq -j '.exitScript // empty' "${config}")
   exitScript="${exitScript//\$\{PWD\}/${PWD}}"
