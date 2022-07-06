@@ -30,4 +30,25 @@ public class Pac4jDelegatedAuthenticationRestfulProperties extends RestEndpointP
     @DurationCapable
     private String cacheDuration = "PT8H";
 
+    /**
+     * Control the size of the delegated identity provider cache
+     * that holds identity providers.
+     * 
+     * This setting specifies the maximum number of entries the cache may contain. Note that the cache <b>may evict
+     * an entry before this limit is exceeded or temporarily exceed the threshold while evicting</b>.
+     * As the cache size grows close to the maximum, the cache evicts entries that are less likely to
+     * be used again. For example, the cache may evict an entry because it hasn't been used recently
+     * or very often.
+     */
+    private long cacheSize = 100;
+
+    /**
+     * Specify the format of the payload that would be produced by the REST API.
+     * Accepted values are:
+     * <ul>
+     *     <li>{@code pac4j}: The output must confirm to the syntax controlled by pac4j's {@code PropertiesConfigFactory}</li>
+     *     <li>{@code cas}: The output must should contain properties that allow CAS to build delegated identity providers.</li>
+     * </ul>
+     */
+    private String type = "pac4j";
 }

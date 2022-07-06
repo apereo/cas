@@ -74,14 +74,17 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
             context.getReleasingAttributes().clear();
             val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
             val attributes = new HashMap<String, List<Object>>();
-            policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
-                LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]",
-                    policy.getName(), context.getPrincipal().getId());
-                val policyAttributes = policy.getAttributes(context);
-                merger.mergeAttributes(attributes, policyAttributes);
-                LOGGER.trace("Attributes that remain, after the merge with attribute policy results, are [{}]", attributes);
-                context.getReleasingAttributes().putAll(attributes);
-            });
+            policies
+                .stream()
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .forEach(policy -> {
+                    LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]",
+                        policy.getName(), context.getPrincipal().getId());
+                    val policyAttributes = policy.getAttributes(context);
+                    merger.mergeAttributes(attributes, policyAttributes);
+                    LOGGER.trace("Attributes that remain, after the merge with attribute policy results, are [{}]", attributes);
+                    context.getReleasingAttributes().putAll(attributes);
+                });
             return attributes;
         } finally {
             context.getReleasingAttributes().clear();

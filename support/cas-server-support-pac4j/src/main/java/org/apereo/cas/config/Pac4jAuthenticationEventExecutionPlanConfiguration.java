@@ -22,12 +22,12 @@ import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.pac4j.RefreshableDelegatedClients;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
-import org.apereo.cas.support.pac4j.authentication.DefaultDelegatedClientFactory;
-import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
-import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactoryCustomizer;
-import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.clients.DefaultDelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactoryCustomizer;
+import org.apereo.cas.support.pac4j.authentication.clients.RefreshableDelegatedClients;
+import org.apereo.cas.support.pac4j.authentication.clients.RestfulDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -48,6 +48,7 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
+import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -229,25 +230,30 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         public DelegatedClientNameExtractor pac4jDelegatedClientNameExtractor() {
             return DelegatedClientNameExtractor.fromHttpRequest();
         }
+
         @Bean
         @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DelegatedClientFactory pac4jDelegatedClientFactory(
+            @Qualifier(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
+            final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
-            val rest = casProperties.getAuthn().getPac4j().getRest();
-            if (StringUtils.isNotBlank(rest.getUrl())) {
-                return new RestfulDelegatedClientFactory(casProperties);
-            }
             val customizers = Optional.ofNullable(customizerList.getIfAvailable())
                 .map(result -> {
                     AnnotationAwareOrderComparator.sortIfNecessary(result);
                     return result;
                 }).orElseGet(() -> new ArrayList<>(0));
-            return new DefaultDelegatedClientFactory(casProperties, customizers, casSslContext, applicationContext);
+            val rest = casProperties.getAuthn().getPac4j().getRest();
+            if (StringUtils.isNotBlank(rest.getUrl())) {
+                return new RestfulDelegatedClientFactory(customizers, casSslContext,
+                    casProperties, samlMessageStoreFactory);
+            }
+            return new DefaultDelegatedClientFactory(casProperties,
+                customizers, casSslContext, samlMessageStoreFactory);
         }
     }
 

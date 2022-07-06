@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j;
 
-import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.clients.RefreshableDelegatedClients;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

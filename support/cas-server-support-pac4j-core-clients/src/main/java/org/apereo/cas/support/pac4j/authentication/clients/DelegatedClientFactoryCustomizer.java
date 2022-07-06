@@ -1,4 +1,4 @@
-package org.apereo.cas.support.pac4j.authentication;
+package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.pac4j.core.client.Client;
 import org.springframework.core.Ordered;

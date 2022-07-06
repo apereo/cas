@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
+import org.apereo.cas.support.pac4j.authentication.clients.DefaultDelegatedClientFactory;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +38,8 @@ public abstract class BaseDelegatedClientFactoryTests {
     }
 
     protected DefaultDelegatedClientFactory getDefaultDelegatedClientFactory(final CasConfigurationProperties casSettings) {
-        return new DefaultDelegatedClientFactory(casSettings, List.of(), casSslContext, applicationContext);
+        return new DefaultDelegatedClientFactory(casSettings, List.of(),
+            casSslContext, new DirectObjectProvider<>(null));
     }
 }
 
