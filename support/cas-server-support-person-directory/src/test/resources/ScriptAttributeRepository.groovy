@@ -2,10 +2,8 @@ import java.util.*
 
 def run(final Object... args) {
     def uid = args[0]
-    def attributes = args[1] as Map
-    def logger = args[2]
-    def properties = args[3]
-    def appContext = args[4]
+    def logger = args[1]
+    def attributes = args[2]
 
     logger.info("The uid is [{}], current attributes are [{}]", uid, attributes.keySet())
     if (uid.equals("nouser")) {

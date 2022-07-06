@@ -41,7 +41,6 @@ public class ChainingAttributeReleasePolicyTests {
     @Qualifier("scriptResourceCacheManager")
     private ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager;
 
-
     private ChainingAttributeReleasePolicy chain;
 
     @BeforeEach
