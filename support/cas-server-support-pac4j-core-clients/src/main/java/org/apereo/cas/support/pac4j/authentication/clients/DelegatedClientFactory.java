@@ -1,6 +1,6 @@
-package org.apereo.cas.support.pac4j.authentication;
+package org.apereo.cas.support.pac4j.authentication.clients;
 
-import org.pac4j.core.client.Client;
+import org.pac4j.core.client.IndirectClient;
 
 import java.util.Collection;
 
@@ -11,7 +11,7 @@ import java.util.Collection;
  * @since 6.2.0
  */
 @FunctionalInterface
-public interface DelegatedClientFactory<T extends Client> {
+public interface DelegatedClientFactory {
     /**
      * The bean name that identifies the saml2 message factory instance.
      */
@@ -22,5 +22,5 @@ public interface DelegatedClientFactory<T extends Client> {
      *
      * @return the set
      */
-    Collection<T> build();
+    Collection<IndirectClient> build();
 }

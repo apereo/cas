@@ -1,6 +1,4 @@
-package org.apereo.cas.support.pac4j;
-
-import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
+package org.apereo.cas.support.pac4j.authentication.clients;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,10 +17,10 @@ import java.util.Optional;
  */
 @Slf4j
 public class RefreshableDelegatedClients extends Clients {
-    private final DelegatedClientFactory<Client> delegatedClientFactory;
+    private final DelegatedClientFactory delegatedClientFactory;
 
     public RefreshableDelegatedClients(final String callbackUrl,
-                                       final DelegatedClientFactory<Client> delegatedClientFactory) {
+                                       final DelegatedClientFactory delegatedClientFactory) {
         setCallbackUrl(callbackUrl);
         this.delegatedClientFactory = delegatedClientFactory;
     }

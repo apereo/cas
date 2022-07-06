@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProper
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -85,7 +86,7 @@ public class DefaultDelegatedClientFactoryTests {
             assertEquals(2, clients1.size());
             val clients2 = List.copyOf(factory.build());
             assertTrue(clients2.stream()
-                .allMatch(c2 -> clients1.stream().anyMatch(c -> c.hashCode() == c2.hashCode())));
+                .allMatch(c2 -> clients1.stream().anyMatch(client -> client.hashCode() == c2.hashCode())));
         }
 
         @Test

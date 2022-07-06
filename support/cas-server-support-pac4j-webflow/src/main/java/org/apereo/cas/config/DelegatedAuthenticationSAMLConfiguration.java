@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.hazelcast.core.HazelcastInstance;

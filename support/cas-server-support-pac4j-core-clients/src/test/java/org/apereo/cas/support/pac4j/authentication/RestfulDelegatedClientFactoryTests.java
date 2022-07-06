@@ -1,8 +1,12 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.clients.RestfulDelegatedClientFactory;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -15,6 +19,7 @@ import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 public class RestfulDelegatedClientFactoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static Map<String, String> getProperties() {
         return Map.of(
@@ -50,7 +55,7 @@ public class RestfulDelegatedClientFactoryTests {
     public void verifyWrongStatusCode() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getPac4j().getRest().setUrl("http://localhost:9212");
-        val factory = new RestfulDelegatedClientFactory(props);
+        val factory = getFactory(props);
 
         try (val webServer = new MockWebServer(9212, HttpStatus.EXPECTATION_FAILED)) {
             webServer.start();
@@ -58,6 +63,11 @@ public class RestfulDelegatedClientFactoryTests {
             assertNotNull(clientsFound);
             assertTrue(clientsFound.isEmpty());
         }
+    }
+
+    private static DelegatedClientFactory getFactory(final CasConfigurationProperties props) {
+        return new RestfulDelegatedClientFactory(List.of(), CasSSLContext.disabled(),
+            props, new DirectObjectProvider<>(null));
     }
 
     @Test
@@ -68,7 +78,7 @@ public class RestfulDelegatedClientFactoryTests {
 
         val props = new CasConfigurationProperties();
         props.getAuthn().getPac4j().getRest().setUrl("http://localhost:9212");
-        val factory = new RestfulDelegatedClientFactory(props);
+        val factory = getFactory(props);
 
         var clientsFound = factory.build();
         assertTrue(clientsFound.isEmpty());
@@ -88,6 +98,41 @@ public class RestfulDelegatedClientFactoryTests {
             clientsFound = factory.build();
             assertNotNull(clientsFound);
             assertEquals(3, clientsFound.size());
+        }
+    }
+
+
+    @Test
+    public void verifyClientsViaCasProperties() throws Exception {
+        val clients = new HashMap<String, Object>();
+        clients.put("cas.authn.pac4j.github.client-name", "name");
+        clients.put("cas.authn.pac4j.github.id", "id");
+        clients.put("cas.authn.pac4j.github.secret", "qazxsedc");
+        clients.put("cas.authn.pac4j.cas[0].login-url", "https://localhost:8444/cas/login");
+        clients.put("cas.authn.pac4j.cas[0].protocol", "CAS30");
+
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getPac4j().getRest().setUrl("http://localhost:9212");
+        props.getAuthn().getPac4j().getRest().setType("cas");
+        val factory = getFactory(props);
+        var clientsFound = factory.build();
+        assertTrue(clientsFound.isEmpty());
+
+        val entity = MAPPER.writeValueAsString(clients);
+        try (val webServer = new MockWebServer(9212,
+            new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            clientsFound = factory.build();
+            assertNotNull(clientsFound);
+            assertEquals(2, clientsFound.size());
+
+            /*
+             * Try the cache once the list is retrieved...
+             */
+            clientsFound = factory.build();
+            assertNotNull(clientsFound);
+            assertEquals(2, clientsFound.size());
         }
     }
 

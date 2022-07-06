@@ -124,6 +124,7 @@ layout: null
         *   [Provisioning](/cas/{{ version }}/integration/Delegate-Authentication-Provisioning.html)
         *   [Post Processing](/cas/{{ version }}/integration/Delegate-Authentication-PostProcessing.html)
         *   [Request Customization](/cas/{{ version }}/integration/Delegate-Authentication-Request-Customization.html)
+        *   [Provider Registration](/cas/{{ version }}/integration/Delegate-Authentication-Provider-Registration.html)
         *   [Identity Providers](#identityproviders)
             *   [Apple](/cas/{{ version }}/integration/Delegate-Authentication-Apple.html)
             *   [Azure AD](/cas/{{ version }}/integration/Delegate-Authentication-Azure-AD.html)
