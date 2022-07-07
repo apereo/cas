@@ -65,8 +65,7 @@ public class RestfulDelegatedClientFactory extends BaseDelegatedClientFactory {
         return FunctionUtils.doAndRetry(callback -> {
             val response = HttpUtils.execute(exec);
             try {
-                val statusCode = response.getStatusLine().getStatusCode();
-                if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
+                if (response != null && HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                     val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     switch (restProperties.getType().toLowerCase()) {
                         case "cas":

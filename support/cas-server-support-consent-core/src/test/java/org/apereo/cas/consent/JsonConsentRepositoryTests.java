@@ -39,7 +39,8 @@ public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
         val decision = repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, user, ATTR));
         assertNotNull(decision);
         assertTrue(decision.getId() > 0);
-        await().untilAsserted(() -> assertTrue(repo.findConsentDecisions(user).stream().anyMatch(c -> c.getId() == decision.getId())));
+        await().untilAsserted(() -> assertTrue(repo.findConsentDecisions(user)
+            .stream().anyMatch(desc -> desc.getId() == decision.getId())));
     }
 
     @Test
