@@ -194,11 +194,11 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 nameid.setNameQualifier(service.getNameIdQualifier());
             } else {
                 nameid.setNameQualifier(SamlIdPUtils.determineNameIdNameQualifier(service, samlIdPMetadataResolver));
-                FunctionUtils.doIf(StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier()),
-                        value -> nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier()),
-                        value -> nameid.setSPNameQualifier(adaptor.getEntityId()))
-                    .accept(service);
             }
+            FunctionUtils.doIf(StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier()),
+                    value -> nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier()),
+                    value -> nameid.setSPNameQualifier(adaptor.getEntityId()))
+                .accept(service);
         }
         return nameid;
     }
