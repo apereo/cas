@@ -52,6 +52,8 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleValueAsArray(true).build().toObjectMapper();
 
+    private String method = "GET";
+
     private String endpoint;
 
     private Map<String, String> headers = new TreeMap<>();
@@ -65,7 +67,7 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
             headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
+                .method(HttpMethod.valueOf(this.method))
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(endpoint))
                 .parameters(CollectionUtils.wrap("principal", context.getPrincipal().getId(),
                     "service", context.getRegisteredService().getServiceId()))
@@ -73,7 +75,7 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            if (HttpStatus.resolve(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+            if (response != null && HttpStatus.resolve(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Policy response received: [{}]", result);
                 return MAPPER.readValue(result, new TypeReference<>() {
