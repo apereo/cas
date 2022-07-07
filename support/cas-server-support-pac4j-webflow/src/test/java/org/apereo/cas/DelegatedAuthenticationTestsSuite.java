@@ -1,7 +1,10 @@
 package org.apereo.cas;
 
 import org.apereo.cas.support.pac4j.RefreshableDelegatedClientsTests;
-import org.apereo.cas.support.pac4j.client.GroovyDelegatedClientAuthenticationRequestCustomizerTests;
+import org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests;
+import org.apereo.cas.support.pac4j.clients.DelegatedClientsEndpointTests;
+import org.apereo.cas.support.pac4j.clients.GroovyDelegatedClientAuthenticationRequestCustomizerTests;
+import org.apereo.cas.support.pac4j.clients.RestfulDelegatedClientFactoryTests;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationControllerTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderRedirectionStrategyTests;
 import org.apereo.cas.web.flow.DefaultDelegatedClientAuthenticationWebflowManagerTests;
@@ -38,6 +41,9 @@ import org.junit.platform.suite.api.Suite;
     DelegatedClientAuthenticationRedirectActionTests.class,
     DelegatedAuthenticationGenerateClientsActionTests.class,
     RefreshableDelegatedClientsTests.class,
+    DelegatedClientsEndpointTests.class,
+    DefaultDelegatedClientFactoryTests.class,
+    RestfulDelegatedClientFactoryTests.class,
     DelegatedClientAuthenticationStoreWebflowStateActionTests.class,
     DelegatedClientAuthenticationFailureActionTests.class,
     GroovyDelegatedClientAuthenticationRequestCustomizerTests.class,

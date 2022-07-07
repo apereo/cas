@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -63,6 +64,26 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
      * Order of the authentication handler in the chain.
      */
     private Integer order;
+
+
+    /**
+     * Control the expiration policy of the cache
+     * that holds onto the results.
+     */
+    @DurationCapable
+    private String cacheDuration = "PT8H";
+
+    /**
+     * Control the size of the delegated identity provider cache
+     * that holds identity providers.
+     *
+     * This setting specifies the maximum number of entries the cache may contain. Note that the cache <b>may evict
+     * an entry before this limit is exceeded or temporarily exceed the threshold while evicting</b>.
+     * As the cache size grows close to the maximum, the cache evicts entries that are less likely to
+     * be used again. For example, the cache may evict an entry because it hasn't been used recently
+     * or very often.
+     */
+    private long cacheSize = 100;
 
     /**
      * Path to a groovy script to determine the auto-redirection
