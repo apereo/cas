@@ -54,12 +54,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         this.samlIdPObjectEncrypter = samlIdPObjectEncrypter;
     }
 
-    /**
-     * Gets supported name id formats.
-     *
-     * @param context the context
-     * @return the supported name id formats
-     */
     protected static List<String> getSupportedNameIdFormats(final SamlProfileBuilderContext context) {
         val supportedNameFormats = new ArrayList<>(context.getAdaptor().getSupportedNameIdFormats());
         LOGGER.debug("Metadata for [{}] declares the following NameIDs [{}]", context.getAdaptor().getEntityId(), supportedNameFormats);
@@ -108,12 +102,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return NameIDType.UNSPECIFIED;
     }
 
-    /**
-     * Gets required name id format if any.
-     *
-     * @param context the context
-     * @return the required name id format if any
-     */
     protected static String getRequiredNameIdFormatIfAny(final SamlProfileBuilderContext context) {
         val requiredNameFormat = SamlIdPUtils.getNameIDPolicy(context.getSamlRequest()).map(NameIDPolicy::getFormat).orElse(null);
         LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
@@ -146,13 +134,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return finalizeNameId(nameID, context);
     }
 
-    /**
-     * Finalize name id name id.
-     *
-     * @param nameid  the nameid
-     * @param context the context
-     * @return the name id
-     */
     protected NameID finalizeNameId(final NameID nameid,
                                     final SamlProfileBuilderContext context) {
         if (nameid != null) {
@@ -160,22 +141,15 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 nameid.setNameQualifier(context.getRegisteredService().getNameIdQualifier());
             } else {
                 nameid.setNameQualifier(SamlIdPUtils.determineNameIdNameQualifier(context.getRegisteredService(), samlIdPMetadataResolver));
-                FunctionUtils.doIf(StringUtils.isNotBlank(context.getRegisteredService().getServiceProviderNameIdQualifier()),
-                        value -> nameid.setSPNameQualifier(context.getRegisteredService().getServiceProviderNameIdQualifier()),
-                        value -> nameid.setSPNameQualifier(context.getAdaptor().getEntityId()))
-                    .accept(context.getRegisteredService());
             }
+            FunctionUtils.doIf(StringUtils.isNotBlank(context.getRegisteredService().getServiceProviderNameIdQualifier()),
+                    value -> nameid.setSPNameQualifier(context.getRegisteredService().getServiceProviderNameIdQualifier()),
+                    value -> nameid.setSPNameQualifier(context.getAdaptor().getEntityId()))
+                .accept(context.getRegisteredService());
         }
         return nameid;
     }
 
-    /**
-     * Validate required name id format if any.
-     *
-     * @param supportedNameFormats the supported name formats
-     * @param requiredNameFormat   the required name format
-     * @param context              the context
-     */
     protected void validateRequiredNameIdFormatIfAny(final List<String> supportedNameFormats,
                                                      final String requiredNameFormat,
                                                      final SamlProfileBuilderContext context) {
@@ -209,13 +183,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return null;
     }
 
-    /**
-     * Encode name id based on name format name id.
-     *
-     * @param context    the context
-     * @param nameFormat the name format
-     * @return the name id
-     */
     protected NameID encodeNameIdBasedOnNameFormat(final SamlProfileBuilderContext context,
                                                    final String nameFormat) {
         try {
@@ -257,7 +224,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 LOGGER.debug("Generation of transient NameID value is skipped for [{}] and [{}] will be used instead",
                     entityId, context.getAuthenticatedAssertion().getName());
             } else {
-                LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", context.getAuthenticatedAssertion().getName(), entityId);
+                LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]",
+                    context.getAuthenticatedAssertion().getName(), entityId);
                 return persistentIdGenerator.generate(context.getAuthenticatedAssertion().getName(), entityId);
             }
         }

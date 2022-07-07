@@ -39,6 +39,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
@@ -209,7 +210,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         assertTrue(ticketRegistry.getTickets().isEmpty());
     }
 
-    @Test
+    @RetryingTest(2)
     public void verifyConcurrentCleaner() throws Exception {
         val registryTask = new TimerTask() {
             @Override
