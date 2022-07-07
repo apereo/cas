@@ -66,9 +66,11 @@ public class HttpUtils {
         val uri = buildHttpUri(execution.getUrl().trim(), execution.getParameters());
         val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase().trim(), execution.getEntity(), uri);
         try {
-            execution.getHeaders().forEach((key, v) -> {
-                val headerValue = SpringExpressionLanguageValueResolver.getInstance().resolve(v);
-                request.addHeader(key, headerValue);
+            val expressionResolver = SpringExpressionLanguageValueResolver.getInstance();
+            execution.getHeaders().forEach((key, value) -> {
+                val headerValue = expressionResolver.resolve(value);
+                val headerKey = expressionResolver.resolve(key);
+                request.addHeader(headerKey, headerValue);
             });
             prepareHttpRequest(request, execution);
             val builder = getHttpClientBuilder();
