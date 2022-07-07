@@ -24,11 +24,11 @@ import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.awaitility.Awaitility.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link GroovyPasswordlessUserAccountStoreTests}.
+ * This is {@link JsonPasswordlessUserAccountStoreTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0

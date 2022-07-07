@@ -1,4 +1,4 @@
-package org.apereo.cas.support.pac4j.client;
+package org.apereo.cas.support.pac4j.clients;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;

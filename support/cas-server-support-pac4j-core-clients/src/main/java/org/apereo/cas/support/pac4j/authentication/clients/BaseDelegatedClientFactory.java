@@ -14,9 +14,11 @@ import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
@@ -83,11 +85,39 @@ import java.util.stream.Collectors;
 public abstract class BaseDelegatedClientFactory implements DelegatedClientFactory {
     private static final Pattern PATTERN_LOGIN_URL = Pattern.compile('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '$');
 
+    protected final CasConfigurationProperties casProperties;
+
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
 
     private final CasSSLContext casSSLContext;
 
     private final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory;
+
+    private final Cache<String, Collection<IndirectClient>> clientsCache;
+
+    protected abstract Collection<IndirectClient> loadClients();
+
+    @Override
+    @Synchronized
+    public final Collection<IndirectClient> build() {
+        val core = casProperties.getAuthn().getPac4j().getCore();
+        if (core.isLazyInit()) {
+            val results = Optional.ofNullable(getCachedClients()).orElseGet(this::loadClients);
+            clientsCache.put(casProperties.getServer().getName(), results);
+            return getCachedClients();
+        }
+        return loadClients();
+    }
+
+    @Override
+    public Collection<IndirectClient> rebuild() {
+        clientsCache.invalidateAll();
+        return build();
+    }
+
+    protected Collection<IndirectClient> getCachedClients() {
+        return clientsCache.getIfPresent(casProperties.getServer().getName());
+    }
 
     protected void configureClient(final IndirectClient client,
                                    final Pac4jBaseClientProperties clientProperties,

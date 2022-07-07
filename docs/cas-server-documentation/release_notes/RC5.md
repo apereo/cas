@@ -57,10 +57,16 @@ CAS modules that offer an integration with a relational database, such as [JPA S
 are now extensively enhanced and tested to ensure the underlying components can correctly respond to *refresh* events, when 
 the application context is reloaded once a property is changed.
 
+### Refreshable Delegated Identity Providers
+
+The collection of external identity providers that are used for [delegated authentication](../integration/Delegate-Authentication.html)
+can now be [registered with CAS](../integration/Delegate-Authentication-Provider-Registration.html) using an external 
+REST API that is able to produce identity provider configuration using a collection of CAS-owned properties as the final payload.
+
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover
-more use cases and scenarios. At the moment, total number of jobs stands at approximately `310` distinct
+more use cases and scenarios. At the moment, total number of jobs stands at approximately `312` distinct
 scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 
 ## Other Stuff
@@ -73,6 +79,9 @@ scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
   `service` parameters.
 - Certain ticket-related operations are now removed from the `CentralAuthenticationService` interface, as all transaction-bound operations should now be 
   moved inside the `TicketRegistry` interface.
+- Minor adjustments to attribute release policies, with particular attention to reusing resolved attributes as part of a chain.
+- On successful login attempts and in case no `service` is specified, CAS will redirect to [Account profile management](..
+  /registration/Account-Management-Overview.html) in case the feature is enabled.
 
 
 ## Library Upgrades

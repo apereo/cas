@@ -10,7 +10,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@FunctionalInterface
 public interface DelegatedClientFactory {
     /**
      * The bean name that identifies the saml2 message factory instance.
@@ -23,4 +22,11 @@ public interface DelegatedClientFactory {
      * @return the set
      */
     Collection<IndirectClient> build();
+
+    /**
+     * Rebuild collection and invalidate the cached entries, if any.
+     *
+     * @return the collection
+     */
+    Collection<IndirectClient> rebuild();
 }
