@@ -22,6 +22,7 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -64,13 +65,13 @@ import org.springframework.beans.factory.ObjectProvider;
 
 import java.security.interfaces.ECPrivateKey;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -101,12 +102,9 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
     @Synchronized
     public final Collection<IndirectClient> build() {
         val core = casProperties.getAuthn().getPac4j().getCore();
-        if (core.isLazyInit()) {
-            val results = Optional.ofNullable(getCachedClients()).orElseGet(this::loadClients);
-            clientsCache.put(casProperties.getServer().getName(), results);
-            return getCachedClients();
-        }
-        return loadClients();
+        val currentClients = getCachedClients().isEmpty() || !core.isLazyInit() ? loadClients() : getCachedClients();
+        clientsCache.put(casProperties.getServer().getName(), currentClients);
+        return currentClients;
     }
 
     @Override
@@ -116,7 +114,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
     }
 
     protected Collection<IndirectClient> getCachedClients() {
-        return clientsCache.getIfPresent(casProperties.getServer().getName());
+        val cachedClients = clientsCache.getIfPresent(casProperties.getServer().getName());
+        return ObjectUtils.defaultIfNull(cachedClients, new ArrayList<>());
     }
 
     protected void configureClient(final IndirectClient client,
@@ -127,7 +126,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             client.setName(cname);
         } else {
             val className = client.getClass().getSimpleName();
-            val genName = className.concat(RandomUtils.randomNumeric(2));
+            val genName = className.concat(RandomUtils.randomNumeric(4));
             client.setName(genName);
             LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
                         + "Consider defining an explicit name for the delegated provider", className, genName);
@@ -301,7 +300,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     protected Collection<IndirectClient> buildOAuth20IdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
-        val index = new AtomicInteger();
         return pac4jProperties
             .getOauth2()
             .stream()
@@ -310,7 +308,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                              && StringUtils.isNotBlank(oauth.getSecret()))
             .map(oauth -> {
                 val client = new GenericOAuth20Client();
-                client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalAttributeId(), pac4jProperties.getCore().getPrincipalAttributeId()));
+                client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalAttributeId(),
+                    pac4jProperties.getCore().getPrincipalAttributeId()));
                 client.setKey(oauth.getId());
                 client.setSecret(oauth.getSecret());
                 client.setProfileAttrs(oauth.getProfileAttrs());
@@ -322,14 +321,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 client.setScope(oauth.getScope());
                 client.setCustomParams(oauth.getCustomParams());
                 client.getConfiguration().setResponseType(oauth.getResponseType());
-
-                if (StringUtils.isBlank(oauth.getClientName())) {
-                    val count = index.intValue();
-                    client.setName(client.getClass().getSimpleName() + count);
-                }
                 configureClient(client, oauth, casProperties);
-
-                index.incrementAndGet();
                 LOGGER.debug("Created client [{}]", client);
                 return client;
             })
@@ -484,7 +476,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     protected Collection<IndirectClient> buildSaml2IdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
-        val index = new AtomicInteger();
         return pac4jProperties
             .getSaml()
             .stream()
@@ -584,13 +575,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 }
 
                 val client = new SAML2Client(cfg);
-                if (StringUtils.isBlank(saml.getClientName())) {
-                    val count = index.intValue();
-                    client.setName(client.getClass().getSimpleName() + count);
-                }
                 configureClient(client, saml, casProperties);
 
-                index.incrementAndGet();
                 LOGGER.debug("Created delegated client [{}]", client);
                 return client;
             })
@@ -613,7 +599,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     protected Collection<IndirectClient> buildCasIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
-        val index = new AtomicInteger();
         return pac4jProperties
             .getCas()
             .stream()
@@ -626,13 +611,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
 
                 val client = new CasClient(cfg);
-
-                if (StringUtils.isBlank(cas.getClientName())) {
-                    val count = index.intValue();
-                    client.setName(client.getClass().getSimpleName() + count);
-                }
                 configureClient(client, cas, casProperties);
-                index.incrementAndGet();
                 LOGGER.debug("Created client [{}]", client);
                 return client;
             })

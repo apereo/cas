@@ -41,6 +41,11 @@ public class DelegatedClientsEndpoint extends BaseCasActuatorEndpoint {
         this.clientFactory = clientFactory;
     }
 
+    /**
+     * Reload the identity providers and rebuild from scratch.
+     *
+     * @return the identity providers.
+     */
     @DeleteOperation
     @Operation(summary = "Clear loaded identity providers and rebuild from CAS configuration or other sources.")
     public Map<String, Map<String, String>> reload() {
