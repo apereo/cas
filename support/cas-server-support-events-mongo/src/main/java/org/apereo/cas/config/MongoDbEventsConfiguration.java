@@ -28,7 +28,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Events, module = "mongoDb")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Events, module = "mongo")
 @AutoConfiguration
 public class MongoDbEventsConfiguration {
 
