@@ -23,7 +23,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Events, module = "influxDb")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Events, module = "influxdb")
 @AutoConfiguration
 public class CasEventsInfluxDbRepositoryConfiguration {
 
