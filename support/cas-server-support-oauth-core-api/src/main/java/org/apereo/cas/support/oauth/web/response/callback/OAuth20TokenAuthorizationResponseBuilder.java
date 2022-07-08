@@ -52,16 +52,6 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         return StringUtils.equalsIgnoreCase(context.getResponseType(), OAuth20ResponseTypes.TOKEN.getType());
     }
 
-    /**
-     * Build callback url response type string.
-     *
-     * @param holder       the holder
-     * @param accessToken  the access token
-     * @param params       the params
-     * @param refreshToken the refresh token
-     * @return the string
-     * @throws Exception the exception
-     */
     protected ModelAndView buildCallbackUrlResponseType(
         final AccessTokenRequestContext holder,
         final OAuth20AccessToken accessToken,
@@ -81,7 +71,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
             .accessTokenJwtBuilder(configurationContext.getAccessTokenJwtBuilder())
             .casProperties(configurationContext.getCasProperties())
             .build()
-            .encode();
+            .encode(accessToken.getId());
 
         val expiresIn = accessToken.getExpiresIn();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)

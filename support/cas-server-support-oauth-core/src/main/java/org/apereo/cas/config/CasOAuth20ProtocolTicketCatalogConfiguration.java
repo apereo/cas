@@ -25,7 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.core.Ordered;
 
 /**
- * This is {@link OAuth20ProtocolTicketCatalogConfiguration}.
+ * This is {@link CasOAuth20ProtocolTicketCatalogConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -34,7 +34,7 @@ import org.springframework.core.Ordered;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
-public class OAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
+public class CasOAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
 
     @Override
     public void configureTicketCatalog(final TicketCatalog plan,

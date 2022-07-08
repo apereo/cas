@@ -53,6 +53,7 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
@@ -197,6 +198,7 @@ public class OidcEndpointsConfiguration {
 
     @Configuration(value = "OidcEndpointsWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Slf4j
     public static class OidcEndpointsWebConfiguration {
         private static String getOidcBaseEndpoint(final OidcIssuerService issuerService,
                                                   final CasConfigurationProperties casProperties) {
@@ -217,6 +219,9 @@ public class OidcEndpointsConfiguration {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
                     val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
+                    LOGGER.info("Registering CAS OpenID Connect endpoints under [{}]. Verify to make sure this value "
+                        + "is correctly defined based on your issuer and server settings, defined in CAS configuration. "
+                        + "Failure to specify the correct value may interfere with OpenID Connect functionality.", baseEndpoint);
                     registry.addInterceptor(new RefreshableHandlerInterceptor(oauthInterceptor))
                         .order(100)
                         .addPathPatterns(baseEndpoint.concat("/*"));

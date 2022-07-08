@@ -4,12 +4,12 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
+import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
-import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -157,7 +157,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
         CasOAuth20Configuration.class,
         CasOAuth20TicketSerializationConfiguration.class,
         CasOAuth20EndpointsConfiguration.class,
-        OAuth20ProtocolTicketCatalogConfiguration.class
+        CasOAuth20ProtocolTicketCatalogConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

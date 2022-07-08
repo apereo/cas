@@ -60,6 +60,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
      */
     @GetMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL,
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OAUTH_AUTHORIZATION_SERVER_URL,
         "/**/" + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration(final HttpServletRequest request,
                                                                                                 final HttpServletResponse response) {

@@ -26,6 +26,11 @@ public interface Authenticators {
     String CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN = "clientDynamicRegistrationAuth";
 
     /**
+     * DPoP authenticator for proof of posession.
+     */
+    String CAS_OAUTH_CLIENT_DPOP_AUTHN = "proofOfPossessionAuth";
+
+    /**
      * OAuth authn for refresh token authn for public clients.
      */
     String CAS_OAUTH_CLIENT_FORM_REFRESH_TOKEN_AUTHN = "clientRefreshTokenFormAuth";

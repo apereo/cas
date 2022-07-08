@@ -30,17 +30,12 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         super(config);
     }
 
-    /**
-     * Is allowed to generate refresh token ?
-     *
-     * @return true/false
-     */
     protected static boolean isAllowedToGenerateRefreshToken() {
         return true;
     }
 
     @Override
-    public AccessTokenRequestContext extract(final WebContext context) {
+    public AccessTokenRequestContext extractRequest(final WebContext context) {
         val grantType = getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
 

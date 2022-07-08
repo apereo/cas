@@ -374,7 +374,7 @@ public class OidcIdTokenGeneratorServiceTests {
                 .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder)
                 .issuer(issuer)
                 .build()
-                .encode();
+                .encode(accessToken.getId());
             val newHash = OAuth20AccessTokenAtHashGenerator.builder()
                 .encodedAccessToken(encodedAccessToken)
                 .registeredService(registeredService)

@@ -28,7 +28,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
     }
 
     @Override
-    public AccessTokenRequestContext extract(final WebContext context) {
+    public AccessTokenRequestContext extractRequest(final WebContext context) {
         val clientId = getConfigurationContext().getRequestParameterResolver()
             .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getKey();
         val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);

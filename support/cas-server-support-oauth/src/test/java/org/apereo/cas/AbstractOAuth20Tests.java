@@ -662,7 +662,7 @@ public abstract class AbstractOAuth20Tests {
         final HttpServletRequest mockRequest) {
 
         val mockResponse = new MockHttpServletResponse();
-
+        
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
         val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())

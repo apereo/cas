@@ -134,11 +134,6 @@ public interface OAuth20Constants {
     String ERROR_WITH_CALLBACK = "error_with_callback";
 
     /**
-     * Request parameter is not supported.
-     */
-    String REQUEST_NOT_SUPPORTED = "request_not_supported";
-
-    /**
      * Unsupported response_type error.
      */
     String UNSUPPORTED_RESPONSE_TYPE = "unsupported_response_type";
@@ -314,6 +309,11 @@ public interface OAuth20Constants {
     String TOKEN_TYPE_BEARER = "Bearer";
 
     /**
+     * The DPOP Token.
+     */
+    String TOKEN_TYPE_DPOP = "DPoP";
+
+    /**
      * Client assertion type as jwt bearer.
      */
     String CLIENT_ASSERTION_TYPE_JWT_BEARER = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -382,4 +382,15 @@ public interface OAuth20Constants {
      * The unauthorized client.
      */
     String UNAUTHORIZED_CLIENT = "unauthorized_client";
+
+    /**
+     * DPoP header.
+     */
+    String DPOP = "DPoP";
+
+
+    /**
+     * DPoP confirmation that is put inside access token as an attribute.
+     */
+    String DPOP_CONFIRMATION = "DPoPConfirmation";
 }

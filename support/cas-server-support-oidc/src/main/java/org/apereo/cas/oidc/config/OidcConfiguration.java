@@ -14,6 +14,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
+import org.apereo.cas.oidc.authn.OidcDPoPAuthenticator;
 import org.apereo.cas.oidc.authn.OidcJwtAuthenticator;
 import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
@@ -464,6 +465,27 @@ public class OidcConfiguration {
                 registrationClient.setName(Authenticators.CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN);
                 registrationClient.init();
                 return registrationClient;
+            };
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcDPoPClientProvider")
+        public OAuth20AuthenticationClientProvider oidcDPoPClientProvider(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
+            final OidcServerDiscoverySettings oidcServerDiscoverySettings) {
+            return () -> {
+                val client = new HeaderClient(OAuth20Constants.DPOP,
+                    new OidcDPoPAuthenticator(oidcServerDiscoverySettings, servicesManager,
+                        registeredServiceAccessStrategyEnforcer, casProperties));
+                client.setName(Authenticators.CAS_OAUTH_CLIENT_DPOP_AUTHN);
+                client.init();
+                return client;
             };
         }
 

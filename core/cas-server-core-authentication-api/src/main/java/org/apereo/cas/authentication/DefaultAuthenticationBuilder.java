@@ -169,7 +169,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addAttribute(final String key, final List<Object> value) {
-        this.attributes.put(key, value);
+        if (!value.isEmpty()) {
+            this.attributes.put(key, value);
+        }
         return this;
     }
 

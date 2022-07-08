@@ -179,6 +179,11 @@ public interface OidcConstants {
     String WELL_KNOWN_OPENID_CONFIGURATION_URL = WELL_KNOWN_URL + "/openid-configuration";
 
     /**
+     * .well-known/oauth-authorization-server path url.
+     */
+    String WELL_KNOWN_OAUTH_AUTHORIZATION_SERVER_URL = WELL_KNOWN_URL + "/oauth-authorization-server";
+
+    /**
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.
      */

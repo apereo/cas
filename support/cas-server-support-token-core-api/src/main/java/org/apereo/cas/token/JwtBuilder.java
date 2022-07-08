@@ -139,16 +139,15 @@ public class JwtBuilder {
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());
-
-        payload.getAttributes().forEach((k, v) -> {
-            var claimValue = v.size() == 1 ? CollectionUtils.firstElement(v).get() : v;
+        
+        payload.getAttributes().forEach((name, value) -> {
+            var claimValue = value.size() == 1 ? CollectionUtils.firstElement(value).get() : value;
             if (claimValue instanceof ZonedDateTime) {
                 claimValue = claimValue.toString();
             }
-            claims.claim(k, claimValue);
+            claims.claim(name, claimValue);
         });
         claims.expirationTime(payload.getValidUntilDate());
-
         val claimsSet = claims.build();
         val jwtJson = claimsSet.toString();
         LOGGER.debug("Generated JWT [{}]", jwtJson);

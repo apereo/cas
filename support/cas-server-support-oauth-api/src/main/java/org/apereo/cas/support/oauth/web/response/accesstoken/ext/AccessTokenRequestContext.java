@@ -90,6 +90,12 @@ public class AccessTokenRequestContext implements Serializable {
 
     private final UserProfile userProfile;
 
+    @Setter
+    private String dpopConfirmation;
+
+    @Setter
+    private String dpop;
+
     @JsonIgnore
     public boolean isCodeToken() {
         return token instanceof OAuth20Code;

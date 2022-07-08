@@ -32,9 +32,6 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    /**
-     * JWT builder.
-     */
     protected final JwtBuilder accessTokenJwtBuilder;
 
     private final CasConfigurationProperties casProperties;
@@ -59,23 +56,11 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         return generateResponseForAccessToken(result);
     }
 
-    /**
-     * Generate response for device token model and view.
-     *
-     * @param result the result
-     * @return the model and view
-     */
     protected ModelAndView generateResponseForDeviceToken(final OAuth20AccessTokenResponseResult result) {
         val model = getDeviceTokenResponseModel(result);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
     }
 
-    /**
-     * Gets device token response model.
-     *
-     * @param result the result
-     * @return the device token response model
-     */
     protected Map getDeviceTokenResponseModel(final OAuth20AccessTokenResponseResult result) {
         val model = new LinkedHashMap<String, Object>();
         val uri = result.getCasProperties().getServer().getPrefix()
@@ -91,12 +76,6 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         return model;
     }
 
-    /**
-     * Generate response for access token model and view.
-     *
-     * @param result the result
-     * @return the model and view
-     */
     protected ModelAndView generateResponseForAccessToken(final OAuth20AccessTokenResponseResult result) {
         val model = getAccessTokenResponseModel(result);
         val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
@@ -104,44 +83,31 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         return mv;
     }
 
-    /**
-     * Generate internal.
-     *
-     * @param result     the result
-     * @return the access token response model
-     */
     protected Map<String, Object> getAccessTokenResponseModel(final OAuth20AccessTokenResponseResult result) {
         val model = new LinkedHashMap<String, Object>();
         val generatedToken = result.getGeneratedToken();
-        generatedToken.getAccessToken().ifPresent(t -> {
-            model.put(OAuth20Constants.ACCESS_TOKEN, encodeAccessToken(t, result));
-            model.put(OAuth20Constants.SCOPE, String.join(" ", t.getScopes()));
-            model.put(OAuth20Constants.EXPIRES_IN, t.getExpiresIn());
+        generatedToken.getAccessToken().ifPresent(token -> {
+            model.put(OAuth20Constants.ACCESS_TOKEN, encodeAccessToken(token, result));
+            model.put(OAuth20Constants.SCOPE, String.join(" ", token.getScopes()));
+            model.put(OAuth20Constants.EXPIRES_IN, token.getExpiresIn());
         });
         generatedToken.getRefreshToken().ifPresent(t -> model.put(OAuth20Constants.REFRESH_TOKEN, t.getId()));
         model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
+
+        generatedToken.getAccessToken().ifPresent(token -> {
+            if (token.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
+                model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_DPOP);
+            }
+        });
         return model;
     }
 
-    /**
-     * Encode access token string.
-     *
-     * @param accessToken the access token
-     * @param result      the result
-     * @return the string
-     */
     protected String encodeAccessToken(final OAuth20AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
-        return getAccessTokenBuilder(accessToken, result).build().encode();
+        return getAccessTokenBuilder(accessToken, result).build()
+            .encode(accessToken.getIdToken(), new Object[]{accessToken, result});
     }
 
-    /**
-     * Gets access token builder.
-     *
-     * @param accessToken the access token
-     * @param result      the result
-     * @return the jwt access token builder
-     */
     protected OAuth20JwtAccessTokenEncoder.OAuth20JwtAccessTokenEncoderBuilder getAccessTokenBuilder(
         final OAuth20AccessToken accessToken, final OAuth20AccessTokenResponseResult result) {
         return OAuth20JwtAccessTokenEncoder.builder()
