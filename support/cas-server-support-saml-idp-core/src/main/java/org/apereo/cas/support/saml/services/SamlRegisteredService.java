@@ -87,7 +87,7 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     private String signingKeyAlgorithm;
 
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
-    @JacksonInject(value = "signAssertions")
+    @JacksonInject("signAssertions")
     private TriStateBoolean signAssertions = TriStateBoolean.FALSE;
 
     private boolean signUnsolicitedAuthnRequest;
@@ -111,7 +111,7 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     private boolean skipValidatingAuthnRequest;
 
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
-    @JacksonInject(value = "signResponses")
+    @JacksonInject("signResponses")
     private TriStateBoolean signResponses = TriStateBoolean.TRUE;
 
     private boolean encryptAssertions;

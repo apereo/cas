@@ -57,7 +57,7 @@ import java.util.Optional;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnMissingClass(value = {
+@ConditionalOnMissingClass({
     "org.apereo.cas.services.JsonServiceRegistry",
     "org.apereo.cas.services.YamlServiceRegistry"
 })

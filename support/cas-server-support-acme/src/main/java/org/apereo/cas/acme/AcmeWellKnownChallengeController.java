@@ -31,8 +31,10 @@ public class AcmeWellKnownChallengeController {
      * @return the string
      */
     @GetMapping(value = "/.well-known/acme-challenge/{token}", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String handleRequest(@PathVariable(value = "token") final String token,
-                              final HttpServletRequest request, final HttpServletResponse response) {
+    public String handleRequest(
+        @PathVariable("token")
+        final String token,
+        final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Handling ACME challenge...");
         return acmeChallengeRepository.get(token);
     }

@@ -41,7 +41,7 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
      * @param response the response
      * @return the permission ticket
      */
-    @PostMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL)
+    @PostMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL)
     public ResponseEntity registerResourceSet(
         @RequestBody
         final String body,

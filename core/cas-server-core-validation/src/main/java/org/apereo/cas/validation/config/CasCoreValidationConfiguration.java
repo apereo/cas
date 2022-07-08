@@ -87,7 +87,7 @@ public class CasCoreValidationConfiguration {
     public static class CasCoreValidationSpecificationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @ConditionalOnMissingBean(name = "cas10ProtocolValidationSpecification")
         public CasProtocolValidationSpecification cas10ProtocolValidationSpecification(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -97,7 +97,7 @@ public class CasCoreValidationConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @ConditionalOnMissingBean(name = "cas20ProtocolValidationSpecification")
         public CasProtocolValidationSpecification cas20ProtocolValidationSpecification(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -106,7 +106,7 @@ public class CasCoreValidationConfiguration {
         }
 
         @Bean
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "cas20WithoutProxyProtocolValidationSpecification")
         public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification(

@@ -34,7 +34,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
     private static final long serialVersionUID = -5704993954986738308L;
 
-    @JsonProperty(value = "timeToLive")
+    @JsonProperty("timeToLive")
     private long timeToKillInSeconds;
 
     @JsonProperty("numberOfUses")

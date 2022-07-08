@@ -56,14 +56,13 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @param request  the request
      * @param response the response
      * @return the response entity
-     * @throws Exception the exception
      */
-    @PostMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL)
+    @PostMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL)
     public ResponseEntity handleAuthorizationRequest(
         @RequestBody
         final String body,
         final HttpServletRequest request,
-        final HttpServletResponse response) throws Exception {
+        final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaAuthorizationRequest.class);
@@ -108,7 +107,6 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @param analysisResult   the analysis result
      * @param permissionTicket the permission ticket
      * @return the response entity
-     * @throws Exception the exception
      */
     protected ResponseEntity handleMismatchedClaims(
         final HttpServletRequest request,
@@ -116,7 +114,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         final ResourceSet resourceSet,
         final UserProfile profileResult,
         final UmaResourceSetClaimPermissionResult analysisResult,
-        final UmaPermissionTicket permissionTicket) throws Exception {
+        final UmaPermissionTicket permissionTicket) {
 
         val model = new LinkedHashMap<String, Object>();
         model.put(OAuth20Constants.ERROR, OAuth20Constants.NEED_INFO);
@@ -192,7 +190,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .accessTokenJwtBuilder(getUmaConfigurationContext().getAccessTokenJwtBuilder())
             .casProperties(getUmaConfigurationContext().getCasProperties())
             .build()
-            .encode();
+            .encode(accessToken.getId());
 
         val timeout = Beans.newDuration(getUmaConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();

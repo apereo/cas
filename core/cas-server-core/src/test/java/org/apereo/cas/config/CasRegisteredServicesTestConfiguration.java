@@ -28,7 +28,7 @@ public class CasRegisteredServicesTestConfiguration {
 
     @ConditionalOnMissingBean(name = "inMemoryRegisteredServices")
     @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public List inMemoryRegisteredServices() throws Exception {
         return RegisteredServiceTestUtils.getRegisteredServicesForTests();
     }

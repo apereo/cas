@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@ConditionalOnClass(value = JpaBeans.class)
+@ConditionalOnClass(JpaBeans.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)

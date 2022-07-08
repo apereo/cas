@@ -22,9 +22,7 @@ import javax.xml.bind.annotation.*;
  * @since 6.4.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "loginSearchReturn"
-})
+@XmlType(name = "", propOrder = "loginSearchReturn")
 @XmlRootElement(name = "loginSearchResponse")
 public class LoginSearchResponse {
 

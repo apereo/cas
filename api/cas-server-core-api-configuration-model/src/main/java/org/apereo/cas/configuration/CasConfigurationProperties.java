@@ -65,7 +65,7 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(value = "cas")
+@ConfigurationProperties("cas")
 @Getter
 @Setter
 @Accessors(chain = true)

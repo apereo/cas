@@ -163,7 +163,7 @@ public class RadiusMultifactorConfiguration {
 
     }
 
-    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
+    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "radius")
     @Configuration(value = "RadiusMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("radiusMultifactorWebflowConfigurer")

@@ -69,7 +69,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      * @param serviceId the service id
      */
     @DeleteOperation
-    @Operation(summary = "Invalidate SAML2 metadata cache using an entity id.", parameters = {@Parameter(name = "serviceId")})
+    @Operation(summary = "Invalidate SAML2 metadata cache using an entity id.", parameters = @Parameter(name = "serviceId"))
     public void invalidate(@Nullable final String serviceId) {
         if (StringUtils.isBlank(serviceId)) {
             cachingMetadataResolver.invalidate();

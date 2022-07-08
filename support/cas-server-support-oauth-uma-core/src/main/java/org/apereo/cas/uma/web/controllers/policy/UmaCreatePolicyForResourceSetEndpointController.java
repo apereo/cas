@@ -43,9 +43,9 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
      * @param response   the response
      * @return the policy for resource set
      */
-    @PostMapping(value = OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL)
+    @PostMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL)
     public ResponseEntity createPolicyForResourceSet(
-        @PathVariable(value = "resourceId")
+        @PathVariable("resourceId")
         final long resourceId,
         @RequestBody
         final String body,

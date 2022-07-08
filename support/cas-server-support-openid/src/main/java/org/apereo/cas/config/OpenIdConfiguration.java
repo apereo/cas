@@ -182,7 +182,7 @@ public class OpenIdConfiguration {
     public static class OpenIdProtocolViews {
 
         @Bean
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public View casOpenIdServiceFailureView(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("casProtocolViewFactory")
@@ -191,7 +191,7 @@ public class OpenIdConfiguration {
         }
 
         @Bean
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public View casOpenIdServiceSuccessView(final ConfigurableApplicationContext applicationContext,
                                                 @Qualifier("casProtocolViewFactory")
                                                 final CasProtocolViewFactory casProtocolViewFactory) {
@@ -199,7 +199,7 @@ public class OpenIdConfiguration {
         }
 
         @Bean
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public View casOpenIdAssociationSuccessView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -208,7 +208,7 @@ public class OpenIdConfiguration {
         }
 
         @Bean
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public View openIdProviderView(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("casProtocolViewFactory")

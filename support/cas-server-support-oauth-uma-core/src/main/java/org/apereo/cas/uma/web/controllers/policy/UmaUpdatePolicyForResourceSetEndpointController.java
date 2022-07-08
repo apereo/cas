@@ -45,11 +45,11 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
      * @param response   the response
      * @return the policy for resource set
      */
-    @PutMapping(value = OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
+    @PutMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
     public ResponseEntity updatePoliciesForResourceSet(
-        @PathVariable(value = "resourceId")
+        @PathVariable("resourceId")
         final long resourceId,
-        @PathVariable(value = "policyId")
+        @PathVariable("policyId")
         final long policyId,
         @RequestBody
         final String body,

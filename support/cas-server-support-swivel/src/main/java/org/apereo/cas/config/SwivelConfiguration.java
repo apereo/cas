@@ -149,7 +149,7 @@ public class SwivelConfiguration {
 
     }
 
-    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
+    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
     @Configuration(value = "SwivelMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("swivelMultifactorWebflowConfigurer")
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "swivel")

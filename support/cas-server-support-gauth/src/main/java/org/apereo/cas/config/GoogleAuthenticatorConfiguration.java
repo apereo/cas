@@ -90,7 +90,7 @@ public class GoogleAuthenticatorConfiguration {
         }
     }
 
-    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
+    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
     @Configuration(value = "GoogleAuthenticatorMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("googleAuthenticatorMultifactorWebflowConfigurer")
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "gauth")

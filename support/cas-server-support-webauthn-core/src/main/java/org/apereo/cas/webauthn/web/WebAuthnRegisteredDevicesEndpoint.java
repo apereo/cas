@@ -60,7 +60,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      * @return the collection
      */
-    @Operation(summary = "Fetch registered devices for username", parameters = {@Parameter(name = "username", required = true)})
+    @Operation(summary = "Fetch registered devices for username", parameters = @Parameter(name = "username", required = true))
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<? extends CredentialRegistration> fetch(
         @PathVariable
@@ -94,8 +94,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param username the username
      */
-    @Operation(summary = "Remove device registrations for username",
-        parameters = {@Parameter(name = "username", required = true)})
+    @Operation(summary = "Remove device registrations for username", parameters = @Parameter(name = "username", required = true))
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(
         @PathVariable

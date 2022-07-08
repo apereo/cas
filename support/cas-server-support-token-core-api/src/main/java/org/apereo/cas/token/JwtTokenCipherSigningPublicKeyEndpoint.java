@@ -55,9 +55,7 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
      * @throws Exception the exception
      */
     @ReadOperation(produces = MediaType.TEXT_PLAIN_VALUE)
-    @Operation(summary = "Get public key for signing operations", parameters = {
-        @Parameter(name = "service")
-    })
+    @Operation(summary = "Get public key for signing operations", parameters = @Parameter(name = "service"))
     public String fetchPublicKey(@Nullable final String service) throws Exception {
         var signingKey = tokenCipherExecutor.getSigningKey();
 

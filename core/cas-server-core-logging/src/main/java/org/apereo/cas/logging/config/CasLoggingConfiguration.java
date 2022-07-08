@@ -43,7 +43,7 @@ import java.util.HashMap;
 @AutoConfiguration
 public class CasLoggingConfiguration {
 
-    @ConditionalOnBean(value = TicketRegistry.class)
+    @ConditionalOnBean(TicketRegistry.class)
     public static class CasMdcLoggingConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -69,7 +69,7 @@ public class CasLoggingConfiguration {
     /**
      * Log4j configuration.
      */
-    @ConditionalOnClass(value = LoggerContext.class)
+    @ConditionalOnClass(LoggerContext.class)
     @Configuration(value = "CasLog4jConfiguration", proxyBeanMethods = false)
     public static class CasLog4jConfiguration {
         @Bean

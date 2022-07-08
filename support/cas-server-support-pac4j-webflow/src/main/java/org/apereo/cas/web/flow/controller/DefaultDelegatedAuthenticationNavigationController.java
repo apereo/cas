@@ -46,7 +46,7 @@ public class DefaultDelegatedAuthenticationNavigationController {
      * @return the view
      * @throws Exception the exception
      */
-    @GetMapping(value = ENDPOINT_RESPONSE)
+    @GetMapping(ENDPOINT_RESPONSE)
     public View redirectResponseToFlow(
         @PathVariable("clientName")
         final String clientName,
@@ -65,7 +65,7 @@ public class DefaultDelegatedAuthenticationNavigationController {
      * @return the view
      * @throws Exception the exception
      */
-    @PostMapping(value = ENDPOINT_RESPONSE)
+    @PostMapping(ENDPOINT_RESPONSE)
     public View postResponseToFlow(
         @PathVariable("clientName")
         final String clientName,

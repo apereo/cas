@@ -27,14 +27,14 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
     }
 
     @Override
-    @GetMapping(value = "/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+    @GetMapping("/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) {
         return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @Override
-    @PostMapping(value = "/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+    @PostMapping("/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PUSHED_AUTHORIZE_URL)) {

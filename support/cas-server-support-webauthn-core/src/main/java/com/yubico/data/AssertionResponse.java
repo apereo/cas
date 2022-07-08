@@ -33,7 +33,7 @@ import com.yubico.webauthn.data.PublicKeyCredential;
 import lombok.Value;
 
 @Value
-@JsonIgnoreProperties({"sessionToken"})
+@JsonIgnoreProperties("sessionToken")
 public class AssertionResponse {
 
     private final ByteArray requestId;

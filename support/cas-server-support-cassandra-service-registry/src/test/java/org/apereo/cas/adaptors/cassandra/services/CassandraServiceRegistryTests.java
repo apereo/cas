@@ -59,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @EnabledIfListeningOnPort(port = 9042)
 @Getter
-@TestExecutionListeners(value = {
+@TestExecutionListeners({
     SpringBootDependencyInjectionTestExecutionListener.class,
     CassandraServiceRegistryTests.DisposingTestExecutionListener.class
 })

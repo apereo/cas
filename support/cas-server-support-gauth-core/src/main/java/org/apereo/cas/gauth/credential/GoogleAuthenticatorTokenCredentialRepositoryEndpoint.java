@@ -57,7 +57,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @return the one time token account
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Load and get all accounts for the user", parameters = {@Parameter(name = "username", required = true)})
+    @Operation(summary = "Load and get all accounts for the user", parameters = @Parameter(name = "username", required = true))
     public Collection<? extends OneTimeTokenAccount> get(
         @PathVariable
         final String username) {
@@ -81,7 +81,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @param username the username
      */
     @DeleteMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete account for the user", parameters = {@Parameter(name = "username", required = true)})
+    @Operation(summary = "Delete account for the user", parameters = @Parameter(name = "username", required = true))
     public void delete(
         @PathVariable
         final String username) {
@@ -130,7 +130,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @throws Exception the exception
      */
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Import account as a JSON document", parameters = {@Parameter(name = "request")})
+    @Operation(summary = "Import account as a JSON document", parameters = @Parameter(name = "request"))
     public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);

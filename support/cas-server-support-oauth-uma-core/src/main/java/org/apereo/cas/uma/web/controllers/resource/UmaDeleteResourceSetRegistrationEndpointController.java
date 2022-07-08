@@ -39,7 +39,7 @@ public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaE
      * @param response the response
      * @return the response entity
      */
-    @DeleteMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}")
+    @DeleteMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}")
     public ResponseEntity deleteResourceSet(@PathVariable("id") final long id, final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(id);
