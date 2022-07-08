@@ -153,7 +153,6 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
-
     protected static final String TGT_ID = "TGT-0";
 
     @Autowired
