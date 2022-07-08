@@ -135,7 +135,7 @@ public class JwtBuilder {
         Objects.requireNonNull(payload.getIssuer(), "Issuer cannot be undefined");
         val claims = new JWTClaimsSet.Builder()
             .audience(serviceAudience)
-            .issuer(payload.issuer)
+            .issuer(payload.getIssuer())
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());

@@ -55,26 +55,25 @@ public class OidcDPoPAuthenticator implements Authenticator {
                     .registeredService(registeredService)
                     .build();
                 val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
-                if (!accessResult.isExecutionFailure()) {
-                    val algorithms = oidcServerDiscoverySettings.getDPopSigningAlgValuesSupported()
-                        .stream()
-                        .map(JWSAlgorithm::parse)
-                        .collect(Collectors.toSet());
+                accessResult.throwExceptionIfNeeded();
+                val algorithms = oidcServerDiscoverySettings.getDPopSigningAlgValuesSupported()
+                    .stream()
+                    .map(JWSAlgorithm::parse)
+                    .collect(Collectors.toSet());
 
-                    val seconds = Beans.newDuration(casProperties.getAuthn().getOidc().getCore().getSkew()).toSeconds();
-                    val verifier = new DPoPTokenRequestVerifier(algorithms,
-                        new URI(webContext.getRequestURL()), seconds, null);
-                    val signedProof = SignedJWT.parse(dPopProof);
-                    val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
-                    val confirmation = verifier.verify(dPopIssuer, signedProof);
+                val seconds = Beans.newDuration(casProperties.getAuthn().getOidc().getCore().getSkew()).toSeconds();
+                val verifier = new DPoPTokenRequestVerifier(algorithms,
+                    new URI(webContext.getRequestURL()), seconds, null);
+                val signedProof = SignedJWT.parse(dPopProof);
+                val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
+                val confirmation = verifier.verify(dPopIssuer, signedProof);
 
-                    val userProfile = new CommonProfile(true);
-                    userProfile.setId(clientId);
-                    userProfile.addAttributes(signedProof.getJWTClaimsSet().getClaims());
-                    userProfile.addAttribute(OAuth20Constants.DPOP, dPopProof);
-                    userProfile.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, confirmation.getValue().toString());
-                    credentials.setUserProfile(userProfile);
-                }
+                val userProfile = new CommonProfile(true);
+                userProfile.setId(clientId);
+                userProfile.addAttributes(signedProof.getJWTClaimsSet().getClaims());
+                userProfile.addAttribute(OAuth20Constants.DPOP, dPopProof);
+                userProfile.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, confirmation.getValue().toString());
+                credentials.setUserProfile(userProfile);
             }));
     }
 }

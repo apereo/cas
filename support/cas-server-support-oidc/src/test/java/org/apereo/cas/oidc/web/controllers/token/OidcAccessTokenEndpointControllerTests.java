@@ -2,7 +2,9 @@ package org.apereo.cas.oidc.web.controllers.token;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import lombok.val;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
@@ -30,8 +32,11 @@ public class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
-        val mv = oidcAccessTokenEndpointController.handleRequest(request, response);
+        var mv = oidcAccessTokenEndpointController.handleRequest(request, response);
         assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST, mv.getStatus());
+        mv = oidcAccessTokenEndpointController.handleInvalidDPoPProofException(response, new InvalidDPoPProofException("invalid"));
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_DPOP_PROOF, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
