@@ -84,25 +84,25 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     await cas.logg(`Refresh Token 1: ${refreshToken1}`);
     await cas.logg(`Refresh Token 2: ${refreshToken2}`);
 
-    // await exchangeToken(refreshToken2, "client",
-    //     res => {
-    //         throw `Operation should fail but instead produced: ${res.data}`;
-    //     }, error => {
-    //         console.log(`Status: ${error.response.status}`);
-    //         assert(error.response.status === 400)
-    //         console.log(error.response.data);
-    //         assert(error.response.data.error === "invalid_grant");
-    //     });
-    //
-    // await exchangeToken(refreshToken1, "client2",
-    //     res => {
-    //         throw `Operation should fail but instead produced: ${res.data}`;
-    //     }, error => {
-    //         console.log(`Status: ${error.response.status}`);
-    //         assert(error.response.status === 400)
-    //         console.log(error.response.data);
-    //         assert(error.response.data.error === "invalid_grant");
-    //     });
+    await exchangeToken(refreshToken2, "client",
+        res => {
+            throw `Operation should fail but instead produced: ${res.data}`;
+        }, error => {
+            console.log(`Status: ${error.response.status}`);
+            assert(error.response.status === 400)
+            console.log(error.response.data);
+            assert(error.response.data.error === "invalid_grant");
+        });
+
+    await exchangeToken(refreshToken1, "client2",
+        res => {
+            throw `Operation should fail but instead produced: ${res.data}`;
+        }, error => {
+            console.log(`Status: ${error.response.status}`);
+            assert(error.response.status === 400)
+            console.log(error.response.data);
+            assert(error.response.data.error === "invalid_grant");
+        });
 
     await exchangeToken(refreshToken1, "client",
         res => {

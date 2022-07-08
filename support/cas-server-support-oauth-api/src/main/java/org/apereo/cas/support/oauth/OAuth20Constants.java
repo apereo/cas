@@ -214,6 +214,11 @@ public interface OAuth20Constants {
     String INVALID_GRANT = "invalid_grant";
 
     /**
+     * The invalid dpop.
+     */
+    String INVALID_DPOP_PROOF = "invalid_dpop_proof";
+
+    /**
      * The invalid scope.
      */
     String INVALID_SCOPE = "invalid_scope";
