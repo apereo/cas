@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Order(value = Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core)
 @AutoConfiguration
 public class CasCoreHttpConfiguration {

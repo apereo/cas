@@ -30,7 +30,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         super(configurationContext);
     }
 
-    @GetMapping(value = {
+    @GetMapping({
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL,
         "/**/" + OidcConstants.AUTHORIZE_URL
     })
@@ -58,7 +58,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         return super.handleRequest(request, response);
     }
 
-    @PostMapping(value = {
+    @PostMapping({
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL,
         "/**/" + OidcConstants.AUTHORIZE_URL
     })

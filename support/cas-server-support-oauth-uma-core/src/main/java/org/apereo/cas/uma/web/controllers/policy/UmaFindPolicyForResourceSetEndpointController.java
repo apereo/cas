@@ -38,9 +38,9 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
      * @param response   the response
      * @return the policy for resource set
      */
-    @GetMapping(value = OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL)
+    @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL)
     public ResponseEntity getPoliciesForResourceSet(
-        @PathVariable(value = "resourceId")
+        @PathVariable("resourceId")
         final long resourceId,
         final HttpServletRequest request,
         final HttpServletResponse response) {
@@ -71,11 +71,11 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
      * @param response   the response
      * @return the policy for resource set
      */
-    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
+    @GetMapping('/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
     public ResponseEntity getPolicyForResourceSet(
-        @PathVariable(value = "resourceId")
+        @PathVariable("resourceId")
         final long resourceId,
-        @PathVariable(value = "policyId")
+        @PathVariable("policyId")
         final long policyId,
         final HttpServletRequest request,
         final HttpServletResponse response) {

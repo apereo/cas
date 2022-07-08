@@ -30,9 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "username"
-})
+@XmlType(name = "", propOrder = "username")
 @Getter
 @Setter
 @XmlRootElement(name = "getSoapAuthenticationRequest")

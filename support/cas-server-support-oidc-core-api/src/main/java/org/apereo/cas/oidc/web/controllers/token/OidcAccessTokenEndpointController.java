@@ -47,7 +47,7 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
         return super.handleRequest(request, response);
     }
 
-    @GetMapping(value = {
+    @GetMapping({
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL,
         "/**/" + OidcConstants.ACCESS_TOKEN_URL,
@@ -58,6 +58,13 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
         return this.handleRequest(request, response);
     }
 
+    /**
+     * Handle invalid dpop proof exception.
+     *
+     * @param req the req
+     * @param ex  the ex
+     * @return the model and view
+     */
     @ExceptionHandler(InvalidDPoPProofException.class)
     public ModelAndView handleInvalidDPoPProofException(final HttpServletResponse req, final Exception ex) {
         return OAuth20Utils.writeError(req, OAuth20Constants.INVALID_DPOP_PROOF);

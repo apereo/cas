@@ -19,9 +19,7 @@ import javax.persistence.Table;
  */
 @SuperBuilder
 @NoArgsConstructor
-@AttributeOverrides({
-    @AttributeOverride(name = "body", column = @Column(columnDefinition = "text"))
-})
+@AttributeOverrides(@AttributeOverride(name = "body", column = @Column(columnDefinition = "text")))
 @Entity(name = "MySQLJpaTicketEntity")
 @Table(name = "CasTickets")
 public class MySQLJpaTicketEntity extends BaseTicketEntity {

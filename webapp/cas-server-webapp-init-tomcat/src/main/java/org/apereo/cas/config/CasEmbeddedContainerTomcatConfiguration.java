@@ -27,7 +27,7 @@ import org.springframework.core.Ordered;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
+@ConditionalOnClass({Tomcat.class, Http2Protocol.class})
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ApacheTomcat)
 @AutoConfiguration(before = ServletWebServerFactoryAutoConfiguration.class)

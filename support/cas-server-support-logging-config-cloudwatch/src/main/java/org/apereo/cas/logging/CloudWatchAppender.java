@@ -227,9 +227,12 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                                                     @PluginAttribute("credentialSecretKey") final String credentialSecretKey,
                                                     @PluginAttribute("awsLogRegionName") final String awsLogRegionName,
                                                     @PluginElement("Layout") final Layout<Serializable> layout,
-                                                    @PluginAttribute(value = "createIfNeeded") final String createIfNeeded,
-                                                    @PluginAttribute(value = "createLogGroupIfNeeded") final String createLogGroupIfNeeded,
-                                                    @PluginAttribute(value = "createLogStreamIfNeeded") final String createLogStreamIfNeeded) {
+                                                    @PluginAttribute("createIfNeeded")
+                                                        final String createIfNeeded,
+                                                    @PluginAttribute("createLogGroupIfNeeded")
+                                                        final String createLogGroupIfNeeded,
+                                                    @PluginAttribute("createLogStreamIfNeeded")
+                                                        final String createLogStreamIfNeeded) {
         return new CloudWatchAppender(
             name,
             endpoint,

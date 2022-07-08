@@ -19,9 +19,7 @@ import javax.persistence.Entity;
  */
 @SuperBuilder
 @NoArgsConstructor
-@AttributeOverrides({
-    @AttributeOverride(name = "body", column = @Column(columnDefinition = "text"))
-})
+@AttributeOverrides(@AttributeOverride(name = "body", column = @Column(columnDefinition = "text")))
 @Entity(name = "PostgresJpaTicketEntity")
 public class PostgresJpaTicketEntity extends BaseTicketEntity {
     private static final long serialVersionUID = 6546716187959834795L;

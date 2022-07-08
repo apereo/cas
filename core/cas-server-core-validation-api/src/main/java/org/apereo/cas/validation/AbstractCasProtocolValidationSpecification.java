@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @Setter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)

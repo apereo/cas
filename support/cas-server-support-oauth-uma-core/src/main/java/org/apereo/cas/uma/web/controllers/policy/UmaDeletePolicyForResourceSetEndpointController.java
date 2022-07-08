@@ -41,11 +41,11 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
      * @param response   the response
      * @return the policy for resource set
      */
-    @DeleteMapping(value = OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
+    @DeleteMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
     public ResponseEntity deletePoliciesForResourceSet(
-        @PathVariable(value = "resourceId")
+        @PathVariable("resourceId")
         final long resourceId,
-        @PathVariable(value = "policyId")
+        @PathVariable("policyId")
         final long policyId,
         final HttpServletRequest request,
         final HttpServletResponse response) {

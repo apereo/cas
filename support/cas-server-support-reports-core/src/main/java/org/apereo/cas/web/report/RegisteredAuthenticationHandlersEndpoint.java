@@ -60,7 +60,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
      * @param name the name
      * @return the authentication handler
      */
-    @Operation(summary = "Get available authentication handler by name", parameters = {@Parameter(name = "name", required = true)})
+    @Operation(summary = "Get available authentication handler by name", parameters = @Parameter(name = "name", required = true))
     @ReadOperation(produces = {
         MEDIA_TYPE_SPRING_BOOT_V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public AuthenticationHandlerDetails fetchAuthnHandler(@Selector final String name) {

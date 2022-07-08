@@ -59,7 +59,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(value = {
+    @GetMapping({
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL,
         '/' + OidcConstants.BASE_OIDC_URL + "/logout",
         "/**/" + OidcConstants.LOGOUT_URL

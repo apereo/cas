@@ -51,8 +51,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @SuppressWarnings("JavaUtilDate")
-    @Operation(summary = "Provide a report of the audit log using a given interval",
-        parameters = {@Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H")})
+    @Operation(summary = "Provide a report of the audit log using a given interval", parameters = @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H"))
     public Set<AuditActionContext> getAuditLog(
         @Selector
         final String interval) {

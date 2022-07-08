@@ -35,9 +35,7 @@ import java.util.Map;
 @Slf4j
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-@EqualsAndHashCode(
-    of = {"data"},
-    callSuper = false)
+@EqualsAndHashCode(of = "data", callSuper = false)
 public class MetadataObject {
     private static final ObjectMapper OBJECT_MAPPER = JacksonCodecs.json();
 

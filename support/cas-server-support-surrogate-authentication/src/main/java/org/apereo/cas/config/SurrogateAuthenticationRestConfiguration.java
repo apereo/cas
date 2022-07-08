@@ -22,7 +22,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)
+@ConditionalOnClass(RestHttpRequestCredentialFactoryConfigurer.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
 @AutoConfiguration
 public class SurrogateAuthenticationRestConfiguration {

@@ -263,7 +263,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         }
     }
 
-    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
+    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
     @Configuration(value = "CasSimpleMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("casSimpleMultifactorAuthenticationTicketFactoryConfigurer")
     public static class CasSimpleMultifactorTrustConfiguration {

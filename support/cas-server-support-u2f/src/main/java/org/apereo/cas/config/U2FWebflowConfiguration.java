@@ -198,7 +198,7 @@ public class U2FWebflowConfiguration {
         }
     }
 
-    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
+    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "u2f")
     @Configuration(value = "U2fMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("u2fMultifactorWebflowConfigurer")

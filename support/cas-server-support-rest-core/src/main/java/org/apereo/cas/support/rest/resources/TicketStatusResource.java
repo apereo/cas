@@ -42,7 +42,7 @@ public class TicketStatusResource {
      * @param id ticket id
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @GetMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{id:.+}")
+    @GetMapping(RestProtocolConstants.ENDPOINT_TICKETS + "/{id:.+}")
     public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
         try {
             val ticket = ticketRegistry.getTicket(id, Ticket.class);

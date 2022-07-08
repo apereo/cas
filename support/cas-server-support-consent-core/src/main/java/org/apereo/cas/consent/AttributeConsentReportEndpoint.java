@@ -67,7 +67,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @return the collection
      */
     @GetMapping(path = "{principal}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get consent decisions for principal", parameters = {@Parameter(name = "principal", required = true)})
+    @Operation(summary = "Get consent decisions for principal", parameters = @Parameter(name = "principal", required = true))
     public Collection<Map<String, Object>> consentDecisions(
         @PathVariable
         final String principal) {
@@ -154,7 +154,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @return true/false
      */
     @DeleteMapping(path = "{principal}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete consent decisions for principal", parameters = {@Parameter(name = "principal")})
+    @Operation(summary = "Delete consent decisions for principal", parameters = @Parameter(name = "principal"))
     public boolean revokeAllConsents(
         @PathVariable
         final String principal) {

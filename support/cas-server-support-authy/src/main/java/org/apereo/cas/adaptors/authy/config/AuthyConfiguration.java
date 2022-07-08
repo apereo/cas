@@ -189,7 +189,7 @@ public class AuthyConfiguration {
         }
     }
 
-    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
+    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
     @Configuration(value = "AuthyMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("authyMultifactorWebflowConfigurer")
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "authy")

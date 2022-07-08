@@ -63,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ResourceLock("Couchbase")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestExecutionListeners(value = {
+@TestExecutionListeners({
     SpringBootDependencyInjectionTestExecutionListener.class,
     CouchbaseServiceRegistryTests.DisposingTestExecutionListener.class
 })

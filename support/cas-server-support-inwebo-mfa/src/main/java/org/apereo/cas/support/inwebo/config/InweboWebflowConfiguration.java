@@ -169,7 +169,7 @@ public class InweboWebflowConfiguration {
     /**
      * The Inwebo multifactor trust configuration.
      */
-    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
+    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "inwebo")
     @Configuration(value = "InweboMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("inweboMultifactorWebflowConfigurer")

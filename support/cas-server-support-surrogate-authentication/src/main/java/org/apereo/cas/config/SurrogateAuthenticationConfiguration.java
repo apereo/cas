@@ -198,7 +198,7 @@ public class SurrogateAuthenticationConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationPrincipalResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @DependsOn(value = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+    @DependsOn(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     public static class SurrogateAuthenticationPrincipalResolutionConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalResolver")
