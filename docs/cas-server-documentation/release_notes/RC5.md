@@ -62,11 +62,17 @@ the application context is reloaded once a property is changed.
 The collection of external identity providers that are used for [delegated authentication](../integration/Delegate-Authentication.html)
 can now be [registered with CAS](../integration/Delegate-Authentication-Provider-Registration.html) using an external 
 REST API that is able to produce identity provider configuration using a collection of CAS-owned properties as the final payload.
+    
+### DPoP Access Tokens
+
+Initial support for DPoP access tokens is now available when CAS is acting as an [OpenID Connect provider](../authentication/OIDC-Authentication.html).
+DPoP is a security extension for binding access tokens to a private key that belongs to the client. The binding makes the DPoP 
+access token sender-constrained and its replay, if leaked or stolen token, can be effectively detected and prevented, as opposed to the common Bearer token.
 
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover
-more use cases and scenarios. At the moment, total number of jobs stands at approximately `312` distinct
+more use cases and scenarios. At the moment, total number of jobs stands at approximately `314` distinct
 scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 
 ## Other Stuff
