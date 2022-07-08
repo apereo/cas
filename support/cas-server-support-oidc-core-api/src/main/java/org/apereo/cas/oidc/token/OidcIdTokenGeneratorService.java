@@ -104,7 +104,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setJwtId(jwtId);
         claims.setClaim(OidcConstants.CLAIM_SESSION_ID, DigestUtils.sha(jwtId));
 
-        claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.empty()));
+        claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
         claims.setAudience(accessToken.getClientId());
 
         val expirationDate = NumericDate.now();
