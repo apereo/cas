@@ -30,12 +30,12 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
+import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -521,14 +521,9 @@ public abstract class AbstractOidcTests {
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
-        CasOAuth20Configuration.class,
-        OAuth20ProtocolTicketCatalogConfiguration.class,
-        CasOAuth20EndpointsConfiguration.class,
         CasThrottlingConfiguration.class,
-        CasOAuth20ThrottleConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
-        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         OidcConfiguration.class,
         OidcJwksConfiguration.class,
@@ -536,7 +531,12 @@ public abstract class AbstractOidcTests {
         OidcResponseConfiguration.class,
         OidcLogoutConfiguration.class,
         OidcThrottleConfiguration.class,
-        OidcComponentSerializationConfiguration.class
+        OidcComponentSerializationConfiguration.class,
+        CasOAuth20Configuration.class,
+        CasOAuth20ProtocolTicketCatalogConfiguration.class,
+        CasOAuth20EndpointsConfiguration.class,
+        CasOAuth20ThrottleConfiguration.class,
+        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

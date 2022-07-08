@@ -76,8 +76,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected final CasConfigurationProperties casProperties;
 
-    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestContext holder,
-                                                                         final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
+    private static OAuth20TokenGeneratedResult generateAccessTokenResult(
+        final AccessTokenRequestContext holder,
+        final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
         return OAuth20TokenGeneratedResult.builder()
             .registeredService(holder.getRegisteredService())
             .accessToken(pair.getKey())
@@ -154,14 +155,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .build();
     }
 
-    /**
-     * Generate access token OAuth grant types pair.
-     *
-     * @param holder the holder
-     * @return the pair
-     * @throws Exception the exception
-     */
-    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> generateAccessTokenOAuthGrantTypes(final AccessTokenRequestContext holder) throws Exception {
+    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> generateAccessTokenOAuthGrantTypes(
+        final AccessTokenRequestContext holder) throws Exception {
         LOGGER.debug("Creating access token for [{}]", holder.getService());
         val authnBuilder = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
@@ -173,11 +168,14 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .map(OAuthRegisteredService::getClientId).orElse(StringUtils.EMPTY);
         val requestedClaims = holder.getClaims().getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>());
         requestedClaims.forEach(authnBuilder::addAttribute);
+
+        authnBuilder.addAttribute(OAuth20Constants.DPOP, holder.getDpop());
+        authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, holder.getDpopConfirmation());
         val authentication = authnBuilder.build();
 
         LOGGER.debug("Creating access token for [{}]", holder);
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
-        val accessToken = this.accessTokenFactory.create(holder.getService(),
+        val accessToken = accessTokenFactory.create(holder.getService(),
             authentication, ticketGrantingTicket, holder.getScopes(),
             Optional.ofNullable(holder.getToken()).map(Ticket::getId).orElse(null),
             clientId,
@@ -201,13 +199,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return Pair.of(accessToken, refreshToken);
     }
 
-    /**
-     * Update OAuth code.
-     *
-     * @param holder      the holder
-     * @param accessToken the accessToken
-     * @throws Exception the exception
-     */
     protected void updateOAuthCode(final AccessTokenRequestContext holder, final OAuth20AccessToken accessToken) throws Exception {
         if (holder.isRefreshToken()) {
             val refreshToken = (OAuth20RefreshToken) holder.getToken();

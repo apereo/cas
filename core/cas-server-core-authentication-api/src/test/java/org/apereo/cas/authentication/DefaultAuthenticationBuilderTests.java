@@ -81,5 +81,6 @@ public class DefaultAuthenticationBuilderTests {
 
         authn.updateAll(authn2);
         assertTrue(authn.getAttributes().containsKey("authn2"));
+        assertTrue(authn.containsAttribute("authn2"));
     }
 }

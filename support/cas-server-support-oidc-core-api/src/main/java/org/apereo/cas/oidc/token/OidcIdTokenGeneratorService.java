@@ -111,7 +111,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setExpirationTime(expirationDate);
         LOGGER.debug("Calculated ID token expiration claim to be [{}]", expirationDate);
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast((float) Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
+        claims.setNotBeforeMinutesInThePast(Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
 
         val subject = registeredService.getUsernameAttributeProvider().resolveUsername(principal,
             accessToken.getService(), registeredService);
@@ -263,7 +263,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             .casProperties(getConfigurationContext().getCasProperties())
             .issuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService)))
             .build()
-            .encode();
+            .encode(accessToken.getId());
 
         val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(registeredService);
         val hash = OAuth20AccessTokenAtHashGenerator.builder()

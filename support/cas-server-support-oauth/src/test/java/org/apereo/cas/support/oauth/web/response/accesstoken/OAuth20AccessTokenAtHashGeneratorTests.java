@@ -37,7 +37,7 @@ public class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests
             .casProperties(casProperties)
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
             .build()
-            .encode();
+            .encode(accessToken.getId());
 
         return OAuth20AccessTokenAtHashGenerator.builder()
             .algorithm(alg)

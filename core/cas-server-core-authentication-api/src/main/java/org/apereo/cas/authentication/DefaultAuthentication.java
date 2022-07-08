@@ -87,6 +87,11 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
+    public boolean containsAttribute(final String name) {
+        return this.attributes.containsKey(name);
+    }
+
+    @Override
     public boolean isEqualTo(final Authentication auth2) {
         if (auth2 == null) {
             return false;

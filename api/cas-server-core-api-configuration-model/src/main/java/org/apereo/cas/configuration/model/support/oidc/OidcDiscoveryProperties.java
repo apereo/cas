@@ -117,6 +117,14 @@ public class OidcDiscoveryProperties implements Serializable {
         "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:uma-ticket").collect(Collectors.toList());
 
     /**
+     * A array containing a list
+     * of the JWS "alg" values supported by the CAS authorization server for
+     * DPoP proof JWTs.
+     */
+    private List<String> dpopSigningAlgValuesSupported = Stream.of("RS256", "RS384", "RS512", "ES256", "ES384", "ES512")
+        .collect(Collectors.toList());
+
+    /**
      * Supported algorithms for id token signing.
      */
     private List<String> idTokenSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",

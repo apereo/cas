@@ -52,6 +52,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("id_token_signing_alg_values_supported")
     private Set<String> idTokenSigningAlgValuesSupported;
 
+    @JsonProperty("dpop_signing_alg_values_supported")
+    private Set<String> dPopSigningAlgValuesSupported;
+
     @JsonProperty("id_token_encryption_alg_values_supported")
     private Set<String> idTokenEncryptionAlgValuesSupported;
 

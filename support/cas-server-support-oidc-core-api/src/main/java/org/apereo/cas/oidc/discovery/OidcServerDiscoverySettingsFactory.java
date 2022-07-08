@@ -59,6 +59,9 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setBackchannelLogoutSupported(oidc.getLogout().isBackchannelLogoutSupported());
         discovery.setFrontchannelLogoutSupported(oidc.getLogout().isFrontchannelLogoutSupported());
 
+        discovery.setDPopSigningAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getDpopSigningAlgValuesSupported()));
+
         discovery.setUserInfoSigningAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getUserInfoSigningAlgValuesSupported()));
         discovery.setUserInfoEncryptionAlgValuesSupported(

@@ -42,6 +42,7 @@ public class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
         assertFalse(oidcServerDiscoverySettings.getIdTokenSigningAlgValuesSupported().isEmpty());
         assertFalse(oidcServerDiscoverySettings.getSubjectTypesSupported().isEmpty());
         assertFalse(oidcServerDiscoverySettings.getAcrValuesSupported().isEmpty());
+        assertFalse(oidcServerDiscoverySettings.getDPopSigningAlgValuesSupported().isEmpty());
 
         assertFalse(oidcServerDiscoverySettings.getResponseTypesSupported().isEmpty());
         assertFalse(oidcServerDiscoverySettings.getScopesSupported().isEmpty());

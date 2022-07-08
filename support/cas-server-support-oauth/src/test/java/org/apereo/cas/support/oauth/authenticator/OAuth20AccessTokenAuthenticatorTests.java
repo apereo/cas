@@ -50,7 +50,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
             .casProperties(casProperties)
             .build();
 
-        val credentials = new TokenCredentials(encoder.encode());
+        val credentials = new TokenCredentials(encoder.encode(accessToken.getId()));
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
@@ -67,7 +67,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
             .casProperties(casProperties)
             .build();
-        val credentials = new TokenCredentials(encoder.encode());
+        val credentials = new TokenCredentials(encoder.encode(accessToken.getId()));
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(InvalidTicketException.class, () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
@@ -86,7 +86,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
             .casProperties(casProperties)
             .build();
 
-        val credentials = new TokenCredentials(encoder.encode());
+        val credentials = new TokenCredentials(encoder.encode(accessToken.getId()));
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);

@@ -49,8 +49,8 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         ));
         this.servicesManager.save(registeredService);
 
-        val token1 = getAccessTokenEncoder(accessToken, registeredService).encode();
-        val token2 = getAccessTokenEncoder(accessToken, registeredService).encode();
+        val token1 = getAccessTokenEncoder(accessToken, registeredService).encode(accessToken.getId());
+        val token2 = getAccessTokenEncoder(accessToken, registeredService).encode(accessToken.getId());
         assertEquals(token1, token2);
     }
 
@@ -60,7 +60,7 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
         val encoder = getAccessTokenEncoder(accessToken, registeredService);
 
-        val encodedAccessToken = encoder.encode();
+        val encodedAccessToken = encoder.encode(accessToken.getId());
         val decoded = encoder.decode(encodedAccessToken);
         assertNotNull(decoded);
         assertEquals(accessToken.getId(), decoded);
@@ -72,8 +72,8 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
 
         val encoder = getAccessTokenEncoder(accessToken, registeredService);
-        val token1 = encoder.encode();
-        val token2 = encoder.encode();
+        val token1 = encoder.encode(accessToken.getId());
+        val token2 = encoder.encode(accessToken.getId());
         assertEquals(token1, token2);
 
         val decoded1 = encoder.decode(token1);

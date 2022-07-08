@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticatorTests;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticatorTests;
+import org.apereo.cas.oidc.authn.OidcDPoPAuthenticatorTests;
 import org.apereo.cas.oidc.authn.OidcJwtAuthenticatorHMacTests;
 import org.apereo.cas.oidc.authn.OidcJwtAuthenticatorRsaTests;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicyTests;
@@ -181,6 +182,7 @@ import org.junit.platform.suite.api.Suite;
     OidcCasCallbackUrlResolverTests.class,
     OidcClientSecretValidatorTests.class,
     OidcMessageSanitizerTests.class,
+    OidcDPoPAuthenticatorTests.class,
     OidcInitialAccessTokenControllerTests.class,
     OidcClientRegistrationRequestTranslatorTests.class,
     OidcPushedAuthorizationRequestTests.class,

@@ -64,6 +64,14 @@ public interface Authentication extends Serializable {
     void addAttribute(String name, Object value);
 
     /**
+     * Contains attribute?
+     *
+     * @param name the name
+     * @return true
+     */
+    boolean containsAttribute(String name);
+
+    /**
      * Gets a list of metadata about the credentials supplied at authentication time.
      *
      * @return Non -null list of supplied credentials represented as metadata that should be
