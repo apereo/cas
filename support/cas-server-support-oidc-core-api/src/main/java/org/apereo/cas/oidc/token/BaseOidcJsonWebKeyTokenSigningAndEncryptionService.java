@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
 import org.apereo.cas.token.JwtBuilder;
@@ -82,7 +83,12 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
 
     @Override
     public String resolveIssuer(final Optional<OAuthRegisteredService> service) {
-        return this.issuerService.determineIssuer(Optional.empty());
+        val filter = service
+            .filter(svc -> svc instanceof OidcRegisteredService)
+            .map(OidcRegisteredService.class::cast)
+            .stream()
+            .findFirst();
+        return issuerService.determineIssuer(filter);
     }
 
     /**

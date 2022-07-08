@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.apereo.cas.oidc.OidcConstants.StandardScopes.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -167,8 +168,11 @@ public class OidcIdTokenGeneratorServiceTests {
             when(accessToken.getId()).thenReturn(getClass().getSimpleName());
             when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
 
-            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
+            val registeredService = getOidcRegisteredService("clientid");
+            registeredService.setIdTokenIssuer(UUID.randomUUID().toString());
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
+            servicesManager.save(registeredService);
+            
             val idToken = oidcIdTokenGenerator.generate(accessToken, 30, profile,
                 OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
@@ -184,6 +188,7 @@ public class OidcIdTokenGeneratorServiceTests {
             assertEquals("casuser", claims.getStringClaimValue(OIDC_CLAIM_NAME));
             assertEquals(phoneValues, claims.getStringListClaimValue(OIDC_CLAIM_PHONE_NUMBER));
             assertEquals("test", claims.getStringClaimValue(OIDC_CLAIM_PREFERRED_USERNAME));
+            assertEquals(registeredService.getIdTokenIssuer(), claims.getStringClaimValue(OidcConstants.ISS));
         }
 
         @Test
