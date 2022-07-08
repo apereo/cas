@@ -114,7 +114,7 @@ public interface OidcConstants {
     /**
      * Oidc access token url path segment url.
      */
-    String ACCESS_TOKEN_URL = "oidcAccessToken";
+    String ACCESS_TOKEN_URL = "accessToken";
 
     /**
      * Oidc token url path segment url.
