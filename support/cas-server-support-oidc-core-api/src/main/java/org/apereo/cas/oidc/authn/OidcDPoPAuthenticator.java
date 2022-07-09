@@ -62,8 +62,8 @@ public class OidcDPoPAuthenticator implements Authenticator {
                     .collect(Collectors.toSet());
 
                 val seconds = Beans.newDuration(casProperties.getAuthn().getOidc().getCore().getSkew()).toSeconds();
-                val verifier = new DPoPTokenRequestVerifier(algorithms,
-                    new URI(webContext.getRequestURL()), seconds, null);
+                val endpointURI = new URI(webContext.getRequestURL());
+                val verifier = new DPoPTokenRequestVerifier(algorithms, endpointURI, seconds, null);
                 val signedProof = SignedJWT.parse(dPopProof);
                 val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
                 val confirmation = verifier.verify(dPopIssuer, signedProof);
