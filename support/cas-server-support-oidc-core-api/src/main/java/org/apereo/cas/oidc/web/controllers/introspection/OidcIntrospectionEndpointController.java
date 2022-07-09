@@ -2,11 +2,13 @@ package org.apereo.cas.oidc.web.controllers.introspection;
 
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
@@ -81,10 +83,15 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     }
 
     @Override
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20Token ticket) {
-        val r = super.createIntrospectionValidResponse(ticket);
-        r.setIss(getConfigurationContext().getIssuerService().determineIssuer(Optional.empty()));
-        FunctionUtils.doIf(r.isActive(), o -> r.setScope(String.join(" ", ticket.getScopes()))).accept(r);
-        return r;
+    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(
+        final String accessTokenId, final OAuth20Token ticket) {
+        val response = super.createIntrospectionValidResponse(accessTokenId, ticket);
+        val registeredService = getConfigurationContext().getServicesManager().findServiceBy(ticket.getService(), OidcRegisteredService.class);
+        response.setIss(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
+        FunctionUtils.doIf(response.isActive(), o -> response.setScope(String.join(" ", ticket.getScopes()))).accept(response);
+
+        CollectionUtils.firstElement(ticket.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
+            .ifPresent(dpop -> response.setDPopConfirmation(new OAuth20IntrospectionAccessTokenResponse.DPopConfirmation(dpop.toString())));
+        return response;
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.introspection;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -42,4 +43,13 @@ public class OAuth20IntrospectionAccessTokenResponse {
 
     @JsonProperty("grant_type")
     private String grantType;
+
+    @JsonProperty("cnf")
+    private DPopConfirmation dPopConfirmation;
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class DPopConfirmation {
+        private final String jkt;
+    }
 }
