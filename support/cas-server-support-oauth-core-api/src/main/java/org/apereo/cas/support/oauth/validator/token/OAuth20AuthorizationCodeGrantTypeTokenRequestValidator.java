@@ -70,7 +70,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                         getConfigurationContext().getTicketRegistry().deleteTicket(ticket);
                     }));
                 }
-                LOGGER.warn("Request OAuth code [{}] is not found or has expired", code.get());
+                LOGGER.warn("Provided OAuth code [{}] is not found or has expired", code.get());
                 return false;
             }
 

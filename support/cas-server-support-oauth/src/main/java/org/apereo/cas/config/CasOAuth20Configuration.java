@@ -765,6 +765,7 @@ public class CasOAuth20Configuration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "casCallbackUrlResolver")
         public UrlResolver casCallbackUrlResolver(final CasConfigurationProperties casProperties,
                                                   @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
                                                   final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
