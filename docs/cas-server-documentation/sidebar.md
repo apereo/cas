@@ -541,6 +541,7 @@ layout: null
                 * [Overview](/cas/{{ version }}/authentication/OIDC-Authentication-Clients.html) 
                 * [Dynamic Registration](/cas/{{ version }}/authentication/OIDC-Authentication-Dynamic-Registration.html) 
             * [Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-Discovery.html)
+            * [DPoP](/cas/{{ version }}/authentication/OIDC-Authentication-DPoP.html)
             * [JWKS](#oicjwksmenu)
                 * [Overview](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS.html)
                 * [Storage](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Storage.html)
