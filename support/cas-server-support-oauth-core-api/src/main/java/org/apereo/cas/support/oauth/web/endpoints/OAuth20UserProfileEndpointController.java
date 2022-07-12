@@ -32,11 +32,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OAuth20UserProfileEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
-    private final ResponseEntity<String> expiredAccessTokenResponseEntity;
-
     public OAuth20UserProfileEndpointController(final T configurationContext) {
         super(configurationContext);
-        this.expiredAccessTokenResponseEntity = buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
     }
 
     protected static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
@@ -73,32 +70,36 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
                                                    final HttpServletResponse response) throws Exception {
-        try {
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            val accessTokenResult = getAccessTokenFromRequest(request);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        val accessTokenResult = getAccessTokenFromRequest(request);
 
-            val decodedAccessTokenId = accessTokenResult.getValue();
-            if (StringUtils.isBlank(decodedAccessTokenId)) {
-                LOGGER.error("Missing required parameter [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
-                return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
-            }
-            val accessTokenTicket = getConfigurationContext().getTicketRegistry().getTicket(decodedAccessTokenId, OAuth20AccessToken.class);
-            if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-                LOGGER.error("Access token [{}] cannot be found in the ticket registry or has expired.", decodedAccessTokenId);
-                return expiredAccessTokenResponseEntity;
-            }
+        val decodedAccessTokenId = accessTokenResult.getValue();
+        if (StringUtils.isBlank(decodedAccessTokenId)) {
+            LOGGER.error("Missing required parameter [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
+        }
+        val accessTokenTicket = FunctionUtils.doAndHandle(() -> {
+            val state = getConfigurationContext().getTicketRegistry().getTicket(decodedAccessTokenId, OAuth20AccessToken.class);
+            return state == null || state.isExpired() ? null : state;
+        });
+        if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
+            LOGGER.error("Access token [{}] cannot be found in the ticket registry or has expired.", decodedAccessTokenId);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+        }
+        try {
             validateAccessToken(accessTokenResult.getKey(), accessTokenTicket, request, response);
-            return FunctionUtils.doAndHandle(() -> {
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST);
+        }
+        return FunctionUtils.doAndHandle(() -> {
                 AuthenticationCredentialsThreadLocalBinder.bindCurrent(accessTokenTicket.getAuthentication());
                 updateAccessTokenUsage(accessTokenTicket);
                 val context = new JEEContext(request, response);
                 val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
                 return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
-            }, e -> expiredAccessTokenResponseEntity).get();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST);
-        }
+            },
+            e -> buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST)).get();
     }
 
     protected void validateAccessToken(final String accessTokenId, final OAuth20AccessToken accessToken,
