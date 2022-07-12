@@ -1,7 +1,7 @@
 {
   "dependencies": "oidc",
   "properties": [
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     
     "--cas.audit.engine.enabled=false",
     "--cas.ticket.crypto.enabled=true",

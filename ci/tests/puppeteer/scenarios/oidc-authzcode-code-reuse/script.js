@@ -32,7 +32,6 @@ const assert = require('assert');
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
     }, async res => {
-        console.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
@@ -54,7 +53,6 @@ const assert = require('assert');
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"
     }, res => {
-        console.log(res.data);
         assert(res.data.email != null)
         assert(res.data.gender != null)
         assert(res.data.name != null)
