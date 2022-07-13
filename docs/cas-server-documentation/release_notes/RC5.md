@@ -109,3 +109,4 @@ scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 - Apache Curator
 - Spring Boot Admin
 - Hibernate
+- Lettuce
