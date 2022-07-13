@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.util.FileCopyUtils;
@@ -16,6 +17,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
+@Getter
 public class DynamicHtmlView implements View {
     private final String html;
 
