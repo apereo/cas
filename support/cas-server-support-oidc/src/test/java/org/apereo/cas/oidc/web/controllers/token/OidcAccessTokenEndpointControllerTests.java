@@ -71,7 +71,7 @@ public class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
         val ecJWK = new ECKeyGenerator(Curve.P_256).keyID("1234567890").generate();
         val proofFactory = new DefaultDPoPProofFactory(ecJWK, JWSAlgorithm.ES256);
 
-        var request = getHttpRequestForEndpoint(OidcConstants.ACCESS_TOKEN_URL);
+        var request = getHttpRequestForEndpoint("token");
         request.setMethod(HttpMethod.POST.name());
         var response = new MockHttpServletResponse();
 

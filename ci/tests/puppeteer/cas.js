@@ -14,7 +14,9 @@ const {PuppeteerScreenRecorder} = require('puppeteer-screen-recorder');
 const ps = require("ps-node");
 const NodeStaticAuth = require("node-static-auth");
 const operativeSystemModule = require("os");
-const figlet = require("figlet")
+const figlet = require("figlet");
+const CryptoJS = require("crypto-js");
+
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -425,8 +427,9 @@ exports.recordScreen = async (page) => {
     return recorder;
 }
 
-exports.createJwt = async (payload, key, alg = "RS256") => {
-    const token = JwtOps.sign(payload, key, {algorithm: alg}, undefined);
+exports.createJwt = async (payload, key, alg = "RS256", options = {}) => {
+    let allOptions = {...{algorithm: alg}, ...options};
+    const token = JwtOps.sign(payload, key, allOptions, undefined);
     console.log(`Created JWT:\n${colors.green(token)}\n`);
     return token;
 }
@@ -553,6 +556,14 @@ exports.killProcess = async (command, arguments) => {
             }
         });
     });
+}
+
+exports.sha256 = async(value) => {
+    return CryptoJS.SHA256(value)
+}
+
+exports.base64Url = async(value) => {
+    return CryptoJS.enc.Base64url.stringify(value);
 }
 
 exports.goto = async (page, url, retryCount = 5) => {

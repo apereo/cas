@@ -123,7 +123,7 @@ If you do not need the final value to be scoped to the defined value, you may al
 Let an external javascript, groovy or python script decide how the principal id attribute should be determined.
 This approach takes advantage of scripting functionality built into the Java platform.
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
-to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+to massage the CAS configuration to include the [Python modules](https://search.maven.org/search?q=a:jython-standalone).
 
 Scripts will receive and have access to the following variable bindings:
 
