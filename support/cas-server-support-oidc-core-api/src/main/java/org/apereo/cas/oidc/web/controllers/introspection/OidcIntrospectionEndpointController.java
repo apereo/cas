@@ -86,12 +86,17 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(
         final String accessTokenId, final OAuth20Token ticket) {
         val response = super.createIntrospectionValidResponse(accessTokenId, ticket);
-        val registeredService = getConfigurationContext().getServicesManager().findServiceBy(ticket.getService(), OidcRegisteredService.class);
-        response.setIss(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
-        FunctionUtils.doIf(response.isActive(), o -> response.setScope(String.join(" ", ticket.getScopes()))).accept(response);
+        if (ticket != null) {
+            Optional.ofNullable(ticket.getService())
+                .ifPresent(service -> {
+                    val registeredService = getConfigurationContext().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
+                    response.setIss(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
 
-        CollectionUtils.firstElement(ticket.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
-            .ifPresent(dpop -> response.setDPopConfirmation(new OAuth20IntrospectionAccessTokenResponse.DPopConfirmation(dpop.toString())));
+                });
+            FunctionUtils.doIf(response.isActive(), o -> response.setScope(String.join(" ", ticket.getScopes()))).accept(response);
+            CollectionUtils.firstElement(ticket.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
+                .ifPresent(dpop -> response.setDPopConfirmation(new OAuth20IntrospectionAccessTokenResponse.DPopConfirmation(dpop.toString())));
+        }
         return response;
     }
 }

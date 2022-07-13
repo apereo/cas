@@ -62,7 +62,7 @@ public class JsonPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
                 val json = MAPPER.writeValueAsString(CollectionUtils.wrap("casuser", account));
                 FileUtils.writeStringToFile(file, json, StandardCharsets.UTF_8);
                 Files.setLastModifiedTime(file.toPath(), FileTime.from(Instant.now()));
-                Thread.sleep(1_000);
+                Thread.sleep(5_000);
                 await().untilAsserted(() -> assertFalse(resource.getAccounts().isEmpty()));
             }
         });

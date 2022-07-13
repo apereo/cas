@@ -9,15 +9,16 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.oauth2.sdk.dpop.JWKThumbprintConfirmation;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPIssuer;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPTokenRequestVerifier;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
@@ -47,33 +48,50 @@ public class OidcDPoPAuthenticator implements Authenticator {
     public void validate(final Credentials credentials, final WebContext webContext,
                          final SessionStore sessionStore) {
         webContext.getRequestHeader(OAuth20Constants.DPOP)
-            .ifPresent(Unchecked.consumer(dPopProof -> {
-                val clientId = webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).orElseThrow();
-                val registeredService = (OidcRegisteredService)
-                    OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-                val audit = AuditableContext.builder()
-                    .registeredService(registeredService)
-                    .build();
-                val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
-                accessResult.throwExceptionIfNeeded();
-                val algorithms = oidcServerDiscoverySettings.getDPopSigningAlgValuesSupported()
-                    .stream()
-                    .map(JWSAlgorithm::parse)
-                    .collect(Collectors.toSet());
+            .ifPresent(proof -> FunctionUtils.doAndHandle(u -> validateAccessToken(credentials, webContext, proof)));
+    }
 
-                val seconds = Beans.newDuration(casProperties.getAuthn().getOidc().getCore().getSkew()).toSeconds();
-                val endpointURI = new URI(webContext.getRequestURL());
-                val verifier = new DPoPTokenRequestVerifier(algorithms, endpointURI, seconds, null);
-                val signedProof = SignedJWT.parse(dPopProof);
-                val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
-                val confirmation = verifier.verify(dPopIssuer, signedProof);
+    protected void validateAccessToken(final Credentials credentials, final WebContext webContext,
+                                       final String dPopProof) throws Exception {
+        val clientId = webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).orElseThrow();
+        val registeredService = (OidcRegisteredService)
+            OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+        val audit = AuditableContext.builder()
+            .registeredService(registeredService)
+            .build();
+        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
+        val confirmation = verifyProofOfPossession(webContext, dPopProof, clientId);
+        buildUserProfile(credentials, dPopProof, clientId, confirmation);
+    }
 
-                val userProfile = new CommonProfile(true);
-                userProfile.setId(clientId);
-                userProfile.addAttributes(signedProof.getJWTClaimsSet().getClaims());
-                userProfile.addAttribute(OAuth20Constants.DPOP, dPopProof);
-                userProfile.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, confirmation.getValue().toString());
-                credentials.setUserProfile(userProfile);
-            }));
+    protected JWKThumbprintConfirmation verifyProofOfPossession(final WebContext webContext,
+                                                                final String dPopProof,
+                                                                final String clientId) throws Exception {
+        val algorithms = oidcServerDiscoverySettings.getDPopSigningAlgValuesSupported()
+            .stream()
+            .map(JWSAlgorithm::parse)
+            .collect(Collectors.toSet());
+        val seconds = Beans.newDuration(casProperties.getAuthn().getOidc().getCore().getSkew()).toSeconds();
+        val endpointURI = new URI(webContext.getRequestURL());
+        val verifier = new DPoPTokenRequestVerifier(algorithms, endpointURI, seconds, null);
+        val signedProof = getSignedProofOfPosessionJwt(dPopProof);
+        val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
+        return verifier.verify(dPopIssuer, signedProof);
+    }
+
+    protected void buildUserProfile(final Credentials credentials, final String dPopProof,
+                                    final String clientId, final JWKThumbprintConfirmation confirmation) throws Exception {
+        val signedProof = getSignedProofOfPosessionJwt(dPopProof);
+        val userProfile = new CommonProfile(true);
+        userProfile.setId(clientId);
+        userProfile.addAttributes(signedProof.getJWTClaimsSet().getClaims());
+        userProfile.addAttribute(OAuth20Constants.DPOP, dPopProof);
+        userProfile.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, confirmation.getValue().toString());
+        credentials.setUserProfile(userProfile);
+    }
+
+    protected SignedJWT getSignedProofOfPosessionJwt(final String dPopProof) throws Exception {
+        return SignedJWT.parse(dPopProof);
     }
 }

@@ -93,12 +93,12 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST);
         }
         return FunctionUtils.doAndHandle(() -> {
-                AuthenticationCredentialsThreadLocalBinder.bindCurrent(accessTokenTicket.getAuthentication());
-                updateAccessTokenUsage(accessTokenTicket);
-                val context = new JEEContext(request, response);
-                val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
-                return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
-            },
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(accessTokenTicket.getAuthentication());
+            updateAccessTokenUsage(accessTokenTicket);
+            val context = new JEEContext(request, response);
+            val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
+            return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
+        },
             e -> buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST)).get();
     }
 
