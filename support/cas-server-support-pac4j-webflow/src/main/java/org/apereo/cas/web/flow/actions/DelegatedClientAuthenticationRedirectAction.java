@@ -1,10 +1,12 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.authentication.principal.provision.DelegatedAuthenticationFailureException;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServicePropertyGroups;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
@@ -123,39 +125,55 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val ticket = requestContext.getFlowScope().get(TransientSessionTicket.class.getName(), TransientSessionTicket.class);
-        val clientName = ticket.getProperty(Client.class.getName(), String.class);
-        val client = configContext.getClients().findClient(clientName)
-            .map(IndirectClient.class::cast)
-            .stream()
-            .findFirst()
-            .orElseThrow();
-
+        val client = locateClientIdentityProvider(ticket);
+        initializeClientIdentityProvider(client);
         val action = getRedirectionAction(ticket, requestContext);
         LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);
         if (action instanceof WithLocationAction) {
-            val foundAction = WithLocationAction.class.cast(action);
-            val builder = new URIBuilder(foundAction.getLocation());
-            val url = builder.toString();
-            LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
-            requestContext.getExternalContext().requestExternalRedirect(url);
+            LOGGER.debug("Redirecting client [{}] based on identifier [{}]", client.getName(), ticket.getId());
+            handleIdentityProviderWithExternalRedirect(requestContext, client, action);
         }
         if (action instanceof WithContentAction) {
-            val seeOtherAction = WithContentAction.class.cast(action);
-            val view = new DynamicHtmlView(seeOtherAction.getContent());
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            view.render(Map.of(), request, response);
+            handleIdentityProviderWithDynamicContent(requestContext, client, action);
         }
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 
-    /**
-     * Configure web context for service overrides.
-     *
-     * @param registeredService the registered service
-     * @param webContext        the web context
-     * @param properties        the properties
-     */
+    protected void initializeClientIdentityProvider(final IndirectClient client) {
+        client.init();
+        FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
+    }
+
+    protected IndirectClient locateClientIdentityProvider(final TransientSessionTicket ticket) {
+        val clientName = ticket.getProperty(Client.class.getName(), String.class);
+        return configContext.getClients().findClient(clientName)
+            .map(IndirectClient.class::cast)
+            .stream()
+            .findFirst()
+            .orElseThrow();
+    }
+
+    protected void handleIdentityProviderWithDynamicContent(final RequestContext requestContext,
+                                                            final IndirectClient client,
+                                                            final RedirectionAction action) throws Exception {
+        val seeOtherAction = WithContentAction.class.cast(action);
+        val view = new DynamicHtmlView(seeOtherAction.getContent());
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        LOGGER.debug("Rendering dynamic content [{}] for client [{}]", view.getHtml(), client.getName());
+        view.render(Map.of(), request, response);
+    }
+
+    protected void handleIdentityProviderWithExternalRedirect(final RequestContext requestContext,
+                                                              final IndirectClient client,
+                                                              final RedirectionAction action) throws Exception {
+        val foundAction = WithLocationAction.class.cast(action);
+        val builder = new URIBuilder(foundAction.getLocation());
+        val url = builder.toString();
+        LOGGER.debug("Redirecting to [{}] via client [{}]", url, client.getName());
+        requestContext.getExternalContext().requestExternalRedirect(url);
+    }
+
     protected void configureWebContextForRegisteredServiceProperties(
         final RegisteredService registeredService,
         final WebContext webContext,

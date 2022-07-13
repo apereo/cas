@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.provision.DelegatedAuthenticationFailureException;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
@@ -96,7 +97,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             val currentService = WebUtils.getService(requestContext);
             LOGGER.debug("Initializing client [{}] with request parameters [{}] and service [{}]",
                 client, requestContext.getRequestParameters(), currentService);
-            client.init();
+            initializeClientIdentityProvider(client);
 
             val customizers = configurationContext.getObject().getDelegatedClientAuthenticationRequestCustomizers();
             if (customizers.isEmpty() || customizers.stream()
@@ -112,6 +113,11 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             }
             return Optional.<DelegatedClientIdentityProviderConfiguration>empty();
         }, throwable -> Optional.<DelegatedClientIdentityProviderConfiguration>empty()).get();
+    }
+
+    protected void initializeClientIdentityProvider(final IndirectClient client) {
+        client.init();
+        FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }
 
     protected boolean isDelegatedClientAuthorizedForService(final Client client,
