@@ -80,7 +80,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      */
     public static final String INIT_PARAM_CONTENT_SECURITY_POLICY = "contentSecurityPolicy";
     
-    /*
+    /**
      * Static resources file extension values.
      */
     public static final String INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES = "cacheControlStaticResources";
