@@ -7,6 +7,7 @@ import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,9 +64,11 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
             val emailAttribute = mail.getAttributeName();
             val to = principal.getAttributes().get(emailAttribute);
             if (to != null) {
-                val body = EmailMessageBodyBuilder.builder().properties(mail)
-                    .parameters(Map.of("event", eventDetails)).build().produce();
-                this.communicationsManager.email(mail, to.toString(), body);
+                CollectionUtils.firstElement(to).ifPresent(address -> {
+                    val body = EmailMessageBodyBuilder.builder().properties(mail)
+                        .parameters(Map.of("event", eventDetails)).build().produce();
+                    communicationsManager.email(mail, address.toString(), body);
+                });
             } else {
                 LOGGER.trace("The principal has no [{}] attribute, cannot send email notification", emailAttribute);
             }
