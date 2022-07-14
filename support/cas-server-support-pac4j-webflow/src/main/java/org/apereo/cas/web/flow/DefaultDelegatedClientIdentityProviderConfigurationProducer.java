@@ -112,6 +112,10 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
         LOGGER.debug("Initializing client [{}] with request parameters [{}] and service [{}]",
             client, requestContext.getRequestParameters(), currentService);
         client.init();
+        if (!client.isInitialized()) {
+            LOGGER.warn("Unable to initialize client [{}]. Verify the client configuration details.", client.getName());
+            return Optional.empty();
+        }
 
         if (delegatedClientAuthenticationRequestCustomizers.isEmpty()
             || delegatedClientAuthenticationRequestCustomizers.stream().anyMatch(c -> c.isAuthorized(webContext, client, currentService))) {

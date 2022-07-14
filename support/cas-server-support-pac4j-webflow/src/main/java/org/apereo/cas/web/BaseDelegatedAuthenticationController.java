@@ -131,6 +131,11 @@ public abstract class BaseDelegatedAuthenticationController {
     protected View getResultingView(final IndirectClient client, final WebContext webContext,
                                     final TransientSessionTicket ticket) throws Exception {
         client.init();
+        if (!client.isInitialized()) {
+            throw new IllegalStateException("Unable to initialize client " + client.getName()
+                                            + ". Verify the client configuration details.");
+        }
+
         val actionResult = getRedirectionAction(client, webContext, ticket);
         if (actionResult.isPresent()) {
             val action = actionResult.get();

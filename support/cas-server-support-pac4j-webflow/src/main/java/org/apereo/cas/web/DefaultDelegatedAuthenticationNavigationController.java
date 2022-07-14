@@ -62,6 +62,10 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
             }
             val client = IndirectClient.class.cast(clientResult.get());
             client.init();
+            if (!client.isInitialized()) {
+                throw new IllegalStateException("Unable to initialize client " + client.getName()
+                                                + ". Verify the client configuration details.");
+            }
             val webContext = new JEEContext(request, response);
             val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
 
