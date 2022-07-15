@@ -178,7 +178,7 @@ if [[ $generateData == "true" ]]; then
   if [[ ! -f "$docgen" ]]; then
     ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8
     if [ $? -eq 1 ]; then
-      echo "Unable to build the documentation processor. Aborting..."
+      printred "Unable to build the documentation processor. Aborting..."
       exit 1
     fi
   fi
@@ -189,7 +189,7 @@ if [[ $generateData == "true" ]]; then
     -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
     -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands"
   if [ $? -eq 1 ]; then
-    echo "Unable to generate documentation data. Aborting..."
+    printred "Unable to generate documentation data. Aborting..."
     exit 1
   fi
   printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir...\n"
@@ -223,7 +223,7 @@ if [[ $proofRead == "true" ]]; then
       grep "fragment:keep" $f >/dev/null 2>&1
       docsVal=$?
       if [ $docsVal == 1 ]; then
-        echo "$f is unused."
+        printred "$f is unused."
         rm "docs/cas-server-documentation/_includes/$fname"
         res=1
       fi
