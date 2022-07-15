@@ -2,8 +2,8 @@ package org.apereo.cas.util;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ScanResult;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import org.springframework.lang.NonNull;
 
 import java.lang.annotation.Annotation;
@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Reflection Utilities based on {@link ClassGraph}.
@@ -31,8 +32,7 @@ public class ReflectionUtils {
      */
     @NonNull
     public <T> Collection<Class<? extends T>> findSubclassesInPackage(final Class<T> superclass, final String packageName) {
-
-        try (ScanResult scanResult = new ClassGraph()
+        try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableClassInfo()
             .scan()) {
@@ -52,22 +52,17 @@ public class ReflectionUtils {
      * @param packageName The base package to look in.
      * @return The - possibly empty - collection of annotated classes.
      */
-    public Collection<Class<?>> findClassesWithAnnotationsInPackage(final Collection<Class<? extends Annotation>> annotations, final String packageName) {
-
-        List<Class<?>> result = new ArrayList<>();
-
-        try (ScanResult scanResult = new ClassGraph()
+    public Collection<Class<?>> findClassesWithAnnotationsInPackage(final Collection<Class<? extends Annotation>> annotations,
+                                                                    final String packageName) {
+        try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableAnnotationInfo()
             .scan()) {
-
-            for (var annotation : annotations) {
-                result.addAll(scanResult.getClassesWithAnnotation(annotation).loadClasses());
-            }
-
+            return annotations.stream()
+                .map(annotation -> scanResult.getClassesWithAnnotation(annotation).loadClasses())
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
         }
-
-        return result;
     }
 
     /**
@@ -78,7 +73,7 @@ public class ReflectionUtils {
      * @return The found class.
      */
     public static Optional<Class<?>> findClassBySimpleNameInPackage(final String simpleName, final String packageName) {
-        try (ScanResult scanResult = new ClassGraph()
+        try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableClassInfo()
             .scan()) {
