@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
@@ -124,7 +125,10 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public Conditions newConditions(final ZonedDateTime issuedAt, final String audienceUri, final long issueLength) {
         val conditions = SamlUtils.newSamlObject(Conditions.class);
         conditions.setNotBefore(issuedAt.toInstant());
-        conditions.setNotOnOrAfter(issuedAt.plus(issueLength, ChronoUnit.SECONDS).toInstant());
+
+        val notOnOrAfter = ZonedDateTime.now(ZoneOffset.UTC).plus(issueLength, ChronoUnit.SECONDS);
+        conditions.setNotOnOrAfter(notOnOrAfter.toInstant());
+        
         val audienceRestriction = SamlUtils.newSamlObject(AudienceRestrictionCondition.class);
         val audience = SamlUtils.newSamlObject(Audience.class);
         audience.setURI(audienceUri);
