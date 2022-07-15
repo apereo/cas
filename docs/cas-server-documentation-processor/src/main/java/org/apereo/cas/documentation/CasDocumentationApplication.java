@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.web.annotation.WebEndpoint;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -51,7 +53,17 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 /**
@@ -179,12 +191,19 @@ public class CasDocumentationApplication {
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
         }
-        parentPath.mkdirs();
+        if (!parentPath.mkdirs()) {
+            LOGGER.debug("Unable to create directory");
+        }
         var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(ShellComponent.class), CasShellCommand.NAMESPACE);
         var properties = new ArrayList<Map<?, ?>>();
 
         subTypes.forEach(clazz -> {
+            LOGGER.info("Locating shell command group for [{}]", clazz.getSimpleName());
             var group = clazz.getAnnotation(ShellCommandGroup.class);
+            if (group == null) {
+                LOGGER.warn("Shell command group is missing for " + clazz.getName());        
+            }
+
             var methods = new LinkedHashMap();
             for (var method : clazz.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(ShellMethod.class)) {
@@ -207,7 +226,9 @@ public class CasDocumentationApplication {
 
                     cmd.description = annotInstance.value();
                     cmd.name = String.join(",", annotInstance.key());
-                    cmd.group = group.value();
+                    cmd.group = group == null ? "other" : group.value();
+
+                    LOGGER.info("Adding shell command [{}]", cmd.name);
                     methods.put(cmd.name, cmd);
                 }
             }
@@ -247,7 +268,9 @@ public class CasDocumentationApplication {
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
         }
-        parentPath.mkdirs();
+        if (!parentPath.mkdirs()) {
+            LOGGER.debug("Unable to create directory");
+        }
 
         var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(ConditionalOnFeatureEnabled.class), CentralAuthenticationService.NAMESPACE);
         var properties = new ArrayList<Map<?, ?>>();
@@ -280,12 +303,29 @@ public class CasDocumentationApplication {
         }
     }
 
+    private static Pair<String, String> getEndpoint(final Class clazz) {
+        var endpoint = (Endpoint) clazz.getAnnotation(Endpoint.class);
+        if (endpoint != null) {
+            return Pair.of(endpoint.id(), endpoint.annotationType().getSimpleName());
+        }
+
+        LOGGER.info("[{}] is not an Endpoint. Checking for WebEndpoint...", clazz.getName());
+        var webEndpoint = (WebEndpoint) clazz.getAnnotation(WebEndpoint.class);
+        if (webEndpoint != null) {
+            return Pair.of(webEndpoint.id(), webEndpoint.annotationType().getSimpleName());
+        }
+        LOGGER.warn("Unable to determine endpoint from " + clazz.getName());
+        return null;
+    }
+
     private static void exportActuatorEndpoints(final File dataPath) throws Exception {
         var parentPath = new File(dataPath, "actuators");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
         }
-        parentPath.mkdirs();
+        if (!parentPath.mkdirs()) {
+            LOGGER.debug("Unable to create directory");
+        }
 
         var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(RestControllerEndpoint.class), "org");
         subTypes.forEach(clazz -> {
@@ -293,7 +333,7 @@ public class CasDocumentationApplication {
             var endpoint = clazz.getAnnotation(RestControllerEndpoint.class);
 
             var methods = findAnnotatedMethods(clazz, GetMapping.class);
-            LOGGER.info("Checking actuator endpoint for [{}]", clazz.getName());
+            LOGGER.info("Checking actuator endpoint (GET) for [{}]", clazz.getName());
             methods.forEach(Unchecked.consumer(method -> {
                 var get = method.getAnnotation(GetMapping.class);
                 var map = new LinkedHashMap<>();
@@ -325,6 +365,7 @@ public class CasDocumentationApplication {
                 properties.add(map);
             }));
 
+            LOGGER.info("Checking actuator endpoint (DELETE) for [{}]", clazz.getName());
             methods = findAnnotatedMethods(clazz, DeleteMapping.class);
             methods.forEach(Unchecked.consumer(method -> {
                 var delete = method.getAnnotation(DeleteMapping.class);
@@ -356,6 +397,7 @@ public class CasDocumentationApplication {
                 properties.add(map);
             }));
 
+            LOGGER.info("Checking actuator endpoint (POST) for [{}]", clazz.getName());
             methods = findAnnotatedMethods(clazz, PostMapping.class);
             methods.forEach(Unchecked.consumer(method -> {
                 var post = method.getAnnotation(PostMapping.class);
@@ -387,6 +429,7 @@ public class CasDocumentationApplication {
                 properties.add(map);
             }));
 
+            LOGGER.info("Checking actuator endpoint (PATCH) for [{}]", clazz.getName());
             methods = findAnnotatedMethods(clazz, PatchMapping.class);
             methods.forEach(Unchecked.consumer(method -> {
                 var patch = method.getAnnotation(PatchMapping.class);
@@ -418,6 +461,7 @@ public class CasDocumentationApplication {
                 properties.add(map);
             }));
 
+            LOGGER.info("Checking actuator endpoint (PUT) for [{}]", clazz.getName());
             methods = findAnnotatedMethods(clazz, PutMapping.class);
             methods.forEach(Unchecked.consumer(method -> {
                 var put = method.getAnnotation(PutMapping.class);
@@ -451,66 +495,75 @@ public class CasDocumentationApplication {
 
             if (!properties.isEmpty()) {
                 var destination = new File(parentPath, endpoint.id());
-                destination.mkdirs();
+                if (!destination.mkdirs()) {
+                    LOGGER.debug("Unable to create directory");
+                }
 
                 var configFile = new File(destination, "config.yml");
                 CasConfigurationMetadataCatalog.export(configFile, properties);
             }
         });
 
+        LOGGER.info("Checking endpoints...");
         subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(Endpoint.class), "org");
         subTypes.forEach(clazz -> {
             var properties = new ArrayList<Map<?, ?>>();
-            var endpoint = clazz.getAnnotation(Endpoint.class);
+            var endpoint = getEndpoint(clazz);
 
-            var methods = findAnnotatedMethods(clazz, ReadOperation.class);
-            methods.forEach(Unchecked.consumer(method -> {
-                var read = method.getAnnotation(ReadOperation.class);
-                var map = new LinkedHashMap<>();
-                map.put("method", RequestMethod.GET.name());
-                map.put("path", endpoint.id());
-                map.put("name", endpoint.id());
-                map.put("endpointType", Endpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
-                if (read.produces().length > 0) {
-                    map.put("produces", read.produces());
-                }
-                properties.add(map);
-            }));
+            if (endpoint != null) {
+                LOGGER.info("Checking endpoints (READ) for [{}]", clazz.getName());
+                var methods = findAnnotatedMethods(clazz, ReadOperation.class);
+                methods.forEach(Unchecked.consumer(method -> {
+                    var read = method.getAnnotation(ReadOperation.class);
+                    var map = new LinkedHashMap<>();
+                    map.put("method", RequestMethod.GET.name());
+                    map.put("path", endpoint.getKey());
+                    map.put("name", endpoint.getKey());
+                    map.put("endpointType", endpoint.getValue());
+                    collectActuatorEndpointMethodMetadata(method, map, endpoint.getKey());
+                    if (read.produces().length > 0) {
+                        map.put("produces", read.produces());
+                    }
+                    properties.add(map);
+                }));
 
-            methods = findAnnotatedMethods(clazz, WriteOperation.class);
-            methods.forEach(Unchecked.consumer(method -> {
-                var write = method.getAnnotation(WriteOperation.class);
-                var map = new LinkedHashMap<>();
-                map.put("method", RequestMethod.POST.name());
-                map.put("path", endpoint.id());
-                map.put("name", endpoint.id());
-                map.put("endpointType", Endpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
-                if (write.produces().length > 0) {
-                    map.put("produces", write.produces());
-                }
-                properties.add(map);
-            }));
+                LOGGER.info("Checking endpoints (WRITE) for [{}]", clazz.getName());
+                methods = findAnnotatedMethods(clazz, WriteOperation.class);
+                methods.forEach(Unchecked.consumer(method -> {
+                    var write = method.getAnnotation(WriteOperation.class);
+                    var map = new LinkedHashMap<>();
+                    map.put("method", RequestMethod.POST.name());
+                    map.put("path", endpoint.getKey());
+                    map.put("name", endpoint.getKey());
+                    map.put("endpointType", Endpoint.class.getSimpleName());
+                    collectActuatorEndpointMethodMetadata(method, map, endpoint.getKey());
+                    if (write.produces().length > 0) {
+                        map.put("produces", write.produces());
+                    }
+                    properties.add(map);
+                }));
 
-            methods = findAnnotatedMethods(clazz, DeleteOperation.class);
-            methods.forEach(Unchecked.consumer(method -> {
-                var delete = method.getAnnotation(DeleteOperation.class);
-                var map = new LinkedHashMap<>();
-                map.put("method", RequestMethod.DELETE.name());
-                map.put("path", endpoint.id());
-                map.put("name", endpoint.id());
-                map.put("endpointType", Endpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
-                if (delete.produces().length > 0) {
-                    map.put("produces", delete.produces());
-                }
-                properties.add(map);
-            }));
-
+                LOGGER.info("Checking endpoints (DELETE) for [{}]", clazz.getName());
+                methods = findAnnotatedMethods(clazz, DeleteOperation.class);
+                methods.forEach(Unchecked.consumer(method -> {
+                    var delete = method.getAnnotation(DeleteOperation.class);
+                    var map = new LinkedHashMap<>();
+                    map.put("method", RequestMethod.DELETE.name());
+                    map.put("path", endpoint.getKey());
+                    map.put("name", endpoint.getKey());
+                    map.put("endpointType", endpoint.getValue());
+                    collectActuatorEndpointMethodMetadata(method, map, endpoint.getKey());
+                    if (delete.produces().length > 0) {
+                        map.put("produces", delete.produces());
+                    }
+                    properties.add(map);
+                }));
+            }
             if (!properties.isEmpty()) {
-                var destination = new File(parentPath, endpoint.id());
-                destination.mkdirs();
+                var destination = new File(parentPath, endpoint.getKey());
+                if (!destination.mkdirs()) {
+                    LOGGER.debug("Unable to create directory");
+                }
 
                 var configFile = new File(destination, "config.yml");
                 CasConfigurationMetadataCatalog.export(configFile, properties);
@@ -643,7 +696,7 @@ public class CasDocumentationApplication {
             var name = String.format("actuator.endpoint.%s.description", endpointId);
             var summary = actuatorProperties.getProperty(name);
             if (StringUtils.isBlank(summary)) {
-                throw new RuntimeException("Unable to locate undocumented endpoint summary for: " + endpointId);
+                throw new RuntimeException("Unable to locate undocumented endpoint summary for: " + endpointId + " found in " + clazz.getName());
             }
             map.put("summary", StringUtils.appendIfMissing(summary, "."));
         }

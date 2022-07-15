@@ -188,6 +188,10 @@ if [[ $generateData == "true" ]]; then
   ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
     -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
     -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands"
+  if [ $? -eq 1 ]; then
+    echo "Unable to generate documentation data. Aborting..."
+    exit 1
+  fi
   printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir...\n"
 else
   printgreen "Skipping documentation data generation...\n"

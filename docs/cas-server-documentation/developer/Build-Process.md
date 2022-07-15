@@ -124,7 +124,7 @@ If you're still running IntelliJ with a JDK 8, you may require these options ins
 -Xss16m
 -XX:NewRatio=3
 
--XX:ReservedCodeCacheSize=240m
+-XX:ReservedCodeCacheSize=512m
 -XX:+UseCompressedOops
 -XX:SoftRefLRUPolicyMSPerMB=50
 
@@ -172,7 +172,7 @@ should look something like the below screenshot:
 It is possible to run the CAS web application directly from IDEA by 
 creating a *Run Configuration* that roughly matches the following screenshot:
 
-[image](https://user-images.githubusercontent.com/1205228/41805461-9ea25b76-765f-11e8-9a36-fa82d286cf09.png)
+![image](https://user-images.githubusercontent.com/1205228/41805461-9ea25b76-765f-11e8-9a36-fa82d286cf09.png)
 
 This setup allows the developer to run the CAS web 
 application via an [embedded servlet container](Build-Process.html#embedded-containers).
