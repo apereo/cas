@@ -14,7 +14,7 @@ public class DelegatedAuthenticationFailureException extends RootCasException {
     /**
      * Code description.
      */
-    public static final String CODE = "DELEGATED_AUTHN_FAILURE";
+    private static final String CODE = "DELEGATED_AUTHN_FAILURE";
 
     public DelegatedAuthenticationFailureException() {
         super(CODE);
