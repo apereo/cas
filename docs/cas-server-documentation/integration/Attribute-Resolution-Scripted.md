@@ -21,7 +21,7 @@ The following settings are relevant:
 {% include_cached casproperties.html properties="cas.authn.attribute-repository.script" %}
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
-to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+to massage the CAS configuration to include the Python modules.
 
 The Groovy script may be defined as:
 
