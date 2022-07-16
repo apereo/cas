@@ -240,7 +240,7 @@ if [[ ${buildDocs} == "true" ]]; then
   popd
 fi
 
-if [[ $proofRead == "true" ]]; then
+# if [[ $proofRead == "true" ]]; then
   # printgreen "Validating documentation links..."
   # validateProjectDocumentation
   # retVal=$?
@@ -248,7 +248,7 @@ if [[ $proofRead == "true" ]]; then
   #   printred "Failed to validate documentation.\n"
   #   exit ${retVal}
   # fi
-fi
+# fi
 
 pushd .
 cd "$PWD/gh-pages"
