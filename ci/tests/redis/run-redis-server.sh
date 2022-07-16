@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
+export REDIS_VERSION=${1:-7.0}
 
-echo "Running Redis + Sentinel docker image..."
+echo "Running Redis + Sentinel docker image: $REDIS_VERSION"
 
 COMPOSE_FILE=./ci/tests/redis/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
