@@ -2,31 +2,37 @@ version: "3"
 
 services:
   master:
-    image: redis:7.0.0-alpine
+    image: bitnami/redis:7.0
     container_name: redis_server_master
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - 6379:6379
 
   replica_1:
-    image: redis:7.0.0-alpine
+    image: bitnami/redis:7.0
     container_name: redis_server_replica_1
     command: redis-server --slaveof master 6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - 6380:6379
     depends_on:
       - master
 
   replica_2:
-    image: redis:7.0.0-alpine
+    image: bitnami/redis:7.0
     container_name: redis_server_replica_2
     command: redis-server --slaveof master 6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - 6381:6379
     depends_on:
       - master
 
   sentinel_1:
-    image: s7anley/redis-sentinel-docker:4.0.10
+    image: bitnami/redis-sentinel:7.0
     container_name: redis_sentinel_1
     ports:
       - 26379:26379
@@ -38,7 +44,7 @@ services:
       - master
 
   sentinel_2:
-    image: s7anley/redis-sentinel-docker:4.0.10
+    image: bitnami/redis-sentinel:7.0
     container_name: redis_sentinel_2
     ports:
       - 26380:26379
@@ -50,7 +56,7 @@ services:
       - master
 
   sentinel_3:
-    image: s7anley/redis-sentinel-docker:4.0.10
+    image: bitnami/redis-sentinel:7.0
     container_name: redis_sentinel_3
     ports:
       - 26381:26379
