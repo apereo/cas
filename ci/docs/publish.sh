@@ -129,7 +129,19 @@ printgreen "Shell Commands: \t${shellCommands}"
 printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
 
+cloneRepository=false
 if [[ $clone == "true" ]]; then
+  printgreen "Project documentation is instructed to be cloned"
+  cloneRepository=true
+elif [[ ! -d "$PWD/gh-pages" ]]; then
+  printgreen "Project documentation directory does not exist, and will be cloned"
+  cloneRepository=true
+else
+  printgreen "Project documentation will be reused from "$PWD/gh-pages""
+  cloneRepository=false
+fi
+
+if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD/gh-pages"
   [[ -d $PWD/docs-latest ]] && rm -Rf "$PWD"/docs-latest
   [[ -d $PWD/docs-includes ]] && rm -Rf "$PWD"/docs-includes
@@ -244,6 +256,7 @@ if [[ ${buildDocs} == "true" ]]; then
   pushd .
   cd "$PWD/gh-pages"
   printgreen "Installing documentation dependencies...\n"
+  bundle config set force_ruby_platform true
   bundle install
   printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
@@ -312,8 +325,10 @@ if [[ "${publishDocs}" == "true" ]]; then
   if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
     printyellow "\nNo GitHub token is defined to publish documentation. Skipping"
     popd
-    rm -Rf "$PWD/gh-pages"
-    exit 0
+    if [[ $clone == "true" ]]; then
+      rm -Rf "$PWD/gh-pages"
+      exit 0
+    fi
   fi
 
   printgreen "Pushing upstream to origin/gh-pages...\n"
