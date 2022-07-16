@@ -99,7 +99,7 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [wiki]: https://apereo.github.io/cas
 [overlay]: https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html
 [contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
-[downloadcas]: http://www.apereo.org/cas/download
+[downloadcas]: https://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/apereo/cas/
 [casmavencentral]: http://mvnrepository.com/artifact/org.apereo.cas
 [downloadcasgithub]: https://github.com/apereo/cas/archive/master.zip

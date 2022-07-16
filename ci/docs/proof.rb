@@ -19,14 +19,18 @@ options = {
   :typhoeus => { followlocation: true },
   :disable_external => false,
   :allow_hash_href => true,
+  :allow_missing_href => true,
+  :ignore_missing_alt => true,
+  :check_external_hash => false,
   # :only_4xx => true,
   :empty_alt_ignore => true,
-  :http_status_ignore => [0,401,429,301,302],
-  :parallel => { :in_processes => 3},
-  :url_swap => {
+  :ignore_status_codes => [0,401,429,301,302],
+  :parallel => { :in_processes => 8},
+  :enforce_https => false,
+  :swap_urls => {
     %r{^/cas/} => '/'
   }, 
-  :url_ignore => [
+  :ignore_urls => [
     %r{/*\d+.\d+.x/},
     %r{^#.+},
     %r{localhost},
