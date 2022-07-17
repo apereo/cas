@@ -34,7 +34,8 @@ public class SamlCoreProperties implements Serializable {
     /**
      * Issue length that controls the validity period of the assertion.
      */
-    private int issueLength = 30;
+    @DurationCapable
+    private String issueLength = "PT30S";
 
     /**
      * Attribute namespace to use when generating SAML1 responses.

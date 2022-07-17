@@ -28,7 +28,7 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
     /**
      * User filter to use for searching.
      * Syntax is {@code cn={user}} or {@code cn={0}}.
-     * 
+     * <p>
      * You may also provide an external groovy script
      * in the syntax of {@code file:/path/to/GroovyScript.groovy}
      * to fully build the final filter template dynamically.

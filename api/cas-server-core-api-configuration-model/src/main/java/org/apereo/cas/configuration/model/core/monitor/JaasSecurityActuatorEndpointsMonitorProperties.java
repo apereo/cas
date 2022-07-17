@@ -39,7 +39,7 @@ public class JaasSecurityActuatorEndpointsMonitorProperties implements Serializa
     /**
      * The login context name should coincide with a given index in the login config specified.
      * This name is used as the index to the configuration specified in the login config property.
-     *
+     * <p>
      * &lt;pre&gt;
      * JAASTest {
      * org.springframework.security.authentication.jaas.TestLoginModule required;

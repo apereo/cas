@@ -111,13 +111,13 @@ public abstract class BaseCouchbaseProperties implements Serializable {
 
     /**
      * Query scan consistency.
-     *
+     * <p>
      * By default, the query engine will return whatever is currently in the index at
      * the time of query (this mode is also called {@code NOT_BOUNDED}). If you
      * need to include everything that has just been written, a different scan consistency must
      * be chosen. If {@code REQUEST_PLUS} is chosen, it will likely take a bit
      * longer to return the results but the query engine will make sure that it is as up-to-date as possible.
-     *
+     * <p>
      * Accepted values are: {@code NOT_BOUNDED, REQUEST_PLUS}.
      */
     private String scanConsistency = "NOT_BOUNDED";

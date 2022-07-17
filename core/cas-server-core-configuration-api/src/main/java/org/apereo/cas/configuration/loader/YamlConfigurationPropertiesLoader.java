@@ -28,7 +28,7 @@ public class YamlConfigurationPropertiesLoader extends BaseConfigurationProperti
 
     /**
      * Load property source.
-     *
+     * <p>
      * It is important that failure to parse yaml is logged or the server is likely to die and
      * message may not be logged by global handler, making problem identification difficult.
      * @return the property source

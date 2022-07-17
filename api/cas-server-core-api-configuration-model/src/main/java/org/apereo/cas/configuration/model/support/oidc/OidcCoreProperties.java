@@ -40,7 +40,7 @@ public class OidcCoreProperties implements Serializable {
      * the identity provider (CAS) asserts as its Issuer Identifier. This also MUST be
      * identical to the {@code iss} claim value in ID Tokens issued from this issuer,
      * unless overridden in very special circumstances as a last resort.
-     *
+     * <p>
      * CAS primarily supports a single issuer per deployment/host.
      */
     @RequiredProperty

@@ -90,7 +90,7 @@ public class ResourceUtils {
 
     /**
      * Does resource exist?
-     *
+     * <p>
      * On Windows, reading one byte from a directory does not return length greater than zero so an explicit directory
      * check is needed.
      * @param res the res

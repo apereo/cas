@@ -176,7 +176,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
     /**
      * Returns a property source composed of system properties and environment variables.
-     *
+     * <p>
      * System properties take precedence over environment variables (similarly to spring boot behaviour).
      */
     @SuppressWarnings({"rawtypes", "unchecked"})

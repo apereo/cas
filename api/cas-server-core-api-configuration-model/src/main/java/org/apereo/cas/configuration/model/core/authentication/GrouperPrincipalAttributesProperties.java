@@ -46,7 +46,7 @@ public class GrouperPrincipalAttributesProperties implements Serializable {
     /**
      * Indicate how the username passed to the attribute repository
      * should be set and treated by the grouper client to look up records.
-     *
+     * <p>
      * Accepted values are: {@code SUBJECT_IDENTIFIER}, {@code SUBJECT_ATTRIBUTE_NAME}, {@code SUBJECT_ID}.
      */
     private String subjectType = "SUBJECT_ID";
