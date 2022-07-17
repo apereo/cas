@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -45,7 +46,7 @@ import java.util.TreeMap;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
+public class ReturnRestfulAttributeReleasePolicy extends BaseMappedAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6249488544306639050L;
 
@@ -78,8 +79,12 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
             if (response != null && HttpStatus.resolve(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Policy response received: [{}]", result);
-                return MAPPER.readValue(result, new TypeReference<>() {
+                val returnedAttributes = MAPPER.readValue(result, new TypeReference<Map<String, List<Object>>>() {
                 });
+                return FunctionUtils.doIf(getAllowedAttributes().isEmpty(),
+                        () -> returnedAttributes,
+                        () -> authorizeMappedAttributes(context, returnedAttributes))
+                    .get();
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

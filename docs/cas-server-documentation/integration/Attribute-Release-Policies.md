@@ -202,6 +202,10 @@ the response includes a `Map` of attributes linked to their values.
       "@class": "java.util.LinkedHashMap",
       "header": "value"
     }
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "cn" : "commonName"
+    }
   }
 }
 ```
@@ -214,6 +218,15 @@ The following parameters are passed to the endpoint:
 | `service`   | The object representing the corresponding service definition in the registry. |
 
 The body of the submitted request may also include a `Map` of currently resolved attributes.
+
+The `allowedAttributes` field is an optional attribute that allows the policy to remap attributes virtually.
+If the attribute is undefined or empty, all received attributes will be considered authorized for release on 
+an as-is basis. If attribute mapping rules are defined, received attributes are filtered through the mapping rules
+and the results would be allowed for release. 
+
+The range of supported mapping rules and options are the same as those supported by the *Return Mapped* policy in its various forms. 
+For example, the above configuration will accept a `cn` attribute from the external REST endpoint and will virtually rename
+that attribute into `commonName` instead.
 
 ### Return Mapped
 

@@ -48,7 +48,8 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
         allowedAttributes.put("email", List.of(mappedAttribute));
-        val policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
+        val policy = new ReturnMappedAttributeReleasePolicy()
+            .setAllowedAttributes(CollectionUtils.wrap(allowedAttributes));
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         registeredService.setAttributeReleasePolicy(policy);
 

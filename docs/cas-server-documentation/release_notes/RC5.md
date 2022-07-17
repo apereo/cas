@@ -87,8 +87,9 @@ scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 - The `NotOnOrAfter` attribute in SAML1 responses is using *now* as the basis for calculating the final value.
 - Minor adjustments to attribute release policies, with particular attention to reusing resolved attributes as part of a chain.
 - Minor adjustments to documentation validation processes when publishing to the documentation website.
+- The *issuer length* setting that allows one to skew the SAML1 conditions can now be specified as a *Duration*.
 - On successful login attempts and in case no `service` is specified, CAS will redirect to [Account profile management](../registration/Account-Management-Overview.html) in case the feature is enabled.
-
+- [RESTful attribute release policy](../integration/Attribute-Release-Policies.html) is now able to optionally remap received attributes.
 
 ## Library Upgrades
 

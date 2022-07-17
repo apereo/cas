@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Getter
 @Setter
+@Accessors(chain = true)
 @NoArgsConstructor
 public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 

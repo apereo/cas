@@ -54,7 +54,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         getServicesManager().save(registeredService);
 
         val authnResult = getAuthenticationSystemSupport().finalizeAuthenticationTransaction(service,
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
         getTicketRegistry().addTicket(this.ticketGrantingTicket);
     }
@@ -91,8 +91,8 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         val context = new MockRequestContext();
         val serviceId = UUID.randomUUID().toString();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId, Map.of("Role", Set.of(".*developer.*")));
-        registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(
-            Map.of("Role", "groovy { return attributes['eduPersonAffiliation'].get(0) }")));
+        registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy()
+            .setAllowedAttributes(Map.of("Role", "groovy { return attributes['eduPersonAffiliation'].get(0) }")));
         getServicesManager().save(registeredService);
 
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, RegisteredServiceTestUtils.getService(serviceId));
@@ -131,8 +131,8 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId,
             Map.of("eduPersonAffiliation", Set.of(".*developer.*")));
-        registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(
-            Map.of("eduPersonAffiliation", "groovy { return 'engineers' }")));
+        registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy()
+            .setAllowedAttributes(Map.of("eduPersonAffiliation", "groovy { return 'engineers' }")));
 
         getServicesManager().save(registeredService);
 
