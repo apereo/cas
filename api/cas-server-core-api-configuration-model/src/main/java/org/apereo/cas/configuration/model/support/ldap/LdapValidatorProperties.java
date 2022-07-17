@@ -27,7 +27,7 @@ public class LdapValidatorProperties implements Serializable {
 
     /**
      * Determine the LDAP validator type.
-     * 
+     * <p>
      * The following LDAP validators can be used to test connection health status:
      * <ul>
      * <li>{@code search}: Validates a connection is healthy by performing a search operation.

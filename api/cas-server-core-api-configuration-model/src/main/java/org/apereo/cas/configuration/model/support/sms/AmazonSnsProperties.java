@@ -24,7 +24,7 @@ public class AmazonSnsProperties extends BaseAmazonWebServicesProperties {
 
     /**
      * A custom ID that contains up to 11 alphanumeric characters, including at least one letter and no spaces.
-     * 
+     * <p>
      * The sender ID is displayed as the message sender on the receiving device. For example, you can use your
      * business brand to make the message source easier to recognize.
      * Support for sender IDs varies by country and/or region. For example, messages delivered to
@@ -37,7 +37,7 @@ public class AmazonSnsProperties extends BaseAmazonWebServicesProperties {
 
     /**
      * The maximum amount in USD that you are willing to spend to send the SMS message.
-     *
+     * <p>
      * Amazon SNS will not send the message if it determines that doing so would incur a cost that exceeds the maximum price.
      * This attribute has no effect if your month-to-date SMS costs have already exceeded the limit set
      * for the MonthlySpendLimit attribute, which you set by using the SetSMSAttributes request.

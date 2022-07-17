@@ -31,7 +31,7 @@ public class PasswordEncoderProperties implements Serializable {
      * It may also refer to a fully-qualified class name that implements
      * the Spring Security's {@code PasswordEncoder} interface
      * if you wish you define your own encoder.
-     *
+     * <p>
      * The following types may be used:
      * <ul>
      *     <li>{@code NONE}: No password encoding (i.e. plain-text) takes place.</li>

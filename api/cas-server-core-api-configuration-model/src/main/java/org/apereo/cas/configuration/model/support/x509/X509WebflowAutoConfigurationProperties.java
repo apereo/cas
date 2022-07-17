@@ -28,7 +28,7 @@ public class X509WebflowAutoConfigurationProperties extends WebflowAutoConfigura
      * as a separate connector. Configuration of a separate server connector
      * and port allows the separation of client-auth functionality
      * from the rest of the server, allowing for opt-in behavior.
-     * 
+     * <p>
      * To activate, a non-zero port must be specified.
      */
     @RequiredProperty

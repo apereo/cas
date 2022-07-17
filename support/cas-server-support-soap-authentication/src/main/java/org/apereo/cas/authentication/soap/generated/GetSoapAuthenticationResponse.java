@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlType;
  * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p>
  * &lt;pre&gt;
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * &lt;/pre&gt;
- * 
+ * <p>
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,7 +60,7 @@ public class GetSoapAuthenticationResponse {
      * &lt;pre&gt;
      *    getAttributes().add(newItem);
      * &lt;/pre&gt;
-     * 
+     * <p>
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list

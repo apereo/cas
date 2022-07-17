@@ -76,7 +76,7 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
     /**
      * Control the size of the delegated identity provider cache
      * that holds identity providers.
-     *
+     * <p>
      * This setting specifies the maximum number of entries the cache may contain. Note that the cache <b>may evict
      * an entry before this limit is exceeded or temporarily exceed the threshold while evicting</b>.
      * As the cache size grows close to the maximum, the cache evicts entries that are less likely to

@@ -82,7 +82,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString());
         val builder = new Saml10ObjectBuilder(configBean);
         val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer",
-            "whatever", 1000, "PT30S",
+            "whatever", "PT1000S", "PT30S",
             new NoOpProtocolAttributeEncoder(), mgmr);
         this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
             mgmr,

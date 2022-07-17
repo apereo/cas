@@ -39,7 +39,7 @@ public class SamlResponseBuilder {
 
     private final String defaultAttributeNamespace;
 
-    private final int issueLength;
+    private final String issueLength;
 
     private final String skewAllowance;
 
@@ -101,7 +101,8 @@ public class SamlResponseBuilder {
             samlObjectBuilder.generateSecureRandomId());
         LOGGER.debug("Built assertion for issuer [{}] dated at [{}]", issuer, issuedAt);
 
-        val conditions = samlObjectBuilder.newConditions(issuedAt, service.getId(), issueLength);
+        val skewIssueInSeconds = Beans.newDuration(issueLength).toSeconds();
+        val conditions = samlObjectBuilder.newConditions(issuedAt, service.getId(), skewIssueInSeconds);
         assertion.setConditions(conditions);
         LOGGER.debug("Built assertion conditions for issuer [{}] and service [{}] ", issuer, service.getId());
 

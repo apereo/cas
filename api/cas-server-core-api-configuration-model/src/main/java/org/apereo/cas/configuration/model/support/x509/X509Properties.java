@@ -103,7 +103,7 @@ public class X509Properties implements Serializable {
 
     /**
      * Options to describe how to fetch CRL resources.
-     * 
+     * <p>
      * To fetch CRLs, the following options are available:
      * <ul>
      * <li>{@code RESOURCE}: By default, all revocation checks use fixed

@@ -27,7 +27,7 @@ import java.util.Objects;
  * In httpd, mod_headers is used to add the SSL information as HTTP headers. In
  * Tomcat, this valve is used to read the information from the HTTP headers and
  * insert it into the request.
- *
+ * <p>
  * <b>Note: Ensure that the headers are always set by httpd for all requests to
  * prevent a client spoofing SSL information by sending fake headers. </b>
  * In httpd.conf add the following:

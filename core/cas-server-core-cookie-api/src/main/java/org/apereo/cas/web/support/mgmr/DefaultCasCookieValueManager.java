@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 /**
  * The {@link DefaultCasCookieValueManager} is responsible for creating
  * the CAS SSO cookie and encrypting and signing its value.
- *
+ * <p>
  * This class by default ({@code CookieProperties.isPinToSession=true}) ensures the cookie is used on a
  * request from same IP and with the same user-agent as when cookie was created.
  * The client info (with original client ip) may be null if cluster failover occurs and session replication not working.
