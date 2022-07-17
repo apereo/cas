@@ -175,7 +175,9 @@ public class MonitoredRepository {
     }
 
     public void labelPullRequestAs(final PullRequest pr, final CasLabels labelName) {
-        this.gitHub.addLabel(pr, labelName.getTitle());
+        if (!pr.isLabeledAs(labelName)) {
+            this.gitHub.addLabel(pr, labelName.getTitle());
+        }
     }
 
     public void addComment(final PullRequest pr, final String comment) {

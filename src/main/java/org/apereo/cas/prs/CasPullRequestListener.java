@@ -24,10 +24,11 @@ public class CasPullRequestListener implements PullRequestListener {
 
     @Override
     public void onOpenPullRequest(final PullRequest givenPullRequest) {
-        val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
+        val pr = repository.getPullRequest(givenPullRequest.getNumber());
         log.debug("Processing {}", pr);
 
-        if (processDependencyUpgradesPullRequests(pr) || processLabelSeeMaintenancePolicy(pr) || processInvalidPullRequest(pr)) {
+        if (shouldDisregardPullRequest(pr)) {
+            log.info("{} is considered invalid and will not be processed", pr);
             return;
         }
         processLabelReadyForContinuousIntegration(pr);
@@ -38,6 +39,12 @@ public class CasPullRequestListener implements PullRequestListener {
         removeLabelWorkInProgress(pr);
         checkForPullRequestTestCases(pr);
         checkForPullRequestDescription(pr);
+    }
+
+    private boolean shouldDisregardPullRequest(final PullRequest pr) {
+        return processDependencyUpgradesPullRequests(pr)
+               || processLabelSeeMaintenancePolicy(pr)
+               || processInvalidPullRequest(pr);
     }
 
     @SneakyThrows
@@ -56,14 +63,21 @@ public class CasPullRequestListener implements PullRequestListener {
     private void processLabelsByChangeset(final PullRequest pr) {
         repository.getPullRequestFiles(pr)
             .forEach(file -> {
-                var fname = file.getFilename();
-                if (fname.contains("api/cas-server-core-api-configuration-model") && !pr.isLabeledAs(CasLabels.LABEL_CONFIGURATION)) {
+                var filename = file.getFilename();
+                if (filename.contains("api/cas-server-core-api-configuration-model")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_CONFIGURATION);
                 }
-                if (fname.contains("dependencies.gradle") && !pr.isLabeledAs(CasLabels.LABEL_DEPENDENCIES_MODULES)) {
+                if (filename.contains("dependencies.gradle")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_DEPENDENCIES_MODULES);
-                } else if (fname.endsWith(".gradle") && !pr.isLabeledAs(CasLabels.LABEL_GRADLE_BUILD_RELEASE)) {
+                } else if (filename.endsWith(".gradle")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_GRADLE_BUILD_RELEASE);
+                } else if (filename.contains("gradle.properties")) {
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_GRADLE_BUILD_RELEASE);
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_DEPENDENCIES_MODULES);
+                } else if (filename.endsWith(".html") || filename.endsWith(".js") || filename.endsWith(".css")) {
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_USER_INTERFACE_THEMES);
+                } else if (filename.endsWith(".md")) {
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_DOCUMENTATION);
                 }
             });
     }
@@ -145,22 +159,22 @@ public class CasPullRequestListener implements PullRequestListener {
         
         val count = repository.getPullRequestFiles(pr).stream()
             .filter(file -> {
-                var fname = file.getFilename();
-                return !fname.contains("src/test/java")
-                       && !fname.endsWith(".html")
-                       && !fname.endsWith(".properties")
-                       && !fname.endsWith(".js")
-                       && !fname.endsWith(".yml")
-                       && !fname.endsWith(".yaml")
-                       && !fname.endsWith(".json")
-                       && !fname.endsWith(".jpg")
-                       && !fname.endsWith(".jpeg")
-                       && !fname.endsWith(".sh")
-                       && !fname.endsWith(".bat")
-                       && !fname.endsWith(".txt")
-                       && !fname.endsWith(".md")
-                       && !fname.endsWith(".gif")
-                       && !fname.endsWith(".css");
+                var filename = file.getFilename();
+                return !filename.contains("src/test/java")
+                       && !filename.endsWith(".html")
+                       && !filename.endsWith(".properties")
+                       && !filename.endsWith(".js")
+                       && !filename.endsWith(".yml")
+                       && !filename.endsWith(".yaml")
+                       && !filename.endsWith(".json")
+                       && !filename.endsWith(".jpg")
+                       && !filename.endsWith(".jpeg")
+                       && !filename.endsWith(".sh")
+                       && !filename.endsWith(".bat")
+                       && !filename.endsWith(".txt")
+                       && !filename.endsWith(".md")
+                       && !filename.endsWith(".gif")
+                       && !filename.endsWith(".css");
             })
             .count();
 
@@ -170,6 +184,16 @@ public class CasPullRequestListener implements PullRequestListener {
             repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
 
             var template = IOUtils.toString(new ClassPathResource("template-large-patch.md").getInputStream(), StandardCharsets.UTF_8);
+            repository.addComment(pr, template);
+            repository.close(pr);
+            return true;
+        }
+
+        if (pr.getTitle().matches("Update\\s\\w.java")) {
+            log.info("Closing invalid pull request {} with a bad description/title", pr);
+            repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+            repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
+            var template = IOUtils.toString(new ClassPathResource("template-no-description.md").getInputStream(), StandardCharsets.UTF_8);
             repository.addComment(pr, template);
             repository.close(pr);
             return true;
@@ -263,7 +287,7 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private void processLabelsByFeatures(final PullRequest givenPullRequest) {
-        val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
+        val pr = repository.getPullRequest(givenPullRequest.getNumber());
         val title = pr.getTitle().toLowerCase();
         Arrays.stream(CasLabels.values()).forEach(l -> {
             if (!pr.isLabeledAs(l)) {

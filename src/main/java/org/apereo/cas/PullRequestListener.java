@@ -10,7 +10,6 @@ import org.apereo.cas.github.PullRequest;
  */
 public interface PullRequestListener {
     default void onOpenPullRequest(final PullRequest pr) {
-
     }
 
     default void onPullRequestClosure(final PullRequest pr) {
