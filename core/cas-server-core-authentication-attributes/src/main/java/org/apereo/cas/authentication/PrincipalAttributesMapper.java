@@ -12,8 +12,19 @@ import java.util.Map;
 @FunctionalInterface
 public interface PrincipalAttributesMapper {
 
-    Map<String, List<Object>> map(final AttributeMappingRequest request);
+    /**
+     * Map principal attributes.
+     *
+     * @param request the request
+     * @return the map
+     */
+    Map<String, List<Object>> map(AttributeMappingRequest request);
 
+    /**
+     * Default principal attributes mapper.
+     *
+     * @return the principal attributes mapper
+     */
     static PrincipalAttributesMapper defaultMapper() {
         return new DefaultPrincipalAttributesMapper();
     }
