@@ -19,10 +19,6 @@ typically upper-bound to the length of the CAS single sign-on session.
 
 {% include_cached casproperties.html properties="cas.authn.oauth.access-token" %}
 
-## OAuthJWT Access Tokens
-
-{% include_cached casproperties.html properties="cas.authn.oauth.access-token" %}
-
 ## OAuth Device Tokens
 
 {% include_cached casproperties.html properties="cas.authn.oauth.device-token" %}

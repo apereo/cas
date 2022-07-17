@@ -9,4 +9,4 @@ category: Authentication
 
 The expiration policy for OpenID Connect tokens is controlled by CAS settings and properties. These settings
 generally are the same as those that are defined for the OAuth Protocol. 
-[See this guide](OIDC-Authentication-TokenExpirationPolicy.html) for more info.
+[See this guide](OAuth-Authentication-TokenExpirationPolicy.html) for more info.
