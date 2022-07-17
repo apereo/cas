@@ -22,7 +22,8 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.sentinel.master=mymaster",
     "cas.ticket.registry.redis.sentinel.node[0]=localhost:26379",
     "cas.ticket.registry.redis.sentinel.node[1]=localhost:26380",
-    "cas.ticket.registry.redis.sentinel.node[2]=localhost:26381"
+    "cas.ticket.registry.redis.sentinel.node[2]=localhost:26381",
+    "cas.ticket.registry.redis.timeout=5000"
 })
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")

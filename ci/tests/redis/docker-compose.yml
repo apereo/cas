@@ -1,20 +1,30 @@
 version: "3"
 
 services:
-  master:
+  redis-master:
     image: bitnami/redis:${REDIS_VERSION}
     container_name: redis_server_master
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_REPLICA_IP=127.0.0.1
+      - REDIS_REPLICA_PORT=6379
+      - REDIS_MASTER_HOST=localhost
+      - REDIS_MASTER_PORT_NUMBER=6379
     ports:
       - 6379:6379
 
   replica_1:
     image: bitnami/redis:${REDIS_VERSION}
     container_name: redis_server_replica_1
-    command: redis-server --slaveof master 6379
+    command: redis-server --slaveof redis-master 6379
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_REPLICA_IP=127.0.0.1
+      - REDIS_REPLICA_PORT=6380
+      - REDIS_MASTER_HOST=localhost
+      - REDIS_MASTER_PORT_NUMBER=6379
     ports:
       - 6380:6379
     depends_on:
@@ -23,9 +33,14 @@ services:
   replica_2:
     image: bitnami/redis:${REDIS_VERSION}
     container_name: redis_server_replica_2
-    command: redis-server --slaveof master 6379
+    command: redis-server --slaveof redis-master 6379
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_REPLICA_IP=127.0.0.1
+      - REDIS_REPLICA_PORT=6381
+      - REDIS_MASTER_HOST=localhost
+      - REDIS_MASTER_PORT_NUMBER=6379
     ports:
       - 6381:6379
     depends_on:
@@ -37,9 +52,9 @@ services:
     ports:
       - 26379:26379
     environment:
-      - MASTER_NAME=mymaster
-      - QUORUM=2
-      - MASTER=master
+      - REDIS_MASTER_SET=mymaster
+      - REDIS_SENTINEL_QUORUM=2
+      - REDIS_MASTER_HOST=localhost
     depends_on:
       - master
 
@@ -49,9 +64,9 @@ services:
     ports:
       - 26380:26379
     environment:
-      - MASTER_NAME=mymaster
-      - QUORUM=2
-      - MASTER=master
+      - REDIS_MASTER_SET=mymaster
+      - REDIS_SENTINEL_QUORUM=2
+      - REDIS_MASTER_HOST=localhost
     depends_on:
       - master
 
@@ -61,8 +76,8 @@ services:
     ports:
       - 26381:26379
     environment:
-      - MASTER_NAME=mymaster
-      - QUORUM=2
-      - MASTER=master
+      - REDIS_MASTER_SET=mymaster
+      - REDIS_SENTINEL_QUORUM=2
+      - REDIS_MASTER_HOST=localhost
     depends_on:
       - master
