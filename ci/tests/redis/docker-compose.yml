@@ -12,7 +12,7 @@ services:
       - REDIS_MASTER_HOST=localhost
       - REDIS_MASTER_PORT_NUMBER=6379
     ports:
-      - 6379:6379
+      - "6379:6379"
 
   replica_1:
     image: bitnami/redis:${REDIS_VERSION}
@@ -26,9 +26,9 @@ services:
       - REDIS_MASTER_HOST=localhost
       - REDIS_MASTER_PORT_NUMBER=6379
     ports:
-      - 6380:6379
+      - "6380:6379"
     depends_on:
-      - master
+      - redis-master
 
   replica_2:
     image: bitnami/redis:${REDIS_VERSION}
@@ -42,42 +42,42 @@ services:
       - REDIS_MASTER_HOST=localhost
       - REDIS_MASTER_PORT_NUMBER=6379
     ports:
-      - 6381:6379
+      - "6381:6379"
     depends_on:
-      - master
+      - redis-master
 
   sentinel_1:
     image: bitnami/redis-sentinel:${REDIS_VERSION}
     container_name: redis_sentinel_1
     ports:
-      - 26379:26379
+      - "26379:26379"
     environment:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
     depends_on:
-      - master
+      - redis-master
 
   sentinel_2:
     image: bitnami/redis-sentinel:${REDIS_VERSION}
     container_name: redis_sentinel_2
     ports:
-      - 26380:26379
+      - "26380:26379"
     environment:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
     depends_on:
-      - master
+      - redis-master
 
   sentinel_3:
     image: bitnami/redis-sentinel:${REDIS_VERSION}
     container_name: redis_sentinel_3
     ports:
-      - 26381:26379
+      - "26381:26379"
     environment:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
     depends_on:
-      - master
+      - redis-master
