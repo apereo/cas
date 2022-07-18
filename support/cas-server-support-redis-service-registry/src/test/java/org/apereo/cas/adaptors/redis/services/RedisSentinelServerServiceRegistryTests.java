@@ -23,7 +23,8 @@ import org.springframework.test.context.TestPropertySource;
     "cas.service-registry.redis.sentinel.master=mymaster",
     "cas.service-registry.redis.sentinel.node[0]=localhost:26379",
     "cas.service-registry.redis.sentinel.node[1]=localhost:26380",
-    "cas.service-registry.redis.sentinel.node[2]=localhost:26381"
+    "cas.service-registry.redis.sentinel.node[2]=localhost:26381",
+    "cas.service-registry.redis.timeout=5000"
 })
 @EnabledIfListeningOnPort(port = 6379)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
