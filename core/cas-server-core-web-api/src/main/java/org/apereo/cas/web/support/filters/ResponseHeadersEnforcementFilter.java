@@ -89,7 +89,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
     private final Object lock = new Object();
 
 
-    private Pattern cacheControlStaticResourcesPattern = Pattern.compile("^.+\\.(css|js|png|txt|jpg|ico|jpeg|bmp|gif)$", Pattern.CASE_INSENSITIVE);
+    private Pattern cacheControlStaticResourcesPattern;
 
     private boolean enableCacheControl;
 
