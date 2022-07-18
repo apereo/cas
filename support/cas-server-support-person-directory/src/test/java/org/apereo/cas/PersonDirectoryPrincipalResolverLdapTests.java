@@ -46,8 +46,14 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].use-all-query-attributes=false",
     "cas.authn.attribute-repository.ldap[0].query-attributes.principal=cnuser",
     "cas.authn.attribute-repository.ldap[0].search-entry-handlers[0].type=DN_ATTRIBUTE_ENTRY",
-    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[0].type=MERGE_ENTRIES",
-    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[1].type=ACTIVE_DIRECTORY"
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[1].type=MERGE_ENTRIES",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[2].type=FOLLOW_SEARCH_REFERRAL",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[3].type=FOLLOW_SEARCH_RESULT_REFERENCE",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[4].type=ACTIVE_DIRECTORY",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[5].type=MERGE_ENTRIES",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[6].type=RECURSIVE_ENTRY",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[7].type=RANGE_ENTRY",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[8].type=PRIMARY_GROUP"
 })
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)

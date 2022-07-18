@@ -108,6 +108,7 @@ import org.ldaptive.handler.SearchResultHandler;
 import org.ldaptive.pool.BindConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.referral.FollowSearchReferralHandler;
+import org.ldaptive.referral.FollowSearchResultReferenceHandler;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
@@ -1012,6 +1013,12 @@ public class LdapUtils {
         val searchResultHandlers = new ArrayList<SearchResultHandler>();
         properties.forEach(h -> {
             switch (h.getType()) {
+                case FOLLOW_SEARCH_REFERRAL:
+                    searchResultHandlers.add(new FollowSearchReferralHandler(h.getSearchReferral().getLimit()));
+                    break;
+                case FOLLOW_SEARCH_RESULT_REFERENCE:
+                    searchResultHandlers.add(new FollowSearchResultReferenceHandler(h.getSearchResult().getLimit()));
+                    break;
                 case PRIMARY_GROUP:
                     val ehp = new PrimaryGroupIdHandler();
                     val primaryGroupId = h.getPrimaryGroupId();
@@ -1191,7 +1198,7 @@ public class LdapUtils {
      */
     public static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
         createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l,
-                                                 final ApplicationContext applicationContext) {
+                                             final ApplicationContext applicationContext) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blocked authentication result codes");
             return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
