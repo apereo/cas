@@ -53,8 +53,8 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
      * Constructs the primary group SID and then searches for that group and puts it's DN in the {@code memberOf} attribute of the
      * original search entry. This handler requires that entries contain both the {@code objectSid/primaryGroupID}
      * attributes. If those attributes are not found this handler is a no-op. This handler should be used in conjunction
-     * with the {@code ObjectSidHandler} to ensure the {@code objectSid} attribute is in the proper form. See
-     * http://support2.microsoft.com/kb/297951
+     * with the {@code ObjectSidHandler} to ensure the {@code objectSid} attribute is in the proper form.
+     * <a href="http://support2.microsoft.com/kb/297951">See this.</a>
      */
     @NestedConfigurationProperty
     private PrimaryGroupIdSearchEntryHandlersProperties primaryGroupId = new PrimaryGroupIdSearchEntryHandlersProperties();
@@ -66,9 +66,29 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
     private RecursiveSearchEntryHandlersProperties recursive = new RecursiveSearchEntryHandlersProperties();
 
     /**
+     * Provides handling of an ldap referral for search operations.
+     */
+    @NestedConfigurationProperty
+    private FollowReferralSearchEntryHandlersProperties searchReferral = new FollowReferralSearchEntryHandlersProperties();
+
+    /**
+     * Provides handling of an ldap continuation reference for search operations.
+     */
+    @NestedConfigurationProperty
+    private FollowResultSearchEntryHandlersProperties searchResult = new FollowResultSearchEntryHandlersProperties();
+
+    /**
      * The enum Search entry handler types.
      */
-    public enum SearchEntryHandlerTypes implements Serializable {
+    public enum SearchEntryHandlerTypes {
+        /**
+         * Provides handling of an ldap referral for search operations.
+         */
+        FOLLOW_SEARCH_REFERRAL,
+        /**
+         * Provides handling of an ldap continuation reference for search operations.
+         */
+        FOLLOW_SEARCH_RESULT_REFERENCE,
         /**
          * Process the entry results fetched from active directory and
          * check for account status controls for disabled/expired accounts, etc.
