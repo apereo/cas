@@ -21,13 +21,16 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockFilterChain;
+import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -50,6 +53,10 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-0");
+        val servletContext = new MockServletContext();
+        val filterConfig = new MockFilterConfig(servletContext);
+        filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES, "css|js|png|txt|jpg|ico|jpeg|bmp|gif");
+        filter.init(filterConfig);
         filter.doFilter(request, response, new MockFilterChain());
         assertNotNull(response.getHeader("Cache-Control"));
     }

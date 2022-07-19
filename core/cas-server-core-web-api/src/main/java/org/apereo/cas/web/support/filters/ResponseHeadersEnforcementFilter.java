@@ -79,11 +79,17 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      * Consent security policy.
      */
     public static final String INIT_PARAM_CONTENT_SECURITY_POLICY = "contentSecurityPolicy";
+    
+    /**
+     * Static resources file extension values.
+     */
+    public static final String INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES = "cacheControlStaticResources";
 
-    private static final Pattern CACHE_CONTROL_STATIC_RESOURCES_PATTERN = 
-                    Pattern.compile("^.+\\.(css|js|png|txt|jpg|ico|jpeg|bmp|gif)$", Pattern.CASE_INSENSITIVE);
 
     private final Object lock = new Object();
+
+
+    private Pattern cacheControlStaticResourcesPattern;
 
     private boolean enableCacheControl;
 
@@ -131,6 +137,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         recognizedParameterNames.add(INIT_PARAM_CONTENT_SECURITY_POLICY);
         recognizedParameterNames.add(INIT_PARAM_ENABLE_XSS_PROTECTION);
         recognizedParameterNames.add(INIT_PARAM_XSS_PROTECTION);
+        recognizedParameterNames.add(INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES);
         recognizedParameterNames.add(THROW_ON_ERROR);
 
         while (initParamNames.hasMoreElements()) {
@@ -156,7 +163,9 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         val stsEnabled = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY);
         val xframeOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS);
         val xssOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_XSS_PROTECTION);
-
+        val cacheControlStaticResources = filterConfig.getInitParameter(INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES);
+        
+        this.cacheControlStaticResourcesPattern = Pattern.compile("^.+\\.(" + cacheControlStaticResources + ")$", Pattern.CASE_INSENSITIVE);
         this.enableCacheControl = Boolean.parseBoolean(cacheControl);
         this.enableXContentTypeOptions = Boolean.parseBoolean(contentTypeOpts);
         this.enableStrictTransportSecurity = Boolean.parseBoolean(stsEnabled);
@@ -418,7 +427,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
                                             final String value) {
 
         val uri = httpServletRequest.getRequestURI();
-        if (!CACHE_CONTROL_STATIC_RESOURCES_PATTERN.matcher(uri).matches()) {
+        if (!cacheControlStaticResourcesPattern.matcher(uri).matches()) {
             httpServletResponse.addHeader("Cache-Control", value);
             httpServletResponse.addHeader("Pragma", "no-cache");
             httpServletResponse.addIntHeader("Expires", 0);
