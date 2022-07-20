@@ -96,7 +96,7 @@ public class ConfigurationMetadataPropertyCreator {
         }
         prop.setName(indexedName);
         prop.setId(indexedName);
-        
+
         var elementType = fieldDecl.getElementType();
         val elementTypeStr = elementType.asString();
         if (PRIMITIVES.containsKey(elementTypeStr)) {
@@ -113,7 +113,7 @@ public class ConfigurationMetadataPropertyCreator {
         } else {
             prop.setType(elementTypeStr);
             var parent = fieldDecl.getParentNode().get();
-            
+
             var enumDecl = parent.findFirst(EnumDeclaration.class, em -> em.getNameAsString().contains(elementTypeStr));
             if (enumDecl.isPresent()) {
                 val em = enumDecl.get();
@@ -134,12 +134,14 @@ public class ConfigurationMetadataPropertyCreator {
                 prop.setDefaultValue(((FieldAccessExpr) exp).getNameAsString());
             }
         }
+        Logger.log("Collecting property %s", prop.getName());
         properties.add(prop);
 
         val grp = new ComparableConfigurationMetadataProperty();
         grp.setId(indexedGroup);
         grp.setName(indexedGroup);
         grp.setType(parentClass);
+        Logger.log("Collecting property %s", grp.getName());
         groups.add(grp);
 
         return prop;

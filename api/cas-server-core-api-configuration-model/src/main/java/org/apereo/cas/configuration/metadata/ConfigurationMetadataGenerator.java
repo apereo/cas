@@ -98,14 +98,7 @@ public class ConfigurationMetadataGenerator {
         generator.adjustConfigurationMetadata();
     }
 
-    private static void log(final String message, final Object... args) {
-        //CHECKSTYLE:OFF
-        System.out.printf(message, args);
-        System.out.println();
-        //CHECKSTYLE:ON
-    }
-
-    private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
+    protected static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
                                                                final Collection<ConfigurationMetadataProperty> groups) {
 
         var hints = new LinkedHashSet<ConfigurationMetadataHint>(0);
@@ -250,14 +243,18 @@ public class ConfigurationMetadataGenerator {
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
         jsonMap.put("hints", hints);
+        
+        Logger.log("Final results is written to %s", jsonFile.getAbsolutePath());
         MAPPER.writeValue(jsonFile, jsonMap);
-        MAPPER.writeValue(new File(buildDir, jsonFile.getName()), jsonMap);
+        val copy = new File(buildDir, jsonFile.getName());
+        Logger.log("A copy of the results is written to %s", copy.getAbsolutePath());
+        MAPPER.writeValue(copy, jsonMap);
     }
 
     private void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
         val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
         val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
-        log("Processing nested configuration types...");
+        Logger.log("Processing nested configuration types...");
         properties
             .forEach(Unchecked.consumer(p -> {
                 var indexBrackets = false;
@@ -281,7 +278,7 @@ public class ConfigurationMetadataGenerator {
 
                 if (!typeName.isEmpty()) {
                     val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
-                    log("Matched Type %s%nProperty %s:%s%nPath %s%n", typeName, p.getName(), p.getType(), typePath);
+                    Logger.log("Matched Type %s%nProperty %s:%s%nPath %s", typeName, p.getName(), p.getType(), typePath);
                     val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
                     parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
                 }
@@ -291,7 +288,7 @@ public class ConfigurationMetadataGenerator {
         groups.addAll(collectedGroups);
     }
 
-    private void processMappableProperties(final Set<ConfigurationMetadataProperty> properties,
+    protected void processMappableProperties(final Set<ConfigurationMetadataProperty> properties,
                                            final Set<ConfigurationMetadataProperty> groups) {
         val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
         val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
@@ -319,7 +316,7 @@ public class ConfigurationMetadataGenerator {
         groups.addAll(collectedGroups);
     }
 
-    private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
+    protected void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
                                              final Set<ConfigurationMetadataProperty> groups) {
         val propertiesToProcess = properties.stream()
             .filter(e -> {
