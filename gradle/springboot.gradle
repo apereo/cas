@@ -41,7 +41,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
             mainClass.set(project.ext.mainClassName)
             manifest {
                 attributes(
-                        "Automatic-Module-Name": project.name,
+                        "Automatic-Module-Name": project.name.replace("-", "."),
                         "Implementation-Title": project.name,
                         "Implementation-Vendor": project.group,
                         "Created-By": project.group)

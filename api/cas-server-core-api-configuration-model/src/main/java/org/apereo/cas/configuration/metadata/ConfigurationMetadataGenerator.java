@@ -72,7 +72,9 @@ public class ConfigurationMetadataGenerator {
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
 
-    private static final Pattern NESTED_TYPE_PATTERN = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
+    private static final Pattern NESTED_TYPE_PATTERN1 = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
+
+    private static final Pattern NESTED_TYPE_PATTERN2 = Pattern.compile("java\\.util\\.(List|Set)<(.+Properties)>");
 
     private static final Pattern MAP_TYPE_STRING_KEY_OBJECT_PATTERN =
         Pattern.compile("java\\.util\\.Map<java\\.lang\\.String,\\s*(org\\.apereo\\.cas\\..+)>");
@@ -94,6 +96,13 @@ public class ConfigurationMetadataGenerator {
         val projectDir = args[1];
         val generator = new ConfigurationMetadataGenerator(buildDir, projectDir);
         generator.adjustConfigurationMetadata();
+    }
+
+    private static void log(final String message, final Object... args) {
+        //CHECKSTYLE:OFF
+        System.out.printf(message, args);
+        System.out.println();
+        //CHECKSTYLE:ON
     }
 
     private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
@@ -248,17 +257,34 @@ public class ConfigurationMetadataGenerator {
     private void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
         val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
         val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
-
-        properties.stream()
-            .filter(p -> NESTED_TYPE_PATTERN.matcher(p.getType()).matches())
+        log("Processing nested configuration types...");
+        properties
             .forEach(Unchecked.consumer(p -> {
-                val matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
-                val indexBrackets = matcher.matches();
-                val typeName = matcher.group(1);
-                val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
+                var indexBrackets = false;
+                var typeName = StringUtils.EMPTY;
+                
+                if (NESTED_TYPE_PATTERN1.matcher(p.getType()).matches()) {
+                    val matcher = NESTED_TYPE_PATTERN1.matcher(p.getType());
+                    indexBrackets = matcher.matches();
+                    typeName = matcher.group(1);
+                } else if (NESTED_TYPE_PATTERN2.matcher(p.getType()).matches()) {
+                    val matcher = NESTED_TYPE_PATTERN2.matcher(p.getType());
+                    indexBrackets = matcher.matches();
+                    typeName = matcher.group(2);
 
-                val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
-                parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
+                    val result = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
+                    if (result.isPresent()) {
+                        typeName = result.get().getName();
+                    }
+
+                }
+
+                if (!typeName.isEmpty()) {
+                    val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
+                    log("Matched Type %s%nProperty %s:%s%nPath %s%n", typeName, p.getName(), p.getType(), typePath);
+                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                    parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
+                }
             }));
 
         properties.addAll(collectedProps);
