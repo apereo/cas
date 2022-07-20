@@ -17,11 +17,11 @@ import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
@@ -63,7 +63,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
     public void verifyCacheControlDisabled() throws Exception {
-        val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL, "false"));  
+        val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL, "false"));
         filter.setEnableCacheControl(true);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
