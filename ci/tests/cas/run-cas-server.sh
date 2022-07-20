@@ -34,6 +34,9 @@ properties='{
       "core": {
         "init-from-json": true
       },
+      "json": {
+        "watcher-enabled": false
+      },
       "schedule": {
         "enabled": false
       }
