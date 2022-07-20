@@ -8,6 +8,7 @@ import lombok.val;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link ConfigurationMetadataClassSourceLocator}.
@@ -16,6 +17,8 @@ import java.util.Map;
  * @since 6.0.0
  */
 public class ConfigurationMetadataClassSourceLocator {
+
+    private static final Pattern GENERIC_TYPED_CLASS = Pattern.compile("\\w+<(\\w+)>");
 
     private static ConfigurationMetadataClassSourceLocator INSTANCE;
 
@@ -52,13 +55,19 @@ public class ConfigurationMetadataClassSourceLocator {
      * @return the class
      */
     public Class locatePropertiesClassForType(final ClassOrInterfaceType type) {
-        if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
-            return cachedPropertiesClasses.get(type.getNameAsString());
+        var typeName = type.getNameAsString();
+        if (cachedPropertiesClasses.containsKey(typeName)) {
+            return cachedPropertiesClasses.get(typeName);
         }
 
-        val clz = ReflectionUtils.findClassBySimpleNameInPackage(type.getNameAsString(), "org.apereo.cas")
-                .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
-        cachedPropertiesClasses.put(type.getNameAsString(), clz);
+        val matcher = GENERIC_TYPED_CLASS.matcher(type.toString());
+        if (matcher.matches()) {
+            typeName = matcher.group(1);
+        }
+
+        val error = new IllegalArgumentException("Cant locate class for " + typeName);
+        val clz = ReflectionUtils.findClassBySimpleNameInPackage(typeName, "org.apereo.cas").orElseThrow(() -> error);
+        cachedPropertiesClasses.put(typeName, clz);
         return clz;
     }
 }
