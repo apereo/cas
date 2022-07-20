@@ -463,7 +463,7 @@ subprojects {
         def projectSpecVersion = project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'
         manifest {
             attributes(
-                    "Automatic-Module-Name": projectName,
+                    "Automatic-Module-Name": project.name.replace("-", "."),
                     "Implementation-Title": projectName,
                     "Implementation-Vendor": projectGroup,
                     "Created-By": projectGroup)
