@@ -59,6 +59,11 @@ configurations.all {
                 if (requested.group == "com.oracle.ojdbc:ojdbc10")  {
                     details.useVersion("${oracleJdbcVersion}")
                 }
+                if (requested.group == "io.netty")  {
+                    if (!requested.name.startsWith("netty-tcnative")) {
+                        details.useVersion("${nettyVersion}")
+                    }
+                }
                 if (requested.group == "org.mongodb")  {
                     details.useVersion("${mongoDriverVersion}")
                 }
