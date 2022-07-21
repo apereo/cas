@@ -55,12 +55,9 @@ ext {
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
 
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").present
-    remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend")
-            .getOrElse("false") == "true" ? "y" : "n"
-    generateGitProperties = publishFlag
-            || providers.systemProperty("generateGitProperties").present
-    generateTimestamps = publishFlag
-        || providers.systemProperty("generateTimestamps").present
+    remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
+    generateGitProperties = publishFlag || providers.systemProperty("generateGitProperties").present
+    generateTimestamps = publishFlag || providers.systemProperty("generateTimestamps").present
 
     ci = System.getenv("CI") || providers.systemProperty("CI").present
 
@@ -84,7 +81,7 @@ ext {
 }
 
 def isArtifactSigningRequired = {
-    return publishReleases && !skipArtifactSigning
+    publishReleases && !skipArtifactSigning
 }
 
 if ("${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
@@ -185,6 +182,13 @@ allprojects {
     }
 
     apply from: rootProject.file("gradle/tasks.gradle")
+    def arch = System.getProperty("os.arch")
+    if (arch == "aarch64") {
+        System.setProperty("os.arch", "x86_64")
+        arch = System.getProperty("os.arch")
+        def name = System.getProperty("os.name")
+        ansi.yellow("The OS platform architecture is forcefully reset to ${arch} for ${name}")
+    }
 
     if (rootProject.generateGitProperties) {
         apply plugin: "com.gorylenko.gradle-git-properties"
