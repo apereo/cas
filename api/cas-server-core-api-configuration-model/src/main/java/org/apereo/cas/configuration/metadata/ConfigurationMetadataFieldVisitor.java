@@ -77,7 +77,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
 
         val creator = new ConfigurationMetadataPropertyCreator(indexNameWithBrackets, properties, groups, parentClass);
         result = creator.createConfigurationProperty(field, property.getName());
-        Logger.log("Created %s", result.getName());
+        LOGGER.debug("Created [{}]", result.getName());
         processNestedClassOrInterfaceTypeIfNeeded(field, result);
     }
 
@@ -89,12 +89,12 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
                 val clz = instance.locatePropertiesClassForType(type);
                 if (clz != null && !clz.isMemberClass()) {
                     val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, clz.getName());
-                    Logger.log("Processing type path %s", typePath);
+                    LOGGER.debug("Processing type path [{}]", typePath);
                     val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
                     parser.parseCompilationUnit(properties, groups, prop, typePath, clz.getName(), false);
                 }
             } else {
-                Logger.log("Type %s is excluded from processing", type);
+                LOGGER.debug("Type [{}] is excluded from processing", type);
             }
         }
     }

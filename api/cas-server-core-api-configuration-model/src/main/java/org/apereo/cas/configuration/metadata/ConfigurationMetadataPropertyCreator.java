@@ -134,14 +134,14 @@ public class ConfigurationMetadataPropertyCreator {
                 prop.setDefaultValue(((FieldAccessExpr) exp).getNameAsString());
             }
         }
-        Logger.log("Collecting property %s", prop.getName());
+        LOGGER.debug("Collecting property [{}]", prop.getName());
         properties.add(prop);
 
         val grp = new ComparableConfigurationMetadataProperty();
         grp.setId(indexedGroup);
         grp.setName(indexedGroup);
         grp.setType(parentClass);
-        Logger.log("Collecting property %s", grp.getName());
+        LOGGER.debug("Collecting property [{}]", grp.getName());
         groups.add(grp);
 
         return prop;
