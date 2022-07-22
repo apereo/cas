@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.expiration.builder;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 
 import lombok.val;
@@ -35,7 +34,6 @@ public class TransientSessionTicketExpirationPolicyBuilderTests {
     @Test
     public void verifyType() {
         val builder = new TransientSessionTicketExpirationPolicyBuilder(casProperties);
-        assertSame(TransientSessionTicket.class, builder.getTicketType());
         val policy = builder.buildTicketExpirationPolicy();
         assertNotNull(policy);
 

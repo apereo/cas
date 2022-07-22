@@ -55,20 +55,20 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
     @Override
     public String generate(final OAuth20AccessToken accessToken,
-                           final long timeoutInSeconds,
                            final UserProfile userProfile,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
                            final OAuthRegisteredService registeredService) throws Exception {
+        val timeout = getConfigurationContext().getIdTokenExpirationPolicy().buildTicketExpirationPolicy().getTimeToLive();
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
             "Registered service instance is not an OIDC service");
 
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
-        val claims = buildJwtClaims(accessToken, timeoutInSeconds, oidcRegisteredService, responseType, grantType);
+        val claims = buildJwtClaims(accessToken, timeout, oidcRegisteredService, responseType, grantType);
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
-
+    
     /**
      * Produce claims as jwt.
      * As per OpenID Connect Core section 5.4, 'The Claims requested by the profile,

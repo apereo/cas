@@ -1,6 +1,5 @@
 package org.apereo.cas.uma.web.controllers.authz;
 
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -191,17 +190,14 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .casProperties(getUmaConfigurationContext().getCasProperties())
             .build()
             .encode(accessToken.getId());
-
-        val timeout = Beans.newDuration(getUmaConfigurationContext().getCasProperties()
-            .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
-
+        
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(request, response),
             getUmaConfigurationContext().getSessionStore());
         userProfile.addAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
         userProfile.addAttribute(ResourceSet.class.getName(), resourceSet);
 
         val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator()
-            .generate(accessToken, timeout, userProfile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
+            .generate(accessToken, userProfile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
         accessToken.setIdToken(idToken);
         getUmaConfigurationContext().getTicketRegistry().updateTicket(accessToken);
 

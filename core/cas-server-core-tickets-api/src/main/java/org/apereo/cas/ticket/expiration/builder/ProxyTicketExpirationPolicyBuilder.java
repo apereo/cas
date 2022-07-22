@@ -34,11 +34,6 @@ public class ProxyTicketExpirationPolicyBuilder implements ExpirationPolicyBuild
         return toProxyTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<ProxyTicket> getTicketType() {
-        return ProxyTicket.class;
-    }
-
     /**
      * To proxy ticket expiration policy.
      *

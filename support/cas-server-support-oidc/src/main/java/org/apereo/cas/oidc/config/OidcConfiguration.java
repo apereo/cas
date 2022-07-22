@@ -585,8 +585,8 @@ public class OidcConfiguration {
             final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
             @Qualifier("oidcIdTokenGenerator")
             final IdTokenGeneratorService oidcIdTokenGenerator,
-            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY)
-            final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
+            @Qualifier("oidcIdTokenExpirationPolicy")
+            final ExpirationPolicyBuilder oidcIdTokenExpirationPolicy,
             @Qualifier("oidcUserProfileViewRenderer")
             final OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer,
             @Qualifier("oidcIdTokenClaimCollector")
@@ -655,7 +655,7 @@ public class OidcConfiguration {
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
                 .discoverySettings(oidcServerDiscoverySettings)
                 .requestParameterResolver(oauthRequestParameterResolver)
@@ -663,7 +663,7 @@ public class OidcConfiguration {
                 .ticketFactory(ticketFactory)
                 .idTokenClaimCollector(oidcIdTokenClaimCollector)
                 .idTokenGeneratorService(oidcIdTokenGenerator)
-                .idTokenExpirationPolicy(grantingTicketExpirationPolicy)
+                .idTokenExpirationPolicy(oidcIdTokenExpirationPolicy)
                 .oidcRequestSupport(oidcRequestSupport)
                 .attributeToScopeClaimMapper(oidcAttributeToScopeClaimMapper)
                 .applicationContext(applicationContext)

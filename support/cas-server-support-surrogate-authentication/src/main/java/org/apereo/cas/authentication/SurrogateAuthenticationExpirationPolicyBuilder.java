@@ -41,11 +41,6 @@ public class SurrogateAuthenticationExpirationPolicyBuilder implements Expiratio
         return toTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<TicketGrantingTicket> getTicketType() {
-        return TicketGrantingTicket.class;
-    }
-
     /**
      * To ticket expiration policy.
      *

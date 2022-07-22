@@ -69,7 +69,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Jwt
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
@@ -337,11 +336,6 @@ public abstract class AbstractOAuth20Tests {
             @Override
             public ExpirationPolicy buildTicketExpirationPolicy() {
                 return new AlwaysExpiresExpirationPolicy();
-            }
-
-            @Override
-            public Class<Ticket> getTicketType() {
-                return null;
             }
         };
     }

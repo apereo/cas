@@ -130,11 +130,6 @@ public abstract class BaseTicketRegistryTests {
             public ExpirationPolicy buildTicketExpirationPolicy() {
                 return NeverExpiresExpirationPolicy.INSTANCE;
             }
-
-            @Override
-            public Class<Ticket> getTicketType() {
-                return null;
-            }
         };
     }
 

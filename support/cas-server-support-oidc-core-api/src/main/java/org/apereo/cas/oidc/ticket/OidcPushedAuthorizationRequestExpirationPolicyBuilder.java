@@ -37,11 +37,6 @@ public class OidcPushedAuthorizationRequestExpirationPolicyBuilder implements Ex
         return toTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<OidcPushedAuthorizationRequest> getTicketType() {
-        return OidcPushedAuthorizationRequest.class;
-    }
-
     /**
      * To ticket expiration policy.
      *

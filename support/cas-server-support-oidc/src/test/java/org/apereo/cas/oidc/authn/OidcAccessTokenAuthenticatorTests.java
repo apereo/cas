@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.authn;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -56,8 +55,6 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         assertTrue(userProfile.containsAttribute("exp"));
         assertTrue(userProfile.containsAttribute("aud"));
         assertTrue(userProfile.containsAttribute("email"));
-
-        assertSame(OAuth20AccessToken.class, accessTokenExpirationPolicy.getTicketType());
     }
 
     @Test

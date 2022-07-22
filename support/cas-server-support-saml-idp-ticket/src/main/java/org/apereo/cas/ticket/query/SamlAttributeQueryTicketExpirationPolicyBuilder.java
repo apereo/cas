@@ -35,11 +35,6 @@ public class SamlAttributeQueryTicketExpirationPolicyBuilder implements Expirati
         return toTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<SamlAttributeQueryTicket> getTicketType() {
-        return SamlAttributeQueryTicket.class;
-    }
-
     /**
      * To ticket expiration policy.
      *

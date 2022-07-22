@@ -28,7 +28,6 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -80,11 +79,6 @@ public abstract class BaseCasCoreTests {
             @Override
             public ExpirationPolicy buildTicketExpirationPolicy() {
                 return NeverExpiresExpirationPolicy.INSTANCE;
-            }
-
-            @Override
-            public Class<Ticket> getTicketType() {
-                return null;
             }
         };
     }

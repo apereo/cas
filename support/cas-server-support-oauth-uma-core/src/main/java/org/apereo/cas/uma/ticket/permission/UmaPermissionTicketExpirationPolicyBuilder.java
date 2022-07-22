@@ -33,12 +33,7 @@ public class UmaPermissionTicketExpirationPolicyBuilder implements ExpirationPol
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTicketExpirationPolicy();
     }
-
-    @Override
-    public Class<UmaPermissionTicket> getTicketType() {
-        return UmaPermissionTicket.class;
-    }
-
+    
     /**
      * To ticket expiration policy.
      *

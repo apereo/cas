@@ -34,11 +34,6 @@ public class ServiceTicketExpirationPolicyBuilder implements ExpirationPolicyBui
         return toServiceTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<ServiceTicket> getTicketType() {
-        return ServiceTicket.class;
-    }
-
     /**
      * To service ticket expiration policy.
      *

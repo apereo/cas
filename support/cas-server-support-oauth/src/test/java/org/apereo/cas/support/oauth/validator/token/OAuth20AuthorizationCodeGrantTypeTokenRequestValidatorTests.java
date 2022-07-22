@@ -222,11 +222,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
             public ExpirationPolicy buildTicketExpirationPolicy() {
                 return new OAuth20CodeExpirationPolicy(1, 60);
             }
-
-            @Override
-            public Class getTicketType() {
-                return OAuth20Code.class;
-            }
         };
 
         val oauthCode = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(), expirationPolicy,
