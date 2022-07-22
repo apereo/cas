@@ -57,7 +57,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
         val transaction = authenticationTransactionFactory.newTransaction(service, credentials);
         transaction.collect(authenticationResultBuilder.getAuthentications());
-        this.authenticationTransactionManager.handle(transaction, authenticationResultBuilder);
+        authenticationTransactionManager.handle(transaction, authenticationResultBuilder);
         return authenticationResultBuilder;
     }
 

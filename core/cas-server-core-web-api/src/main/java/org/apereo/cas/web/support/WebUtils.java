@@ -1670,6 +1670,26 @@ public class WebUtils {
     }
 
     /**
+     * Put single sign on sessions.
+     *
+     * @param requestContext the request context
+     * @param sessions       the sessions
+     */
+    public static void putSingleSignOnSessions(final RequestContext requestContext, final List<? extends Serializable> sessions) {
+        requestContext.getFlowScope().put("singleSignOnSessions", sessions);
+    }
+
+    /**
+     * Gets single sign on sessions.
+     *
+     * @param requestContext the request context
+     * @return the single sign on sessions
+     */
+    public static List<? extends Serializable> getSingleSignOnSessions(final RequestContext requestContext) {
+        return (List<? extends Serializable>) requestContext.getFlowScope().get("singleSignOnSessions", List.class);
+    }
+
+    /**
      * Gets authorized services.
      *
      * @param requestContext the request context

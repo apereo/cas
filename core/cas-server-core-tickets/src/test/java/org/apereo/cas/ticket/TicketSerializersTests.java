@@ -61,7 +61,7 @@ public class TicketSerializersTests {
     private TicketFactory defaultTicketFactory;
 
     @Autowired
-    @Qualifier("ticketSerializationManager")
+    @Qualifier(TicketSerializationManager.BEAN_NAME)
     private TicketSerializationManager ticketSerializationManager;
 
     @Test

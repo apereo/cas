@@ -18,6 +18,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
@@ -659,6 +660,8 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
         public Action prepareAccountProfileViewAction(
+            @Qualifier(TicketSerializationManager.BEAN_NAME)
+            final TicketSerializationManager ticketSerializationManager,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
@@ -672,7 +675,7 @@ public class CasSupportActionsConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new PrepareAccountProfileViewAction(ticketRegistry,
-                    servicesManager, casProperties, auditTrailExecutionPlan))
+                    servicesManager, casProperties, auditTrailExecutionPlan, ticketSerializationManager))
                 .withId(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
                 .build()
                 .get();

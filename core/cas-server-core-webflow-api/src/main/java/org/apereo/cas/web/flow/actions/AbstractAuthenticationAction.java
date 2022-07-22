@@ -54,13 +54,13 @@ public abstract class AbstractAuthenticationAction extends BaseCasWebflowAction 
             return event;
         }
 
-        val serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
+        val serviceTicketEvent = serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
         if (serviceTicketEvent != null) {
             fireEventHooks(serviceTicketEvent, requestContext);
             return serviceTicketEvent;
         }
 
-        val finalEvent = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
+        val finalEvent = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
         fireEventHooks(finalEvent, requestContext);
         return finalEvent;
     }

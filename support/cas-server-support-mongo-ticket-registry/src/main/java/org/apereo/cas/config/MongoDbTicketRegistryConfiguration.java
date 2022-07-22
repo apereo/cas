@@ -40,7 +40,7 @@ public class MongoDbTicketRegistryConfiguration {
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
         @Qualifier("mongoDbTicketRegistryTemplate")
         final MongoOperations mongoDbTicketRegistryTemplate,
-        @Qualifier("ticketSerializationManager")
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
         final TicketSerializationManager ticketSerializationManager) {
         val mongo = casProperties.getTicket().getRegistry().getMongo();
         val registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate, ticketSerializationManager);

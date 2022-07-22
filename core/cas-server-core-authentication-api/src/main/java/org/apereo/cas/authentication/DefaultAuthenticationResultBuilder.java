@@ -179,8 +179,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         synchronized (this.authentications) {
             val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
             authenticationBuilder.setPrincipal(primaryPrincipal);
-            LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
         }
+        LOGGER.debug("Determined primary authentication principal to be [{}]", authenticationBuilder.getPrincipal());
 
         authenticationBuilder.setAttributes(authenticationAttributes);
         LOGGER.trace("Collected authentication attributes for this result are [{}]", authenticationAttributes);

@@ -39,6 +39,14 @@
                         <span class="mdc-list-item__text">Attributes</span>
                     </a>
                     <a class="mdc-list-item list-group-item list-group-item-action"
+                       id="linkSessions"
+                       onclick="showPanel('#divSessions');"
+                       href="#divSessions">
+                        <i class="mdi mdi-account-clock fa fa-key"></i>&nbsp;
+                        <span class="mdc-list-item__text">Sessions</span>
+                    </a>
+
+                    <a class="mdc-list-item list-group-item list-group-item-action"
                        th:if="${authorizedServices}"
                        id="linkServices"
                        onclick="showPanel('#divApplications');"

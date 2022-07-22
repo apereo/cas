@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
 @Tag("Tickets")
 public class DefaultTicketStringSerializationManagerTests {
     @Autowired
-    @Qualifier("ticketSerializationManager")
+    @Qualifier(TicketSerializationManager.BEAN_NAME)
     private TicketSerializationManager ticketSerializationManager;
 
     @Autowired
