@@ -39,6 +39,12 @@ public class OidcProperties implements Serializable {
     private OidcCoreProperties core = new OidcCoreProperties();
 
     /**
+     * OIDC core protocol settings.
+     */
+    @NestedConfigurationProperty
+    private OidcIdTokenProperties idToken = new OidcIdTokenProperties();
+
+    /**
      * OIDC webfinger protocol settings.
      */
     @NestedConfigurationProperty
