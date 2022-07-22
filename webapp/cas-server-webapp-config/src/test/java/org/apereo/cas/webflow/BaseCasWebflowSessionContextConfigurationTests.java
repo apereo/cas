@@ -2,6 +2,7 @@ package org.apereo.cas.webflow;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
@@ -207,7 +208,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
                     val principal = CoreAuthenticationTestUtils.getPrincipal();
                     authenticationResultBuilder.collect(authentication);
-                    authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+                    authenticationResultBuilder.collect((Credential) CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
                     val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
 
                     WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
