@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.registry.JmsTicketRegistry;
 import org.apereo.cas.ticket.registry.JmsTicketRegistryQueuePublisher;
 import org.apereo.cas.ticket.registry.JmsTicketRegistryQueueReceiver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -73,8 +74,11 @@ public class JmsTicketRegistryConfiguration {
     public MessageConverter jacksonJmsMessageTicketRegistryConverter() {
         val converter = new MappingJackson2MessageConverter();
         val mapper = JacksonObjectMapperFactory.builder()
-            .defaultTypingEnabled(true).defaultViewInclusion(false)
-            .writeDatesAsTimestamps(true).build().toObjectMapper();
+            .defaultTypingEnabled(true)
+            .defaultViewInclusion(false)
+            .writeDatesAsTimestamps(true)
+            .build()
+            .toObjectMapper();
         converter.setObjectMapper(mapper);
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("@class");
@@ -84,6 +88,8 @@ public class JmsTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
+        final TicketSerializationManager ticketSerializationManager,
         @Qualifier("messageQueueTicketRegistryIdentifier")
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         final CasConfigurationProperties casProperties,
@@ -94,7 +100,8 @@ public class JmsTicketRegistryConfiguration {
         val jms = casProperties.getTicket().getRegistry().getJms();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
         LOGGER.debug("Configuring JMS ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
-        val registry = new JmsTicketRegistry(new JmsTicketRegistryQueuePublisher(jmsTemplate), messageQueueTicketRegistryIdentifier);
+        val registry = new JmsTicketRegistry(new JmsTicketRegistryQueuePublisher(jmsTemplate),
+            messageQueueTicketRegistryIdentifier, ticketSerializationManager);
         registry.setCipherExecutor(cipher);
         return registry;
     }

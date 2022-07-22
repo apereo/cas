@@ -1,21 +1,33 @@
 {
-  "dependencies": "reports,jms-ticket-registry",
+  "dependencies": "reports,jms-ticket-registry,pac4j-webflow",
   "conditions": {
     "docker": "true"
   },
   "properties": [
     "--cas.audit.engine.enabled=false",
-
+    "--logging.level.org.apereo.cas=debug",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
     "--spring.activemq.pool.enabled=true",
     "--spring.activemq.packages.trust-all=true",
 
     "--cas.ticket.registry.jms.crypto.signing.key=CYPAXgmLzDnPjWEdCMeP360LorQjurUFtUgJGvBLdctpGgUDK1NjTnfjEmHJpnQHwQ52KYWpmQ4GlAmsxlDjiQ",
     "--cas.ticket.registry.jms.crypto.encryption.key=7CITiW3O2dOpUYOwHJX3-w",
     "--cas.ticket.registry.jms.queue-identifier=cas-jms-queue-1",
-    
+
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",
+    "--cas.authn.pac4j.saml[0].service-provider-metadata-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].identity-provider-metadata-path=http://localhost:9443/simplesaml/saml2/idp/metadata.php",
+    "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
+
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.enabled-by-default=true"
   ],
-  "initScript": "${PWD}/ci/tests/activemq/run-activemq-server.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

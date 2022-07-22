@@ -26,15 +26,16 @@ public class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQ
 
     @BeforeEach
     public void setup() {
-        ticketRegistry.getObject().deleteAll();
+        ticketRegistry.deleteAll();
     }
 
     @Test
     public void verifyDeleteTicket() throws Exception {
-        val ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-        ticketRegistry.getObject().addTicket(ticket);
+        val ticket = new TicketGrantingTicketImpl("TGT",
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        ticketRegistry.addTicket(ticket);
         val cmd = new DeleteTicketMessageQueueCommand(new PublisherIdentifier(), ticket.getId());
-        cmd.execute(ticketRegistry.getObject());
-        assertTrue(ticketRegistry.getObject().getTickets().isEmpty());
+        cmd.execute(ticketRegistry);
+        assertTrue(ticketRegistry.getTickets().isEmpty());
     }
 }
