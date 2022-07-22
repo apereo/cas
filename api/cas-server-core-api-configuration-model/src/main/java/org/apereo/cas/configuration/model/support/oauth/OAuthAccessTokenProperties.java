@@ -32,14 +32,14 @@ public class OAuthAccessTokenProperties implements Serializable {
      * Hard timeout to kill the access token and expire it.
      */
     @DurationCapable
-    private String maxTimeToLiveInSeconds = "PT28800S";
+    private String maxTimeToLiveInSeconds = "PT8H";
 
     /**
      * Sliding window for the access token expiration policy.
      * Essentially, this is an idle time out.
      */
     @DurationCapable
-    private String timeToKillInSeconds = "PT7200S";
+    private String timeToKillInSeconds = "PT2H";
 
     /**
      * Create access token as JWTs.

@@ -75,6 +75,12 @@ The collection of end-to-end browser tests based on Puppeteer continue to grow t
 more use cases and scenarios. At the moment, total number of jobs stands at approximately `314` distinct
 scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 
+### OpenID Connect ID Tokens
+
+The expiration policy of [OpenID Connect ID Tokens](../authentication/OIDC-Authentication-TokenExpirationPolicy.html)
+is now separated from SSO expiration policy and session length, and is given its own independant setting in the CAS
+configuration schema, though the default continues to match the default SSO session timeout.
+
 ## Other Stuff
      
 - The configuration for the embedded Apache Tomcat is now allowed to create multiple connectors and ports. The `secure` and `scheme` attributes are also 
@@ -90,6 +96,7 @@ scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 - The *issuer length* setting that allows one to skew the SAML1 conditions can now be specified as a *Duration*.
 - On successful login attempts and in case no `service` is specified, CAS will redirect to [Account profile management](../registration/Account-Management-Overview.html) in case the feature is enabled.
 - [RESTful attribute release policy](../integration/Attribute-Release-Policies.html) is now able to optionally remap received attributes.
+- The CAS Gradle build is now able to support `aarch64` architectures for internal builds. 
 
 ## Library Upgrades
 
@@ -112,6 +119,7 @@ scenarios. The overall test coverage of the CAS codebase is approximately `94%`.
 - Apache Log4j
 - Apache Curator
 - Spring Boot Admin
+- Apache Tomcat
 - Hibernate
 - Lettuce
 - Infinispan
