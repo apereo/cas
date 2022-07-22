@@ -103,6 +103,8 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         systemProperties = System.properties
         
         def list = []
+        list.add("-Djava.net.preferIPv4Stack=true ")
+        list.add("-Djava.net.preferIPv4Addresses=true")
         list.add("-XX:TieredStopAtLevel=1")
         list.add("--add-modules")
         list.add("java.se")
