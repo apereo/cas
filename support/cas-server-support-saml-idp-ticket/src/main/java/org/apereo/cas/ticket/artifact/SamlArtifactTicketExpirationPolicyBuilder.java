@@ -31,11 +31,6 @@ public class SamlArtifactTicketExpirationPolicyBuilder implements ExpirationPoli
         return toTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<SamlArtifactTicket> getTicketType() {
-        return SamlArtifactTicket.class;
-    }
-
     /**
      * To ticket expiration policy.
      *

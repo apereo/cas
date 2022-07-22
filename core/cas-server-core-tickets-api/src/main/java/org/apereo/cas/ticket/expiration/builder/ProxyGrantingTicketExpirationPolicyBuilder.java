@@ -38,8 +38,4 @@ public class ProxyGrantingTicketExpirationPolicyBuilder implements ExpirationPol
         return ticketGrantingTicketExpirationPolicyBuilder.buildTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<ProxyGrantingTicket> getTicketType() {
-        return ProxyGrantingTicket.class;
-    }
 }

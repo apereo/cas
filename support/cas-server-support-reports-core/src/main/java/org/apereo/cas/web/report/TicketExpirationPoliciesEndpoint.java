@@ -79,7 +79,7 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
         expirationPolicyBuilders.forEach(Unchecked.consumer(builder -> {
             val policy = builder.buildTicketExpirationPolicy();
             val details = getTicketExpirationPolicyDetails(policy);
-            model.put(builder.getTicketType().getName(), details);
+            model.put(builder.getClass().getSimpleName(), details);
         }));
 
         val registeredService = StringUtils.isNotBlank(serviceId)

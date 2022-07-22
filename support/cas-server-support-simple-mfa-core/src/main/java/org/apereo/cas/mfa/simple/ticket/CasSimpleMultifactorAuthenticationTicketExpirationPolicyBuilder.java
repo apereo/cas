@@ -35,11 +35,6 @@ public class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder imp
         return toTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<TransientSessionTicket> getTicketType() {
-        return TransientSessionTicket.class;
-    }
-
     /**
      * To ticket expiration policy.
      *

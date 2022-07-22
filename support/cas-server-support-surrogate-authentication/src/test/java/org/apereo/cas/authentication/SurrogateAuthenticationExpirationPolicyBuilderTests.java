@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
 
 import lombok.val;
@@ -31,7 +30,6 @@ public class SurrogateAuthenticationExpirationPolicyBuilderTests {
     public void verifyOperation() {
         val builder = new SurrogateAuthenticationExpirationPolicyBuilder(
             new TicketGrantingTicketExpirationPolicyBuilder(casProperties), casProperties);
-        assertSame(TicketGrantingTicket.class, builder.getTicketType());
         assertNotNull(builder.buildTicketExpirationPolicy());
     }
 }

@@ -20,6 +20,5 @@ public class OAuth20DeviceTokenExpirationPolicyBuilderTests extends AbstractOAut
     public void verifyOperation() {
         val results = deviceTokenExpirationPolicy.buildTicketExpirationPolicy();
         assertNotNull(results);
-        assertSame(OAuth20DeviceToken.class, deviceTokenExpirationPolicy.getTicketType());
     }
 }

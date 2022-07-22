@@ -2,7 +2,6 @@ package org.apereo.cas.mfa.simple.ticket;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
-import org.apereo.cas.ticket.TransientSessionTicket;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -30,6 +29,6 @@ public class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilderTest
     @Test
     public void verifyTicketType() {
         val builder = new CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(casProperties);
-        assertSame(TransientSessionTicket.class, builder.getTicketType());
+       assertNotNull(builder.toTicketExpirationPolicy());
     }
 }

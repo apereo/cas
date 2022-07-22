@@ -35,11 +35,6 @@ public class TransientSessionTicketExpirationPolicyBuilder implements Expiration
         return toTransientSessionTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<TransientSessionTicket> getTicketType() {
-        return TransientSessionTicket.class;
-    }
-
     /**
      * To transient ticket expiration policy.
      *

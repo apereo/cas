@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestValidator;
+import org.apereo.cas.oidc.token.OidcIdTokenExpirationPolicyBuilder;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
@@ -25,6 +26,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -222,6 +224,13 @@ public class OidcResponseConfiguration {
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcIdTokenGeneratorService(oidcConfigurationContext);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oidcIdTokenExpirationPolicy")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ExpirationPolicyBuilder oidcIdTokenExpirationPolicy(final CasConfigurationProperties casProperties) {
+            return new OidcIdTokenExpirationPolicyBuilder(casProperties);
         }
     }
 

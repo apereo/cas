@@ -50,11 +50,6 @@ public class TicketGrantingTicketExpirationPolicyBuilder implements ExpirationPo
         return p;
     }
 
-    @Override
-    public Class<TicketGrantingTicket> getTicketType() {
-        return TicketGrantingTicket.class;
-    }
-
     /**
      * To ticket-granting ticket expiration policy.
      *

@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -22,7 +23,7 @@ import java.util.Optional;
  */
 @SuperBuilder
 @ToString(doNotUseGetters = true, exclude = "registeredService")
-public class OAuth20TokenGeneratedResult {
+public class OAuth20TokenGeneratedResult implements Serializable {
     private final OAuth20AccessToken accessToken;
 
     private final OAuth20RefreshToken refreshToken;

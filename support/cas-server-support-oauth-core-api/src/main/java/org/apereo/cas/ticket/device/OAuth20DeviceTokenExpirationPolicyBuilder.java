@@ -32,12 +32,7 @@ public class OAuth20DeviceTokenExpirationPolicyBuilder implements ExpirationPoli
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTicketExpirationPolicy();
     }
-
-    @Override
-    public Class<OAuth20DeviceToken> getTicketType() {
-        return OAuth20DeviceToken.class;
-    }
-
+    
     /**
      * To ticket expiration policy.
      *

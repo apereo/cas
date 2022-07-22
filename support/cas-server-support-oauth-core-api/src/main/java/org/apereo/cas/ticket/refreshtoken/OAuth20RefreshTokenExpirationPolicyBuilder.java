@@ -33,11 +33,6 @@ public class OAuth20RefreshTokenExpirationPolicyBuilder implements ExpirationPol
         return toTicketExpirationPolicy();
     }
 
-    @Override
-    public Class<OAuth20RefreshToken> getTicketType() {
-        return OAuth20RefreshToken.class;
-    }
-
     /**
      * To ticket expiration policy.
      *
