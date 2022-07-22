@@ -4,6 +4,7 @@ import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.account.LdapPasswordlessUserAccountStore;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -39,7 +40,7 @@ public class LdapPasswordlessAuthenticationConfiguration {
                 val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
                 val ldap = accounts.getLdap();
                 val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-                return new LdapPasswordlessUserAccountStore(connectionFactory, ldap);
+                return new LdapPasswordlessUserAccountStore(new LdapConnectionFactory(connectionFactory), ldap);
             })
             .otherwiseProxy()
             .get();

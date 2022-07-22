@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.LdapUserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -52,7 +53,8 @@ public class GraphicalUserAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer(
-        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
@@ -77,7 +79,7 @@ public class GraphicalUserAuthenticationConfiguration {
         val ldap = gua.getLdap();
         if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())
             && StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getImageAttribute())) {
-            val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(gua.getLdap());
+            val connectionFactory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()));
             return new LdapUserGraphicalAuthenticationRepository(casProperties, connectionFactory);
         }
         throw new BeanCreationException("A repository instance must be configured to locate user-defined graphics");

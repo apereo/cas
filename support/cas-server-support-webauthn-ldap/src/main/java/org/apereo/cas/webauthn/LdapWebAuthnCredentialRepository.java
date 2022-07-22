@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
@@ -39,13 +40,13 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepository implements DisposableBean {
-    private final ConnectionFactory connectionFactory;
+    private final LdapConnectionFactory connectionFactory;
 
     public LdapWebAuthnCredentialRepository(final ConnectionFactory connectionFactory,
-        final CasConfigurationProperties properties,
-        final CipherExecutor<String, String> cipherExecutor) {
+                                            final CasConfigurationProperties properties,
+                                            final CipherExecutor<String, String> cipherExecutor) {
         super(properties, cipherExecutor);
-        this.connectionFactory = connectionFactory;
+        this.connectionFactory = new LdapConnectionFactory(connectionFactory);
     }
 
     @Override
@@ -124,7 +125,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
             val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, CollectionUtils.wrapList(principal.trim().toLowerCase()));
             LOGGER.debug("Locating LDAP entry via filter [{}] based on attribute [{}]", filter,
                 ldapProperties.getAccountAttributeName());
-            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
+            val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),
                 filter, ldapProperties.getPageSize(), ldapProperties.getAccountAttributeName());
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getEntry();
@@ -144,7 +145,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
             val attrMap = new HashMap<String, Set<String>>();
             attrMap.put(ldapProperties.getAccountAttributeName(), accounts);
             LOGGER.debug("Storing records [{}] at LDAP attribute [{}] for [{}]", accounts, attrMap.keySet(), entry.getDn());
-            return LdapUtils.executeModifyOperation(entry.getDn(), connectionFactory, CollectionUtils.wrap(attrMap));
+            return connectionFactory.executeModifyOperation(entry.getDn(), CollectionUtils.wrap(attrMap));
         }
         return false;
     }
@@ -155,7 +156,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
         val filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
         try {
             LOGGER.debug("Locating LDAP entries via filter [{}] based on attribute [{}]", filter, att);
-            val response = LdapUtils.executeSearchOperation(connectionFactory,
+            val response = connectionFactory.executeSearchOperation(
                 ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize(), att);
             if (LdapUtils.containsResultEntry(response)) {
                 val results = response.getEntries();

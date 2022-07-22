@@ -2,13 +2,13 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
@@ -26,13 +26,13 @@ import java.util.Collections;
  */
 @Slf4j
 public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor, DisposableBean {
-    private final ConnectionFactory searchFactory;
+    private final LdapConnectionFactory searchFactory;
 
     private final AbstractLdapSearchProperties ldapProperties;
 
     public LdapPasswordSynchronizationAuthenticationPostProcessor(final AbstractLdapSearchProperties properties) {
         this.ldapProperties = properties;
-        this.searchFactory = LdapUtils.newLdaptiveConnectionFactory(properties);
+        this.searchFactory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(properties));
     }
 
     @Override
@@ -54,14 +54,14 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Collections.singletonList(credential.getUsername()));
             LOGGER.trace("Constructed LDAP filter [{}] to locate user and update password", filter);
 
-            val response = LdapUtils.executeSearchOperation(searchFactory, ldapProperties.getBaseDn(), filter, this.ldapProperties.getPageSize());
+            val response = searchFactory.executeSearchOperation(ldapProperties.getBaseDn(), filter, this.ldapProperties.getPageSize());
             LOGGER.debug("LDAP response is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
                 val dn = response.getEntry().getDn();
                 LOGGER.trace("Updating account password for [{}]", dn);
 
-                val operation = new ModifyOperation(searchFactory);
+                val operation = new ModifyOperation(searchFactory.getConnectionFactory());
                 val mod = new AttributeModification(AttributeModification.Type.REPLACE, getLdapPasswordAttribute(credential));
                 val updateResponse = operation.execute(new ModifyRequest(dn, mod));
                 LOGGER.trace("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());

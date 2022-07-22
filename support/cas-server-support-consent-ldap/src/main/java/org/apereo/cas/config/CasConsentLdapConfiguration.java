@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.LdapConsentRepository;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -35,7 +36,7 @@ public class CasConsentLdapConfiguration {
         @Qualifier("consentLdapConnectionFactory")
         final ConnectionFactory consentLdapConnectionFactory) {
         val ldap = casProperties.getConsent().getLdap();
-        return new LdapConsentRepository(consentLdapConnectionFactory, ldap);
+        return new LdapConsentRepository(new LdapConnectionFactory(consentLdapConnectionFactory), ldap);
     }
 
     @Bean

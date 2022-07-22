@@ -4,13 +4,13 @@ import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationLdapAccountsProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ldaptive.ConnectionFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -26,7 +26,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccountStore {
-    private final ConnectionFactory connectionFactory;
+    private final LdapConnectionFactory connectionFactory;
 
     private final PasswordlessAuthenticationLdapAccountsProperties ldapProperties;
 
@@ -38,7 +38,7 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                 CollectionUtils.wrap(username));
 
             LOGGER.debug("Constructed LDAP filter [{}] to locate passwordless account", filter);
-            val response = LdapUtils.executeSearchOperation(connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
+            val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
             LOGGER.debug("LDAP response for passwordless account is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {

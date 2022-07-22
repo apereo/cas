@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.consent.LdapConsentProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -16,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
@@ -43,7 +43,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final ConnectionFactory connectionFactory;
+    private final LdapConnectionFactory connectionFactory;
 
     private final LdapConsentProperties ldapProperties;
 
@@ -221,7 +221,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
         attrMap.put(this.ldapProperties.getConsentAttributeName(), newConsent);
 
         LOGGER.debug("Storing consent decisions [{}] at LDAP attribute [{}] for [{}]", newConsent, attrMap.keySet(), entry.getDn());
-        return LdapUtils.executeModifyOperation(entry.getDn(), this.connectionFactory, CollectionUtils.wrap(attrMap));
+        return connectionFactory.executeModifyOperation(entry.getDn(), CollectionUtils.wrap(attrMap));
     }
 
     /**
@@ -235,7 +235,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
             val searchFilter = '(' + ldapProperties.getSearchFilter() + ')';
             val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, CollectionUtils.wrapList(principal));
             LOGGER.debug("Locating consent LDAP entry via filter [{}] based on attribute [{}]", filter, ldapProperties.getConsentAttributeName());
-            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
+            val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),
                 filter, ldapProperties.getPageSize(), ldapProperties.getConsentAttributeName());
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getEntry();
@@ -258,7 +258,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
         try {
             val filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
             LOGGER.debug("Locating consent LDAP entries via filter [{}] based on attribute [{}]", filter, att);
-            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
+            val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),
                 filter, ldapProperties.getPageSize(), att);
             if (LdapUtils.containsResultEntry(response)) {
                 val results = response.getEntries();
