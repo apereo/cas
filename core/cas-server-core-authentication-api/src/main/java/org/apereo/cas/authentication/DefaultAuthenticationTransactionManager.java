@@ -29,13 +29,13 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
     public AuthenticationTransactionManager handle(@NonNull final AuthenticationTransaction authenticationTransaction,
                                                    @NonNull final AuthenticationResultBuilder authenticationResult)
         throws AuthenticationException {
-        if (!authenticationTransaction.getCredentials().isEmpty()) {
-            val authentication = this.authenticationManager.authenticate(authenticationTransaction);
+        if (authenticationTransaction.getCredentials().isEmpty()) {
+            LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
+        } else {
+            val authentication = authenticationManager.authenticate(authenticationTransaction);
             LOGGER.trace("Successful authentication; Collecting authentication result [{}]", authentication);
             publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
             authenticationResult.collect(authentication);
-        } else {
-            LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
         }
         return this;
     }

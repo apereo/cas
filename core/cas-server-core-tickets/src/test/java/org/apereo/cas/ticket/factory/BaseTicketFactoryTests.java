@@ -56,7 +56,7 @@ public abstract class BaseTicketFactoryTests {
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("ticketSerializationManager")
+    @Qualifier(TicketSerializationManager.BEAN_NAME)
     protected TicketSerializationManager ticketSerializationManager;
 
     @Autowired

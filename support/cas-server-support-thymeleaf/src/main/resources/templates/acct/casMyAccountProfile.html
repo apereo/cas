@@ -41,7 +41,7 @@
                     </td>
                     <td width="85%">
                         <div th:replace="fragments/accountprofileoverview :: overview">
-                            <a href="fragments/accountprofilemfadevices.html">Fragment goes here</a>
+                            <a href="fragments/accountprofileoverview.html">Fragment goes here</a>
                         </div>
 
                         <div th:replace="fragments/accountprofilemfadevices :: mfadevices">
@@ -58,6 +58,9 @@
 
                         <div th:replace="fragments/accountprofileapplications :: applications">
                             <a href="fragments/accountprofileapplications.html">Fragment goes here</a>
+                        </div>
+                        <div th:replace="fragments/accountprofilesessions :: sessions">
+                            <a href="fragments/accountprofilesessions.html">Fragment goes here</a>
                         </div>
 
                         <div th:replace="fragments/accountprofileconsent :: consent">

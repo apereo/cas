@@ -40,7 +40,7 @@ public class CassandraTicketRegistryConfiguration {
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
         @Qualifier("cassandraTicketRegistrySessionFactory")
         final CassandraSessionFactory cassandraTicketRegistrySessionFactory,
-        @Qualifier("ticketSerializationManager")
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
         final TicketSerializationManager ticketSerializationManager) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
         val registry = new CassandraTicketRegistry(ticketCatalog, cassandraTicketRegistrySessionFactory,

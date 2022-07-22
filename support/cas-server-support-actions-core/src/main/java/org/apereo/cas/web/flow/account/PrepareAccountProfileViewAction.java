@@ -7,7 +7,10 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -22,6 +25,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serializable;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -48,6 +52,8 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
     private final AuditTrailExecutionPlan auditTrailManager;
 
+    private final TicketSerializationManager ticketSerializationManager;
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
@@ -62,9 +68,18 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
                 buildAuthorizedServices(requestContext, ticket, service);
             }
             buildAuditLogRecords(requestContext, ticket);
+            buildActiveSingleSignOnSessions(requestContext, ticket);
         });
 
         return success();
+    }
+
+    protected void buildActiveSingleSignOnSessions(final RequestContext requestContext, final TicketGrantingTicket ticket) {
+        val activeSessions = ticketRegistry.getSessionsFor(ticket.getAuthentication().getPrincipal().getId())
+            .map(TicketGrantingTicket.class::cast)
+            .map(SingleSignOnSession::new)
+            .collect(Collectors.toList());
+        WebUtils.putSingleSignOnSessions(requestContext, activeSessions);
     }
 
     protected void buildAuthorizedServices(final RequestContext requestContext, final TicketGrantingTicket ticket,
@@ -106,6 +121,26 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
                 context.getApplicationCode(), context.getWhenActionWasPerformed(), context.getClientIpAddress(),
                 context.getServerIpAddress(), context.getServerIpAddress());
             this.json = FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
+        }
+    }
+
+    @Getter
+    @SuppressWarnings("UnusedMethod")
+    class SingleSignOnSession implements Serializable {
+        private static final long serialVersionUID = 8935451143814878214L;
+
+        private final String payload;
+
+        private final String principal;
+
+        private final String authenticationDate;
+
+        SingleSignOnSession(final TicketGrantingTicket ticket) {
+            this.payload = ticketSerializationManager.serializeTicket(ticket);
+            this.principal = ticket.getAuthentication().getPrincipal().getId();
+
+            val dateFormat = new ISOStandardDateFormat();
+            this.authenticationDate = dateFormat.format(DateTimeUtils.dateOf(ticket.getAuthentication().getAuthenticationDate()));
         }
     }
 }

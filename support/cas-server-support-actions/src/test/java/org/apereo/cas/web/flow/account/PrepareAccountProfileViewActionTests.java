@@ -4,14 +4,20 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.AbstractWebflowActionsTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.apache.commons.text.RandomStringGenerator;
+import org.apache.commons.text.WordUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +63,8 @@ public class PrepareAccountProfileViewActionTests extends AbstractWebflowActions
         getServicesManager().save(registeredService1);
 
         val context = new MockRequestContext();
-        val tgt = new MockTicketGrantingTicket("casuser");
+        val tgt = new TicketGrantingTicketImpl(RandomUtils.randomAlphabetic(8),
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         getTicketRegistry().addTicket(tgt);
 
@@ -68,10 +75,15 @@ public class PrepareAccountProfileViewActionTests extends AbstractWebflowActions
         val result = prepareAccountProfileViewAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         assertNotNull(WebUtils.getAuthorizedServices(context));
+        assertNotNull(WebUtils.getSingleSignOnSessions(context));
         val list = WebUtils.getAuthorizedServices(context);
         assertFalse(list.isEmpty());
         assertNotNull(WebUtils.getAuthentication(context));
 
+        val session = (PrepareAccountProfileViewAction.SingleSignOnSession) WebUtils.getSingleSignOnSessions(context).get(0);
+        assertNotNull(session.getAuthenticationDate());
+        assertNotNull(session.getPayload());
+        assertNotNull(session.getPrincipal());
         assertTrue(context.getFlowScope().contains("auditLog"));
     }
 
