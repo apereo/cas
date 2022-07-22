@@ -1,6 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -73,7 +74,7 @@ public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     public void verifyNoConsent() throws Exception {
         val ldap = casProperties.getConsent().getLdap();
         val factory = mock(ConnectionFactory.class);
-        val repo = new LdapConsentRepository(factory, ldap);
+        val repo = new LdapConsentRepository(new LdapConnectionFactory(factory), ldap);
         assertTrue(repo.findConsentDecisions().isEmpty());
 
         val decision = BUILDER.build(SVC, REG_SVC, "unknown", ATTR);

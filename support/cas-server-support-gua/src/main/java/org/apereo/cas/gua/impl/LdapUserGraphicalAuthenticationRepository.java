@@ -3,13 +3,13 @@ package org.apereo.cas.gua.impl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.io.ByteSource;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
@@ -26,7 +26,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
 
     private final CasConfigurationProperties casProperties;
 
-    private final ConnectionFactory connectionFactory;
+    private final LdapConnectionFactory connectionFactory;
 
     @Override
     public void destroy() {
@@ -53,8 +53,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
             val filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(id));
-            return LdapUtils.executeSearchOperation(
-                this.connectionFactory,
+            return connectionFactory.executeSearchOperation(
                 gua.getLdap().getBaseDn(),
                 filter,
                 gua.getLdap().getPageSize(),

@@ -37,9 +37,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.support.ldap.ActiveDirectoryLdapEntryHandler;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ActivePassiveConnectionStrategy;
-import org.ldaptive.AddOperation;
-import org.ldaptive.AddRequest;
-import org.ldaptive.AttributeModification;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.CompareConnectionValidator;
 import org.ldaptive.CompareRequest;
@@ -47,19 +44,12 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.DeleteOperation;
-import org.ldaptive.DeleteRequest;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.FilterTemplate;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.ModifyOperation;
-import org.ldaptive.ModifyRequest;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.RandomConnectionStrategy;
-import org.ldaptive.ResultCode;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchConnectionValidator;
@@ -68,7 +58,6 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchScope;
 import org.ldaptive.SimpleBindRequest;
-import org.ldaptive.ad.UnicodePwdAttribute;
 import org.ldaptive.ad.extended.FastBindConnectionInitializer;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
@@ -95,9 +84,6 @@ import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationRequestHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
-import org.ldaptive.control.util.PagedResultsClient;
-import org.ldaptive.extended.ExtendedOperation;
-import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.LdapEntryHandler;
@@ -134,7 +120,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -229,71 +214,6 @@ public class LdapUtils {
         return nullValue;
     }
 
-    /**
-     * Execute search operation.
-     *
-     * @param connectionFactory the connection factory
-     * @param baseDn            the base dn
-     * @param filter            the filter
-     * @param pageSize          the page size
-     * @param returnAttributes  the return attributes
-     * @return the response
-     * @throws LdapException the ldap exception
-     */
-    public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
-                                                        final String baseDn,
-                                                        final FilterTemplate filter,
-                                                        final int pageSize,
-                                                        final String... returnAttributes) throws LdapException {
-        return executeSearchOperation(connectionFactory, baseDn,
-            filter, pageSize, null, returnAttributes);
-    }
-
-    /**
-     * Execute search operation.
-     *
-     * @param connectionFactory the connection factory
-     * @param baseDn            the base dn
-     * @param filter            the filter
-     * @param pageSize          the page size
-     * @param binaryAttributes  the binary attributes
-     * @param returnAttributes  the return attributes
-     * @return the response
-     * @throws LdapException the ldap exception
-     */
-    public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
-                                                        final String baseDn,
-                                                        final FilterTemplate filter,
-                                                        final int pageSize,
-                                                        final String[] binaryAttributes,
-                                                        final String[] returnAttributes) throws LdapException {
-        val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
-        if (pageSize <= 0) {
-            val searchOperation = new SearchOperation(connectionFactory);
-            searchOperation.setSearchResultHandlers(new FollowSearchReferralHandler());
-            return searchOperation.execute(request);
-        }
-        val client = new PagedResultsClient(connectionFactory, pageSize);
-        return client.executeToCompletion(request);
-    }
-
-    /**
-     * Execute search operation response.
-     *
-     * @param connectionFactory the connection factory
-     * @param baseDn            the base dn
-     * @param filter            the filter
-     * @param pageSize          the page size
-     * @return the response
-     * @throws LdapException the ldap exception
-     */
-    public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
-                                                        final String baseDn,
-                                                        final FilterTemplate filter,
-                                                        final int pageSize) throws LdapException {
-        return executeSearchOperation(connectionFactory, baseDn, filter, pageSize,
-            ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
-    }
 
     /**
      * Checks to see if response has a result.
@@ -303,150 +223,6 @@ public class LdapUtils {
      */
     public static boolean containsResultEntry(final SearchResponse response) {
         return response != null && response.getEntry() != null;
-    }
-
-    /**
-     * Execute a password modify operation.
-     *
-     * @param currentDn         the current dn
-     * @param connectionFactory the connection factory
-     * @param oldPassword       the old password
-     * @param newPassword       the new password
-     * @param type              the type
-     * @return true /false
-     * <p>
-     * AD NOTE: Resetting passwords requires binding to AD as user with privileges to reset other users passwords
-     * and it does not validate old password or respect directory policies such as history or minimum password age.
-     * Changing a password with the old password does respect directory policies and requires no account operator
-     * privileges on the bind user. Pass in blank old password if reset is in order (e.g. forgot password) vs.
-     * letting user change their own (e.g. expiring) password.
-     */
-    public static boolean executePasswordModifyOperation(final String currentDn,
-                                                         final ConnectionFactory connectionFactory,
-                                                         final String oldPassword,
-                                                         final String newPassword,
-                                                         final AbstractLdapProperties.LdapType type) {
-        try {
-            val connConfig = connectionFactory.getConnectionConfig();
-            val secureLdap = connConfig.getLdapUrl() != null && !connConfig.getLdapUrl().toLowerCase().contains("ldaps://");
-            if (connConfig.getUseStartTLS() || secureLdap) {
-                LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
-                            + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
-                    type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
-            }
-            if (type == AbstractLdapProperties.LdapType.AD) {
-                LOGGER.debug("Executing password change op for active directory based on "
-                             + "[https://support.microsoft.com/en-us/kb/269190]"
-                             + "change type: [{}]", StringUtils.isBlank(oldPassword) ? "reset" : "change");
-                val operation = new ModifyOperation(connectionFactory);
-                val response = StringUtils.isBlank(oldPassword)
-                    ?
-                    operation.execute(new ModifyRequest(currentDn,
-                        new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(newPassword))))
-                    :
-                    operation.execute(new ModifyRequest(currentDn,
-                        new AttributeModification(AttributeModification.Type.DELETE, new UnicodePwdAttribute(oldPassword)),
-                        new AttributeModification(AttributeModification.Type.ADD, new UnicodePwdAttribute(newPassword))));
-                LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-                return response.getResultCode() == ResultCode.SUCCESS;
-            }
-
-            LOGGER.debug("Executing password modification op for generic LDAP");
-            val operation = new ExtendedOperation(connectionFactory);
-            val response = operation.execute(new PasswordModifyRequest(currentDn,
-                StringUtils.isNotBlank(oldPassword) ? oldPassword : null,
-                newPassword));
-            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-            return response.getResultCode() == ResultCode.SUCCESS;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
-    }
-
-    /**
-     * Execute modify operation boolean.
-     *
-     * @param currentDn         the current dn
-     * @param connectionFactory the connection factory
-     * @param attributes        the attributes
-     * @return true/false
-     */
-    public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory,
-                                                 final Map<String, Set<String>> attributes) {
-        try {
-            val operation = new ModifyOperation(connectionFactory);
-            val mods = attributes.entrySet()
-                .stream()
-                .map(entry -> {
-                    val values = entry.getValue().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-                    val attr = new LdapAttribute(entry.getKey(), values);
-                    LOGGER.debug("Constructed new attribute [{}]", attr);
-                    return new AttributeModification(AttributeModification.Type.REPLACE, attr);
-                })
-                .toArray(AttributeModification[]::new);
-            val request = new ModifyRequest(currentDn, mods);
-            val response = operation.execute(request);
-            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-            return response.getResultCode() == ResultCode.SUCCESS;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
-    }
-
-    /**
-     * Execute modify operation boolean.
-     *
-     * @param currentDn         the current dn
-     * @param connectionFactory the connection factory
-     * @param entry             the entry
-     * @return true/false
-     */
-    public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory, final LdapEntry entry) {
-        final Map<String, Set<String>> attributes = entry.getAttributes().stream()
-            .collect(Collectors.toMap(LdapAttribute::getName, ldapAttribute -> new HashSet<>(ldapAttribute.getStringValues())));
-
-        return executeModifyOperation(currentDn, connectionFactory, attributes);
-    }
-
-    /**
-     * Execute add operation boolean.
-     *
-     * @param connectionFactory the connection factory
-     * @param entry             the entry
-     * @return true/false
-     */
-    public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
-        try {
-            val operation = new AddOperation(connectionFactory);
-            val response = operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
-            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-            return response.getResultCode() == ResultCode.SUCCESS;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
-    }
-
-    /**
-     * Execute delete operation boolean.
-     *
-     * @param connectionFactory the connection factory
-     * @param entry             the entry
-     * @return true/false
-     */
-    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
-        try {
-            val delete = new DeleteOperation(connectionFactory);
-            val request = new DeleteRequest(entry.getDn());
-            val response = delete.execute(request);
-            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-            return response.getResultCode() == ResultCode.SUCCESS;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
     }
 
     /**
@@ -508,7 +284,8 @@ public class LdapUtils {
      * @param returnAttributes the return attributes
      * @return the search executor
      */
-    public static SearchRequest newLdaptiveSearchRequest(final String baseDn, final String filterQuery,
+    public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
+                                                         final String filterQuery,
                                                          final List<String> params,
                                                          final String[] returnAttributes) {
         val request = new SearchRequest();

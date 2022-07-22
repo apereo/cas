@@ -3,6 +3,7 @@ package org.apereo.cas.gauth.credential;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.LdapGoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -45,7 +46,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private final ConnectionFactory connectionFactory;
+    private final LdapConnectionFactory connectionFactory;
 
     private final LdapGoogleAuthenticatorMultifactorProperties ldapProperties;
 
@@ -55,7 +56,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
                                                             final ConnectionFactory connectionFactory,
                                                             final LdapGoogleAuthenticatorMultifactorProperties ldapProperties) {
         super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
-        this.connectionFactory = connectionFactory;
+        this.connectionFactory = new LdapConnectionFactory(connectionFactory);
         this.ldapProperties = ldapProperties;
     }
 
@@ -132,7 +133,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         LOGGER.debug("Storing account [{}]", account);
         val entry = locateLdapEntryFor(account.getUsername());
         val ldapAttribute = Objects.requireNonNull(entry,
-            () -> String.format("Unable to locate LDAP entry for %s", account.getUsername()))
+                () -> String.format("Unable to locate LDAP entry for %s", account.getUsername()))
             .getAttribute(ldapProperties.getAccountAttributeName());
 
         if (ldapAttribute == null || ldapAttribute.getStringValues().isEmpty()) {
@@ -237,7 +238,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         val attrMap = new HashMap<String, Set<String>>();
         attrMap.put(ldapProperties.getAccountAttributeName(), accounts);
         LOGGER.debug("Storing records [{}] at LDAP attribute [{}] for [{}]", accounts, attrMap.keySet(), entry.getDn());
-        return LdapUtils.executeModifyOperation(entry.getDn(), connectionFactory, CollectionUtils.wrap(attrMap));
+        return connectionFactory.executeModifyOperation(entry.getDn(), CollectionUtils.wrap(attrMap));
     }
 
     private Collection<LdapEntry> locateLdapEntriesForAll() {
@@ -245,7 +246,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
             val att = ldapProperties.getAccountAttributeName();
             val filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
             LOGGER.debug("Locating LDAP entries via filter [{}] based on attribute [{}]", filter, att);
-            val response = LdapUtils.executeSearchOperation(connectionFactory,
+            val response = connectionFactory.executeSearchOperation(
                 ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize(), att);
             if (LdapUtils.containsResultEntry(response)) {
                 val results = response.getEntries();
@@ -263,7 +264,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
             val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, CollectionUtils.wrapList(principal));
             LOGGER.debug("Locating LDAP entry via filter [{}] based on attribute [{}]", filter,
                 ldapProperties.getAccountAttributeName());
-            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
+            val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),
                 filter, ldapProperties.getPageSize(), ldapProperties.getAccountAttributeName());
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getEntry();
@@ -280,7 +281,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
             val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter);
             LOGGER.debug("Locating LDAP entry via filter [{}] based on attribute [{}]", filter,
                 ldapProperties.getAccountAttributeName());
-            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
+            val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),
                 filter, ldapProperties.getPageSize(), ldapProperties.getAccountAttributeName());
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getEntry();
