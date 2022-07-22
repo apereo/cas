@@ -64,12 +64,14 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
         }
         val props = casProperties.getAccountRegistration().getCore();
         val holder = ClientInfoHolder.getClientInfo();
-        if (props.isIncludeServerIpAddress() && !claims.getStringClaimValue("origin").equals(holder.getServerIpAddress())) {
-            LOGGER.error("Token origin server IP address does not match CAS");
+        val origin = claims.getStringClaimValue("origin");
+        if (props.isIncludeServerIpAddress() && !origin.equals(holder.getServerIpAddress())) {
+            LOGGER.error("Token origin server IP address [{}] does not match CAS [{}]", origin, holder.getServerIpAddress());
             return null;
         }
-        if (props.isIncludeClientIpAddress() && !claims.getStringClaimValue("client").equals(holder.getClientIpAddress())) {
-            LOGGER.error("Token client IP address does not match CAS");
+        val client = claims.getStringClaimValue("client");
+        if (props.isIncludeClientIpAddress() && !client.equals(holder.getClientIpAddress())) {
+            LOGGER.error("Token client IP address [{}] does not match CAS [{}]", client, holder.getClientIpAddress());
             return null;
         }
 
