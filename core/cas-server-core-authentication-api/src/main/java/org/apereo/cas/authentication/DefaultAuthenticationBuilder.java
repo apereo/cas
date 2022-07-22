@@ -227,8 +227,24 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public Authentication build() {
+        val resultingCredentials = new LinkedHashMap<String, DetailedCredentialMetaData>();
+        credentials
+            .stream()
+            .filter(credential -> credential instanceof DetailedCredentialMetaData)
+            .map(DetailedCredentialMetaData.class::cast)
+            .forEach(credential -> {
+                val key = credential.getId() + '#' + credential.getCredentialClass().getName();
+                if (resultingCredentials.containsKey(key)) {
+                    val current = resultingCredentials.get(key);
+                    current.getProperties().putAll(credential.getProperties());
+                    resultingCredentials.put(key, current);
+                } else {
+                    resultingCredentials.put(key, credential);
+                }
+            });
+
         return new DefaultAuthentication(this.authenticationDate, this.principal,
-            this.warnings, this.credentials,
+            this.warnings, new ArrayList<>(resultingCredentials.values()),
             this.attributes, this.successes, this.failures);
     }
 

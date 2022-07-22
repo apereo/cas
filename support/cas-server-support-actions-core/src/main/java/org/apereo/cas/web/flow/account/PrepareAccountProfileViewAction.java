@@ -1,13 +1,14 @@
 package org.apereo.cas.web.flow.account;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.authentication.DetailedCredentialMetaData;
+import org.apereo.cas.authentication.metadata.ClientInfoAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.webflow.execution.Event;
@@ -51,8 +53,6 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     private final AuditTrailExecutionPlan auditTrailManager;
-
-    private final TicketSerializationManager ticketSerializationManager;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -126,7 +126,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
     @Getter
     @SuppressWarnings("UnusedMethod")
-    class SingleSignOnSession implements Serializable {
+    static class SingleSignOnSession implements Serializable {
         private static final long serialVersionUID = 8935451143814878214L;
 
         private final String payload;
@@ -135,12 +135,29 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
         private final String authenticationDate;
 
-        SingleSignOnSession(final TicketGrantingTicket ticket) {
-            this.payload = ticketSerializationManager.serializeTicket(ticket);
-            this.principal = ticket.getAuthentication().getPrincipal().getId();
+        private final String userAgent;
 
+        private final String clientIpAddress;
+
+        SingleSignOnSession(final TicketGrantingTicket ticket) {
+            this.principal = ticket.getAuthentication().getPrincipal().getId();
+            this.userAgent = ticket.getAuthentication().getCredentials()
+                .stream()
+                .filter(cred -> cred instanceof DetailedCredentialMetaData)
+                .map(DetailedCredentialMetaData.class::cast)
+                .filter(cred -> cred.getProperties().containsKey(DetailedCredentialMetaData.PROPERTY_USER_AGENT))
+                .map(cred -> cred.getProperties().get(DetailedCredentialMetaData.PROPERTY_USER_AGENT).toString())
+                .findFirst()
+                .orElse(StringUtils.EMPTY);
+
+            this.clientIpAddress = CollectionUtils.firstElement(ticket.getAuthentication()
+                    .getAttributes()
+                    .get(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS))
+                .map(Object::toString)
+                .orElse(StringUtils.EMPTY);
             val dateFormat = new ISOStandardDateFormat();
             this.authenticationDate = dateFormat.format(DateTimeUtils.dateOf(ticket.getAuthentication().getAuthenticationDate()));
+            this.payload = FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
         }
     }
 }

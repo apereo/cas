@@ -5,7 +5,6 @@ import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -16,8 +15,6 @@ import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.apache.commons.text.RandomStringGenerator;
-import org.apache.commons.text.WordUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +81,8 @@ public class PrepareAccountProfileViewActionTests extends AbstractWebflowActions
         assertNotNull(session.getAuthenticationDate());
         assertNotNull(session.getPayload());
         assertNotNull(session.getPrincipal());
+        assertNotNull(session.getClientIpAddress());
+        assertNotNull(session.getUserAgent());
         assertTrue(context.getFlowScope().contains("auditLog"));
     }
 

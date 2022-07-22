@@ -3,6 +3,8 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DetailedCredentialMetaData;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -60,10 +62,16 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         val credential = getCredentialFromContext(context);
         val service = WebUtils.getService(context);
         try {
-
             if (credential != null) {
                 val builder = getConfigurationContext().getAuthenticationSystemSupport()
                     .handleInitialAuthenticationTransaction(service, credential);
+                val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(context);
+                val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(context);
+                val metadata = new BasicCredentialMetaData(credential,
+                    CollectionUtils.wrap(DetailedCredentialMetaData.PROPERTY_USER_AGENT, agent,
+                        DetailedCredentialMetaData.PROPERTY_GEO_LOCATION, geoLocation));
+                builder.collect(metadata);
+
                 builder.getInitialAuthentication().ifPresent(authn -> {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
                     WebUtils.putAuthentication(authn, context);
@@ -95,8 +103,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             var event = returnAuthenticationExceptionEventIfNeeded(exception, credential, service);
             if (event == null) {
                 FunctionUtils.doIf(LOGGER.isDebugEnabled(),
-                    e -> LOGGER.debug(exception.getMessage(), exception),
-                    e -> LoggingUtils.warn(LOGGER, exception.getMessage(), exception))
+                        e -> LOGGER.debug(exception.getMessage(), exception),
+                        e -> LoggingUtils.warn(LOGGER, exception.getMessage(), exception))
                     .accept(exception);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, exception);
             }
@@ -184,8 +192,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .map(Exception.class::cast)
             .map(ex -> {
                 FunctionUtils.doIf(LOGGER.isDebugEnabled(),
-                    e -> LOGGER.debug(ex.getMessage(), ex),
-                    e -> LOGGER.warn(ex.getMessage()))
+                        e -> LOGGER.debug(ex.getMessage(), ex),
+                        e -> LOGGER.warn(ex.getMessage()))
                     .accept(exception);
                 val attributes = new LocalAttributeMap<Serializable>(CasWebflowConstants.TRANSITION_ID_ERROR, ex);
                 attributes.put(Credential.class.getName(), credential);
