@@ -50,7 +50,7 @@ public class OidcUserProfileDataCreatorTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
-        "cas.authn.oidc.core.include-id-token-claims=true"
+        "cas.authn.oidc.id-token.include-id-token-claims=true"
     })
     public class DefaultTests extends AbstractOidcTests {
         @Test
