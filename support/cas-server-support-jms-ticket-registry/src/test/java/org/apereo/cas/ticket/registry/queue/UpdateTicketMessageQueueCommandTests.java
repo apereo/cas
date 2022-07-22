@@ -25,10 +25,12 @@ public class UpdateTicketMessageQueueCommandTests extends AbstractTicketMessageQ
 
     @Test
     public void verifyUpdateTicket() throws Exception {
-        var ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-        val cmd = new UpdateTicketMessageQueueCommand(new PublisherIdentifier(), ticket);
-        cmd.execute(ticketRegistry.getObject());
-        ticket = ticketRegistry.getObject().getTicket(ticket.getId(), ticket.getClass());
+        var ticket = new TicketGrantingTicketImpl("TGT",
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        val body = ticketSerializationManager.serializeTicket(ticket);
+        val cmd = new UpdateTicketMessageQueueCommand(new PublisherIdentifier(), body, ticket.getClass().getName());
+        cmd.execute(ticketRegistry);
+        ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());
         assertNotNull(ticket);
         assertEquals("TGT", ticket.getId());
     }

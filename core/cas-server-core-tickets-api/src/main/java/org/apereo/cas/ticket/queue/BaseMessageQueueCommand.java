@@ -1,7 +1,10 @@
 package org.apereo.cas.ticket.queue;
 
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.PublisherIdentifier;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
@@ -9,6 +12,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.val;
 
 import java.io.Serializable;
 
@@ -36,5 +40,10 @@ public abstract class BaseMessageQueueCommand implements Serializable {
      * @throws Exception the exception
      */
     public void execute(final TicketRegistry registry) throws Exception {
+    }
+
+    protected static Ticket deserializeTicket(final String ticket, final String ticketType) {
+        val manager = ApplicationContextProvider.getApplicationContext().getBean(TicketSerializationManager.class);
+        return manager.deserializeTicket(ticket, ticketType);
     }
 }

@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
@@ -22,8 +23,8 @@ import org.apereo.cas.config.JmsTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -45,6 +46,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
@@ -75,5 +77,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 public abstract class AbstractTicketMessageQueueCommandTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
-    protected ObjectProvider<TicketRegistry> ticketRegistry;
+    protected TicketRegistry ticketRegistry;
+
+    @Autowired
+    @Qualifier(TicketSerializationManager.BEAN_NAME)
+    protected TicketSerializationManager ticketSerializationManager;
 }

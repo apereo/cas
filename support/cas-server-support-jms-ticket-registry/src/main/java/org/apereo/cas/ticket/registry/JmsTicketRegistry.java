@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.queue.DeleteTicketMessageQueueCommand;
 import org.apereo.cas.ticket.queue.DeleteTicketsMessageQueueCommand;
 import org.apereo.cas.ticket.queue.TicketRegistryQueuePublisher;
 import org.apereo.cas.ticket.queue.UpdateTicketMessageQueueCommand;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.PublisherIdentifier;
 
 import lombok.NonNull;
@@ -27,11 +28,15 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
 
     private final PublisherIdentifier id;
 
+    private final TicketSerializationManager ticketSerializationManager;
+
     @Override
     public void addTicketInternal(final @NonNull Ticket ticket) throws Exception {
         super.addTicketInternal(ticket);
         LOGGER.trace("Publishing add command for id [{}] and ticket [{}]", id, ticket.getId());
-        ticketPublisher.publishMessageToQueue(new AddTicketMessageQueueCommand(id, ticket));
+        val body = ticketSerializationManager.serializeTicket(ticket);
+        val command = new AddTicketMessageQueueCommand(id, body, ticket.getClass().getName());
+        ticketPublisher.publishMessageToQueue(command);
     }
 
     @Override
@@ -53,7 +58,9 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) throws Exception {
         val result = super.updateTicket(ticket);
         LOGGER.trace("Publishing update command for id [{}] and ticket [{}]", id, ticket.getId());
-        ticketPublisher.publishMessageToQueue(new UpdateTicketMessageQueueCommand(id, ticket));
+        val body = ticketSerializationManager.serializeTicket(ticket);
+        val command = new UpdateTicketMessageQueueCommand(id, body, ticket.getClass().getName());
+        ticketPublisher.publishMessageToQueue(command);
         return result;
     }
 }
