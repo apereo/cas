@@ -1,0 +1,21 @@
+{
+  "dependencies": "reports,jms-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+
+    "--spring.activemq.pool.enabled=true",
+    "--spring.activemq.packages.trust-all=true",
+
+    "--cas.ticket.registry.jms.crypto.signing.key=CYPAXgmLzDnPjWEdCMeP360LorQjurUFtUgJGvBLdctpGgUDK1NjTnfjEmHJpnQHwQ52KYWpmQ4GlAmsxlDjiQ",
+    "--cas.ticket.registry.jms.crypto.encryption.key=7CITiW3O2dOpUYOwHJX3-w",
+    "--cas.ticket.registry.jms.queue-identifier=cas-jms-queue-1",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "initScript": "${PWD}/ci/tests/activemq/run-activemq-server.sh"
+}
