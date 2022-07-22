@@ -102,7 +102,7 @@ public class DefaultDelegatedClientAuthenticationWebflowStateContributor impleme
                 val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
                 Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
-                    .ifPresent(localeResolver -> localeResolver.setLocale(request, response, new Locale(locale.toString())));
+                    .ifPresent(localeResolver -> localeResolver.setLocale(request, response, Locale.forLanguageTag(locale.toString())));
             });
         webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_METHOD, properties.get(CasProtocolConstants.PARAMETER_METHOD));
         return service;

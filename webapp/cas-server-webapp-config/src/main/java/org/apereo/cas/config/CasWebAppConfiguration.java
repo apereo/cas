@@ -67,7 +67,7 @@ public class CasWebAppConfiguration {
                     || !locale.getLanguage().equals(localeProps.getDefaultValue())) {
                     return locale;
                 }
-                return new Locale(localeProps.getDefaultValue());
+                return Locale.forLanguageTag(localeProps.getDefaultValue());
             }
         };
         resolver.setCookieDomain(localeCookie.getDomain());

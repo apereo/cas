@@ -64,7 +64,7 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
                              final Object handler) throws ServletException {
         val requestUrl = request.getRequestURL().toString();
         if (casProperties.getObject().getLocale().isForceDefaultLocale()) {
-            val locale = new Locale(casProperties.getObject().getLocale().getDefaultValue());
+            val locale = Locale.forLanguageTag(casProperties.getObject().getLocale().getDefaultValue());
             configureLocale(request, response, locale);
             return true;
         }
@@ -74,7 +74,7 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
             if (registeredService instanceof WebBasedRegisteredService) {
                 val webRegisteredService = (WebBasedRegisteredService) registeredService;
                 if (StringUtils.isNotBlank(webRegisteredService.getLocale())) {
-                    val locale = new Locale(SpringExpressionLanguageValueResolver.getInstance()
+                    val locale = Locale.forLanguageTag(SpringExpressionLanguageValueResolver.getInstance()
                         .resolve(webRegisteredService.getLocale()));
                     configureLocale(request, response, locale);
                 }
@@ -83,7 +83,7 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
 
         val newLocale = request.getParameter(getParamName());
         if (newLocale != null) {
-            val locale = new Locale(newLocale);
+            val locale = Locale.forLanguageTag(newLocale);
             configureLocale(request, response, locale);
         }
 
