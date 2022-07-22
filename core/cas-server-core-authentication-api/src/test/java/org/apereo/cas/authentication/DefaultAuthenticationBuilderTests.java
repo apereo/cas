@@ -29,8 +29,31 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 public class DefaultAuthenticationBuilderTests {
     @Test
+    public void verifyMergeCredentialMetadata() {
+        val meta1 = new BasicCredentialMetaData(getCredential(), Map.of("P1", "V1"));
+        val meta2 = new BasicCredentialMetaData(getCredential(), Map.of("P2", "V2"));
+        val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
+        builder.addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta1));
+        builder.setCredentials(List.of(meta1, meta2));
+
+        val result = new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), meta1);
+        builder.addSuccess("Success", result);
+        builder.setFailures(Map.of("Failure1", new FailedLoginException()));
+        builder.addFailure("Success", new FailedLoginException());
+        assertFalse(builder.hasAttribute("invalid"));
+        val authentication = builder.build();
+        assertNotNull(authentication);
+        assertEquals(1, authentication.getCredentials().size());
+        val credentialMetaData = (DetailedCredentialMetaData) authentication.getCredentials().get(0);
+        assertEquals(2, credentialMetaData.getProperties().size());
+        assertTrue(credentialMetaData.getProperties().containsKey("P1"));
+        assertTrue(credentialMetaData.getProperties().containsKey("P2"));
+    }
+
+    @Test
     public void verifyOperation() {
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val meta = new BasicCredentialMetaData(getCredential());
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         builder.addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
@@ -66,7 +89,7 @@ public class DefaultAuthenticationBuilderTests {
 
     @Test
     public void verifyUpdateOperation() {
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val meta = new BasicCredentialMetaData(getCredential());
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         builder.addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
@@ -82,5 +105,12 @@ public class DefaultAuthenticationBuilderTests {
         authn.updateAll(authn2);
         assertTrue(authn.getAttributes().containsKey("authn2"));
         assertTrue(authn.containsAttribute("authn2"));
+    }
+
+    private static Credential getCredential() {
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername("casuser");
+        credential.setPassword("P@$$w0rd");
+        return credential;
     }
 }

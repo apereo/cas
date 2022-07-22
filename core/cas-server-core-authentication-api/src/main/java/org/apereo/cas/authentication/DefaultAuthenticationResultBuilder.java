@@ -38,6 +38,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     private final List<Credential> providedCredentials = new ArrayList<>(0);
 
+    private final List<CredentialMetaData> providedCredentialMetadata = new ArrayList<>(0);
+
     /**
      * Principal id is and must be enforced to be the same for all authentications.
      * Based on that restriction, it's safe to grab the first principal id in the chain
@@ -62,9 +64,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     @Override
     public AuthenticationResultBuilder collect(final Authentication authentication) {
-        if (authentication != null) {
-            this.authentications.add(authentication);
-        }
+        Optional.ofNullable(authentication).ifPresent(authentications::add);
         return this;
     }
 
@@ -75,10 +75,14 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
+    public AuthenticationResultBuilder collect(final CredentialMetaData credential) {
+        Optional.ofNullable(credential).ifPresent(providedCredentialMetadata::add);
+        return this;
+    }
+
+    @Override
     public AuthenticationResultBuilder collect(final Credential credential) {
-        if (credential != null) {
-            this.providedCredentials.add(credential);
-        }
+        Optional.ofNullable(credential).ifPresent(providedCredentials::add);
         return this;
     }
 
@@ -156,7 +160,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                 .addSuccesses(authn.getSuccesses())
                 .addFailures(authn.getFailures())
                 .addWarnings(authn.getWarnings())
-                .addCredentials(authn.getCredentials());
+                .addCredentials(authn.getCredentials())
+                .addCredentials(this.providedCredentialMetadata);
         });
     }
 
