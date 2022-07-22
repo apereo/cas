@@ -1,6 +1,15 @@
 {
   "properties": [
     {
+      "name": "cas.authn.oidc.core.include-id-token-claims",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.id-token.include-id-token-claims",
+        "reason": "This setting should is now moved into a id-token namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.mfa.simple.token-length",
       "type": "java.lang.String",
       "deprecation": {

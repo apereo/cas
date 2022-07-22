@@ -156,8 +156,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         generateAccessTokenHash(accessToken, registeredService, claims);
 
         val includeClaims = responseType != OAuth20ResponseTypes.CODE && grantType != OAuth20GrantTypes.AUTHORIZATION_CODE;
-        if (includeClaims || oidc.getCore().isIncludeIdTokenClaims()) {
-            FunctionUtils.doIf(oidc.getCore().isIncludeIdTokenClaims(),
+        if (includeClaims || oidc.getIdToken().isIncludeIdTokenClaims()) {
+            FunctionUtils.doIf(oidc.getIdToken().isIncludeIdTokenClaims(),
                     ignore -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
                                           + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
                                           + "Claims should be requested from the userinfo/profile endpoints in exchange for an access token."))

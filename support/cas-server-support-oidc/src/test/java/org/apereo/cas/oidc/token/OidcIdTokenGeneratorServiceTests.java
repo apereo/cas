@@ -68,7 +68,7 @@ public class OidcIdTokenGeneratorServiceTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
-        "cas.authn.oidc.core.include-id-token-claims=true"
+        "cas.authn.oidc.id-token.include-id-token-claims=true"
     })
     public class IgnoringResponseTypeTests extends AbstractOidcTests {
         @Test
@@ -125,7 +125,7 @@ public class OidcIdTokenGeneratorServiceTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-        "cas.authn.oidc.core.include-id-token-claims=false",
+        "cas.authn.oidc.id-token.include-id-token-claims=false",
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
         "cas.authn.oidc.core.claims-map.preferred_username=custom-attribute"
     })
