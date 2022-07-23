@@ -12,6 +12,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -31,6 +32,10 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 public class PasswordEncoderUtils {
     private static final int HASH_WIDTH = 256;
 
+    private static final int ARGON2_DEFAULT_MEMORY = 4096;
+
+    private static final int ARGON2_DEFAULT_ITERATIONS = 3;
+
     /**
      * New password encoder password encoder.
      *
@@ -38,7 +43,6 @@ public class PasswordEncoderUtils {
      * @param applicationContext the application context
      * @return the password encoder
      */
-    @SuppressWarnings("java:S5344")
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties,
                                                      final ApplicationContext applicationContext) {
         val type = properties.getType();
@@ -60,7 +64,7 @@ public class PasswordEncoderUtils {
                 return clazz.getDeclaredConstructor().newInstance();
             } catch (final Exception e) {
                 val msg = "Falling back to a no-op password encoder as CAS has failed to create "
-                    + "an instance of the custom password encoder class " + type;
+                          + "an instance of the custom password encoder class " + type;
                 LoggingUtils.error(LOGGER, msg, e);
                 return NoOpPasswordEncoder.getInstance();
             }
@@ -75,6 +79,9 @@ public class PasswordEncoderUtils {
             case STANDARD:
                 LOGGER.debug("Creating standard password encoder with the secret defined in the configuration");
                 return new StandardPasswordEncoder(properties.getSecret());
+            case ARGON2:
+                return new Argon2PasswordEncoder(properties.getStrength(), properties.getHashLength(),
+                    1, ARGON2_DEFAULT_MEMORY, ARGON2_DEFAULT_ITERATIONS);
             case BCRYPT:
                 LOGGER.debug("Creating BCRYPT password encoder given the strength [{}] and secret in the configuration",
                     properties.getStrength());
@@ -89,7 +96,7 @@ public class PasswordEncoderUtils {
                 return new SCryptPasswordEncoder();
             case SSHA:
                 LOGGER.warn("Creating SSHA encoder; digest based password encoding is not considered secure. "
-                    + "This strategy is here to support legacy implementations and using it is considered insecure.");
+                            + "This strategy is here to support legacy implementations and using it is considered insecure.");
                 return new LdapShaPasswordEncoder();
             case PBKDF2:
                 if (StringUtils.isBlank(properties.getSecret())) {

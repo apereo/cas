@@ -20,8 +20,8 @@ import org.springframework.security.crypto.password.AbstractPasswordEncoder;
 @RequiredArgsConstructor
 public class GroovyPasswordEncoder extends AbstractPasswordEncoder implements DisposableBean {
 
-    private final transient WatchableGroovyScriptResource watchableScript;
-    private final transient ApplicationContext applicationContext;
+    private final WatchableGroovyScriptResource watchableScript;
+    private final ApplicationContext applicationContext;
 
     public GroovyPasswordEncoder(final Resource groovyScript, final ApplicationContext applicationContext) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
