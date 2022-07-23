@@ -66,20 +66,31 @@ public class PasswordEncoderProperties implements Serializable {
     private String characterEncoding = "UTF-8";
 
     /**
-     * Secret to use with {@code STANDARD}, {@code PBKDF2}, {@code BCRYPT}, {@code GLIBC_CRYPT} password encoders.
+     * Secret to use with {@link PasswordEncoderTypes#STANDARD}, {@link PasswordEncoderTypes#PBKDF2},
+     * {@link PasswordEncoderTypes#BCRYPT}, {@link PasswordEncoderTypes#GLIBC_CRYPT} password encoders.
      * Secret usually is an optional setting.
      */
     private String secret;
 
     /**
      * Strength or number of iterations to use for password hashing.
-     * Usually relevant when dealing with {@code PBKDF2} or {@code BCRYPT} encoders.
-     * Used by {@code GLIBC_CRYPT} encoders as well.
+     * Usually relevant when dealing with {@link PasswordEncoderTypes#PBKDF2},
+     * {@link PasswordEncoderTypes#BCRYPT} or {@link PasswordEncoderTypes#GLIBC_CRYPT}.
+     * When used by {@link PasswordEncoderTypes#ARGON2}, it indicates the salt strength.
      */
     private int strength = 16;
 
-    public enum PasswordEncoderTypes {
+    /**
+     * When used by {@link PasswordEncoderTypes#ARGON2}, it indicates the hash strength/length.
+     */
+    private int hashLength = 16;
 
+    public enum PasswordEncoderTypes {
+        /**
+         * Uses the Argon2 hashing function. Users can optionally supply the length of the salt to use,
+         * and the length of the generated hash.
+         */
+        ARGON2,
         /**
          * No password encoding will take place.
          */
