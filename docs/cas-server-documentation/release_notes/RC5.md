@@ -69,6 +69,11 @@ Initial support for DPoP access tokens is now available when CAS is acting as an
 DPoP is a security extension for binding access tokens to a private key that belongs to the client. The binding makes the DPoP 
 access token sender-constrained and its replay, if leaked or stolen token, can be effectively detected and prevented, as opposed to the common Bearer token.
 
+### SSO Sessions
+
+A modest version of the user's active SSO sessions is included in 
+the [account profile](../registration/Account-Management-Overview.html) dashboard.
+
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover
@@ -97,6 +102,8 @@ configuration schema, though the default continues to match the default SSO sess
 - On successful login attempts and in case no `service` is specified, CAS will redirect to [Account profile management](../registration/Account-Management-Overview.html) in case the feature is enabled.
 - [RESTful attribute release policy](../integration/Attribute-Release-Policies.html) is now able to optionally remap received attributes.
 - The CAS Gradle build is now able to support `aarch64` architectures for internal builds. 
+- The *Argon2 hashing function* is now supported for password encoding operations.
+- Disabling SSO globally via CAS settings should now disregard SSO sessions for all scenarios. 
 
 ## Library Upgrades
 
