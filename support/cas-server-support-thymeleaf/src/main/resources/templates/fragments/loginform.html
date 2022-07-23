@@ -44,8 +44,10 @@
                 <div id="login-form-controls" th:if="${loginFormViewable and loginFormEnabled}">
                     <div th:if="${existingSingleSignOnSessionAvailable}">
                         <i class="mdi mdi-alert-decagram fas fa-exclamation-triangle"></i>&nbsp;
-                        <span id="existingSsoMsg" class="mdc-button__label"
-                              th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}"/>
+                        <span id="existingSsoMsg" th:if="${registeredService}" class="mdc-button__label"
+                              th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id},${registeredService.name})}"/>
+                        <span id="existingSsoMsg" th:unless="${registeredService}" class="mdc-button__label"
+                              th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id}, 'CAS')}"/>
                     </div>
                     <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
                         <i class="mdi mdi-security fas fa-shield-alt"></i>

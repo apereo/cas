@@ -15,8 +15,8 @@ const cas = require('../../cas.js');
         "nonce=vn4qulthnx";
     await cas.goto(page, url);
 
-    await cas.assertVisibility(page, 'li #CasClient')
-    await cas.click(page, "li #CasClient")
+    await cas.assertVisibility(page, 'li #CasClient');
+    await cas.click(page, "li #CasClient");
     await page.waitForNavigation();
 
     await page.waitForTimeout(2000)

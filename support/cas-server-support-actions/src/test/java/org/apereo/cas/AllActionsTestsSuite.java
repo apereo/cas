@@ -11,7 +11,6 @@ import org.apereo.cas.web.flow.GatewayServicesManagementCheckActionTests;
 import org.apereo.cas.web.flow.GenerateServiceTicketActionTests;
 import org.apereo.cas.web.flow.GenericSuccessViewActionTests;
 import org.apereo.cas.web.flow.InitialFlowSetupActionTests;
-import org.apereo.cas.web.flow.InitialFlowSetupCookieActionTests;
 import org.apereo.cas.web.flow.InitializeLoginActionTests;
 import org.apereo.cas.web.flow.LogoutActionTests;
 import org.apereo.cas.web.flow.LogoutViewSetupActionTests;
@@ -54,7 +53,6 @@ import org.junit.platform.suite.api.Suite;
     FlowExecutionExceptionResolverTests.class,
     InitializeLoginActionTests.class,
     PopulateSpringSecurityContextActionTests.class,
-    InitialFlowSetupCookieActionTests.class,
     SendTicketGrantingTicketActionTests.class,
     ServiceAuthorizationCheckMockitoActionTests.class,
     CreateTicketGrantingTicketActionTests.class,

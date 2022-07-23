@@ -40,23 +40,15 @@ import java.util.stream.Collectors;
 public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
-    /**
-     * Add warning messages to message context if needed.
-     *
-     * @param tgtId          the tgt id
-     * @param messageContext the message context
-     * @return authn warnings from all handlers and results
-     * @since 4.1.0
-     */
-    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId,
+    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final Authentication authentication,
                                                                                         final MessageContext messageContext) {
-        val entries = tgtId.getAuthentication().getSuccesses().entrySet();
+        val entries = authentication.getSuccesses().entrySet();
         val messages = entries
             .stream()
             .map(entry -> entry.getValue().getWarnings())
             .filter(entry -> !entry.isEmpty())
             .collect(Collectors.toList());
-        messages.add(tgtId.getAuthentication().getWarnings());
+        messages.add(authentication.getWarnings());
 
         return messages
             .stream()
@@ -103,7 +95,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
 
         LOGGER.trace("Calculating authentication warning messages...");
-        val warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
+        val warnings = calculateAuthenticationWarningMessages(tgt.getAuthentication(), context.getMessageContext());
         if (!warnings.isEmpty()) {
             val attributes = new LocalAttributeMap<Object>(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
