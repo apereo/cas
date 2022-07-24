@@ -111,6 +111,8 @@ configuration schema, though the default continues to match the default SSO sess
 - Google Firebase
 - Spring Data
 - Spring Boot
+- Spring Boot Admin
+- Spring Shell
 - Spring Integration
 - Dropwizard
 - Gradle
@@ -123,6 +125,7 @@ configuration schema, though the default continues to match the default SSO sess
 - MongoDb
 - Netty
 - Micrometer
+- Apache Groovy
 - Apache Log4j
 - Apache Curator
 - Spring Boot Admin
