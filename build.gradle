@@ -187,7 +187,7 @@ allprojects {
         System.setProperty("os.arch", "x86_64")
         arch = System.getProperty("os.arch")
         def name = System.getProperty("os.name")
-        ansi.yellow("The OS platform architecture is forcefully reset to ${arch} for ${name}")
+        ansi.yellow("The OS platform architecture for this Gradle build is reset to ${arch} for ${name}")
     }
 
     if (rootProject.generateGitProperties) {

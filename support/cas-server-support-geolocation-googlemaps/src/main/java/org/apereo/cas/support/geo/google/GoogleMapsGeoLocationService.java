@@ -29,7 +29,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
 
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
-        return locate(address.getHostAddress());
+        return null;
     }
 
     @Override

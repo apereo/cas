@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GeoLocation)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GeoLocation, module = "googlemaps")
 @AutoConfiguration
 public class GoogleMapsGeoCodingConfiguration {
 
