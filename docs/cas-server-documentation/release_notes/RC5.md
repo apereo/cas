@@ -86,6 +86,10 @@ The expiration policy of [OpenID Connect ID Tokens](../authentication/OIDC-Authe
 is now separated from SSO expiration policy and session length, and is given its own independant setting in the CAS
 configuration schema, though the default continues to match the default SSO session timeout.
 
+### IP Geo Location
+
+Geo tracking authentication requests is now possible using [IP GeoLocation](../authentication/GeoTracking-Authentication-Requests.html).
+
 ## Other Stuff
      
 - The configuration for the embedded Apache Tomcat is now allowed to create multiple connectors and ports. The `secure` and `scheme` attributes are also 

@@ -40,7 +40,7 @@ public class GoogleMapsGeoLocationServiceTests {
 
     @Test
     public void verifyOperation() {
-        assertNotNull(geoLocationService);
+        assertNull(geoLocationService.locate("8.8.8.8"));
         assertNull(geoLocationService.locate(null, 12.123));
         val resp = geoLocationService.locate(40.689060, -74.044636);
         assertEquals(40.689060, resp.getLatitude());

@@ -603,6 +603,7 @@ layout: null
         *   [~~Google Apps~~](/cas/{{ version }}/integration/Google-Apps-Integration.html)
     *   [Google reCAPTCHA](/cas/{{ version }}/integration/Configuring-Google-reCAPTCHA.html)
     *   [Google Analytics](/cas/{{ version }}/integration/Configuring-Google-Analytics.html)
+    *   [GeoLocation Tracking](/cas/{{ version }}/authentication/GeoTracking-Authentication-Requests.html)
     *   [SCIM Provisioning](/cas/{{ version }}/integration/SCIM-Integration.html)
     *   [ACME](/cas/{{ version }}/integration/ACME-Integration.html)
     *   [Amazon Web Services](/cas/{{ version }}/integration/AWS-Integration.html)

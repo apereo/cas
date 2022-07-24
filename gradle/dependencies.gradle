@@ -528,6 +528,13 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        ipgeolocation         : [
+                dependencies.create("io.ipgeolocation:ipgeolocation:$ipGeoLocationVersion") {
+                    exclude(group: "org.json", module: "json")
+                },
+                dependencies.create("org.json:json:$jsonVersion") {
+                }
+        ],
         okhttp                  : [
                 dependencies.create("com.squareup.okhttp:okhttp-urlconnection:$okioHttpVersion") {
                     exclude(group: "com.squareup.okio", module: "okio")
@@ -1257,10 +1264,8 @@ ext.libraries = [
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
-
                 },
                 dependencies.create("com.google.code.gson:gson:$gsonVersion") {
-
                 }
         ],
         squareup                : [
