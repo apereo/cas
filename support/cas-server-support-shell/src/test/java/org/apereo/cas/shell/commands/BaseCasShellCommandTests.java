@@ -9,9 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.shell.Shell;
-import org.springframework.shell.SpringShellAutoConfiguration;
-import org.springframework.shell.jline.JLineShellAutoConfiguration;
-import org.springframework.shell.standard.StandardAPIAutoConfiguration;
+import org.springframework.shell.boot.JLineShellAutoConfiguration;
+import org.springframework.shell.boot.SpringShellAutoConfiguration;
+import org.springframework.shell.boot.StandardAPIAutoConfiguration;
+
 
 /**
  * This is {@link BaseCasShellCommandTests}.
