@@ -89,16 +89,36 @@ public class Beans {
      * @return the duration
      */
     public static Duration newDuration(final String value) {
-        if ("0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value) || !StringUtils.hasText(value)) {
+        if (isNeverDurable(value)) {
             return Duration.ZERO;
         }
-        if ("-1".equalsIgnoreCase(value) || !StringUtils.hasText(value) || "INFINITE".equalsIgnoreCase(value)) {
+        if (isInfinitelyDurable(value)) {
             return Duration.ofDays(Integer.MAX_VALUE);
         }
         if (NumberUtils.isCreatable(value)) {
             return Duration.ofSeconds(Long.parseLong(value));
         }
         return Duration.parse(value);
+    }
+
+    /**
+     * Is infinitely durable?
+     *
+     * @param value the value
+     * @return true/false
+     */
+    public static boolean isInfinitelyDurable(final String value) {
+        return "-1".equalsIgnoreCase(value) || !StringUtils.hasText(value) || "INFINITE".equalsIgnoreCase(value);
+    }
+
+    /**
+     * Is never durable?
+     *
+     * @param value the value
+     * @return true/false
+     */
+    public static boolean isNeverDurable(final String value) {
+        return "0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value) || !StringUtils.hasText(value);
     }
 
     /**

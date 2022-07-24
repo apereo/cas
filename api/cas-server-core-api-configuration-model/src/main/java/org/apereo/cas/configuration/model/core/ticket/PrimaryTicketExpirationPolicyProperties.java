@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -27,11 +28,14 @@ public class PrimaryTicketExpirationPolicyProperties implements Serializable {
     /**
      * Maximum time in seconds tickets would be live in CAS server.
      */
-    private long maxTimeToLiveInSeconds = 28_800;
+    @DurationCapable
+    private String maxTimeToLiveInSeconds = "PT8H";
 
     /**
-     * Time in seconds after which tickets would be destroyed after a period of inactivity.
+     * Time in seconds after which tickets would be
+     * destroyed after a period of inactivity.
      */
-    private long timeToKillInSeconds = 7_200;
+    @DurationCapable
+    private String timeToKillInSeconds = "PT2H";
 
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicket;
@@ -34,7 +35,8 @@ public class CasWsSecurityTokenTicketCatalogConfiguration extends BaseTicketCata
             SecurityTokenTicket.class, DefaultSecurityTokenTicket.class, Ordered.HIGHEST_PRECEDENCE);
         val properties = definition.getProperties();
         properties.setStorageName("wsSecurityTokenTicketsCache");
-        properties.setStorageTimeout(casProperties.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds());
+        val seconds = Beans.newDuration(casProperties.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds()).toSeconds();
+        properties.setStorageTimeout(seconds);
         registerTicketDefinition(plan, definition);
     }
 }

@@ -28,7 +28,7 @@ public class AlwaysExpiresExpirationPolicyTests {
 
     @Test
     public void verifySerializeAnAlwaysExpiresExpirationPolicyToJson() throws IOException {
-        val policyWritten = new AlwaysExpiresExpirationPolicy();
+        val policyWritten = AlwaysExpiresExpirationPolicy.INSTANCE;
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, AlwaysExpiresExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);
@@ -36,7 +36,7 @@ public class AlwaysExpiresExpirationPolicyTests {
 
     @Test
     public void verifySerialization() {
-        val policyWritten = new AlwaysExpiresExpirationPolicy();
+        val policyWritten = AlwaysExpiresExpirationPolicy.INSTANCE;
         val result = SerializationUtils.serialize(policyWritten);
         val policyRead = SerializationUtils.deserialize(result, AlwaysExpiresExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);
