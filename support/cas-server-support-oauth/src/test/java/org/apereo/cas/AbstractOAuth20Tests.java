@@ -335,7 +335,7 @@ public abstract class AbstractOAuth20Tests {
 
             @Override
             public ExpirationPolicy buildTicketExpirationPolicy() {
-                return new AlwaysExpiresExpirationPolicy();
+                return AlwaysExpiresExpirationPolicy.INSTANCE;
             }
         };
     }

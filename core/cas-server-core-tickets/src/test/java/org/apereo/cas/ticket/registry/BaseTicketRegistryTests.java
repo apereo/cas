@@ -502,7 +502,7 @@ public abstract class BaseTicketRegistryTests {
         val ticket = (AbstractTicket) tgt.grantServiceTicket(serviceTicketId, service,
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         assertNotNull(ticket, "Service ticket cannot be null");
-        ticket.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
+        ticket.setExpirationPolicy(AlwaysExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
         ticketRegistry.updateTicket(tgt);
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class));
@@ -511,7 +511,7 @@ public abstract class BaseTicketRegistryTests {
     @RepeatedTest(2)
     public void verifyExpiredTicket() throws Exception {
         val authn = CoreAuthenticationTestUtils.getAuthentication();
-        ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, authn, new AlwaysExpiresExpirationPolicy()));
+        ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, authn, AlwaysExpiresExpirationPolicy.INSTANCE));
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class));
     }
 

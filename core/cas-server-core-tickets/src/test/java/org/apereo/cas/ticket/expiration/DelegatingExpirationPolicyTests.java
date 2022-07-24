@@ -33,7 +33,7 @@ public class DelegatingExpirationPolicyTests {
                 return POLICY_NAME_DEFAULT;
             }
         };
-        policy.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, new AlwaysExpiresExpirationPolicy());
+        policy.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, AlwaysExpiresExpirationPolicy.INSTANCE);
         policy.addPolicy(new NeverExpiresExpirationPolicy());
 
         var ticketState = mock(TicketGrantingTicketAwareTicket.class);

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -27,5 +28,6 @@ public class TimeoutTicketExpirationPolicyProperties implements Serializable {
     /**
      * Maximum time in seconds. for TGTs to be live in CAS server.
      */
-    private long maxTimeToLiveInSeconds;
+    @DurationCapable
+    private String maxTimeToLiveInSeconds;
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -26,10 +27,12 @@ public class ThrottledTimeoutTicketExpirationPolicyProperties implements Seriali
     /**
      * Timeout in seconds to kill the session and consider tickets expired.
      */
-    private long timeToKillInSeconds;
+    @DurationCapable
+    private String timeToKillInSeconds;
 
     /**
      * Timeout in between each attempt.
      */
-    private long timeInBetweenUsesInSeconds;
+    @DurationCapable
+    private String timeInBetweenUsesInSeconds;
 }
