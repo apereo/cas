@@ -13,9 +13,9 @@ const cas = require('../../cas.js');
     console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await cas.screenshot(page);
-    await page.waitForTimeout(4000)
+    await page.waitForTimeout(4000);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(4000)
+    await page.waitForTimeout(4000);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));

@@ -16,7 +16,7 @@ const cas = require('../../cas.js');
         await cas.loginWith(page, "casuser", "Mellon");
 
         let ticket = await cas.assertTicketParameter(page);
-        let body = await validate(endpoint, service1, ticket, false)
+        let body = await validate(endpoint, service1, ticket, false);
 
         if (endpoint === "validate") {
             assert(body === "yes\ncasuser\n")

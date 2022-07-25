@@ -12,18 +12,18 @@ const assert = require('assert');
         + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D";
 
     await cas.goto(page, url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
 
-    await page.waitForTimeout(1000)
-    await cas.assertVisibility(page, '#userInfoClaims')
-    await cas.assertVisibility(page, '#scopes')
-    await cas.assertVisibility(page, '#MyCustomScope')
-    await cas.assertVisibility(page, '#openid')
-    await cas.assertVisibility(page, '#informationUrl')
-    await cas.assertVisibility(page, '#privacyUrl')
-    await cas.assertVisibility(page, '#name')
-    await cas.assertVisibility(page, '#phone_number')
+    await page.waitForTimeout(1000);
+    await cas.assertVisibility(page, '#userInfoClaims');
+    await cas.assertVisibility(page, '#scopes');
+    await cas.assertVisibility(page, '#MyCustomScope');
+    await cas.assertVisibility(page, '#openid');
+    await cas.assertVisibility(page, '#informationUrl');
+    await cas.assertVisibility(page, '#privacyUrl');
+    await cas.assertVisibility(page, '#name');
+    await cas.assertVisibility(page, '#phone_number');
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -35,7 +35,7 @@ const assert = require('assert');
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
         + `&client_id=client&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
     await cas.goto(page, accessTokenUrl);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     console.log(payload);
@@ -46,12 +46,12 @@ const assert = require('assert');
 
     console.log("Decoding ID token...");
     let decoded = await cas.decodeJwt(payload.id_token);
-    assert(decoded.sub !== null)
-    assert(decoded.client_id !== null)
-    assert(decoded["preferred_username"] !== null)
-    assert(decoded["identity-name"] !== null)
-    assert(decoded["common-name"] !== null)
-    assert(decoded["lastname"] !== null)
+    assert(decoded.sub !== null);
+    assert(decoded.client_id !== null);
+    assert(decoded["preferred_username"] !== null);
+    assert(decoded["identity-name"] !== null);
+    assert(decoded["common-name"] !== null);
+    assert(decoded["lastname"] !== null);
 
 
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
@@ -61,8 +61,8 @@ const assert = require('assert');
         'Content-Type': "application/json"
     }, res => {
         console.log(res.data);
-        assert(res.data["common-name"] != null)
-        assert(res.data["lastname"] != null)
+        assert(res.data["common-name"] != null);
+        assert(res.data["lastname"] != null);
         assert(res.data.sub != null)
     }, error => {
         throw `Operation failed: ${error}`;

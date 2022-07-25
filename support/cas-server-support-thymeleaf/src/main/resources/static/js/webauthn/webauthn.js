@@ -318,7 +318,7 @@ function getWebAuthnUrls() {
     let endpoints = {
         authenticate: "webauthn/authenticate",
         register: "webauthn/register",
-    }
+    };
     return new Promise((resolve, reject) => resolve(endpoints)).then(data => {
         return data;
     });

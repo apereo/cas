@@ -35,14 +35,14 @@ async function introspect(token) {
     let authzHeader = `Basic ${buff.toString('base64')}`;
     console.log(`Authorization header: ${authzHeader}`);
 
-    console.log(`Introspecting token ${token}`)
+    console.log(`Introspecting token ${token}`);
     await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
         res => {
-            assert(res.data.active === true)
-            assert(res.data.aud === "client")
-            assert(res.data.sub === "client")
-            assert(res.data.iss === "https://localhost:8443/cas/oidc")
-            assert(res.data.client_id === "client")
+            assert(res.data.active === true);
+            assert(res.data.aud === "client");
+            assert(res.data.sub === "client");
+            assert(res.data.iss === "https://localhost:8443/cas/oidc");
+            assert(res.data.client_id === "client");
             assert(res.data.token === token)
         }, error => {
             throw `Introspection operation failed: ${error}`;

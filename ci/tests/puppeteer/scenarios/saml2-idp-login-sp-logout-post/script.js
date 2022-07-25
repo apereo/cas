@@ -13,7 +13,7 @@ const path = require("path");
     await cas.loginWith(page, "casuser", "Mellon");
 
     let ticket = await cas.assertTicketParameter(page);
-    await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`)
+    await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
     await page.close();
 
     page = await cas.newPage(browser);
@@ -31,7 +31,7 @@ const path = require("path");
     });
 
     await cas.goto(page, 'https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     const content = await page.content();
     assert(content.includes('action="https://samltest.id/Shibboleth.sso/SLO/POST"'));
     assert(content.includes('<input type="hidden" name="SAMLResponse" value="'));

@@ -11,10 +11,10 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
-    await cas.assertVisibility(page, '#username')
-    await cas.assertVisibility(page, '#password')
+    await cas.assertVisibility(page, '#username');
+    await cas.assertVisibility(page, '#password');
 
     await browser.close();
 })();

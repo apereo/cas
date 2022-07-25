@@ -36,7 +36,7 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(resource)
+    console.log(resource);
 
     const policyUrl = `https://localhost:8443/cas/oauth2.0/${resource.resourceId}/policy`;
     let policyObject = {
@@ -79,7 +79,7 @@ const cas = require('../../cas.js');
         claims: {
             first_name: "CAS"
         }
-    }
+    };
 
     let permissionRequest = JSON.stringify(permissionObject);
     console.log(`Creating permission ${permissionRequest}`);
@@ -91,8 +91,8 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/json'
         }, 200, permissionRequest));
     console.log(result);
-    assert(result.ticket !== null)
-    assert(result.code !== null)
+    assert(result.ticket !== null);
+    assert(result.code !== null);
 
 
     console.log("Checking for claims");
@@ -104,7 +104,7 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/json'
         }, 302, undefined,
         res => {
-            console.log(res.headers)
+            console.log(res.headers);
             assert(res.headers.location.includes(
                 "https://apereo.github.io?authorization_state=claims_submitted&state=12345"));
         });

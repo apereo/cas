@@ -12,9 +12,9 @@ async function unsolicited(page, target) {
 
     console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(3000)
-    const result = await page.url()
-    console.log(`Page url: ${result}`)
+    await page.waitForTimeout(3000);
+    const result = await page.url();
+    console.log(`Page url: ${result}`);
     assert(result.includes(target));
 }
 
@@ -23,14 +23,14 @@ async function unsolicited(page, target) {
     const page = await browser.newPage();
 
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.loginWith(page, "casuser", "Mellon");
 
     await unsolicited(page, "https://apereo.github.io");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
 
     await unsolicited(page, "https://github.com/apereo/cas");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

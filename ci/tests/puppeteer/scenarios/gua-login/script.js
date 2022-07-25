@@ -8,15 +8,15 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
 
     let uid = await page.$('#username');
-    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
-    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
-    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")));
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")));
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
     await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await cas.assertTextContent(page, "#login h2", "casuser")
-    await cas.assertTextContent(page, "#guaInfo", "If you do not recognize this image as yours, do NOT continue.")
-    await cas.assertVisibility(page, '#guaImage')
+    await cas.assertTextContent(page, "#login h2", "casuser");
+    await cas.assertTextContent(page, "#guaInfo", "If you do not recognize this image as yours, do NOT continue.");
+    await cas.assertVisibility(page, '#guaImage');
     await cas.submitForm(page, "#fm1");
     await cas.type(page,'#password', "Mellon");
     await page.keyboard.press('Enter');

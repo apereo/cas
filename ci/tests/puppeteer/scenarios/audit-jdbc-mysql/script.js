@@ -8,7 +8,7 @@ const assert = require("assert");
 async function callRegisteredServices() {
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
     await cas.doGet(baseUrl, res => {
-        assert(res.status === 200)
+        assert(res.status === 200);
         console.log(`Services found: ${res.data[1].length}`);
     }, err => {
         throw err;
@@ -29,7 +29,7 @@ async function callAuditLog() {
 
 (async () => {
     let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8')
+    const file = fs.readFileSync(configFilePath, 'utf8');
     const configFile = YAML.parse(file);
 
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -40,20 +40,20 @@ async function callAuditLog() {
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.goto(page, "https://localhost:8443/cas/logout");
-    await page.close()
+    await page.close();
 
     await callAuditLog();
 
-    console.log("Updating configuration...")
+    console.log("Updating configuration...");
     let number = await cas.randomNumber();
     await updateConfig(configFile, configFilePath, number);
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(3000);
 
-    console.log("Refreshing CAS...")
+    console.log("Refreshing CAS...");
     let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-    console.log(response)
+    console.log(response);
 
-    console.log("Testing authentication after refresh...")
+    console.log("Testing authentication after refresh...");
     page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
     await cas.loginWith(page, "casuser", "Mellon");
@@ -65,7 +65,7 @@ async function callAuditLog() {
     await callAuditLog();
     await callRegisteredServices();
 
-    console.log("Waiting for audit log cleaner to resume...")
+    console.log("Waiting for audit log cleaner to resume...");
     await cas.sleep(2000);
     
     await browser.close();
@@ -81,7 +81,7 @@ async function updateConfig(configFile, configFilePath, data) {
                 }
             }
         }
-    }
+    };
     const newConfig = YAML.stringify(config);
     console.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);

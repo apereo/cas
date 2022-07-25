@@ -10,7 +10,7 @@ const fs = require('fs');
 
     let args = process.argv.slice(2);
     let config = JSON.parse(fs.readFileSync(args[0]));
-    assert(config != null)
+    assert(config != null);
 
     console.log(`Certificate file: ${config.trustStoreCertificateFile}`);
 
@@ -31,19 +31,19 @@ const fs = require('fs');
     });
 
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(5000);
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
 
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com");
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(5000);
     await assertFailure(page);
     await browser.close();
 })();
 
 async function assertFailure(page) {
-    await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.")
+    await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.");
     await page.waitForTimeout(1000)
 }
 

@@ -6,6 +6,6 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "invalidtime", "invalidtime");
-    await cas.assertInnerText(page, "#content h2", "Your account is forbidden to login at this time.")
+    await cas.assertInnerText(page, "#content h2", "Your account is forbidden to login at this time.");
     await browser.close();
 })();

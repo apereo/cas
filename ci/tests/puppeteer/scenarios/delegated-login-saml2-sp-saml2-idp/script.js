@@ -8,7 +8,7 @@ const path = require('path');
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     await cas.doGet('https://localhost:8443/cas/sp/metadata', res => {
         assert(res.status === 200)
@@ -23,17 +23,17 @@ const path = require('path');
     });
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
-    await cas.assertVisibility(page, 'li #SAML2Client')
-    await cas.click(page, "li #SAML2Client")
-    await page.waitForTimeout(6000)
+    await cas.assertVisibility(page, 'li #SAML2Client');
+    await cas.click(page, "li #SAML2Client");
+    await page.waitForTimeout(6000);
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
 
-    console.log("Checking for page URL...")
-    console.log(await page.url())
+    console.log("Checking for page URL...");
+    console.log(await page.url());
 
     await page.waitForSelector('#table_with_attributes', {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");

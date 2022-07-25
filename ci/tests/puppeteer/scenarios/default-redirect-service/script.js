@@ -8,13 +8,13 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
 
     let uid = await page.$('#username');
-    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
-    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
-    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")));
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")));
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
     await cas.loginWith(page, "casuser", "Mellon");
     
-    const url = await page.url()
-    console.log(`Page url: ${url}`)
-    assert(url === "https://github.com/")
+    const url = await page.url();
+    console.log(`Page url: ${url}`);
+    assert(url === "https://github.com/");
     await browser.close();
 })();

@@ -12,7 +12,7 @@ const assert = require('assert');
             'Authorization': authzHeader,
             'Content-Type': 'application/json',
         }, 200);
-    console.log(body)
+    console.log(body);
     let tokenResponse = JSON.parse(body);
 
     let service = {
@@ -33,7 +33,7 @@ const assert = require('assert');
         "userinfo_encrypted_response_alg": "RSA1_5",
         "userinfo_encrypted_response_enc": "A128CBC-HS256",
         "contacts": ["sample@example.org", "user@example.org"]
-    }
+    };
 
     body = JSON.stringify(service, undefined, 2);
     console.log(`Sending ${body}`);
@@ -43,14 +43,14 @@ const assert = require('assert');
             'Content-Length': body.length,
             'Content-Type': 'application/json',
         }, 201, body);
-    assert(result !== null)
+    assert(result !== null);
     let entity = JSON.parse(result.toString());
-    console.log(entity)
+    console.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);
     assert(entity.registration_access_token !== null);
     assert(entity.registration_client_uri !== null);
-    assert(entity.contacts.length === 2)
+    assert(entity.contacts.length === 2);
     
     body = JSON.stringify(service, undefined, 2);
     console.log(`Sending ${body}`);

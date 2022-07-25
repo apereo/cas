@@ -12,17 +12,17 @@ const assert = require("assert");
     // await page.waitForTimeout(1000)
 
     await login(page, "mfa-duo", "https://apereo.github.io");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     await browser.close();
 })();
 
 async function login(page, providerId, service = undefined) {
-    await cas.goto(page, "https://localhost:8443/cas/logout")
-    await page.waitForTimeout(1000)
+    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await page.waitForTimeout(1000);
     await cas.assertCookie(page, false);
 
-    console.log(`Trying with provider id ${providerId} and service ${service}`)
+    console.log(`Trying with provider id ${providerId} and service ${service}`);
     let url = `https://localhost:8443/cas/login?authn_method=${providerId}`;
     if (service !== undefined) {
         url += `&service=${service}`;
@@ -31,12 +31,12 @@ async function login(page, providerId, service = undefined) {
     await cas.loginWith(page, "duobypass", "Mellon");
     await cas.screenshot(page);
     if (service !== undefined) {
-        await page.waitForTimeout(4000)
-        const url = await page.url()
-        console.log(`Page url: ${url}`)
+        await page.waitForTimeout(4000);
+        const url = await page.url();
+        console.log(`Page url: ${url}`);
         let ticket = await cas.assertTicketParameter(page);
         let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-        console.log(body)
+        console.log(body);
         let json = JSON.parse(body);
         let authenticationSuccess = json.serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.attributes.authnContextClass === undefined);

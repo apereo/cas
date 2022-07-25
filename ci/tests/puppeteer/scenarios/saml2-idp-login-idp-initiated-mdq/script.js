@@ -29,15 +29,15 @@ const path = require("path");
         await cas.screenshot(page);
         let e = await performance.now();
         let duration = (e - s) / 1000;
-        console.log(`Request took ${duration} seconds.`)
+        console.log(`Request took ${duration} seconds.`);
 
         if (count > 1 && duration > 12) {
             throw `Request took longer than expected:${duration}`;
         }
 
         await page.waitForTimeout(2000);
-        await cas.assertVisibility(page, '#username')
-        await cas.assertVisibility(page, '#password')
+        await cas.assertVisibility(page, '#username');
+        await cas.assertVisibility(page, '#password');
         count++;
     }
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));

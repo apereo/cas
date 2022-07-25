@@ -13,7 +13,7 @@ const assert = require('assert');
     console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.click(page, "#allow");
     await page.waitForNavigation();
 
@@ -41,13 +41,13 @@ const assert = require('assert');
         console.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
 
-        assert(decoded.sub !== null)
+        assert(decoded.sub !== null);
         assert(decoded["preferred_username"] == null)
     }, error => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken != null, "Access Token cannot be null")
+    assert(accessToken != null, "Access Token cannot be null");
 
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${accessToken}`;
     console.log(`Calling user profile ${profileUrl}`);

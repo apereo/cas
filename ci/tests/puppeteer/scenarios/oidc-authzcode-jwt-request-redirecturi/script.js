@@ -45,12 +45,12 @@ const assert = require("assert");
 
         console.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
-        assert(decoded.sub != null)
-        assert(decoded.aud != null)
-        assert(decoded.jti != null)
-        assert(decoded.sid != null)
-        assert(decoded.iss != null)
-        assert(decoded.state != null)
+        assert(decoded.sub != null);
+        assert(decoded.aud != null);
+        assert(decoded.jti != null);
+        assert(decoded.sid != null);
+        assert(decoded.iss != null);
+        assert(decoded.state != null);
         assert(decoded.nonce != null)
     }, error => {
         throw `Operation failed to obtain access token: ${error}`;

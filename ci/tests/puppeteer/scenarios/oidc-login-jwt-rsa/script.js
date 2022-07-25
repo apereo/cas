@@ -5,7 +5,7 @@ const path = require("path");
 const jwkToPem = require('jwk-to-pem');
 
 (async () => {
-    const configFilePath = path.join(__dirname, '/keystore.json')
+    const configFilePath = path.join(__dirname, '/keystore.json');
     const key = JSON.parse(fs.readFileSync(configFilePath)).keys[0];
     console.log(`Using JWK:\n${JSON.stringify(key)}\n`);
     

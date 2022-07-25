@@ -15,15 +15,15 @@ const assert = require('assert');
 
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
         res => {
-            assert(res.status === 200)
+            assert(res.status === 200);
             let length = res.data.Resources.length;
             console.log(`Found ${length} record`);
-            assert(length === 1)
+            assert(length === 1);
             assert(res.data.Resources[0].userName === "casscimuser")
         },
         error => {
             throw error;
-        }, { 'Authorization': "Basic c2NpbS11c2VyOmNoYW5nZWl0" })
+        }, { 'Authorization': "Basic c2NpbS11c2VyOmNoYW5nZWl0" });
 
     
     await browser.close();

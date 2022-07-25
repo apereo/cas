@@ -20,12 +20,12 @@ async function cleanUp() {
 
         console.log(`Navigating to ${url}`);
         await cas.goto(page, url);
-        await page.waitForTimeout(5000)
+        await page.waitForTimeout(5000);
 
-        let resultUrl = await page.url()
-        await cas.logg(`Page url: ${resultUrl}`)
-        assert(resultUrl === "https://localhost:9876/sp/")
-        await cas.assertInnerText(page, "#principal", "casuser")
+        let resultUrl = await page.url();
+        await cas.logg(`Page url: ${resultUrl}`);
+        assert(resultUrl === "https://localhost:9876/sp/");
+        await cas.assertInnerText(page, "#principal", "casuser");
 
         await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.assertCookie(page);

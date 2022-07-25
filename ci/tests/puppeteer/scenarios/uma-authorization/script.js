@@ -36,7 +36,7 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(resource)
+    console.log(resource);
 
     const policyUrl = `https://localhost:8443/cas/oauth2.0/${resource.resourceId}/policy`;
     let policyObject = {
@@ -79,7 +79,7 @@ const cas = require('../../cas.js');
         claims: {
             first_name: "CAS"
         }
-    }
+    };
 
     let permissionRequest = JSON.stringify(permissionObject);
     console.log(`Creating permission ${permissionRequest}`);
@@ -91,8 +91,8 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/json'
         }, 200, permissionRequest));
     console.log(result);
-    assert(result.ticket !== null)
-    assert(result.code !== null)
+    assert(result.ticket !== null);
+    assert(result.code !== null);
 
     let permissionTicket = result.ticket;
     console.log(`Found UMA permission ticket ${permissionTicket}`);
@@ -103,9 +103,9 @@ const cas = require('../../cas.js');
             assert(res.status === 200);
         }, error => {
             throw error;
-        })
+        });
 
-    console.log("Getting access token for authorization")
+    console.log("Getting access token for authorization");
     params = "client_id=client&";
     params += "client_secret=secret&";
     params += "scope=uma_authorization read&";
@@ -123,11 +123,11 @@ const cas = require('../../cas.js');
         throw `Operation failed: ${error}`;
     });
 
-    console.log(`Asking for relying party token (RPT) based on ${authorizationToken}`)
+    console.log(`Asking for relying party token (RPT) based on ${authorizationToken}`);
     let authzObject = {
         ticket: permissionTicket,
         'grant_type': "urn:ietf:params:oauth:grant-type:uma-ticket"
-    }
+    };
     let authzRequest = JSON.stringify(authzObject);
     result = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oauth2.0/rptAuthzRequest", "POST",
         {
@@ -154,11 +154,11 @@ const cas = require('../../cas.js');
                 "https://apereo.github.io?authorization_state=claims_submitted&state=12345"));
         });
 
-    console.log(`After claim collection, asking for relying party token (RPT) based on ${authorizationToken}`)
+    console.log(`After claim collection, asking for relying party token (RPT) based on ${authorizationToken}`);
     authzObject = {
         ticket: permissionTicket,
         'grant_type': "urn:ietf:params:oauth:grant-type:uma-ticket"
-    }
+    };
     authzRequest = JSON.stringify(authzObject);
     result = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oauth2.0/rptAuthzRequest", "POST",
         {
@@ -181,8 +181,8 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/json'
         },
         res => {
-            assert(res.data.active === true)
-            assert(res.data.grant_type === 'uma_ticket')
+            assert(res.data.active === true);
+            assert(res.data.grant_type === 'uma_ticket');
             assert(res.data.sub === 'casuser')
         }, error => {
             throw `Introspection operation failed: ${error}`;

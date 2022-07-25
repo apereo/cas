@@ -47,7 +47,7 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(resource)
+    console.log(resource);
     assert(resource.entity.id !== null);
     assert(resource.entity.name !== null);
     assert(resource.entity.uri !== null);
@@ -58,28 +58,28 @@ const cas = require('../../cas.js');
     assert(resource.location !== null);
     assert(resource.resourceId !== null);
 
-    console.log("Checking for all available resources")
+    console.log("Checking for all available resources");
     let result = JSON.parse(await cas.doRequest(resourceUrl, "GET",
         {
             "Authorization": `Bearer ${at}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(result)
+    console.log(result);
 
-    console.log(`Checking for created resource ${resource.location}`)
+    console.log(`Checking for created resource ${resource.location}`);
     result = JSON.parse(await cas.doRequest(resource.location, "GET",
         {
             "Authorization": `Bearer ${at}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(result)
+    console.log(result);
 
     resourceObject.name = "Updated Photos API";
     resourceObject.id = resource.resourceId;
     resourceRequest = JSON.stringify(resourceObject);
-    console.log(`Updating created resource ${resourceRequest}`)
+    console.log(`Updating created resource ${resourceRequest}`);
     result = JSON.parse(await cas.doRequest(resource.location, "PUT",
         {
             "Authorization": `Bearer ${at}`,
@@ -87,19 +87,19 @@ const cas = require('../../cas.js');
             'Content-Length': resourceRequest.length,
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(result)
+    console.log(result);
     assert(result.entity.name === "Updated Photos API");
 
-    console.log(`Checking for created resource ${resource.location}`)
+    console.log(`Checking for created resource ${resource.location}`);
     result = JSON.parse(await cas.doRequest(resource.location, "GET",
         {
             "Authorization": `Bearer ${at}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(result)
+    console.log(result);
 
-    console.log(`Deleting created resource ${resource.location}`)
+    console.log(`Deleting created resource ${resource.location}`);
     result = JSON.parse(await cas.doRequest(resource.location, "DELETE",
         {
             "Authorization": `Bearer ${at}`,

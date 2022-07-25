@@ -6,16 +6,16 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io&renew=true");
-    await cas.assertVisibility(page, "#username")
-    await cas.logg("Waiting for the service registry cache to expire...")
-    await cas.sleep(3000)
+    await cas.assertVisibility(page, "#username");
+    await cas.logg("Waiting for the service registry cache to expire...");
+    await cas.sleep(3000);
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io&renew=true");
-    await cas.assertVisibility(page, "#username")
+    await cas.assertVisibility(page, "#username");
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices/type";
     await cas.doGet(`${baseUrl}/CasRegisteredService`,
         res => {
-            assert(res.status === 200)
+            assert(res.status === 200);
             assert(res.data[1].length === 1)
         },
         error => {
@@ -23,7 +23,7 @@ const assert = require("assert");
         }, {'Content-Type': "application/json"});
     await cas.doGet(`${baseUrl}/OidcRegisteredService`,
         res => {
-            assert(res.status === 200)
+            assert(res.status === 200);
             assert(res.data[1].length === 0)
         },
         error => {

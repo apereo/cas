@@ -56,15 +56,15 @@ async function sendRequest(page, entityIds) {
         await cas.goto(page, url);
         let e = performance.now();
         let duration = (e - s) / 1000;
-        console.log(`Request took ${duration} seconds.`)
+        console.log(`Request took ${duration} seconds.`);
 
         if (count > 1 && duration > 15) {
             throw "Request took longer than expected";
         }
 
         await page.waitForTimeout(1000);
-        await cas.assertVisibility(page, '#username')
-        await cas.assertVisibility(page, '#password')
+        await cas.assertVisibility(page, '#username');
+        await cas.assertVisibility(page, '#password');
         await cas.loginWith(page, "casuser", "Mellon");
         count++;
     }

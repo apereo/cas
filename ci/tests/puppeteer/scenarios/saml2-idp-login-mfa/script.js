@@ -12,14 +12,14 @@ const assert = require('assert');
     await cas.loginWith(page, "casuser", "Mellon");
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(3000);
     await cas.screenshot(page);
 
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
-    await page2.waitForTimeout(1000)
-    await cas.click(page2, "table tbody td a")
-    await page2.waitForTimeout(1000)
+    await page2.waitForTimeout(1000);
+    await cas.click(page2, "table tbody td a");
+    await page2.waitForTimeout(1000);
     let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await page2.close();
 
@@ -34,10 +34,10 @@ const assert = require('assert');
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     console.log(authData);
     let initialAuthData = authData.AuthnInstant;
-    await cas.logg(`Initial authentication instant: ${initialAuthData}`)
-    let allCookies = await page.cookies()
+    await cas.logg(`Initial authentication instant: ${initialAuthData}`);
+    let allCookies = await page.cookies();
     allCookies.forEach(cookie => {
-        console.log(`Deleting cookie ${cookie.name}`)
+        console.log(`Deleting cookie ${cookie.name}`);
         page.deleteCookie({
             name : cookie.name,
             domain : cookie.domain
@@ -45,12 +45,12 @@ const assert = require('assert');
     });
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(3000);
 
     authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     console.log(authData);
     let nextAuthData = authData.AuthnInstant;
-    await cas.logg(`Second authentication instant: ${nextAuthData}`)
+    await cas.logg(`Second authentication instant: ${nextAuthData}`);
     assert(nextAuthData !== initialAuthData);
 
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));

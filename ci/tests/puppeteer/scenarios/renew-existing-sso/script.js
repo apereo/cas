@@ -9,13 +9,13 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
 
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.assertCookie(page);
 
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://example.com&renew=true");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
-    await cas.assertVisibility(page, '#existingSsoMsg')
+    await cas.assertVisibility(page, '#existingSsoMsg');
 
     await browser.close();
 })();

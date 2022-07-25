@@ -13,7 +13,7 @@ const assert = require("assert");
 
     console.log("Establishing SSO session...");
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.loginWith(page, "casuser", "Mellon");
 
     let entityId = "https://httpbin.org/shibboleth";
@@ -21,20 +21,20 @@ const assert = require("assert");
     url += `?providerId=${entityId}`;
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
     await cas.goto(page, url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     console.log(page.url());
-    assert(page.url().startsWith("https://httpbin.org/post"))
+    assert(page.url().startsWith("https://httpbin.org/post"));
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.screenshot(page);
     await page.waitForSelector('#table_with_attributes', {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");

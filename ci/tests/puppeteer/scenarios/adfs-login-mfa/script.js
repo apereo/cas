@@ -8,9 +8,9 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     console.log(`Navigating to ${service}`);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.click(page, "div .idp span");
-    await page.waitForTimeout(4000)
+    await page.waitForTimeout(4000);
     await cas.type(page, "#userNameInput", process.env.ADFS_USERNAME, true);
     await cas.type(page, "#passwordInput", process.env.ADFS_PASSWORD, true);
     await page.waitForTimeout(1000);
@@ -19,9 +19,9 @@ const cas = require('../../cas.js');
     
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
-    await page2.waitForTimeout(1000)
-    await cas.click(page2, "table tbody td a")
-    await page2.waitForTimeout(1000)
+    await page2.waitForTimeout(1000);
+    await cas.click(page2, "table tbody td a");
+    await page2.waitForTimeout(1000);
     let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await page2.close();
 
@@ -36,7 +36,7 @@ const cas = require('../../cas.js');
     await cas.assertCookie(page);
     await page.waitForTimeout(3000);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    console.log(body)
+    console.log(body);
     let json = JSON.parse(body);
     let authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user.includes("casuser@apereo.org"));

@@ -7,8 +7,8 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
 
     await cas.loginWith(page, "casuser", "Mellon");
-    const url = await page.url()
-    console.log(`Page url: ${url}`)
+    const url = await page.url();
+    console.log(`Page url: ${url}`);
     await cas.assertTicketParameter(page);
     await browser.close();
 })();

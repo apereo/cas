@@ -8,10 +8,10 @@ const cas = require('../../cas.js');
     const service = "https://apereo.github.io";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "duobypass", "Mellon");
-    await cas.assertVisibility(page, '#twitter-link')
-    await cas.assertVisibility(page, '#youtube-link')
-    console.log(await page.url())
-    await page.waitForTimeout(8000)
+    await cas.assertVisibility(page, '#twitter-link');
+    await cas.assertVisibility(page, '#youtube-link');
+    console.log(await page.url());
+    await page.waitForTimeout(8000);
     await cas.assertTicketParameter(page);
 
     await cas.goto(page, `https://localhost:8443/cas/login`);
@@ -19,12 +19,12 @@ const cas = require('../../cas.js');
     await cas.assertCookie(page);
 
     const endpoints = ["duoPing", "duoAccountStatus/casuser", "duoAdmin/casuser?providerId=mfa-duo"];
-    const baseUrl = "https://localhost:8443/cas/actuator/"
+    const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
-        console.log(`Calling endpoint ${url}`)
+        console.log(`Calling endpoint ${url}`);
         const response = await cas.goto(page, url);
-        console.log(`${response.status()} ${response.statusText()}`)
+        console.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok())
     }
     await browser.close();

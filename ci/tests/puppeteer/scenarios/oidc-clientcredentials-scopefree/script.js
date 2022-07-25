@@ -25,10 +25,10 @@ const cas = require('../../cas.js');
         assert(res.data.refresh_token !== null);
         assert(res.data.token_type !== null);
         assert(res.data.scope !== null);
-        assert(decoded.sub !== null)
-        assert(decoded.cn !== null)
-        assert(decoded.name !== null)
-        assert(decoded["preferred_username"] !== null)
+        assert(decoded.sub !== null);
+        assert(decoded.cn !== null);
+        assert(decoded.name !== null);
+        assert(decoded["preferred_username"] !== null);
         assert(decoded["given-name"] !== null)
     }, error => {
         throw `Operation failed: ${error}`;

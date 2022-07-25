@@ -26,7 +26,7 @@ const path = require("path");
         await cas.loginWith(page, "casuser", "Mellon");
         let ticket = await cas.assertTicketParameter(page);
         let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-        await cas.logg(body)
+        await cas.logg(body);
         let json = JSON.parse(body.toString());
         let authenticationSuccess = json.serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.attributes.group !== undefined);

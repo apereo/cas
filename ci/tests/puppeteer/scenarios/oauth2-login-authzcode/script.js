@@ -11,10 +11,10 @@ const cas = require('../../cas.js');
     const url = `https://localhost:8443/cas/oauth2.0/authorize?response_type=code&redirect_uri=${redirectUri}&client_id=client&scope=profile&state=9qa3`;
     
     await cas.goto(page, url);
-    console.log(`Page URL: ${page.url()}`)
-    await page.waitForTimeout(1000)
+    console.log(`Page URL: ${page.url()}`);
+    await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     let code = await cas.assertParameter(page, "code");
     console.log(`OAuth code ${code}`);
@@ -39,9 +39,9 @@ const cas = require('../../cas.js');
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken != null)
+    assert(accessToken != null);
 
-    const params = new URLSearchParams()
+    const params = new URLSearchParams();
     params.append('access_token', accessToken);
     
     await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', params, {},

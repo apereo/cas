@@ -20,9 +20,9 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(5000)
 
-    const url = await page.url()
-    console.log(`Page url: ${url}`)
-    assert(url.startsWith("https://github.com/"))
+    const url = await page.url();
+    console.log(`Page url: ${url}`);
+    assert(url.startsWith("https://github.com/"));
     
     await browser.close();
 })();
