@@ -72,7 +72,8 @@ access token sender-constrained and its replay, if leaked or stolen token, can b
 ### SSO Sessions
 
 A modest version of the user's active SSO sessions is included in 
-the [account profile](../registration/Account-Management-Overview.html) dashboard.
+the [account profile](../registration/Account-Management-Overview.html) dashboard. Authentication requests that can be linked
+to user agents and devices may also be automatically geo-tracked and located on the dashboard.
 
 ### Testing Strategy
 
