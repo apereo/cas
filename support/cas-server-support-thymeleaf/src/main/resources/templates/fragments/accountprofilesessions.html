@@ -71,6 +71,7 @@
                 <tr class="mdc-data-table__header-row">
                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Principal</th>
                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">IP Address</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Location</th>
                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">User Agent</th>
                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
@@ -81,7 +82,8 @@
                 <tr th:each="entry : ${singleSignOnSessions}" class="mdc-data-table__row">
                     <td class="mdc-data-table__cell" th:utext="${entry.principal}">Value</td>
                     <td class="mdc-data-table__cell" th:utext="${entry.clientIpAddress}">Value</td>
-                    <td class="mdc-data-table__cell" th:utext="${#strings.abbreviate(entry.userAgent, 25)}">Value</td>
+                    <td class="mdc-data-table__cell" th:utext="${#strings.abbreviate(entry.geoLocation, 30)}">Value</td>
+                    <td class="mdc-data-table__cell" th:utext="${#strings.abbreviate(entry.userAgent, 30)}">Value</td>
                     <td class="mdc-data-table__cell" th:utext="${entry.authenticationDate}"></td>
 
                     <td class="mdc-data-table__cell">

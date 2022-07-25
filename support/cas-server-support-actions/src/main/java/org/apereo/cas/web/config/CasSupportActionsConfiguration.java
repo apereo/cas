@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -56,6 +57,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -659,6 +661,8 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
         public Action prepareAccountProfileViewAction(
+            @Qualifier(GeoLocationService.BEAN_NAME)
+            final ObjectProvider<GeoLocationService> geoLocationService,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
@@ -672,7 +676,7 @@ public class CasSupportActionsConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new PrepareAccountProfileViewAction(ticketRegistry,
-                    servicesManager, casProperties, auditTrailExecutionPlan))
+                    servicesManager, casProperties, auditTrailExecutionPlan, geoLocationService.getIfAvailable()))
                 .withId(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
                 .build()
                 .get();
