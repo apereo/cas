@@ -53,18 +53,15 @@ public class JsonPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
     public void verifyReload() throws Exception {
         val file = File.createTempFile("file", ".json");
         FileUtils.writeStringToFile(file, MAPPER.writeValueAsString(new HashMap<>()), StandardCharsets.UTF_8);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                val resource = new JsonPasswordlessUserAccountStore(new FileSystemResource(file));
-                assertTrue(resource.getAccounts().isEmpty());
-                val account = PasswordlessUserAccount.builder().username("casuser").build();
-                val json = MAPPER.writeValueAsString(CollectionUtils.wrap("casuser", account));
-                FileUtils.writeStringToFile(file, json, StandardCharsets.UTF_8);
-                Files.setLastModifiedTime(file.toPath(), FileTime.from(Instant.now()));
-                Thread.sleep(5_000);
-                await().untilAsserted(() -> assertFalse(resource.getAccounts().isEmpty()));
-            }
+        assertDoesNotThrow(() -> {
+            val resource = new JsonPasswordlessUserAccountStore(new FileSystemResource(file));
+            assertTrue(resource.getAccounts().isEmpty());
+            val account = PasswordlessUserAccount.builder().username("casuser").build();
+            val json = MAPPER.writeValueAsString(CollectionUtils.wrap("casuser", account));
+            FileUtils.writeStringToFile(file, json, StandardCharsets.UTF_8);
+            Files.setLastModifiedTime(file.toPath(), FileTime.from(Instant.now()));
+            Thread.sleep(5_000);
+            await().untilAsserted(() -> assertFalse(resource.getAccounts().isEmpty()));
         });
     }
 }

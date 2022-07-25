@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -26,7 +27,8 @@ public class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTe
         val service = RegisteredServiceTestUtils.getService("noExpirationPolicy");
         val factory = (TicketGrantingTicketFactory) this.ticketFactory.get(TicketGrantingTicket.class);
         val tgt = factory.create(RegisteredServiceTestUtils.getAuthentication(), service, TicketGrantingTicket.class);
-        assertEquals(casProperties.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds(), tgt.getExpirationPolicy().getTimeToLive());
+        val seconds = Beans.newDuration(casProperties.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds()).toSeconds();
+        assertEquals(seconds, tgt.getExpirationPolicy().getTimeToLive());
     }
 
     @Test
