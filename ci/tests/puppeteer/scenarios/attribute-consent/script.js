@@ -7,11 +7,11 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon")
+    await cas.loginWith(page, "casuser", "Mellon");
 
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://example.org");
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
-    await cas.assertTextContent(page, "#appTitle", "The following attributes will be released to [https://example.org]:")
+    await cas.assertTextContent(page, "#appTitle", "The following attributes will be released to [https://example.org]:");
     await cas.assertTextContent(page, "#first-name", "first-name");
     await cas.assertTextContent(page, "#first-name-value", "[Apereo]");
     await cas.assertTextContent(page, "#last-name", "last-name");
@@ -21,7 +21,7 @@ const cas = require('../../cas.js');
 
     await cas.screenshot(page);
     await cas.click(page, "#optionsButton");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
 
     await cas.screenshot(page);
     let opt = await page.$('#optionAlways');
@@ -30,7 +30,7 @@ const cas = require('../../cas.js');
     assert(opt != null);
     opt = await page.$('#optionAttributeValue');
     assert(opt != null);
-    await cas.assertTextContent(page, "#reminderTitle", "How often should I be reminded to consent again?")
+    await cas.assertTextContent(page, "#reminderTitle", "How often should I be reminded to consent again?");
 
     opt = await page.$('#reminder');
     assert(opt != null);
@@ -40,11 +40,11 @@ const cas = require('../../cas.js');
     assert(opt != null);
     opt = await page.$('#cancel');
     assert(opt != null);
-    const url = "https://localhost:8443/cas/actuator/attributeConsent/casuser"
-    console.log(`Trying ${url}`)
+    const url = "https://localhost:8443/cas/actuator/attributeConsent/casuser";
+    console.log(`Trying ${url}`);
     const response = await cas.goto(page, url);
-    console.log(`${response.status()} ${response.statusText()}`)
-    assert(response.ok())
+    console.log(`${response.status()} ${response.statusText()}`);
+    assert(response.ok());
 
     await browser.close();
 })();

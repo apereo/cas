@@ -13,9 +13,9 @@ const cas = require('../../cas.js');
         console.log(res.data);
         assert(res.data.access_token !== null);
         cas.decodeJwt(res.data.access_token, true).then(decoded => {
-            assert(decoded !== null)
-            assert(decoded.payload["sub"] === "client")
-            assert(decoded.payload.client_id === "client")
+            assert(decoded !== null);
+            assert(decoded.payload["sub"] === "client");
+            assert(decoded.payload.client_id === "client");
             assert(decoded.payload.grant_type === "CLIENT_CREDENTIALS")
         });
 

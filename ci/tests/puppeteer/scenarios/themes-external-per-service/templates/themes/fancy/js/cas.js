@@ -1,1 +1,1 @@
-document.title = "Fancy Theme"
+document.title = "Fancy Theme";

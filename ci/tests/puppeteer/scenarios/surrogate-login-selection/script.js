@@ -9,16 +9,16 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://example.org");
 
     await cas.loginWith(page, "+casuser", "Mellon");
-    await cas.assertTextContent(page, "#titlePanel h2", "Choose Account")
+    await cas.assertTextContent(page, "#titlePanel h2", "Choose Account");
     await cas.assertTextContentStartsWith(page, "#surrogateInfo", "You are provided with a list of accounts");
-    await cas.assertVisibility(page, '#surrogateTarget')
+    await cas.assertVisibility(page, '#surrogateTarget');
 
-    await cas.assertVisibility(page, '#submit')
+    await cas.assertVisibility(page, '#submit');
 
     let cancel = await page.$('#cancel');
     assert(cancel == null);
 
-    await cas.assertVisibility(page, '#login')
+    await cas.assertVisibility(page, '#login');
 
     await browser.close();
 })();

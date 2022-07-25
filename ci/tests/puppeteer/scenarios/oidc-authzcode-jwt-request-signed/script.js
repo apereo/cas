@@ -43,16 +43,16 @@ const assert = require("assert");
 
         console.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
-        assert(decoded.sub === "casuser")
-        assert(decoded.jti.startsWith("TGT-"))
-        assert(decoded.aud === "client")
-        assert(decoded.jti != null)
-        assert(decoded.iat != null)
-        assert(decoded.sid != null)
-        assert(decoded.iss === "https://localhost:8443/cas/oidc")
-        assert(decoded.client_id === "client")
-        assert(decoded.auth_time != null)
-        assert(decoded.preferred_username === "casuser")
+        assert(decoded.sub === "casuser");
+        assert(decoded.jti.startsWith("TGT-"));
+        assert(decoded.aud === "client");
+        assert(decoded.jti != null);
+        assert(decoded.iat != null);
+        assert(decoded.sid != null);
+        assert(decoded.iss === "https://localhost:8443/cas/oidc");
+        assert(decoded.client_id === "client");
+        assert(decoded.auth_time != null);
+        assert(decoded.preferred_username === "casuser");
         assert(decoded.amr[0] === "Static Credentials")
     }, error => {
         throw `Operation failed to obtain access token: ${error}`;

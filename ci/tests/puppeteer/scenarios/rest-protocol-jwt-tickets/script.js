@@ -2,11 +2,11 @@ const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
-    console.log("Creating ticket-granting ticket as JWT")
+    console.log("Creating ticket-granting ticket as JWT");
     let tgt = await executeRequest('https://localhost:8443/cas/v1/tickets?username=casuser&password=Mellon&token=true', 201);
     await cas.decodeJwt(tgt);
 
-    console.log("Creating service ticket as JWT")
+    console.log("Creating service ticket as JWT");
     tgt = await executeRequest('https://localhost:8443/cas/v1/tickets?username=casuser&password=Mellon', 201);
     console.log(tgt);
     assert(tgt !== null);

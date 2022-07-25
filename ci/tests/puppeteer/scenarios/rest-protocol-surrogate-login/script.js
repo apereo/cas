@@ -2,9 +2,9 @@ const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
-    let params = new URLSearchParams()
-    params.append('username', 'user1+casuser')
-    params.append('password', 'Mellon')
+    let params = new URLSearchParams();
+    params.append('username', 'user1+casuser');
+    params.append('password', 'Mellon');
     await cas.doPost("https://localhost:8443/cas/v1/users",
         params, {
             'Accept': 'application/json',

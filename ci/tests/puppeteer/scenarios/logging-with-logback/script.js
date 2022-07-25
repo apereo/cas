@@ -13,7 +13,7 @@ const assert = require('assert');
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
-    const baseUrl = "https://localhost:8443/cas/actuator/"
+    const baseUrl = "https://localhost:8443/cas/actuator/";
     await cas.doGet(`${baseUrl}loggers`,
         res => {
             assert(res.data.loggers.ROOT.configuredLevel === "OFF");

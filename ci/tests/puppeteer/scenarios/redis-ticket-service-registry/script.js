@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.goto(page, "https://localhost:8443/cas/actuator/health");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         res => {
             assert(res.data.components.redis !== null);
@@ -20,6 +20,6 @@ const cas = require('../../cas.js');
 
         }, error => {
             throw error;
-        }, { 'Content-Type': "application/json" })
+        }, { 'Content-Type': "application/json" });
     await browser.close();
 })();

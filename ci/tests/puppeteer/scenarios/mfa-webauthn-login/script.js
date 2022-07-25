@@ -7,23 +7,23 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-webauthn");
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(3000);
     await cas.screenshot(page);
     await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
     
     let errorPanel = await page.$('#errorPanel');
     assert(await errorPanel == null);
 
-    await cas.assertVisibility(page, '#messages')
-    await cas.assertInvisibility(page, '#deviceTable')
-    await cas.assertVisibility(page, '#authnButton')
+    await cas.assertVisibility(page, '#messages');
+    await cas.assertInvisibility(page, '#deviceTable');
+    await cas.assertVisibility(page, '#authnButton');
 
     const endpoints = ["health", "webAuthnDevices/casuser"];
-    const baseUrl = "https://localhost:8443/cas/actuator/"
+    const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
-        console.log(`${response.status()} ${response.statusText()}`)
+        console.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok())
     }
 

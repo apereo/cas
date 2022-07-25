@@ -5,17 +5,17 @@ const {JSONPath} = require('jsonpath-plus');
 const startPuppeteerLoadTest = require('puppeteer-loadtest');
 let args = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync(args[0]));
-assert(config != null)
+assert(config != null);
 
 const paramOptions = {
     file: config.loadScript,
     samplesRequested: config.samplesRequested,
     concurrencyRequested: config.concurrencyRequested
-}
-const loadtest = async () => await startPuppeteerLoadTest(paramOptions)
+};
+const loadtest = async () => await startPuppeteerLoadTest(paramOptions);
 
 loadtest().then(results => {
-    console.log(JSON.stringify(results, null, 2))
-    const samples = JSONPath({path: '$..sample', json: results })
+    console.log(JSON.stringify(results, null, 2));
+    const samples = JSONPath({path: '$..sample', json: results });
     assert(samples.length === parseInt(config.samplesRequested))
 });

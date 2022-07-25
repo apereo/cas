@@ -35,19 +35,19 @@ exports.browserOptions = (opt) => ({
 
 exports.logy = async (text) => {
     console.log(colors.yellow(text));
-}
+};
 
 exports.logb = async (text) => {
     console.log(colors.blue(text));
-}
+};
 
 exports.logg = async (text) => {
     console.log(colors.green(text));
-}
+};
 
 exports.logr = async (text) => {
     console.log(colors.red(text));
-}
+};
 
 exports.removeDirectory = async (directory) => {
     console.log(`Removing directory ${colors.green(directory)}`);
@@ -58,7 +58,7 @@ exports.removeDirectory = async (directory) => {
     if (fs.existsSync(directory)) {
         await this.logr(`Removed directory still present at: ${directory}`);
     }
-}
+};
 
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
@@ -66,44 +66,44 @@ exports.click = async (page, button) => {
         console.log(`Clicking element ${button} with link ${buttonNode.href}`);
         buttonNode.click();
     }, button);
-}
+};
 
 exports.asciiart = async (text) => {
     await this.logb(figlet.textSync(text));
-}
+};
 
 exports.clickLast = async (page, button) => {
     await page.evaluate((button) => {
         let buttons = document.querySelectorAll(button);
         buttons[buttons.length - 1].click();
     }, button);
-}
+};
 
 exports.innerHTML = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerHTML.trim());
     console.log(`HTML for selector [${selector}] is: [${text}]`);
     return text;
-}
+};
 
 exports.innerText = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerText.trim());
     console.log(`Text for selector [${selector}] is: [${text}]`);
     return text;
-}
+};
 
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.textContent.trim(), element);
     console.log(`Text content for selector [${selector}] is: [${text}]`);
     return text;
-}
+};
 
 exports.inputValue = async (page, selector) => {
     const element = await page.$(selector);
     const text = await page.evaluate(element => element.value, element);
     console.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
-}
+};
 
 exports.uploadImage = async (imagePath) => {
     let clientId = process.env.IMGUR_CLIENT_ID;
@@ -117,7 +117,7 @@ exports.uploadImage = async (imagePath) => {
         });
         console.log(`Uploaded image is at ${colors.green(response.data.link)}`);
     }
-}
+};
 
 exports.loginWith = async (page, user, password,
                            usernameField = "#username",
@@ -131,7 +131,7 @@ exports.loginWith = async (page, user, password,
 
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-}
+};
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
     console.log(`Fetching Scratch codes for ${user}...`);
@@ -140,29 +140,29 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
             'Accept': 'application/json'
         });
     return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
-}
+};
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     let result = (element != null && await element.boundingBox() != null);
     console.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
     return result;
-}
+};
 
 exports.assertVisibility = async (page, selector) => {
     assert(await this.isVisible(page, selector));
-}
+};
 
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
     let result = element == null || await element.boundingBox() == null;
     console.log(`Checking element invisibility for ${selector} while on page ${page.url()}:${result}`);
     assert(result);
-}
+};
 
 
 exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
     const theCookie = (await page.cookies()).filter(value => {
-        console.log(`Checking cookie ${value.name}`)
+        console.log(`Checking cookie ${value.name}`);
         return value.name === cookieName
     });
     if (present) {
@@ -174,20 +174,20 @@ exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
         assert(theCookie.length === 0);
         console.log(`Cookie ${cookieName} cannot be found`);
     }
-}
+};
 
 exports.submitForm = async (page, selector) => {
     console.log(`Submitting form ${selector}`);
     await page.$eval(selector, form => form.submit());
     await page.waitForTimeout(2500)
-}
+};
 
 exports.type = async (page, selector, value, obfuscate = false) => {
     let logValue = obfuscate ? `******` : value;
     console.log(`Typing ${logValue} in field ${selector}`);
     await page.$eval(selector, el => el.value = '');
     await page.type(selector, value);
-}
+};
 
 exports.newPage = async (browser) => {
     let page = (await browser.pages())[0];
@@ -207,7 +207,7 @@ exports.newPage = async (browser) => {
         })
         .on('pageerror', ({message}) => this.logr(`Console: ${message}`));
     return page;
-}
+};
 
 exports.assertParameter = async (page, param) => {
     console.log(`Asserting parameter ${param} in URL: ${page.url()}`);
@@ -216,32 +216,32 @@ exports.assertParameter = async (page, param) => {
     console.log(`Parameter ${param} with value ${value}`);
     assert(value != null);
     return value;
-}
+};
 
 exports.assertMissingParameter = async (page, param) => {
     let result = new URL(page.url());
     assert(result.searchParams.has(param) === false);
-}
+};
 
 exports.sleep = async (ms) =>
     new Promise((resolve) => {
-        this.logg(`Waiting for ${ms / 1000} second(s)...`)
+        this.logg(`Waiting for ${ms / 1000} second(s)...`);
         setTimeout(resolve, ms);
-    })
+    });
 
 exports.assertTicketParameter = async (page, found = true) => {
     console.log(`Page URL: ${page.url()}`);
     let result = new URL(page.url());
     if (found) {
-        assert(result.searchParams.has("ticket"))
+        assert(result.searchParams.has("ticket"));
         let ticket = result.searchParams.get("ticket");
         console.log(`Ticket: ${ticket}`);
         assert(ticket != null);
         return ticket;
     }
-    assert(result.searchParams.has("ticket") === false)
+    assert(result.searchParams.has("ticket") === false);
     return null;
-}
+};
 
 exports.doRequest = async (url, method = "GET", headers = {},
                            statusCode = 200,
@@ -253,9 +253,9 @@ exports.doRequest = async (url, method = "GET", headers = {},
             rejectUnauthorized: false,
             headers: headers
         };
-        console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`)
+        console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
         const handler = (res) => {
-            console.log(`Response status code: ${colors.green(res.statusCode)}`)
+            console.log(`Response status code: ${colors.green(res.statusCode)}`);
             // console.log(`Response headers: ${colors.green(res.headers)}`)
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
@@ -275,7 +275,7 @@ exports.doRequest = async (url, method = "GET", headers = {},
         } else {
             https.get(url, options, res => handler(res)).on("error", reject);
         }
-    })
+    });
 
 exports.doGet = async (url, successHandler, failureHandler, headers = {}, responseType = undefined) => {
     const instance = axios.create({
@@ -300,7 +300,7 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         .catch(error => {
             failureHandler(error);
         })
-}
+};
 
 exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
     const instance = axios.create({
@@ -309,7 +309,7 @@ exports.doPost = async (url, params = "", headers = {}, successHandler, failureH
         })
     });
     let urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
-    console.log(`Posting to URL ${colors.green(url)}`)
+    console.log(`Posting to URL ${colors.green(url)}`);
     await instance
         .post(url, urlParams, {headers: headers})
         .then(res => {
@@ -322,7 +322,7 @@ exports.doPost = async (url, params = "", headers = {}, successHandler, failureH
             }
             failureHandler(error);
         })
-}
+};
 
 exports.waitFor = async (url, successHandler, failureHandler) => {
     let opts = {
@@ -338,7 +338,7 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         .catch(err => {
             failureHandler(err);
         });
-}
+};
 
 exports.runGradle = async (workdir, opts = [], exitFunc) => {
     let gradleCmd = './gradlew';
@@ -353,9 +353,9 @@ exports.runGradle = async (workdir, opts = [], exitFunc) => {
     exec.stderr.on('data', (data) => {
         console.error(data.toString());
     });
-    exec.on('exit', exitFunc)
+    exec.on('exit', exitFunc);
     return exec;
-}
+};
 
 exports.launchWsFedSp = async (spDir, opts = []) => {
     let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
@@ -364,7 +364,7 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     return this.runGradle(spDir, args, (code) => {
         console.log(`WSFED SP Child process exited with code ${code}`);
     });
-}
+};
 
 exports.stopGradleApp = async (gradleDir, deleteDir = true) => {
     let args = ['appStop', '-q', '--no-daemon'];
@@ -376,7 +376,7 @@ exports.stopGradleApp = async (gradleDir, deleteDir = true) => {
             this.removeDirectory(gradleDir);
         }
     });
-}
+};
 
 exports.shutdownCas = async (baseUrl) => {
     await this.logg(`Stopping CAS via shutdown actuator`);
@@ -386,32 +386,32 @@ exports.shutdownCas = async (baseUrl) => {
             'Content-Type': 'application/json',
         });
     return JSON.parse(response)
-}
+};
 
 exports.assertInnerTextStartsWith = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     assert(header.startsWith(value));
-}
+};
 
 exports.assertInnerTextContains = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     assert(header.includes(value));
-}
+};
 
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     assert(header === value)
-}
+};
 
 exports.assertPageTitle = async (page, value) => {
     const title = await page.title();
     console.log(`Page Title: ${title}`);
     assert(title === value)
-}
+};
 
 exports.recordScreen = async (page) => {
     let index = Math.floor(Math.random() * 10000);
-    let filePath = path.join(__dirname, `/recording-${index}.mp4`)
+    let filePath = path.join(__dirname, `/recording-${index}.mp4`);
     const config = {
         followNewTab: true,
         fps: 60,
@@ -422,17 +422,17 @@ exports.recordScreen = async (page) => {
         aspectRatio: '4:3',
     };
     const recorder = new PuppeteerScreenRecorder(page, config);
-    console.log(`Recording screen to ${filePath}`)
+    console.log(`Recording screen to ${filePath}`);
     await recorder.start(filePath);
     return recorder;
-}
+};
 
 exports.createJwt = async (payload, key, alg = "RS256", options = {}) => {
     let allOptions = {...{algorithm: alg}, ...options};
     const token = JwtOps.sign(payload, key, allOptions, undefined);
     console.log(`Created JWT:\n${colors.green(token)}\n`);
     return token;
-}
+};
 
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
@@ -446,7 +446,7 @@ exports.decodeJwt = async (token, complete = false) => {
         await this.logg(decoded);
     }
     return decoded;
-}
+};
 
 exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
     console.log(`Fetching Bypass codes from Duo Security for ${user}...`);
@@ -456,23 +456,23 @@ exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
             'Content-Type': 'application/json',
         });
     return JSON.parse(response)["mfa-duo"];
-}
+};
 
-exports.fetchDuoSecurityBypassCode = async (user = "casuser") => await this.fetchDuoSecurityBypassCode(user)[0]
+exports.fetchDuoSecurityBypassCode = async (user = "casuser") => await this.fetchDuoSecurityBypassCode(user)[0];
 
 exports.base64Decode = async (data) => {
     let buff = Buffer.from(data, 'base64');
     return buff.toString('ascii');
-}
+};
 
 exports.screenshot = async (page) => {
     if (process.env.CI === "true") {
         let index = Math.floor(Math.random() * 90000);
-        let filePath = path.join(__dirname, `/screenshot${index}.png`)
+        let filePath = path.join(__dirname, `/screenshot${index}.png`);
         try {
-            let url = await page.url()
-            console.log(`Page URL when capturing screenshot: ${url}`)
-            console.log(`Attempting to take a screenshot and save at ${filePath}`)
+            let url = await page.url();
+            console.log(`Page URL when capturing screenshot: ${url}`);
+            console.log(`Attempting to take a screenshot and save at ${filePath}`);
             await page.setViewport({width: 1920, height: 1080});
             await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
             console.log(`Screenshot saved at ${colors.green(filePath)}`);
@@ -483,25 +483,25 @@ exports.screenshot = async (page) => {
     } else {
         console.log("Capturing screenshots is disabled in non-CI environments");
     }
-}
+};
 
 exports.assertTextContent = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
     let header = await this.textContent(page, selector);
     assert(header === value);
-}
+};
 
 exports.assertTextContentStartsWith = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
     let header = await this.textContent(page, selector);
     assert(header.startsWith(value));
-}
+};
 
 exports.mockJsonServer = async (pathMappings, port = 8000) => {
     let app = mockServer(pathMappings, port, "localhost");
     await app.start();
     return app;
-}
+};
 
 exports.httpServer = async (root, port = 5432,
                             authEnabled = true,
@@ -529,10 +529,10 @@ exports.httpServer = async (root, port = 5432,
         }
     };
     new NodeStaticAuth(config);
-}
+};
 
 exports.randomNumber = async (min = 1, max = 100) =>
-    Math.floor(Math.random() * (max - min + 1)) + min
+    Math.floor(Math.random() * (max - min + 1)) + min;
 
 exports.killProcess = async (command, arguments) => {
     ps.lookup({
@@ -556,15 +556,15 @@ exports.killProcess = async (command, arguments) => {
             }
         });
     });
-}
+};
 
 exports.sha256 = async(value) => {
     return CryptoJS.SHA256(value)
-}
+};
 
 exports.base64Url = async(value) => {
     return CryptoJS.enc.Base64url.stringify(value);
-}
+};
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
@@ -574,7 +574,7 @@ exports.goto = async (page, url, retryCount = 5) => {
     while (response === null && attempts < retryCount) {
         attempts += 1;
         try {
-            console.log(`Navigating to: ${colors.green(url)}`)
+            console.log(`Navigating to: ${colors.green(url)}`);
             response = await page.goto(url);
             assert(await page.evaluate(() => document.title) !== null);
         } catch (err) {
@@ -587,7 +587,7 @@ exports.goto = async (page, url, retryCount = 5) => {
         console.log(`Response status: ${colors.green(await response.status())}`);
     }
     return response;
-}
+};
 
 exports.loginDuoSecurityBypassCode = async (page, type) => {
     await page.waitForTimeout(12000);
@@ -636,12 +636,12 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
                 await this.screenshot(page);
                 i++;
             } else {
-                console.log(`Duo Security accepted the bypass code ${bypassCode}`)
+                console.log(`Duo Security accepted the bypass code ${bypassCode}`);
                 return;
             }
         }
     }
-}
+};
 
 console.clear();
-this.asciiart("Apereo CAS - Puppeteer")
+this.asciiart("Apereo CAS - Puppeteer");

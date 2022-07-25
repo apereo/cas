@@ -7,35 +7,35 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
-    await cas.assertVisibility(page, '#twitter-link')
-    await cas.assertVisibility(page, '#youtube-link')
+    await cas.assertVisibility(page, '#twitter-link');
+    await cas.assertVisibility(page, '#youtube-link');
 
     const imgs = await page.$$eval('#cas-logo',
         imgs => imgs.map(img => img.getAttribute('src')));
     let logo = imgs.pop();
-    console.log(logo)
-    assert(logo === "/cas/themes/example/images/logo.png")
+    console.log(logo);
+    assert(logo === "/cas/themes/example/images/logo.png");
 
-    console.log("Logging out...")
+    console.log("Logging out...");
     await cas.goto(page, "https://localhost:8443/cas/logout?service=https://github.com/apereo/cas");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
-    await cas.assertVisibility(page, '#twitter-link')
-    await cas.assertVisibility(page, '#youtube-link')
+    await cas.assertVisibility(page, '#twitter-link');
+    await cas.assertVisibility(page, '#youtube-link');
     
-    await cas.assertVisibility(page, '#logoutButton')
+    await cas.assertVisibility(page, '#logoutButton');
     await cas.submitForm(page, "#fm1");
 
-    await page.waitForTimeout(1000)
-    const url = await page.url()
-    console.log(`Page url: ${url}`)
-    assert(url.toString().startsWith("https://localhost:8443/cas/logout"))
+    await page.waitForTimeout(1000);
+    const url = await page.url();
+    console.log(`Page url: ${url}`);
+    assert(url.toString().startsWith("https://localhost:8443/cas/logout"));
     await cas.assertCookie(page, false);
 
-    await cas.assertVisibility(page, '#twitter-link')
-    await cas.assertVisibility(page, '#youtube-link')
+    await cas.assertVisibility(page, '#twitter-link');
+    await cas.assertVisibility(page, '#youtube-link');
     
     await browser.close();
 })();

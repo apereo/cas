@@ -15,7 +15,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://google.com");
     await page.waitForTimeout(1000);
 
-    await cas.assertVisibility(page, 'li #CASServerOne')
+    await cas.assertVisibility(page, 'li #CASServerOne');
     await cas.assertVisibility(page, 'li #CASServerTwo');
     assert(await page.$('#username') == null);
     assert(await page.$('#password') == null);

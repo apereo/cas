@@ -9,15 +9,15 @@ const cas = require('../../cas.js');
         + "response_type=code";
 
     await cas.goto(page, url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
 
-    await page.waitForTimeout(10000)
+    await page.waitForTimeout(10000);
     // wait 10s before login again, the time for the TGT to be expired
     await cas.goto(page, url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     // the TGT being expired (while the web session is not), the login page is displayed
-    await cas.assertVisibility(page, '#username')
+    await cas.assertVisibility(page, '#username');
     await browser.close();
 })();

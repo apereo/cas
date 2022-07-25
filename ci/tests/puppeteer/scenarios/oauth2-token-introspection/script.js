@@ -27,26 +27,26 @@ const cas = require('../../cas.js');
         throw `Operation failed: ${error}`;
     });
 
-    console.log("Introspecting invalid token...")
+    console.log("Introspecting invalid token...");
     await introspect("AT-1234567890", (res, token) => {
-        assert(res.data.active === false)
-        assert(res.data.scope === "CAS")
-        assert(res.data.tokenType === undefined)
+        assert(res.data.active === false);
+        assert(res.data.scope === "CAS");
+        assert(res.data.tokenType === undefined);
         assert(res.data.client_id === undefined)
     });
 
 })();
 
 function successHandler(res, token) {
-    assert(res.data.active === true)
+    assert(res.data.active === true);
     assert(res.data.iat !== null);
     assert(res.data.exp !== null);
-    assert(res.data.aud === "client")
-    assert(res.data.uniqueSecurityName === "client")
-    assert(res.data.scope === "CAS")
-    assert(res.data.sub === "client")
-    assert(res.data.tokenType === "Bearer")
-    assert(res.data.client_id === "client")
+    assert(res.data.aud === "client");
+    assert(res.data.uniqueSecurityName === "client");
+    assert(res.data.scope === "CAS");
+    assert(res.data.sub === "client");
+    assert(res.data.tokenType === "Bearer");
+    assert(res.data.client_id === "client");
     assert(res.data.token === token)
 }
 
@@ -56,7 +56,7 @@ async function introspect(token, handlerOnSuccess) {
     let authzHeader = `Basic ${buff.toString('base64')}`;
     console.log(`Authorization header: ${authzHeader}`);
 
-    console.log(`Introspecting token ${token}`)
+    console.log(`Introspecting token ${token}`);
     await cas.doGet(`https://localhost:8443/cas/oauth2.0/introspect?token=${token}`,
         res => handlerOnSuccess(res, token),
         error => {

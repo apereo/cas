@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-inwebo");
     await cas.loginWith(page, "testcaspush", "password");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     let form = await page.$('#pendingCheckResultForm');
     assert(form != null);
     await browser.close();

@@ -8,7 +8,7 @@ const path = require('path');
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
@@ -19,30 +19,30 @@ const path = require('path');
         "nonce=vn4qulthnx";
     await cas.goto(page, url);
 
-    await cas.assertVisibility(page, 'li #SAML2Client')
-    await cas.click(page, "li #SAML2Client")
-    await page.waitForTimeout(3000)
+    await cas.assertVisibility(page, 'li #SAML2Client');
+    await cas.click(page, "li #SAML2Client");
+    await page.waitForTimeout(3000);
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
 
-    console.log("Checking for page URL...")
-    console.log(await page.url())
-    await page.waitForTimeout(2000)
+    console.log("Checking for page URL...");
+    console.log(await page.url());
+    await page.waitForTimeout(2000);
 
-    console.log("Allowing release of scopes and claims...")
-    console.log(await page.url())
+    console.log("Allowing release of scopes and claims...");
+    console.log(await page.url());
     
     let result = new URL(page.url());
-    console.log(result.searchParams.toString())
+    console.log(result.searchParams.toString());
 
     assert(result.searchParams.has("ticket") === false);
     assert(result.searchParams.has("client_id"));
     assert(result.searchParams.has("redirect_uri"));
     assert(result.searchParams.has("scope"));
 
-    await cas.click(page, "#allow")
-    await page.waitForTimeout(3000)
+    await cas.click(page, "#allow");
+    await page.waitForTimeout(3000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     console.log(page.url());

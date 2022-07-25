@@ -7,9 +7,9 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
 
     await cas.loginWith(page, "testuser", "testuser");
-    await cas.assertTextContent(page, "#content h1", "Authentication Interrupt")
+    await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.submitForm(page, "#fm1");
-    await cas.assertTextContent(page, "#content h1", "Authentication Succeeded with Warnings")
+    await cas.assertTextContent(page, "#content h1", "Authentication Succeeded with Warnings");
     await cas.submitForm(page, "#form");
     await cas.assertCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");

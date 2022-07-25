@@ -6,16 +6,16 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
     await submitLoginFailure(page);
-    await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed")
+    await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
     await submitLoginFailure(page);
-    await cas.assertInnerText(page, "#content h2", "Access Denied")
-    await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.")
+    await cas.assertInnerText(page, "#content h2", "Access Denied");
+    await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
 
-    const url = "https://localhost:8443/cas/actuator/throttles"
-    console.log(`Trying ${url}`)
+    const url = "https://localhost:8443/cas/actuator/throttles";
+    console.log(`Trying ${url}`);
     const response = await cas.goto(page, url);
-    console.log(`${response.status()} ${response.statusText()}`)
-    assert(response.ok())
+    console.log(`${response.status()} ${response.statusText()}`);
+    assert(response.ok());
 
     await browser.close();
 })();

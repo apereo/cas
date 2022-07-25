@@ -8,13 +8,13 @@ const cas = require('../../cas.js');
     const service = "https://example.com";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     let uid = await page.$('#username');
-    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
-    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
-    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")));
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")));
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
     await cas.loginWith(page, "casuser", "Mellon");
     let ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
-    console.log(body)
-    assert(body === "yes\ncasuser\n")
+    console.log(body);
+    assert(body === "yes\ncasuser\n");
     await browser.close();
 })();

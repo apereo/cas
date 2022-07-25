@@ -26,13 +26,13 @@
                 $('#source').val(select.value);
             }
 
-            let tooltips = document.querySelectorAll('.mdc-tooltip')
+            let tooltips = document.querySelectorAll('.mdc-tooltip');
             if (tooltips != null) {
                 tooltips.forEach(t => {
                     new material.tooltip.MDCTooltip(t);
                 })
             }
-            let banners = document.querySelectorAll('.mdc-banner')
+            let banners = document.querySelectorAll('.mdc-banner');
             if (banners != null) {
                 banners.forEach(b => {
                     new material.banner.MDCBanner(b);
@@ -56,7 +56,7 @@
                 console.log("Unable to locate element for CAPSLOCK")
             }
         }
-    }
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
         cas.init();

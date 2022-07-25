@@ -16,11 +16,11 @@ const assert = require("assert");
 
     await cas.goto(page, "https://localhost:8443/cas/logout");
 
-    let url = await page.url()
-    console.log(`Page url: ${url}`)
-    assert(url === "https://localhost:8443/cas/logout")
+    let url = await page.url();
+    console.log(`Page url: ${url}`);
+    assert(url === "https://localhost:8443/cas/logout");
 
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.assertCookie(page, false);
 
     await browser.close();

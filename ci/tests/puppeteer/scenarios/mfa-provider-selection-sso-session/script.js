@@ -15,13 +15,13 @@ const cas = require("../../cas.js");
 
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
     await page.waitForTimeout(500);
-    await cas.assertInvisibility(page, "#username")
+    await cas.assertInvisibility(page, "#username");
 
     console.log("Selecting mfa-gauth");
     await cas.assertVisibility(page, '#mfa-gauth');
     await cas.assertVisibility(page, '#mfa-yubikey');
 
-    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]")
+    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]");
     await page.waitForTimeout(500);
 
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
@@ -38,8 +38,8 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#authnContextClass td.attribute-value", "[mfa-gauth]");
     
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
-    const url = await page.url()
-    console.log(`Page url: ${url}`)
+    const url = await page.url();
+    console.log(`Page url: ${url}`);
     assert(url.startsWith("https://github.com/"));
 
     await cas.goto(page, "https://localhost:8443/cas/logout");
@@ -49,7 +49,7 @@ const cas = require("../../cas.js");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
     await page.waitForTimeout(500);
     await cas.loginWith(page, "casuser", "Mellon");
-    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]")
+    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]");
     await page.waitForTimeout(500);
 
     scratch = await cas.fetchGoogleAuthenticatorScratchCode();
@@ -61,8 +61,8 @@ const cas = require("../../cas.js");
     console.log("Navigating to second service with SSO session");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo");
     await page.waitForTimeout(1000);
-    await cas.assertInvisibility(page, "#username")
-    await cas.assertTicketParameter(page)
+    await cas.assertInvisibility(page, "#username");
+    await cas.assertTicketParameter(page);
 
     await browser.close();
 })();

@@ -6,18 +6,18 @@ const path = require('path');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.click(page, "#saml2IdPDiscovery")
-    await page.waitForTimeout(5000)
-    await cas.type(page, "#idpSelectInput", "simplesaml")
-    await page.waitForTimeout(1000)
+    await cas.click(page, "#saml2IdPDiscovery");
+    await page.waitForTimeout(5000);
+    await cas.type(page, "#idpSelectInput", "simplesaml");
+    await page.waitForTimeout(1000);
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(4000)
-    console.log(`Page url: ${ await page.url()}`)
+    await page.waitForTimeout(4000);
+    console.log(`Page url: ${ await page.url()}`);
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
 
-    console.log(`Page url: ${ await page.url()}`)
+    console.log(`Page url: ${ await page.url()}`);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertCookie(page);

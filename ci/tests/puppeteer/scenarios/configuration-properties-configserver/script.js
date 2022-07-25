@@ -9,7 +9,7 @@ const assert = require("assert");
             assert(res.status === 200)
         }, err => {
             throw err;
-        })
+        });
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");

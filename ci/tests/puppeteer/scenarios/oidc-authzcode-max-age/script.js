@@ -11,14 +11,14 @@ async function fetchIdToken(page, maxAge, successHandler) {
 
     console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.loginWith(page, "casuser", "Mellon");
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
     }
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.screenshot(page);
     let code = await cas.assertParameter(page, "code");
     console.log(`OAuth code ${code}`);
@@ -59,13 +59,13 @@ async function fetchIdToken(page, maxAge, successHandler) {
     await fetchIdToken(page, -1, idToken => {
         time1 = idToken.auth_time
     });
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await fetchIdToken(page, 1, idToken => {
         time2 = idToken.auth_time;
     });
 
-    console.log(`Initial attempt; ID token auth_time: ${time1}`)
-    console.log(`Second attempt with max_age=1; ID token auth_time: ${time2}`)
+    console.log(`Initial attempt; ID token auth_time: ${time1}`);
+    console.log(`Second attempt with max_age=1; ID token auth_time: ${time2}`);
     assert(time1 !== time2);
 
     await browser.close();

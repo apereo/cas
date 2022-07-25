@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
             'Content-Type': "application/x-www-form-urlencoded"
         },
         res => {
-            assert(res.status === 200)
+            assert(res.status === 200);
 
             let data = res.data.toString();
             assert(data.includes("aws_access_key_id"));

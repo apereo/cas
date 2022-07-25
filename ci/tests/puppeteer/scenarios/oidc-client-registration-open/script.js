@@ -21,7 +21,7 @@ const assert = require('assert');
         "userinfo_encrypted_response_alg": "RSA1_5",
         "userinfo_encrypted_response_enc": "A128CBC-HS256",
         "contacts": ["sample@example.org", "user@example.org"]
-    }
+    };
 
     let body = JSON.stringify(service, undefined, 2);
     console.log(`Sending ${body}`);
@@ -30,25 +30,25 @@ const assert = require('assert');
             'Content-Length': body.length,
             'Content-Type': 'application/json',
         }, 201, body);
-    assert(result !== null)
+    assert(result !== null);
     let entity = JSON.parse(result.toString());
-    console.log(entity)
+    console.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);
     assert(entity.registration_access_token !== null);
     assert(entity.registration_client_uri !== null);
-    assert(entity.contacts.length === 2)
+    assert(entity.contacts.length === 2);
 
-    console.log("Fetching client configuration...")
-    console.log("==================================")
+    console.log("Fetching client configuration...");
+    console.log("==================================");
     
     await cas.doGet(entity.registration_client_uri,
         res => {
             console.log(`Registered entity: ${JSON.stringify(res.data)}`);
-            assert(res.data.client_secret_expires_at > 0)
-            assert(res.data.client_name === "My Example")
-            assert(res.data.client_id === entity.client_id)
-            assert(res.data.client_secret === entity.client_secret)
+            assert(res.data.client_secret_expires_at > 0);
+            assert(res.data.client_name === "My Example");
+            assert(res.data.client_id === entity.client_id);
+            assert(res.data.client_secret === entity.client_secret);
             assert(res.status === 200)
         }, error => {
             throw error;

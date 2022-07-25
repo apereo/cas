@@ -44,10 +44,10 @@ const cas = require('../../cas.js');
         "releaseAttributes?username=casuser&password=Mellon&service=https://example.com",
         "status"];
 
-    const baseUrl = "https://localhost:8443/cas/actuator/"
+    const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
-        console.log(`Trying ${url}`)
+        console.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
             'Accept': 'application/json',
             'Content-Type': 'application/json',

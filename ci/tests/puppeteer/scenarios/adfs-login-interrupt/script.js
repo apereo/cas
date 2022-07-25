@@ -8,15 +8,15 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     console.log(`Navigating to ${service}`);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.click(page, "div .idp span");
-    await page.waitForTimeout(4000)
+    await page.waitForTimeout(4000);
     await cas.type(page, "#userNameInput", process.env.ADFS_USERNAME, true);
     await cas.type(page, "#passwordInput", process.env.ADFS_PASSWORD, true);
     await page.waitForTimeout(1000);
     await cas.submitForm(page, "#loginForm");
     await page.waitForTimeout(3000);
-    await cas.assertTextContent(page, "#content h1", "Authentication Interrupt")
+    await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
     await cas.assertTextContentStartsWith(page, "#interruptMessage", "We interrupted your login");
     await cas.submitForm(page, "#fm1");
@@ -26,7 +26,7 @@ const cas = require('../../cas.js');
     await cas.assertCookie(page);
     await page.waitForTimeout(3000);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    console.log(body)
+    console.log(body);
     let json = JSON.parse(body);
     let authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user.includes("casuser@apereo.org"));

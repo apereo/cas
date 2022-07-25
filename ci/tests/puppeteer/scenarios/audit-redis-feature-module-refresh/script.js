@@ -7,7 +7,7 @@ const YAML = require("yaml");
 
 (async () => {
     let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8')
+    const file = fs.readFileSync(configFilePath, 'utf8');
     const configFile = YAML.parse(file);
     
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -21,14 +21,14 @@ const YAML = require("yaml");
         assert(res.data.length === 0);
     }, error => {
         throw(error);
-    })
+    });
 
-    console.log("Updating configuration and waiting for changes to reload...")
+    console.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, true);
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(5000);
 
     let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-    console.log(response)
+    console.log(response);
 
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "unknown", "Mellon");
@@ -57,7 +57,7 @@ async function updateConfig(configFile, configFilePath, data) {
                 }
             }
         }
-    }
+    };
     const newConfig = YAML.stringify(config);
     console.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);

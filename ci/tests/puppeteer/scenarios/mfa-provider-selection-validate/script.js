@@ -15,7 +15,7 @@ const cas = require("../../cas.js");
     console.log("Select mfa-gauth");
     await cas.assertVisibility(page, '#mfa-gauth');
 
-    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]")
+    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]");
     await page.waitForTimeout(1000);
 
     console.log(`Using scratch code ${scratch} to login...`);
@@ -31,17 +31,17 @@ const cas = require("../../cas.js");
 
     await cas.logg(body);
     
-    assert(body.includes("<cas:authenticationSuccess>"))
-    assert(body.includes("<cas:user>casuser</cas:user>"))
-    assert(body.includes("<cas:credentialType>GoogleAuthenticatorTokenCredential</cas:credentialType>"))
+    assert(body.includes("<cas:authenticationSuccess>"));
+    assert(body.includes("<cas:user>casuser</cas:user>"));
+    assert(body.includes("<cas:credentialType>GoogleAuthenticatorTokenCredential</cas:credentialType>"));
 
-    assert(body.includes("<cas:authenticationMethod>Accept</cas:authenticationMethod>"))
-    assert(body.includes("<cas:authenticationMethod>GoogleAuth</cas:authenticationMethod>"))
+    assert(body.includes("<cas:authenticationMethod>Accept</cas:authenticationMethod>"));
+    assert(body.includes("<cas:authenticationMethod>GoogleAuth</cas:authenticationMethod>"));
 
-    assert(body.includes("<cas:authnContextClass>mfa-gauth</cas:authnContextClass>"))
+    assert(body.includes("<cas:authnContextClass>mfa-gauth</cas:authnContextClass>"));
 
-    assert(body.includes("<cas:successfulAuthenticationHandlers>Accept</cas:successfulAuthenticationHandlers>"))
-    assert(body.includes("<cas:successfulAuthenticationHandlers>GoogleAuth</cas:successfulAuthenticationHandlers>"))
+    assert(body.includes("<cas:successfulAuthenticationHandlers>Accept</cas:successfulAuthenticationHandlers>"));
+    assert(body.includes("<cas:successfulAuthenticationHandlers>GoogleAuth</cas:successfulAuthenticationHandlers>"));
 
     await browser.close();
 })();

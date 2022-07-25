@@ -7,14 +7,14 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(3000);
 
-    await cas.assertVisibility(page, '#loginProviders')
-    await cas.assertVisibility(page, 'li #TwitterClient')
-    await cas.assertVisibility(page, 'li #GitHubClient')
+    await cas.assertVisibility(page, '#loginProviders');
+    await cas.assertVisibility(page, 'li #TwitterClient');
+    await cas.assertVisibility(page, 'li #GitHubClient');
 
     await cas.goto(page, "https://localhost:8443/cas/clientredirect?client_name=GithubClient");
     await page.waitForTimeout(3000);
 
-    await cas.assertVisibility(page, '#login_field')
+    await cas.assertVisibility(page, '#login_field');
 
     await browser.close();
 })();

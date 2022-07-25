@@ -18,25 +18,25 @@ const cas = require('../../cas.js');
             assert(res.data.cacheManagers.ehCacheJCacheCacheManager.caches.transientSessionTicketsCache !== null);
         }, error => {
             throw error;
-        }, { 'Content-Type': "application/json" })
+        }, { 'Content-Type': "application/json" });
 
     await cas.doGet("https://localhost:8443/cas/actuator/metrics/cache.puts",
         res => {
             assert(res.data.measurements[0].value === 1);
         }, error => {
             throw error;
-        }, { 'Content-Type': "application/json" })
+        }, { 'Content-Type': "application/json" });
     await cas.doGet("https://localhost:8443/cas/actuator/metrics/cache.removals",
         res => {
             assert(res.data.measurements[0].value === 1);
         }, error => {
             throw error;
-        }, { 'Content-Type': "application/json" })
+        }, { 'Content-Type': "application/json" });
     await cas.doGet("https://localhost:8443/cas/actuator/metrics/cache.gets",
         res => {
             assert(res.data.measurements[0].value >= 3);
         }, error => {
             throw error;
-        }, { 'Content-Type': "application/json" })
+        }, { 'Content-Type': "application/json" });
     await browser.close();
 })();

@@ -11,9 +11,9 @@ const jose = require('jose');
         + "redirect_uri=https://apereo.github.io";
 
     await cas.goto(page, url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -31,7 +31,7 @@ const jose = require('jose');
     console.log(`DPoP proof payload is`);
     console.log(payload);
 
-    const {publicKey, privateKey} = await jose.generateKeyPair('ES256')
+    const {publicKey, privateKey} = await jose.generateKeyPair('ES256');
     const publicJwk = await jose.exportJWK(publicKey);
     console.log(`DPoP public key is`);
     console.log(publicJwk);
@@ -61,10 +61,10 @@ const jose = require('jose');
 
         cas.decodeJwt(accessToken, true)
             .then(decoded => {
-                assert(decoded !== null)
+                assert(decoded !== null);
                 console.log(decoded);
-                assert(decoded.payload["DPoP"] !== undefined)
-                assert(decoded.payload["DPoPConfirmation"] !== undefined)
+                assert(decoded.payload["DPoP"] !== undefined);
+                assert(decoded.payload["DPoPConfirmation"] !== undefined);
                 assert(decoded.payload["cnf"]["jkt"] !== undefined)
             });
     }, error => {

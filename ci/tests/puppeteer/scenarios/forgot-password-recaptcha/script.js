@@ -6,19 +6,19 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
 
-    await page.waitForTimeout(2000)
-    await cas.assertTextContent(page, "#forgotPasswordLink", "Reset your password")
+    await page.waitForTimeout(2000);
+    await cas.assertTextContent(page, "#forgotPasswordLink", "Reset your password");
 
-    await cas.click(page, "#forgotPasswordLink")
-    await page.waitForTimeout(1000)
+    await cas.click(page, "#forgotPasswordLink");
+    await page.waitForTimeout(1000);
 
-    await cas.assertTextContent(page, "#reset #fm1 h3", "Reset your password")
-    await cas.assertVisibility(page, '#username')
+    await cas.assertTextContent(page, "#reset #fm1 h3", "Reset your password");
+    await cas.assertVisibility(page, '#username');
     await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await page.waitForTimeout(1000)
-    await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA validation failed.")
+    await page.waitForTimeout(1000);
+    await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA validation failed.");
     await browser.close();
 })();
 

@@ -10,9 +10,9 @@ const assert = require('assert');
         + "redirect_uri=https://apereo.github.io";
 
     await cas.goto(page, url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -24,7 +24,7 @@ const assert = require('assert');
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
         + `&client_id=client&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
     await cas.goto(page, accessTokenUrl);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     console.log(payload);
@@ -37,8 +37,8 @@ const assert = require('assert');
 
     console.log("Decoding ID token...");
     let decodedIdToken = await cas.decodeJwt(payload.id_token);
-    assert(decodedIdToken.sub !== null)
-    assert(decodedIdToken.client_id !== null)
+    assert(decodedIdToken.sub !== null);
+    assert(decodedIdToken.client_id !== null);
     assert(decodedIdToken.iss === "https://sso.example.org/cas/oidc");
 
     await browser.close();

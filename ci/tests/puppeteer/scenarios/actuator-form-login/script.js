@@ -7,10 +7,10 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/actuator/sso");
 
-    await cas.assertInnerText(page, "#content h2", "Login")
-    await cas.assertVisibility(page, '#content form[name=fm1]')
+    await cas.assertInnerText(page, "#content h2", "Login");
+    await cas.assertVisibility(page, '#content form[name=fm1]');
 
-    await cas.assertInnerText(page, "#content form[name=fm1] h3", "Enter Username & Password")
+    await cas.assertInnerText(page, "#content form[name=fm1] h3", "Enter Username & Password");
     await cas.assertVisibility(page, '#username');
 
     let uid = await page.$('#username');

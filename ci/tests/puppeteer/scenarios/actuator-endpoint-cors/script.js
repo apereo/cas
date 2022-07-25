@@ -11,18 +11,18 @@ const assert = require('assert');
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
         await cas.goto(page, "http://localhost:8444?endpoint=info");
-        await page.waitForTimeout(2500)
+        await page.waitForTimeout(2500);
 
         let data = JSON.parse(await cas.innerText(page, "#data"));
-        assert(data.cas.version !== null)
-        assert(data.cas.java.vendor !== null)
-        assert(data.cas.java.version !== null)
+        assert(data.cas.version !== null);
+        assert(data.cas.java.vendor !== null);
+        assert(data.cas.java.version !== null);
 
         await cas.goto(page, "http://localhost:8444?endpoint=health");
-        await page.waitForTimeout(2500)
+        await page.waitForTimeout(2500);
         data = JSON.parse(await cas.innerText(page, "#data"));
-        assert(data.status !== null)
-        assert(data.components !== null)
+        assert(data.status !== null);
+        assert(data.components !== null);
 
         server.close(() => {
             console.log('Exiting server...');

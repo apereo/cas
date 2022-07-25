@@ -7,17 +7,17 @@ const path = require("path");
 
 (async () => {
     let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8')
+    const file = fs.readFileSync(configFilePath, 'utf8');
     const configFile = YAML.parse(file);
 
     const browser = await puppeteer.launch(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
-        await updateConfig(configFile, configFilePath, "http://localhost:18080/syncope")
-        await page.waitForTimeout(3000)
+        await updateConfig(configFile, configFilePath, "http://localhost:18080/syncope");
+        await page.waitForTimeout(3000);
         let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-        console.log(response)
-        await doLogin(page, "syncopecas", "Mellon", "syncopecas@syncope.org")
+        console.log(response);
+        await doLogin(page, "syncopecas", "Mellon", "syncopecas@syncope.org");
         await doLogin(page, "casuser", "paSSw0rd", "casuser@syncope.org")
     } finally {
         await updateConfig(configFile, configFilePath, "")
@@ -33,9 +33,9 @@ async function doLogin(page, uid, psw, email) {
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     const attributes = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
-    assert(attributes.includes("syncopeUserAttr_email"))
+    assert(attributes.includes("syncopeUserAttr_email"));
     assert(attributes.includes(email))
 }
 
@@ -48,7 +48,7 @@ async function updateConfig(configFile, configFilePath, data) {
                 }
             }
         }
-    }
+    };
     const newConfig = YAML.stringify(config);
     console.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);

@@ -7,7 +7,7 @@ const assert = require('assert');
         "client_name": "Apereo Blog",
         "contacts": ["cas@example.org"],
         "grant_types": ["client_credentials"],
-    }
+    };
     let body = JSON.stringify(service, undefined, 2);
     console.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
@@ -15,26 +15,26 @@ const assert = require('assert');
             'Content-Length': body.length,
             'Content-Type': 'application/json'
         }, 201, body);
-    assert(result !== null)
+    assert(result !== null);
     let entity = JSON.parse(result.toString());
-    console.log(entity)
+    console.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);
 
-    console.log("Using registration entry to get a token...")
+    console.log("Using registration entry to get a token...");
     await executeRequest(entity.client_id, entity.client_secret, false);
     await cas.sleep(5000);
-    console.log("Re-using a now-expired registration entry to get a token, which must fail...")
+    console.log("Re-using a now-expired registration entry to get a token, which must fail...");
     await executeRequest(entity.client_id, entity.client_secret, true);
 
-    console.log("Updating registration entity to renew client secret")
-    console.log("==================================")
+    console.log("Updating registration entity to renew client secret");
+    console.log("==================================");
     service = {
         "redirect_uris": ["https://apereo.github.io"],
         "client_name": "Apereo Blog Updated Now",
         "contacts": ["cas@example.org", "new@example.org"],
         "grant_types": ["client_credentials"],
-    }
+    };
     body = JSON.stringify(service, undefined, 2);
     console.log(`Sending ${body}`);
 
@@ -44,7 +44,7 @@ const assert = require('assert');
         'Content-Type': 'application/json'
     }, 200, body);
     let updatedEntity = JSON.parse(result.toString());
-    console.log(updatedEntity)
+    console.log(updatedEntity);
     assert(entity.client_secret !== updatedEntity.client_secret);
     assert(updatedEntity.client_name === service.client_name);
     assert(updatedEntity.contacts.length === service.contacts.length);

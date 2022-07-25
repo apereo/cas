@@ -6,8 +6,8 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
 
-    await page.waitForTimeout(1000)
-    await cas.assertVisibility(page, '#webauthnLoginPanel div h2#status')
+    await page.waitForTimeout(1000);
+    await cas.assertVisibility(page, '#webauthnLoginPanel div h2#status');
     await cas.assertTextContent(page, "#webauthnLoginPanel div h2#status","Login with FIDO2-enabled Device");
     await browser.close();
 })();
