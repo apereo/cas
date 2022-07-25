@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.account;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.DetailedCredentialMetaData;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.metadata.ClientInfoAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -53,6 +54,8 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     private final AuditTrailExecutionPlan auditTrailManager;
+
+    private final GeoLocationService geoLocationService;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -126,7 +129,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
     @Getter
     @SuppressWarnings("UnusedMethod")
-    static class SingleSignOnSession implements Serializable {
+    class SingleSignOnSession implements Serializable {
         private static final long serialVersionUID = 8935451143814878214L;
 
         private final String payload;
@@ -139,6 +142,8 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
         private final String clientIpAddress;
 
+        private final String geoLocation;
+
         SingleSignOnSession(final TicketGrantingTicket ticket) {
             this.principal = ticket.getAuthentication().getPrincipal().getId();
             this.userAgent = ticket.getAuthentication().getCredentials()
@@ -149,7 +154,6 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
                 .map(cred -> cred.getProperties().get(DetailedCredentialMetaData.PROPERTY_USER_AGENT).toString())
                 .findFirst()
                 .orElse(StringUtils.EMPTY);
-
             this.clientIpAddress = CollectionUtils.firstElement(ticket.getAuthentication()
                     .getAttributes()
                     .get(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS))
@@ -157,6 +161,8 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
                 .orElse(StringUtils.EMPTY);
             val dateFormat = new ISOStandardDateFormat();
             this.authenticationDate = dateFormat.format(DateTimeUtils.dateOf(ticket.getAuthentication().getAuthenticationDate()));
+            this.geoLocation = FunctionUtils.doIfNotNull(geoLocationService,
+                () -> geoLocationService.locate(this.clientIpAddress).build(), () -> "N/A").get();
             this.payload = FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
         }
     }
