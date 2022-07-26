@@ -12,7 +12,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
@@ -505,7 +504,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("Determined SAML2 endpoint for authentication request as [{}]",
             StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()));
 
-        SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest);
+        configurationContext.getOpenSamlConfigBean().logObject(authnRequest);
         return Pair.of(registeredService, facade);
     }
 

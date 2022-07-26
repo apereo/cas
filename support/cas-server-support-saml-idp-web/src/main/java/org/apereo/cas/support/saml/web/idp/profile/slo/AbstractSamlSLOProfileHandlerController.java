@@ -44,7 +44,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     private void handleLogoutResponse(final Pair<? extends SignableSAMLObject, MessageContext> pair) {
         val logoutResponse = (LogoutResponse) pair.getKey();
         LOGGER.debug("Received logout response from [{}]", SamlIdPUtils.getIssuerFromSamlObject(logoutResponse.getIssuer()));
-        SamlUtils.logSamlObject(getConfigurationContext().getOpenSamlConfigBean(), logoutResponse);
+        getConfigurationContext().getOpenSamlConfigBean().logObject(logoutResponse);
     }
 
     private void handleLogoutRequest(final HttpServletResponse response, final HttpServletRequest request,
@@ -72,7 +72,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
             configContext.getSamlObjectSignatureValidator()
                 .verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }
-        SamlUtils.logSamlObject(configContext.getOpenSamlConfigBean(), logoutRequest);
+        configContext.getOpenSamlConfigBean().logObject(logoutRequest);
 
         val logoutUrls = SingleLogoutUrl.from(registeredService);
         if (!logoutUrls.isEmpty()) {

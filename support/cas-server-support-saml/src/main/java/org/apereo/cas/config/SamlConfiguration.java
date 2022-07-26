@@ -51,7 +51,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.View;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -144,7 +143,7 @@ public class SamlConfiguration {
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new Saml10SuccessResponseView(protocolAttributeEncoder, servicesManager,
-                argumentExtractor, StandardCharsets.UTF_8.name(), authenticationAttributeReleasePolicy,
+                argumentExtractor, authenticationAttributeReleasePolicy,
                 authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE, samlResponseBuilder);
         }
 
@@ -165,7 +164,7 @@ public class SamlConfiguration {
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new Saml10FailureResponseView(protocolAttributeEncoder, servicesManager,
-                argumentExtractor, StandardCharsets.UTF_8.name(), authenticationAttributeReleasePolicy,
+                argumentExtractor, authenticationAttributeReleasePolicy,
                 authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE, samlResponseBuilder);
         }
     }

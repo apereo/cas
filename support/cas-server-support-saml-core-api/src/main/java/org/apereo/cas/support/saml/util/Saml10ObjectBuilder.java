@@ -33,7 +33,6 @@ import org.opensaml.saml.saml1.core.SubjectConfirmation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -128,7 +127,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
         val notOnOrAfter = ZonedDateTime.now(ZoneOffset.UTC).plus(issueLength, ChronoUnit.SECONDS);
         conditions.setNotOnOrAfter(notOnOrAfter.toInstant());
-        
+
         val audienceRestriction = SamlUtils.newSamlObject(AudienceRestrictionCondition.class);
         val audience = SamlUtils.newSamlObject(Audience.class);
         audience.setURI(audienceUri);
@@ -280,9 +279,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public void encodeSamlResponse(final HttpServletResponse httpResponse,
                                    final HttpServletRequest httpRequest,
                                    final Response samlMessage) throws Exception {
-
-        SamlUtils.logSamlObject(this.openSamlConfigBean, samlMessage);
-
+        openSamlConfigBean.logObject(samlMessage);
         val encoder = new CasHttpSoap11Encoder();
         val context = new MessageContext();
         context.setMessage(samlMessage);

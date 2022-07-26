@@ -33,13 +33,12 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     public Saml10SuccessResponseView(final ProtocolAttributeEncoder protocolAttributeEncoder,
                                      final ServicesManager servicesManager,
                                      final ArgumentExtractor samlArgumentExtractor,
-                                     final String encoding,
                                      final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
                                      final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
                                      final CasProtocolAttributesRenderer attributesRenderer,
                                      final SamlResponseBuilder samlResponseBuilder) {
         super(true, protocolAttributeEncoder, servicesManager, samlArgumentExtractor,
-            encoding, authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer, samlResponseBuilder);
+            authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer, samlResponseBuilder);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         val registeredService = this.servicesManager.findServiceBy(service);
         val authnAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
         val principalAttributes = getPrincipalAttributesAsMultiValuedAttributes(model);
-        this.samlResponseBuilder.prepareSuccessfulResponse(response, service, authentication,
+        samlResponseBuilder.prepareSuccessfulResponse(response, service, authentication,
             principal, authnAttributes, principalAttributes);
     }
 }

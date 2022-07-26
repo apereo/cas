@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
@@ -90,7 +89,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         LOGGER.debug("Handling ECP request for SOAP context [{}]", context.getMessageContext());
 
         val envelope = context.getMessageContext().getSubcontext(SOAP11Context.class).getEnvelope();
-        SamlUtils.logSamlObject(getConfigurationContext().getOpenSamlConfigBean(), envelope);
+        getConfigurationContext().getOpenSamlConfigBean().logObject(envelope);
 
         val authnRequest = (AuthnRequest) context.getMessageContext().getMessage();
         val authenticationContext = Pair.of(authnRequest, context.getMessageContext());

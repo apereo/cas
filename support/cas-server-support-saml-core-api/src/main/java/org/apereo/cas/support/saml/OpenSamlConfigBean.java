@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -53,4 +54,11 @@ public interface OpenSamlConfigBean {
      * @return the xml object provider registry
      */
     XMLObjectProviderRegistry getXmlObjectProviderRegistry();
+
+    /**
+     * Log object.
+     *
+     * @param samlObject the saml object
+     */
+    void logObject(XMLObject samlObject);
 }
