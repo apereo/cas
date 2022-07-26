@@ -41,13 +41,13 @@ with the `@Test` annotation and then executed by the test framework.
 
 For example, a `src/main/java/Extractor.java` type of component would have 
 its test cases inside a `src/test/java/ExtractorTests.java` test class.
+   
+### Integration Tests
 
 In some scenarios unit tests also run a series of tests against databases, external systems or APIs to verify functionality
 and correctness of integration. For example, a `MongoDbTicketRegistry` type of component would 
-require a MongoDb running instance and special markup
-and annotations to run tests when that external instance is up 
-and running. Structurally speaking, such tests are
-almost identical to plain vanilla unit tests and may only contain additional 
+require a MongoDb running instance and special markup and annotations to run tests when that external instance is up 
+and running. Structurally speaking, such tests are almost identical to plain vanilla unit tests and may only contain additional 
 decorations and annotations,depending on the test system.
 
 ### Functional Tests
@@ -169,16 +169,22 @@ The following command-line options are supported for test execution:
 | `--dry-run`, `--y`                | Launch the CAS web application configured in the test without actually running the test.
 | `--headless`, `--h`               | Launch the test scenario with a headless browser.
 | `--rerun`, `--resume`, `--z`      | Launch and assume the CAS is already running from a previous attempt.
-| `--hbo`                           | A combination of `--headless` and `--build` and Gradle's `--offline`.
-| `--bo`                            | Run with `--build` where the build is then run using an `--offline` Gradle flag.
+| `--hbo`                           | A combination of `--headless` and `--build` and Gradle's `--offline` flag.
+| `--bo`                            | A combination of `--build` and Gradle's `--offline` flag.
 | `--hr`                            | A combination of `--headless` and `--resume`.
+| `--ho`                            | A combination of `--headless` and Gradle's `--offline` flag.
+| `--hb`                            | A combination of `--headless` and `--build`.
+| `--body`, `--body`, `--boyd`      | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.
+| `--boy`                           | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.
    
 For example, the `login-success` test scenario may be run using: 
 
 ```bash
 pupcas login-success --hbo
 ```
-  
+         
+All other build related options and flags (i.e. `--info`) may be passed directly to the script. 
+
 ### Test Scenario Anatomy
 
 Each test scenario is composed of the following files:
