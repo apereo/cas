@@ -589,6 +589,12 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
+exports.refreshContext = async(url = "https://localhost:8443/cas") => {
+    console.log("Refreshing CAS application context...");
+    const response = await this.doRequest(`${url}/actuator/refresh`, "POST");
+    console.log(response);
+};
+
 exports.loginDuoSecurityBypassCode = async (page, type) => {
     await page.waitForTimeout(12000);
     if (type === "websdk") {

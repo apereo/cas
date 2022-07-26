@@ -24,8 +24,7 @@ const path = require('path');
     await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
     await page.waitForTimeout(5000);
 
-    let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-    console.log(response);
+    await cas.refreshContext();
 
     console.log("Attempting to login with new updated credentials...");
     await cas.goto(page, "https://localhost:8443/cas/logout");
