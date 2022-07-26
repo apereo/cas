@@ -15,13 +15,12 @@ const YAML = require("yaml");
     updateConfig(configFile, configFilePath, leak);
     await cas.sleep(2000);
 
-    let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-    console.log(response);
+    await cas.refreshContext();
     await cas.sleep(5000);
 
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    response = await cas.goto(page, "https://localhost:8443/cas/login");
+    let response = await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);
     console.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());

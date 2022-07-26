@@ -27,8 +27,7 @@ const YAML = require("yaml");
     await updateConfig(configFile, configFilePath, true);
     await page.waitForTimeout(5000);
 
-    let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-    console.log(response);
+    await cas.refreshContext();
 
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "unknown", "Mellon");
