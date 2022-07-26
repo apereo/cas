@@ -49,9 +49,7 @@ async function callAuditLog() {
     await updateConfig(configFile, configFilePath, number);
     await page.waitForTimeout(3000);
 
-    console.log("Refreshing CAS...");
-    let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-    console.log(response);
+    await cas.refreshContext();
 
     console.log("Testing authentication after refresh...");
     page = await cas.newPage(browser);

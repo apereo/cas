@@ -15,8 +15,7 @@ const path = require("path");
         const page = await cas.newPage(browser);
         await updateConfig(configFile, configFilePath, "http://localhost:18080/syncope");
         await page.waitForTimeout(3000);
-        let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-        console.log(response);
+        await cas.refreshContext();
         await doLogin(page, "syncopecas", "Mellon", "syncopecas@syncope.org");
         await doLogin(page, "casuser", "paSSw0rd", "casuser@syncope.org")
     } finally {
