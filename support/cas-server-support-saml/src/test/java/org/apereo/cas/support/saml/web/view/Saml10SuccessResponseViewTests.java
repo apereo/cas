@@ -33,7 +33,6 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -87,7 +86,6 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
             mgmr,
             new DefaultArgumentExtractor(new SamlServiceFactory()),
-            StandardCharsets.UTF_8.name(),
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE,

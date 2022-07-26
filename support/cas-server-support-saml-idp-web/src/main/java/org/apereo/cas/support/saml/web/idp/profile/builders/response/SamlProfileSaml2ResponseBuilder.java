@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoder;
@@ -91,14 +90,14 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         val status = newStatus(StatusCode.SUCCESS, null);
         samlResponse.setStatus(status);
 
-        SamlUtils.logSamlObject(this.openSamlConfigBean, samlResponse);
+        openSamlConfigBean.logObject(samlResponse);
 
         if (context.getRegisteredService().getSignResponses().isTrue()) {
             LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", context.getAdaptor().getEntityId());
             val samlResponseSigned = getConfigurationContext().getSamlObjectSigner().encode(samlResponse,
                 context.getRegisteredService(), context.getAdaptor(), context.getHttpResponse(), context.getHttpRequest(),
                 context.getBinding(), context.getSamlRequest(), context.getMessageContext());
-            SamlUtils.logSamlObject(openSamlConfigBean, samlResponseSigned);
+            openSamlConfigBean.logObject(samlResponseSigned);
             return samlResponseSigned;
         }
 

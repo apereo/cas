@@ -24,12 +24,13 @@ public class Saml10FailureResponseView extends AbstractSaml10ResponseView {
 
 
     public Saml10FailureResponseView(final ProtocolAttributeEncoder protocolAttributeEncoder,
-                                     final ServicesManager servicesManager, final ArgumentExtractor samlArgumentExtractor,
-                                     final String encoding, final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
+                                     final ServicesManager servicesManager,
+                                     final ArgumentExtractor samlArgumentExtractor,
+                                     final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
                                      final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
                                      final CasProtocolAttributesRenderer attributesRenderer,
                                      final SamlResponseBuilder samlResponseBuilder) {
-        super(false, protocolAttributeEncoder, servicesManager, samlArgumentExtractor, encoding,
+        super(false, protocolAttributeEncoder, servicesManager, samlArgumentExtractor,
             authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer, samlResponseBuilder);
     }
 

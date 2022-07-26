@@ -37,8 +37,8 @@ const cas = require('../../cas.js');
         }
     };
 
-    const post = options => {
-        return new Promise((resolve, reject) => {
+    const post = options =>
+        new Promise((resolve, reject) => {
             let req = https
                 .request(options, res => {
                     res.setEncoding('utf8');
@@ -49,7 +49,6 @@ const cas = require('../../cas.js');
                 .on('error', reject);
             req.write(request);
         });
-    };
     const body = await post(options);
     console.log(body);
     assert(`body.contains("<saml1:NameIdentifier>casuser</saml1:NameIdentifier>")`);

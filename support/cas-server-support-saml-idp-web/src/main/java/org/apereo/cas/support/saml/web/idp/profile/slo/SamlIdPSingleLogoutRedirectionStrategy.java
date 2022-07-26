@@ -252,7 +252,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             val logoutResponseSigned = configurationContext.getSamlObjectSigner()
                 .encode(logoutResponse, registeredService, adaptor, response,
                     request, sloService.getBinding(), logoutRequest, new MessageContext());
-            SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), logoutResponseSigned);
+            configurationContext.getOpenSamlConfigBean().logObject(logoutResponseSigned);
             return logoutResponseSigned;
         }
         return logoutResponse;

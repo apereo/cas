@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - CAS SAML v1.1 Protocol
+title: CAS - SAML v1.1 Protocol
 category: Protocols
 ---
 
@@ -13,11 +13,24 @@ CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/S
 - Support a method of [attribute release](../integration/Attribute-Release.html)
 - [Single Logout](../installation/Logout-Single-Signout.html)
 
-A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
+A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate` URI.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml" %}
+ 
+## Applications
+
+Registering SAML v1.1 applications with CAS is similar to any other CAS applications:
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://app.example.org",
+  "name": "Example",
+  "id": 1
+}
+```
 
 ## Actuator Endpoints
            

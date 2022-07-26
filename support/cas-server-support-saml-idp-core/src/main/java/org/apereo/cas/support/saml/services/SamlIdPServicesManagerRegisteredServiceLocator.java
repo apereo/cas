@@ -6,7 +6,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -97,7 +96,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
                 public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
                     val openSamlConfigBean = resolver.getOpenSamlConfigBean();
                     val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
-                    SamlUtils.logSamlObject(openSamlConfigBean, authnRequest);
+                    openSamlConfigBean.logObject(authnRequest);
                     return SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
                 }
             };

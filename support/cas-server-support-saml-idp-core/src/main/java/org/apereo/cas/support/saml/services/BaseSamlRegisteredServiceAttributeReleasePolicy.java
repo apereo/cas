@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -77,7 +76,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             val attributeValue = CollectionUtils.firstElement(samlRequest).map(Object::toString).orElseThrow();
             val openSamlConfigBean = resolver.getOpenSamlConfigBean();
             val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
-            SamlUtils.logSamlObject(openSamlConfigBean, authnRequest);
+            openSamlConfigBean.logObject(authnRequest);
             val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             LOGGER.debug("Found entity id [{}] from SAML request issuer", issuer);
             return issuer;

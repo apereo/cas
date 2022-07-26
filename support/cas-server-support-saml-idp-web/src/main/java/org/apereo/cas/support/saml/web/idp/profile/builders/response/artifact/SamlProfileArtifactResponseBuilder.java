@@ -52,7 +52,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         val envelope = SamlUtils.newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);
+        openSamlConfigBean.logObject(envelope);
         return envelope;
     }
 }

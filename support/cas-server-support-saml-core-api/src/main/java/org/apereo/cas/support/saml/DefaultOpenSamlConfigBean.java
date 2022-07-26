@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -58,5 +59,10 @@ public class DefaultOpenSamlConfigBean implements OpenSamlConfigBean {
         this.marshallerFactory = xmlObjectProviderRegistry.getMarshallerFactory();
         this.unmarshallerFactory = xmlObjectProviderRegistry.getUnmarshallerFactory();
         LOGGER.debug("Initialized OpenSaml successfully.");
+    }
+
+    @Override
+    public void logObject(final XMLObject samlObject) {
+        SamlUtils.logSamlObject(this, samlObject);
     }
 }

@@ -50,7 +50,7 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
         val envelope = SamlUtils.newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);
+        openSamlConfigBean.logObject(envelope);
 
         map.remove(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE);
         return encodeFinalResponse(context, envelope);
