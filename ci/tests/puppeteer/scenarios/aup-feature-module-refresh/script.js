@@ -24,8 +24,8 @@ const assert = require("assert");
     await updateConfig(configFile, configFilePath, true);
     await page.waitForTimeout(5000);
 
-    let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-    console.log(response);
+    await cas.refreshContext();
+
     console.log("Starting out with acceptable usage policy feature enabled...");
     await cas.goto(page, `https://localhost:8443/cas/logout`);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);

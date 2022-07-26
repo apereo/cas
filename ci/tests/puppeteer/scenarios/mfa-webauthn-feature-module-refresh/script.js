@@ -21,8 +21,7 @@ const path = require("path");
     await page.waitForTimeout(5000);
 
     try {
-        let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-        console.log(response);
+        await cas.refreshContext();
         await page.waitForTimeout(2000);
 
         await cas.goto(page, "https://localhost:8443/cas/logout");
