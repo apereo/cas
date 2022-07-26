@@ -46,7 +46,8 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
         val remoteAddress = clientInfo.getClientIpAddress();
         val username = getUsernameParameterFromRequest(request);
 
-        val failuresInAudits = this.jdbcTemplate.query(
+        LOGGER.debug("Fetching failures in audit log for username [{}] and remote address [{}]", username, remoteAddress);
+        val failuresInAudits = jdbcTemplate.query(
             throttle.getJdbc().getAuditQuery(),
             new Object[]{
                 remoteAddress,
@@ -59,7 +60,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
                 .key(UUID.randomUUID().toString())
                 .value(DateTimeUtils.zonedDateTimeOf(resultSet.getTimestamp("AUD_DATE")))
                 .build());
-
+        LOGGER.debug("Found [{}] failure(s) in audit log", failuresInAudits.size());
         val result = calculateFailureThresholdRateAndCompare(failuresInAudits);
         if (result) {
             LOGGER.debug("Request from [{}] by user [{}] exceeds threshold", remoteAddress, username);
