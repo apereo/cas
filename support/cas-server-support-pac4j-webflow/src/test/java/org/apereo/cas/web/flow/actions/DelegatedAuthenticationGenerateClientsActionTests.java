@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -31,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-
 @Tag("WebflowAuthenticationActions")
 public class DelegatedAuthenticationGenerateClientsActionTests {
 
@@ -45,6 +43,14 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
         private Action delegatedAuthenticationCreateClientsAction;
 
         @Test
+        public void verifyAuthnFailureProduces() {
+            val context2 = getMockRequestContext();
+            WebUtils.getHttpServletResponseFromExternalWebflowContext(context2).setStatus(HttpStatus.UNAUTHORIZED.value());
+            assertDoesNotThrow(() -> delegatedAuthenticationCreateClientsAction.execute(context2));
+            assertFalse(WebUtils.getDelegatedAuthenticationProviderConfigurations(context2).isEmpty());
+        }
+
+        @Test
         public void verifyOperation() throws Exception {
             val context1 = getMockRequestContext();
             val result = delegatedAuthenticationCreateClientsAction.execute(context1);
@@ -53,9 +59,6 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
             assertFalse(WebUtils.isDelegatedAuthenticationDynamicProviderSelection(context1));
             assertEquals(HttpStatus.FOUND.value(),
                 WebUtils.getHttpServletResponseFromExternalWebflowContext(context1).getStatus());
-            val context2 = getMockRequestContext();
-            WebUtils.getHttpServletResponseFromExternalWebflowContext(context2).setStatus(HttpStatus.UNAUTHORIZED.value());
-            assertThrows(AuthenticationException.class, () -> delegatedAuthenticationCreateClientsAction.execute(context2));
         }
     }
 
