@@ -110,6 +110,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             }
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            LOGGER.debug("Authentication request failed with [{}], resulting in event [{}]", response.getStatus(), event);
             return CollectionUtils.wrapSet(event);
         }
     }
