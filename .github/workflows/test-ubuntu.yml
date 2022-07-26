@@ -9,6 +9,7 @@ env:
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   JDK_CURRENT: 11
   RETRY_MINUTES: 180
   CATEGORY_REGEX: ".*" # Limit which test categories run
@@ -153,16 +154,19 @@ jobs:
         with:
           max_attempts: 2
           retry_on: error
+          retry_wait_seconds: 10
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v3"
         with:
+          token: ${{ env.CODECOV_TOKEN }}
           files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
           flags: ${{ matrix.category }}
           name: ${{ matrix.category }}
           verbose: false
+          fail_ci_if_error: true
       - name: "Upload Coverage Report"
         uses: "actions/upload-artifact@v3"
         with:
