@@ -150,6 +150,7 @@ if [[ $cloneRepository == "true" ]]; then
   chmod -R 777 docs/cas-server-documentation
   cp -R docs/cas-server-documentation/ "$PWD"/docs-latest
   mv "$PWD/docs-latest/_includes" "$PWD/docs-includes"
+  mv "$PWD/docs-latest/_layout" "$PWD/docs-layout"
   mv "$PWD/docs-latest/_includes_site" "$PWD/docs-includes-site"
 
   printgreen "Cloning ${REPOSITORY_NAME}'s [gh-pages] branch...\n"
@@ -159,12 +160,14 @@ if [[ $cloneRepository == "true" ]]; then
   printgreen "Removing previous documentation from $branchVersion...\n"
   rm -Rf "$PWD/gh-pages/$branchVersion" >/dev/null
   rm -Rf "$PWD/gh-pages/_includes/$branchVersion" >/dev/null
+  rm -Rf "$PWD/gh-pages/_layout/$branchVersion" >/dev/null
   rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
 
   printgreen "Creating $branchVersion directory...\n"
   mkdir -p "$PWD/gh-pages/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes"
+  mkdir -p "$PWD/gh-pages/_layout"
   mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
   printgreen "Copying new docs to $branchVersion...\n"
@@ -174,11 +177,13 @@ if [[ $cloneRepository == "true" ]]; then
 
   cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
   cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
+  cp -Rf "$PWD"/docs-layout/* "$PWD/gh-pages/_layout"
   cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes"
 
   rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
   rm -Rf "$PWD/docs-latest"
   rm -Rf "$PWD/docs-includes"
+  rm -Rf "$PWD/docs-layout"
   rm -Rf "$PWD/docs-includes-site"
   printgreen "Copied project documentation to $PWD/gh-pages/...\n"
   # exit 1
