@@ -27,6 +27,8 @@ import org.springframework.core.Ordered;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
@@ -48,16 +50,19 @@ import java.util.List;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebApplication)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @AutoConfiguration
+@EnableWebSecurity
 public class CasWebAppSecurityConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityExpressionHandler")
     public SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler() {
         return new CasWebSecurityExpressionHandler();
     }
+
     @Bean
     public InitializingBean securityContextHolderInitialization() {
         return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_THREADLOCAL);
     }
+
     @Configuration(value = "CasWebAppSecurityMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebAppSecurityMvcConfiguration {
@@ -91,6 +96,20 @@ public class CasWebAppSecurityConfiguration {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
                 casWebSecurityExpressionHandler, pathMappedEndpoints, configurersList);
             return adapter.configureHttpSecurity(http).build();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "casWebSecurityCustomizer")
+        public WebSecurityCustomizer casWebSecurityCustomizer(
+            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
+            final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
+            final SecurityProperties securityProperties,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casWebSecurityExpressionHandler")
+            final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) {
+            val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
+                casWebSecurityExpressionHandler, pathMappedEndpoints, configurersList);
+            return adapter::configureWebSecurity;
         }
     }
 

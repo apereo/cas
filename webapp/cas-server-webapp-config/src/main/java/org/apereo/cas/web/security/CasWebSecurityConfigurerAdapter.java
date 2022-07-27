@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointPropertie
 import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.CasWebSecurityConstants;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
@@ -27,6 +26,7 @@ import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.web.FilterInvocation;
 
@@ -72,7 +72,34 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
      * allowing CAS' own security configuration to handle protection
      * of endpoints where necessary.
      *
-     * @param http http security
+     * @param web web security
+     */
+    public void configureWebSecurity(final WebSecurity web) {
+        val patterns = protocolEndpointWebSecurityConfigurers.stream()
+            .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
+            .flatMap(List<String>::stream)
+            .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
+            .collect(Collectors.toList());
+
+        patterns.add("/webjars/**");
+        patterns.add("/js/**");
+        patterns.add("/css/**");
+        patterns.add("/images/**");
+        patterns.add("/static/**");
+        patterns.add("/error");
+        patterns.add("/favicon.ico");
+
+        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
+        web.debug(LOGGER.isDebugEnabled())
+            .expressionHandler(casWebSecurityExpressionHandler)
+            .ignoring()
+            .antMatchers(patterns.toArray(String[]::new));
+    }
+
+    /**
+     * Configure http security.
+     *
+     * @param http the http
      * @return the http security
      * @throws Exception the exception
      */
@@ -88,26 +115,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .requiresChannel()
             .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
             .requiresSecure();
-
+        
         val requests = http.authorizeRequests().expressionHandler(casWebSecurityExpressionHandler);
-        val patterns = protocolEndpointWebSecurityConfigurers.stream()
-            .filter(BeanSupplier::isNotProxy)
-            .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
-            .flatMap(List<String>::stream)
-            .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
-            .collect(Collectors.toList());
-
-        patterns.add("/webjars/**");
-        patterns.add("/js/**");
-        patterns.add("/css/**");
-        patterns.add("/images/**");
-        patterns.add("/static/**");
-        patterns.add("/error");
-        patterns.add("/favicon.ico");
-
-        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
-        requests.antMatchers(patterns.toArray(String[]::new)).permitAll();
-
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((k, v) -> {
             val endpoint = EndpointRequest.to(k);
