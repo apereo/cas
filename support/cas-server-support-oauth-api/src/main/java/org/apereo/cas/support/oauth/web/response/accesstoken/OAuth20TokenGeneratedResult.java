@@ -24,6 +24,8 @@ import java.util.Optional;
 @SuperBuilder
 @ToString(doNotUseGetters = true, exclude = "registeredService")
 public class OAuth20TokenGeneratedResult implements Serializable {
+    private static final long serialVersionUID = -4111380934505564576L;
+
     private final OAuth20AccessToken accessToken;
 
     private final OAuth20RefreshToken refreshToken;

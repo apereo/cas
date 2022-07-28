@@ -27,7 +27,7 @@ Hazelcast provides a default SSL context factory implementation, which is guided
 and auto-configured by CAS when enabled to use the configured keystore to initialize SSL context.
 
 {% capture cfgkey %}{{ include.configKey }}.cluster.network.ssl{% endcapture %}
-{% include_cached casproperties.html properties=cfgkey %}
+{% include_cached casproperties.html id="tls" properties=cfgkey %}
 
 <div class="alert alert-info"><strong>Performance</strong><p>
 Under Linux, the JVM automatically makes use of <code>/dev/random</code> for the 

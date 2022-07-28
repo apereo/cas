@@ -29,6 +29,8 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor(force = true)
 public class MultifactorAuthenticationRegisteredDevice implements Serializable {
+    private static final long serialVersionUID = 1040948239519297651L;
+
     /**
      * The device name as chosen/managed by the mfa provider.
      */

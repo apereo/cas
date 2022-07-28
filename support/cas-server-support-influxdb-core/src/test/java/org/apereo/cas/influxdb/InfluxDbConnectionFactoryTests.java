@@ -65,6 +65,8 @@ public class InfluxDbConnectionFactoryTests {
     @Setter
     @ToString
     public static class InfluxEvent implements Serializable {
+        private static final long serialVersionUID = -7065491678170232623L;
+
         @Column(name = "time", timestamp = true)
         private Instant time;
 

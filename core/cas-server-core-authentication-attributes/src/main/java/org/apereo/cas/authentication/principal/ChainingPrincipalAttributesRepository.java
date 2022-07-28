@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class ChainingPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository {
+    private static final long serialVersionUID = 3132218595095989750L;
+
     private final List<RegisteredServicePrincipalAttributesRepository> repositories;
 
     @Override

@@ -26,6 +26,8 @@ public class ThrottleFailureProperties implements Serializable {
      */
     private static final String DEFAULT_AUTHN_FAILED_ACTION = "AUTHENTICATION_FAILED";
 
+    private static final long serialVersionUID = 7647772524660134142L;
+
     /**
      * Failure code to record in the audit log.
      * Generally this indicates an authentication failure event.

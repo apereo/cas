@@ -17,4 +17,5 @@ import javax.persistence.Table;
 @Entity(name = "JpaTicketEntity")
 @Table(name = "CasTickets")
 public class JpaTicketEntity extends BaseTicketEntity {
+    private static final long serialVersionUID = 4589814295318995496L;
 }
