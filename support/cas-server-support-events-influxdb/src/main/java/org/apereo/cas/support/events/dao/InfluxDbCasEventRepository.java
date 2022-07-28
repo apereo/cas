@@ -85,6 +85,8 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     @Setter
     @ToString
     public static class InfluxDbEvent implements Serializable {
+        private static final long serialVersionUID = -90633813914510237L;
+
         @Column(timestamp = true)
         private Instant time;
 

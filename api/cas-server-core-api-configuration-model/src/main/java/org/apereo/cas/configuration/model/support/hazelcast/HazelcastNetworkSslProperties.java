@@ -21,6 +21,8 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("HazelcastNetworkSslProperties")
 public class HazelcastNetworkSslProperties implements Serializable {
+    private static final long serialVersionUID = -2444780336835699053L;
+
     /**
      * Name of the algorithm which is used in
      * your TLS/SSL. For the protocol property, we recommend

@@ -43,6 +43,7 @@ public interface ServiceRegistryListener extends Serializable, Ordered {
      */
     static ServiceRegistryListener noOp() {
         return new ServiceRegistryListener() {
+            private static final long serialVersionUID = -8064239596498367543L;
         };
     }
 }
