@@ -41,6 +41,12 @@ The following multifactor providers are supported by CAS.
 | Inwebo               | `mfa-inwebo`   | [See this guide](Inwebo-Authentication.html).              |
 | Custom               | Custom         | [See this guide](../mfa/Custom-MFA-Authentication.html).   |
 
+<div class="alert alert-info"><strong>Azure Multifactor</strong>
+<p>Microsoft has removed the ability for external SSO servers to use Azure MFA. To use Azure MFA, 
+you must also have all your users authenticate using Azure AD SSO.
+You may want to route authentication requests to Azure AD SSO using the 
+delegated authentication features of CAS.</p></div>
+
 ## Core Configuration
 
 {% include_cached casproperties.html properties="cas.authn.mfa.core" %}

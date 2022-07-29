@@ -39,8 +39,8 @@ public class ChainingCasProtocolValidationSpecificationTests {
     public void verifyOperationByAny() {
         val servicesManager = mock(ServicesManager.class);
         val chain = new ChainingCasProtocolValidationSpecification(true);
-        chain.addSpecifications(new Cas20ProtocolValidationSpecification(servicesManager),
-            new Cas10ProtocolValidationSpecification(servicesManager));
+        chain.addSpecifications(new DefaultCasProtocolValidationSpecification(servicesManager, input -> true),
+            new DefaultCasProtocolValidationSpecification(servicesManager, input -> input.getChainedAuthentications().size() == 1));
         assertEquals(2, chain.size());
         chain.reset();
         assertTrue(chain.isSatisfiedBy(getAssertion(), new MockHttpServletRequest()));
@@ -50,7 +50,7 @@ public class ChainingCasProtocolValidationSpecificationTests {
     public void verifyOperationByAll() {
         val servicesManager = mock(ServicesManager.class);
         val chain = new ChainingCasProtocolValidationSpecification(false);
-        chain.addSpecifications(new Cas20ProtocolValidationSpecification(servicesManager));
+        chain.addSpecifications(new DefaultCasProtocolValidationSpecification(servicesManager, input -> true));
         chain.reset();
         assertTrue(chain.isSatisfiedBy(getAssertion(), new MockHttpServletRequest()));
     }

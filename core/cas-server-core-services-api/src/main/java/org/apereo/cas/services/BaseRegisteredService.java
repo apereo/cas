@@ -16,7 +16,7 @@ import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,7 +72,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
-    private HashSet<String> environments = new HashSet<>(0);
+    private Set<String> environments = new LinkedHashSet<>(0);
 
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 

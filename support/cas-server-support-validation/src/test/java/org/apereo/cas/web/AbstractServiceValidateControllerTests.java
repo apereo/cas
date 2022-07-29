@@ -14,8 +14,8 @@ import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 
@@ -56,7 +56,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     protected AbstractServiceValidateController serviceValidateController;
 
     protected static CasProtocolValidationSpecification getValidationSpecification() {
-        return new Cas20WithoutProxyingValidationSpecification(mock(ServicesManager.class));
+        return new DefaultCasProtocolValidationSpecification(mock(ServicesManager.class),
+            input -> input.getChainedAuthentications().size() == 1);
     }
 
     protected static ProxyHandler getProxyHandler() {

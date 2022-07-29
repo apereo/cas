@@ -330,11 +330,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
 
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(finalAuthentication);
-            val assertion = new DefaultAssertionBuilder(finalAuthentication)
-                .with(selectedService)
-                .with(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
-                .with(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
-                .build();
+            val assertion = DefaultAssertionBuilder.builder()
+                .primaryAuthentication(finalAuthentication)
+                .service(selectedService)
+                .registeredService(registeredService)
+                .authentications(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
+                .newLogin(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
+                .build()
+                .assemble();
 
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
             return assertion;

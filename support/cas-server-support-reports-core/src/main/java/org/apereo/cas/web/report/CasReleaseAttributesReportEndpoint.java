@@ -96,10 +96,13 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
             authentication);
 
         val finalAuthentication = builder.build();
-        val assertion = new DefaultAssertionBuilder(finalAuthentication)
-            .with(selectedService)
-            .with(CollectionUtils.wrap(finalAuthentication))
-            .build();
+        val assertion = DefaultAssertionBuilder.builder()
+            .primaryAuthentication(finalAuthentication)
+            .service(selectedService)
+            .authentications(CollectionUtils.wrap(finalAuthentication))
+            .registeredService(registeredService)
+            .build()
+            .assemble();
 
         val resValidation = new LinkedHashMap<String, Object>();
         resValidation.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);

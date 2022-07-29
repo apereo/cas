@@ -10,34 +10,9 @@ category: Services
 
 The CAS service management facility allows CAS server administrators to declare and configure which services
 (CAS clients) may make use of CAS in which ways. The core component of the service management facility is the
-service registry that stores one or more registered services containing metadata that drives a number of CAS behaviors:
+service registry that stores one or more registered services containing metadata that drives a number of CAS behaviors.
 
-* [Authorized services](Configuring-Service-Access-Strategy.html) - Control which services may participate in a CAS SSO session.
-* Forced authentication - Provides administrative control for forced authentication.
-* [Attribute release](../integration/Attribute-Release.html) - Provide user details to services for authorization and personalization.
-* [Proxy control](Configuring-Service-Proxy-Policy.html) - Further restrict authorized services by granting/denying proxy authentication capability.
-* [Theme control](../ux/User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
-    
 {% include_cached casproperties.html properties="cas.service-registry.core" %}
-
-## Caching Services
-
-CAS service definitions that are loaded from service registries are cached with a `expire-after-write` expiration policy.
-Such definition are automatically expired and removed from the cache, unless forcefully removed with an explicit reload operation.
-In particular, you want to make sure the cache expiration policy and period does not conflict with reload operations and schedules. 
-For example, misconfiguration can lead to scenarios where the cache might be running empty while the scheduler is running a
-few minutes/seconds late. With an empty cache, authentication requests from applications might not be immediately authorized
-util the scheduled loader has had a chance to re-populate and reconstruct the cache.
-
-{% include_cached casproperties.html properties="cas.service-registry.cache" %}
-
-## Scheduler Loader
-
-CAS can be configured to load service definitions from connected sources and service registries on a schedule. Service definitions
-are loaded as background-running job, and the operation forces CAS to flush and invalidate cached version of service definitions
-and start anew.
-
-{% include_cached casproperties.html properties="cas.service-registry.schedule" %}
 
 ## Actuator Endpoints
 
@@ -47,7 +22,7 @@ The following endpoints are provided by CAS:
 
 ## Service Management Web Application
 
-The service management webapp is a standalone web application that may be deployed along side CAS that provides a GUI
+The service management webapp is a standalone web application that may be deployed alongside CAS that provides a GUI
 to manage service registry data. The management web application *MUST* share the same registry configuration as the 
 CAS server itself so the entire system can load the same services data. To learn more about 
 the management webapp, [please see this guide](Installing-ServicesMgmt-Webapp.html).
@@ -82,36 +57,9 @@ Registered services present the following metadata:
 | `multifactorPolicy`         | The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html).                                                                                                                                                                                                                                       |
 | `contacts`                  | Specify the collection of contacts associated with service that own the application. See [this guide](Configuring-Service-Contacts.html) for more info.                                                                                                                                                                                                                                                                     |
 | `matchingStrategy`          | Specify the strategy used to match the service definition against an authentication request. See [this guide](Configuring-Service-Matching-Strategy.html) for more info.                                                                                                                                                                                                                                                    |
+| `supportedProtocols`        | Specify supported and allowed protocols for this service. See [this guide](Configuring-Service-Supported-Protocols.html) for more info.                                                                                                                                                                                                                                                                                     |
 
 <div class="alert alert-info"><strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, there are additional service types in CAS that may be activated and required depending on the protocol used and the nature of the client application. Always check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML, etc).</p></div>
-
-### Service Access Strategy
-
-[See this guide](Configuring-Service-Access-Strategy.html) for more info.
-
-### Proxy Authentication Policy
-
-[See this guide](Configuring-Service-Proxy-Policy.html) for more info.
-
-### Required Authentication
-
-[See this guide](Configuring-Service-AuthN-Policy.html) for more details.
-
-### Tags & Properties
-
-[See this guide](Configuring-Service-Custom-Properties.html) for more info.
-
-### Contacts & Owners
-
-[See this guide](Configuring-Service-Contacts.html) for more info.
-
-### Expiration Policy
-
-[See this guide](Configuring-Service-Expiration-Policy.html) for more info.
-
-### Matching Strategy
-
-See [this guide](Configuring-Service-Matching-Strategy.html) for more info.
 
 ## Storage
 
