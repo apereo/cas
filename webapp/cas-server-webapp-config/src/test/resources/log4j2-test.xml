@@ -8,6 +8,9 @@
     <Loggers>
         <Logger name="org.apereo" level="error"  />
         <Logger name="org.ldaptive" level="warn" />
+        <Logger name="org.springframework.test.web" level="info" />
+        <Logger name="org.springframework.web" level="info" />
+        <Logger name="org.springframework.security" level="info" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

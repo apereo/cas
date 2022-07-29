@@ -1466,6 +1466,12 @@ ext.libraries = [
                     exclude(group: "org.mockito", module: "mockito-core")
                     exclude(group: "org.junit.jupiter", module: "junit-jupiter-api")
                 },
+                dependencies.create("org.springframework.security:spring-security-test:$springSecurityVersion") {
+                    exclude(group: "org.springframework.security", module: "spring-security-core")
+                    exclude(group: "org.springframework.security", module: "spring-security-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-test")
+                },
                 dependencies.create("com.squareup.okhttp3:mockwebserver:$okhttp3Version") {
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {

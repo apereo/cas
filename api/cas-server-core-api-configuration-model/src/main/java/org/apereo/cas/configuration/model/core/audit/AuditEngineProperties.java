@@ -70,7 +70,7 @@ public class AuditEngineProperties implements Serializable {
      * from the request, assuming the load balancer is configured correctly
      * to pass that header along.
      */
-    private String alternateClientAddrHeaderName;
+    private String alternateClientAddrHeaderName = "X-Forwarded-For";
 
     /**
      * Determines whether a local DNS lookup should be made to query for the CAS server address.

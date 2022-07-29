@@ -40,9 +40,11 @@ public class Cas10ResponseViewTests {
         this.model = new HashMap<>();
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));
-        this.model.put("assertion", new DefaultAssertionBuilder(
-            CoreAuthenticationTestUtils.getAuthentication()).with(list).with(
-            CoreAuthenticationTestUtils.getWebApplicationService("TestService")).with(true).build());
+        this.model.put("assertion", DefaultAssertionBuilder.builder()
+            .primaryAuthentication(CoreAuthenticationTestUtils.getAuthentication())
+            .authentications(list)
+            .service(CoreAuthenticationTestUtils.getWebApplicationService("TestService"))
+            .newLogin(true).build().assemble());
     }
 
     @Test
