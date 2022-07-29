@@ -14,6 +14,21 @@ import javax.servlet.http.HttpServletRequest;
 @FunctionalInterface
 public interface CasProtocolValidationSpecification extends Ordered {
 
+    enum CasProtocolVersions {
+        /**
+         * CAS v1 protocol.
+         */
+        CAS10,
+        /**
+         * CAS v2 protocol.
+         */
+        CAS20,
+        /**
+         * CAS v3 protocol.
+         */
+        CAS30
+    }
+
     /**
      * Is satisfied?
      *

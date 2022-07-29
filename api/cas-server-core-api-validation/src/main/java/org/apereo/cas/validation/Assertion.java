@@ -2,6 +2,7 @@ package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegisteredService;
 
 import java.io.Serializable;
 import java.util.List;
@@ -47,4 +48,10 @@ public interface Assertion extends Serializable {
      */
     WebApplicationService getService();
 
+    /**
+     * Gets registered service.
+     *
+     * @return the registered service
+     */
+    RegisteredService getRegisteredService();
 }

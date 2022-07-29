@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.util.Set;
+
 /**
  * This is {@link CasModelRegisteredService}.
  *
@@ -51,4 +53,11 @@ public interface CasModelRegisteredService extends WebBasedRegisteredService {
      * @since 6.2
      */
     String getRedirectUrl();
+
+    /**
+     * Indicates the collection of CAS protocol versions that this
+     * application should allow and support.
+     * @return collection of supported protocol versions.
+     */
+    Set<String> getSupportedProtocols();
 }

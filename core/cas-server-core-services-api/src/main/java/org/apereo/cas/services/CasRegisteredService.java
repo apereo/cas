@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * This is {@link CasRegisteredService}.
  *
@@ -35,6 +38,8 @@ public class CasRegisteredService extends BaseWebBasedRegisteredService implemen
     private RegisteredServiceServiceTicketExpirationPolicy serviceTicketExpirationPolicy;
 
     private String redirectUrl;
+
+    private Set<String> supportedProtocols = new LinkedHashSet<>(0);
 
     @JsonIgnore
     @Override

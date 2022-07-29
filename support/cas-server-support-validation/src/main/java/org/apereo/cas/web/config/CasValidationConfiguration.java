@@ -18,6 +18,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.CasProtocolVersionValidationSpecification;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.validation.ChainingCasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
@@ -57,7 +58,9 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.View;
 
 import java.util.List;
+import java.util.Set;
 
+import static org.apereo.cas.validation.CasProtocolValidationSpecification.*;
 import static org.springframework.http.MediaType.*;
 
 /**
@@ -168,10 +171,11 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "v3ServiceValidateControllerValidationSpecification")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification v3ServiceValidateControllerValidationSpecification(
-            @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-            final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification) {
+            @Qualifier("casSingleAuthenticationProtocolValidationSpecification")
+            final CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification) {
             val validationChain = new ChainingCasProtocolValidationSpecification();
-            validationChain.addSpecification(cas20WithoutProxyProtocolValidationSpecification);
+            validationChain.addSpecification(casSingleAuthenticationProtocolValidationSpecification);
+            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolVersions.CAS30)));
             return validationChain;
         }
 
@@ -180,13 +184,14 @@ public class CasValidationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("cas20ProtocolValidationSpecification")
-            final CasProtocolValidationSpecification cas20ProtocolValidationSpecification) throws Exception {
+            @Qualifier("casAlwaysSatisfiedProtocolValidationSpecification")
+            final CasProtocolValidationSpecification casAlwaysSatisfiedProtocolValidationSpecification) throws Exception {
             return BeanSupplier.of(CasProtocolValidationSpecification.class)
                 .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val validationChain = new ChainingCasProtocolValidationSpecification();
-                    validationChain.addSpecification(cas20ProtocolValidationSpecification);
+                    validationChain.addSpecification(casAlwaysSatisfiedProtocolValidationSpecification);
+                    validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolVersions.CAS30)));
                     return validationChain;
                 })
                 .otherwiseProxy()
@@ -197,10 +202,11 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "proxyValidateControllerValidationSpecification")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification proxyValidateControllerValidationSpecification(
-            @Qualifier("cas20ProtocolValidationSpecification")
-            final CasProtocolValidationSpecification cas20ProtocolValidationSpecification) {
+            @Qualifier("casAlwaysSatisfiedProtocolValidationSpecification")
+            final CasProtocolValidationSpecification casAlwaysSatisfiedProtocolValidationSpecification) {
             val validationChain = new ChainingCasProtocolValidationSpecification();
-            validationChain.addSpecification(cas20ProtocolValidationSpecification);
+            validationChain.addSpecification(casAlwaysSatisfiedProtocolValidationSpecification);
+            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolVersions.CAS20)));
             return validationChain;
         }
 
@@ -208,10 +214,11 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "legacyValidateControllerValidationSpecification")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification legacyValidateControllerValidationSpecification(
-            @Qualifier("cas10ProtocolValidationSpecification")
-            final CasProtocolValidationSpecification cas10ProtocolValidationSpecification) {
+            @Qualifier("casSingleAuthenticationProtocolValidationSpecification")
+            final CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification) {
             val validationChain = new ChainingCasProtocolValidationSpecification();
-            validationChain.addSpecification(cas10ProtocolValidationSpecification);
+            validationChain.addSpecification(casSingleAuthenticationProtocolValidationSpecification);
+            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolVersions.CAS10)));
             return validationChain;
         }
 
@@ -219,10 +226,11 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "serviceValidateControllerValidationSpecification")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification serviceValidateControllerValidationSpecification(
-            @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-            final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification) {
+            @Qualifier("casSingleAuthenticationProtocolValidationSpecification")
+            final CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification) {
             val validationChain = new ChainingCasProtocolValidationSpecification();
-            validationChain.addSpecification(cas20WithoutProxyProtocolValidationSpecification);
+            validationChain.addSpecification(casSingleAuthenticationProtocolValidationSpecification);
+            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolVersions.CAS20)));
             return validationChain;
         }
     }

@@ -18,7 +18,7 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
-import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
+import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -483,7 +483,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         cas.grantServiceTicket(tgtId.getId(), svc, ctx);
         val st2Id = cas.grantServiceTicket(tgtId.getId(), svc, ctx);
         val assertion = cas.validateServiceTicket(st2Id.getId(), svc);
-        val validationSpecification = new Cas20WithoutProxyingValidationSpecification(mock(ServicesManager.class));
+        val validationSpecification = new DefaultCasProtocolValidationSpecification(mock(ServicesManager.class), input -> true);
         assertTrue(validationSpecification.isSatisfiedBy(assertion, new MockHttpServletRequest()));
     }
 }

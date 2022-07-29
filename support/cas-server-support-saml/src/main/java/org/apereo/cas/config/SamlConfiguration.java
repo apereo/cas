@@ -230,13 +230,13 @@ public class SamlConfiguration {
             final RequestedAuthenticationContextValidator requestedContextValidator,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-            final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
+            @Qualifier("casSingleAuthenticationProtocolValidationSpecification")
+            final CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification,
             @Qualifier("serviceValidationAuthorizers")
             final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
             val context = ServiceValidateConfigurationContext.builder()
                 .ticketRegistry(ticketRegistry)
-                .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))
+                .validationSpecifications(CollectionUtils.wrapSet(casSingleAuthenticationProtocolValidationSpecification))
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)

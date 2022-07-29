@@ -12,11 +12,10 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.validation.AbstractCasProtocolValidationSpecification;
 import org.apereo.cas.validation.AuthenticationPolicyAwareServiceTicketValidationAuthorizer;
-import org.apereo.cas.validation.Cas10ProtocolValidationSpecification;
-import org.apereo.cas.validation.Cas20ProtocolValidationSpecification;
-import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
@@ -88,31 +87,23 @@ public class CasCoreValidationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        @ConditionalOnMissingBean(name = "cas10ProtocolValidationSpecification")
-        public CasProtocolValidationSpecification cas10ProtocolValidationSpecification(
+        @ConditionalOnMissingBean(name = "casSingleAuthenticationProtocolValidationSpecification")
+        public CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new Cas10ProtocolValidationSpecification(servicesManager);
+            return new DefaultCasProtocolValidationSpecification(servicesManager,
+                AbstractCasProtocolValidationSpecification.ASSERTION_SINGLE_AUTHENTICATION);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        @ConditionalOnMissingBean(name = "cas20ProtocolValidationSpecification")
-        public CasProtocolValidationSpecification cas20ProtocolValidationSpecification(
+        @ConditionalOnMissingBean(name = "casAlwaysSatisfiedProtocolValidationSpecification")
+        public CasProtocolValidationSpecification casAlwaysSatisfiedProtocolValidationSpecification(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new Cas20ProtocolValidationSpecification(servicesManager);
-        }
-
-        @Bean
-        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "cas20WithoutProxyProtocolValidationSpecification")
-        public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            return new Cas20WithoutProxyingValidationSpecification(servicesManager);
+            return new DefaultCasProtocolValidationSpecification(servicesManager,
+                AbstractCasProtocolValidationSpecification.ASSERTION_ALWAYS_SATISFIED);
         }
     }
 

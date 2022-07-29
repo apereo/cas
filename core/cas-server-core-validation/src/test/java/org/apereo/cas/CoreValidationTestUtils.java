@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
@@ -29,12 +30,21 @@ public class CoreValidationTestUtils {
 
     public static Assertion getAssertion(final boolean fromNewLogin,
                                          final String[] extraPrincipals) {
+        return getAssertion(fromNewLogin, extraPrincipals, CoreAuthenticationTestUtils.getRegisteredService());
+    }
+
+    public static Assertion getAssertion(final boolean fromNewLogin,
+                                         final String[] extraPrincipals,
+                                         final RegisteredService registeredService) {
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         Arrays.stream(extraPrincipals).map(CoreAuthenticationTestUtils::getAuthentication).forEach(list::add);
         return new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
-            list, fromNewLogin, RegisteredServiceTestUtils.getService());
+            list, fromNewLogin, RegisteredServiceTestUtils.getService(), registeredService);
     }
 
+    public static Assertion getAssertion(final RegisteredService registeredService) {
+        return getAssertion(false, CONST_NO_PRINCIPALS, registeredService);
+    }
 }
