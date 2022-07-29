@@ -58,7 +58,7 @@ public class HazelcastConfigurationFactory {
     /**
      * Sets config map.
      *
-     * @param mapConfig the map config
+     * @param namedConfig the map config
      * @param config    the config
      */
     public static void setConfigMap(final NamedConfig namedConfig, final Config config) {
