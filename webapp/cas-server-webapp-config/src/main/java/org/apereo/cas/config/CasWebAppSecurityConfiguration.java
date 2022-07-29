@@ -8,12 +8,10 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
-import org.apereo.cas.web.security.CasWebSecurityExpressionHandler;
 
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,8 +22,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -33,7 +31,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
-import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -51,12 +48,7 @@ import java.util.List;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @AutoConfiguration
 @EnableWebSecurity
-public class CasWebAppSecurityConfiguration {
-    @Bean
-    @ConditionalOnMissingBean(name = "casWebSecurityExpressionHandler")
-    public SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler() {
-        return new CasWebSecurityExpressionHandler();
-    }
+public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 
     @Bean
     public InitializingBean securityContextHolderInitialization() {
@@ -84,32 +76,28 @@ public class CasWebAppSecurityConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebappCoreSecurityConfiguration {
         @Bean
+        @ConditionalOnMissingBean(name = "casWebSecurityCustomizer")
+        public WebSecurityCustomizer casWebSecurityCustomizer(
+            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
+            final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
+            final SecurityProperties securityProperties,
+            final CasConfigurationProperties casProperties) {
+            val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
+                pathMappedEndpoints, configurersList);
+            return adapter::configureWebSecurity;
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
         public SecurityFilterChain casWebSecurityConfigurerAdapter(
             final HttpSecurity http,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
             final SecurityProperties securityProperties,
-            final CasConfigurationProperties casProperties,
-            @Qualifier("casWebSecurityExpressionHandler")
-            final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) throws Exception {
+            final CasConfigurationProperties casProperties) throws Exception {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-                casWebSecurityExpressionHandler, pathMappedEndpoints, configurersList);
+                pathMappedEndpoints, configurersList);
             return adapter.configureHttpSecurity(http).build();
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(name = "casWebSecurityCustomizer")
-        public WebSecurityCustomizer casWebSecurityCustomizer(
-            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
-            final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
-            final SecurityProperties securityProperties,
-            final CasConfigurationProperties casProperties,
-            @Qualifier("casWebSecurityExpressionHandler")
-            final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) {
-            val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-                casWebSecurityExpressionHandler, pathMappedEndpoints, configurersList);
-            return adapter::configureWebSecurity;
         }
     }
 

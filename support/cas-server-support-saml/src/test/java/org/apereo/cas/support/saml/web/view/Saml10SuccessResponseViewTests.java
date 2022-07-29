@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
@@ -20,6 +21,7 @@ import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
@@ -109,8 +111,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authAttributes.put("testSamlAttribute", List.of("value"));
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        val assertion = new DefaultAssertionBuilder(primary).with(List.of(primary)).with(
-            CoreAuthenticationTestUtils.getWebApplicationService()).with(true).build();
+        val assertion = getAssertion(primary);
         model.put("assertion", assertion);
 
         val servletResponse = new MockHttpServletResponse();
@@ -146,12 +147,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authAttributes.put("testSamlAttribute", List.of("value"));
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        val assertion = new DefaultAssertionBuilder(primary)
-            .with(List.of(primary))
-            .with(CoreAuthenticationTestUtils.getWebApplicationService())
-            .with(true)
-            .build();
-
+        val assertion = getAssertion(primary);
         model.put("assertion", assertion);
 
         val servletResponse = new MockHttpServletResponse();
@@ -179,11 +175,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
-        val assertion = new DefaultAssertionBuilder(primary)
-            .with(List.of(primary))
-            .with(CoreAuthenticationTestUtils.getWebApplicationService())
-            .with(true)
-            .build();
+        val assertion = getAssertion(primary);
         model.put("assertion", assertion);
 
         val servletResponse = new MockHttpServletResponse();
@@ -198,5 +190,16 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         assertTrue(written.contains("authnAttribute2"));
         assertTrue(written.contains(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
         assertTrue(written.contains("urn:oasis:names:tc:SAML:1.0:am:unspecified"));
+    }
+
+    private static Assertion getAssertion(final Authentication primary) {
+        return DefaultAssertionBuilder.builder()
+            .primaryAuthentication(primary)
+            .authentications(List.of(primary))
+            .service(CoreAuthenticationTestUtils.getWebApplicationService())
+            .newLogin(true)
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .build()
+            .assemble();
     }
 }
