@@ -2,7 +2,6 @@ package org.apereo.cas.validation;
 
 import org.apereo.cas.services.CasModelRegisteredService;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
