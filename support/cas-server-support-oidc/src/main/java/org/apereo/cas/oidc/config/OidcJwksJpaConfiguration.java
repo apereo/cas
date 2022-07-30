@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -35,6 +36,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -46,7 +48,7 @@ import java.util.function.Supplier;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnClass(JpaBeanFactory.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect, module = "jpa")
 @AutoConfiguration
 public class OidcJwksJpaConfiguration {
 
@@ -58,13 +60,14 @@ public class OidcJwksJpaConfiguration {
     public PlatformTransactionManager transactionManagerOidcJwks(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("oidcJwksEntityManagerFactory")
-        final EntityManagerFactory emf) {
+        final ObjectProvider<EntityManagerFactory> emf) {
 
         return BeanSupplier.of(PlatformTransactionManager.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
+            .and(() -> Objects.nonNull(emf.getIfAvailable()))
             .supply(() -> {
                 val mgmr = new JpaTransactionManager();
-                mgmr.setEntityManagerFactory(emf);
+                mgmr.setEntityManagerFactory(emf.getObject());
                 return mgmr;
             })
             .otherwise(PseudoPlatformTransactionManager::new)
@@ -122,7 +125,7 @@ public class OidcJwksJpaConfiguration {
         return BeanSupplier.of(BeanContainer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> BeanContainer.of(CollectionUtils.wrapSet(OidcJsonWebKeystoreEntity.class.getPackage().getName())))
-            .otherwiseProxy()
+            .otherwise(BeanContainer::empty)
             .get();
     }
 
