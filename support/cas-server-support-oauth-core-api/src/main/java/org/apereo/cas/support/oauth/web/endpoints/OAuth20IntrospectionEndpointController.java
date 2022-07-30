@@ -169,7 +169,10 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
                 .collect(Collectors.joining(","));
 
             introspect.setRealmName(realmNames);
-            introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
+            val tokenType = ticket.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)
+                ? OAuth20Constants.TOKEN_TYPE_DPOP
+                : OAuth20Constants.TOKEN_TYPE_BEARER;
+            introspect.setTokenType(tokenType);
 
             val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, new ArrayList<>(0));
             if (!grant.isEmpty()) {

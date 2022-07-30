@@ -55,7 +55,7 @@ const jose = require('jose');
         "DPoP": dpopProof
     }, res => {
         accessToken = res.data.access_token;
-        
+
         assert(accessToken !== null);
         assert(res.data.token_type === "DPoP");
 
@@ -93,7 +93,7 @@ const jose = require('jose');
             }
         });
     console.log(`DPoP JWT is ${dpopProofProfile}`);
-    
+
     let profileUrl = `https://localhost:8443/cas/oidc/profile?token=${accessToken}`;
     console.log(`Calling user profile ${profileUrl}`);
 
@@ -107,6 +107,26 @@ const jose = require('jose');
         throw `Operation failed: ${error}`;
     });
 
-
+    await introspect(accessToken);
     await browser.close();
 })();
+
+async function introspect(token) {
+    let value = `client:secret`;
+    let buff = Buffer.alloc(value.length, value);
+    let authzHeader = `Basic ${buff.toString('base64')}`;
+    console.log(`Authorization header: ${authzHeader}`);
+
+    console.log(`Introspecting token ${token}`);
+    await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
+        res => {
+            assert(res.data.active === true);
+            assert(res.data.tokenType === "DPoP");
+            assert(res.data.cnf.jkt !== undefined);
+        }, error => {
+            throw `Introspection operation failed: ${error}`;
+        }, {
+            'Authorization': authzHeader,
+            'Content-Type': 'application/json'
+        });
+}
