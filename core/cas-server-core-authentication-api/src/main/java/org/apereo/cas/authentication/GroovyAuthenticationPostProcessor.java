@@ -19,7 +19,7 @@ import org.springframework.core.io.Resource;
 @Setter
 @Getter
 public class GroovyAuthenticationPostProcessor implements AuthenticationPostProcessor, DisposableBean {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
     private int order;
 
     public GroovyAuthenticationPostProcessor(final Resource groovyResource) {

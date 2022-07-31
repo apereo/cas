@@ -8,7 +8,7 @@ category: Notifications
 
 # Nexmo SMS Messaging
 
-To learn more, [visit this site](https://vonage.com/communications-apis).
+To learn more, [visit this site](https://www.vonage.com/communications-apis/apis).
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sms-nexmo" %}
 

@@ -5,8 +5,6 @@ import org.apereo.cas.CoreValidationTestUtils;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -17,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@ExtendWith(MockitoExtension.class)
 @Tag("CAS")
 public class Cas10ProtocolValidationSpecificationTests extends BaseCasCoreTests {
     @Autowired

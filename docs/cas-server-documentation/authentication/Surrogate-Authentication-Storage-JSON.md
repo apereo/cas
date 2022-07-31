@@ -8,7 +8,8 @@ category: Authentication
 
 # JSON Surrogate Authentication Registration
 
-Similar to above, except that surrogate accounts may be defined in an external JSON file whose path is specified via the CAS configuration. The syntax of the JSON file should match the following snippet:
+Surrogate accounts may be defined in an external JSON file whose path is specified via the CAS configuration. The syntax of the JSON file should match the 
+following snippet:
 
 ```json
 {

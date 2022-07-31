@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.surrogate.GroovySurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
@@ -61,7 +62,6 @@ import java.util.List;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
 @AutoConfiguration
 public class SurrogateAuthenticationConfiguration {
-
     @Configuration(value = "SurrogateAuthenticationProcessorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationProcessorConfiguration {
@@ -152,6 +152,10 @@ public class SurrogateAuthenticationConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager, final CasConfigurationProperties casProperties) throws Exception {
             val su = casProperties.getAuthn().getSurrogate();
+            if (su.getGroovy().getLocation() != null) {
+                LOGGER.debug("Using Groovy resource [{}] to locate surrogate accounts", su.getGroovy().getLocation());
+                return new GroovySurrogateAuthenticationService(servicesManager, su.getGroovy().getLocation());
+            }
             if (su.getJson().getLocation() != null) {
                 LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
                 return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);

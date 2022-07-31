@@ -193,12 +193,13 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     }
 
     private static Assertion getAssertion(final Authentication primary) {
+        val service = CoreAuthenticationTestUtils.getWebApplicationService();
         return DefaultAssertionBuilder.builder()
             .primaryAuthentication(primary)
             .authentications(List.of(primary))
-            .service(CoreAuthenticationTestUtils.getWebApplicationService())
+            .service(service)
             .newLogin(true)
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService(service.getId()))
             .build()
             .assemble();
     }

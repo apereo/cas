@@ -52,6 +52,12 @@ public class SurrogateAuthenticationProperties implements Serializable {
     private SurrogateJsonAuthenticationProperties json = new SurrogateJsonAuthenticationProperties();
 
     /**
+     * Locate surrogate accounts via a Groovy resource.
+     */
+    @NestedConfigurationProperty
+    private SurrogateGroovyAuthenticationProperties groovy = new SurrogateGroovyAuthenticationProperties();
+
+    /**
      * Locate surrogate accounts via an LDAP server.
      */
     @NestedConfigurationProperty

@@ -6,7 +6,7 @@ category: Authentication
 {% include variables.html %}
 
 
-# LDAP Surrogate Authentication Registration
+# LDAP Surrogate Authentication
 
 LDAP support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 
