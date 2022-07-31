@@ -41,8 +41,7 @@ Acceptable usage policy can be disabled and skipped on a per-service basis:
   "serviceId": "https://app.example.org",
   "name": "Example",
   "id": 1,
-  "acceptableUsagePolicy":
-  {
+  "acceptableUsagePolicy": {
     "@class": "org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy",
     "enabled": true,
     "messageCode": "example.code",
