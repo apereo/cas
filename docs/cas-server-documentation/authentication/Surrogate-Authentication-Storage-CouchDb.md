@@ -6,7 +6,7 @@ category: Authentication
 {% include variables.html %}
 
 
-# CouchDb Surrogate Authentication Registration
+# CouchDb Surrogate Authentication
 
 CouchDb support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 

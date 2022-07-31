@@ -46,6 +46,7 @@ Surrogate accounts may be defined statically in the CAS configuration.
 | CouchDb          | [See this guide](Surrogate-Authentication-Storage-CouchDb.html).
 | JDBC             | [See this guide](Surrogate-Authentication-Storage-JDBC.html).
 | REST             | [See this guide](Surrogate-Authentication-Storage-REST.html).
+| Groovy           | [See this guide](Surrogate-Authentication-Storage-Groovy.html).
 | Custom           | [See this guide](Surrogate-Authentication-Storage-Custom.html).
 
 ## Account Selection

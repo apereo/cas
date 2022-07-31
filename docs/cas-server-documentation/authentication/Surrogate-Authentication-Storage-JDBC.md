@@ -6,7 +6,7 @@ category: Authentication
 {% include variables.html %}
 
 
-# JDBC Surrogate Authentication Registration
+# JDBC Surrogate Authentication
 
 JDBC support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 

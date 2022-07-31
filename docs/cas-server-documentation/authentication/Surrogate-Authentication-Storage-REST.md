@@ -6,7 +6,7 @@ category: Authentication
 {% include variables.html %}
 
 
-# REST Surrogate Authentication Registration
+# REST Surrogate Authentication
 
 REST support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 

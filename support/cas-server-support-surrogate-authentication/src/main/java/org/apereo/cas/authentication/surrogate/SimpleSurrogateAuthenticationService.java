@@ -23,12 +23,6 @@ import java.util.Optional;
 public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthenticationService {
     private final Map<String, List> eligibleAccounts;
 
-    /**
-     * Instantiates a new simple surrogate username password service.
-     *
-     * @param eligibleAccounts the eligible accounts
-     * @param servicesManager  the services manager
-     */
     public SimpleSurrogateAuthenticationService(final Map<String, List> eligibleAccounts, final ServicesManager servicesManager) {
         super(servicesManager);
         this.eligibleAccounts = eligibleAccounts;
