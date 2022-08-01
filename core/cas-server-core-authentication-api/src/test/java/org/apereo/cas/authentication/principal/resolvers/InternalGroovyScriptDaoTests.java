@@ -49,7 +49,7 @@ public class InternalGroovyScriptDaoTests {
         queryAttributes.put("username", "casuser");
 
         val results = d.getPeople(queryAttributes);
-        assertTrue(results.isEmpty());
+        assertFalse(results.isEmpty());
     }
 
     @Test
