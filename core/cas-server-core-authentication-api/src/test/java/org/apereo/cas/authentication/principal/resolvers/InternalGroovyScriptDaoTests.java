@@ -34,7 +34,28 @@ public class InternalGroovyScriptDaoTests {
 
     @Test
     public void verifyAction() {
-        val d = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
+        val d = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties, null));
+        val queryAttributes = new HashMap<String, Object>();
+        queryAttributes.put("username", "casuser");
+
+        val results = d.getPeople(queryAttributes);
+        assertFalse(results.isEmpty());
+    }
+
+    @Test
+    public void verifyIdMismatch() {
+        val d = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties, "test"));
+        val queryAttributes = new HashMap<String, Object>();
+        queryAttributes.put("username", "casuser");
+
+        val results = d.getPeople(queryAttributes);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    public void verifyIdMatch() {
+        val d = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties, "test"));
+        d.setId("test");
         val queryAttributes = new HashMap<String, Object>();
         queryAttributes.put("username", "casuser");
 
