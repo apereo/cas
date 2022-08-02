@@ -337,6 +337,11 @@ exports.assertInnerTextContains = async (page, selector, value) => {
     assert(header.includes(value));
 }
 
+exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
+    const header = await this.innerText(page, selector);
+    assert(!header.includes(value));
+}
+
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     assert(header === value)
