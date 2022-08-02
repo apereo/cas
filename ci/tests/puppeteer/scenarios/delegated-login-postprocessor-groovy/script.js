@@ -20,5 +20,12 @@ const assert = require("assert");
     assert(url.startsWith("https://apereo.github.io/"));
     await cas.assertTicketParameter(page);
     await page.waitForTimeout(1000);
+
+    console.log("Attempting login after SSO...");
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
+    url = await page.url();
+    console.log(url);
+    await cas.assertTicketParameter(page);
+
     await browser.close();
 })();

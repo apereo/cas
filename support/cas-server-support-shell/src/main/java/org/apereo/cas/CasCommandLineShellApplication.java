@@ -8,6 +8,7 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -19,7 +20,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@SpringBootApplication(exclude = GroovyTemplateAutoConfiguration.class, proxyBeanMethods = false)
+@SpringBootApplication(exclude = {
+    HibernateJpaAutoConfiguration.class,
+    GroovyTemplateAutoConfiguration.class
+}, proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync(proxyTargetClass = false)
 @NoArgsConstructor

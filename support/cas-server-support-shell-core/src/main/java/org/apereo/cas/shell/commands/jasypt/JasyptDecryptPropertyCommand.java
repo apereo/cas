@@ -39,9 +39,11 @@ public class JasyptDecryptPropertyCommand {
     public void decryptValue(
         @ShellOption(value = { "value", "--value" },
             help = "Value to decrypt") final String value,
-        @ShellOption(value = { "alg", "--alg" },
+        @ShellOption(defaultValue = ShellOption.NULL,
+            value = { "alg", "--alg" },
             help = "Algorithm to use to decrypt") final String alg,
-        @ShellOption(value = { "provider", "--provider" },
+        @ShellOption(defaultValue = ShellOption.NULL,
+            value = { "provider", "--provider" },
             help = "Security provider to use to decrypt") final String provider,
         @ShellOption(value = { "password", "--password" },
             help = "Password (encryption key) to decrypt") final String password,

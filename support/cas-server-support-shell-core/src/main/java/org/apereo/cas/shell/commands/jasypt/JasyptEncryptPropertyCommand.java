@@ -37,19 +37,27 @@ public class JasyptEncryptPropertyCommand {
      */
     @ShellMethod(key = "encrypt-value", value = "Encrypt a CAS property value/setting via Jasypt")
     public void encryptValue(
-        @ShellOption(value = { "value", "--value" },
-            help = "Value to encrypt") final String value,
-        @ShellOption(value = { "alg", "--alg" },
-            help = "Algorithm to use to encrypt") final String alg,
-        @ShellOption(value = { "provider", "--provider" },
-            help = "Security provider to use to encrypt") final String provider,
-        @ShellOption(value = { "password", "--password" },
-            help = "Password (encryption key) to encrypt") final String password,
-        @ShellOption(value = { "initvector", "--initvector", "iv", "--iv" },
-            help = "Use initialization vector to encrypt", defaultValue = "false") final Boolean initVector,
-        @ShellOption(value = { "iterations", "--iterations" },
+        @ShellOption(value = {"value", "--value"},
+            help = "Value to encrypt")
+        final String value,
+        @ShellOption(defaultValue = ShellOption.NULL,
+            value = {"alg", "--alg"},
+            help = "Algorithm to use to encrypt")
+        final String alg,
+        @ShellOption(defaultValue = ShellOption.NULL,
+            value = {"provider", "--provider"},
+            help = "Security provider to use to encrypt")
+        final String provider,
+        @ShellOption(value = {"password", "--password"},
+            help = "Password (encryption key) to encrypt")
+        final String password,
+        @ShellOption(value = {"initvector", "--initvector", "iv", "--iv"},
+            help = "Use initialization vector to encrypt", defaultValue = "false")
+        final Boolean initVector,
+        @ShellOption(value = {"iterations", "--iterations"},
             defaultValue = ShellOption.NULL,
-            help = "Key obtention iterations to encrypt, default 1000") final String iterations) {
+            help = "Key obtention iterations to encrypt, default 1000")
+        final String iterations) {
 
         val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
