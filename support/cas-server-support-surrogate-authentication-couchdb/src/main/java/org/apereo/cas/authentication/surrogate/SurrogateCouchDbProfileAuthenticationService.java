@@ -34,7 +34,7 @@ public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateA
     }
 
     @Override
-    protected boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
+    protected boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         LOGGER.warn("User [{}] attempting surrogate for [{}]", principal.getId(), surrogate);
         val user = couchDb.findByUsername(principal.getId());
         LOGGER.debug("User [{}]", user);
@@ -62,7 +62,7 @@ public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateA
     }
 
     @Override
-    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public Collection<String> getImpersonationAccounts(final String username) {
         LOGGER.debug("Listing eligible accounts for user [{}].", username);
         val user = couchDb.findByUsername(username);
         if (user == null) {

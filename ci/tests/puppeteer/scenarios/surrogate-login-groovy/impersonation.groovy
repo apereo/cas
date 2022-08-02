@@ -1,5 +1,14 @@
 import org.apereo.cas.authentication.principal.*
 
+def isWildcardAuthorized(Object... args) {
+    def surrogate = args[0].toString()
+    def principal = args[1] as Principal
+    def logger = args[2]
+
+    logger.info("Checking wildcard access {}", surrogate)
+    return principal.id.equals("casuser4")
+}
+
 def canAuthenticate(Object... args) {
     def surrogate = args[0].toString()
     def principal = args[1] as Principal
@@ -22,6 +31,8 @@ def getAccounts(Object... args) {
             return ["casuser2", "casuser3"]
         case "casuser2":
             return ["casuser3"]
+        case "casuser4":
+            return ["*"]
         default:
             return []
     }

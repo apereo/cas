@@ -56,7 +56,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
             LOGGER.trace("Not a surrogate authentication attempt, returning parent class credentials");
             return credentials;
         }
-        val surrogateAccounts = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy(credential.getId());
+        val surrogateAccounts = surrogateAuthenticationService.getImpersonationAccounts(credential.getId());
         if (!surrogateAccounts.contains(credential.getSurrogateUsername())) {
             throw new SurrogateAuthenticationException(
                 "Unable to authorize surrogate authentication request for " + credential.getSurrogateUsername());

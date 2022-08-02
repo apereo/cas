@@ -30,19 +30,26 @@ public class GroovySurrogateAuthenticationService extends BaseSurrogateAuthentic
     }
 
     @Override
-    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
+    public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         val args = new Object[]{surrogate, principal, service.orElse(null), LOGGER};
         return watchableScript.execute("canAuthenticate", Boolean.class, args);
     }
 
     @Override
-    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public Collection<String> getImpersonationAccounts(final String username) {
         val args = new Object[]{username, LOGGER};
         return watchableScript.execute("getAccounts", Collection.class, args);
     }
 
     @Override
-    public void destroy() throws Exception {
+    public boolean isWildcardedAccount(final String surrogate, final Principal principal) {
+        val args = new Object[]{surrogate, principal, LOGGER};
+        return super.isWildcardedAccount(surrogate, principal)
+               && watchableScript.execute("isWildcardAuthorized", Boolean.class, args);
+    }
+
+    @Override
+    public void destroy() {
         watchableScript.close();
     }
 }

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.surrogates.account.selection.header}">Surrogate Account Selection View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+        <div id="titlePanel" class="my-3">
+            <h2 th:utext="#{screen.surrogates.wildcard.title}">Wildcard Account</h2>
+            <div id="surrogateInfo">
+                <p th:utext="#{screen.surrogates.wildcard.description}">Your account is marked as wildcard.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

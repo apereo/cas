@@ -44,7 +44,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
+    public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         HttpResponse response = null;
         try {
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -63,7 +63,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public Collection<String> getImpersonationAccounts(final String username) {
         HttpResponse response = null;
         try {
             val exec = HttpUtils.HttpExecutionRequest.builder()

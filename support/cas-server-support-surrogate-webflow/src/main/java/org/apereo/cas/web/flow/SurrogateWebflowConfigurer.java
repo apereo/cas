@@ -55,6 +55,8 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void createSurrogateListViewState(final Flow flow) {
         val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_SURROGATE_VIEW, "surrogate/casSurrogateAuthnListView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SELECT_SURROGATE);
+
+        createEndState(flow, CasWebflowConstants.STATE_ID_SURROGATE_WILDCARD_VIEW, "surrogate/casSurrogateAuthnWildcardView");
     }
 
     public static class DuoSecurityMultifactorAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
@@ -100,6 +102,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
             CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION);
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW, CasWebflowConstants.STATE_ID_SURROGATE_VIEW);
+        createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SURROGATE_WILDCARD_VIEW, CasWebflowConstants.STATE_ID_SURROGATE_WILDCARD_VIEW);
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SKIP_SURROGATE, targetSuccessId);
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, loadSurrogatesAction.getId(), true);

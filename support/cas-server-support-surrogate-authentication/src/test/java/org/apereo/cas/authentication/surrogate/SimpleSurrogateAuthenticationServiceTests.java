@@ -15,5 +15,6 @@ import org.junit.jupiter.api.Tag;
 @Tag("Impersonation")
 public class SimpleSurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     private final SurrogateAuthenticationService service = new SimpleSurrogateAuthenticationService(
-            CollectionUtils.wrap("casuser", CollectionUtils.wrapList("banderson")), servicesManager);
+        CollectionUtils.wrap("casuser", CollectionUtils.wrapList("banderson"),
+            "casadmin", CollectionUtils.wrapList(SurrogateAuthenticationService.WILDCARD_ACCOUNT)), servicesManager);
 }

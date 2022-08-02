@@ -35,18 +35,18 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
     private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
     private boolean loadSurrogates(final RequestContext requestContext) {
-        val c = WebUtils.getCredential(requestContext);
-        if (c instanceof UsernamePasswordCredential) {
-            val username = c.getId();
+        val credential = WebUtils.getCredential(requestContext);
+        if (credential instanceof UsernamePasswordCredential) {
+            val username = credential.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
-            val surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username)
+            val surrogates = surrogateService.getImpersonationAccounts(username)
                 .stream()
                 .sorted()
                 .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (!surrogates.isEmpty()) {
-                if (!surrogates.contains(username)) {
+                if (!surrogates.contains(username) && !surrogateService.isWildcardedAccount(surrogates)) {
                     surrogates.add(0, username);
                 }
                 WebUtils.putSurrogateAuthenticationAccounts(requestContext, surrogates);
@@ -66,6 +66,10 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
                 WebUtils.removeSurrogateAuthenticationRequest(requestContext);
                 LOGGER.trace("Attempting to load surrogates...");
                 if (loadSurrogates(requestContext)) {
+                    val accounts = WebUtils.getSurrogateAuthenticationAccounts(requestContext);
+                    if (surrogateService.isWildcardedAccount(accounts)) {
+                        return new Event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_WILDCARD_VIEW);
+                    }
                     return new Event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW);
                 }
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP_SURROGATE);

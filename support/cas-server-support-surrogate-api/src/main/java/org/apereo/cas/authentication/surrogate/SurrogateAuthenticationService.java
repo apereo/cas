@@ -3,6 +3,8 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
+import lombok.val;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -16,6 +18,12 @@ import java.util.Optional;
  */
 @FunctionalInterface
 public interface SurrogateAuthenticationService {
+    /**
+     * An authorized account may be tagged as a wildcard, meaning
+     * that the account has special permissions to impersonate anyone.
+     */
+    String WILDCARD_ACCOUNT = "*";
+
     /**
      * Default bean name.
      */
@@ -42,7 +50,7 @@ public interface SurrogateAuthenticationService {
      * @param service   the service
      * @return true if the given surrogate can authenticate as the user
      */
-    default boolean canAuthenticateAs(final String surrogate, final Principal principal, final Optional<Service> service) {
+    default boolean canImpersonate(final String surrogate, final Principal principal, final Optional<Service> service) {
         return false;
     }
 
@@ -52,5 +60,27 @@ public interface SurrogateAuthenticationService {
      * @param username The username of the surrogate
      * @return collection of usernames
      */
-    Collection<String> getEligibleAccountsForSurrogateToProxy(String username);
+    Collection<String> getImpersonationAccounts(String username);
+
+    /**
+     * Is wildcarded account authorized?.
+     *
+     * @param surrogate the surrogate
+     * @param principal the principal
+     * @return true/false
+     */
+    default boolean isWildcardedAccount(final String surrogate, final Principal principal) {
+        val accounts = getImpersonationAccounts(principal.getId());
+        return isWildcardedAccount(accounts);
+    }
+
+    /**
+     * Is wildcarded account acepted and found in the given accounts?.
+     *
+     * @param accounts the accounts
+     * @return true/false
+     */
+    default boolean isWildcardedAccount(final Collection<String> accounts) {
+        return accounts.size() == 1 && accounts.contains(SurrogateAuthenticationService.WILDCARD_ACCOUNT);
+    }
 }

@@ -22,6 +22,19 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
     await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "You are not authorized to impersonate");
 
+    console.log("Checking wildcard access for authorized user...");
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.loginWith(page, `+casuser4`, "Mellon");
+    await page.waitForTimeout(1000);
+    await cas.assertInnerTextContains(page, '#content p', "you may directly proceed to login");
+    await cas.assertInnerTextContains(page, '#content p', "impersonation account selection is not allowed");
+
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.loginWith(page, `anybody+casuser4`, "Mellon");
+    await page.waitForTimeout(1000);
+    await cas.assertTicketParameter(page);
+    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    
     await browser.close();
 })();
 
