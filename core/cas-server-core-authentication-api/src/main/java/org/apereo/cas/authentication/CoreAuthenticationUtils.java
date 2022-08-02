@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -39,12 +38,10 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
@@ -61,11 +58,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -95,35 +89,6 @@ public class CoreAuthenticationUtils {
                 val value = entry.getValue();
                 return CollectionUtils.toCollection(value, ArrayList.class);
             }));
-    }
-
-    /**
-     * Retrieve attributes from attribute repository and return map.
-     *
-     * @param attributeRepository                  the attribute repository
-     * @param principalId                          the principal id
-     * @param activeAttributeRepositoryIdentifiers the active attribute repository identifiers
-     * @param currentPrincipal                     the current principal
-     * @return the map or null
-     */
-    public static Map<String, List<Object>> retrieveAttributesFromAttributeRepository(final IPersonAttributeDao attributeRepository,
-                                                                                      final String principalId,
-                                                                                      final Set<String> activeAttributeRepositoryIdentifiers,
-                                                                                      final Optional<Principal> currentPrincipal) {
-        var filter = IPersonAttributeDaoFilter.alwaysChoose();
-        if (activeAttributeRepositoryIdentifiers != null && !activeAttributeRepositoryIdentifiers.isEmpty()) {
-            val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-            filter = dao -> Arrays.stream(dao.getId())
-                .anyMatch(daoId -> daoId.equalsIgnoreCase(IPersonAttributeDao.WILDCARD)
-                                   || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
-                                   || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
-        }
-
-        val attrs = attributeRepository.getPerson(principalId, filter);
-        if (attrs == null) {
-            return new HashMap<>(0);
-        }
-        return attrs.getAttributes();
     }
 
     /**

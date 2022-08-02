@@ -57,7 +57,7 @@ public class CasPersonDirectoryGroovyConfiguration {
                         .stream()
                         .filter(groovy -> groovy.getLocation() != null)
                         .forEach(groovy -> {
-                            val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
+                            val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties, groovy));
                             dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
                             dao.setOrder(groovy.getOrder());
                             dao.setEnabled(groovy.getState() != AttributeRepositoryStates.DISABLED);

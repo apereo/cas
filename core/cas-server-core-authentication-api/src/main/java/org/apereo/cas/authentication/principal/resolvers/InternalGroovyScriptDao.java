@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.GroovyPrincipalAttributesProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
@@ -33,24 +34,23 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
 
     private final CasConfigurationProperties casProperties;
 
+    private final GroovyPrincipalAttributesProperties groovyPrincipalAttributesProperties;
+
     @Override
     public Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(final Map<String, List<Object>> attributes) {
         val username = usernameAttributeProvider.getUsernameFromQuery(attributes);
         val results = new HashMap<String, List<Object>>();
         if (StringUtils.isNotBlank(username)) {
-            casProperties.getAuthn().getAttributeRepository().getGroovy()
-                .forEach(groovy -> {
-                    val args = new Object[]{username, attributes, LOGGER, casProperties, applicationContext};
-                    val finalAttributes = (Map<String, ?>) ScriptingUtils.executeGroovyScript(
-                        groovy.getLocation(), args, Map.class, true);
-                    LOGGER.debug("Groovy-based attributes found are [{}]", finalAttributes);
+            val args = new Object[]{username, attributes, LOGGER, casProperties, applicationContext};
+            val finalAttributes = (Map<String, ?>) ScriptingUtils.executeGroovyScript(
+                    groovyPrincipalAttributesProperties.getLocation(), args, Map.class, true);
+            LOGGER.debug("Groovy-based attributes found are [{}]", finalAttributes);
 
-                    finalAttributes.forEach((k, v) -> {
-                        val values = new ArrayList<Object>(CollectionUtils.toCollection(v));
-                        LOGGER.trace("Adding Groovy-based attribute [{}] with value(s) [{}]", k, values);
-                        results.put(k, values);
-                    });
-                });
+            finalAttributes.forEach((k, v) -> {
+                val values = new ArrayList<Object>(CollectionUtils.toCollection(v));
+                LOGGER.trace("Adding Groovy-based attribute [{}] with value(s) [{}]", k, values);
+                results.put(k, values);
+            });
         }
         return results;
     }
