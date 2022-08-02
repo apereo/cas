@@ -122,7 +122,7 @@ or override log42.component.properties to turn off async
         <Logger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="${sys:spring.security.log.level}" />
         <Logger name="org.springframework.boot.autoconfigure.security" level="${sys:spring.security.log.level}" />
         <Logger name="org.springframework.boot.devtools" level="debug" />
-        
+
         <Logger name="org.springframework" level="warn" />
         <Logger name="org.springframework.webflow" level="${sys:spring.webflow.log.level}"/>
         <Logger name="org.springframework.aop" level="warn" />
@@ -131,6 +131,7 @@ or override log42.component.properties to turn off async
         <Logger name="org.springframework.cloud.vault" level="warn" />
         <Logger name="org.springframework.web.client" level="warn" />
         <Logger name="org.springframework.security" level="${sys:spring.security.log.level}"/>
+        <Logger name="org.springframework.security.config.annotation.web.builders" level="error" />
         <Logger name="org.springframework.cloud" level="${sys:spring.cloud.log.level}"/>
         <Logger name="org.springframework.amqp" level="error" />
         <Logger name="org.springframework.integration" level="warn"/>
