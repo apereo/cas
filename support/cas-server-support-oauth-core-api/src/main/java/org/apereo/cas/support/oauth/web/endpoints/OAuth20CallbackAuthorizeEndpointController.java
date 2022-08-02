@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,17 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val callback = new OAuth20CallbackLogic();
         val context = new JEEContext(request, response);
-        val defaultUrl = context.getRequestParameter(OAuth20Constants.REDIRECT_URI).orElseGet(context::getFullRequestURL);
+        String defaultUrl = null;
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+        val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+        if (clientId.isPresent() && redirectUri.isPresent()) {
+            val servicesManager = getConfigurationContext().getServicesManager();
+            val serviceClient = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId.get());
+            val serviceRedirectUri = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(servicesManager, redirectUri.get());
+            if (serviceClient != null && serviceClient.equals(serviceRedirectUri)) {
+                defaultUrl = redirectUri.get();
+            }
+        }
         callback.perform(context, getConfigurationContext().getSessionStore(),
             getConfigurationContext().getOauthConfig(), (object, ctx) -> Boolean.FALSE,
                 defaultUrl, Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT);
