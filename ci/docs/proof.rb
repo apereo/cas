@@ -68,4 +68,8 @@ end
 # end
 
 # puts "Checking files..."
-HTMLProofer.check_directory("#{TARGET_DIRECTORY}", options).run
+proofer = HTMLProofer.check_directory("#{TARGET_DIRECTORY}", options)
+proofer.before_request do |request|
+  request.options[:headers]['User-Agent'] = "Mozilla/5.0 (X11; Linux i686; rv:103.0) Gecko/20100101 Firefox/103.0"
+end
+proofer.run
