@@ -52,6 +52,7 @@ public class SurrogateCouchDbAuthenticationTests extends BaseSurrogateAuthentica
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         repository.initStandardDesignDocument();
         repository.add(new CouchDbSurrogateAuthorization("banderson", "casuser"));
+        repository.add(new CouchDbSurrogateAuthorization(SurrogateAuthenticationService.WILDCARD_ACCOUNT, "casadmin"));
     }
 
     @AfterEach

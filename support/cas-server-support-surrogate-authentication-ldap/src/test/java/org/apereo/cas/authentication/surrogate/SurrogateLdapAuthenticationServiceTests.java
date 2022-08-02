@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.surrogate.ldap.search-filter=cn={user}",
     "cas.authn.surrogate.ldap.surrogate-search-filter=employeeType={surrogate}",
     "cas.authn.surrogate.ldap.member-attribute-name=mail",
-    "cas.authn.surrogate.ldap.member-attribute-value-regex=\\\\w+@example.org"
+    "cas.authn.surrogate.ldap.member-attribute-value-regex=\\\\w+@example.org|\\\\*"
 })
 @Getter
 @EnabledIfListeningOnPort(port = 10389)
@@ -85,7 +85,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
         val su = casProperties.getAuthn().getSurrogate();
         val factory = mock(ConnectionFactory.class);
         val ldapService = new SurrogateLdapAuthenticationService(factory, su.getLdap(), servicesManager);
-        assertFalse(ldapService.canAuthenticateAs("casuser",
+        assertFalse(ldapService.canImpersonate("casuser",
             CoreAuthenticationTestUtils.getPrincipal(), Optional.empty()));
         ldapService.destroy();
     }
@@ -97,7 +97,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
         BeanUtils.copyProperties(su.getLdap(), props);
         props.setMemberAttributeName("unknown");
         val ldapService = new SurrogateLdapAuthenticationService(surrogateLdapConnectionFactory, props, servicesManager);
-        assertTrue(ldapService.getEligibleAccountsForSurrogateToProxy("casuser").isEmpty());
+        assertTrue(ldapService.getImpersonationAccounts("casuser").isEmpty());
         ldapService.destroy();
     }
 
@@ -109,7 +109,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
         BeanUtils.copyProperties(su.getLdap(), props);
         props.setMemberAttributeName("unknown");
         val ldapService = new SurrogateLdapAuthenticationService(factory, props, servicesManager);
-        assertTrue(ldapService.getEligibleAccountsForSurrogateToProxy("casuser").isEmpty());
+        assertTrue(ldapService.getImpersonationAccounts("casuser").isEmpty());
         ldapService.destroy();
     }
 }

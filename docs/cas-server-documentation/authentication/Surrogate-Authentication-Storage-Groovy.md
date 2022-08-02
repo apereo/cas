@@ -13,6 +13,15 @@ specified via the CAS configuration. The body of the script may be defined as su
 ```groovy
 import org.apereo.cas.authentication.principal.*
 
+def isWildcardAuthorized(Object... args) {
+    def surrogate = args[0].toString()
+    def principal = args[1] as Principal
+    def logger = args[2]
+
+    logger.info("Checking wildcard access {}", surrogate)
+    return false
+}
+
 def canAuthenticate(Object... args) {
     def surrogate = args[0].toString()
     def principal = args[1] as Principal

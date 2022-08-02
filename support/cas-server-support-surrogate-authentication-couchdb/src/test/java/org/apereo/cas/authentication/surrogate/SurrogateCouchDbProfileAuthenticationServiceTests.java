@@ -57,10 +57,15 @@ public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurro
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         repository.initialize();
 
-        val profile = new CouchDbProfileDocument();
-        profile.setUsername("casuser");
-        profile.setAttribute("surrogateFor", CollectionUtils.wrapList("banderson"));
-        repository.add(profile);
+        val profile1 = new CouchDbProfileDocument();
+        profile1.setUsername("casuser");
+        profile1.setAttribute("surrogateFor", CollectionUtils.wrapList("banderson"));
+        repository.add(profile1);
+
+        val profile2 = new CouchDbProfileDocument();
+        profile2.setUsername("casadmin");
+        profile2.setAttribute("surrogateFor", CollectionUtils.wrapList(SurrogateAuthenticationService.WILDCARD_ACCOUNT));
+        repository.add(profile2);
     }
 
     @AfterEach

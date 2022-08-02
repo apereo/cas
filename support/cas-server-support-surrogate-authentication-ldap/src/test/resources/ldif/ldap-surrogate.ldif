@@ -9,3 +9,15 @@ mail: casuser@example.org
 sn: CAS
 uid: casuser
 employeeType: banderson
+
+dn: cn=casadmin,ou=surrogates,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: casuser
+userPassword: 123456
+mail: *
+sn: CAS
+uid: casuser
+employeeType: *

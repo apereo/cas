@@ -73,7 +73,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 accessResult.throwExceptionIfNeeded();
             }
 
-            if (surrogateAuthenticationService.canAuthenticateAs(targetUserId, primaryPrincipal.getPrimary(), Optional.ofNullable(transaction.getService()))) {
+            if (surrogateAuthenticationService.canImpersonate(targetUserId, primaryPrincipal.getPrimary(), Optional.ofNullable(transaction.getService()))) {
                 LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", primaryPrincipal, targetUserId);
                 publishSuccessEvent(primaryPrincipal, targetUserId);
 

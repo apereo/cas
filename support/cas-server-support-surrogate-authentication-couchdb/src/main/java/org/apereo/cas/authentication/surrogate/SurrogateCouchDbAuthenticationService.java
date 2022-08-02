@@ -24,12 +24,12 @@ public class SurrogateCouchDbAuthenticationService extends BaseSurrogateAuthenti
     }
 
     @Override
-    protected boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
+    protected boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         return !couchDb.findBySurrogatePrincipal(surrogate, principal.getId()).isEmpty();
     }
 
     @Override
-    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public Collection<String> getImpersonationAccounts(final String username) {
         return couchDb.findByPrincipal(username);
     }
 }

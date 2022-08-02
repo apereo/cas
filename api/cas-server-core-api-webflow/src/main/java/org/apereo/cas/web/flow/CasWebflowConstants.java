@@ -116,6 +116,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SURROGATE_VIEW = "surrogateListView";
 
     /**
+     * The view id 'surrogateWildcardView'.
+     */
+    String TRANSITION_ID_SURROGATE_WILDCARD_VIEW = "surrogateWildcardView";
+
+    /**
      * Skip surrogate view if no surrogates can be found.
      */
     String TRANSITION_ID_SKIP_SURROGATE = "skipSurrogateView";
@@ -462,6 +467,11 @@ public interface CasWebflowConstants {
      * The state 'surrogateListView'.
      */
     String STATE_ID_SURROGATE_VIEW = "surrogateListView";
+
+    /**
+     * The state 'surrogateWildcardView'.
+     */
+    String STATE_ID_SURROGATE_WILDCARD_VIEW = "surrogateWildcardView";
 
     /**
      * The state 'loadSurrogatesAction'.

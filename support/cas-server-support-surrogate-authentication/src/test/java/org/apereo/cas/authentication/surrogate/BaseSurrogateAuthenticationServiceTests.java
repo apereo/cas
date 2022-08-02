@@ -63,6 +63,8 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     public static final String BANDERSON = "banderson";
 
+    public static final String ADMIN = "casadmin";
+
     @Mock
     protected ServicesManager servicesManager;
 
@@ -70,22 +72,29 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @Test
     public void verifyUserAllowedToProxy() throws Exception {
-        assertFalse(getService().getEligibleAccountsForSurrogateToProxy(CASUSER).isEmpty());
+        assertFalse(getService().getImpersonationAccounts(CASUSER).isEmpty());
     }
 
     @Test
     public void verifyUserNotAllowedToProxy() throws Exception {
-        assertTrue(getService().getEligibleAccountsForSurrogateToProxy("unknown-user").isEmpty());
+        assertTrue(getService().getImpersonationAccounts("unknown-user").isEmpty());
     }
 
     @Test
     public void verifyProxying() throws Exception {
         val service = Optional.of(CoreAuthenticationTestUtils.getService());
         val surrogateService = getService();
-        assertTrue(surrogateService.canAuthenticateAs(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
-        assertTrue(surrogateService.canAuthenticateAs(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
-        assertFalse(surrogateService.canAuthenticateAs("XXXX", CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
-        assertFalse(surrogateService.canAuthenticateAs(CASUSER, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
+        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
+        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
+        assertFalse(surrogateService.canImpersonate("XXXX", CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
+        assertFalse(surrogateService.canImpersonate(CASUSER, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
+    }
+
+    @Test
+    public void verifyWildcard() throws Exception {
+        val service = Optional.of(CoreAuthenticationTestUtils.getService());
+        assertTrue(getService().canImpersonate("anyone", CoreAuthenticationTestUtils.getPrincipal(ADMIN), service));
+        assertTrue(getService().isWildcardedAccount("anyone", CoreAuthenticationTestUtils.getPrincipal(ADMIN)));
     }
 
     @ImportAutoConfiguration({

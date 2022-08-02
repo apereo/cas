@@ -84,7 +84,7 @@ public class SurrogatePrincipalBuilder {
             if (authentication.getPrincipal() instanceof SurrogatePrincipal) {
                 principal = SurrogatePrincipal.class.cast(authentication.getPrincipal()).getPrimary();
             }
-            if (!surrogateAuthenticationService.canAuthenticateAs(surrogateTargetId, principal, Optional.empty())) {
+            if (!surrogateAuthenticationService.canImpersonate(surrogateTargetId, principal, Optional.empty())) {
                 throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + surrogateTargetId);
             }
             val surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, principal, registeredService);
