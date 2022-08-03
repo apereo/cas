@@ -5,10 +5,8 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +17,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RestControllerEndpoint(id = "discoveryProfile", enableByDefault = false)
+@Endpoint(id = "discoveryProfile", enableByDefault = false)
 public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
     private final CasServerProfileRegistrar casServerProfileRegistrar;
 
@@ -34,8 +32,7 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
      *
      * @return the map
      */
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @ReadOperation
     @Operation(summary = "Produce CAS discovery profile")
     public Map<String, Object> discovery() {
         val results = new HashMap<String, Object>();
