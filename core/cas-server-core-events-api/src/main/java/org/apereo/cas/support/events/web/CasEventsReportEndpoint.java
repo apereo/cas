@@ -7,10 +7,9 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Comparator;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RestControllerEndpoint(id = "events", enableByDefault = false)
+@Endpoint(id = "events", enableByDefault = false)
 public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
     private static final long LIMIT = 1000;
 
@@ -39,7 +38,7 @@ public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
      *
      * @return the collection
      */
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @ReadOperation
     @Operation(summary = "Provide a report of CAS events in the event repository")
     public List<? extends CasEvent> events() {
         val eventRepository = applicationContext.getBean(CasEventRepository.BEAN_NAME, CasEventRepository.class);
