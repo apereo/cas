@@ -2,10 +2,13 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenFailureResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenSuccessResponse;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.HttpConstants;
@@ -35,17 +38,22 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
     @Qualifier("introspectionEndpointController")
     private OAuth20IntrospectionEndpointController<OAuth20ConfigurationContext> introspectionEndpoint;
 
+    @BeforeEach
+    public void initialize() {
+        servicesManager.deleteAll();
+    }
+
     @Test
     public void verifyBadCredentialsOperation() {
-        val body = internalVerifyOperation("---");
-        assertNull(body);
+        val body = (OAuth20IntrospectionAccessTokenFailureResponse) internalVerifyOperation("---");
+        assertNotNull(body.getError());
     }
 
     @Test
     public void verifyOperation() {
         val auth = CLIENT_ID + ':' + CLIENT_SECRET;
         addRegisteredService();
-        val body = internalVerifyOperation(auth);
+        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) internalVerifyOperation(auth);
 
         assertNotNull(body);
         assertEquals(CLIENT_ID, body.getClientId());
@@ -53,12 +61,20 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
     }
 
     @Test
+    public void verifyBadSecret() {
+        val auth = CLIENT_ID + ':' + CLIENT_SECRET;
+        addRegisteredService(SERVICE_URL, UUID.randomUUID().toString());
+        val body = (OAuth20IntrospectionAccessTokenFailureResponse) internalVerifyOperation(auth);
+        assertNotNull(body.getError());
+    }
+
+    @Test
     public void verifyOperationFromOtherClient() {
         val registeredService2 = getRegisteredService(REDIRECT_URI, CLIENT_ID2, CLIENT_SECRET);
         servicesManager.save(registeredService2);
-        
+
         val auth2 = CLIENT_ID2 + ':' + CLIENT_SECRET;
-        val body = internalVerifyOperation(auth2);
+        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) internalVerifyOperation(auth2);
 
         assertNotNull(body);
         assertEquals(CLIENT_ID, body.getClientId());
@@ -104,7 +120,7 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
-    protected OAuth20IntrospectionAccessTokenResponse internalVerifyOperation(final String auth) {
+    protected BaseOAuth20IntrospectionAccessTokenResponse internalVerifyOperation(final String auth) {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -116,6 +132,7 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
         request.addParameter(OAuth20Constants.TOKEN, at);
-        return introspectionEndpoint.handleRequest(request, response).getBody();
+        val entity = introspectionEndpoint.handleRequest(request, response);
+        return entity.getBody();
     }
 }

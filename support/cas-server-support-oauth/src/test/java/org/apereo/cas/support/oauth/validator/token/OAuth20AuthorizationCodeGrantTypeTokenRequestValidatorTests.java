@@ -24,6 +24,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
@@ -33,9 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -47,190 +50,236 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
-public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
-    private OAuth20Code supportingServiceTicket;
+public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
 
-    private OAuth20Code nonSupportingServiceTicket;
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = "cas.authn.oauth.code.remove-related-access-tokens=true")
+    public class RemovingInvalidTokenTests extends AbstractOAuth20Tests {
+        @Autowired
+        @Qualifier("oauthAuthorizationCodeGrantTypeTokenRequestValidator")
+        private OAuth20TokenRequestValidator validator;
+        
+        @Test
+        public void verifyPreviousAccessTokensRemoved() throws Exception {
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            val profile = new CommonProfile();
+            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+            profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+            val session = request.getSession(true);
+            assertNotNull(session);
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-    private OAuth20Code promiscuousServiceTicket;
+            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser");
+            val registeredService = addRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL3, UUID.randomUUID().toString());
+            val code = addCode(principal, registeredService);
+            val at1 = addAccessToken(principal, registeredService, code.getId());
+            assertNotNull(at1);
+            val at2 = addAccessToken(principal, registeredService, code.getId());
+            assertNotNull(at2);
+            code.markTicketExpired();
 
-    @Autowired
-    @Qualifier("oauthAuthorizationCodeGrantTypeTokenRequestValidator")
-    private OAuth20TokenRequestValidator validator;
-
-    @BeforeEach
-    public void before() throws Exception {
-        val supportingService = RequestValidatorTestUtils.getService(
-            RegisteredServiceTestUtils.CONST_TEST_URL,
-            RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
-            RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
-            RequestValidatorTestUtils.SHARED_SECRET,
-            CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
-        val nonSupportingService = RequestValidatorTestUtils.getService(
-            RegisteredServiceTestUtils.CONST_TEST_URL2,
-            RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
-            RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
-            RequestValidatorTestUtils.SHARED_SECRET,
-            CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
-        val promiscuousService = RequestValidatorTestUtils.getPromiscuousService(
-            RegisteredServiceTestUtils.CONST_TEST_URL3,
-            RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
-            RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
-            RequestValidatorTestUtils.SHARED_SECRET);
-
-        this.supportingServiceTicket = registerTicket(supportingService);
-        this.nonSupportingServiceTicket = registerTicket(nonSupportingService);
-        this.promiscuousServiceTicket = registerTicket(promiscuousService);
-
-        this.servicesManager.deleteAll();
-        this.servicesManager.save(supportingService, nonSupportingService, promiscuousService);
+            request.setParameter(OAuth20Constants.CODE, code.getId());
+            profile.setId(registeredService.getClientId());
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+            request.setParameter(OAuth20Constants.REDIRECT_URI, registeredService.getServiceId());
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertNull(ticketRegistry.getTicket(at1.getId()));
+            assertNull(ticketRegistry.getTicket(at2.getId()));
+        }
     }
 
-    @Test
-    public void verifyBadToken() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
-        val session = request.getSession(true);
-        assertNotNull(session);
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    public class DefaultTests extends AbstractOAuth20Tests {
+        private OAuth20Code supportingServiceTicket;
 
-        request.setParameter(OAuth20Constants.CODE, "UnknownToken");
-        assertFalse(this.validator.validate(new JEEContext(request, response)));
-    }
+        private OAuth20Code nonSupportingServiceTicket;
 
-    @Test
-    public void verifyBadService() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
-        val session = request.getSession(true);
-        assertNotNull(session);
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
+        private OAuth20Code promiscuousServiceTicket;
 
-        request.setParameter(OAuth20Constants.CODE, nonSupportingServiceTicket.getId());
-        assertFalse(this.validator.validate(new JEEContext(request, response)));
-    }
+        @Autowired
+        @Qualifier("oauthAuthorizationCodeGrantTypeTokenRequestValidator")
+        private OAuth20TokenRequestValidator validator;
 
-    @Test
-    public void verifyBadRequest() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
-        val session = request.getSession(true);
-        assertNotNull(session);
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
-        assertFalse(this.validator.validate(new JEEContext(request, response)));
-    }
+        @BeforeEach
+        public void before() throws Exception {
+            val supportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+            val nonSupportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL2,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
+            val promiscuousService = RequestValidatorTestUtils.getPromiscuousService(
+                RegisteredServiceTestUtils.CONST_TEST_URL3,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET);
 
-    @Test
-    public void verifyUnknownCodeRevokesPreviousAccessTokens() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
-        val session = request.getSession(true);
-        assertNotNull(session);
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            this.supportingServiceTicket = registerTicket(supportingService);
+            this.nonSupportingServiceTicket = registerTicket(nonSupportingService);
+            this.promiscuousServiceTicket = registerTicket(promiscuousService);
 
-        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser");
-        val at = addAccessToken(principal, addRegisteredService());
+            this.servicesManager.deleteAll();
+            this.servicesManager.save(supportingService, nonSupportingService, promiscuousService);
+        }
 
-        val code = ticketRegistry.getTicket(at.getToken(), OAuth20Code.class);
-        assertNotNull(code);
-        code.markTicketExpired();
+        @Test
+        public void verifyBadToken() throws Exception {
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            val profile = new CommonProfile();
+            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+            profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+            val session = request.getSession(true);
+            assertNotNull(session);
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+            request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
 
-        request.setParameter(OAuth20Constants.CODE, code.getId());
-        profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL3);
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertFalse(this.validator.validate(new JEEContext(request, response)));
-        assertNull(ticketRegistry.getTicket(at.getToken()));
-    }
+            request.setParameter(OAuth20Constants.CODE, "UnknownToken");
+            assertFalse(this.validator.validate(new JEEContext(request, response)));
+        }
 
-    @Test
-    public void verifyOperation() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
-        val session = request.getSession(true);
-        assertNotNull(session);
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+        @Test
+        public void verifyBadService() throws Exception {
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            val profile = new CommonProfile();
+            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+            profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+            val session = request.getSession(true);
+            assertNotNull(session);
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+            request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
 
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
+            request.setParameter(OAuth20Constants.CODE, nonSupportingServiceTicket.getId());
+            assertFalse(this.validator.validate(new JEEContext(request, response)));
+        }
 
-        request.setParameter(OAuth20Constants.CODE, supportingServiceTicket.getId());
-        assertTrue(this.validator.validate(new JEEContext(request, response)));
+        @Test
+        public void verifyBadRequest() throws Exception {
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            val profile = new CommonProfile();
+            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+            profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+            val session = request.getSession(true);
+            assertNotNull(session);
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+            request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
+            assertFalse(this.validator.validate(new JEEContext(request, response)));
+        }
 
-        request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
-        assertFalse(this.validator.validate(new JEEContext(request, response)));
+        @Test
+        public void verifyUnknownCodeRevokesPreviousAccessTokens() throws Exception {
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            val profile = new CommonProfile();
+            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+            profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+            val session = request.getSession(true);
+            assertNotNull(session);
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.getType());
-        assertFalse(this.validator.validate(new JEEContext(request, response)));
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser");
+            val at = addAccessToken(principal, addRegisteredService());
 
-        request.setParameter(OAuth20Constants.CODE, nonSupportingServiceTicket.getId());
-        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL2);
-        profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertFalse(this.validator.validate(new JEEContext(request, response)));
+            val code = ticketRegistry.getTicket(at.getToken(), OAuth20Code.class);
+            assertNotNull(code);
+            code.markTicketExpired();
 
-        request.setParameter(OAuth20Constants.CODE, promiscuousServiceTicket.getId());
-        profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
-        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL3);
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertTrue(this.validator.validate(new JEEContext(request, response)));
-    }
+            request.setParameter(OAuth20Constants.CODE, code.getId());
+            profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+            request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL3);
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            assertFalse(this.validator.validate(new JEEContext(request, response)));
+            assertNull(ticketRegistry.getTicket(at.getToken()));
+        }
 
-    private OAuth20Code registerTicket(final OAuthRegisteredService service) throws Exception {
-        val builder = new OAuth20DefaultCasAuthenticationBuilder(
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            new WebApplicationServiceFactory(),
-            new DefaultOAuth20ProfileScopeToAttributesFilter(),
-            oauthRequestParameterResolver,
-            casProperties);
-        val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
-        val expirationPolicy = new ExpirationPolicyBuilder() {
-            private static final long serialVersionUID = 3911344031977989503L;
+        @Test
+        public void verifyOperation() throws Exception {
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            val profile = new CommonProfile();
+            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+            profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+            val session = request.getSession(true);
+            assertNotNull(session);
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            @Override
-            public ExpirationPolicy buildTicketExpirationPolicy() {
-                return new OAuth20CodeExpirationPolicy(1, 60);
-            }
-        };
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+            request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
 
-        val oauthCode = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(), expirationPolicy,
-            mock(ServicesManager.class), CipherExecutor.noOpOfStringToString())
-            .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
-                new MockTicketGrantingTicket("casuser"), new HashSet<>(),
-                null, null, "clientid12345",
-                new HashMap<>(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-        this.ticketRegistry.addTicket(oauthCode);
-        return oauthCode;
+            request.setParameter(OAuth20Constants.CODE, supportingServiceTicket.getId());
+            assertTrue(this.validator.validate(new JEEContext(request, response)));
+
+            request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
+            assertFalse(this.validator.validate(new JEEContext(request, response)));
+
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.getType());
+            assertFalse(this.validator.validate(new JEEContext(request, response)));
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+
+            request.setParameter(OAuth20Constants.CODE, nonSupportingServiceTicket.getId());
+            request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL2);
+            profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            assertFalse(this.validator.validate(new JEEContext(request, response)));
+
+            request.setParameter(OAuth20Constants.CODE, promiscuousServiceTicket.getId());
+            profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+            request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL3);
+            session.setAttribute(Pac4jConstants.USER_PROFILES,
+                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            assertTrue(this.validator.validate(new JEEContext(request, response)));
+        }
+
+        private OAuth20Code registerTicket(final OAuthRegisteredService service) throws Exception {
+            val builder = new OAuth20DefaultCasAuthenticationBuilder(
+                PrincipalFactoryUtils.newPrincipalFactory(),
+                new WebApplicationServiceFactory(),
+                new DefaultOAuth20ProfileScopeToAttributesFilter(),
+                oauthRequestParameterResolver,
+                casProperties);
+            val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
+            val expirationPolicy = new ExpirationPolicyBuilder() {
+                private static final long serialVersionUID = 3911344031977989503L;
+
+                @Override
+                public ExpirationPolicy buildTicketExpirationPolicy() {
+                    return new OAuth20CodeExpirationPolicy(1, 60);
+                }
+            };
+
+            val oauthCode = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(), expirationPolicy,
+                mock(ServicesManager.class), CipherExecutor.noOpOfStringToString())
+                .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
+                    new MockTicketGrantingTicket("casuser"), new HashSet<>(),
+                    null, null, "clientid12345",
+                    new HashMap<>(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+            this.ticketRegistry.addTicket(oauthCode);
+            return oauthCode;
+        }
     }
 }
