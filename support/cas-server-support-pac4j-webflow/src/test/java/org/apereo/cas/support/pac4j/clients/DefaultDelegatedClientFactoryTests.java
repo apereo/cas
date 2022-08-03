@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.saml.client.SAML2Client;
+import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
+import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -245,6 +247,28 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.saml[0].identity-provider-metadata-path=classpath:idp-metadata.xml",
         "cas.authn.pac4j.saml[0].service-provider-metadata-path=file:/tmp/sp.xml",
         "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
+        "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
+        "cas.authn.pac4j.core.lazy-init=true"
+    })
+    public class Saml2ClientsWithMetadatSigner extends BaseDelegatedClientFactoryTests {
+        @Test
+        public void verifyClient() {
+            val clients = delegatedClientFactory.build();
+            assertEquals(1, clients.size());
+            val client = SAML2Client.class.cast(clients.iterator().next());
+            assertTrue(client.getConfiguration().getMetadataSigner() instanceof XMLSecSAML2MetadataSigner);
+        }
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = {
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
+        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
+        "cas.authn.pac4j.saml[0].identity-provider-metadata-path=classpath:idp-metadata.xml",
+        "cas.authn.pac4j.saml[0].service-provider-metadata-path=file:/tmp/sp.xml",
+        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
         "cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.unknown",
         "cas.authn.pac4j.core.lazy-init=true"
     })
@@ -256,6 +280,7 @@ public class DefaultDelegatedClientFactoryTests {
             assertEquals(1, clients.size());
             val client = SAML2Client.class.cast(clients.iterator().next());
             assertNotNull(client.getConfiguration().getSamlMessageStoreFactory());
+            assertTrue(client.getConfiguration().getMetadataSigner() instanceof DefaultSAML2MetadataSigner);
         }
     }
 
