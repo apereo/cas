@@ -56,6 +56,7 @@ import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
+import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
 import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
 import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
 import org.pac4j.saml.store.EmptyStoreFactory;
@@ -501,7 +502,10 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
-                cfg.setMetadataSigner(new XMLSecSAML2MetadataSigner(cfg));
+                val signer = FunctionUtils.doIf(StringUtils.equalsIgnoreCase(saml.getMetadataSignerStrategy(), "default"),
+                    () -> new DefaultSAML2MetadataSigner(cfg),
+                    () -> new XMLSecSAML2MetadataSigner(cfg)).get();
+                cfg.setMetadataSigner(signer);
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
                 cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
@@ -516,7 +520,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
-
 
                 Optional.ofNullable(samlMessageStoreFactory.getIfAvailable())
                     .ifPresentOrElse(cfg::setSamlMessageStoreFactory, () -> {
