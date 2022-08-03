@@ -6,6 +6,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
+import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenSuccessResponse;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
@@ -50,7 +51,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
     @Override
-    public ResponseEntity<OAuth20IntrospectionAccessTokenSuccessResponse> handleRequest(
+    public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handleRequest(
         final HttpServletRequest request,
         final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
@@ -77,8 +78,8 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
     @Override
-    public ResponseEntity<OAuth20IntrospectionAccessTokenSuccessResponse> handlePostRequest(final HttpServletRequest request,
-                                                                                            final HttpServletResponse response) {
+    public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
+                                                                                                   final HttpServletResponse response) {
         return super.handlePostRequest(request, response);
     }
 
