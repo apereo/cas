@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -30,6 +31,7 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
     @BeforeEach
     public void initialize() {
         clearAllServices();
+        addRegisteredService();
     }
 
     @Test
@@ -50,6 +52,38 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
         val response = new MockHttpServletResponse();
         val view = callbackAuthorizeController.handleRequest(request, response);
         assertNotNull(view);
-        assertEquals("http://localhost", ((RedirectView) view.getView()).getUrl());
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((RedirectView) view.getView()).getUrl());
+    }
+
+    @Test
+    public void verifyOperationWithoutClientId() {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        val response = new MockHttpServletResponse();
+        val view = callbackAuthorizeController.handleRequest(request, response);
+        assertNotNull(view);
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((RedirectView) view.getView()).getUrl());
+    }
+
+    @Test
+    public void verifyOperationBadClientId() {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.CLIENT_ID, "badClientId");
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        val response = new MockHttpServletResponse();
+        val view = callbackAuthorizeController.handleRequest(request, response);
+        assertNotNull(view);
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((RedirectView) view.getView()).getUrl());
+    }
+
+    @Test
+    public void verifyOperationBadRedirectUri() {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.REDIRECT_URI, "http://badredirecturi");
+        val response = new MockHttpServletResponse();
+        val view = callbackAuthorizeController.handleRequest(request, response);
+        assertNotNull(view);
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((RedirectView) view.getView()).getUrl());
     }
 }
