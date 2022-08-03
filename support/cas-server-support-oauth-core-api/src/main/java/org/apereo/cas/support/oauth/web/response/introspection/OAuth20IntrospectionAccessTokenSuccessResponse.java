@@ -7,14 +7,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
- * This is {@link OAuth20IntrospectionAccessTokenResponse}.
+ * This is {@link OAuth20IntrospectionAccessTokenSuccessResponse}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Getter
 @Setter
-public class OAuth20IntrospectionAccessTokenResponse {
+public class OAuth20IntrospectionAccessTokenSuccessResponse extends BaseOAuth20IntrospectionAccessTokenResponse {
+    private static final long serialVersionUID = -7917281748569741345L;
+
     private String token;
 
     @JsonInclude(JsonInclude.Include.ALWAYS)

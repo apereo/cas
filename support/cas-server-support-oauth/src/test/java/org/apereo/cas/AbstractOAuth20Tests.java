@@ -436,6 +436,14 @@ public abstract class AbstractOAuth20Tests {
         return registeredService;
     }
 
+    protected OAuthRegisteredService addRegisteredService(final String redirectUri,
+                                                          final String clientSecret) {
+        val registeredService = getRegisteredService(redirectUri, clientSecret, EnumSet.allOf(OAuth20GrantTypes.class));
+        registeredService.setGenerateRefreshToken(true);
+        servicesManager.save(registeredService);
+        return registeredService;
+    }
+
     protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes, final String clientSecret) {
         return addRegisteredService(false, grantTypes, clientSecret);
     }
@@ -573,12 +581,18 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20AccessToken addAccessToken(final Principal principal,
                                                 final OAuthRegisteredService registeredService) throws Exception {
         val code = addCode(principal, registeredService);
+        return addAccessToken(principal, registeredService, code.getId());
+    }
+
+    protected OAuth20AccessToken addAccessToken(final Principal principal,
+                                                final OAuthRegisteredService registeredService,
+                                                final String codeId) throws Exception {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
         val accessToken = defaultAccessTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), code.getId(), registeredService.getClientId(), new HashMap<>(),
+            new ArrayList<>(), codeId, registeredService.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(accessToken);
         return accessToken;

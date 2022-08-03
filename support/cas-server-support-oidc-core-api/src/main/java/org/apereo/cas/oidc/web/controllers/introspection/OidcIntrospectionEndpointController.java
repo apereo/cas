@@ -6,7 +6,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
-import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenSuccessResponse;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -50,7 +50,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
     @Override
-    public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handleRequest(
+    public ResponseEntity<OAuth20IntrospectionAccessTokenSuccessResponse> handleRequest(
         final HttpServletRequest request,
         final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
@@ -77,13 +77,13 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
     @Override
-    public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
-                                                                                     final HttpServletResponse response) {
+    public ResponseEntity<OAuth20IntrospectionAccessTokenSuccessResponse> handlePostRequest(final HttpServletRequest request,
+                                                                                            final HttpServletResponse response) {
         return super.handlePostRequest(request, response);
     }
 
     @Override
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(
+    protected OAuth20IntrospectionAccessTokenSuccessResponse createIntrospectionValidResponse(
         final String accessTokenId, final OAuth20Token ticket) {
         val response = super.createIntrospectionValidResponse(accessTokenId, ticket);
         if (ticket != null) {
@@ -95,7 +95,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
                 });
             FunctionUtils.doIf(response.isActive(), o -> response.setScope(String.join(" ", ticket.getScopes()))).accept(response);
             CollectionUtils.firstElement(ticket.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
-                .ifPresent(dpop -> response.setDPopConfirmation(new OAuth20IntrospectionAccessTokenResponse.DPopConfirmation(dpop.toString())));
+                .ifPresent(dpop -> response.setDPopConfirmation(new OAuth20IntrospectionAccessTokenSuccessResponse.DPopConfirmation(dpop.toString())));
         }
         return response;
     }
