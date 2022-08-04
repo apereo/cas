@@ -12,6 +12,10 @@ import java.io.Serializable;
  * @since 6.6.0
  */
 public interface OAuth20ClientSecretValidator {
+    /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "oauth20ClientSecretValidator";
 
     /**
      * Gets cipher executor.
