@@ -581,7 +581,7 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcConfigurationContext oidcConfigurationContext(
-            @Qualifier("oauth20ClientSecretValidator")
+            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
             final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
             @Qualifier("oidcIdTokenGenerator")
             final IdTokenGeneratorService oidcIdTokenGenerator,

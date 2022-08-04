@@ -113,7 +113,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected Authenticator oauthClientAuthenticator;
 
     @Autowired
-    @Qualifier("oauth20ClientSecretValidator")
+    @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
     protected OAuth20ClientSecretValidator oauth20ClientSecretValidator;
 
     protected OAuthRegisteredService service;

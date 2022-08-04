@@ -101,6 +101,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
@@ -221,6 +222,10 @@ public abstract class AbstractOAuth20Tests {
     public static final int TIMEOUT = 7200;
 
     @Autowired
+    @Qualifier("oauthCasClient")
+    protected Client oauthCasClient;
+
+    @Autowired
     @Qualifier("oauthCasClientRedirectActionBuilder")
     protected OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder;
 
@@ -249,7 +254,7 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder;
 
     @Autowired
-    @Qualifier("oauth20ClientSecretValidator")
+    @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
     protected OAuth20ClientSecretValidator oauth20ClientSecretValidator;
 
     @Autowired
