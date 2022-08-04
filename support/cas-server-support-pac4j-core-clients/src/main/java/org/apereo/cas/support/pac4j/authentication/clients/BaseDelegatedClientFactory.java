@@ -121,7 +121,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     protected void configureClient(final IndirectClient client,
                                    final Pac4jBaseClientProperties clientProperties,
-                                   final CasConfigurationProperties casProperties) {
+                                   final CasConfigurationProperties givenProperties) {
         val cname = clientProperties.getClientName();
         if (StringUtils.isNotBlank(cname)) {
             client.setName(cname);
@@ -145,7 +145,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         }
         val callbackUrl = StringUtils.defaultString(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
         client.setCallbackUrl(callbackUrl);
-
+        LOGGER.trace("Client [{}] will use the callback URL [{}]", client.getName(), callbackUrl);
+        
         switch (clientProperties.getCallbackUrlType()) {
             case PATH_PARAMETER:
                 client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
@@ -158,7 +159,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 client.setCallbackUrlResolver(new QueryParameterCallbackUrlResolver());
         }
         customizers.forEach(customizer -> customizer.customize(client));
-        if (!casProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
+        if (!givenProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
             client.init();
         }
     }

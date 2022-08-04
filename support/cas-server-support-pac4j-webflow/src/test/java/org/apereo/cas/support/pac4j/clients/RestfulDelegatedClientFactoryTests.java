@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.clients;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.config.client.PropertiesConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -100,11 +103,16 @@ public class RestfulDelegatedClientFactoryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
+        "cas.server.name=https://sso.example.org",
+        "cas.server.prefix=${cas.server.name}/cas",
         "cas.authn.pac4j.core.lazy-init=false",
         "cas.authn.pac4j.rest.url=http://localhost:9212",
         "cas.authn.pac4j.rest.type=cas"
     })
     public class CasPropertiesTests extends BaseDelegatedClientFactoryTests {
+        @Autowired
+        private CasConfigurationProperties casProperties;
+
         @Test
         public void verifyAction() throws Exception {
             val clients = new HashMap<String, Object>();
@@ -119,14 +127,15 @@ public class RestfulDelegatedClientFactoryTests {
                 new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
 
-                var clientsFound = delegatedClientFactory.build();
+                var clientsFound = List.copyOf(delegatedClientFactory.build());
                 assertNotNull(clientsFound);
                 assertEquals(2, clientsFound.size());
+                assertEquals(casProperties.getServer().getLoginUrl(), clientsFound.get(0).getCallbackUrl());
 
                 /*
                  * Try the cache once the list is retrieved...
                  */
-                clientsFound = delegatedClientFactory.build();
+                clientsFound = List.copyOf(delegatedClientFactory.build());
                 assertNotNull(clientsFound);
                 assertEquals(2, clientsFound.size());
             }
