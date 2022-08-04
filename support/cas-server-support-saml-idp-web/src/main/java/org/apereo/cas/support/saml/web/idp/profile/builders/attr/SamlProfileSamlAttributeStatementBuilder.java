@@ -153,9 +153,9 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                         attributeValue = nameID;
                     }
                 }
-                if (NameID.PERSISTENT.equalsIgnoreCase(valueType)) {
+                if (NameIDType.PERSISTENT.equalsIgnoreCase(valueType)) {
                     val nameID = newSamlObject(NameID.class);
-                    nameID.setFormat(NameID.PERSISTENT);
+                    nameID.setFormat(NameIDType.PERSISTENT);
                     nameID.setNameQualifier(SamlIdPUtils.determineNameIdNameQualifier(context.getRegisteredService(), samlIdPMetadataResolver));
                     FunctionUtils.doIf(StringUtils.isNotBlank(context.getRegisteredService().getServiceProviderNameIdQualifier()),
                             value -> nameID.setSPNameQualifier(context.getRegisteredService().getServiceProviderNameIdQualifier()),

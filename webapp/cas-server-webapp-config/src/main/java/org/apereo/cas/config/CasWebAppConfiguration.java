@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.CookieGenerator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,7 +72,7 @@ public class CasWebAppConfiguration {
             }
         };
         resolver.setCookieDomain(localeCookie.getDomain());
-        resolver.setCookiePath(StringUtils.defaultIfBlank(localeCookie.getPath(), CookieLocaleResolver.DEFAULT_COOKIE_PATH));
+        resolver.setCookiePath(StringUtils.defaultIfBlank(localeCookie.getPath(), CookieGenerator.DEFAULT_COOKIE_PATH));
         resolver.setCookieHttpOnly(localeCookie.isHttpOnly());
         resolver.setCookieSecure(localeCookie.isSecure());
         resolver.setCookieName(StringUtils.defaultIfBlank(localeCookie.getName(), CookieLocaleResolver.DEFAULT_COOKIE_NAME));

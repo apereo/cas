@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
@@ -114,7 +114,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true, true);
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -134,7 +134,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(false, true);
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -262,7 +262,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         service.setEncryptionKeyAlgorithms(CollectionUtils.wrapArrayList(
             EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP));
 
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -289,7 +289,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         service.setEncryptionKeyAlgorithms(CollectionUtils.wrapArrayList(
             EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP));
 
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -314,7 +314,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         service.setEncryptionDataAlgorithms(CollectionUtils.wrapArrayList("something"));
         service.setEncryptionKeyAlgorithms(CollectionUtils.wrapArrayList("something"));
         service.setEncryptionOptional(true);
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 

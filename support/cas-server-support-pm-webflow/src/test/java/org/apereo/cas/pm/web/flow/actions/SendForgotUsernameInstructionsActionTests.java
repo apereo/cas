@@ -48,7 +48,8 @@ public class SendForgotUsernameInstructionsActionTests {
 
             val context = mock(RequestContext.class);
             when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-            when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
+            val flashScope = new LocalAttributeMap<>();
+            when(context.getFlashScope()).thenReturn(flashScope);
             when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
@@ -65,7 +66,7 @@ public class SendForgotUsernameInstructionsActionTests {
             request.setParameter("email", "casuser@baddomain.org");
             result = sendForgotUsernameInstructionsAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
-            assertFalse(context.getFlashScope().contains(Principal.class.getName()));
+            assertFalse(flashScope.contains(Principal.class.getName()));
         }
 
         @Test
@@ -73,19 +74,20 @@ public class SendForgotUsernameInstructionsActionTests {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 
+            val flashScope = new LocalAttributeMap<>();
             val context = mock(RequestContext.class);
             when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
             when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-            when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
+            when(context.getFlashScope()).thenReturn(flashScope);
             when(context.getRequestParameters()).thenReturn(new MockParameterMap());
             when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
 
             request.setParameter("email", "casuser@apereo.org");
             var result = sendForgotUsernameInstructionsAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-            assertTrue(context.getFlashScope().contains(Principal.class.getName()));
+            assertTrue(flashScope.contains(Principal.class.getName()));
         }
     }
 
@@ -103,10 +105,11 @@ public class SendForgotUsernameInstructionsActionTests {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 
+            val flashScope = new LocalAttributeMap<>();
             val context = mock(RequestContext.class);
             when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
             when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-            when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
+            when(context.getFlashScope()).thenReturn(flashScope);
             when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getRequestParameters()).thenReturn(new MockParameterMap());
@@ -116,7 +119,7 @@ public class SendForgotUsernameInstructionsActionTests {
             request.setParameter("email", "casuser@apereo.org");
             var result = sendForgotUsernameInstructionsAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-            assertFalse(context.getFlashScope().contains(Principal.class.getName()));
+            assertFalse(flashScope.contains(Principal.class.getName()));
         }
     }
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
@@ -113,7 +114,7 @@ public class TicketGrantingTicketExpirationPolicyBuilder implements ExpirationPo
         val rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
         val p = new RememberMeDelegatingExpirationPolicy();
         p.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME, rememberMePolicy);
-        p.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, toTicketGrantingTicketExpirationPolicy());
+        p.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, toTicketGrantingTicketExpirationPolicy());
         return p;
     }
 }

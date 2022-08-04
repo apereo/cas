@@ -65,7 +65,7 @@ import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
 import org.apache.cxf.ws.security.tokenstore.MemoryTokenStore;
 import org.apache.cxf.ws.security.tokenstore.TokenStore;
 import org.apache.wss4j.dom.validate.Validator;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -195,20 +195,20 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             }
             switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
                 case "email":
-                    s.setSubjectNameIDFormat(NameID.EMAIL);
+                    s.setSubjectNameIDFormat(NameIDType.EMAIL);
                     break;
                 case "entity":
-                    s.setSubjectNameIDFormat(NameID.ENTITY);
+                    s.setSubjectNameIDFormat(NameIDType.ENTITY);
                     break;
                 case "transient":
-                    s.setSubjectNameIDFormat(NameID.TRANSIENT);
+                    s.setSubjectNameIDFormat(NameIDType.TRANSIENT);
                     break;
                 case "persistent":
-                    s.setSubjectNameIDFormat(NameID.PERSISTENT);
+                    s.setSubjectNameIDFormat(NameIDType.PERSISTENT);
                     break;
                 case "unspecified":
                 default:
-                    s.setSubjectNameIDFormat(NameID.UNSPECIFIED);
+                    s.setSubjectNameIDFormat(NameIDType.UNSPECIFIED);
                     break;
             }
             val c = new DefaultConditionsProvider();

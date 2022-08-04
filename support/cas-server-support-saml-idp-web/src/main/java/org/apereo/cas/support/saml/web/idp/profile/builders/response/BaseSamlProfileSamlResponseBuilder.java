@@ -18,6 +18,7 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.NameIDType;
 
 import java.util.Map;
 import java.util.Objects;
@@ -104,7 +105,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
      */
     protected Issuer buildSamlResponseIssuer(final String entityId) {
         val issuer = newIssuer(entityId);
-        issuer.setFormat(Issuer.ENTITY);
+        issuer.setFormat(NameIDType.ENTITY);
         return issuer;
     }
 

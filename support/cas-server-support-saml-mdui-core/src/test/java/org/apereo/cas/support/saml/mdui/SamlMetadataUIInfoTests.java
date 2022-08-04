@@ -70,8 +70,8 @@ public class SamlMetadataUIInfoTests {
 
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val info = new SamlMetadataUIInfo(mdui, service);
-        assertEquals(names.getValue(), info.getDisplayName());
-        assertEquals(description.getValue(), info.getDescription());
+        assertEquals("Name", info.getDisplayName());
+        assertEquals("Description", info.getDescription());
         assertFalse(info.getDescriptions().isEmpty());
         assertFalse(info.getDisplayNames().isEmpty());
         assertFalse(info.getInformationURLs().isEmpty());

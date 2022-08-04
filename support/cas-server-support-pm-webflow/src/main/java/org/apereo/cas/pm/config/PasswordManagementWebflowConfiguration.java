@@ -116,7 +116,7 @@ public class PasswordManagementWebflowConfiguration {
                 @Override
                 public boolean supports(final Object handler) {
                     return super.supports(handler) && ((FlowHandler) handler)
-                        .getFlowId().equals(PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
+                        .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
                 }
             };
             handler.setFlowExecutor(loginFlowExecutor);

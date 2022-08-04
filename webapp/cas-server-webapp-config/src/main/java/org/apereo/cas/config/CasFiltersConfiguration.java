@@ -13,6 +13,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.AuthenticationCredentialsThreadLocalBinderClearingFilter;
+import org.apereo.cas.web.support.filters.AbstractSecurityFilter;
 import org.apereo.cas.web.support.filters.AddResponseHeadersFilter;
 import org.apereo.cas.web.support.filters.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
@@ -147,7 +148,7 @@ public class CasFiltersConfiguration {
                 BooleanUtils.toStringTrueFalse(httpWebRequest.isAllowMultiValueParameters()));
             initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
                 httpWebRequest.getOnlyPostParams());
-            initParams.put(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR, Boolean.TRUE.toString());
+            initParams.put(AbstractSecurityFilter.THROW_ON_ERROR, Boolean.TRUE.toString());
 
             if (StringUtils.isNotBlank(httpWebRequest.getPatternToBlock())) {
                 initParams.put(RequestParameterPolicyEnforcementFilter.PATTERN_TO_BLOCK,

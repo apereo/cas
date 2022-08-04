@@ -27,7 +27,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
@@ -101,7 +101,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             .getAuthentication().getPrincipal().getId();
         LOGGER.trace("Preparing NameID attribute for principal [{}]", principalName);
 
-        val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameID.UNSPECIFIED);
+        val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameIDType.UNSPECIFIED);
         val encoder = SamlAttributeBasedNameIdGenerator.get(Optional.empty(), nameFormat, samlService, principalName);
         LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
         val nameId = FunctionUtils.doUnchecked(() -> encoder.generate(new ProfileRequestContext(), nameFormat));

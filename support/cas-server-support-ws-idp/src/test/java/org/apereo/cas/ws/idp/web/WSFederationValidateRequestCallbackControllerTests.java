@@ -77,17 +77,17 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
 
         val token = new SecurityToken(UUID.randomUUID().toString());
 
-        val id = UUID.randomUUID().toString();
+        val id = SecurityTokenTicket.PREFIX + '-' + UUID.randomUUID().toString();
         val sts = mock(SecurityTokenTicket.class);
         when(sts.getPrefix()).thenReturn(SecurityTokenTicket.PREFIX);
-        when(sts.getId()).thenReturn(SecurityTokenTicket.PREFIX + '-' + id);
+        when(sts.getId()).thenReturn(id);
         when(sts.isExpired()).thenReturn(Boolean.FALSE);
         when(sts.getSecurityToken()).thenReturn(token);
 
         ticketRegistry.addTicket(sts);
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.getDescendantTickets().add(sts.getId());
+        tgt.getDescendantTickets().add(id);
         ticketRegistry.addTicket(tgt);
 
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
@@ -96,8 +96,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
         val st = new MockServiceTicket("123456", service, tgt);
         ticketRegistry.addTicket(st);
 
-        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
-
+        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, id);
         ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
         request.setCookies(response.getCookies());
 

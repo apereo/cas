@@ -56,11 +56,14 @@ public class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCa
 
     private RequestContext context;
 
+    private final LocalAttributeMap<Object> flowScope = new LocalAttributeMap<>();
+
     @BeforeEach
     public void initialize() {
         this.context = mock(RequestContext.class);
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+
+        when(context.getFlowScope()).thenReturn(flowScope);
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
@@ -87,11 +90,10 @@ public class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCa
 
         var event = radiusAuthenticationWebflowEventResolver.resolveSingle(this.context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
-        assertTrue(context.getFlowScope().contains(RadiusAuthenticationWebflowEventResolver.FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS));
-
+        assertTrue(flowScope.contains(RadiusAuthenticationWebflowEventResolver.FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS));
         event = radiusAuthenticationWebflowEventResolver.resolveSingle(this.context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_CANCEL, event.getId());
-        assertFalse(context.getFlowScope().contains(RadiusAuthenticationWebflowEventResolver.FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS));
+        assertFalse(flowScope.contains(RadiusAuthenticationWebflowEventResolver.FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS));
     }
 
 }

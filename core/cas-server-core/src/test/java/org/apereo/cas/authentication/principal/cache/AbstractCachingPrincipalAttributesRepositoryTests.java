@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -80,7 +79,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
             assertTrue(repoAttrs.containsKey(MAIL));
             Thread.sleep(1_000);
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
-            repository.setAttributeRepositoryIds(Arrays.stream(this.dao.getId()).collect(Collectors.toSet()));
+            repository.setAttributeRepositoryIds(Set.of("Stub"));
             repoAttrs = repository.getAttributes(this.principal, svc);
             assertEquals(1, repoAttrs.size());
             assertFalse(repoAttrs.containsKey("uid"));

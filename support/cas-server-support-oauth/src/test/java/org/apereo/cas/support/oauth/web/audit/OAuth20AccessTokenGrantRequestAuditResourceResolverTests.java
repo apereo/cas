@@ -29,8 +29,10 @@ public class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
         val r = new OAuth20AccessTokenGrantRequestAuditResourceResolver();
         val token = mock(OAuth20Token.class);
         when(token.getId()).thenReturn("CODE");
-        when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
-        when(token.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+        val tokenService = RegisteredServiceTestUtils.getService();
+        when(token.getService()).thenReturn(tokenService);
+        val authentication = RegisteredServiceTestUtils.getAuthentication();
+        when(token.getAuthentication()).thenReturn(authentication);
 
         val service = new OAuthRegisteredService();
         service.setClientId("CLIENTID");
@@ -39,12 +41,11 @@ public class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
 
         val holder = AccessTokenRequestContext.builder()
             .scopes(CollectionUtils.wrapSet("email"))
-            .service(token.getService())
-            .authentication(token.getAuthentication())
+            .service(tokenService)
+            .authentication(authentication)
             .registeredService(service)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .token(token)
-            .ticketGrantingTicket(token.getTicketGrantingTicket())
             .redirectUri("https://oauth.example.org")
             .build();
         val result = AuditableExecutionResult.builder()

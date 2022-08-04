@@ -106,13 +106,13 @@ public class RequestParameterPolicyEnforcementFilterTests {
         val filter = new RequestParameterPolicyEnforcementFilter();
 
         val initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR);
+        initParameterNames.add(AbstractSecurityFilter.THROW_ON_ERROR);
         val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
 
         val filterConfig = mock(FilterConfig.class);
         when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR)).thenReturn("true");
+        when(filterConfig.getInitParameter(AbstractSecurityFilter.THROW_ON_ERROR)).thenReturn("true");
 
         filter.init(filterConfig);
         assertTrue(AbstractSecurityFilter.isThrowOnErrors());
@@ -124,13 +124,13 @@ public class RequestParameterPolicyEnforcementFilterTests {
         val filter = new RequestParameterPolicyEnforcementFilter();
 
         val initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR);
+        initParameterNames.add(AbstractSecurityFilter.THROW_ON_ERROR);
         val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
 
         val filterConfig = mock(FilterConfig.class);
         when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR))
+        when(filterConfig.getInitParameter(AbstractSecurityFilter.THROW_ON_ERROR))
             .thenReturn("false");
 
         filter.init(filterConfig);

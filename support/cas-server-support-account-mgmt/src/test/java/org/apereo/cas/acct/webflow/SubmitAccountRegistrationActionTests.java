@@ -90,10 +90,10 @@ public class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerT
         when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
-
+        val external = new ServletExternalContext(new MockServletContext(), request, response);
+        when(context.getExternalContext()).thenReturn(external);
         RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        ExternalContextHolder.setExternalContext(external);
         val results = submitAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, results.getId());
     }

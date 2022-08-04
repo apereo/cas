@@ -59,9 +59,10 @@ public class YubiKeyAuthenticationWebflowEventResolverTests extends BaseCasWebfl
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
+        val external = new ServletExternalContext(new MockServletContext(), request, response);
+        when(context.getExternalContext()).thenReturn(external);
         RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        ExternalContextHolder.setExternalContext(external);
 
         WebUtils.putCredential(context,
             RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "123456"));

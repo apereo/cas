@@ -83,7 +83,7 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService svc) {
-        if (svc.getId() == BaseRegisteredService.INITIAL_IDENTIFIER_VALUE) {
+        if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             svc.setId(svc.hashCode());
         }
         invokeServiceRegistryListenerPreSave(svc);

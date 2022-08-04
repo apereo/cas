@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.springframework.test.context.TestPropertySource;
 
@@ -80,7 +81,7 @@ public class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
         val builder = new NameIDBuilder();
         val nameId = builder.buildObject();
         nameId.setValue(UUID.randomUUID().toString());
-        nameId.setFormat(NameID.ENCRYPTED);
+        nameId.setFormat(NameIDType.ENCRYPTED);
         val encNameId = samlIdPObjectEncrypter.encode(nameId, registeredService, adaptor);
         assertNotNull(encNameId);
     }
@@ -95,7 +96,7 @@ public class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
         val builder = new NameIDBuilder();
         val nameId = builder.buildObject();
         nameId.setValue(UUID.randomUUID().toString());
-        nameId.setFormat(NameID.ENCRYPTED);
+        nameId.setFormat(NameIDType.ENCRYPTED);
         val encNameId = samlIdPObjectEncrypter.encode(nameId, registeredService, adaptor);
         assertNotNull(encNameId);
         assertThrows(DecryptionException.class, () -> samlIdPObjectEncrypter.decode(encNameId, registeredService, adaptor));

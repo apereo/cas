@@ -69,9 +69,9 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
 
     @Test
     public void verifyUnsignedRequestParameter() throws Exception {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        val serviceManager = getServicesManager(applicationContext);
+        val ctx = new StaticApplicationContext();
+        ctx.refresh();
+        val serviceManager = getServicesManager(ctx);
 
         buildRegisteredService(serviceManager);
 
@@ -95,9 +95,9 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
 
     @Test
     public void verifyValidator() throws Exception {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        val serviceManager = getServicesManager(applicationContext);
+        val ctx = new StaticApplicationContext();
+        ctx.refresh();
+        val serviceManager = getServicesManager(ctx);
         val service = buildRegisteredService(serviceManager);
 
         val validator = getValidator(serviceManager);

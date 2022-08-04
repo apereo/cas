@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
@@ -25,18 +24,16 @@ import static org.mockito.Mockito.*;
 public class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<DefaultChainingServicesManager> {
     @Test
     public void verifyOperation() {
-        val servicesManager = mock(ServicesManager.class);
-        when(servicesManager.findServiceBy(anyLong(), any())).thenCallRealMethod();
-        when(servicesManager.findServiceByName(anyString(), any())).thenCallRealMethod();
-        when(servicesManager.count()).thenCallRealMethod();
-        when(servicesManager.getName()).thenCallRealMethod();
-        when(servicesManager.getOrder()).thenCallRealMethod();
-        assertEquals(Ordered.LOWEST_PRECEDENCE, servicesManager.getOrder());
-        assertEquals(0, servicesManager.count());
-        assertNotNull(servicesManager.getName());
-
-        assertNull(servicesManager.findServiceBy(0, CasRegisteredService.class));
-        assertNull(servicesManager.findServiceBy(new WebApplicationServiceFactory().createService("name"), CasRegisteredService.class));
+        val mock = mock(ServicesManager.class);
+        when(mock.findServiceBy(anyLong(), any())).thenCallRealMethod();
+        when(mock.findServiceByName(anyString(), any())).thenCallRealMethod();
+        when(mock.count()).thenCallRealMethod();
+        when(mock.getName()).thenCallRealMethod();
+        when(mock.getOrder()).thenCallRealMethod();
+        assertEquals(Ordered.LOWEST_PRECEDENCE, mock.getOrder());
+        assertEquals(0, mock.count());
+        assertNotNull(mock.getName());
+        assertNull(mock.findServiceBy(0, CasRegisteredService.class));
     }
 
     @Test

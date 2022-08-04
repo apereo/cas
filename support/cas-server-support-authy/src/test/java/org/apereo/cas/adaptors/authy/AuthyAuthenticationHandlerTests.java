@@ -39,13 +39,14 @@ public class AuthyAuthenticationHandlerTests {
     private static AuthyClientInstance configureAuthyClientInstance(final int userStatus,
                                                                     final int tokenStatus, final String message) throws Exception {
         val authyInstance = mock(AuthyClientInstance.class);
-        when(authyInstance.getAuthyClient()).thenReturn(mock(AuthyApiClient.class));
+        val apiClient = mock(AuthyApiClient.class);
+        when(authyInstance.getAuthyClient()).thenReturn(apiClient);
 
         val tokens = mock(Tokens.class);
         val token = new Token(tokenStatus, "OK", message);
         when(tokens.verify(eq(123456), eq("token"), anyMap())).thenReturn(token);
 
-        when(authyInstance.getAuthyClient().getTokens()).thenReturn(tokens);
+        when(apiClient.getTokens()).thenReturn(tokens);
         val user = new User(userStatus, "token");
         user.setId(123456);
         when(authyInstance.getOrCreateUser(any(Principal.class))).thenReturn(user);

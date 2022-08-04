@@ -20,7 +20,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.apereo.cas.web.support.WebUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -55,13 +54,14 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTes
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         val sessionTicket = mock(TransientSessionTicket.class);
-        when(sessionTicket.getService()).thenReturn(RegisteredServiceTestUtils.getService());
+        val service = RegisteredServiceTestUtils.getService();
+        when(sessionTicket.getService()).thenReturn(service);
         when(sessionTicket.getProperty(anyString(), any())).thenReturn(account);
 
         val stored = contributor.restore(context,
             new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()),
             sessionTicket, client);
-        assertEquals(stored, sessionTicket.getService());
-        assertNotNull(getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class));
+        assertEquals(stored, service);
+        assertNotNull(WebUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class));
     }
 }

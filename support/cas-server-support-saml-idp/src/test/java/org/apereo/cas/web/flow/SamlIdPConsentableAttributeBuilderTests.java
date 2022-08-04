@@ -32,41 +32,41 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties =
     "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
 public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
+    private static final String VALUE = UUID.randomUUID().toString();
     @Autowired
     @Qualifier("samlIdPConsentableAttributeBuilder")
     private ConsentableAttributeBuilder samlIdPConsentableAttributeBuilder;
-
     @Test
     public void verifyDefnWithSamlXSString() {
         val value = mock(XSString.class);
-        when(value.getValue()).thenReturn(UUID.randomUUID().toString());
+        when(value.getValue()).thenReturn(VALUE);
         val attribute = samlIdPConsentableAttributeBuilder.build(CasConsentableAttribute.builder()
             .name("unknown")
             .values(CollectionUtils.wrapList(value))
             .build());
-        assertEquals(value.getValue(), attribute.getValues().get(0).toString());
+        assertEquals(VALUE, attribute.getValues().get(0).toString());
     }
 
     @Test
     public void verifyDefnWithObject() {
         val value = mock(Object.class);
-        when(value.toString()).thenReturn(UUID.randomUUID().toString());
+        when(value.toString()).thenReturn(VALUE);
         val attribute = samlIdPConsentableAttributeBuilder.build(CasConsentableAttribute.builder()
             .name("unknown")
             .values(CollectionUtils.wrapList(value))
             .build());
-        assertEquals(value.toString(), attribute.getValues().get(0).toString());
+        assertEquals(VALUE, attribute.getValues().get(0).toString());
     }
 
     @Test
     public void verifyDefnWithSamlXSUri() {
         val value = mock(XSURI.class);
-        when(value.getURI()).thenReturn(UUID.randomUUID().toString());
+        when(value.getURI()).thenReturn(VALUE);
         val attribute = samlIdPConsentableAttributeBuilder.build(CasConsentableAttribute.builder()
             .name("unknown")
             .values(CollectionUtils.wrapList(value))
             .build());
-        assertEquals(value.getURI(), attribute.getValues().get(0).toString());
+        assertEquals(VALUE, attribute.getValues().get(0).toString());
     }
 
     @Test

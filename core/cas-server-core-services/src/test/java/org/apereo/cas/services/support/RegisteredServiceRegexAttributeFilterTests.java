@@ -2,7 +2,6 @@ package org.apereo.cas.services.support;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -17,8 +16,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.Ordered;
 
@@ -58,9 +55,6 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     private final Map<String, List<Object>> givenAttributesMap;
 
-    @Mock
-    private RegisteredService registeredService;
-
     public RegisteredServiceRegexAttributeFilterTests() {
         this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
@@ -76,11 +70,6 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     @BeforeEach
     public void initialize() {
-        MockitoAnnotations.openMocks(this);
-
-        when(this.registeredService.getName()).thenReturn("sample test service");
-        when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
-
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,

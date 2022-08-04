@@ -46,9 +46,9 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getInProgressAuthentication();
         val duoSecurityIdentifier = WebUtils.getMultifactorAuthenticationProviderById(requestContext);
-        val provider = duoProviderBean.getProvider(duoSecurityIdentifier);
+        val duoProvider = duoProviderBean.getProvider(duoSecurityIdentifier);
 
-        val client = provider.getDuoAuthenticationService()
+        val client = duoProvider.getDuoAuthenticationService()
             .getDuoClient()
             .map(c -> (Client) c)
             .orElseThrow(() -> new RuntimeException("Unable to locate Duo Security client"));
