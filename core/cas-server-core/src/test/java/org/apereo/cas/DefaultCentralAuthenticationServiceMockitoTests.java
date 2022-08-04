@@ -205,10 +205,10 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
 
 
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
+        val ctx = new StaticApplicationContext();
+        ctx.refresh();
         val context = CentralAuthenticationServiceContext.builder()
-            .applicationContext(applicationContext)
+            .applicationContext(ctx)
             .ticketRegistry(ticketRegMock)
             .servicesManager(smMock)
             .ticketFactory(factory)

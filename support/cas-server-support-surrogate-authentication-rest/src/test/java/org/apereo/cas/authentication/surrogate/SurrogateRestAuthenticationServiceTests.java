@@ -43,17 +43,14 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
     @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;
 
-    private MockWebServer webServer;
-
     @Override
     @Test
     public void verifyUserAllowedToProxy() throws Exception {
         var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
-            this.webServer = webServer;
-            this.webServer.start();
-            assertTrue(this.webServer.isRunning());
+            webServer.start();
+            assertTrue(webServer.isRunning());
             super.verifyUserAllowedToProxy();
         }
     }
@@ -64,9 +61,8 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
         var data = MAPPER.writeValueAsString(CollectionUtils.wrapList());
         try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
-            this.webServer = webServer;
-            this.webServer.start();
-            assertTrue(this.webServer.isRunning());
+            webServer.start();
+            assertTrue(webServer.isRunning());
             super.verifyUserNotAllowedToProxy();
         }
     }
@@ -77,9 +73,8 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
         var data = MAPPER.writeValueAsString(CollectionUtils.wrapList(SurrogateAuthenticationService.WILDCARD_ACCOUNT));
         try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
-            this.webServer = webServer;
-            this.webServer.start();
-            assertTrue(this.webServer.isRunning());
+            webServer.start();
+            assertTrue(webServer.isRunning());
             super.verifyWildcard();
         }
     }

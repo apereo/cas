@@ -20,6 +20,14 @@ import java.util.Map;
  */
 @FunctionalInterface
 public interface TicketValidator {
+    /**
+     * Validate ticket and return result.
+     *
+     * @param ticket  the ticket
+     * @param service the service
+     * @return the validation result
+     * @throws AbstractTicketException the abstract ticket exception
+     */
     ValidationResult validate(String ticket, String service) throws AbstractTicketException;
 
     @SuperBuilder

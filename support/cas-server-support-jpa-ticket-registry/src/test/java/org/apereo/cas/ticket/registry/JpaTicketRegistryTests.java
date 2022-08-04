@@ -92,9 +92,9 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(2)
     public void verifyLargeDataset() throws Exception {
         val ticketGrantingTickets = Stream.generate(() -> {
-            val ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
-            return new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            return new TicketGrantingTicketImpl(tgtId,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         }).limit(COUNT);
 

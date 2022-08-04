@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicy;
 
@@ -51,7 +52,7 @@ public class SurrogateAuthenticationExpirationPolicyBuilder implements Expiratio
         val surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
         val policy = new SurrogateSessionExpirationPolicy();
         policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_SURROGATE, surrogatePolicy);
-        policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_DEFAULT,
+        policy.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT,
             ticketGrantingTicketExpirationPolicyBuilder.buildTicketExpirationPolicy());
         return policy;
     }

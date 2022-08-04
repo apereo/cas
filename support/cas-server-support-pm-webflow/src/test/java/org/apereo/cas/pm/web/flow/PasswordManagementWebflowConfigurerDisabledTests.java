@@ -75,7 +75,7 @@ public class PasswordManagementWebflowConfigurerDisabledTests extends BaseWebflo
         assertNotNull(state);
 
         val handler = mock(FlowHandler.class);
-        when(handler.getFlowId()).thenReturn(PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
+        when(handler.getFlowId()).thenReturn(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
         assertTrue(passwordResetHandlerAdapter.supports(handler));
 
         val context = new MockRequestContext();

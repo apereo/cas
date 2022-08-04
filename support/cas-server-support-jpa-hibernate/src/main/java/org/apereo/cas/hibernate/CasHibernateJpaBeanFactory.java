@@ -14,7 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
-import org.hibernate.cfg.Environment;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContextAware;
@@ -52,23 +52,23 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
     public FactoryBean<EntityManagerFactory> newEntityManagerFactoryBean(final JpaConfigurationContext config,
                                                                          final AbstractJpaProperties jpaProperties) {
         val properties = new Properties();
-        properties.put(Environment.DIALECT, jpaProperties.getDialect());
-        properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
-        properties.put(Environment.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
-        properties.put(Environment.GENERATE_STATISTICS, jpaProperties.isGenerateStatistics());
+        properties.put(AvailableSettings.DIALECT, jpaProperties.getDialect());
+        properties.put(AvailableSettings.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
+        properties.put(AvailableSettings.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
+        properties.put(AvailableSettings.GENERATE_STATISTICS, jpaProperties.isGenerateStatistics());
 
         if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
-            properties.put(Environment.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
+            properties.put(AvailableSettings.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
         }
         if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
-            properties.put(Environment.DEFAULT_SCHEMA, jpaProperties.getDefaultSchema());
+            properties.put(AvailableSettings.DEFAULT_SCHEMA, jpaProperties.getDefaultSchema());
         }
-        properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
-        properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
+        properties.put(AvailableSettings.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
+        properties.put(AvailableSettings.FORMAT_SQL, Boolean.TRUE);
         properties.put("hibernate.connection.useUnicode", Boolean.TRUE);
         properties.put("hibernate.connection.characterEncoding", StandardCharsets.UTF_8.name());
         properties.put("hibernate.connection.charSet", StandardCharsets.UTF_8.name());
-        properties.put(Environment.AUTOCOMMIT, jpaProperties.isAutocommit());
+        properties.put(AvailableSettings.AUTOCOMMIT, jpaProperties.isAutocommit());
         properties.put("hibernate.jdbc.time_zone", "UTC");
         properties.put("hibernate.jdbc.fetch_size", jpaProperties.getFetchSize());
 
@@ -79,7 +79,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
                 if (namingStrategy instanceof ApplicationContextAware) {
                     ((ApplicationContextAware) namingStrategy).setApplicationContext(applicationContext);
                 }
-                properties.put(Environment.PHYSICAL_NAMING_STRATEGY, namingStrategy);
+                properties.put(AvailableSettings.PHYSICAL_NAMING_STRATEGY, namingStrategy);
             });
         properties.putAll(jpaProperties.getProperties());
 

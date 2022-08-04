@@ -31,7 +31,7 @@ public class TrustedAuthenticationWebflowConfigurerTests extends BaseWebflowConf
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(TrustedAuthenticationWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(CasWebflowConstants.ACTION_ID_REMOTE_TRUSTED_AUTHENTICATION);
         assertNotNull(state);

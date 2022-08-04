@@ -108,9 +108,9 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
         @Test
         @Order(1)
         public void verifyUserMfaActionDisabled() throws Exception {
-            val applicationContext = new StaticApplicationContext();
-            applicationContext.refresh();
-            TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+            val ctx = new StaticApplicationContext();
+            ctx.refresh();
+            TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(ctx);
 
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);

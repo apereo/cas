@@ -8,7 +8,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -107,7 +107,7 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
 
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
             .httpRequest(request)

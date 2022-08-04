@@ -85,7 +85,8 @@ public class DuoSecurityPrepareWebLoginFormActionTests {
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
         when(provider.matches(anyString())).thenReturn(Boolean.TRUE);
 
-        WebUtils.putCredential(context, new DuoSecurityCredential(authentication.getPrincipal().getId(), UUID.randomUUID().toString(), provider.getId()));
+        WebUtils.putCredential(context, new DuoSecurityCredential(authentication.getPrincipal().getId(),
+            UUID.randomUUID().toString(), DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER));
         WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
 

@@ -38,14 +38,14 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public YubiKeyAccount getAccountInternal(final String uid) {
-        val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(uid));
+        val query = new Query().addCriteria(Criteria.where(YubiKeyAccount.FIELD_USERNAME).is(uid));
         return mongoTemplate.findOne(query, MongoDbYubiKeyAccount.class, this.collectionName);
     }
 
     @Override
     public void delete(final String uid) {
         val query = new Query();
-        query.addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(uid));
+        query.addCriteria(Criteria.where(YubiKeyAccount.FIELD_USERNAME).is(uid));
         this.mongoTemplate.remove(query, MongoDbYubiKeyAccount.class, this.collectionName);
     }
 
@@ -64,8 +64,8 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public boolean update(final YubiKeyAccount account) {
-        val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(account.getUsername()));
-        val update = Update.update(MongoDbYubiKeyAccount.FIELD_DEVICES, account.getDevices());
+        val query = new Query().addCriteria(Criteria.where(YubiKeyAccount.FIELD_USERNAME).is(account.getUsername()));
+        val update = Update.update(YubiKeyAccount.FIELD_DEVICES, account.getDevices());
         this.mongoTemplate.updateFirst(query, update, MongoDbYubiKeyAccount.class, this.collectionName);
         return true;
     }

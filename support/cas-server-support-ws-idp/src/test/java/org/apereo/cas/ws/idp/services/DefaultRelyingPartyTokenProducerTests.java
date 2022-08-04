@@ -12,6 +12,7 @@ import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
 import lombok.val;
 import org.apache.cxf.binding.soap.SoapFault;
+import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -144,7 +145,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
             elementResponse.setAttribute("id", "abcdefgh123456");
             when(client.requestSecurityTokenResponse(ArgumentMatchers.eq("CAS"))).thenReturn(elementResponse);
             when(client.requestSecurityTokenResponse(ArgumentMatchers.eq("FatalError")))
-                .thenThrow(new SoapFault("error", SoapFault.FAULT_CODE_SERVER));
+                .thenThrow(new SoapFault("error", Fault.FAULT_CODE_SERVER));
             when(client.requestSecurityTokenResponse(ArgumentMatchers.eq("RequestFailed")))
                 .thenThrow(new SoapFault("error", new QName("RequestFailed")));
 

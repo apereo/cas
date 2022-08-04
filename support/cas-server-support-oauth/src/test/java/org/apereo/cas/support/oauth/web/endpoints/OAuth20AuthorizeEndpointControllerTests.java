@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -21,14 +20,10 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
-import org.pac4j.core.credentials.TokenCredentials;
-import org.pac4j.core.exception.http.FoundAction;
-import org.pac4j.core.exception.http.RedirectionAction;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
@@ -275,9 +270,9 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setContextPath(StringUtils.EMPTY);
         val mockResponse = new MockHttpServletResponse();
 
-        val casProperties = oAuth20AuthorizeEndpointController.getConfigurationContext().getCasProperties();
-        casProperties.getSessionReplication().getCookie().setAutoConfigureCookiePath(true);
-        casProperties.getAuthn().getOauth().setReplicateSessions(true);
+        val properties = oAuth20AuthorizeEndpointController.getConfigurationContext().getCasProperties();
+        properties.getSessionReplication().getCookie().setAutoConfigureCookiePath(true);
+        properties.getAuthn().getOauth().setReplicateSessions(true);
         oAuth20AuthorizeEndpointController.getConfigurationContext()
             .getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 

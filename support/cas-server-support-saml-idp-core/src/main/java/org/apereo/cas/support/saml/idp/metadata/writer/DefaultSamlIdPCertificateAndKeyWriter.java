@@ -24,6 +24,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -81,7 +82,7 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
         val dn = new X500Name("CN=" + hostname);
         val notBefore = new GregorianCalendar();
         val notOnOrAfter = new GregorianCalendar();
-        notOnOrAfter.set(GregorianCalendar.YEAR, notOnOrAfter.get(GregorianCalendar.YEAR) + certificateLifetimeInYears);
+        notOnOrAfter.set(Calendar.YEAR, notOnOrAfter.get(Calendar.YEAR) + certificateLifetimeInYears);
 
         val builder = new JcaX509v3CertificateBuilder(
             dn,

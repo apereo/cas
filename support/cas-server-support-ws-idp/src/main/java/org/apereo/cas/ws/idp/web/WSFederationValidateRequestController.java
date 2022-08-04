@@ -60,8 +60,8 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         }
     }
 
-    private void handleLogoutRequest(final WSFederationRequest fedRequest, final HttpServletRequest request,
-                                     final HttpServletResponse response) throws Exception {
+    protected void handleLogoutRequest(final WSFederationRequest fedRequest, final HttpServletRequest request,
+                                       final HttpServletResponse response) throws Exception {
 
         val logoutUrl = FunctionUtils.doIf(StringUtils.isNotBlank(fedRequest.getWreply()),
                 () -> {

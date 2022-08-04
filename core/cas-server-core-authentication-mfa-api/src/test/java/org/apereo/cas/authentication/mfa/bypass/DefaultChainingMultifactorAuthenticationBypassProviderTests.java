@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthenticationBypassProvider;
 import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
@@ -28,6 +29,14 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFATrigger")
 public class DefaultChainingMultifactorAuthenticationBypassProviderTests {
+
+    @Test
+    public void verifyChain() {
+        val p = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        p.addMultifactorAuthenticationProviderBypassEvaluator(
+            new MultifactorAuthenticationProviderBypassEvaluator[] {NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance()});
+        assertFalse(p.isEmpty());
+    }
 
     @Test
     public void verifyEmptyChainOperation() {

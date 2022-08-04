@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -40,16 +41,16 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyNewSamlServiceProvider() throws Exception {
         val entity = mock(EntityDescriptor.class);
-        when(entity.getEntityID()).thenReturn("https://dropbox.com");
+        when(entity.getEntityID()).thenReturn(RegisteredServiceTestUtils.CONST_TEST_URL);
         val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
         val metadata = mock(MetadataResolver.class);
         when(metadata.resolveSingle(any(CriteriaSet.class))).thenReturn(entity);
         when(resolver.resolve(any(SamlRegisteredService.class), any(CriteriaSet.class))).thenReturn(metadata);
         val sp = new SamlServiceProviderProperties.Dropbox();
         sp.setMetadata("https://metadata.dropbox.com");
-        sp.setEntityIds(CollectionUtils.wrap(entity.getEntityID()));
+        sp.setEntityIds(CollectionUtils.wrap(RegisteredServiceTestUtils.CONST_TEST_URL));
         val service = SamlSPUtils.newSamlServiceProviderService(sp, resolver);
         assertNotNull(service);
-        assertEquals(entity.getEntityID(), service.getServiceId());
+        assertEquals(RegisteredServiceTestUtils.CONST_TEST_URL, service.getServiceId());
     }
 }

@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml2.core.AuthnContext;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -142,7 +142,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             currentDateTime.plusSeconds(skew), service.getId());
         assertion.setConditions(conditions);
 
-        val subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
+        val subject = this.samlObjectBuilder.newSubject(NameIDType.EMAIL, userId,
             service.getId(), currentDateTime.plusSeconds(skew), service.getRequestId(), null);
         assertion.setSubject(subject);
 

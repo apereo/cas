@@ -444,6 +444,7 @@ subprojects {
             it.options.errorprone.errorproneArgs = ['-Xep:MissingOverride:OFF',
                                                     '-Xep:HidingField:OFF',
                                                     '-Xep:MissingSummary:OFF',
+                                                    '-Xep:CanIgnoreReturnValueSuggester:OFF',
                                                     '-Xep:SameNameButDifferent:OFF']
             it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
             casCompilerArgs.add("-XDcompilePolicy=byfile")

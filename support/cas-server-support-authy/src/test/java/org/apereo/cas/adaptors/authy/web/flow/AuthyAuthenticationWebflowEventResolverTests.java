@@ -63,10 +63,11 @@ public class AuthyAuthenticationWebflowEventResolverTests {
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
+        val external = new ServletExternalContext(new MockServletContext(), request, response);
+        when(context.getExternalContext()).thenReturn(external);
 
         RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        ExternalContextHolder.setExternalContext(external);
         WebUtils.putCredential(context, new AuthyTokenCredential("token"));
     }
 

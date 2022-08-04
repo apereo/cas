@@ -5,8 +5,8 @@ import org.apereo.cas.util.RandomUtils;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.crypto.AESDecrypter;
-import com.nimbusds.jose.crypto.DirectDecrypter;
+import com.nimbusds.jose.crypto.impl.AESCryptoProvider;
+import com.nimbusds.jose.crypto.impl.DirectCryptoProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -126,17 +126,17 @@ public class GenerateJwtCommand {
         val algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
         val encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
 
-        if (DirectDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
-            if (!DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
+        if (DirectCryptoProvider.SUPPORTED_ALGORITHMS.contains(algorithm)) {
+            if (!DirectCryptoProvider.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
                 LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
-                    encryptionMethod, encryptionAlgorithm, DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS);
+                    encryptionMethod, encryptionAlgorithm, DirectCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
                 return;
             }
         }
-        if (AESDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
-            if (!AESDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
+        if (AESCryptoProvider.SUPPORTED_ALGORITHMS.contains(algorithm)) {
+            if (!AESCryptoProvider.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
                 LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
-                    encryptionMethod, encryptionAlgorithm, AESDecrypter.SUPPORTED_ENCRYPTION_METHODS);
+                    encryptionMethod, encryptionAlgorithm, AESCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
                 return;
             }
         }

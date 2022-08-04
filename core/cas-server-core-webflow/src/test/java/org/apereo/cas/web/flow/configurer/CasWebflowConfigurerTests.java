@@ -104,8 +104,8 @@ public class CasWebflowConfigurerTests {
         assertNotNull(transition2);
 
         val flow = mock(Flow.class);
-        assertNull(cfg.getTransitionableState(flow, state.getId(), ActionState.class));
-        assertNull(cfg.getTransitionableState(flow, state.getId()));
+        assertNull(cfg.getTransitionableState(flow, "example", ActionState.class));
+        assertNull(cfg.getTransitionableState(flow, "example"));
     }
 
     @Test

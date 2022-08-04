@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -24,6 +24,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,10 +37,6 @@ import static org.mockito.Mockito.*;
 public class SendTicketGrantingTicketActionTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
-
-    private static final String TEST_STRING = "test";
-
-    private static final String SUCCESS = "success";
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -66,19 +63,16 @@ public class SendTicketGrantingTicketActionTests {
             val response = new MockHttpServletResponse();
             request.addHeader("User-Agent", "Test");
 
-            val tgt1 = mock(TicketGrantingTicket.class);
-            when(tgt1.getId()).thenReturn(TEST_STRING);
-
+            val tgt1 = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
             WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
             WebUtils.putTicketGrantingTicketIntoMap(context.getRequestScope(), tgt1.getId());
 
-            val tgt2 = mock(TicketGrantingTicket.class);
-            when(tgt2.getId()).thenReturn(TEST_STRING + "--" + TEST_STRING);
+            val tgt2 = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             WebUtils.putTicketGrantingTicketIntoMap(context.getFlowScope(), tgt2.getId());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-            assertEquals(SUCCESS, action.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
         }
 
     }
@@ -99,9 +93,9 @@ public class SendTicketGrantingTicketActionTests {
 
         @Test
         public void verifyNoTgtToSet() throws Exception {
-            context.setExternalContext(
-                new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-            assertEquals(SUCCESS, action.execute(context).getId());
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+                new MockHttpServletRequest(), new MockHttpServletResponse()));
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
         }
 
         @Test
@@ -113,13 +107,12 @@ public class SendTicketGrantingTicketActionTests {
 
             val response = new MockHttpServletResponse();
             request.addHeader("User-Agent", "Test");
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getId()).thenReturn(TEST_STRING);
+            val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
 
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-            assertEquals(SUCCESS, action.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
             request.setCookies(response.getCookies());
             assertEquals(tgt.getId(), getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request));
         }
@@ -134,14 +127,12 @@ public class SendTicketGrantingTicketActionTests {
             val response = new MockHttpServletResponse();
             request.addHeader("User-Agent", "Test");
 
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getId()).thenReturn(TEST_STRING);
-
+            val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             request.setCookies(new Cookie("TGT", "test5"));
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-            assertEquals(SUCCESS, action.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
             request.setCookies(response.getCookies());
             assertEquals(tgt.getId(), getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request));
         }
@@ -154,14 +145,14 @@ public class SendTicketGrantingTicketActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
         private Action action;
-        
+
         private MockRequestContext context;
 
         @BeforeEach
         public void onSetUp() {
             context = new MockRequestContext();
         }
-        
+
         @Test
         public void verifySsoSessionCookieOnRenewAsParameter() throws Exception {
             val response = new MockHttpServletResponse();
@@ -172,12 +163,11 @@ public class SendTicketGrantingTicketActionTests {
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
             ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getId()).thenReturn(TEST_STRING);
+            val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             request.setCookies(new Cookie("TGT", "test5"));
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-            assertEquals(SUCCESS, action.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
             assertEquals(0, response.getCookies().length);
         }
 
@@ -194,14 +184,13 @@ public class SendTicketGrantingTicketActionTests {
             val svc = mock(WebApplicationService.class);
             when(svc.getId()).thenReturn("TestSsoFalse");
 
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getId()).thenReturn(TEST_STRING);
+            val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             request.setCookies(new Cookie("TGT", "test5"));
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, svc);
 
-            assertEquals(SUCCESS, action.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
             assertEquals(0, response.getCookies().length);
         }
     }
