@@ -68,7 +68,7 @@ public class CasCoreAuthenticationConfiguration {
             return new DefaultAuthenticationTransactionFactory();
         }
 
-        @ConditionalOnMissingBean(name = "authenticationAttributeReleasePolicy")
+        @ConditionalOnMissingBean(name = AuthenticationAttributeReleasePolicy.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy(

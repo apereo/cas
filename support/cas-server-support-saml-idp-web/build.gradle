@@ -28,7 +28,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":support:cas-server-support-saml-idp-ticket")
     
-    implementation libraries.casclient
+
     implementation libraries.shibutiljavasupport
     implementation libraries.pac4jcore
     compileOnly libraries.pac4jsaml

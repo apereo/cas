@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -12,12 +11,10 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -42,30 +39,26 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("InlineFormatString")
 public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPConfigurationTests {
     private static final String SAML_AUTHN_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><saml2p:AuthnRequest "
-        + "xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" AssertionConsumerServiceURL=\"http://localhost:8081/callback"
-        + "?client_name=SAML2Client\" ForceAuthn=\"false\" IssueInstant=\"2018-10-05T14:52:47.084Z\" "
-        + "ProtocolBinding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Version=\"2.0\"><saml2:Issuer "
-        + "xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s</saml2:Issuer><saml2p:NameIDPolicy "
-        + "AllowCreate=\"true\"/></saml2p:AuthnRequest>";
+                                                      + "xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" AssertionConsumerServiceURL=\"http://localhost:8081/callback"
+                                                      + "?client_name=SAML2Client\" ForceAuthn=\"false\" IssueInstant=\"2018-10-05T14:52:47.084Z\" "
+                                                      + "ProtocolBinding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Version=\"2.0\"><saml2:Issuer "
+                                                      + "xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s</saml2:Issuer><saml2p:NameIDPolicy "
+                                                      + "AllowCreate=\"true\"/></saml2p:AuthnRequest>";
 
     private static final String SAML_LOGOUT_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<saml2p:LogoutRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\""
-        + " Destination=\"http://localhost:8081/callback?client_name=SAML2Client\" ID=\"_81838f9e55714ae79732d8525266bc230c53dbe\""
-        + " IssueInstant=\"2021-04-06T12:22:57.210Z\" Version=\"2.0\"><saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2"
-        + ".0:assertion\">%s</saml2:Issuer><saml2:NameID xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\""
-        + " Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\">bellini</saml2:NameID><saml2p:SessionIndex>ST-1-7EEGV0DEBGW5I"
-        + "-FhzInvmTzVG8o</saml2p:SessionIndex></saml2p:LogoutRequest>";
+                                                       + "<saml2p:LogoutRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\""
+                                                       + " Destination=\"http://localhost:8081/callback?client_name=SAML2Client\" ID=\"_81838f9e55714ae79732d8525266bc230c53dbe\""
+                                                       + " IssueInstant=\"2021-04-06T12:22:57.210Z\" Version=\"2.0\"><saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2"
+                                                       + ".0:assertion\">%s</saml2:Issuer><saml2:NameID xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\""
+                                                       + " Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\">bellini</saml2:NameID><saml2p:SessionIndex>ST-1-7EEGV0DEBGW5I"
+                                                       + "-FhzInvmTzVG8o</saml2p:SessionIndex></saml2p:LogoutRequest>";
 
     private static final String SAML_AUTHN_REQUEST2 = "fVNdj9owEHyv1P9g+Z3E5OAoFlBR6AcShYjQPvSlMvbmsJTYrte5o/++ToATlVqeYtkzszO7mwmKunJ83"
-        + "oSj2cGvBjCQU10Z5N3DlDbecCtQIzeiBuRB8mL+dc2zhHHnbbDSVvSGcp8hEMEHbQ0lq+WUbjcf19vPq83Pd2w8YqOSsQcmhoqxx4z"
-        + "JsRqrcjwqH7ORKGGspMwGlHwHj5E/pVGOktzbZ63Ab2KlKS1yEmKAqI3YwMpgECZEJOsPemzU6z/uswc+zPhg+IOSZURqI0IndgzB8TT"
-        + "VyiVwErWrIJG2TotiW4B/1hISd3RduS7wB22UNk/3sx7OIORf9vu8l2+LPSXza/6FNdjU4C/y33brVxP4twcFte2nUQtOrYn3QiKdvX"
-        + "1DyKRtN++i+lnLxTO5bQEe9SGx/iltDwdbQTj20E3SW8qrhuNt+1bL3FZa/iafrK9F+H+2ftLvbrTqlR2UQy10NVfKA2LMWFX2ZeFBh"
-        + "DiS4Bug6W2ty5aB6nYu9iHAKZCFrZ3wGtthxPQynDNeU95iF1Xcoh2Us7uLJrlscfE6j58X61U7PJCx8N4Lg876cOnHP8U7x+kdyxFxfb/9e2Z/AA==";
-
-    @Autowired
-    @Qualifier("samlIdPServicesManagerRegisteredServiceLocator")
-    private ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator;
+                                                      + "oSj2cGvBjCQU10Z5N3DlDbecCtQIzeiBuRB8mL+dc2zhHHnbbDSVvSGcp8hEMEHbQ0lq+WUbjcf19vPq83Pd2w8YqOSsQcmhoqxx4z"
+                                                      + "JsRqrcjwqH7ORKGGspMwGlHwHj5E/pVGOktzbZ63Ab2KlKS1yEmKAqI3YwMpgECZEJOsPemzU6z/uswc+zPhg+IOSZURqI0IndgzB8TT"
+                                                      + "VyiVwErWrIJG2TotiW4B/1hISd3RduS7wB22UNk/3sx7OIORf9vu8l2+LPSXza/6FNdjU4C/y33brVxP4twcFte2nUQtOrYn3QiKdvX"
+                                                      + "1DyKRtN++i+lnLxTO5bQEe9SGx/iltDwdbQTj20E3SW8qrhuNt+1bL3FZa/iafrK9F+H+2ftLvbrTqlR2UQy10NVfKA2LMWFX2ZeFBh"
+                                                      + "DiS4Bug6W2ty5aB6nYu9iHAKZCFrZ3wGtthxPQynDNeU95iF1Xcoh2Us7uLJrlscfE6j58X61U7PJCx8N4Lg876cOnHP8U7x+kdyxFxfb/9e2Z/AA==";
 
     @BeforeEach
     public void setup() {
@@ -73,7 +66,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     }
 
     @Test
-    public void verifyInCommonAggregateWithCallback() {
+    public void verifyInCommonAggregateWithCallback() throws Exception {
         val callbackUrl = "http://localhost:8443/cas" + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
 
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
@@ -308,7 +301,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     }
 
     @Test
-    public void verifyWithSelectionStrategy() {
+    public void verifyWithSelectionStrategy() throws Exception {
         val prefix = "http://localhost:8443/cas";
         val callbackUrl = prefix + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
 

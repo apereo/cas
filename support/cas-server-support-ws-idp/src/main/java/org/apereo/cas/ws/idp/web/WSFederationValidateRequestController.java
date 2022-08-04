@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
@@ -12,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
-import org.jasig.cas.client.util.CommonUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,9 +75,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                 },
                 () -> getConfigContext().getCasProperties().getServer().getLogoutUrl())
             .get();
-
-        val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
-        authenticationRedirectStrategy.redirect(request, response, logoutUrl);
+        response.sendRedirect(logoutUrl);
     }
 
     private void handleInitialAuthenticationRequest(
@@ -109,13 +106,20 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, registeredService);
         val renew = shouldRenewAuthentication(fedRequest, request);
-        var initialUrl = CommonUtils.constructRedirectUrl(getConfigContext().getCasProperties().getServer().getLoginUrl(),
-            CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, renew, false);
+        var initialUrl = constructRedirectUrl(
+            getConfigContext().getCasProperties().getServer().getLoginUrl(), serviceUrl, renew);
         val builder = new URIBuilder(initialUrl);
         service.getAttributes().forEach((key, value)
             -> CollectionUtils.firstElement(value).map(Object::toString).ifPresent(v -> builder.addParameter(key, v)));
         initialUrl = builder.toString();
         LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
         response.sendRedirect(initialUrl);
+    }
+
+    private static String constructRedirectUrl(final String casServerLoginUrl,
+                                               final String serviceUrl, final boolean renew) {
+        return casServerLoginUrl + '?' + CasProtocolConstants.PARAMETER_SERVICE + '='
+               + EncodingUtils.urlEncode(serviceUrl)
+               + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY);
     }
 }

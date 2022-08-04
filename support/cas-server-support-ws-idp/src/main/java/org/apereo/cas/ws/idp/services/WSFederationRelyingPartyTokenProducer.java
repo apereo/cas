@@ -1,9 +1,9 @@
 package org.apereo.cas.ws.idp.services;
 
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.jasig.cas.client.validation.Assertion;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,5 +29,5 @@ public interface WSFederationRelyingPartyTokenProducer {
      */
     String produce(SecurityToken securityToken, WSFederationRegisteredService service,
                    WSFederationRequest fedRequest, HttpServletRequest servletRequest,
-                   Assertion assertion) throws Exception;
+                   TicketValidator.ValidationResult assertion) throws Exception;
 }

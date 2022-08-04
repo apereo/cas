@@ -24,7 +24,7 @@ public class AuthenticatedAssertionContext {
     private final ZonedDateTime validFromDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     @Builder.Default
-    private final ZonedDateTime validUntilDate = ZonedDateTime.now(ZoneOffset.UTC).plusYears(1);
+    private final ZonedDateTime validUntilDate = ZonedDateTime.now(ZoneOffset.UTC).plusDays(1);
 
     @Builder.Default
     private final ZonedDateTime authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);

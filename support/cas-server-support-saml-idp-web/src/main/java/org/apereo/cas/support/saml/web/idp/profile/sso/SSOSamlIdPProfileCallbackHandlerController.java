@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurati
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -84,7 +85,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         }
         return WebUtils.produceErrorView(new IllegalArgumentException("Unable to build SAML response"));
     }
-    
+
     private ModelAndView handleProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         val authnContext = retrieveAuthenticationRequest(response, request);
 
@@ -117,11 +118,11 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
         val assertion = validator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
+
+        val asserted = (Assertion) assertion.getContext().get(Assertion.class.getName());
         return AuthenticatedAssertionContext.builder()
-            .name(assertion.getPrincipal().getName())
-            .authenticationDate(DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()))
-            .validFromDate(DateTimeUtils.zonedDateTimeOf(assertion.getValidFromDate()))
-            .validUntilDate(DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate()))
+            .name(assertion.getPrincipal().getId())
+            .authenticationDate(DateTimeUtils.zonedDateTimeOf(asserted.getPrimaryAuthentication().getAuthenticationDate()))
             .attributes(CollectionUtils.merge(assertion.getAttributes(), assertion.getPrincipal().getAttributes()))
             .build();
     }

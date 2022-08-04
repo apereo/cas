@@ -1,19 +1,18 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.AssertionImpl;
-import org.jasig.cas.client.validation.TicketValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -133,8 +132,9 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         @Bean
         public TicketValidator samlIdPTicketValidator() throws Exception {
             val validator = mock(TicketValidator.class);
-            val principal = new AttributePrincipalImpl("casuser", CollectionUtils.wrap("cn", "cas"));
-            when(validator.validate(anyString(), anyString())).thenReturn(new AssertionImpl(principal));
+            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser", CollectionUtils.wrap("cn", "cas"));
+            when(validator.validate(anyString(), anyString()))
+                .thenReturn(TicketValidator.ValidationResult.builder().principal(principal).build());
             return validator;
         }
     }

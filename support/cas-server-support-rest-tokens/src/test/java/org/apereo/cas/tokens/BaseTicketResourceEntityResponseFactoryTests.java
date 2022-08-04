@@ -33,17 +33,12 @@ import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFac
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
-import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.AssertionImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,9 +46,7 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -136,26 +129,6 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
         @Override
         public void afterPropertiesSet() {
             init();
-        }
-
-        @Bean
-        public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-            return new AbstractUrlBasedTicketValidator("https://cas.example.org") {
-                @Override
-                protected String getUrlSuffix() {
-                    return "/cas";
-                }
-
-                @Override
-                protected Assertion parseResponseFromServer(final String s) {
-                    return new AssertionImpl(new AttributePrincipalImpl("casuser", CollectionUtils.wrap("name", "value")));
-                }
-
-                @Override
-                protected String retrieveResponseFromServer(final URL url, final String s) {
-                    return "theresponse";
-                }
-            };
         }
     }
 }

@@ -16,6 +16,11 @@ import java.util.Map;
 @FunctionalInterface
 public interface AuthenticationAttributeReleasePolicy {
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "authenticationAttributeReleasePolicy";
+
+    /**
      * This method will return the Authentication attributes that should be released.
      *
      * @param authentication The authentication object we are processing.

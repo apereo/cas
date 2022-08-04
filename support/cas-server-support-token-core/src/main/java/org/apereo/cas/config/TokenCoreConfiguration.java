@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.token.JwtTokenCipherSigningPublicKeyEndpoint;
 import org.apereo.cas.token.JwtTokenTicketBuilder;
@@ -23,7 +24,6 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -58,7 +58,7 @@ public class TokenCoreConfiguration {
         public TicketValidator tokenTicketValidator(
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

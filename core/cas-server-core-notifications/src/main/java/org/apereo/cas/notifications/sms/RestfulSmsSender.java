@@ -44,7 +44,7 @@ public class RestfulSmsSender implements SmsSender {
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.POST)
+                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase()))
                 .url(restProperties.getUrl())
                 .parameters(parameters)
                 .entity(message)

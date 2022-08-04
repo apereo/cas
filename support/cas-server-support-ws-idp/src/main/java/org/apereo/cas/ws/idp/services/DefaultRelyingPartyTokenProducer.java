@@ -3,6 +3,7 @@ package org.apereo.cas.ws.idp.services;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -21,7 +22,6 @@ import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSUtils;
-import org.jasig.cas.client.validation.Assertion;
 import org.jooq.lambda.Unchecked;
 import org.w3c.dom.Element;
 
@@ -62,7 +62,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
                           final WSFederationRequest fedRequest, final HttpServletRequest request,
-                          final Assertion assertion) throws Exception {
+                          final TicketValidator.ValidationResult assertion) throws Exception {
         val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
         mapAttributesToRequestedClaims(service, sts, assertion);
         val rpToken = requestSecurityTokenResponse(service, sts, assertion);
@@ -97,7 +97,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
     private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service,
                                                 final SecurityTokenServiceClient sts,
-                                                final Assertion assertion) throws Exception {
+                                                final TicketValidator.ValidationResult assertion) throws Exception {
         val writer = new W3CDOMStreamWriter();
         writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
         writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
@@ -132,11 +132,11 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
     private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
                                                  final SecurityTokenServiceClient sts,
-                                                 final Assertion assertion) {
+                                                 final TicketValidator.ValidationResult assertion) {
         try {
             val properties = sts.getProperties();
-            properties.put(SecurityConstants.USERNAME, assertion.getPrincipal().getName());
-            val uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
+            properties.put(SecurityConstants.USERNAME, assertion.getPrincipal().getId());
+            val uid = credentialCipherExecutor.encode(assertion.getPrincipal().getId());
             properties.put(SecurityConstants.PASSWORD, uid);
             return FunctionUtils.doUnchecked(() -> sts.requestSecurityTokenResponse(service.getAppliesTo()));
         } catch (final SoapFault ex) {

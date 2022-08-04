@@ -21,4 +21,8 @@ import lombok.experimental.Accessors;
 @JsonFilter("RestfulSmsProperties")
 public class RestfulSmsProperties extends RestEndpointProperties {
     private static final long serialVersionUID = -8102345678378393382L;
+
+    public RestfulSmsProperties() {
+        setMethod("POST");
+    }
 }

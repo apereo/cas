@@ -68,7 +68,7 @@ public class CasCoreAuthenticationSupportConfigurationTests {
     private RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository;
 
     @Autowired
-    @Qualifier("authenticationAttributeReleasePolicy")
+    @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
     private AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     @Autowired
