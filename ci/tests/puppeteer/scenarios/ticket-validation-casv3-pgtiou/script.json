@@ -5,8 +5,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
-  ,
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     "--cas.authn.accept.name=STATIC"
   ]
 }

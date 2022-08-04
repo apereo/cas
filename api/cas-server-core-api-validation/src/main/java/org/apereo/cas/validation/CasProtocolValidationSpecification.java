@@ -26,7 +26,11 @@ public interface CasProtocolValidationSpecification extends Ordered {
         /**
          * CAS v3 protocol.
          */
-        CAS30
+        CAS30,
+        /**
+         * SAML v1.1 protocol.
+         */
+        SAML1
     }
 
     /**

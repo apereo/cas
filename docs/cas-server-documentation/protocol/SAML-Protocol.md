@@ -25,10 +25,11 @@ Registering SAML v1.1 applications with CAS is similar to any other CAS applicat
 
 ```json
 {
-  "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "https://app.example.org",
-  "name": "Example",
-  "id": 1
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^https://app.example.org.+",
+  "name" : "App",
+  "id" : 1,
+  "supportedProtocols": [ "java.util.HashSet", [ "SAML1" ] ]
 }
 ```
 

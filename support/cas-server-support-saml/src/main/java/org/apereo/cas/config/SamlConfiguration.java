@@ -27,6 +27,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.CasProtocolVersionValidationSpecification;
+import org.apereo.cas.validation.ChainingCasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
@@ -52,6 +54,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.View;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link SamlConfiguration} that creates the necessary OpenSAML context and beans.
@@ -211,6 +214,18 @@ public class SamlConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "samlValidateControllerValidationSpecification")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasProtocolValidationSpecification samlValidateControllerValidationSpecification(
+            @Qualifier("casSingleAuthenticationProtocolValidationSpecification")
+            final CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification) {
+            val validationChain = new ChainingCasProtocolValidationSpecification();
+            validationChain.addSpecification(casSingleAuthenticationProtocolValidationSpecification);
+            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolValidationSpecification.CasProtocolVersions.SAML1)));
+            return validationChain;
+        }
+
+        @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlValidateController samlValidateController(
             final CasConfigurationProperties casProperties,
@@ -230,13 +245,13 @@ public class SamlConfiguration {
             final RequestedAuthenticationContextValidator requestedContextValidator,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("casSingleAuthenticationProtocolValidationSpecification")
-            final CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification,
+            @Qualifier("samlValidateControllerValidationSpecification")
+            final CasProtocolValidationSpecification samlValidateControllerValidationSpecification,
             @Qualifier("serviceValidationAuthorizers")
             final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
             val context = ServiceValidateConfigurationContext.builder()
                 .ticketRegistry(ticketRegistry)
-                .validationSpecifications(CollectionUtils.wrapSet(casSingleAuthenticationProtocolValidationSpecification))
+                .validationSpecifications(CollectionUtils.wrapSet(samlValidateControllerValidationSpecification))
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)
