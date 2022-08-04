@@ -35,7 +35,8 @@ dependencies {
     compileOnly libraries.hazelcast
 
     testImplementation libraries.hazelcast
-    
+    testImplementation libraries.casclient
+
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services")
