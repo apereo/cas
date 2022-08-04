@@ -2,7 +2,6 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -49,9 +48,6 @@ import static org.mockito.Mockito.*;
 })
 @Import(CasWebflowAccountProfileConfiguration.class)
 public class AccountProfilePreparePasswordManagementActionTests extends BasePasswordManagementActionTests {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)
     private Action prepareAccountProfilePasswordMgmtAction;

@@ -8,6 +8,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -80,6 +81,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     }
 
     @Override
+    @CanIgnoreReturnValue
     public OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> store(
         final GoogleAuthenticatorToken validatedToken) {
         this.tokenRepository.store(validatedToken);

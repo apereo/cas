@@ -1,5 +1,6 @@
 package org.apereo.cas.pm;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -53,6 +54,7 @@ public class PasswordManagementQuery implements Serializable {
      * @param value         the value
      * @return the user record context
      */
+    @CanIgnoreReturnValue
     public PasswordManagementQuery attribute(final String attributeName, final Object value) {
         record.add(attributeName, value);
         return this;
@@ -65,6 +67,7 @@ public class PasswordManagementQuery implements Serializable {
      * @param answer   the answer
      * @return the password management query
      */
+    @CanIgnoreReturnValue
     public PasswordManagementQuery securityQuestion(final String question, final String answer) {
         this.securityQuestions.add(question, answer);
         return this;

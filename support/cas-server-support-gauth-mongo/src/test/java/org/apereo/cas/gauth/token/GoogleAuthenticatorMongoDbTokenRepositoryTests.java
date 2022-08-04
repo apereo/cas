@@ -97,6 +97,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnabledIfListeningOnPort(port = 27017)
 public class GoogleAuthenticatorMongoDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
+    @Override
     @BeforeEach
     public void initialize() {
         super.initialize();

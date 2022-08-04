@@ -12,7 +12,6 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
@@ -46,7 +45,7 @@ public class DefaultLogoutManagerTests {
 
     private LogoutManager logoutManager;
 
-    private TicketGrantingTicket tgt;
+    private MockTicketGrantingTicket tgt;
 
     private AbstractWebApplicationService simpleWebApplicationServiceImpl;
 

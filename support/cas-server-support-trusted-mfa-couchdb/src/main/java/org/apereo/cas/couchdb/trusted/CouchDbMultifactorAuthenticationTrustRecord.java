@@ -4,6 +4,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -63,6 +64,7 @@ public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuth
      * @param other record to be merged into this one
      * @return this
      */
+    @CanIgnoreReturnValue
     public CouchDbMultifactorAuthenticationTrustRecord merge(final MultifactorAuthenticationTrustRecord other) {
         setId(other.getId());
         setPrincipal(other.getPrincipal());

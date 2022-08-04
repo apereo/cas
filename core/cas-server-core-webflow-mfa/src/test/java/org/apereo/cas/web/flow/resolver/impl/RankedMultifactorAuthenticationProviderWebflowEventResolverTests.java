@@ -51,6 +51,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     @Autowired
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasDelegatingWebflowEventResolver resolver;
+    @Override
     @BeforeEach
     public void setup() {
         super.setup();

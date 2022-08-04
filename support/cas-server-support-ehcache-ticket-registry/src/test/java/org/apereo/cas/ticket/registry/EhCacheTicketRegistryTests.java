@@ -41,6 +41,7 @@ public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
+    @Override
     @RepeatedTest(1)
     public void verifyDeleteNonExistingTicket() throws Exception {
         assertEquals(0, newTicketRegistry.deleteTicket(new MockTicketGrantingTicket("casuser")));

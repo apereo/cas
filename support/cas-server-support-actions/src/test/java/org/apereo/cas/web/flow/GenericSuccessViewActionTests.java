@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -39,9 +38,6 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 @TestPropertySource(properties = "cas.view.authorized-services-on-successful-login=true")
 public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
     private Action genericSuccessViewAction;

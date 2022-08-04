@@ -7,6 +7,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalListener;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -49,6 +50,7 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     }
 
     @Override
+    @CanIgnoreReturnValue
     public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> put(final String key,
                                                                                   final ExecutableCompiledGroovyScript value) {
         this.cache.put(key, value);
@@ -56,6 +58,7 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     }
 
     @Override
+    @CanIgnoreReturnValue
     public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> remove(final String key) {
         this.cache.invalidate(key);
         return this;

@@ -91,6 +91,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnabledIfListeningOnPort(port = 6379)
 public class GoogleAuthenticatorRedisTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
+    @Override
     @BeforeEach
     public void initialize() {
         super.initialize();

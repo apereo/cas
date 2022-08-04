@@ -11,8 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
@@ -37,10 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oauth.uma.resource-set.jpa.ddl-auto=create-drop"
 })
 public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
-
-    @Autowired
-    @Qualifier("umaResourceSetRepository")
-    protected ResourceSetRepository umaResourceSetRepository;
 
     @Test
     public void verifyOperation() {

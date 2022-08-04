@@ -62,6 +62,7 @@ public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepository
         couchDbRepository.initStandardDesignDocument();
     }
 
+    @Override
     @AfterEach
     public void tearDown() {
         deviceRepository.removeAll();

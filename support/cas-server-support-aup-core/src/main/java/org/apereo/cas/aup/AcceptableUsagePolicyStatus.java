@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Data;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
@@ -68,6 +69,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      * @param value the value
      * @return the property
      */
+    @CanIgnoreReturnValue
     public AcceptableUsagePolicyStatus setProperty(final String name, final Object value) {
         this.properties.remove(name);
         addProperty(name, value);
@@ -79,6 +81,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      *
      * @return the acceptable usage policy status
      */
+    @CanIgnoreReturnValue
     public AcceptableUsagePolicyStatus clearProperties() {
         this.properties.clear();
         return this;
@@ -91,6 +94,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      * @param value the value
      * @return the acceptable usage policy status
      */
+    @CanIgnoreReturnValue
     public AcceptableUsagePolicyStatus addProperty(final String name, final Object value) {
         this.properties.put(name, value);
         return this;

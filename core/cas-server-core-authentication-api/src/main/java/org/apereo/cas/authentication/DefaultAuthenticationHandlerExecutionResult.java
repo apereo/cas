@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -74,12 +75,14 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationHandlerExecutionResult addWarning(final MessageDescriptor message) {
         this.warnings.add(message);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationHandlerExecutionResult clearWarnings() {
         this.warnings.clear();
         return this;

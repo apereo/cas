@@ -1,5 +1,6 @@
 package org.springframework.boot.configurationmetadata;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,6 +40,7 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
      * @param inputStream the source input stream
      * @return this builder
      */
+    @CanIgnoreReturnValue
     public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream) {
         return withJsonResource(inputStream, this.defaultCharset);
     }
@@ -55,6 +57,7 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
      * @param charset     the charset of the input
      * @return this builder
      */
+    @CanIgnoreReturnValue
     public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream, final Charset charset) {
         Objects.requireNonNull(inputStream, "InputStream must not be null.");
         this.repositories.add(add(inputStream, charset));

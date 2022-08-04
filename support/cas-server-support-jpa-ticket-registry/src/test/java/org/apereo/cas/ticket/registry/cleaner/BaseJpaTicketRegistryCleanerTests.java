@@ -236,6 +236,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
 
 
         val cleanerTask = new TimerTask() {
+            @Override
             public void run() {
                 ticketRegistryCleaner.clean();
             }

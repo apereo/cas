@@ -29,6 +29,7 @@ public class DefaultAuthyClientInstance implements AuthyClientInstance {
      * @return the or create user
      * @throws Exception the exception
      */
+    @Override
     public User getOrCreateUser(final Principal principal) throws Exception {
         val attributes = principal.getAttributes();
         if (!attributes.containsKey(properties.getMailAttribute())) {

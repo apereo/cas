@@ -1,5 +1,6 @@
 package org.apereo.cas.throttle;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -19,12 +20,14 @@ public class DefaultAuthenticationThrottlingExecutionPlan implements Authenticat
     private final List<ThrottledRequestFilter> authenticationThrottleFilters = new ArrayList<>();
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationThrottlingExecutionPlan registerAuthenticationThrottleInterceptor(final HandlerInterceptor handler) {
         this.authenticationThrottleInterceptors.add(handler);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationThrottlingExecutionPlan registerAuthenticationThrottleFilter(final ThrottledRequestFilter filter) {
         this.authenticationThrottleFilters.add(filter);
         return this;

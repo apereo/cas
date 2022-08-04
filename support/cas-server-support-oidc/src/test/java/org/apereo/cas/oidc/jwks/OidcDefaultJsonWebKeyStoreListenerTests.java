@@ -2,13 +2,11 @@ package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
@@ -23,10 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 public class OidcDefaultJsonWebKeyStoreListenerTests extends AbstractOidcTests {
-    @Autowired
-    @Qualifier("oidcJsonWebKeyStoreListener")
-    private CasEventListener oidcJsonWebKeyStoreListener;
-
     @Autowired
     private ConfigurableApplicationContext realApplicationContext;
 

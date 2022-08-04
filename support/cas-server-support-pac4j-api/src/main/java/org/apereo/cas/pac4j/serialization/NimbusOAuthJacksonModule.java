@@ -72,6 +72,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
             final String value) {
         }
 
+        @Override
         @JsonIgnore
         public Set<String> getParameterNames() {
             return new HashSet<>();

@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,24 +64,28 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final Authentication authentication) {
         Optional.ofNullable(authentication).ifPresent(authentications::add);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final Collection<Authentication> authentications) {
         this.authentications.addAll(authentications);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final CredentialMetaData credential) {
         Optional.ofNullable(credential).ifPresent(providedCredentialMetadata::add);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final Credential credential) {
         Optional.ofNullable(credential).ifPresent(providedCredentials::add);
         return this;

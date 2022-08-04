@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 /**
  * The {@link TicketFactory} is an abstraction that decides
  * how CAS ticket factory objects are created.
@@ -30,6 +32,7 @@ public interface TicketFactory {
      * @param clazz the clazz
      * @return ticket factory object
      */
+    @CanIgnoreReturnValue
     default TicketFactory get(Class<? extends Ticket> clazz) {
         return this;
     }

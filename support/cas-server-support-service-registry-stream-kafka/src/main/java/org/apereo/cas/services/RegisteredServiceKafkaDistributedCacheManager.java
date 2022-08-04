@@ -6,6 +6,7 @@ import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.cache.MappableDistributedCacheManager;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.kafka.core.KafkaOperations;
@@ -36,6 +37,7 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier>
         set(final RegisteredService key, final DistributedCacheObject<RegisteredService> item,
             final boolean publish) {
@@ -46,6 +48,7 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier>
         update(final RegisteredService key, final DistributedCacheObject<RegisteredService> item,
                final boolean publish) {
@@ -56,6 +59,7 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier>
         remove(final RegisteredService key, final DistributedCacheObject<RegisteredService> item, final boolean publish) {
         if (publish) {

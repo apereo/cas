@@ -34,6 +34,7 @@ public class CompositeHealthIndicatorTests {
     public static class DownHealthIndicator extends AbstractHealthIndicator {
         private final Status status;
 
+        @Override
         protected void doHealthCheck(final Health.Builder builder) {
             builder.status(status);
         }

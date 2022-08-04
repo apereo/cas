@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
     private final AuthenticationManager authenticationManager;
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationTransactionManager handle(@NonNull final AuthenticationTransaction authenticationTransaction,
                                                    @NonNull final AuthenticationResultBuilder authenticationResult)
         throws AuthenticationException {

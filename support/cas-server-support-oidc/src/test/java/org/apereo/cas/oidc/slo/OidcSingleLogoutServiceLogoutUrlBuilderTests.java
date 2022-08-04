@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 public class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTests {
 
+    @Override
     @BeforeEach
     public void initialize() throws Exception {
         servicesManager.deleteAll();

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.beans;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -120,6 +121,7 @@ public interface BeanContainer<T> {
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanContainer<T> and(final T entry) {
             items.add(entry);
             return this;

@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,7 @@ public class DuoSecurityUserAccount implements Serializable {
      * @param group the group
      * @return the duo security user account
      */
+    @CanIgnoreReturnValue
     public DuoSecurityUserAccount addGroup(final DuoSecurityUserAccountGroup group) {
         this.groups.add(group);
         return this;
@@ -65,6 +67,7 @@ public class DuoSecurityUserAccount implements Serializable {
      * @param codes the codes
      * @return the duo security user account
      */
+    @CanIgnoreReturnValue
     public DuoSecurityUserAccount addBypassCodes(final List<DuoSecurityBypassCode> codes) {
         this.bypassCodes.addAll(codes);
         return this;
@@ -76,6 +79,7 @@ public class DuoSecurityUserAccount implements Serializable {
      * @param device the device
      * @return the duo security user account
      */
+    @CanIgnoreReturnValue
     public DuoSecurityUserAccount addDevice(final DuoSecurityUserDevice device) {
         this.devices.add(device);
         return this;
@@ -88,6 +92,7 @@ public class DuoSecurityUserAccount implements Serializable {
      * @param value the value
      * @return the duo security user account
      */
+    @CanIgnoreReturnValue
     public DuoSecurityUserAccount addAttribute(final String key, final String value) {
         if (!StringUtils.equalsAnyIgnoreCase("null", value) && StringUtils.isNotBlank(value)) {
             this.metadata.put(key, value);

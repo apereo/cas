@@ -32,6 +32,7 @@ import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.yubico.core.DefaultSessionManager;
 import com.yubico.core.InMemoryRegistrationStorage;
 import com.yubico.core.SessionManager;
@@ -430,6 +431,7 @@ public class WebAuthnConfiguration {
                 final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
                 return new ProtocolEndpointWebSecurityConfigurer<>() {
                     @Override
+                    @CanIgnoreReturnValue
                     public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                         Unchecked.consumer(sec -> http.csrf(customizer -> {
                             val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");

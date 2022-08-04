@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,7 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
     private final Collection<Authentication> authentications = new ArrayList<>();
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationTransaction collect(final Collection<Authentication> authentications) {
         this.authentications.addAll(authentications);
         return this;

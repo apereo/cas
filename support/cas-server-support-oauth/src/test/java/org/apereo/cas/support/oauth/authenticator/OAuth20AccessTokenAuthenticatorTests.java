@@ -31,6 +31,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
             ticketRegistry, accessTokenJwtBuilder);
     }
 
+    @Override
     @BeforeEach
     public void initialize() {
         super.initialize();

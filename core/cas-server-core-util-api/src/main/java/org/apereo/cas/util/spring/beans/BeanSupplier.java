@@ -2,6 +2,7 @@ package org.apereo.cas.util.spring.beans;
 
 import org.apereo.cas.util.ResourceUtils;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -171,24 +172,28 @@ public interface BeanSupplier<T> extends Supplier<T> {
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanSupplier<T> when(final Supplier<Boolean> conditionSupplier) {
             this.conditionSuppliers.add(conditionSupplier);
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanSupplier<T> supply(final Supplier<T> beanSupplier) {
             this.beanSupplier = beanSupplier;
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanSupplier<T> otherwise(final Supplier<T> beanSupplier) {
             this.proxySupplier = beanSupplier;
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanSupplier<T> otherwiseProxy() {
             return otherwise(new ProxiedBeanSupplier<>(this.clazz));
         }
