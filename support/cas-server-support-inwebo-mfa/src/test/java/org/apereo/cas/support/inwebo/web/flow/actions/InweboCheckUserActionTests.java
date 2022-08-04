@@ -28,6 +28,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
 
     private InweboCheckUserAction action;
 
+    @Override
     @BeforeEach
     public void setUp() {
         super.setUp();

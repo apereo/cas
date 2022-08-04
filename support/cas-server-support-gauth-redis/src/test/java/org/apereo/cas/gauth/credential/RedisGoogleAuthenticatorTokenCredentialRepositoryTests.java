@@ -87,6 +87,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends Base
         assertEquals(0, registry.count());
     }
 
+    @Override
     @Test
     public void verifySaveAndUpdate() {
         val id = UUID.randomUUID().toString();

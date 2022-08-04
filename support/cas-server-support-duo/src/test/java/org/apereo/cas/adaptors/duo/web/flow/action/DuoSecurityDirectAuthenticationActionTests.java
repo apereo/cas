@@ -52,6 +52,7 @@ public class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMu
 
     private RequestContext context;
 
+    @Override
     @BeforeEach
     public void setup() {
         super.setup();

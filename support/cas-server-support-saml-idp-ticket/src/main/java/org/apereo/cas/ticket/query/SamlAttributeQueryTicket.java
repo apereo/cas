@@ -35,5 +35,6 @@ public interface SamlAttributeQueryTicket extends ServiceTicket {
      *
      * @return the authentication
      */
+    @Override
     Authentication getAuthentication();
 }

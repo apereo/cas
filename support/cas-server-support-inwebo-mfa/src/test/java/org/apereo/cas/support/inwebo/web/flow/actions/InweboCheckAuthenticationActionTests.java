@@ -25,6 +25,7 @@ public class InweboCheckAuthenticationActionTests extends BaseActionTests {
 
     private Action action;
 
+    @Override
     @BeforeEach
     public void setUp() {
         super.setUp();

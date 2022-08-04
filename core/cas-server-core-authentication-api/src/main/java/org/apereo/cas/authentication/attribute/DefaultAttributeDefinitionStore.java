@@ -9,6 +9,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -72,11 +73,13 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AttributeDefinitionStore registerAttributeDefinition(final AttributeDefinition defn) {
         return registerAttributeDefinition(defn.getKey(), defn);
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AttributeDefinitionStore registerAttributeDefinition(final String key, final AttributeDefinition defn) {
         LOGGER.trace("Registering attribute definition [{}] by key [{}]", defn, key);
 
@@ -92,6 +95,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AttributeDefinitionStore removeAttributeDefinition(final String key) {
         LOGGER.debug("Removing attribute definition by key [{}]", key);
 
@@ -157,6 +161,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
 
 
     @Override
+    @CanIgnoreReturnValue
     public AttributeDefinitionStore store(final Resource resource) {
         return FunctionUtils.doUnchecked(() -> {
             val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);

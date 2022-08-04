@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -12,6 +13,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -29,10 +31,10 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link OidcIdTokenGeneratorService}.
@@ -68,7 +70,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val claims = buildJwtClaims(accessToken, timeout, oidcRegisteredService, responseType, grantType);
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
-    
+
     /**
      * Produce claims as jwt.
      * As per OpenID Connect Core section 5.4, 'The Claims requested by the profile,
@@ -230,9 +232,15 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                + OAuth20Constants.BASE_OAUTH20_URL + '/'
                                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
-        val oAuthServiceTicket = Stream.concat(
-                tgt.getServices().entrySet().stream(),
-                tgt.getProxyGrantingTickets().entrySet().stream())
+        val streamServices = new LinkedHashMap<String, Service>();
+        if (tgt instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
+            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) tgt).getServices();
+            streamServices.putAll(services);
+        }
+        streamServices.putAll(tgt.getProxyGrantingTickets());
+
+        val oAuthServiceTicket = streamServices.entrySet()
+            .stream()
             .filter(e -> {
                 val service = getConfigurationContext().getServicesManager().findServiceBy(e.getValue());
                 return service != null && service.getServiceId().equals(oAuthCallbackUrl);

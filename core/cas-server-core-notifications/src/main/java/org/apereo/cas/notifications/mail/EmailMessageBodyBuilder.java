@@ -6,6 +6,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import groovy.text.GStringTemplateEngine;
 import lombok.Builder;
 import lombok.NonNull;
@@ -50,6 +51,7 @@ public class EmailMessageBodyBuilder {
      * @param object the object
      * @return the email message body builder
      */
+    @CanIgnoreReturnValue
     public EmailMessageBodyBuilder addParameter(final String key, final Object object) {
         parameters.put(key, object);
         return this;

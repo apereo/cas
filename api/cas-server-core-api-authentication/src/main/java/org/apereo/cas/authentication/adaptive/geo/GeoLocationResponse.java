@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,6 +42,7 @@ public class GeoLocationResponse implements Serializable {
      * @param address the address
      * @return the geo location response
      */
+    @CanIgnoreReturnValue
     public GeoLocationResponse addAddress(final String address) {
         if (StringUtils.isNotBlank(address)) {
             this.addresses.add(address);

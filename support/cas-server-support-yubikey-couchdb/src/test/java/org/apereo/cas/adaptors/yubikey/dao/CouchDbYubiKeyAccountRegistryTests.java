@@ -64,6 +64,7 @@ public class CouchDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRe
     @Qualifier("yubikeyAccountCipherExecutor")
     private CipherExecutor yubikeyAccountCipherExecutor;
 
+    @Override
     @BeforeEach
     public void setUp() {
         couchDbInstance.createDatabaseIfNotExists(couchDbConnector.getDatabaseName());

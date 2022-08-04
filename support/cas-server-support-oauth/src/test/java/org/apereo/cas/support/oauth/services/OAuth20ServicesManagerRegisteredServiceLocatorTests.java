@@ -39,6 +39,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends Abstrac
     @Qualifier("oauthServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator;
 
+    @Override
     @BeforeEach
     public void setup() {
         super.setup();

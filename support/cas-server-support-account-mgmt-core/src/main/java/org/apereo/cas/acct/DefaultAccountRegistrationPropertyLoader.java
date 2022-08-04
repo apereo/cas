@@ -4,6 +4,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.hjson.JsonValue;
@@ -43,6 +44,7 @@ public class DefaultAccountRegistrationPropertyLoader implements AccountRegistra
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AccountRegistrationPropertyLoader store(final Map<String, AccountRegistrationProperty> map) {
         Unchecked.consumer(input -> MAPPER.writerWithDefaultPrettyPrinter().writeValue(resource.getFile(), input)).accept(map);
         return this;

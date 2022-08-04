@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -51,6 +52,7 @@ public class CouchDbSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
      * @param doc other doc
      * @return this
      */
+    @CanIgnoreReturnValue
     public CouchDbSamlIdPMetadataDocument merge(final SamlIdPMetadataDocument doc) {
         setId(doc.getId());
         setMetadata(doc.getMetadata());

@@ -60,6 +60,7 @@ import java.util.Objects;
 @UtilityClass
 public class SamlUtils {
     private static final ThreadLocal<TransformerFactory> TRANSFORMER_FACTORY_INSTANCE = new ThreadLocal<>() {
+        @Override
         protected synchronized TransformerFactory initialValue() {
             return TransformerFactory.newInstance();
         }

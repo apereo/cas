@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -193,17 +194,19 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected int deleteChildren(final TicketGrantingTicket ticket) {
         val count = new AtomicLong(0);
-        val services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            services.keySet().forEach(ticketId -> {
-                val deleteCount = deleteSingleTicket(ticketId);
-                if (deleteCount > 0) {
-                    LOGGER.debug("Removed ticket [{}]", ticketId);
-                    count.getAndAdd(deleteCount);
-                } else {
-                    LOGGER.debug("Unable to remove ticket [{}]", ticketId);
-                }
-            });
+        if (ticket instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
+            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticket).getServices();
+            if (services != null && !services.isEmpty()) {
+                services.keySet().forEach(ticketId -> {
+                    val deleteCount = deleteSingleTicket(ticketId);
+                    if (deleteCount > 0) {
+                        LOGGER.debug("Removed ticket [{}]", ticketId);
+                        count.getAndAdd(deleteCount);
+                    } else {
+                        LOGGER.debug("Unable to remove ticket [{}]", ticketId);
+                    }
+                });
+            }
         }
         return count.intValue();
     }

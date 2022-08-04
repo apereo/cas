@@ -34,10 +34,9 @@ import static org.mockito.Mockito.*;
 @Tag("OIDC")
 public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
 
-    private CasCookieBuilder ticketGrantingTicketCookieGenerator;
-
     private TicketGrantingTicket ticketGrantingTicket;
 
+    @Override
     @BeforeEach
     public void initialize() throws Exception {
         super.initialize();

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -131,36 +132,42 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder setPrincipal(final Principal p) {
         this.principal = p;
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addCredentials(final List<CredentialMetaData> credentials) {
         this.credentials.addAll(credentials);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addCredential(final CredentialMetaData credential) {
         this.credentials.add(credential);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addWarnings(final List<MessageDescriptor> warning) {
         this.warnings.addAll(warning);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addWarning(final MessageDescriptor warning) {
         this.warnings.add(warning);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder setWarnings(final List<MessageDescriptor> warning) {
         this.warnings.clear();
         this.warnings.addAll(warning);
@@ -168,29 +175,34 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addAttribute(final String key, final List<Object> value) {
         this.attributes.put(key, value);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addAttribute(final String key, final Object value) {
         return addAttribute(key, CollectionUtils.toCollection(value, ArrayList.class));
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder setSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
         this.successes.clear();
         return addSuccesses(successes);
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addAttributes(final Map<String, Object> attributes) {
         attributes.forEach(this::addAttribute);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
         if (successes != null) {
             successes.forEach(this::addSuccess);
@@ -199,6 +211,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addFailures(final @NonNull Map<String, Throwable> failures) {
         if (failures != null) {
             failures.forEach(this::addFailure);
@@ -207,6 +220,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addSuccess(final String key, final AuthenticationHandlerExecutionResult value) {
         LOGGER.trace("Recording authentication handler result success under key [{}]", key);
         if (this.successes.containsKey(key)) {
@@ -218,6 +232,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
         if (d != null) {
             this.authenticationDate = d;
@@ -226,6 +241,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public Authentication build() {
         val resultingCredentials = new LinkedHashMap<String, DetailedCredentialMetaData>();
         credentials
@@ -249,12 +265,14 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder setFailures(final @NonNull Map<String, Throwable> failures) {
         this.failures.clear();
         return addFailures(failures);
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder addFailure(final String key, final Throwable value) {
         LOGGER.trace("Recording authentication handler failure under key [{}]", key);
         if (this.successes.containsKey(key)) {
@@ -269,6 +287,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder setAttributes(final Map<String, List<Object>> attributes) {
         this.attributes.clear();
         this.attributes.putAll(attributes);
@@ -276,11 +295,13 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder mergeAttribute(final String key, final Object value) {
         return mergeAttribute(key, CollectionUtils.toCollection(value, ArrayList.class));
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationBuilder mergeAttribute(final String key, final List<Object> value) {
         val currentValue = this.attributes.get(key);
         if (currentValue == null) {
@@ -292,6 +313,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public boolean hasAttribute(final String name, final Predicate<Object> predicate) {
         if (this.attributes.containsKey(name)) {
             val value = this.attributes.get(name);
@@ -307,6 +329,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @param credentials Non-null list of credential metadata.
      * @return This builder instance.
      */
+    @CanIgnoreReturnValue
     public AuthenticationBuilder setCredentials(final @NonNull List<CredentialMetaData> credentials) {
         this.credentials.clear();
         this.credentials.addAll(credentials);

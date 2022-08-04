@@ -4,7 +4,6 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -37,10 +36,7 @@ import static org.mockito.Mockito.*;
 public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20Tests {
     @Mock
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
-
-    @Mock
-    private TicketRegistry ticketRegistry;
-
+    
     @BeforeEach
     public void initialize() {
         MockitoAnnotations.openMocks(this);

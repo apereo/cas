@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -49,6 +50,7 @@ public class CouchDbSamlMetadataDocument extends SamlMetadataDocument {
      * @param document other document to merge in
      * @return this
      */
+    @CanIgnoreReturnValue
     public CouchDbSamlMetadataDocument merge(final SamlMetadataDocument document) {
         setId(document.getId());
         setName(document.getName());

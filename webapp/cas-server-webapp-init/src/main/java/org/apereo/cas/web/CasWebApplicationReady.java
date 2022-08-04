@@ -10,6 +10,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import java.time.Instant;
 
 /**
+ * Application listener that gets invoked with the context gets ready.
+ * 
  * @author Hal Deadman
  * @since 6.6.0
  */

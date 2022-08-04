@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -78,6 +79,7 @@ public class SingleSignOnParticipationRequest {
      * @param value the value
      * @return the single sign on participation request
      */
+    @CanIgnoreReturnValue
     public SingleSignOnParticipationRequest attribute(final String key, final Object value) {
         this.attributes.put(key, value);
         return this;

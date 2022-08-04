@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.web.servlet.ThemeResolver;
@@ -28,6 +29,7 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
      * @param r the resolver
      * @return the chaining theme resolver
      */
+    @CanIgnoreReturnValue
     public ChainingThemeResolver addResolver(final ThemeResolver r) {
         chain.add(r);
         return this;

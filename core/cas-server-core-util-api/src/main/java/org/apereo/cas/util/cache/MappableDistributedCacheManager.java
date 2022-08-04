@@ -2,6 +2,7 @@ package org.apereo.cas.util.cache;
 
 import org.apereo.cas.util.PublisherIdentifier;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -41,6 +42,7 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<K, V, PublisherIdentifier> set(final K key,
                                                                   final V item,
                                                                   final boolean publish) {
@@ -59,6 +61,7 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<K, V, PublisherIdentifier> update(final K key, final V item,
                                                                      final boolean publish) {
         remove(key, item, publish);
@@ -67,6 +70,7 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<K, V, PublisherIdentifier> remove(final K key, final V item,
                                                                      final boolean publish) {
         val cacheKey = buildKey(key);

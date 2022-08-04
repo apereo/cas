@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Tag("OAuth")
 public class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
+    @Override
     @BeforeEach
     public void setup() {
         super.setup();

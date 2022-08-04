@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.http.HttpHeaders;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
@@ -105,10 +104,6 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     @Autowired
     @Qualifier("umaFindPolicyForResourceSetEndpointController")
     protected UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController;
-
-    @Autowired
-    @Qualifier("oauthDistributedSessionStore")
-    protected SessionStore oauthDistributedSessionStore;
 
     @Autowired
     @Qualifier("umaDeletePolicyForResourceSetEndpointController")

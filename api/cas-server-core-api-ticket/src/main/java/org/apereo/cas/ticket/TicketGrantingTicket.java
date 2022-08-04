@@ -41,14 +41,7 @@ public interface TicketGrantingTicket extends TicketGrantingTicketAwareTicket {
                                      ExpirationPolicy expirationPolicy,
                                      boolean credentialProvided,
                                      ServiceTicketSessionTrackingPolicy trackingPolicy);
-
-    /**
-     * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
-     *
-     * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
-     */
-    Map<String, Service> getServices();
-
+    
     /**
      * Gets proxy granting tickets created by this TGT.
      *

@@ -6,6 +6,7 @@ import org.apereo.cas.util.RandomUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -77,6 +78,7 @@ public class CouchDbConsentDecision extends ConsentDecision {
      * @param other decision to copy details from.
      * @return CouchDb capable consent decision.
      */
+    @CanIgnoreReturnValue
     public CouchDbConsentDecision copyDetailsFrom(final ConsentDecision other) {
         setAttributes(other.getAttributes());
         setPrincipal(other.getPrincipal());

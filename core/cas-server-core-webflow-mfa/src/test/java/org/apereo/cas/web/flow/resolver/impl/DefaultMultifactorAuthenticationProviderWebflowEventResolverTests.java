@@ -58,6 +58,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests e
     @Qualifier("globalAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver;
 
+    @Override
     @BeforeEach
     public void setup() {
         super.setup();

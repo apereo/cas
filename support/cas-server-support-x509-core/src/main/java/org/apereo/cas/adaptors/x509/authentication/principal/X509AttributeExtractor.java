@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Extract person attributes from the certificate.
+ * 
  * @author Hal Deadman
  * @since 6.4
  */
@@ -13,6 +15,7 @@ public interface X509AttributeExtractor {
 
     /**
      * Extract various attributes from the certificate about the person.
+     * 
      * @param certificate X509 Certificate
      * @return Map of the attributes
      */

@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -145,6 +146,7 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
     }
 
     @Override
+    @CanIgnoreReturnValue
     public TicketGrantingTicket getRoot() {
         return this;
     }

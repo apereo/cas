@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -51,10 +50,7 @@ public class RiskAwareAuthenticationWebflowEventResolverTests extends BaseWebflo
     @Autowired
     @Qualifier("riskAwareAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @Test
     public void verifyNoResolution() {
         assertNotNull(riskAwareAuthenticationWebflowEventResolver);
