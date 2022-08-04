@@ -322,7 +322,7 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.updateTicket(tgt);
         val tgtResult = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertTrue(tgtResult instanceof AuthenticatedServicesAwareTicketGrantingTicket);
-        services = ((AuthenticatedServicesAwareTicketGrantingTicket) found).getServices();
+        services = ((AuthenticatedServicesAwareTicketGrantingTicket) tgtResult).getServices();
         assertEquals(Collections.singleton("ST1"), services.keySet());
     }
 

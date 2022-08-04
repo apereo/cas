@@ -28,6 +28,8 @@ dependencies {
     api libraries.opensaml
     api libraries.shibutiljavasupport
 
+    runtimeOnly libraries.casclient
+
     implementation libraries.nimbus
     implementation libraries.apachevelocity
     implementation libraries.dropwizard
