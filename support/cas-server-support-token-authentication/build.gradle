@@ -17,7 +17,7 @@ dependencies {
     
     implementation libraries.pac4jcore
     implementation libraries.pac4jjwt
-    implementation libraries.casclient
+
     implementation libraries.nimbus
     implementation libraries.jose4j
     

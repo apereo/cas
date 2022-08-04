@@ -41,7 +41,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-consent-api")
     compileOnly project(":support:cas-server-support-pac4j-webflow")
 
-    implementation libraries.casclient
+
     implementation libraries.pac4jcore
     implementation libraries.shibutiljavasupport
 

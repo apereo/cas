@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -17,7 +18,6 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.jasig.cas.client.validation.Assertion;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -100,8 +100,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         return postResponseBackToRelyingParty(rpToken, fedRequest);
     }
 
-    private SecurityToken fetchSecurityTokenFromAssertion(final Assertion assertion, final Service targetService) {
-        val principal = assertion.getPrincipal().getName();
+    private SecurityToken fetchSecurityTokenFromAssertion(final TicketValidator.ValidationResult assertion, final Service targetService) {
+        val principal = assertion.getPrincipal().getId();
         val token = getConfigContext().getSecurityTokenServiceTokenFetcher().fetch(targetService, principal);
         if (token.isEmpty()) {
             LOGGER.warn("No security token could be retrieved for service [{}] and principal [{}]", targetService, principal);
@@ -128,15 +128,15 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
     private String produceRelyingPartyToken(final HttpServletRequest request, final Service targetService,
                                             final WSFederationRequest fedRequest, final SecurityToken securityToken,
-                                            final Assertion assertion) throws Exception {
+                                            final TicketValidator.ValidationResult assertion) throws Exception {
         val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Located registered service [{}] to create relying-party tokens...", service);
         return getConfigContext().getRelyingPartyTokenProducer().produce(securityToken, service, fedRequest, request, assertion);
     }
 
-    private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
-                                                          final HttpServletRequest request,
-                                                          final WSFederationRequest fedRequest) throws Exception {
+    private TicketValidator.ValidationResult validateRequestAndBuildCasAssertion(final HttpServletResponse response,
+                                                                                 final HttpServletRequest request,
+                                                                                 final WSFederationRequest fedRequest) throws Exception {
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);

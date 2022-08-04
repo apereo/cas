@@ -1,6 +1,5 @@
 package org.apereo.cas.ws.idp.web;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -19,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.http.client.utils.URIBuilder;
-import org.jasig.cas.client.util.CommonUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -73,13 +71,11 @@ public abstract class BaseWSFederationRequestController {
         if (StringUtils.isNotBlank(wsfedRequest.getWreq())) {
             builder.addParameter(WSFederationConstants.WREQ, wsfedRequest.getWreq());
         }
-        val url = builder.build();
+        val url = builder.build().toASCIIString();
         LOGGER.trace("Built service callback url [{}]", url);
-        return CommonUtils.constructServiceUrl(request, response,
-            url.toString(), configContext.getCasProperties().getServer().getName(),
-            CasProtocolConstants.PARAMETER_SERVICE,
-            CasProtocolConstants.PARAMETER_TICKET, false);
+        return url;
     }
+
 
     /**
      * Gets security token from request.

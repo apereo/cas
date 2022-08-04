@@ -50,6 +50,7 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.UrlDecodingHTTPRedirectDe
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractor;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.InternalTicketValidator;
@@ -68,7 +69,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
@@ -443,7 +443,7 @@ public class SamlIdPEndpointsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new InternalTicketValidator(centralAuthenticationService, samlIdPServiceFactory,
                 authenticationAttributeReleasePolicy, servicesManager);
@@ -502,7 +502,7 @@ public class SamlIdPEndpointsConfiguration {
         @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext(
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,

@@ -19,9 +19,11 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderCo
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -37,8 +39,6 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.validation.Assertion;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
@@ -88,14 +88,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      *
      * @param assertion the assertion
      */
-    protected static void logCasValidationAssertion(final Assertion assertion) {
-        LOGGER.debug("CAS Assertion Valid: [{}]", assertion.isValid());
-        LOGGER.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal().getName());
-        LOGGER.debug("CAS Assertion authentication Date: [{}]", assertion.getAuthenticationDate());
-        LOGGER.debug("CAS Assertion ValidFrom Date: [{}]", assertion.getValidFromDate());
-        LOGGER.debug("CAS Assertion ValidUntil Date: [{}]", assertion.getValidUntilDate());
-        LOGGER.debug("CAS Assertion Attributes: [{}]", assertion.getAttributes());
-        LOGGER.debug("CAS Assertion Principal Attributes: [{}]", assertion.getPrincipal().getAttributes());
+    protected static void logCasValidationAssertion(final TicketValidator.ValidationResult assertion) {
+        LOGGER.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal());
+        LOGGER.debug("CAS Assertion Authentication Attributes: [{}]", assertion.getAttributes());
+        LOGGER.debug("CAS Assertion Service: [{}]", assertion.getService());
     }
 
     /**
@@ -249,9 +245,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("Created service url [{}]", DigestUtils.abbreviate(serviceUrl));
 
         val properties = configurationContext.getCasProperties();
-        val urlToRedirectTo = CommonUtils.constructRedirectUrl(properties.getServer().getLoginUrl(),
-            CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
-            authnRequest.isPassive());
+        val urlToRedirectTo = constructRedirectUrl(properties.getServer().getLoginUrl(),
+            serviceUrl, authnRequest.isForceAuthn(), authnRequest.isPassive());
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
 
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
@@ -268,6 +263,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val mv = new ModelAndView(new RedirectView(urlToRedirectTo));
         mv.setStatus(HttpStatus.FOUND);
         return mv;
+    }
+
+    private static String constructRedirectUrl(final String casServerLoginUrl,
+                                               final String serviceUrl, final boolean renew,
+                                               final boolean gateway) {
+        return casServerLoginUrl + '?' + CasProtocolConstants.PARAMETER_SERVICE + '='
+               + EncodingUtils.urlEncode(serviceUrl)
+               + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
+               + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
     }
 
     /**
@@ -291,12 +295,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
         storeAuthenticationRequest(request, response, pair);
         val url = builder.buildURL();
-
         LOGGER.trace("Built service callback url [{}]", url);
-        return CommonUtils.constructServiceUrl(request, response,
-            url, configurationContext.getCasProperties().getServer().getName(),
-            CasProtocolConstants.PARAMETER_SERVICE,
-            CasProtocolConstants.PARAMETER_TICKET, false);
+        return url;
     }
 
     /**

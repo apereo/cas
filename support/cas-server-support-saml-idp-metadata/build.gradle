@@ -22,7 +22,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")
     
-    implementation libraries.casclient
+
     implementation libraries.shibutiljavasupport
 
     testImplementation project(":core:cas-server-core-web")

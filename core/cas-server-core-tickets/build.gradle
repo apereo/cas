@@ -3,8 +3,6 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":core:cas-server-core-tickets-api")
 
-    implementation libraries.casclient
-
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-util-api")

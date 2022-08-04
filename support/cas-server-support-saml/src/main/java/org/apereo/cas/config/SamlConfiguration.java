@@ -140,7 +140,7 @@ public class SamlConfiguration {
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new Saml10SuccessResponseView(protocolAttributeEncoder, servicesManager,
                 argumentExtractor, authenticationAttributeReleasePolicy,
@@ -161,7 +161,7 @@ public class SamlConfiguration {
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new Saml10FailureResponseView(protocolAttributeEncoder, servicesManager,
                 argumentExtractor, authenticationAttributeReleasePolicy,

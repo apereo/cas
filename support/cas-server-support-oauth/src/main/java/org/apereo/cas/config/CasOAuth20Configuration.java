@@ -16,6 +16,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
@@ -120,6 +121,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
@@ -128,6 +130,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.jasig.cas.client.authentication.AttributePrincipalImpl;
+import org.jasig.cas.client.validation.AssertionImpl;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Client;
@@ -157,7 +161,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -367,6 +373,7 @@ public class CasOAuth20Configuration {
                 defaultDeviceUserCodeFactory, defaultRefreshTokenFactory,
                 ticketRegistry, casProperties);
         }
+
         @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -397,13 +404,21 @@ public class CasOAuth20Configuration {
             final CasConfigurationProperties casProperties,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             val server = casProperties.getServer();
             val cfg = new CasConfiguration(server.getLoginUrl());
             val validator = new InternalTicketValidator(centralAuthenticationService,
                 webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
-            cfg.setDefaultTicketValidator(validator);
+            cfg.setDefaultTicketValidator((ticket, service) -> {
+                val result = validator.validate(ticket, service);
+                val attrPrincipal = new AttributePrincipalImpl(result.getPrincipal().getId(), (Map) result.getPrincipal().getAttributes());
+                val registeredService = (RegisteredService) result.getContext().get(RegisteredService.class.getName());
+                val assertion = (Assertion) result.getContext().get(Assertion.class.getName());
+                val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
+                    assertion.getPrimaryAuthentication(), assertion, new HashMap<>(0), registeredService);
+                return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes);
+            });
             val oauthCasClient = new CasClient(cfg);
             oauthCasClient.setRedirectionActionBuilder((webContext, sessionStore) ->
                 oauthCasClientRedirectActionBuilder.build(oauthCasClient, webContext));

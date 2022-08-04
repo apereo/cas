@@ -1,12 +1,12 @@
 package org.apereo.cas.token;
 
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -14,11 +14,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jasig.cas.client.validation.TicketValidator;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,30 +47,23 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     @Override
     public String build(final String serviceTicketId, final WebApplicationService webApplicationService) {
         val assertion = FunctionUtils.doUnchecked(() -> ticketValidator.validate(serviceTicketId, webApplicationService.getId()));
-        val attributes = (Map) CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(assertion.getAttributes());
-        attributes.putAll(CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(assertion.getPrincipal().getAttributes()));
+        val attributes = new LinkedHashMap(assertion.getAttributes());
+        attributes.putAll(assertion.getPrincipal().getAttributes());
 
         LOGGER.trace("Assertion attributes received are [{}]", attributes);
         val registeredService = servicesManager.findServiceBy(webApplicationService);
         val finalAttributes = ProtocolAttributeEncoder.decodeAttributes(attributes, registeredService, webApplicationService);
         LOGGER.debug("Final attributes decoded are [{}]", finalAttributes);
 
-        val validUntilDate = FunctionUtils.doIf(
-            assertion.getValidUntilDate() != null,
-            assertion::getValidUntilDate,
-            () -> {
-                val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive());
-                return DateTimeUtils.dateOf(dt);
-            })
-            .get();
-
+        val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive());
+        val validUntilDate = DateTimeUtils.dateOf(dt);
         val builder = JwtBuilder.JwtRequest.builder();
         val request = builder
             .registeredService(Optional.ofNullable(registeredService))
             .serviceAudience(webApplicationService.getId())
-            .issueDate(assertion.getAuthenticationDate())
+            .issueDate(new Date())
             .jwtId(serviceTicketId)
-            .subject(assertion.getPrincipal().getName())
+            .subject(assertion.getPrincipal().getId())
             .validUntilDate(validUntilDate)
             .attributes(finalAttributes)
             .issuer(casProperties.getServer().getPrefix())

@@ -17,6 +17,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObj
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPLogoutResponseObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -28,7 +29,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.core.xml.XMLObject;
 import org.pac4j.core.context.session.SessionStore;
 

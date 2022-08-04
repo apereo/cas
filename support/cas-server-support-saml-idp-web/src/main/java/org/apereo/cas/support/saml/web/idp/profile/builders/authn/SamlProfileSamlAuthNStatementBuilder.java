@@ -18,7 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.jasig.cas.client.util.CommonUtils;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 
@@ -35,7 +34,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
     private static final long serialVersionUID = 8761566449790497226L;
 
-    private final transient SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder;
+    private final SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder;
 
     private final CasConfigurationProperties casProperties;
 
@@ -66,22 +65,23 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
     private AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
         val authenticationMethod = authnContextClassRefBuilder.build(context);
-        var id = context.getHttpRequest() != null ? CommonUtils.safeGetParameter(context.getHttpRequest(),
-            CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;
+        var id = Optional.ofNullable(context.getHttpRequest())
+            .map(request -> request.getParameter(CasProtocolConstants.PARAMETER_TICKET))
+            .filter(StringUtils::isNotBlank)
+            .orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(id)) {
             LOGGER.info("Unable to locate service ticket as the session index; Generating random identifier instead...");
             id = '_' + String.valueOf(RandomUtils.nextLong());
         }
         val statement = newAuthnStatement(authenticationMethod,
             DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getAuthenticationDate()), id);
-        if (context.getAuthenticatedAssertion().getValidUntilDate() != null) {
-            val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getValidUntilDate());
+        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getValidUntilDate());
 
-            val skewAllowance = context.getRegisteredService().getSkewAllowance() > 0
-                ? context.getRegisteredService().getSkewAllowance()
-                : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
-            statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
-        }
+        val skewAllowance = context.getRegisteredService().getSkewAllowance() > 0
+            ? context.getRegisteredService().getSkewAllowance()
+            : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
+        statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
+        
         val subjectLocality = buildSubjectLocality(context);
         if (subjectLocality != null) {
             statement.setSubjectLocality(subjectLocality);

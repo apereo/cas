@@ -243,7 +243,7 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "cas3ServiceSuccessView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas3ServiceSuccessView(
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("casAttributeEncoder")
             final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -352,7 +352,7 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "cas1ServiceSuccessView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas1ServiceSuccessView(
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("casAttributeEncoder")
             final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -370,7 +370,7 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "cas1ServiceFailureView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas1ServiceFailureView(
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("casAttributeEncoder")
             final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -388,7 +388,7 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "cas2ServiceSuccessView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2ServiceSuccessView(
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("casAttributeEncoder")
             final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -407,7 +407,7 @@ public class CasValidationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "cas3ServiceJsonView")
         public View cas3ServiceJsonView(
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("casAttributeEncoder")
             final ProtocolAttributeEncoder protocolAttributeEncoder,
