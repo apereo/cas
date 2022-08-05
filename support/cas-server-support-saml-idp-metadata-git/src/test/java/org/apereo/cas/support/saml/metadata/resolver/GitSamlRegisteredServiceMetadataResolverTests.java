@@ -16,7 +16,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
@@ -100,12 +99,9 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
         service.setMetadataLocation("https://example.com/endswith.git");
         assertTrue(resolver.supports(service));
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                resolver.resolve(null, null);
-                resolver.saveOrUpdate(null);
-            }
+        assertDoesNotThrow(() -> {
+            resolver.resolve(null, null);
+            resolver.saveOrUpdate(null);
         });
     }
 }

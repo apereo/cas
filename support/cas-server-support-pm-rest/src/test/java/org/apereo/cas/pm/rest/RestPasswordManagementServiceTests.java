@@ -23,7 +23,6 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -229,12 +228,7 @@ public class RestPasswordManagementServiceTests {
                     props.getAuthn().getPm(),
                     passwordHistoryService);
 
-                assertDoesNotThrow(new Executable() {
-                    @Override
-                    public void execute() throws Throwable {
-                        passwordService.updateSecurityQuestions(query);
-                    }
-                });
+                assertDoesNotThrow(() -> passwordService.updateSecurityQuestions(query));
             }
         }
 

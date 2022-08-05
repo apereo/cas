@@ -15,7 +15,6 @@ import com.yubico.webauthn.data.UserIdentity;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -100,12 +99,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         webAuthnCredentialRepository.removeRegistrationByUsername(id.toUpperCase(), registration);
         assertTrue(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                webAuthnCredentialRepository.clean();
-            }
-        });
+        assertDoesNotThrow(() -> webAuthnCredentialRepository.clean());
     }
 
     protected String getUsername() {

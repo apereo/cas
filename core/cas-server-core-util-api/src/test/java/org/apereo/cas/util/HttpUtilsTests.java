@@ -4,7 +4,6 @@ import lombok.val;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
@@ -51,14 +50,11 @@ public class HttpUtilsTests {
 
     @Test
     public void verifyClose() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                HttpUtils.close(null);
-                val response = mock(CloseableHttpResponse.class);
-                doThrow(new RuntimeException()).when(response).close();
-                HttpUtils.close(response);
-            }
+        assertDoesNotThrow(() -> {
+            HttpUtils.close(null);
+            val response = mock(CloseableHttpResponse.class);
+            doThrow(new RuntimeException()).when(response).close();
+            HttpUtils.close(response);
         });
     }
 

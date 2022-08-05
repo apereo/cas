@@ -43,8 +43,6 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import com.yubico.u2f.U2F;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.val;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -149,12 +147,7 @@ public abstract class BaseU2FWebflowActionTests {
             val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
             val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 20);
             val u2f = mock(U2F.class);
-            when(u2f.startRegistration(any(), any())).thenAnswer(new Answer<>() {
-                @Override
-                public Object answer(final InvocationOnMock invocationOnMock) throws Throwable {
-                    return new U2F().startRegistration(invocationOnMock.getArgument(0), invocationOnMock.getArgument(1));
-                }
-            });
+            when(u2f.startRegistration(any(), any())).thenAnswer(invocationOnMock -> new U2F().startRegistration(invocationOnMock.getArgument(0), invocationOnMock.getArgument(1)));
             when(u2f.finishRegistration(any(), any())).thenReturn(r1);
             when(u2f.finishSignature(any(), any(), any())).thenReturn(r1);
             return u2f;

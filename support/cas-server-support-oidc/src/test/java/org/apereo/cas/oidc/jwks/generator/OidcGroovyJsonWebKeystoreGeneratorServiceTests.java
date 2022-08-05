@@ -8,7 +8,6 @@ import org.apache.commons.io.IOUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
@@ -29,12 +28,9 @@ public class OidcGroovyJsonWebKeystoreGeneratorServiceTests extends AbstractOidc
         val resource = oidcJsonWebKeystoreGeneratorService.generate();
         assertTrue(resource.exists());
         assertTrue(oidcJsonWebKeystoreGeneratorService.find().isPresent());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                val results = new String(IOUtils.toByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
-                new JsonWebKeySet(results);
-            }
+        assertDoesNotThrow(() -> {
+            val results = new String(IOUtils.toByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
+            new JsonWebKeySet(results);
         });
     }
 

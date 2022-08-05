@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,14 +32,11 @@ public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractM
     @Test
     public void verifyAction() {
         assertNotNull(mfaTrustStorageCleaner.getStorage());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                val record = getMultifactorAuthenticationTrustRecord();
-                record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
-                getMfaTrustEngine().save(record);
-                mfaTrustStorageCleaner.clean();
-            }
+        assertDoesNotThrow(() -> {
+            val record = getMultifactorAuthenticationTrustRecord();
+            record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
+            getMfaTrustEngine().save(record);
+            mfaTrustStorageCleaner.clean();
         });
     }
 }

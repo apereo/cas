@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.principal;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -20,11 +19,6 @@ public class ServiceTests {
     public void verifyOperation() {
         val policy = mock(Service.class);
         doCallRealMethod().when(policy).setPrincipal(anyString());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                policy.setPrincipal("casuser");
-            }
-        });
+        assertDoesNotThrow(() -> policy.setPrincipal("casuser"));
     }
 }

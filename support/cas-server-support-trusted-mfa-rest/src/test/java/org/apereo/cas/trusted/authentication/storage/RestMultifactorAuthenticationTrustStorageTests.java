@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -90,12 +89,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
             webServer.start();
 
             mfaTrustEngine.save(r);
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    mfaTrustEngine.remove(r.getRecordKey());
-                }
-            });
+            assertDoesNotThrow(() -> mfaTrustEngine.remove(r.getRecordKey()));
         }
     }
 
@@ -104,12 +98,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
         try (val webServer = new MockWebServer(9297,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    mfaTrustEngine.remove(ZonedDateTime.now(ZoneOffset.UTC));
-                }
-            });
+            assertDoesNotThrow(() -> mfaTrustEngine.remove(ZonedDateTime.now(ZoneOffset.UTC)));
         }
     }
 

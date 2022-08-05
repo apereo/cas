@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.Closeable;
 
@@ -28,12 +27,9 @@ public class DefaultCloseableDataSourceTests {
 
         val ds = JpaBeans.newDataSource(props);
         assertTrue(ds.getTargetDataSource() instanceof Closeable);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                ds.close();
-                ds.destroy();
-            }
+        assertDoesNotThrow(() -> {
+            ds.close();
+            ds.destroy();
         });
     }
 

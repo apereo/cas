@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.StaticApplicationContext;
@@ -33,14 +32,11 @@ public class ApplicationContextProviderTests {
         appCtx.getBeanFactory().registerSingleton("beanContainer", container);
 
         ApplicationContextProvider.holdApplicationContext(appCtx);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                val holding = new HoldingBeanContainer();
-                ApplicationContextProvider.processBeanInjections(holding);
-                assertNotNull(holding.getContainer());
-                assertEquals(2, holding.getContainer().size());
-            }
+        assertDoesNotThrow(() -> {
+            val holding = new HoldingBeanContainer();
+            ApplicationContextProvider.processBeanInjections(holding);
+            assertNotNull(holding.getContainer());
+            assertEquals(2, holding.getContainer().size());
         });
     }
 

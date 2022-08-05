@@ -9,7 +9,6 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -49,12 +48,7 @@ public class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequ
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         authenticationRiskEmailNotifier.setAuthentication(authentication);
         authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                authenticationRiskEmailNotifier.publish();
-            }
-        });
+        assertDoesNotThrow(() -> authenticationRiskEmailNotifier.publish());
     }
 
     @Test
@@ -64,11 +58,6 @@ public class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequ
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         authenticationRiskEmailNotifier.setAuthentication(authentication);
         authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                authenticationRiskEmailNotifier.publish();
-            }
-        });
+        assertDoesNotThrow(() -> authenticationRiskEmailNotifier.publish());
     }
 }

@@ -7,7 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,11 +29,6 @@ public class CasConfigurationServerServletInitializerTests {
     public void verifyInitializer() {
         val servletContext = new MockServletContext();
         val servletInitializer = new CasConfigurationServerServletInitializer();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                servletInitializer.onStartup(servletContext);
-            }
-        });
+        assertDoesNotThrow(() -> servletInitializer.onStartup(servletContext));
     }
 }

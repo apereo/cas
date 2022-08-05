@@ -12,7 +12,6 @@ import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,12 +33,9 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     public void verifyOtherConstructor() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                new CachingTicketRegistry(CipherExecutor.noOp(),
-                    new DirectObjectProvider<>(mock(LogoutManager.class)));
-            }
+        assertDoesNotThrow(() -> {
+            new CachingTicketRegistry(CipherExecutor.noOp(),
+                new DirectObjectProvider<>(mock(LogoutManager.class)));
         });
     }
 

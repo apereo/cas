@@ -31,7 +31,6 @@ import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -163,13 +162,10 @@ public class JsonResourcePasswordManagementServiceTests {
     @Test
     public void verifySecurityQuestions() {
         val query = PasswordManagementQuery.builder().username("casuser").build();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                query.securityQuestion("Q1", "A1");
-                query.securityQuestion("Q2", "A2");
-                passwordChangeService.updateSecurityQuestions(query);
-            }
+        assertDoesNotThrow(() -> {
+            query.securityQuestion("Q1", "A1");
+            query.securityQuestion("Q2", "A2");
+            passwordChangeService.updateSecurityQuestions(query);
         });
         assertFalse(passwordChangeService.getSecurityQuestions(query).isEmpty());
     }

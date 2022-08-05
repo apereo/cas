@@ -3,7 +3,6 @@ package org.apereo.cas.web.support;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,15 +26,12 @@ public class ThrottledSubmissionHandlerInterceptorTests {
         assertFalse(input.exceedsThreshold(new MockHttpServletRequest()));
         assertTrue(input.preHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object()));
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                input.release();
-                input.recordSubmissionFailure(new MockHttpServletRequest());
-                input.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), new ModelAndView());
-                input.afterConcurrentHandlingStarted(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object());
-                input.afterCompletion(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), new RuntimeException());
-            }
+        assertDoesNotThrow(() -> {
+            input.release();
+            input.recordSubmissionFailure(new MockHttpServletRequest());
+            input.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), new ModelAndView());
+            input.afterConcurrentHandlingStarted(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object());
+            input.afterCompletion(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), new RuntimeException());
         });
     }
 }

@@ -96,12 +96,7 @@ public class RegisteredServicesEventListenerTests {
         registeredService.getContacts().add(contact);
         val listener = new DefaultRegisteredServicesEventListener(this.servicesManager, casProperties, communicationsManager);
         val event = new CasRegisteredServiceExpiredEvent(this, registeredService, false);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                listener.handleRegisteredServiceExpiredEvent(event);
-            }
-        });
+        assertDoesNotThrow(() -> listener.handleRegisteredServiceExpiredEvent(event));
     }
 
     @Test

@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.core.Ordered;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,12 +31,9 @@ public class MultifactorAuthenticationProviderBypassEvaluatorTests {
         assertEquals(1, input.size());
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
         assertFalse(input.isMultifactorAuthenticationBypassed(mock(Authentication.class), "provider-id"));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                input.rememberBypass(mock(Authentication.class), mock(MultifactorAuthenticationProvider.class));
-                input.forgetBypass(mock(Authentication.class));
-            }
+        assertDoesNotThrow(() -> {
+            input.rememberBypass(mock(Authentication.class), mock(MultifactorAuthenticationProvider.class));
+            input.forgetBypass(mock(Authentication.class));
         });
     }
 }

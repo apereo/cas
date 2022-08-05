@@ -3,7 +3,6 @@ package org.apereo.cas.web.view;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -26,12 +25,7 @@ public class DynamicHtmlViewTests {
         val response = new MockHttpServletResponse();
         val view = new DynamicHtmlView("<p>Hello</p>");
         assertEquals(MediaType.TEXT_HTML_VALUE, view.getContentType());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                view.render(Map.of(), request, response);
-            }
-        });
+        assertDoesNotThrow(() -> view.render(Map.of(), request, response));
         assertNotNull(response.getContentAsString());
     }
 }

@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.validator.token.device;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,11 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InvalidOAuth20DeviceTokenExceptionTests {
     @Test
     public void verifyOperation() {
-        assertThrows(InvalidOAuth20DeviceTokenException.class, new Executable() {
-            @Override
-            public void execute() {
-                throw new InvalidOAuth20DeviceTokenException("bad-ticket-id");
-            }
+        assertThrows(InvalidOAuth20DeviceTokenException.class, () -> {
+            throw new InvalidOAuth20DeviceTokenException("bad-ticket-id");
         });
     }
 }

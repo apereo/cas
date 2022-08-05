@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,12 +84,7 @@ public class WsFederationResponseValidatorTests {
         wsFederationHelper.setClock(clock);
 
         val context = prepareContext();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context);
-            }
-        });
+        assertDoesNotThrow(() -> wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context));
     }
 
     @Test

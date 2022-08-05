@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.binding.convert.converters.Converter;
 
@@ -11,8 +10,14 @@ import org.springframework.binding.convert.converters.Converter;
  * @since 6.6.0
  */
 public class StringToCharArrayConverter implements Converter {
+    /**
+     * Single instance of this converter.
+     */
     public static final Converter INSTANCE = new StringToCharArrayConverter();
 
+    /**
+     * The identifier of this converter.
+     */
     public static final String ID = StringToCharArrayConverter.class.getSimpleName();
 
     @Override

@@ -6,7 +6,6 @@ import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,12 +37,7 @@ public class HazelcastSessionConfigurationTests {
     public void verifyOperation() {
         assertNotNull(hazelcastInstance);
         val extractor = new HazelcastSessionPrincipalNameExtractor();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                extractor.extract(new MapSession(), "casuser", mock(ValueCollector.class));
-            }
-        });
+        assertDoesNotThrow(() -> extractor.extract(new MapSession(), "casuser", mock(ValueCollector.class)));
     }
 
     @AfterEach

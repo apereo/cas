@@ -1,7 +1,7 @@
 package org.apereo.cas.util.lock;
 
-import lombok.SneakyThrows;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -41,17 +41,13 @@ public class DefaultLockRepositoryTests {
 
         val threads = new ArrayList<Thread>();
         IntStream.range(0, 10).forEach(i -> {
-            val thread = new Thread(new Runnable() {
-                @Override
-                @SneakyThrows
-                public void run() {
-                    Thread.sleep(250);
-                    repository.execute(lockKey, () -> {
-                        container.values.get(lockKey).add(UUID.randomUUID().toString());
-                        return null;
-                    });
-                }
-            });
+            val thread = new Thread(Unchecked.runnable(() -> {
+                Thread.sleep(250);
+                repository.execute(lockKey, () -> {
+                    container.values.get(lockKey).add(UUID.randomUUID().toString());
+                    return null;
+                });
+            }));
             thread.setName("Thread-" + i);
             threads.add(thread);
             thread.start();

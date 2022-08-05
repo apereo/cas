@@ -7,7 +7,6 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -42,13 +41,8 @@ public class ChainingPrincipalAttributesRepositoryTests {
             CoreAuthenticationTestUtils.getRegisteredService());
         assertNotNull(attributes);
         assertEquals(2, chain.getAttributeRepositoryIds().size());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                chain.update(CoreAuthenticationTestUtils.getPrincipal().getId(),
-                    CoreAuthenticationTestUtils.getPrincipal().getAttributes(),
-                    CoreAuthenticationTestUtils.getRegisteredService());
-            }
-        });
+        assertDoesNotThrow(() -> chain.update(CoreAuthenticationTestUtils.getPrincipal().getId(),
+            CoreAuthenticationTestUtils.getPrincipal().getAttributes(),
+            CoreAuthenticationTestUtils.getRegisteredService()));
     }
 }

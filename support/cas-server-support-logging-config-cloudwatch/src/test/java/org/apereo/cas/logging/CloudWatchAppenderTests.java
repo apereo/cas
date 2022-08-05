@@ -9,7 +9,6 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import software.amazon.awssdk.core.SdkSystemSetting;
@@ -42,14 +41,11 @@ public class CloudWatchAppenderTests {
         val appender = (CloudWatchAppender) logger.getAppenders().get("CloudWatchAppender");
         assertNotNull(appender);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                val event = mock(LogEvent.class);
-                when(event.getMessage()).thenReturn(new SimpleMessage());
-                appender.append(event);
-                IntStream.range(1, 20).forEach(idx -> logger.info("Testing CloudWatchAppender [{}]...", idx));
-            }
+        assertDoesNotThrow(() -> {
+            val event = mock(LogEvent.class);
+            when(event.getMessage()).thenReturn(new SimpleMessage());
+            appender.append(event);
+            IntStream.range(1, 20).forEach(idx -> logger.info("Testing CloudWatchAppender [{}]...", idx));
         });
         appender.stop();
     }

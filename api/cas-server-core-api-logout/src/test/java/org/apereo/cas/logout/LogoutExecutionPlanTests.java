@@ -5,7 +5,6 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -24,12 +23,9 @@ public class LogoutExecutionPlanTests {
         };
         assertTrue(plan.getLogoutPostProcessors().isEmpty());
         assertTrue(plan.getSingleLogoutServiceMessageHandlers().isEmpty());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                plan.registerSingleLogoutServiceMessageHandler(mock(SingleLogoutServiceMessageHandler.class));
-                plan.registerLogoutPostProcessor(mock(LogoutPostProcessor.class));
-            }
+        assertDoesNotThrow(() -> {
+            plan.registerSingleLogoutServiceMessageHandler(mock(SingleLogoutServiceMessageHandler.class));
+            plan.registerLogoutPostProcessor(mock(LogoutPostProcessor.class));
         });
 
     }

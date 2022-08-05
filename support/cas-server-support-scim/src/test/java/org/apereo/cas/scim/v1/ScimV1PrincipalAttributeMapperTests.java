@@ -9,7 +9,6 @@ import com.unboundid.scim.schema.CoreSchema;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.net.URI;
 import java.util.Date;
@@ -42,13 +41,10 @@ public class ScimV1PrincipalAttributeMapperTests {
         meta.setCreated(new Date());
         user.setMeta(meta);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                val mapper = new ScimV1PrincipalAttributeMapper();
-                mapper.map(user, CoreAuthenticationTestUtils.getPrincipal(),
-                    CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-            }
+        assertDoesNotThrow(() -> {
+            val mapper = new ScimV1PrincipalAttributeMapper();
+            mapper.map(user, CoreAuthenticationTestUtils.getPrincipal(),
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         });
     }
 }

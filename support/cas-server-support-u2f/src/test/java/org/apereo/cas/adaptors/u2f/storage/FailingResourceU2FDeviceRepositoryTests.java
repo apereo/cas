@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.u2f.storage;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,12 +30,9 @@ public class FailingResourceU2FDeviceRepositoryTests {
         assertTrue(failure.getRegisteredDevices().isEmpty());
         assertTrue(failure.getRegisteredDevices("user").isEmpty());
         assertNull(failure.registerDevice(U2FDeviceRegistration.builder().username("user").build()));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                failure.deleteRegisteredDevice(U2FDeviceRegistration.builder().username("user").build());
-                failure.clean();
-            }
+        assertDoesNotThrow(() -> {
+            failure.deleteRegisteredDevice(U2FDeviceRegistration.builder().username("user").build());
+            failure.clean();
         });
     }
 }

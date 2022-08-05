@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
@@ -44,11 +43,6 @@ public class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationReques
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         authenticationRiskSmsNotifier.setAuthentication(authentication);
         authenticationRiskSmsNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authenticationRiskSmsNotifier.publish();
-            }
-        });
+        assertDoesNotThrow(() -> authenticationRiskSmsNotifier.publish());
     }
 }

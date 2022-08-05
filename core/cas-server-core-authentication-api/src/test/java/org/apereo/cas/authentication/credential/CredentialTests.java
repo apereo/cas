@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.credential;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
 
@@ -51,12 +50,7 @@ public class CredentialTests {
         };
         val context = mock(ValidationContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                c.validate(context);
-            }
-        });
+        assertDoesNotThrow(() -> c.validate(context));
     }
 
     private static AbstractCredential getCredential() {

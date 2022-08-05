@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -56,12 +55,7 @@ public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
             ticket.setExpirationPolicy(new HardTimeoutExpirationPolicy(-1));
             assertThrows(IllegalArgumentException.class,
                 () -> registry.addTicket(ticket));
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    registry.shutdown();
-                }
-            });
+            assertDoesNotThrow(registry::shutdown);
         }
     }
 
@@ -77,12 +71,7 @@ public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
         defn.getProperties().setStorageName("Tickets");
         when(catalog.find(any(Ticket.class))).thenReturn(defn);
         try (val registry = new HazelcastTicketRegistry(instance, catalog, 0)) {
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() throws Exception {
-                    registry.addTicket(ticket);
-                }
-            });
+            assertDoesNotThrow(() -> registry.addTicket(ticket));
             assertNull(registry.getTicket(ticket.getId()));
         }
     }

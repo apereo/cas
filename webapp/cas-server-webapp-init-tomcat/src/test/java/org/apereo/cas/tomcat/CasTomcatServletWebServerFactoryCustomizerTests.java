@@ -10,7 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.coyote.http11.Http11AprProtocol;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -105,12 +104,7 @@ public class CasTomcatServletWebServerFactoryCustomizerTests {
         val customizer = new CasTomcatServletWebServerFactoryCustomizer(serverProperties, casProperties);
         val factory = execCustomize(customizer);
         factory.getTomcatConnectorCustomizers().forEach(c ->
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    c.customize(new Connector());
-                }
-            }));
+            assertDoesNotThrow(() -> c.customize(new Connector())));
     }
 
     @Test
@@ -144,12 +138,7 @@ public class CasTomcatServletWebServerFactoryCustomizerTests {
         factory.getTomcatConnectorCustomizers().forEach(c -> {
             val connector = new Connector(Http11AprProtocol.class.getCanonicalName());
             connector.setPort(serverProperties.getPort());
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    c.customize(connector);
-                }
-            });
+            assertDoesNotThrow(() -> c.customize(connector));
 
         });
     }
@@ -158,12 +147,7 @@ public class CasTomcatServletWebServerFactoryCustomizerTests {
         val factory = mock(TomcatServletWebServerFactory.class);
         val customizers = new ArrayList<TomcatConnectorCustomizer>();
         when(factory.getTomcatConnectorCustomizers()).thenReturn(customizers);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                customizer.customize(factory);
-            }
-        });
+        assertDoesNotThrow(() -> customizer.customize(factory));
         return factory;
     }
 

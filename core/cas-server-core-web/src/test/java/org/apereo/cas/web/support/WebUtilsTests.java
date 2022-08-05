@@ -13,7 +13,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -76,29 +75,26 @@ public class WebUtilsTests {
         assertNull(WebUtils.getAvailableAuthenticationHandleNames(context));
         
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                WebUtils.putYubiKeyMultipleDeviceRegistrationEnabled(context, true);
-                WebUtils.putInitialHttpRequestPostParameters(context);
-                WebUtils.putExistingSingleSignOnSessionAvailable(context, true);
-                WebUtils.putExistingSingleSignOnSessionPrincipal(context, CoreAuthenticationTestUtils.getPrincipal());
-                WebUtils.putAvailableAuthenticationHandleNames(context, List.of());
-                WebUtils.putPasswordManagementEnabled(context, true);
-                WebUtils.putRecaptchaPropertiesFlowScope(context, new GoogleRecaptchaProperties().setEnabled(true));
-                WebUtils.putLogoutUrls(context, Map.of());
-                val ac = OneTimeTokenAccount.builder()
-                    .validationCode(123456)
-                    .username("casuser")
-                    .name("Example")
-                    .build();
-                WebUtils.putOneTimeTokenAccount(context, ac);
-                assertNotNull(WebUtils.getOneTimeTokenAccount(context, OneTimeTokenAccount.class));
-                WebUtils.putOneTimeTokenAccounts(context, List.of(ac));
+        assertDoesNotThrow(() -> {
+            WebUtils.putYubiKeyMultipleDeviceRegistrationEnabled(context, true);
+            WebUtils.putInitialHttpRequestPostParameters(context);
+            WebUtils.putExistingSingleSignOnSessionAvailable(context, true);
+            WebUtils.putExistingSingleSignOnSessionPrincipal(context, CoreAuthenticationTestUtils.getPrincipal());
+            WebUtils.putAvailableAuthenticationHandleNames(context, List.of());
+            WebUtils.putPasswordManagementEnabled(context, true);
+            WebUtils.putRecaptchaPropertiesFlowScope(context, new GoogleRecaptchaProperties().setEnabled(true));
+            WebUtils.putLogoutUrls(context, Map.of());
+            val ac = OneTimeTokenAccount.builder()
+                .validationCode(123456)
+                .username("casuser")
+                .name("Example")
+                .build();
+            WebUtils.putOneTimeTokenAccount(context, ac);
+            assertNotNull(WebUtils.getOneTimeTokenAccount(context, OneTimeTokenAccount.class));
+            WebUtils.putOneTimeTokenAccounts(context, List.of(ac));
 
-                WebUtils.putWarnCookieIfRequestParameterPresent(null, context);
-                WebUtils.putTicketGrantingTicketInScopes(context, "ticket-id");
-            }
+            WebUtils.putWarnCookieIfRequestParameterPresent(null, context);
+            WebUtils.putTicketGrantingTicketInScopes(context, "ticket-id");
         });
         WebUtils.putCredential(context, new UsernamePasswordCredential("casuser", "password"));
         assertThrows(ClassCastException.class, () -> WebUtils.getCredential(context, OneTimeTokenCredential.class));

@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 
@@ -25,11 +24,6 @@ public class MultifactorAuthenticationProviderBeanTests {
         val input = new MultifactorAuthenticationProviderBean(
             mock(MultifactorAuthenticationProviderFactoryBean.class),
             mock(DefaultListableBeanFactory.class), List.of());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                input.onRefreshScopeRefreshed(new RefreshScopeRefreshedEvent());
-            }
-        });
+        assertDoesNotThrow(() -> input.onRefreshScopeRefreshed(new RefreshScopeRefreshedEvent()));
     }
 }

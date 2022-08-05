@@ -3,7 +3,6 @@ package org.apereo.cas.util.http;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.util.concurrent.ExecutorService;
 
@@ -27,12 +26,7 @@ public class SimpleHttpClientFactoryBeanTests {
         val exec = mock(ExecutorService.class);
         when(exec.awaitTermination(anyLong(), any())).thenThrow(new RuntimeException());
         input.setExecutorService(exec);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                input.destroy();
-            }
-        });
+        assertDoesNotThrow(input::destroy);
     }
 
 }

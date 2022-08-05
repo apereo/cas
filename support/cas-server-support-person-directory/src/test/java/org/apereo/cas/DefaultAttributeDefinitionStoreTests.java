@@ -21,7 +21,6 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -350,15 +349,12 @@ public class DefaultAttributeDefinitionStoreTests {
     @Test
     public void verifyDefinitionsReload() {
         val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                val store = new DefaultAttributeDefinitionStore(resource);
-                store.setScope("example.org");
-                Files.setLastModifiedTime(resource.getFile().toPath(), FileTime.from(Instant.now()));
-                Thread.sleep(5_000);
-                store.destroy();
-            }
+        assertDoesNotThrow(() -> {
+            val store = new DefaultAttributeDefinitionStore(resource);
+            store.setScope("example.org");
+            Files.setLastModifiedTime(resource.getFile().toPath(), FileTime.from(Instant.now()));
+            Thread.sleep(5_000);
+            store.destroy();
         });
     }
 

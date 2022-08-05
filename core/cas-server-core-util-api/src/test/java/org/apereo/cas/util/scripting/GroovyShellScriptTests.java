@@ -4,7 +4,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,24 +22,16 @@ public class GroovyShellScriptTests {
         assertNotNull(shell.getGroovyScript());
         assertNotNull(shell.getScript());
         
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
-            }
-        });
+        assertDoesNotThrow(() -> shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY));
         assertNotNull(shell.toString());
     }
 
     @Test
     public void verifyUnknownBadScript() {
         val shell = new GroovyShellScript("###$$@@@!!!***&&&");
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
-                shell.execute("run", Void.class, ArrayUtils.EMPTY_OBJECT_ARRAY);
-            }
+        assertDoesNotThrow(() -> {
+            shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
+            shell.execute("run", Void.class, ArrayUtils.EMPTY_OBJECT_ARRAY);
         });
     }
 }

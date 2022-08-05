@@ -21,7 +21,6 @@ import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -354,12 +353,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val attrs = policy.getConsentableAttributes(context);
         assertEquals(principal.getAttributes(), attrs);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                policy.setAttributeFilter(null);
-            }
-        });
+        assertDoesNotThrow(() -> policy.setAttributeFilter(null));
 
     }
 }
