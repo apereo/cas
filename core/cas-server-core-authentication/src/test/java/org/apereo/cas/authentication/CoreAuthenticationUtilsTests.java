@@ -46,7 +46,7 @@ public class CoreAuthenticationUtilsTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static void verifySerialization(final Collection<AuthenticationPolicy> policy) throws IOException {
-        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString() + ".json");
+        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID() + ".json");
         MAPPER.writeValue(file, policy);
         val readPolicy = MAPPER.readValue(file, Collection.class);
         assertEquals(policy, readPolicy);

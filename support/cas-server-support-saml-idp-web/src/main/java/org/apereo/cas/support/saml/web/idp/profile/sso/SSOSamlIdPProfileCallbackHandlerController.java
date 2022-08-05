@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * This is {@link SSOSamlIdPProfileCallbackHandlerController}, which handles
@@ -120,6 +121,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         logCasValidationAssertion(assertion);
 
         val asserted = (Assertion) assertion.getContext().get(Assertion.class.getName());
+        Objects.requireNonNull(asserted, "Validation assertion cannot be null");
         return AuthenticatedAssertionContext.builder()
             .name(assertion.getPrincipal().getId())
             .authenticationDate(DateTimeUtils.zonedDateTimeOf(asserted.getPrimaryAuthentication().getAuthenticationDate()))

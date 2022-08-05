@@ -175,7 +175,7 @@ public class CompressionUtils {
             val env = new HashMap<String, Object>();
             env.put("create", "true");
             env.put("encoding", StandardCharsets.UTF_8.name());
-            try (val zipfs = FileSystems.newFileSystem(URI.create("jar:" + file.toURI().toString()), env)) {
+            try (val zipfs = FileSystems.newFileSystem(URI.create("jar:" + file.toURI()), env)) {
                 dataStream.forEach(Unchecked.consumer(entry -> {
                     var sourceFile = converter.apply(entry);
                     if (sourceFile.exists()) {

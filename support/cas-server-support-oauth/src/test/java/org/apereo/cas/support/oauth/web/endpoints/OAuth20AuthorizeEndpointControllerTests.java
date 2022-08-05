@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@Tag("OAuth")
+@Tag("OAuthWeb")
 public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     private static final String AUTHORIZE_URL = CAS_SCHEME + "://" + CAS_SERVER + CONTEXT + "authorize";
 

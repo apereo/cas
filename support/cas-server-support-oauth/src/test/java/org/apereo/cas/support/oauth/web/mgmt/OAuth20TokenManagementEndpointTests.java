@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.oauthTokens.enabled=true",
     "management.endpoints.web.exposure.include=*"
 })
-@Tag("OAuth")
+@Tag("OAuthWeb")
 public class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20TokenManagementEndpoint")

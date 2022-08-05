@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Hal Deadman
  * @since 6.4.0
  */
-@Tag("OAuth")
+@Tag("OAuthWeb")
 @TestPropertySource(properties = {
     "cas.authn.oauth.csrf-cookie.max-age=3600",
     "cas.authn.oauth.csrf-cookie.path=/cas",

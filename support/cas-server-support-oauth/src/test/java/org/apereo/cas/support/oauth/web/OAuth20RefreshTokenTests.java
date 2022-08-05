@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@Tag("OAuth")
+@Tag("OAuthToken")
 public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
 
     @BeforeEach

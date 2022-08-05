@@ -237,6 +237,12 @@ while (( "$#" )); do
             jdbcauthentication|jdbcauthn)
                 task+="testJDBCAuthentication "
                 ;;
+            oauthtoken)
+                task+="testOAuthToken "
+                ;;
+            oauthweb)
+                task+="testOAuthWeb "
+                ;;
             oauth)
                 task+="testOAuth "
                 ;;

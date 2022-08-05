@@ -31,7 +31,7 @@ public class DistributedCacheObjectTests {
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())
             .build();
-        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString() + ".json");
+        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID() + ".json");
         MAPPER.writeValue(file, o);
         val readPolicy = MAPPER.readValue(file, DistributedCacheObject.class);
         assertEquals(o, readPolicy);

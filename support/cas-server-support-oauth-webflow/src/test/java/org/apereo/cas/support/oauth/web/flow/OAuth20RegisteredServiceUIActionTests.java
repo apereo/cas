@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseOAuth20WebflowTests.SharedTestConfiguration.class,
     properties = "spring.main.allow-bean-definition-overriding=true")
-@Tag("OAuth")
+@Tag("OAuthWeb")
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI)
