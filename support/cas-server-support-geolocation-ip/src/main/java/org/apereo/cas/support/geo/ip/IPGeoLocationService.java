@@ -29,7 +29,9 @@ public class IPGeoLocationService extends AbstractGeoLocationService {
         val geoParams = new GeolocationParams();
         geoParams.setIPAddress(address.getHostAddress());
         geoParams.setFields("geo");
+        LOGGER.debug("Fetching geolocation results for [{}]", geoParams.getIPAddress());
         val geolocation = api.getGeolocation(geoParams);
+        LOGGER.debug("Geolocation results for [{}] are [{}]", geoParams.getIPAddress(), geolocation);
         val status = HttpStatus.resolve((Integer) geolocation.getOrDefault("status", HttpStatus.BAD_REQUEST.value()));
         if (status != null && status.is2xxSuccessful()) {
             val location = new GeoLocationResponse();
@@ -39,6 +41,7 @@ public class IPGeoLocationService extends AbstractGeoLocationService {
             location.addAddress(response.getCountryName());
             return location;
         }
+        LOGGER.warn("Unable to determine geolocation results for [{}]", geoParams.getIPAddress());
         return null;
     }
 

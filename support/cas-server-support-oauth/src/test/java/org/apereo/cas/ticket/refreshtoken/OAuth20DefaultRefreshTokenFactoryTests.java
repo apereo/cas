@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("OAuth")
+@Tag("OAuthToken")
 public class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests {
     @Test
     public void verifyOperationWithExpPolicy() {

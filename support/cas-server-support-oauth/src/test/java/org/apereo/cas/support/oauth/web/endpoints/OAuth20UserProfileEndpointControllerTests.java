@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@Tag("OAuth")
+@Tag("OAuthWeb")
 public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
 
     @Autowired

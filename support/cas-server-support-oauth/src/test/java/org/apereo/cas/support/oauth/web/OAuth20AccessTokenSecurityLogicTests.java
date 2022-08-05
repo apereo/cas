@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Tag("OAuth")
+@Tag("OAuthToken")
 public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
 
     @Test

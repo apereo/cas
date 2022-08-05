@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("OAuth")
+@Tag("OAuthToken")
 public class OAuth20DeviceTokenExpirationPolicyBuilderTests extends AbstractOAuth20Tests {
     @Test
     public void verifyOperation() {

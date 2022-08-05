@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("OAuth")
+@Tag("OAuthWeb")
 public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("callbackAuthorizeController")

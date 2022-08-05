@@ -50,6 +50,8 @@ enum TestCategories {
     MsSqlServer,
     MySQL,
     OAuth,
+    OAuthToken,
+    OAuthWeb,
     OIDC,
     Oracle,
     PasswordOps,

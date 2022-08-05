@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import(BaseOAuth20WebflowTests.SharedTestConfiguration.class)
-@Tag("OAuth")
+@Tag("OAuthWeb")
 public class OAuth20WebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("oauth20LogoutWebflowConfigurer")

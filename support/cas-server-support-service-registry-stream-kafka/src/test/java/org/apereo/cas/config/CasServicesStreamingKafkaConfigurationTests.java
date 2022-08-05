@@ -70,7 +70,7 @@ public class CasServicesStreamingKafkaConfigurationTests {
             .build();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString() + ".json");
+        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID() + ".json");
         val mapper = new RegisteredServiceJsonSerializer(appCtx).getObjectMapper();
         mapper.writeValue(file, o);
         val readPolicy = mapper.readValue(file, DistributedCacheObject.class);
