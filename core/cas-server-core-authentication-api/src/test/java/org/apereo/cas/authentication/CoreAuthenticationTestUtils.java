@@ -60,7 +60,6 @@ public class CoreAuthenticationTestUtils {
         val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
-
         return usernamePasswordCredentials;
     }
 

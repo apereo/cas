@@ -36,7 +36,7 @@ public class SoapAuthenticationClient extends WebServiceGatewaySupport {
         val wss4jSecurityInterceptor = new Wss4jSecurityInterceptor();
         wss4jSecurityInterceptor.setSecurementActions("Timestamp UsernameToken");
         wss4jSecurityInterceptor.setSecurementUsername(credential.getUsername());
-        wss4jSecurityInterceptor.setSecurementPassword(credential.getPassword());
+        wss4jSecurityInterceptor.setSecurementPassword(credential.toPassword());
         setInterceptors(new ClientInterceptor[]{wss4jSecurityInterceptor});
     }
 }

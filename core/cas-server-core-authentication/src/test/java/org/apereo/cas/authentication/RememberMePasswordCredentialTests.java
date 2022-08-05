@@ -25,7 +25,7 @@ public class RememberMePasswordCredentialTests {
         c.setRememberMe(true);
 
         assertEquals("username", c.getUsername());
-        assertEquals("password", c.getPassword());
+        assertEquals("password", c.toPassword());
         assertTrue(c.isRememberMe());
     }
 }

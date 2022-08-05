@@ -107,7 +107,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
         try {
             val username = credential.getUsername();
             LOGGER.trace("Fetching token for [{}]", username);
-            val result = getAccessTokenFromUserCredentials(username, credential.getPassword());
+            val result = getAccessTokenFromUserCredentials(username, credential.toPassword());
             LOGGER.debug("Retrieved token [{}] for [{}]", result.getAccessToken(), username);
             val userInfo = getUserInfoFromGraph(result.getAccessToken());
             LOGGER.trace("Retrieved user info [{}]", userInfo);

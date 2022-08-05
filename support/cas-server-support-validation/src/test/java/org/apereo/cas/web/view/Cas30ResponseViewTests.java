@@ -154,7 +154,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         val encodedPsw = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         val password = decryptCredential(encodedPsw);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        assertEquals(password, creds.getPassword());
+        assertEquals(password, creds.toPassword());
     }
 
     @Test

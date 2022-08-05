@@ -69,7 +69,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         throws GeneralSecurityException, PreventedException {
         val attributes = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         val username = credential.getUsername();
-        val password = credential.getPassword();
+        val password = credential.toPassword();
         try {
             val dbFields = query(credential);
             if (dbFields.containsKey(properties.getFieldPassword())) {
