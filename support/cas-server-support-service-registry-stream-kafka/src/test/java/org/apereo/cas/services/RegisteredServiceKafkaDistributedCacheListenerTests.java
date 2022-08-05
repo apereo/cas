@@ -11,7 +11,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,12 +54,7 @@ public class RegisteredServiceKafkaDistributedCacheListenerTests {
             System.currentTimeMillis(),
             service, new PublisherIdentifier());
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                listener.registeredServiceDistributedCacheKafkaListener(item);
-            }
-        });
+        assertDoesNotThrow(() -> listener.registeredServiceDistributedCacheKafkaListener(item));
     }
 
     @Test
@@ -71,12 +65,7 @@ public class RegisteredServiceKafkaDistributedCacheListenerTests {
             System.currentTimeMillis(),
             service, new PublisherIdentifier());
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                listener.registeredServiceDistributedCacheKafkaListener(item);
-            }
-        });
+        assertDoesNotThrow(() -> listener.registeredServiceDistributedCacheKafkaListener(item));
     }
 
 }

@@ -17,7 +17,6 @@ import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -75,11 +74,6 @@ public class GroovyResourcePasswordManagementServiceTests {
         val query = PasswordManagementQuery.builder().username("casuser@example.org").build();
         assertFalse(passwordChangeService.getSecurityQuestions(query).isEmpty());
         query.securityQuestion("Q1", "A1");
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                passwordChangeService.updateSecurityQuestions(query);
-            }
-        });
+        assertDoesNotThrow(() -> passwordChangeService.updateSecurityQuestions(query));
     }
 }

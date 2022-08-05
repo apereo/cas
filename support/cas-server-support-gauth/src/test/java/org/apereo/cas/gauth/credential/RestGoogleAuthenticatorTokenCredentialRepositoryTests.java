@@ -14,7 +14,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -90,13 +89,10 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         try (val webServer = new MockWebServer(8550,
             new ByteArrayResource("1".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    repo.delete("casuser");
-                    repo.delete(12345);
-                    repo.deleteAll();
-                }
+            assertDoesNotThrow(() -> {
+                repo.delete("casuser");
+                repo.delete(12345);
+                repo.deleteAll();
             });
         }
     }
@@ -183,18 +179,15 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         try (val webServer = new MockWebServer(8553,
             new ByteArrayResource(entity.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    val toSave = OneTimeTokenAccount.builder()
-                        .username(account.getUsername())
-                        .secretKey(account.getSecretKey())
-                        .validationCode(0)
-                        .scratchCodes(List.of())
-                        .name(UUID.randomUUID().toString())
-                        .build();
-                    repo.save(toSave);
-                }
+            assertDoesNotThrow(() -> {
+                val toSave = OneTimeTokenAccount.builder()
+                    .username(account.getUsername())
+                    .secretKey(account.getSecretKey())
+                    .validationCode(0)
+                    .scratchCodes(List.of())
+                    .name(UUID.randomUUID().toString())
+                    .build();
+                repo.save(toSave);
             });
         }
     }

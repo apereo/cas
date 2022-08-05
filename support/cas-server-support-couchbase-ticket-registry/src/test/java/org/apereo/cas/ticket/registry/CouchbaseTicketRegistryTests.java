@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,12 +62,7 @@ public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     public void verifyFails() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                newTicketRegistry.addTicket((Ticket) null);
-            }
-        });
+        assertDoesNotThrow(() -> newTicketRegistry.addTicket((Ticket) null));
     }
 
     public static class DisposingTestExecutionListener implements TestExecutionListener {

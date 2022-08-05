@@ -32,7 +32,6 @@ import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -132,15 +131,12 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
         val registry = new MemcachedTicketRegistry(pool);
         assertNotNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));
         assertNotNull(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser").getId()));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                val client = mock(MemcachedClientIF.class);
-                when(pool.borrowObject()).thenReturn(client);
-                when(client.set(anyString(), anyInt(), any())).thenThrow(new IllegalArgumentException());
-                doThrow(new IllegalArgumentException()).when(pool).returnObject(any());
-                registry.addTicket(new MockTicketGrantingTicket("casuser"));
-            }
+        assertDoesNotThrow(() -> {
+            val client = mock(MemcachedClientIF.class);
+            when(pool.borrowObject()).thenReturn(client);
+            when(client.set(anyString(), anyInt(), any())).thenThrow(new IllegalArgumentException());
+            doThrow(new IllegalArgumentException()).when(pool).returnObject(any());
+            registry.addTicket(new MockTicketGrantingTicket("casuser"));
         });
     }
 

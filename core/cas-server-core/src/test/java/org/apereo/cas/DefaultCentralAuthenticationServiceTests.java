@@ -23,7 +23,6 @@ import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -91,11 +90,8 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
         val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService(), ctx);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                getTicketRegistry().deleteTicket(serviceTicketId.getId());
-            }
+        assertDoesNotThrow(() -> {
+            getTicketRegistry().deleteTicket(serviceTicketId.getId());
         });
     }
 

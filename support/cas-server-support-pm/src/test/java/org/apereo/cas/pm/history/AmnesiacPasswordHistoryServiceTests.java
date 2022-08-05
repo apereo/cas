@@ -5,7 +5,6 @@ import org.apereo.cas.pm.impl.history.AmnesiacPasswordHistoryService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,12 +23,9 @@ public class AmnesiacPasswordHistoryServiceTests {
         assertTrue(service.fetchAll().isEmpty());
         assertTrue(service.fetch("casuser").isEmpty());
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                service.removeAll();
-                service.remove("casuser");
-            }
+        assertDoesNotThrow(() -> {
+            service.removeAll();
+            service.remove("casuser");
         });
     }
 

@@ -5,7 +5,6 @@ import org.apereo.cas.util.MockServletContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,11 +26,6 @@ public class CasWebApplicationServletInitializerTests {
     public void verifyInitializr() {
         val servletInitializer = new CasWebApplicationServletInitializer();
         val context = new MockServletContext();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                servletInitializer.onStartup(context);
-            }
-        });
+        assertDoesNotThrow(() -> servletInitializer.onStartup(context));
     }
 }

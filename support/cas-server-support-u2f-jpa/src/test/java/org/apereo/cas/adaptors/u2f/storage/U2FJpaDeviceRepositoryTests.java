@@ -11,7 +11,6 @@ import lombok.val;
 import org.apereo.inspektr.common.Cleanable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -62,12 +61,7 @@ public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTest
 
     @Test
     public void verifyCleaner() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                cleanerScheduler.clean();
-            }
-        });
+        assertDoesNotThrow(() -> cleanerScheduler.clean());
     }
 
     @Test

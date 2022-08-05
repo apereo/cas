@@ -11,7 +11,6 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
@@ -141,12 +140,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         handler.initialize();
         handler.invoke(messageContext);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
-            }
-        });
+        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
     }
 
     @Test
@@ -158,12 +152,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         saml2ClientConfiguration.setAuthnRequestSigned(true);
         val authnRequest = builder.build(saml2MessageContext);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
-            }
-        });
+        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
 
     }
 
@@ -182,12 +171,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         val provider = new DefaultSignatureSigningParametersProvider(saml2ClientConfiguration);
         Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.getSsoDescriptor()));
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
-            }
-        });
+        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
 
     }
 }

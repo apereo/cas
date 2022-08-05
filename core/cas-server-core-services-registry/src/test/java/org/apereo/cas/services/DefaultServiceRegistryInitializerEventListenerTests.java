@@ -33,17 +33,7 @@ public class DefaultServiceRegistryInitializerEventListenerTests {
                 listener.handleConfigurationModifiedEvent(new CasConfigurationModifiedEvent(this, true));
             }
         });
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                listener.handleEnvironmentChangeEvent(new EnvironmentChangeEvent(Set.of()));
-            }
-        });
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                listener.handleRefreshEvent(new EnvironmentChangeEvent(Set.of()));
-            }
-        });
+        assertDoesNotThrow(() -> listener.handleEnvironmentChangeEvent(new EnvironmentChangeEvent(Set.of())));
+        assertDoesNotThrow(() -> listener.handleRefreshEvent(new EnvironmentChangeEvent(Set.of())));
     }
 }

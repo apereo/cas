@@ -23,6 +23,17 @@ public class FlowBuilderConversionService extends DefaultConversionService {
         addConverter(StringToCharArrayConverter.ID, StringToCharArrayConverter.INSTANCE);
     }
 
+    /**
+     * This is necessary here, because the default executor
+     * will wrap our converter inside a {@link org.springframework.binding.convert.converters.ObjectToArray}
+     * component that inteferes with the conversion. This conversion is mainly applicable when
+     * passwords in form of {@link String} need to bind over to character arrays.
+     *
+     * @param id          identifier of the converter.
+     * @param sourceClass source class of the binding object
+     * @param targetClass target class of the binding object
+     * @return conversion executor
+     */
     @Override
     public ConversionExecutor getConversionExecutor(final String id, final Class<?> sourceClass, final Class<?> targetClass) throws ConversionExecutorNotFoundException {
         if (id.equals(StringToCharArrayConverter.ID)) {

@@ -11,7 +11,6 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,12 +59,9 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId, t -> {
             throw new IllegalArgumentException();
         }));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                getNewTicketRegistry().addTicket((Ticket) null);
-                getNewTicketRegistry().updateTicket(null);
-            }
+        assertDoesNotThrow(() -> {
+            getNewTicketRegistry().addTicket((Ticket) null);
+            getNewTicketRegistry().updateTicket(null);
         });
     }
 

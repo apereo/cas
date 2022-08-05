@@ -16,7 +16,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
@@ -217,12 +216,9 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     
     @Test
     public void verifyAddDelegate() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                resolver.addDelegate(mock(CasWebflowEventResolver.class));
-                resolver.addDelegate(mock(CasWebflowEventResolver.class), 0);
-            }
+        assertDoesNotThrow(() -> {
+            resolver.addDelegate(mock(CasWebflowEventResolver.class));
+            resolver.addDelegate(mock(CasWebflowEventResolver.class), 0);
         });
     }
 }
