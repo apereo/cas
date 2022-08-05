@@ -70,6 +70,12 @@ public class ResetPasswordManagementProperties implements Serializable {
     @DurationCapable
     private String expiration = "PT1M";
 
+    /**
+     * How many times you can use the password reset link.
+     * Stricly lower than 1 means infinite.
+     */
+    private int numberOfUses = -1;
+
     public ResetPasswordManagementProperties() {
         mail.setAttributeName("mail");
         mail.setText("Reset your password via this link: %s");

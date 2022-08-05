@@ -2,6 +2,8 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -61,6 +63,7 @@ public class SendPasswordResetInstructionsActionTests {
             request.setLocalAddr("123.456.789.000");
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
             ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ticketRegistry.deleteAll();
         }
 
         @Test
@@ -71,8 +74,30 @@ public class SendPasswordResetInstructionsActionTests {
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
+            val tickets = ticketRegistry.getTickets();
+            assertEquals(1, tickets.size());
+            assertInstanceOf(HardTimeoutExpirationPolicy.class, tickets.iterator().next().getExpirationPolicy());
         }
 
+        @Test
+        public void verifyActionMultiUse() throws Exception {
+            val reset = casProperties.getAuthn().getPm().getReset();
+
+            reset.setNumberOfUses(1);
+            try {
+                val context = new MockRequestContext();
+                val request = new MockHttpServletRequest();
+                request.addParameter("username", "casuser");
+                WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+                context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+                assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
+                val tickets = ticketRegistry.getTickets();
+                assertEquals(1, tickets.size());
+                assertInstanceOf(MultiTimeUseOrTimeoutExpirationPolicy.class, tickets.iterator().next().getExpirationPolicy());
+            } finally {
+                reset.setNumberOfUses(-1);
+            }
+        }
 
         @Test
         public void verifyNoPhoneOrEmail() throws Exception {
