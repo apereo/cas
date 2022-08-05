@@ -1,14 +1,15 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.ticket.TicketValidator;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -28,13 +29,11 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,7 +45,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import(SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests.SamlIdPTestConfiguration.class)
 @Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {
@@ -77,7 +75,9 @@ public class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests e
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, getAuthnRequest()).toString();
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
-        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-1234567890");
+
+        val st = getServiceTicket();
+        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
         val mv = controller.handleCallbackProfileRequestGet(response, request);
         assertEquals(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ, mv.getViewName());
     }
@@ -95,7 +95,8 @@ public class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests e
         context.setMessage(getAuthnRequest());
         request.getSession().setAttribute(MessageContext.class.getName(), SamlIdPAuthenticationContext.from(context).encode());
 
-        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-1234567890");
+        val st = getServiceTicket();
+        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
         val payload = samlIdPDistributedSessionStore.getTrackableSession(new JEEContext(request, response))
             .map(BrowserSessionStorage.class::cast)
             .map(BrowserSessionStorage::getPayload)
@@ -104,20 +105,6 @@ public class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests e
         val mv = controller.handleCallbackProfileRequestPost(response, request);
         assertNull(mv);
         assertEquals(HttpStatus.SC_OK, response.getStatus());
-    }
-
-    @TestConfiguration(value = "SamlIdPTestConfiguration", proxyBeanMethods = false)
-    public static class SamlIdPTestConfiguration {
-
-        @Bean
-        public TicketValidator samlIdPTicketValidator() throws Exception {
-            val validator = mock(TicketValidator.class);
-            val principal = PrincipalFactoryUtils.newPrincipalFactory()
-                .createPrincipal("casuser", CollectionUtils.wrap("cn", "cas"));
-            when(validator.validate(anyString(), anyString()))
-                .thenReturn(TicketValidator.ValidationResult.builder().principal(principal).build());
-            return validator;
-        }
     }
 
     private AuthnRequest getAuthnRequest() {
@@ -130,5 +117,17 @@ public class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests e
         issuer.setValue(samlRegisteredService.getServiceId());
         authnRequest.setIssuer(issuer);
         return authnRequest;
+    }
+
+    private ServiceTicket getServiceTicket() throws Exception {
+        val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+        ticketRegistry.addTicket(tgt);
+        val trackingPolicy = mock(ServiceTicketSessionTrackingPolicy.class);
+        val ticketService = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
+        ticketService.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(samlRegisteredService.getServiceId()));
+        val st1 = tgt.grantServiceTicket(ticketService, trackingPolicy);
+        ticketRegistry.addTicket(st1);
+        ticketRegistry.updateTicket(tgt);
+        return st1;
     }
 }
