@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAML2Web")
 public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("idpInitiatedSamlProfileHandlerController")

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DelegatedAuthenticationWebflowConfiguration.class,
     SamlIdentityProviderDiscoveryConfiguration.class
 })
-@Tag("SAML2")
+@Tag("SAML2Web")
 public class SamlIdentityProviderDiscoveryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

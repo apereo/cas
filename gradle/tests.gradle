@@ -64,6 +64,7 @@ enum TestCategories {
     SAML,
     SAML1,
     SAML2,
+    SAML2Web,
     SAMLMetadata,
     SAMLServiceProvider,
     SAMLLogout,
