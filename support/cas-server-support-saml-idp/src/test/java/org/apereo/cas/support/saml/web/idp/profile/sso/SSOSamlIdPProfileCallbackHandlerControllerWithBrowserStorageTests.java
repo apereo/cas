@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Import(SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests.SamlIdPTestConfiguration.class)
-@Tag("SAML2")
+@Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.session-storage-type=BROWSER_SESSION_STORAGE",
