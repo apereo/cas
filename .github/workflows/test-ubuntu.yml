@@ -12,7 +12,7 @@ env:
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   JDK_CURRENT: 11
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: ".*(saml2).*" # Limit which test categories run
+  CATEGORY_REGEX: ".*" # Limit which test categories run
 
 ##########################################################################
 
