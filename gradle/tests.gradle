@@ -1,3 +1,5 @@
+import java.util.regex.*
+
 enum TestCategories {
     ActuatorEndpoint,
     AmazonWebServices,
@@ -95,9 +97,10 @@ if (rootProject.tasks.findByName("testCategories") == null) {
     rootProject.tasks.register("testCategories") {
         description = "Display all available test categories"
         doLast {
-            def categoryMatchPattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
+            def pattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
+            def categoryMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
             def result = TestCategories.values()
-                    .findAll { it.name().matches(categoryMatchPattern) }
+                    .findAll {it.name().find(categoryMatchPattern) }
                     .toSorted({ o1, o2 ->
                         o1.name().compareTo(o2.name())
                     })
