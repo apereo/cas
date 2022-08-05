@@ -23,12 +23,12 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
     private final PasswordHistoryService passwordHistoryService;
     
     @Override
-    public boolean isValid(final UsernamePasswordCredential c, final PasswordChangeRequest bean) {
+    public boolean isValid(final UsernamePasswordCredential upc, final PasswordChangeRequest bean) {
         if (!StringUtils.hasText(bean.getPassword())) {
             LOGGER.error("Provided password is blank");
             return false;
         }
-        if (bean.getPassword().equals(c.getPassword())) {
+        if (bean.getPassword().equals(upc.toPassword())) {
             LOGGER.error("Provided password cannot be the same as the current password");
             return false;
         }
@@ -44,7 +44,7 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
             LOGGER.error("Recycled password from password history is not allowed for [{}]", bean.getUsername());
             return false;
         }
-        return validatePassword(c, bean);
+        return validatePassword(upc, bean);
     }
 
     /**

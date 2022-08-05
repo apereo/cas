@@ -100,7 +100,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         return new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().get(0)) {
             @Override
             protected LdapAttribute getLdapPasswordAttribute(final UsernamePasswordCredential credential) {
-                return new LdapAttribute("st", credential.getPassword());
+                return new LdapAttribute("st", credential.toPassword());
             }
         };
     }

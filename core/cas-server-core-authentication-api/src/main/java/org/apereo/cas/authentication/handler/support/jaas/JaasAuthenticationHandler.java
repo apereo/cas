@@ -164,7 +164,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws GeneralSecurityException the general security exception
      */
     protected LoginContext getLoginContext(final UsernamePasswordCredential credential) throws GeneralSecurityException {
-        val callbackHandler = new UsernamePasswordCallbackHandler(credential.getUsername(), credential.getPassword());
+        val callbackHandler = new UsernamePasswordCallbackHandler(credential.getUsername(), credential.toPassword());
         if (this.loginConfigurationFile != null && StringUtils.isNotBlank(this.loginConfigType)
             && this.loginConfigurationFile.exists() && this.loginConfigurationFile.canRead()) {
             final Configuration.Parameters parameters = new URIParameter(loginConfigurationFile.toURI());

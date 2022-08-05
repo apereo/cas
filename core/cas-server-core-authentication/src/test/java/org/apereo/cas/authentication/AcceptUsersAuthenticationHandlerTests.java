@@ -94,7 +94,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyFailsNullUserNameAndPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
-        credential.setPassword(null);
+        credential.setPassword((char[]) null);
         assertThrows(AccountNotFoundException.class,
             () -> getAuthenticationHandler().authenticate(credential, mock(Service.class)));
     }
@@ -103,7 +103,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyFailsNullPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(SCOTT);
-        credential.setPassword(null);
+        credential.setPassword((char[]) null);
         assertThrows(FailedLoginException.class,
             () -> getAuthenticationHandler().authenticate(credential, mock(Service.class)));
     }

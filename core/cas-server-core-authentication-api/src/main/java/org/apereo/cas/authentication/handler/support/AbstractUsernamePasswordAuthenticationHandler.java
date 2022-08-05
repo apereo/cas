@@ -84,7 +84,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         transformUsername(userPass);
         transformPassword(userPass);
         LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
-        return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
+        return authenticateUsernamePasswordInternal(userPass, originalUserPass.toPassword());
     }
 
     /**
@@ -95,11 +95,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * @throws AccountNotFoundException the account not found exception
      */
     protected void transformPassword(final UsernamePasswordCredential userPass) throws FailedLoginException, AccountNotFoundException {
-        if (StringUtils.isBlank(userPass.getPassword())) {
+        if (StringUtils.isBlank(userPass.toPassword())) {
             throw new FailedLoginException("Password is null.");
         }
         LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(), userPass.getUsername());
-        val transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
+        val transformedPsw = this.passwordEncoder.encode(userPass.toPassword());
         if (StringUtils.isBlank(transformedPsw)) {
             throw new AccountNotFoundException("Encoded password is null.");
         }

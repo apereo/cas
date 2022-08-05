@@ -63,7 +63,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
         try {
             val authParams = new HashMap<String, String>();
             authParams.put("USERNAME", credential.getUsername());
-            authParams.put("PASSWORD", credential.getPassword());
+            authParams.put("PASSWORD", credential.toPassword());
             val authRequest = AdminInitiateAuthRequest.builder();
 
             val request = authRequest.authFlow(AuthFlowType.ADMIN_NO_SRP_AUTH)

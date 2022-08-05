@@ -80,7 +80,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 .method(HttpMethod.GET)
                 .url(syncopeRestUrl)
                 .basicAuthUsername(credential.getUsername())
-                .basicAuthPassword(credential.getPassword())
+                .basicAuthPassword(credential.toPassword())
                 .headers(CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain))
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));

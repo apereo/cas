@@ -42,7 +42,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
     private @Size(min = 1, message = "username.required") String username;
 
     @JsonIgnore
-    private @Size(min = 1, message = "password.required") String password;
+    private @Size(min = 1, message = "password.required") char[] password;
 
     private String source;
 
@@ -50,7 +50,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
 
     public UsernamePasswordCredential(final String username, final String password) {
         this.username = username;
-        this.password = password;
+        setPassword(password);
     }
 
     @Override
@@ -76,5 +76,28 @@ public class UsernamePasswordCredential extends AbstractCredential {
             }
         });
         super.validate(context);
+    }
+
+    /**
+     * Convert to string-friendly password.
+     *
+     * @return the string
+     */
+    public String toPassword() {
+        return new String(this.password);
+    }
+
+    public void setPassword(final char[] password) {
+        this.password = password.clone();
+    }
+
+    /**
+     * Sets password and converts it to char array.
+     *
+     * @param password the password
+     */
+    public void setPassword(final String password) {
+        this.password = new char[password.length()];
+        System.arraycopy(password.toCharArray(), 0, this.password, 0, password.length());
     }
 }

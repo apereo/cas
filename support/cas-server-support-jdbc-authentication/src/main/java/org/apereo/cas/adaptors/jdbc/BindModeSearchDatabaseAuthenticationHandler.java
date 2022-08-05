@@ -35,13 +35,14 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
         val username = credential.getUsername();
-        val password = credential.getPassword();
-        try (val c = getDataSource().getConnection(username, password)) {
-            LOGGER.trace("Established connection to schema [{}]", c.getSchema());
+        val password = credential.toPassword();
+        try (val connection = getDataSource().getConnection(username, password)) {
+            LOGGER.trace("Established connection to schema [{}]", connection.getSchema());
             val principal = this.principalFactory.createPrincipal(username);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final Exception e) {

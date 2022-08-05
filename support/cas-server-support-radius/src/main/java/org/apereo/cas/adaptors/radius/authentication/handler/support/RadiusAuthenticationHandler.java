@@ -59,7 +59,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
 
         try {
             val username = credential.getUsername();
-            val result = RadiusUtils.authenticate(username, credential.getPassword(), this.servers,
+            val result = RadiusUtils.authenticate(username, credential.toPassword(), this.servers,
                 this.failoverOnAuthenticationFailure, this.failoverOnException, Optional.empty());
             if (result.getKey() && result.getValue().isPresent()) {
                 val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(result.getValue().get());

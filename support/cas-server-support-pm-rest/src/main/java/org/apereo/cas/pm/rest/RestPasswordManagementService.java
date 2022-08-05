@@ -56,7 +56,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(upc.getUsername()));
         headers.put("password", CollectionUtils.wrap(bean.getPassword()));
-        headers.put("oldPassword", CollectionUtils.wrap(upc.getPassword()));
+        headers.put("oldPassword", CollectionUtils.wrap(upc.toPassword()));
 
         val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);

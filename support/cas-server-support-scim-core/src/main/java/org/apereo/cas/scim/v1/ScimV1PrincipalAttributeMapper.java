@@ -46,7 +46,7 @@ public class ScimV1PrincipalAttributeMapper {
                     final Credential credential) {
         user.setUserName(p.getId());
         if (credential instanceof UsernamePasswordCredential) {
-            user.setPassword(UsernamePasswordCredential.class.cast(credential).getPassword());
+            user.setPassword(UsernamePasswordCredential.class.cast(credential).toPassword());
         }
         user.setActive(Boolean.TRUE);
 

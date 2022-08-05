@@ -549,6 +549,14 @@ public interface CasWebflowConfigurer extends Ordered {
     FlowVariable createFlowVariable(Flow flow, String id, Class type);
 
     /**
+     * Create state binder configuration.
+     *
+     * @param properties the properties
+     * @return the binder configuration
+     */
+    BinderConfiguration createStateBinderConfiguration(Map<String, Map<String, String>> properties);
+
+    /**
      * Create state binder configuration binder configuration.
      *
      * @param properties the properties

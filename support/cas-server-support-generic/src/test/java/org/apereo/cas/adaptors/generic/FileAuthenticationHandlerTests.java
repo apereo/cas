@@ -96,7 +96,7 @@ public class FileAuthenticationHandlerTests {
     public void verifyFailsNullUserNameAndPassword() {
         val c = new UsernamePasswordCredential();
         c.setUsername(null);
-        c.setPassword(null);
+        c.setPassword((char[]) null);
         assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
     }
 
@@ -104,7 +104,7 @@ public class FileAuthenticationHandlerTests {
     public void verifyFailsNullPassword() {
         val c = new UsernamePasswordCredential();
         c.setUsername("scott");
-        c.setPassword(null);
+        c.setPassword((char[]) null);
         assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
     }
 

@@ -126,7 +126,8 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
         assertTrue(authn.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 
-    private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
+    private static UsernamePasswordCredential newUserPassCredentials(final String user,
+                                                                     final String pass) {
         val userpass = new UsernamePasswordCredential();
         userpass.setUsername(user);
         userpass.setPassword(pass);
