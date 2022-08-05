@@ -102,8 +102,8 @@ public abstract class BaseJwtTokenTicketBuilderTests {
         public TicketValidator tokenTicketValidator() {
             val validator = mock(TicketValidator.class);
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser",
-                CollectionUtils.wrap("name", "value",
-                    ProtocolAttributeEncoder.encodeAttribute("custom:name"), List.of("custom:value")));
+                CollectionUtils.wrap("name", List.of("value"),
+                    ProtocolAttributeEncoder.encodeAttribute("custom:name"), CollectionUtils.wrapList("custom:value")));
             when(validator.validate(anyString(), anyString()))
                 .thenReturn(TicketValidator.ValidationResult.builder().principal(principal).build());
             return validator;

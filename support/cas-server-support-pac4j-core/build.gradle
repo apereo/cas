@@ -24,6 +24,8 @@ dependencies {
     implementation libraries.shibutiljavasupport
     implementation libraries.nimbus
 
+    testImplementation libraries.casclient
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
