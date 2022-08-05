@@ -50,7 +50,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
 
     public UsernamePasswordCredential(final String username, final String password) {
         this.username = username;
-        setPassword(password);
+        setPassword(StringUtils.defaultString(password));
     }
 
     @Override
