@@ -40,15 +40,19 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
+        final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-        val sql = "SELECT COUNT('x') FROM ".concat(properties.getTableUsers()).concat(" WHERE ").concat(properties.getFieldUser())
-            .concat(" = ? AND ").concat(properties.getFieldPassword()).concat("= ?");
+        val sql = "SELECT COUNT('x') FROM ".concat(properties.getTableUsers())
+            .concat(" WHERE ")
+            .concat(properties.getFieldUser())
+            .concat(" = ? AND ")
+            .concat(properties.getFieldPassword()).concat("= ?");
         val username = credential.getUsername();
         try {
             LOGGER.debug("Executing SQL query [{}]", sql);
-            val count = getJdbcTemplate().queryForObject(sql, Integer.class, username, credential.getPassword());
+            val count = getJdbcTemplate().queryForObject(sql, Integer.class, username, credential.toPassword());
             if (count == null || count == 0) {
                 throw new FailedLoginException(username + " not found with SQL query.");
             }

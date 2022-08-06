@@ -56,8 +56,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                                        final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential transformedCredential,
+        final String originalPassword)
         throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(properties.getSql()) || StringUtils.isBlank(properties.getAlgorithmName()) || getJdbcTemplate() == null) {
