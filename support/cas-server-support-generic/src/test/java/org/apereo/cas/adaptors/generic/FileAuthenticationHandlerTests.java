@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
@@ -18,7 +19,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -56,9 +56,9 @@ public class FileAuthenticationHandlerTests {
     @Test
     public void verifyDoesNotSupportBadUserCredentials() {
         try {
-            val c = new HttpBasedServiceCredential(
+            val credential = new HttpBasedServiceCredential(
                 new URL("http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService());
-            assertFalse(authenticationHandler.supports(c));
+            assertFalse(authenticationHandler.supports(credential));
         } catch (final MalformedURLException e) {
             throw new AssertionError("MalformedURLException caught.");
         }
@@ -66,89 +66,93 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticatesUserInFileWithDefaultSeparator() throws Exception {
-        val c = new UsernamePasswordCredential();
+        val credential = new UsernamePasswordCredential();
 
-        c.setUsername("scott");
-        c.assignPassword("rutgers");
+        credential.setUsername("scott");
+        credential.assignPassword("rutgers");
 
-        assertNotNull(authenticationHandler.authenticate(c, mock(Service.class)));
+        assertNotNull(authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
     public void verifyFailsUserNotInFileWithDefaultSeparator() {
-        val c = new UsernamePasswordCredential();
+        val credential = new UsernamePasswordCredential();
 
-        c.setUsername("fds");
-        c.assignPassword("rutgers");
+        credential.setUsername("fds");
+        credential.assignPassword("rutgers");
 
-        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
+        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
     public void verifyFailsNullUserName() {
-        val c = new UsernamePasswordCredential();
-        c.setUsername(null);
-        c.assignPassword("user");
-        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername(null);
+        credential.assignPassword("user");
+        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
     public void verifyFailsNullUserNameAndPassword() {
-        val c = new UsernamePasswordCredential();
-        c.setUsername(null);
-        c.assignPassword((char[]) null);
-        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername(null);
+        credential.assignPassword(null);
+        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
     public void verifyFailsNullPassword() {
-        val c = new UsernamePasswordCredential();
-        c.setUsername("scott");
-        c.assignPassword((char[]) null);
-        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername("scott");
+        credential.assignPassword(null);
+        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
     public void verifyAuthenticatesUserInFileWithCommaSeparator() throws Exception {
-        val c = new UsernamePasswordCredential();
-        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null, new ClassPathResource("authentication2.txt"), ",");
-        c.setUsername("scott");
-        c.assignPassword("rutgers");
-        assertNotNull(authenticationHandler.authenticate(c, mock(Service.class)));
+        val credential = new UsernamePasswordCredential();
+        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), new ClassPathResource("authentication2.txt"), ",");
+        credential.setUsername("scott");
+        credential.assignPassword("rutgers");
+        assertNotNull(authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
     public void verifyFailsUserNotInFileWithCommaSeparator() {
-        val c = new UsernamePasswordCredential();
+        val credential = new UsernamePasswordCredential();
 
-        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,
+        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
+            PrincipalFactoryUtils.newPrincipalFactory(),
             new ClassPathResource("authentication2.txt"), ",");
-        c.setUsername("fds");
-        c.assignPassword("rutgers");
-        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
+        credential.setUsername("fds");
+        credential.assignPassword("rutgers");
+        assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
     public void verifyFailsGoodUsernameBadPassword() {
-        val c = new UsernamePasswordCredential();
-        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,
+        val credential = new UsernamePasswordCredential();
+        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
+            PrincipalFactoryUtils.newPrincipalFactory(),
             new ClassPathResource("authentication2.txt"), ",");
 
-        c.setUsername("scott");
-        c.assignPassword("rutgers1");
+        credential.setUsername("scott");
+        credential.assignPassword("rutgers1");
 
-        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
+        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
     public void verifyAuthenticateNoFileName() {
-        val c = new UsernamePasswordCredential();
-        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,
+        val credential = new UsernamePasswordCredential();
+        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
+            PrincipalFactoryUtils.newPrincipalFactory(),
             new ClassPathResource("fff"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
 
-        c.setUsername("scott");
-        c.assignPassword("rutgers");
+        credential.setUsername("scott");
+        credential.assignPassword("rutgers");
 
-        assertThrows(PreventedException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
+        assertThrows(PreventedException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 }

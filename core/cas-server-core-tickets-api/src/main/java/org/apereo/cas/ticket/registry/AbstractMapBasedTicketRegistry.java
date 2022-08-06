@@ -48,8 +48,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
         val result = decodeTicket(found);
         if (!predicate.test(result)) {
-            LOGGER.debug("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", ticketId,
-                predicate.getClass().getSimpleName());
+            LOGGER.debug("Cannot successfully fetch ticket [{}]", ticketId);
             return null;
         }
         return result;
