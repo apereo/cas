@@ -79,7 +79,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
         val originalUserPass = (UsernamePasswordCredential) credential;
-        val userPass = FunctionUtils.doUnchecked(() -> (UsernamePasswordCredential) credential.getClass().getDeclaredConstructor().newInstance());
+        val userPass = new UsernamePasswordCredential();
         FunctionUtils.doUnchecked(u -> BeanUtils.copyProperties(userPass, originalUserPass));
         transformUsername(userPass);
         transformPassword(userPass);
@@ -103,7 +103,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         if (StringUtils.isBlank(transformedPsw)) {
             throw new AccountNotFoundException("Encoded password is null.");
         }
-        userPass.setPassword(transformedPsw);
+        userPass.assignPassword(transformedPsw);
     }
 
     /**

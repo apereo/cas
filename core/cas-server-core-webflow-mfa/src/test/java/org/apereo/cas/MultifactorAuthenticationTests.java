@@ -130,7 +130,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
                                                                      final String pass) {
         val userpass = new UsernamePasswordCredential();
         userpass.setUsername(user);
-        userpass.setPassword(pass);
+        userpass.assignPassword(pass);
         return userpass;
     }
 
