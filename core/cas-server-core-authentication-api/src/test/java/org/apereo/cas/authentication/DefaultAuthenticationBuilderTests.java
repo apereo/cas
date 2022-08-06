@@ -110,7 +110,7 @@ public class DefaultAuthenticationBuilderTests {
     private static Credential getCredential() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
-        credential.setPassword("P@$$w0rd");
+        credential.assignPassword("P@$$w0rd");
         return credential;
     }
 }

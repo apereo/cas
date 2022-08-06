@@ -85,7 +85,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     private static UsernamePasswordCredential badCredentials(final String username) {
         val credentials = new UsernamePasswordCredential();
         credentials.setUsername(username);
-        credentials.setPassword("badpassword");
+        credentials.assignPassword("badpassword");
         return credentials;
     }
 

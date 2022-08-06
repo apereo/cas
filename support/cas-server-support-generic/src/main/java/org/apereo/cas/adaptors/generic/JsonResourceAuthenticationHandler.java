@@ -81,7 +81,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
         val account = map.get(username);
         if (!matches(originalPassword, account.getPassword())) {
-            LOGGER.debug("Account password on file does not match the provided password for [{}]", username);
+            LOGGER.warn("Account password on file does not match the provided password for [{}]", username);
             throw new FailedLoginException();
         }
 

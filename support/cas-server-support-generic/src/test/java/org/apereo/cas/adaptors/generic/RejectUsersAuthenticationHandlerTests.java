@@ -42,7 +42,7 @@ public class RejectUsersAuthenticationHandlerTests {
     public void verifySupportsProperUserCredentials() throws Exception {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("fff");
-        credential.setPassword("rutgers");
+        credential.assignPassword("rutgers");
         assertNotNull(authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
@@ -61,7 +61,7 @@ public class RejectUsersAuthenticationHandlerTests {
     public void verifyFailsUserInMap() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("scott");
-        credential.setPassword("rutgers");
+        credential.assignPassword("rutgers");
         assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
@@ -69,7 +69,7 @@ public class RejectUsersAuthenticationHandlerTests {
     public void verifyPassesUserNotInMap() throws Exception {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("fds");
-        credential.setPassword("rutgers");
+        credential.assignPassword("rutgers");
         assertNotNull(authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
@@ -77,7 +77,7 @@ public class RejectUsersAuthenticationHandlerTests {
     public void verifyPassesNullUserName() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
-        credential.setPassword("user");
+        credential.assignPassword("user");
         assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
     }
 

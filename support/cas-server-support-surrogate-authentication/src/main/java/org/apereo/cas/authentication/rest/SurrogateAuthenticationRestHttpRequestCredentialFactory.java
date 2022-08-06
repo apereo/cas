@@ -90,7 +90,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
             val realUsername = username.substring(username.indexOf(properties.getSeparator()) + properties.getSeparator().length());
             sc.setUsername(realUsername);
             sc.setSurrogateUsername(surrogateUsername);
-            sc.setPassword(credential.toPassword());
+            sc.assignPassword(credential.toPassword());
             return sc;
         }
         return null;

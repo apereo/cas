@@ -85,7 +85,7 @@ public class UsernamePasswordCredentialTests {
         val c = new UsernamePasswordCredential();
         val password = "test";
 
-        c.setPassword(password);
+        c.assignPassword(password);
         assertEquals(password, c.toPassword());
     }
 

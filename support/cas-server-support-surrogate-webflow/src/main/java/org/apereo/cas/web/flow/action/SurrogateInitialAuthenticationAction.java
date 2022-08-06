@@ -61,7 +61,7 @@ public class SurrogateInitialAuthenticationAction extends BaseCasWebflowAction {
         val sc = new SurrogateUsernamePasswordCredential();
         sc.setUsername(realUsername);
         sc.setSurrogateUsername(surrogateUsername);
-        sc.setPassword(up.toPassword());
+        sc.assignPassword(up.toPassword());
         if (up instanceof RememberMeCredential) {
             sc.setRememberMe(((RememberMeCredential) up).isRememberMe());
         }

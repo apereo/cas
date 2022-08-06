@@ -61,7 +61,7 @@ public class ShiroAuthenticationHandlerTests {
         val creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
-        creds.setPassword("Mellon");
+        creds.assignPassword("Mellon");
 
         assertNotNull(shiro.authenticate(creds, mock(Service.class)));
     }
@@ -76,7 +76,7 @@ public class ShiroAuthenticationHandlerTests {
         val creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
-        creds.setPassword("Mellon");
+        creds.assignPassword("Mellon");
 
         assertNotNull(shiro.authenticate(creds, mock(Service.class)));
     }
@@ -90,7 +90,7 @@ public class ShiroAuthenticationHandlerTests {
         val creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
-        creds.setPassword("Mellon");
+        creds.assignPassword("Mellon");
 
         assertThrows(FailedLoginException.class, () -> shiro.authenticate(creds, mock(Service.class)));
     }
@@ -104,7 +104,7 @@ public class ShiroAuthenticationHandlerTests {
         val creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
-        creds.setPassword("Mellon");
+        creds.assignPassword("Mellon");
 
         assertThrows(FailedLoginException.class, () -> shiro.authenticate(creds, mock(Service.class)));
     }
@@ -113,7 +113,7 @@ public class ShiroAuthenticationHandlerTests {
     public void checkAuthenticationAccountStatusHandling() {
         val creds = new RememberMeUsernamePasswordCredential();
         creds.setUsername("casuser");
-        creds.setPassword("Mellon");
+        creds.assignPassword("Mellon");
 
         assertThrows(AccountNotFoundException.class,
             () -> buildShiroHandlerWithAccountStatus(UnknownAccountException.class).authenticate(creds, mock(Service.class)));

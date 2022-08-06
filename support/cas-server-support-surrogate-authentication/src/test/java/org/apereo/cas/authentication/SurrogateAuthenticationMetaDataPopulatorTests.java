@@ -25,7 +25,7 @@ public class SurrogateAuthenticationMetaDataPopulatorTests {
         val c = new SurrogateUsernamePasswordCredential();
         c.setSurrogateUsername("cassurrogate");
         c.setUsername("casuser");
-        c.setPassword("password");
+        c.assignPassword("password");
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         assertThrows(SurrogateAuthenticationException.class,

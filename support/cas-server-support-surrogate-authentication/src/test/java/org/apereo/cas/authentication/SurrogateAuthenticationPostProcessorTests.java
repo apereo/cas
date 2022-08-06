@@ -44,7 +44,7 @@ public class SurrogateAuthenticationPostProcessorTests {
     public void verifySurrogateCredentialNotFound() {
         val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
-        c.setPassword("Mellon");
+        c.assignPassword("Mellon");
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("service"), c);
         val builder = mock(AuthenticationBuilder.class);
         val principal = new SurrogatePrincipal(CoreAuthenticationTestUtils.getPrincipal("casuser"),
@@ -57,7 +57,7 @@ public class SurrogateAuthenticationPostProcessorTests {
     public void verifyProcessorWorks() {
         val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
-        c.setPassword("Mellon");
+        c.assignPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("https://localhost"), c);
         val builder = mock(AuthenticationBuilder.class);
@@ -80,7 +80,7 @@ public class SurrogateAuthenticationPostProcessorTests {
     public void verifyAuthN() {
         val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
-        c.setPassword("Mellon");
+        c.assignPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
         val service = RegisteredServiceTestUtils.getService("service");
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
@@ -97,7 +97,7 @@ public class SurrogateAuthenticationPostProcessorTests {
     public void verifyFailAuthN() {
         val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
-        c.setPassword("Mellon");
+        c.assignPassword("Mellon");
         c.setSurrogateUsername("other-user");
         val service = RegisteredServiceTestUtils.getService("service");
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
