@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.generic;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.util.Map;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
+@ToString(exclude = "password")
 public class CasUserAccount implements Serializable {
     private static final int SIZE = 8;
 
