@@ -21,14 +21,12 @@ public class CacheCredentialsMetaDataPopulatorTests {
     @Test
     public void verifyPasswordAsAuthenticationAttribute() {
         val populator = new CacheCredentialsMetaDataPopulator();
-
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val builder = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication());
-        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(c));
+        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credential));
         val authn = builder.build();
         assertTrue(authn.getAttributes().containsKey(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD));
-        assertEquals(c.getPassword(), authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD).get(0).toString());
+        assertEquals(credential.toPassword(), authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD).get(0).toString());
     }
-
 
 }

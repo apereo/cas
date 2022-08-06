@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.credential;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
@@ -88,7 +90,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
     }
 
     public void setPassword(final char[] password) {
-        this.password = password.clone();
+        this.password = ArrayUtils.nullToEmpty(password).clone();
     }
 
     /**

@@ -35,6 +35,6 @@ public class AcceptUserGraphicsForAuthenticationActionTests extends AbstractGrap
 
         val credential = WebUtils.getCredential(context, UsernamePasswordCredential.class);
         assertNotNull(credential);
-        assertNull(credential.getPassword());
+        assertEquals(0, credential.getPassword().length);
     }
 }
