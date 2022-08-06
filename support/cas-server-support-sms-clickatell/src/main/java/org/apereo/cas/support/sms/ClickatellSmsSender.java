@@ -39,7 +39,7 @@ public class ClickatellSmsSender implements SmsSender {
 
     private final String serverUrl;
 
-    private final transient RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new MappingJackson2HttpMessageConverter()));
+    private final RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new MappingJackson2HttpMessageConverter()));
 
     @Override
     public boolean send(final String from, final String to, final String message) {

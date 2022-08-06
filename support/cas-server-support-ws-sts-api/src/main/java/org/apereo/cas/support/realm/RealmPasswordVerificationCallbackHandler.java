@@ -21,18 +21,19 @@ import java.util.Arrays;
 @Getter
 public class RealmPasswordVerificationCallbackHandler implements CallbackHandler {
 
-    private final String password;
+    private final char[] password;
 
     @Override
     public void handle(final Callback[] callbacks) {
         Arrays.stream(callbacks)
             .filter(WSPasswordCallback.class::isInstance)
             .map(WSPasswordCallback.class::cast)
-            .forEach(c -> {
-                val identifier = c.getIdentifier();
+            .forEach(callback -> {
+                val identifier = callback.getIdentifier();
                 LOGGER.trace("Evaluating [{}]", identifier);
-                c.setPassword(this.password);
+                callback.setPassword(new String(this.password));
                 LOGGER.debug("Authenticated [{}] successfully.", identifier);
+                Arrays.fill(this.password, '0');
             });
     }
 }

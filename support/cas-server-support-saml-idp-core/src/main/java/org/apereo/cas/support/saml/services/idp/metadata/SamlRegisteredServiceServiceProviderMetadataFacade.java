@@ -68,10 +68,12 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @param entityID          the entity id
      * @return the saml metadata adaptor
      */
-    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                                   final SamlRegisteredService registeredService,
-                                                                                   final String entityID) {
-        val criteria = new CriteriaSet(new EntityIdCriterion(entityID), new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final SamlRegisteredService registeredService,
+        final String entityID) {
+        val criteria = new CriteriaSet(new EntityIdCriterion(entityID),
+            new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         return get(resolver, registeredService, entityID, criteria);
     }
 
@@ -83,9 +85,10 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @param request           the request
      * @return the saml metadata adaptor
      */
-    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                                   final SamlRegisteredService registeredService,
-                                                                                   final RequestAbstractType request) {
+    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final SamlRegisteredService registeredService,
+        final RequestAbstractType request) {
         return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlObject(request));
     }
 

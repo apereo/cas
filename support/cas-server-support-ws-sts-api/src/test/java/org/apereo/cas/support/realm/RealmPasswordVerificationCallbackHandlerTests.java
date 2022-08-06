@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RealmPasswordVerificationCallbackHandlerTests {
     @Test
     public void verifyToken() {
-        val realm = new RealmPasswordVerificationCallbackHandler("password");
+        val realm = new RealmPasswordVerificationCallbackHandler("password".toCharArray());
         val callback = new WSPasswordCallback("casuser", "password", "type", WSPasswordCallback.USERNAME_TOKEN);
         assertDoesNotThrow(() -> {
             realm.handle(new Callback[]{callback});
