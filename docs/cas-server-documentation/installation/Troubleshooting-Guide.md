@@ -33,7 +33,7 @@ If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-
 you may also want to look into your `catalina.out`
 and `localhost-X-Y-Z.log` log files to learn more about source of issues. 
 
-## Deployment Problem; X Configuration Issue. Can You Help?
+## Deployment Problem; Configuration Issue X. Can You Help?
 
 [Study this](#review-logs).
 
@@ -46,13 +46,25 @@ you should always pick a technology with which you are most familiar, or otherwi
 the Spring Webflow, MongoDb, Hazelcast, Redis, etc forums to have experts review and recommend ideas.
 
 Typical questions in this category that are best answered elsewhere are:
-           
+                           
+- How do I change TLS version from `A` to `B`?
 - Why does Azure/AWS/GCP work this way? 
 - How do I configure SSL for Apache Tomcat, Jetty, Active Directory, etc?
 - How do I pass variables from one flow to the next in Spring webflow?
 - How do I tune up a hazelcast cluster?
 - Can you explain the steps needed to configure Redis Sentinel? 
 - What is the recommended strategy for making MongoDb highly available? 
+ 
+## Try Latest Patch Release
+  
+It is quite possible that the problem you are trying to resolve has already been solved by the next patch release.
+A patch release is a conservative incremental improvement that includes bug fixes and small enhancements and 
+is absolutely backward compatible with previous PATCH releases of the same MINOR release. For example, if you are currently
+on CAS version `6.5.1` and have run into a possible issue, you should consider upgrading to `6.5.2`, and 6.5.3` and so on
+to investigate further, assuming releases are of course availble and published.
+
+The project release schedule is [available here](https://github.com/apereo/cas/milestones), and you can always
+have a look at [published releases](https://github.com/apereo/cas/releases).
 
 ## Using `SNAPSHOT` Versions
 
