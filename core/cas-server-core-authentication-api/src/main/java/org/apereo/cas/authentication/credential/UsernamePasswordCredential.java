@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.credential;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -84,7 +85,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
      * @return the string
      */
     public String toPassword() {
-        return new String(this.password);
+        return FunctionUtils.doIfNull(this.password, () -> null, () -> new String(this.password)).get();
     }
 
     /**
