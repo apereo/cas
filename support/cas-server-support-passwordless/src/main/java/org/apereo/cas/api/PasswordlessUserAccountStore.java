@@ -23,4 +23,10 @@ public interface PasswordlessUserAccountStore {
      * @return the passwordless user account
      */
     Optional<PasswordlessUserAccount> findUser(String username);
+
+    /**
+     * Load.
+     */
+    default void reload() {
+    }
 }

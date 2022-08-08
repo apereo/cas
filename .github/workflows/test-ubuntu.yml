@@ -12,7 +12,7 @@ env:
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   JDK_CURRENT: 11
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: ".*" # Limit which test categories run
+  CATEGORY_REGEX: ".*(filesystem|couchbase|mssqlserver).*" # Limit which test categories run
 
 ##########################################################################
 
@@ -152,7 +152,7 @@ jobs:
       - name: Run Tests
         uses: nick-fields/retry@v2
         with:
-          max_attempts: 2
+          max_attempts: 3
           retry_on: error
           retry_wait_seconds: 10
           timeout_minutes: ${{ env.RETRY_MINUTES }}

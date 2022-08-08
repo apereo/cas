@@ -21,7 +21,7 @@ import java.util.Optional;
 @Slf4j
 public class GroovyPasswordlessUserAccountStore implements PasswordlessUserAccountStore {
 
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyPasswordlessUserAccountStore(final Resource groovyScript) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
