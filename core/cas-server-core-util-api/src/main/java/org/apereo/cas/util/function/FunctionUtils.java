@@ -189,6 +189,28 @@ public class FunctionUtils {
     }
 
     /**
+     * Do if not null.
+     *
+     * @param <T>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     * @param elseFunction the else function
+     */
+    public static <T> void doIfNotNull(final T input,
+                                       final CheckedConsumer<T> trueFunction,
+                                       final CheckedConsumer<T> elseFunction) {
+        try {
+            if (input != null) {
+                trueFunction.accept(input);
+            } else {
+                elseFunction.accept(null);
+            }
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+    }
+
+    /**
      * Supply if null supplier.
      *
      * @param <R>           the type parameter
