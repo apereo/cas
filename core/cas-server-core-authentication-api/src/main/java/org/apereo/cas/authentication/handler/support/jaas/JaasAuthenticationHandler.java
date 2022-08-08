@@ -104,13 +104,13 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param order            the order
      */
     public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-        final Integer order) {
+                                     final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws GeneralSecurityException {
         if (StringUtils.isNotBlank(this.kerberosKdcSystemProperty)) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
@@ -184,7 +184,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected static class UsernamePasswordCallbackHandler implements CallbackHandler {
         private final String userName;
 
-        private final String password;
+        private final char[] password;
 
         @Override
         public void handle(final Callback[] callbacks) {
@@ -192,7 +192,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);
                 } else if (callback.getClass().equals(PasswordCallback.class)) {
-                    ((PasswordCallback) callback).setPassword(this.password.toCharArray());
+                    ((PasswordCallback) callback).setPassword(this.password);
                 }
             });
         }

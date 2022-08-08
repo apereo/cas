@@ -5,7 +5,6 @@ import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,18 +36,15 @@ public class DelegatedClientIdentityProviderConfigurationPostProcessorTests {
     @Test
     public void verifyOperation() {
         assertNotNull(delegatedClientIdentityProviderConfigurationPostProcessor);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                val context = new MockRequestContext();
-                val request = new MockHttpServletRequest();
-                val response = new MockHttpServletResponse();
-                context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-                RequestContextHolder.setRequestContext(context);
-                ExternalContextHolder.setExternalContext(context.getExternalContext());
-                delegatedClientIdentityProviderConfigurationPostProcessor.process(context, Set.of());
-                delegatedClientIdentityProviderConfigurationPostProcessor.destroy();
-            }
+        assertDoesNotThrow(() -> {
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+            RequestContextHolder.setRequestContext(context);
+            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            delegatedClientIdentityProviderConfigurationPostProcessor.process(context, Set.of());
+            delegatedClientIdentityProviderConfigurationPostProcessor.destroy();
         });
 
     }

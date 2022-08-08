@@ -10,7 +10,6 @@ import com.google.maps.model.LatLng;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,11 +45,8 @@ public class GoogleMapsGeoLocationServiceTests {
         assertEquals(40.689060, resp.getLatitude());
         assertEquals(-74.044636, resp.getLongitude());
         assertTrue(resp.getAddresses().isEmpty());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                geoLocationService.locate(InetAddress.getByName("www.github.com"));
-            }
+        assertDoesNotThrow(() -> {
+            geoLocationService.locate(InetAddress.getByName("www.github.com"));
         });
     }
 

@@ -72,7 +72,7 @@ public class RegisteredServiceTestUtils {
     public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(final String username) {
         val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
-        usernamePasswordCredentials.setPassword(username);
+        usernamePasswordCredentials.assignPassword(username);
 
         return usernamePasswordCredentials;
     }
@@ -80,7 +80,7 @@ public class RegisteredServiceTestUtils {
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
         val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
-        usernamePasswordCredentials.setPassword(password);
+        usernamePasswordCredentials.assignPassword(password);
 
         return usernamePasswordCredentials;
     }

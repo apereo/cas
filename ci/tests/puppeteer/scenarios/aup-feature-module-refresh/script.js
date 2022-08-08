@@ -15,6 +15,7 @@ const assert = require("assert");
     await cas.goto(page, `https://localhost:8443/cas/logout`);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
+    await page.waitForTimeout(2000);
     await cas.assertTicketParameter(page);
 
     console.log("Updating configuration and waiting for changes to reload...");

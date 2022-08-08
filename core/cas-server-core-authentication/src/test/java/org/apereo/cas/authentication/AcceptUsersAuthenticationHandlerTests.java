@@ -36,7 +36,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifySupportsSpecialCharacters() throws Exception {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("brian");
-        credential.setPassword("t�st");
+        credential.assignPassword("t�st");
         assertEquals("brian", getAuthenticationHandler().authenticate(credential, mock(Service.class)).getPrincipal().getId());
     }
 
@@ -44,7 +44,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifySupportsProperUserCredentials() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(SCOTT);
-        credential.setPassword(RUTGERS);
+        credential.assignPassword(RUTGERS);
         assertTrue(getAuthenticationHandler().supports(credential));
     }
 
@@ -63,7 +63,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyAuthenticatesUserInMap() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(SCOTT);
-        credential.setPassword(RUTGERS);
+        credential.assignPassword(RUTGERS);
 
         try {
             assertEquals(SCOTT, getAuthenticationHandler().authenticate(credential, mock(Service.class)).getPrincipal().getId());
@@ -76,7 +76,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyFailsUserNotInMap() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("fds");
-        credential.setPassword(RUTGERS);
+        credential.assignPassword(RUTGERS);
         assertThrows(AccountNotFoundException.class,
             () -> getAuthenticationHandler().authenticate(credential, mock(Service.class)));
     }
@@ -85,7 +85,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyFailsNullUserName() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
-        credential.setPassword("user");
+        credential.assignPassword("user");
         assertThrows(AccountNotFoundException.class,
             () -> getAuthenticationHandler().authenticate(credential, mock(Service.class)));
     }
@@ -94,7 +94,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyFailsNullUserNameAndPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
-        credential.setPassword(null);
+        credential.assignPassword(null);
         assertThrows(AccountNotFoundException.class,
             () -> getAuthenticationHandler().authenticate(credential, mock(Service.class)));
     }
@@ -103,7 +103,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyFailsNullPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(SCOTT);
-        credential.setPassword(null);
+        credential.assignPassword(null);
         assertThrows(FailedLoginException.class,
             () -> getAuthenticationHandler().authenticate(credential, mock(Service.class)));
     }

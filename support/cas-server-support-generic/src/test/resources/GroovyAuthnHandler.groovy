@@ -11,7 +11,7 @@ def authenticate(final Object... args) {
     def servicesManager = args[2]
     def principalFactory = args[3]
     def logger = args[4]
-    if (credential.username == credential.password) {
+    if (credential.username == credential.toPassword()) {
         def principal = principalFactory.createPrincipal(credential.username)
         return new DefaultAuthenticationHandlerExecutionResult(authenticationHandler,
                 new BasicCredentialMetaData(credential),

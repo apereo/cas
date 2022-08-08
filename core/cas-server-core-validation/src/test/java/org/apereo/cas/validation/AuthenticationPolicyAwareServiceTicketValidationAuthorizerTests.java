@@ -42,7 +42,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -106,12 +105,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
             new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
             getOtpCredential(), getTestOtpAuthenticationHandler());
         val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
     }
 
     @Test
@@ -123,12 +117,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
             new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
             getOtpCredential(), getTestOtpAuthenticationHandler());
         val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
     }
 
     @Test
@@ -141,12 +130,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
             new UsernamePasswordCredential(), handler,
             getOtpCredential(), getTestOtpAuthenticationHandler());
         val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
     }
 
     @Test
@@ -159,12 +143,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
             new UsernamePasswordCredential(), handler,
             getOtpCredential(), getTestOtpAuthenticationHandler());
         val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
     }
 
     @Test
@@ -176,12 +155,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
             new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
             getOtpCredential(), getTestOtpAuthenticationHandler());
         val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
     }
 
     @Test
@@ -193,12 +167,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
             new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
             getOtpCredential(), getTestOtpAuthenticationHandler());
         val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
     }
 
     @Test

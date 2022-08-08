@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -550,6 +551,18 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
         val binder = new BinderConfiguration();
         properties.forEach(p -> binder.addBinding(new BinderConfiguration.Binding(p, null, true)));
+        return binder;
+    }
+
+    @Override
+    public BinderConfiguration createStateBinderConfiguration(final Map<String, Map<String, String>> properties) {
+        val binder = new BinderConfiguration();
+        properties.forEach((key, value) -> {
+            val converter = value.get("converter");
+            val required = BooleanUtils.toBoolean(value.getOrDefault("required", Boolean.TRUE.toString()));
+            val binding = new BinderConfiguration.Binding(key, converter, required);
+            binder.addBinding(binding);
+        });
         return binder;
     }
 

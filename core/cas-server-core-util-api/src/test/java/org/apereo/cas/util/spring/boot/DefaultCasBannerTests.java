@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.io.ByteArrayOutputStream;
@@ -32,12 +31,7 @@ public class DefaultCasBannerTests {
 
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out);
-                }
-            });
+            assertDoesNotThrow(() -> banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }
@@ -49,12 +43,7 @@ public class DefaultCasBannerTests {
         val banner = new DefaultCasBanner();
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out);
-                }
-            });
+            assertDoesNotThrow(() -> banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }

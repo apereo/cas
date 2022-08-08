@@ -62,7 +62,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
      * @return the boolean
      */
     static boolean isNotProxy(final Object result) {
-        return !isProxy(result);
+        return result != null && !isProxy(result);
     }
 
     @Override

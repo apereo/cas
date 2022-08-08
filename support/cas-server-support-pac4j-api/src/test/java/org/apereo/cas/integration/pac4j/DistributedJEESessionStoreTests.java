@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.CookieUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -90,12 +89,7 @@ public class DistributedJEESessionStoreTests {
         assertTrue(value.isPresent());
         assertEquals("test3", value.get());
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                store.set(context, "not-serializable", new NoSerializable());
-            }
-        });
+        assertDoesNotThrow(() -> store.set(context, "not-serializable", new NoSerializable()));
         store.destroySession(context);
         value = store.get(context, "attribute");
         assertTrue(value.isEmpty());

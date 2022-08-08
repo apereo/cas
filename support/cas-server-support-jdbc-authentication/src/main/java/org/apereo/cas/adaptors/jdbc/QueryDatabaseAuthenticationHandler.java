@@ -58,18 +58,19 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
 
         if (StringUtils.isBlank(properties.getFieldPassword())) {
             LOGGER.warn("When the password field is left undefined, CAS will skip comparing database and user passwords for equality "
-                + ", (specially if the query results do not contain the password field),"
-                + "and will instead only rely on a successful query execution with returned results in order to verify credentials");
+                        + ", (specially if the query results do not contain the password field),"
+                        + "and will instead only rely on a successful query execution with returned results in order to verify credentials");
         }
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
+        final String originalPassword)
         throws GeneralSecurityException, PreventedException {
         val attributes = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         val username = credential.getUsername();
-        val password = credential.getPassword();
+        val password = credential.toPassword();
         try {
             val dbFields = query(credential);
             if (dbFields.containsKey(properties.getFieldPassword())) {
@@ -89,7 +90,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 val count = dbFields.get("total");
                 if (count == null || !NumberUtils.isCreatable(count.toString())) {
                     throw new FailedLoginException("Missing field value 'total' from the query results for "
-                        + username + " or value not parseable as a number");
+                                                   + username + " or value not parseable as a number");
                 }
 
                 val number = NumberUtils.createNumber(count.toString());
@@ -129,7 +130,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         }
         val parameters = new LinkedHashMap<String, Object>();
         parameters.put("username", credential.getUsername());
-        parameters.put("password", credential.getPassword());
+        parameters.put("password", credential.toPassword());
         return getNamedParameterJdbcTemplate().queryForMap(properties.getSql(), parameters);
     }
 

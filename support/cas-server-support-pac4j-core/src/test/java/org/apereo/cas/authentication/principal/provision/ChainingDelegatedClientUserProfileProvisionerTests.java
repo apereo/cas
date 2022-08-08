@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.profile.CommonProfile;
@@ -31,12 +30,7 @@ public class ChainingDelegatedClientUserProfileProvisionerTests {
         val client = new CasClient(new CasConfiguration("http://cas.example.org"));
 
         val chain = new ChainingDelegatedClientUserProfileProvisioner(List.of(mock(DelegatedClientUserProfileProvisioner.class)));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                chain.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client,
-                    CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-            }
-        });
+        assertDoesNotThrow(() -> chain.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client,
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 }

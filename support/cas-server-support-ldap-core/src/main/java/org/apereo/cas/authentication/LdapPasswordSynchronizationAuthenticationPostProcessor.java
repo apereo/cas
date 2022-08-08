@@ -91,6 +91,6 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
      * @return the ldap password attribute
      */
     protected LdapAttribute getLdapPasswordAttribute(final UsernamePasswordCredential credential) {
-        return new UnicodePwdAttribute(credential.getPassword());
+        return new UnicodePwdAttribute(credential.toPassword());
     }
 }

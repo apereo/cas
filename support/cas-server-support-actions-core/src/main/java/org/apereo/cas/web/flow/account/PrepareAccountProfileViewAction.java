@@ -15,6 +15,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -161,7 +162,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
                 .orElse(StringUtils.EMPTY);
             val dateFormat = new ISOStandardDateFormat();
             this.authenticationDate = dateFormat.format(DateTimeUtils.dateOf(ticket.getAuthentication().getAuthenticationDate()));
-            this.geoLocation = FunctionUtils.doIfNotNull(geoLocationService,
+            this.geoLocation = FunctionUtils.doIf(BeanSupplier.isNotProxy(geoLocationService),
                 () -> geoLocationService.locate(this.clientIpAddress).build(), () -> "N/A").get();
             this.payload = FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
         }

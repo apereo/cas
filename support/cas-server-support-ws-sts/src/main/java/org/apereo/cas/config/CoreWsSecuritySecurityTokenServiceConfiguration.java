@@ -263,7 +263,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             }
             val p = CryptoUtils.getSecurityProperties(realmConfig.getKeystoreFile(), realmConfig.getKeystorePassword(), realmConfig.getKeystoreAlias());
             realm.setSignatureCryptoProperties(p);
-            realm.setCallbackHandler(new RealmPasswordVerificationCallbackHandler(realmConfig.getKeyPassword()));
+            realm.setCallbackHandler(new RealmPasswordVerificationCallbackHandler(realmConfig.getKeyPassword().toCharArray()));
             return realm;
         }
 

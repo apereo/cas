@@ -138,7 +138,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LOGGER.debug("Updating account password for [{}]", dn);
                     val upc = (UsernamePasswordCredential) credential;
                     val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(entry.getValue().getLdapUrl()));
-                    if (ldapConnectionFactory.executePasswordModifyOperation(dn, upc.getPassword(), bean.getPassword(),
+                    if (ldapConnectionFactory.executePasswordModifyOperation(dn, upc.toPassword(), bean.getPassword(),
                         entry.getValue().getType())) {
                         LOGGER.debug("Successfully updated the account password for [{}]", dn);
                         return Boolean.TRUE;

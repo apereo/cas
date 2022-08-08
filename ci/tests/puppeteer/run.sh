@@ -452,11 +452,15 @@ if [[ "${DRYRUN}" != "true" ]]; then
   exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
 
   [ -n "${exitScript}" ] && \
-    printgreen "Exit script: ${exitScript}" && \
+    printcyan "Exit script: ${exitScript}" && \
     chmod +x "${exitScript}" && \
-    eval "export SCENARIO=${scenarioName}"; eval "${exitScript}"
+    eval "${exitScript}"
 
-  printgreen "Done!\n"
+  if [[ $RC -ne 0 ]]; then
+    printred "Test scenario [${scenarioName}] has failed.\n"
+  else
+    printgreen "Test scenario [${scenarioName}] has passed successfully!\n"
+  fi
 fi
 
 if [[ "${RERUN}" != "true" ]]; then

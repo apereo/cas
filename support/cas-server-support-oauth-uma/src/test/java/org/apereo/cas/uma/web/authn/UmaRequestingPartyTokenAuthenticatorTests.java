@@ -5,7 +5,6 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.jee.context.JEEContext;
@@ -30,12 +29,9 @@ public class UmaRequestingPartyTokenAuthenticatorTests extends BaseUmaEndpointCo
         val token = getAccessToken();
         val credentials = new TokenCredentials(token.getId());
         ticketRegistry.addTicket(token);
-        assertThrows(CredentialsException.class, new Executable() {
-            @Override
-            public void execute() {
-                val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-                input.validate(credentials, webContext, JEESessionStore.INSTANCE);
-            }
+        assertThrows(CredentialsException.class, () -> {
+            val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+            input.validate(credentials, webContext, JEESessionStore.INSTANCE);
         });
     }
 

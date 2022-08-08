@@ -68,7 +68,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             LOGGER.debug("[{}] was not found in the map.", username);
             throw new AccountNotFoundException(username + " not found in backing map.");
         }
-        if (!StringUtils.equals(credential.getPassword(), cachedPassword)) {
+        if (!StringUtils.equals(credential.toPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
         val strategy = getPasswordPolicyHandlingStrategy();

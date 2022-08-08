@@ -11,7 +11,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -56,12 +55,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
         assertTrue(repo.load().isEmpty());
         assertNull(repo.update(OneTimeTokenAccount.builder().build()));
         assertEquals(0, repo.count());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                repo.delete("casuser");
-            }
-        });
+        assertDoesNotThrow(() -> repo.delete("casuser"));
         when(resource.getFile()).thenReturn(File.createTempFile("test", ".json"));
         assertTrue(repo.get("casuser").isEmpty());
     }

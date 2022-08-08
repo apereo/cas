@@ -74,7 +74,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         throws GeneralSecurityException, PreventedException {
 
         val username = credential.getUsername();
-        val password = credential.getPassword();
+        val password = credential.toPassword();
 
         val exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {

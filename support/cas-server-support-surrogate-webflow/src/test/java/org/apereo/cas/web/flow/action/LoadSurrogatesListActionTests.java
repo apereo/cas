@@ -68,7 +68,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         val creds = new SurrogateUsernamePasswordCredential();
-        creds.setPassword("Mellon");
+        creds.assignPassword("Mellon");
         creds.setUsername("casuser");
         creds.setSurrogateUsername("cassurrogate");
         WebUtils.putCredential(context, creds);
@@ -97,7 +97,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         val creds = new SurrogateUsernamePasswordCredential();
-        creds.setPassword("Mellon");
+        creds.assignPassword("Mellon");
         creds.setUsername("casuser");
         creds.setSurrogateUsername("unknown-user");
         WebUtils.putCredential(context, creds);
@@ -127,7 +127,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         val creds = new SurrogateUsernamePasswordCredential();
-        creds.setPassword("Mellon");
+        creds.assignPassword("Mellon");
         creds.setUsername("someuser");
         creds.setSurrogateUsername("others");
         WebUtils.putCredential(context, creds);

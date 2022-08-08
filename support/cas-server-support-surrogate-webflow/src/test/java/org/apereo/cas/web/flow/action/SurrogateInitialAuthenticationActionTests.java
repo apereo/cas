@@ -46,7 +46,7 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
         val context = new MockRequestContext();
         val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
-        c.setPassword("Mellon");
+        c.assignPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
         WebUtils.putCredential(context, c);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -58,7 +58,7 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
         val context = new MockRequestContext();
         val c = new UsernamePasswordCredential();
         c.setUsername("+casuser");
-        c.setPassword("Mellon");
+        c.assignPassword("Mellon");
         WebUtils.putCredential(context, c);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertNull(initialAuthenticationAction.execute(context));
@@ -71,7 +71,7 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
         val context = new MockRequestContext();
         val c = new UsernamePasswordCredential();
         c.setUsername("cassurrogate+casuser");
-        c.setPassword("Mellon");
+        c.assignPassword("Mellon");
         WebUtils.putCredential(context, c);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertNull(initialAuthenticationAction.execute(context));
@@ -84,7 +84,7 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
         val context = new MockRequestContext();
         var credential = new UsernamePasswordCredential();
         credential.setUsername("cassurrogate+casuser");
-        credential.setPassword("badpassword");
+        credential.assignPassword("badpassword");
         WebUtils.putCredential(context, credential);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertNull(initialAuthenticationAction.execute(context));
@@ -92,7 +92,7 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
 
         val sc = WebUtils.getCredential(context, SurrogateUsernamePasswordCredential.class);
         sc.setUsername("casuser");
-        sc.setPassword("Mellon");
+        sc.assignPassword("Mellon");
         WebUtils.putCredential(context, sc);
         assertNull(initialAuthenticationAction.execute(context));
         assertTrue(WebUtils.getCredential(context) instanceof UsernamePasswordCredential);

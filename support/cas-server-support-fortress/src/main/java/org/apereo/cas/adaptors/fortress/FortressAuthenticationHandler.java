@@ -64,7 +64,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
         val username = c.getUsername();
-        val password = c.getPassword();
+        val password = c.toPassword();
         try {
             LOGGER.debug("Trying to delegate authentication for [{}] to fortress", username);
             val user = new User(username, password);

@@ -56,8 +56,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                                        final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential transformedCredential,
+        final String originalPassword)
         throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(properties.getSql()) || StringUtils.isBlank(properties.getAlgorithmName()) || getJdbcTemplate() == null) {
@@ -67,7 +68,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         val username = transformedCredential.getUsername();
         try {
             val values = getJdbcTemplate().queryForMap(properties.getSql(), username);
-            val digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
+            val digestedPassword = digestEncodedPassword(transformedCredential.toPassword(), values);
 
             if (!values.get(properties.getPasswordFieldName()).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");

@@ -67,7 +67,8 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
             }
             if (passwordManagementService.change(creds, bean)) {
-                WebUtils.putCredential(requestContext, new UsernamePasswordCredential(creds.getUsername(), bean.getPassword()));
+                val credential = new UsernamePasswordCredential(creds.getUsername(), bean.getPassword());
+                WebUtils.putCredential(requestContext, credential);
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
                 return getSuccessEvent(requestContext, bean);
             }

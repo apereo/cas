@@ -115,8 +115,9 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
         description = "Display all available puppeteer scenarios"
         doLast {
             def scenarios = []
-            def scenarioMatchPattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
-            rootProject.file("ci/tests/puppeteer/scenarios").eachDirMatch(~scenarioMatchPattern) {
+            def pattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
+            def scenarioMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
+            rootProject.file("ci/tests/puppeteer/scenarios").eachDirMatch(scenarioMatchPattern) {
                 scenarios += it.getName()
             }
             Collections.sort(scenarios)
