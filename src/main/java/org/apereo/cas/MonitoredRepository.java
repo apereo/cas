@@ -56,7 +56,7 @@ public class MonitoredRepository {
             .filter(milestone -> {
                 val milestoneVersion = Version.valueOf(milestone.getTitle());
                 return milestoneVersion.getMajorVersion() == branchVersion.getMajorVersion()
-                    && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
+                       && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
             })
             .findFirst();
     }
@@ -159,7 +159,7 @@ public class MonitoredRepository {
             .filter(milestone -> {
                 var masterVersion = Version.valueOf(milestone.getTitle());
                 return masterVersion.getMajorVersion() == currentVersion.getMajorVersion()
-                    && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
+                       && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
             })
             .findFirst();
         return result;
@@ -174,10 +174,12 @@ public class MonitoredRepository {
             pr.getHead().getSha(), "squash");
     }
 
-    public void labelPullRequestAs(final PullRequest pr, final CasLabels labelName) {
+    public PullRequest labelPullRequestAs(final PullRequest pr, final CasLabels labelName) {
         if (!pr.isLabeledAs(labelName)) {
-            this.gitHub.addLabel(pr, labelName.getTitle());
+            return gitHub.addLabel(pr, labelName.getTitle());
         }
+        log.info("Pull request {} is already assigned to label {}", pr.getNumber(), labelName);
+        return pr;
     }
 
     public void addComment(final PullRequest pr, final String comment) {

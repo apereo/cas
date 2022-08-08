@@ -334,6 +334,8 @@ public class GitHubTemplate implements GitHubOperations {
             new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Label[].class);
         if (!response.getStatusCode().is2xxSuccessful()) {
             log.warn("Failed to remove label from pull request. Response status: {}", response.getStatusCode());
+        } else {
+            pullRequest.getLabels().removeIf(l -> l.getName().equalsIgnoreCase(label));
         }
     }
 
