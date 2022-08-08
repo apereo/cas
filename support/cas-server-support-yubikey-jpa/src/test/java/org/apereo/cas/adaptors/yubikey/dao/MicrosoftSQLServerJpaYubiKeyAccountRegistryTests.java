@@ -18,8 +18,8 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.yubikey.jpa.user=sa",
     "cas.authn.mfa.yubikey.jpa.password=p@ssw0rd",
     "cas.authn.mfa.yubikey.jpa.driver-class=com.microsoft.sqlserver.jdbc.SQLServerDriver",
-    "cas.authn.mfa.yubikey.jpa.url=jdbc:sqlserver://localhost:1433;databaseName=yubikey;useUnicode=true;characterEncoding=UTF-8",
-    "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.SQLServer2012Dialect"
+    "cas.authn.mfa.yubikey.jpa.url=jdbc:sqlserver://localhost:1433;databaseName=yubikey;useUnicode=true;characterEncoding=UTF-8;encrypt=false;trustServerCertificate=true",
+    "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.SQLServer2016Dialect"
 })
 public class MicrosoftSQLServerJpaYubiKeyAccountRegistryTests extends JpaYubiKeyAccountRegistryTests {
 }
