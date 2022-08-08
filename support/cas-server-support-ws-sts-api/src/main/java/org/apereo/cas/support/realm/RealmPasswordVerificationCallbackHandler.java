@@ -33,7 +33,6 @@ public class RealmPasswordVerificationCallbackHandler implements CallbackHandler
                 LOGGER.trace("Evaluating [{}]", identifier);
                 callback.setPassword(new String(this.password));
                 LOGGER.debug("Authenticated [{}] successfully.", identifier);
-                Arrays.fill(this.password, '0');
             });
     }
 }
