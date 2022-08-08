@@ -94,7 +94,7 @@ Needless to say, you are going to need:
 1. A decent diff tool, such as [KDiff3](http://kdiff3.sourceforge.net/), [WinDiff](http://winmerge.org), 
 [Beyond Compare](http://www.scootersoftware.com/), etc.
 2. A decent intelligent text editor, such as [Sublime](http://www.sublimetext.com),
-[Atom](https://atom.io/) or a full blown IDE such as [IntelliJ IDEA](https://www.jetbrains.com/idea/).
+[Visual Studio Code](https://code.visualstudio.com/) or a full blown IDE such as [IntelliJ IDEA](https://www.jetbrains.com/idea/).
 
 ## Document Changes
 

@@ -123,7 +123,7 @@ Remember to mark the release tag as pre-release, when releasing RC versions of t
 
 ## Update CAS Initializr
 
-Make sure to update the [CAS Initializr](../installation/WAR-Overlay-Initializr.html) to allow for generation of projects
+Make sure to update the CAS Initializr to allow for generation of projects
 based on the newly-released version.
 
 ## Update Documentation
@@ -135,7 +135,7 @@ based on the newly-released version.
 - Configure docs to include the new release in the list of [available versions](https://github.com/apereo/cas/blob/gh-pages/_layouts/default.html).
 - Update the project's [`README.md` page](https://github.com/apereo/cas/blob/master/README.md) to list the new version, if necessary.
 - Update [the build process](Build-Process.html) to include any needed information on how to build the new release.
-- Update [the release notes](../release_notes/Overview.html) and remove all previous entries.
+- Update the release notes overview and remove all previous entries.
 - Send a pull request to [Algolia](https://crawler.algolia.com/) for the new documentation version to index the new space for search requests.
 
 ## Update Maintenance Policy

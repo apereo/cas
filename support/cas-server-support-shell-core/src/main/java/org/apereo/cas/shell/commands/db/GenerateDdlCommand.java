@@ -32,6 +32,7 @@ import org.hibernate.dialect.PostgreSQL95Dialect;
 import org.hibernate.dialect.SQLServer2005Dialect;
 import org.hibernate.dialect.SQLServer2008Dialect;
 import org.hibernate.dialect.SQLServer2012Dialect;
+import org.hibernate.dialect.SQLServer2016Dialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.schema.TargetType;
@@ -92,6 +93,7 @@ public class GenerateDdlCommand {
         DIALECTS_MAP.put("SQLSERVER2005", SQLServer2005Dialect.class.getName());
         DIALECTS_MAP.put("SQLSERVER2008", SQLServer2008Dialect.class.getName());
         DIALECTS_MAP.put("SQLSERVER2012", SQLServer2012Dialect.class.getName());
+        DIALECTS_MAP.put("SQLSERVER2016", SQLServer2016Dialect.class.getName());
     }
 
     private static SchemaExport.Action getAction(final boolean dropSchema, final boolean createSchema) {
