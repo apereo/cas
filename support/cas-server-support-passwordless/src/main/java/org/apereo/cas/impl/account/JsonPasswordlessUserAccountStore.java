@@ -26,18 +26,23 @@ public class JsonPasswordlessUserAccountStore extends SimplePasswordlessUserAcco
 
     private WatcherService watcherService;
 
+    private final Resource resource;
+
     public JsonPasswordlessUserAccountStore(final Resource resource) {
         super(readFromResource(resource));
+        this.resource = resource;
         Unchecked.consumer(res -> {
             if (ResourceUtils.isFile(resource)) {
-                this.watcherService = new FileWatcherService(resource.getFile(),
-                    file -> {
-                        accounts.clear();
-                        accounts.putAll(readFromResource(resource));
-                    });
+                this.watcherService = new FileWatcherService(resource.getFile(), file -> reload());
                 this.watcherService.start(getClass().getSimpleName());
             }
         }).accept(resource);
+    }
+
+    @Override
+    public void reload() {
+        accounts.clear();
+        accounts.putAll(readFromResource(this.resource));
     }
 
     private static Map<String, PasswordlessUserAccount> readFromResource(final Resource resource) {

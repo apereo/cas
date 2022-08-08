@@ -33,6 +33,7 @@ public class GroovyPasswordlessUserAccountStoreTests extends BasePasswordlessUse
 
     @Test
     public void verifyAction() {
+        passwordlessUserAccountStore.reload();
         val user = passwordlessUserAccountStore.findUser("casuser");
         assertTrue(user.isPresent());
     }
