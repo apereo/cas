@@ -51,6 +51,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
         try {
             passwordResetTicket = ticketRegistry.getTicket(transientTicket, TransientSessionTicket.class);
             passwordResetTicket.update();
+            ticketRegistry.updateTicket(passwordResetTicket);
 
             val token = passwordResetTicket.getProperties().get(PasswordManagementService.PARAMETER_TOKEN).toString();
             val username = passwordManagementService.parseToken(token);

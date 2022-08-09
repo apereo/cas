@@ -36,29 +36,18 @@ const cas = require('../../cas.js');
     let link = await cas.textContent(page, "div[name=bodyPlainText] .well");
     await cas.goto(page, link);
     await page.waitForTimeout(1000);
+    await cas.assertInnerText(page, "#content #pwdmain h3", "Hello, casuser. You must change your password.");
 
-    await cas.assertInnerText(page, "#content h2", "Answer Security Questions");
-
-    await cas.type(page,'#q0', "answer1");
-    await cas.type(page,'#q1', "answer2");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await page.waitForTimeout(2000);
+    await cas.goto(page, link);
     await page.waitForTimeout(1000);
+    await cas.assertInnerText(page, "#content #pwdmain h3", "Hello, casuser. You must change your password.");
 
-    await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
+    await page.waitForTimeout(2000);
+    await cas.goto(page, link);
     await page.waitForTimeout(1000);
-    await cas.assertInvisibility(page, '#password-confirm-mismatch-msg');
-    await cas.assertInvisibility(page, '#password-policy-violation-msg');
+    await cas.assertInnerText(page, "#main-content h2", "Password Reset Failed");
 
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
-
-    await cas.assertInnerText(page, "#content h2", "Password Change Successful");
-    await cas.assertInnerText(page, "#content p", "Your account password is successfully updated.");
+    await page.waitForTimeout(2000);
     await browser.close();
 })();
-
-async function typePassword(page, pswd, confirm) {
-    await cas.type(page,'#password', pswd);
-    await cas.type(page,'#confirmedPassword', confirm);
-}
