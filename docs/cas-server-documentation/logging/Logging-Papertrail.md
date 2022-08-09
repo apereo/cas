@@ -11,8 +11,6 @@ category: Logs & Audits
 [Papertrail](https://papertrailapp.com) is a cloud-based log management service that provides aggregated logging tools, 
 flexible system groups, team-wide access, long-term archives, charts and analytics exports, monitoring webhooks and more.
 
-See [this guide](http://help.papertrailapp.com/kb/configuration/java-log4j-logging/#log4j2) for more info.
-
 ```xml
 ...
 <Appenders>

@@ -9,14 +9,9 @@ buildscript {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            url "https://maven.eveoh.nl/content/repositories/releases"
-        }
-        
-        maven {
             url "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
         }
-        
     }
 
     dependencies {
