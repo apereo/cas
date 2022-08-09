@@ -176,6 +176,7 @@ if [[ $cloneRepository == "true" ]]; then
   rm -f "$PWD/gh-pages/Gemfile.lock"
 
   cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
+  mv "$PWD"/docs-latest/developer/* "$PWD/gh-pages/developer/"  
   cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
   cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts"
   cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes"

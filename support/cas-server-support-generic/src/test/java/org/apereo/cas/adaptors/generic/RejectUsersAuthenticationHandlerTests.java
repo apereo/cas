@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("FileSystem")
+@Tag("AuthenticationHandler")
 public class RejectUsersAuthenticationHandlerTests {
     private final RejectUsersAuthenticationHandler authenticationHandler;
 

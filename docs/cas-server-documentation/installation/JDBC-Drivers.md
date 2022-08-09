@@ -138,3 +138,4 @@ Available drivers are:
 | `org.hibernate.dialect.SQLServer2005Dialect` |
 | `org.hibernate.dialect.SQLServer2008Dialect` |
 | `org.hibernate.dialect.SQLServer2012Dialect` |
+| `org.hibernate.dialect.SQLServer2016Dialect` |

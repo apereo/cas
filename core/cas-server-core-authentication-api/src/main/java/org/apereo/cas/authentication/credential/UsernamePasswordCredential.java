@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
@@ -94,7 +95,9 @@ public class UsernamePasswordCredential extends AbstractCredential {
      * @param password the password
      */
     public void assignPassword(final String password) {
-        this.password = new char[password.length()];
-        System.arraycopy(password.toCharArray(), 0, this.password, 0, password.length());
+        FunctionUtils.doIfNotNull(password, p -> {
+            this.password = new char[p.length()];
+            System.arraycopy(password.toCharArray(), 0, this.password, 0, password.length());
+        }, p -> this.password = ArrayUtils.EMPTY_CHAR_ARRAY);
     }
 }
