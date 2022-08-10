@@ -154,6 +154,7 @@ layout: null
         *   [JDBC](/cas/{{ version }}/authentication/Configuring-Authentication-Throttling-JDBC.html)
         *   [MongoDb](/cas/{{ version }}/authentication/Configuring-Authentication-Throttling-MongoDb.html)
         *   [Redis](/cas/{{ version }}/authentication/Configuring-Authentication-Throttling-Redis.html)
+        *   [LDAP](/cas/{{ version }}/authentication/Configuring-Authentication-Throttling-LDAP.html)
     *   [GeoLocation Tracking](/cas/{{ version }}/authentication/GeoTracking-Authentication-Requests.html)
     *   [Proxying](/cas/{{ version }}/authentication/Configuring-Proxy-Authentication.html)
     *   [Events](#authnevents)

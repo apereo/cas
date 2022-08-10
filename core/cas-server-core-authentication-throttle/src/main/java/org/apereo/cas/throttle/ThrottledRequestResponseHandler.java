@@ -13,6 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 public interface ThrottledRequestResponseHandler {
 
     /**
+     * Default Bean name.
+     */
+    String BEAN_NAME = "throttledRequestResponseHandler";
+
+    /**
      * Handle.
      *
      * @param request  the request

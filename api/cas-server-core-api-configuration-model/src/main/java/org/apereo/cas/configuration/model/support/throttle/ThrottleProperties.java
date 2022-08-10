@@ -51,6 +51,12 @@ public class ThrottleProperties implements Serializable {
     private HazelcastThrottleProperties hazelcast = new HazelcastThrottleProperties();
 
     /**
+     * Settings related to throttling requests using LDAP.
+     */
+    @NestedConfigurationProperty
+    private LdapThrottleProperties ldap = new LdapThrottleProperties();
+
+    /**
      * Core throttling settings.
      */
     @NestedConfigurationProperty
