@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -106,11 +107,9 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val token = passwordManagementService.createToken(query);
         if (StringUtils.isNotBlank(token)) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-            val pm = casProperties.getAuthn().getPm();
-            val seconds = Beans.newDuration(pm.getReset().getExpiration()).toSeconds();
             val properties = CollectionUtils.<String, Serializable>wrap(
                 PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token,
-                ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(seconds).build());
+                ExpirationPolicy.class.getName(), computeExpirationPolicy());
             val ticket = transientFactory.create(service, properties);
             ticketRegistry.addTicket(ticket);
 
@@ -129,6 +128,25 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         }
         LOGGER.error("Could not create password reset url since no reset token could be generated");
         return null;
+    }
+
+    /**
+     * Compute the expiration policy.
+     *
+     * @return the expiration policy
+     */
+    protected ExpirationPolicy computeExpirationPolicy() {
+        val reset = casProperties.getAuthn().getPm().getReset();
+        val numberOfUses = reset.getNumberOfUses();
+        val seconds = Beans.newDuration(reset.getExpiration()).toSeconds();
+
+        if (numberOfUses >= 1) {
+            LOGGER.debug("Password reset URL shall expire after [{}] uses and [{}] second(s)", numberOfUses, seconds);
+            return new MultiTimeUseOrTimeoutExpirationPolicy(numberOfUses, seconds);
+        }
+
+        LOGGER.debug("Password reset URL shall expire in [{}] second(s)", seconds);
+        return HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(seconds).build();
     }
 
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
