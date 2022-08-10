@@ -57,21 +57,19 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    BasePasswordManagementActionTests.SharedTestConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
+@SpringBootTest(classes = BasePasswordManagementActionTests.SharedTestConfiguration.class,
+    properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
 
-    "cas.authn.pm.core.enabled=true",
-    "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
-    "cas.authn.pm.forgot-username.mail.from=cas@example.org",
-    "cas.authn.pm.reset.mail.from=cas@example.org",
-    "cas.authn.pm.reset.security-questions-enabled=true"
-})
+        "cas.authn.pm.core.enabled=true",
+        "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
+        "cas.authn.pm.forgot-username.mail.from=cas@example.org",
+        "cas.authn.pm.reset.mail.from=cas@example.org",
+        "cas.authn.pm.reset.security-questions-enabled=true"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class BasePasswordManagementActionTests {
+public abstract class BasePasswordManagementActionTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
@@ -155,7 +153,8 @@ public class BasePasswordManagementActionTests {
         CasCoreNotificationsConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
-        CasWebflowContextConfiguration.class
+        CasWebflowContextConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
