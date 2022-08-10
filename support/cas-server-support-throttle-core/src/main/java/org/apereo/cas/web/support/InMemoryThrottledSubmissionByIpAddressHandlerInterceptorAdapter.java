@@ -14,9 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
     public InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(
-        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-        final ThrottledSubmissionsStore ipMap) {
-        super(configurationContext, ipMap);
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     @Override

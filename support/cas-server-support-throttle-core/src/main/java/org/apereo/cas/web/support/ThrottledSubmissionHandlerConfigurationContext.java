@@ -31,4 +31,6 @@ public class ThrottledSubmissionHandlerConfigurationContext {
     private final ConfigurableApplicationContext applicationContext;
 
     private final CasConfigurationProperties casProperties;
+
+    private final ThrottledSubmissionsStore<ThrottledSubmission> throttledSubmissionStore;
 }

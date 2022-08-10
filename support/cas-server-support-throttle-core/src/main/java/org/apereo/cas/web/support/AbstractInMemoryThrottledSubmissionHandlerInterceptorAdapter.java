@@ -2,8 +2,12 @@ package org.apereo.cas.web.support;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jooq.lambda.Unchecked;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -20,34 +24,38 @@ import java.util.stream.Collectors;
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter
     implements InMemoryThrottledSubmissionHandlerInterceptor {
 
-    private final ThrottledSubmissionsStore<ThrottledSubmission> submissionsStore;
-
     protected AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(
-        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-        final ThrottledSubmissionsStore submissionsStore) {
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext) {
         super(configurationContext);
-        this.submissionsStore = submissionsStore;
     }
-
 
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
         val key = constructKey(request);
         LOGGER.debug("Recording submission failure [{}]", key);
-        val submission = ThrottledSubmission.builder().key(key).build();
-        submissionsStore.put(submission);
+        val submission = ThrottledSubmission.builder()
+            .key(key)
+            .username(getUsernameParameterFromRequest(request))
+            .clientIpAddress(ClientInfoHolder.getClientInfo().getClientIpAddress())
+            .build();
+        getConfigurationContext().getThrottledSubmissionStore().put(submission);
+        val receivers = new ArrayList<>(getConfigurationContext().getApplicationContext()
+            .getBeansOfType(ThrottledSubmissionReceiver.class).values());
+        AnnotationAwareOrderComparator.sort(receivers);
+        receivers.forEach(Unchecked.consumer(receiver -> receiver.receive(submission)));
     }
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val key = constructKey(request);
         LOGGER.trace("Throttling threshold key is [{}] with submission threshold [{}]", key, getThresholdRate());
-        return submissionsStore.exceedsThreshold(key, getThresholdRate());
+        return getConfigurationContext().getThrottledSubmissionStore().exceedsThreshold(key, getThresholdRate());
     }
 
     @Override
     public Collection getRecords() {
-        return submissionsStore.entries()
+        return getConfigurationContext().getThrottledSubmissionStore()
+            .entries()
             .map(entry -> entry.getKey() + "<->" + entry.getValue())
             .collect(Collectors.toList());
     }
@@ -56,7 +64,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     public void release() {
         try {
             LOGGER.info("Beginning audit cleanup...");
-            submissionsStore.release(getThresholdRate());
+            getConfigurationContext().getThrottledSubmissionStore().release(getThresholdRate());
         } finally {
             LOGGER.debug("Done releasing throttled entries.");
         }

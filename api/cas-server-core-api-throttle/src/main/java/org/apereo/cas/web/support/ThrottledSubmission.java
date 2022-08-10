@@ -23,4 +23,8 @@ public class ThrottledSubmission implements Serializable {
 
     @Builder.Default
     private final ZonedDateTime value = ZonedDateTime.now(Clock.systemUTC());
+
+    private final String username;
+
+    private final String clientIpAddress;
 }

@@ -22,6 +22,7 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.control.PasswordPolicyControl;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -249,6 +250,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 authenticatedEntryAttributes);
             var ldaptiveCred = new Credential(upc.getPassword());
             val request = new AuthenticationRequest(upc.getUsername(), ldaptiveCred, authenticatedEntryAttributes);
+            request.setControls(new PasswordPolicyControl());
             return authenticator.authenticate(request);
         } catch (final LdapException e) {
             LOGGER.trace(e.getMessage(), e);

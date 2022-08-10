@@ -58,9 +58,7 @@ public class CasThrottlingConfiguration {
         public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
             final CasConfigurationProperties casProperties,
             @Qualifier("authenticationThrottlingConfigurationContext")
-            final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext,
-            @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
-            final ThrottledSubmissionsStore throttleSubmissionMap) {
+            final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext) {
             val throttle = casProperties.getAuthn().getThrottle();
             if (throttle.getFailure().getRangeSeconds() <= 0 && throttle.getFailure().getThreshold() <= 0) {
                 LOGGER.trace("Authentication throttling is disabled since no range-seconds or failure-threshold is defined");
@@ -69,11 +67,11 @@ public class CasThrottlingConfiguration {
             if (StringUtils.isNotBlank(throttle.getCore().getUsernameParameter())) {
                 LOGGER.trace("Activating authentication throttling based on IP address and username...");
                 return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(
-                    authenticationThrottlingConfigurationContext, throttleSubmissionMap);
+                    authenticationThrottlingConfigurationContext);
             }
             LOGGER.trace("Activating authentication throttling based on IP address...");
             return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(
-                authenticationThrottlingConfigurationContext, throttleSubmissionMap);
+                authenticationThrottlingConfigurationContext);
         }
     }
 
@@ -89,12 +87,15 @@ public class CasThrottlingConfiguration {
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
             final CasConfigurationProperties casProperties,
-            @Qualifier("throttledRequestResponseHandler")
+            @Qualifier(ThrottledRequestResponseHandler.BEAN_NAME)
             final ThrottledRequestResponseHandler throttledRequestResponseHandler,
             @Qualifier(ThrottledRequestExecutor.DEFAULT_BEAN_NAME)
-            final ThrottledRequestExecutor throttledRequestExecutor) {
+            final ThrottledRequestExecutor throttledRequestExecutor,
+            @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
+            final ThrottledSubmissionsStore throttledSubmissionStore) {
             return ThrottledSubmissionHandlerConfigurationContext.builder()
                 .casProperties(casProperties)
+                .throttledSubmissionStore(throttledSubmissionStore)
                 .auditTrailExecutionPlan(auditTrailExecutionPlan)
                 .throttledRequestResponseHandler(throttledRequestResponseHandler)
                 .throttledRequestExecutor(throttledRequestExecutor)

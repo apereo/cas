@@ -17,9 +17,8 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
     public InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(
-        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-        final ThrottledSubmissionsStore ipMap) {
-        super(configurationContext, ipMap);
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     @Override
