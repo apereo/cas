@@ -17,6 +17,11 @@ import java.util.List;
 public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInterceptor {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "authenticationThrottle";
+
+    /**
      * No op throttled submission handler interceptor.
      *
      * @return the throttled submission handler interceptor

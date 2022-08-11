@@ -27,4 +27,6 @@ public class ThrottledSubmission implements Serializable {
     private final String username;
 
     private final String clientIpAddress;
+
+    private final ZonedDateTime expiration;
 }

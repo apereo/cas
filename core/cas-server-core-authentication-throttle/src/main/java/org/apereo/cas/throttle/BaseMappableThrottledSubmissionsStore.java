@@ -43,6 +43,11 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     }
 
     @Override
+    public boolean contains(final String key) {
+        return backingMap.containsKey(key);
+    }
+
+    @Override
     public T get(final String key) {
         return backingMap.get(key);
     }
