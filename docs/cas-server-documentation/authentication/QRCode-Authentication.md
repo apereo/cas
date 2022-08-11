@@ -20,7 +20,7 @@ for authentication attempts, allowing the end user to *scan and proceed*.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-qrlogin" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-qr-authentication" %}
 
 
 ## Actuator Endpoints

@@ -65,6 +65,7 @@ public class DefaultQRAuthenticationTokenValidatorService implements QRAuthentic
 
         val tokenDeviceId = FunctionUtils.doUnchecked(() -> claims.getStringClaim(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID));
         if (!StringUtils.equals(tokenDeviceId, request.getDeviceId())) {
+            LOGGER.warn("Request device identifier [{}] does not match the token's identifier: [{}]", request.getDeviceId(), tokenDeviceId);
             throw new AuthenticationException("Request is assigned an invalid device identifier");
         }
 
