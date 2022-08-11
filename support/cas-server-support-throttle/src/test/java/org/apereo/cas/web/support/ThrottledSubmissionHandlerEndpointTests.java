@@ -33,7 +33,7 @@ public class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpoint
     private ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint;
 
     @Autowired
-    @Qualifier("authenticationThrottle")
+    @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;
 
     @Test

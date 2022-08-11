@@ -24,6 +24,6 @@ public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTest
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
-    @Qualifier("authenticationThrottle")
+    @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;
 }

@@ -29,6 +29,14 @@ public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
     void put(T submission);
 
     /**
+     * Contains this key?
+     *
+     * @param key the key
+     * @return true/false
+     */
+    boolean contains(String key);
+
+    /**
      * Get zoned date time.
      *
      * @param key the key

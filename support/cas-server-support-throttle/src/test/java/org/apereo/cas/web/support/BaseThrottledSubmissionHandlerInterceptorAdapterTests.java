@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -30,7 +31,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -46,13 +46,10 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -67,25 +64,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@SpringBootTest(classes = BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class,
-    properties = {
-        "cas.authn.throttle.failure.rangeSeconds=1",
-        "cas.authn.throttle.failure.threshold=2"
-    })
-@EnableAspectJAutoProxy(proxyTargetClass = false)
-@EnableScheduling
-@Slf4j
 public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
-    protected static final String IP_ADDRESS = "1.2.3.4";
+    protected static final String IP_ADDRESS = "192.0.0.1";
 
     @Autowired
     @Qualifier("casAuthenticationManager")
     protected AuthenticationManager authenticationManager;
 
-    private static UsernamePasswordCredential badCredentials(final String username) {
+    private static UsernamePasswordCredential credentials(final String username,
+                                                          final String password) {
         val credentials = new UsernamePasswordCredential();
         credentials.setUsername(username);
-        credentials.assignPassword("badpassword");
+        credentials.assignPassword(password);
         return credentials;
     }
 
@@ -121,12 +111,12 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @SneakyThrows
     protected void failLoop(final int trials, final int period, final int expected) {
         /* Seed with something to compare against */
-        loginUnsuccessfully("mog", "1.2.3.4");
+
+        login("mog", "badpassword", IP_ADDRESS);
 
         IntStream.range(0, trials).forEach(Unchecked.intConsumer(i -> {
-            LOGGER.debug("Waiting for [{}] ms", period);
             Thread.sleep(period);
-            val status = loginUnsuccessfully("mog", "1.2.3.4");
+            val status = login("mog", "badpassword", IP_ADDRESS);
             if (i == trials) {
                 assertEquals(expected, status.getStatus());
             }
@@ -134,31 +124,35 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     }
 
     @SneakyThrows
-    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) {
+    protected MockHttpServletResponse login(final String username,
+                                            final String password,
+                                            final String fromAddress) {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.setMethod("POST");
-        request.setParameter("username", username);
+        request.setParameter(CasProtocolConstants.PARAMETER_USERNAME, username);
+        request.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, password);
         request.setRemoteAddr(fromAddress);
         request.setRequestURI("/cas/login");
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        getThrottle().preHandle(request, response, null);
+        getThrottle().preHandle(request, response, getThrottle());
 
         try {
             val transaction = new DefaultAuthenticationTransactionFactory()
-                .newTransaction(CoreAuthenticationTestUtils.getService(), badCredentials(username));
+                .newTransaction(CoreAuthenticationTestUtils.getService(),
+                    credentials(username, password));
+            response.setStatus(HttpServletResponse.SC_OK);
             authenticationManager.authenticate(transaction);
         } catch (final AuthenticationException e) {
-            getThrottle().postHandle(request, response, null, null);
-            return response;
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            getThrottle().postHandle(request, response, getThrottle(), null);
         } finally {
-            getThrottle().afterCompletion(request, response, null, null);
+            getThrottle().afterCompletion(request, response, getThrottle(), null);
         }
-        throw new AssertionError("Expected AbstractAuthenticationException");
+        return response;
     }
 
     @ImportAutoConfiguration({

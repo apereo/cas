@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.configuration.support.Beans;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -7,6 +9,8 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -33,10 +37,16 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     public void recordSubmissionFailure(final HttpServletRequest request) {
         val key = constructKey(request);
         LOGGER.debug("Recording submission failure [{}]", key);
+
+        val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
+            .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
+        val expiration = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.getSeconds());
+
         val submission = ThrottledSubmission.builder()
             .key(key)
             .username(getUsernameParameterFromRequest(request))
             .clientIpAddress(ClientInfoHolder.getClientInfo().getClientIpAddress())
+            .expiration(expiration)
             .build();
         getConfigurationContext().getThrottledSubmissionStore().put(submission);
         val receivers = new ArrayList<>(getConfigurationContext().getApplicationContext()
@@ -49,7 +59,17 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val key = constructKey(request);
         LOGGER.trace("Throttling threshold key is [{}] with submission threshold [{}]", key, getThresholdRate());
-        return getConfigurationContext().getThrottledSubmissionStore().exceedsThreshold(key, getThresholdRate());
+        val store = getConfigurationContext().getThrottledSubmissionStore();
+
+        if (store.contains(key)) {
+            val submission = store.get(key);
+            val now = ZonedDateTime.now(Clock.systemUTC());
+            if (now.isBefore(submission.getExpiration())) {
+                LOGGER.warn("Throttled submission [{}] remains throttled; submission expires at [{}]", key, submission.getExpiration());
+                return true;
+            }
+        }
+        return store.exceedsThreshold(key, getThresholdRate());
     }
 
     @Override

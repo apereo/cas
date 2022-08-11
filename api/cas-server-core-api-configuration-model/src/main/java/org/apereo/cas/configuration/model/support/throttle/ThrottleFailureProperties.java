@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.throttle;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -35,7 +36,7 @@ public class ThrottleFailureProperties implements Serializable {
     private String code = DEFAULT_AUTHN_FAILED_ACTION;
 
     /**
-     * Number of failed login attempts permitted in the above period.
+     * Number of failed login attempts permitted in the given period.
      * All login throttling components that ship with CAS limit successive failed
      * login attempts that exceed a threshold rate in failures per second.
      */
@@ -46,4 +47,12 @@ public class ThrottleFailureProperties implements Serializable {
      */
     private int rangeSeconds = -1;
 
+    /**
+     * Indicate the number of seconds the account should remain
+     * in a locked/throttled state before it can be released
+     * to continue again. If no value is specified, the failure
+     * threshold and rate that is calculated would hold.
+     */
+    @DurationCapable
+    private String throttleWindowSeconds = "0";
 }

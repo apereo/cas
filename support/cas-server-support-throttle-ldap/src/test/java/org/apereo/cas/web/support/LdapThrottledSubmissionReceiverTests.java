@@ -42,13 +42,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 11389)
 public class LdapThrottledSubmissionReceiverTests {
+    private static final int LDAP_PORT = 11389;
 
     @Autowired
     @Qualifier("ldapThrottledSubmissionReceiver")
     private ThrottledSubmissionReceiver ldapThrottledSubmissionReceiver;
-
-    private static final int LDAP_PORT = 11389;
-
+    
     @BeforeAll
     public static void bootstrap() throws Exception {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));

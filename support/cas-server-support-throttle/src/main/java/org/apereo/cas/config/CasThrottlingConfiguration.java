@@ -53,7 +53,7 @@ public class CasThrottlingConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasThrottlingInterceptorConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "authenticationThrottle")
+        @ConditionalOnMissingBean(name = ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
         @Bean
         public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
             final CasConfigurationProperties casProperties,
@@ -164,7 +164,7 @@ public class CasThrottlingConfiguration {
         public AuthenticationThrottlingExecutionPlanConfigurer authenticationThrottlingExecutionPlanConfigurer(
             @Qualifier("httpPostMethodThrottlingRequestFilter")
             final ThrottledRequestFilter httpPostMethodThrottlingRequestFilter,
-            @Qualifier("authenticationThrottle")
+            @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
             final ThrottledSubmissionHandlerInterceptor authenticationThrottle) {
             return plan -> {
                 plan.registerAuthenticationThrottleFilter(httpPostMethodThrottlingRequestFilter);
