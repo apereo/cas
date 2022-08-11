@@ -63,6 +63,11 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     }
 
     @Override
+    public void remove(final String key) {
+        backingMap.remove(key);
+    }
+
+    @Override
     public boolean exceedsThreshold(final String key, final double thresholdRate) {
         val submissionEntry = get(key);
         LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, submissionEntry);

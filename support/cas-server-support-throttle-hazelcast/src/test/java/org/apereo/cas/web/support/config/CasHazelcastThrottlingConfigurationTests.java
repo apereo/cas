@@ -62,6 +62,7 @@ public class CasHazelcastThrottlingConfigurationTests {
         assertNotNull(throttleSubmissionMap.get(submission.getKey()));
         assertNotEquals(0, throttleSubmissionMap.entries().count());
         throttleSubmissionMap.removeIf(entry -> entry.getKey().equals(submission.getKey()));
+        throttleSubmissionMap.remove(submission.getKey());
         assertEquals(0, throttleSubmissionMap.entries().count());
     }
 }

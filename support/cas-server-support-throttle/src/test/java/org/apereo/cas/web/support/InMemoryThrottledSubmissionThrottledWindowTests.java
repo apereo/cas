@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.authn.throttle.failure.range-seconds=5",
+        "cas.authn.throttle.failure.threshold=1",
         "cas.authn.throttle.failure.throttle-window-seconds=PT2S"
     }
 )
@@ -44,7 +45,7 @@ public class InMemoryThrottledSubmissionThrottledWindowTests
 
     @Override
     @Test
-    public void verifyThrottle() {
+    public void verifyThrottle() throws Exception {
         var success = login("casuser", "Mellon", IP_ADDRESS);
         assertEquals(HttpStatus.SC_OK, success.getStatus());
 
@@ -56,6 +57,11 @@ public class InMemoryThrottledSubmissionThrottledWindowTests
 
         result = login("casuser", "Mellon", IP_ADDRESS);
         assertEquals(HttpStatus.SC_LOCKED, result.getStatus());
+
+        Thread.sleep(5000);
+
+        result = login("casuser", "Mellon", IP_ADDRESS);
+        assertEquals(HttpStatus.SC_OK, result.getStatus());
     }
 
     @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)

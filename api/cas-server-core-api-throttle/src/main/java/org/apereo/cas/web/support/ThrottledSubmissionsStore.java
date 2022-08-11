@@ -22,6 +22,13 @@ public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
     void removeIf(Predicate<T> condition);
 
     /**
+     * Remove.
+     *
+     * @param key the key
+     */
+    void remove(String key);
+
+    /**
      * Put.
      *
      * @param submission the submission

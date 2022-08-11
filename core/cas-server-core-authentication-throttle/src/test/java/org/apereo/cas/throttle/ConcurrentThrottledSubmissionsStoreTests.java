@@ -36,6 +36,7 @@ public class ConcurrentThrottledSubmissionsStoreTests {
         assertNotNull(store.get(key));
         assertEquals(1, store.entries().count());
         store.removeIf(entry -> entry.getKey().equals(key));
+        store.remove(key);
         assertEquals(0, store.entries().count());
     }
 }
