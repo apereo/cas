@@ -16,14 +16,14 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SamlIdPObjectSignerTests}.
+ * This is {@link DefaultSamlIdPObjectSignerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @Tag("SAML2")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
-public class SamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
+public class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void findsSigningCredential() throws Exception {
