@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolverTests;
 import org.apereo.cas.support.pac4j.RefreshableDelegatedClientsTests;
 import org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests;
 import org.apereo.cas.support.pac4j.clients.DelegatedClientsEndpointTests;
@@ -20,6 +21,7 @@ import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientFinishLogout
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientLogoutActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationGenerateClientsActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationFailureActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationRedirectActionTests;
@@ -43,6 +45,7 @@ import org.junit.platform.suite.api.Suite;
     RefreshableDelegatedClientsTests.class,
     DelegatedClientsEndpointTests.class,
     DefaultDelegatedClientFactoryTests.class,
+    DelegatedClientAuthenticationCredentialResolverTests.class,
     RestfulDelegatedClientFactoryTests.class,
     DelegatedClientAuthenticationStoreWebflowStateActionTests.class,
     DelegatedClientAuthenticationFailureActionTests.class,
@@ -62,6 +65,7 @@ import org.junit.platform.suite.api.Suite;
     DelegatedAuthenticationClientRetryActionTests.class,
     DefaultDelegatedClientIdentityProviderAuthorizerTests.class,
     DelegatedAuthenticationWebflowConfigurerTests.class,
+    DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests.class,
     DelegatedSaml2ClientMetadataControllerTests.class
 })
 @Suite

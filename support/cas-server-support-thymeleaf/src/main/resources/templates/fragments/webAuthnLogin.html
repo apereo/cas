@@ -26,8 +26,8 @@
         </script>
 
         <script type="text/javascript" th:inline="javascript">
-            var authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
-            var authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
+            let authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
+            let authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
         </script>
 
         <script th:src="@{/js/webauthn/webauthn.js}"></script>

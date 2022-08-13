@@ -590,6 +590,12 @@ button.close {
     margin: 0;
 }
 
+.dataTables_wrapper {
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
 #serviceui {
     background-color: #17a3b844;
     border-radius: 4px;

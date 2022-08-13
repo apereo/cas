@@ -78,6 +78,18 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         finishLogout.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT));
     }
 
+    protected void createDelegatedClientCredentialSelectionState(final Flow flow) {
+        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION,
+            "delegated-authn/casDelegatedAuthnSelectionView.html");
+        viewState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION));
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SELECT, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_FINALIZE);
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_CANCEL, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
+
+        val finalize = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_FINALIZE,
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE));
+        createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
+    }
+
     /**
      * Create client action action state.
      *
@@ -89,6 +101,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
         val transitionSet = delegatedAuthentication.getTransitionSet();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
+        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SELECT, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION));
 
         val currentStartState = getStartState(flow).getId();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_GENERATE, currentStartState));
@@ -105,7 +118,9 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         val delegatedClients = createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS);
         viewLogin.getRenderActionList().add(delegatedClients);
 
+        createDelegatedClientCredentialSelectionState(flow);
         setStartState(flow, delegatedAuthentication);
+
     }
 
     /**

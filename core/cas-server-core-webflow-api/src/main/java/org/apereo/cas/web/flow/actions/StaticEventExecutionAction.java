@@ -8,6 +8,8 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link StaticEventExecutionAction}.
  *
@@ -17,14 +19,21 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class StaticEventExecutionAction extends BaseCasWebflowAction {
     /**
+     * Null/NoOp action.
+     */
+    public static final Action NULL = new StaticEventExecutionAction(null);
+
+    /**
      * Success action.
      */
     public static final Action SUCCESS = new StaticEventExecutionAction(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-    
+
     private final String eventId;
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        return new EventFactorySupport().event(this, this.eventId);
+        return Optional.ofNullable(eventId)
+            .map(id -> new EventFactorySupport().event(this, id))
+            .orElse(null);
     }
 }

@@ -127,6 +127,14 @@ tasks.register('showConfiguration') {
     }
 }
 
+tasks.register('showProjects') {
+    description "Shows the projects used by the build"
+    doLast() {
+        def result = rootProject.subprojects.collect { it.name }
+        println(groovy.json.JsonOutput.toJson(result))
+    }
+}
+
 tasks.register('downloadDependencies') {
     description "Pre-download project dependencies for all configurations"
     doLast {

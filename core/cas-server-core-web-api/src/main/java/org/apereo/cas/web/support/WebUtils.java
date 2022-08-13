@@ -2015,4 +2015,26 @@ public class WebUtils {
     public static void putDelegatedAuthenticationDisabled(final RequestContext requestContext, final boolean disabled) {
         requestContext.getFlowScope().put("delegatedAuthenticationDisabled", disabled);
     }
+
+    /**
+     * Put delegated client authentication resolved credentials.
+     *
+     * @param context          the context
+     * @param candidateMatches the candidate matches
+     */
+    public static void putDelegatedClientAuthenticationResolvedCredentials(final RequestContext context,
+                                                                           final List<? extends Serializable> candidateMatches) {
+        context.getFlowScope().put("delegatedAuthenticationCredentials", candidateMatches);
+    }
+
+    /**
+     * Gets delegated client authentication resolved credentials.
+     *
+     * @param context the context
+     * @return the delegated client authentication resolved credentials
+     */
+    public static <T extends Serializable> List<T> getDelegatedClientAuthenticationResolvedCredentials(final RequestContext context,
+                                                                                                       final Class<T> clazz) {
+        return (List<T>) context.getFlowScope().get("delegatedAuthenticationCredentials", List.class);
+    }
 }

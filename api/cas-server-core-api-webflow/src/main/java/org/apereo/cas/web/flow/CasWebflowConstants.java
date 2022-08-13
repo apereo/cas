@@ -709,6 +709,16 @@ public interface CasWebflowConstants {
     String STATE_ID_DELEGATED_AUTHENTICATION_REDIRECT_TO_AUTHN_PROVIDER = "redirectToDelegatedAuthnProviderView";
 
     /**
+     * State id 'delegatedAuthenticationSelectCredential'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION = "delegatedAuthenticationSelectCredential";
+    /**
+     * State id 'delegatedAuthenticationFinalizeCredential'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_FINALIZE = "delegatedAuthenticationFinalizeCredential";
+
+
+    /**
      * State id 'delegatedAuthenticationStoreWebflowState'.
      */
     String STATE_ID_DELEGATED_AUTHENTICATION_STORE = "delegatedAuthenticationStoreWebflowState";
@@ -1176,6 +1186,16 @@ public interface CasWebflowConstants {
      * Actions.
      ****************************************
      */
+
+    /**
+     * Action id 'delegatedAuthenticationClientCredentialSelectionFinalizeAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE = "delegatedAuthenticationClientCredentialSelectionFinalizeAction";
+
+    /**
+     * Action id 'delegatedAuthenticationClientCredentialSelectionAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION = "delegatedAuthenticationClientCredentialSelectionAction";
 
     /**
      * Action id 'delegatedAuthenticationProviderDynamicDiscoveryAction'.
