@@ -8,6 +8,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.profile.CommonProfile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,9 +23,18 @@ public class ClientAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifySupports() {
         val populator = new ClientAuthenticationMetaDataPopulator();
-        val clintCreds = new ClientCredential(
+        val clientCreds = new ClientCredential(
             new UsernamePasswordCredentials("casuser", "pa$$"), "FacebookClient");
-        assertTrue(populator.supports(clintCreds));
+        assertTrue(populator.supports(clientCreds));
+    }
+
+    @Test
+    public void verifyProfileWithCreds() {
+        val populator = new ClientAuthenticationMetaDataPopulator();
+        val clientCreds = new ClientCredential("FacebookClient", new CommonProfile());
+        assertNotNull(clientCreds.getUserProfile());
+        assertNotNull(clientCreds.getId());
+        assertTrue(populator.supports(clientCreds));
     }
 
     @Test

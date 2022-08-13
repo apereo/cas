@@ -34,6 +34,7 @@ import java.util.Optional;
 public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
     private final Clients clients;
+
     private final DelegatedClientUserProfileProvisioner profileProvisioner;
 
     public DelegatedClientAuthenticationHandler(final String name,
@@ -60,14 +61,11 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);
 
             LOGGER.trace("Client name: [{}]", clientCredentials.getClientName());
-
-            val clientResult = clients.findClient(clientCredentials.getClientName());
-            if (clientResult.isEmpty()) {
-                throw new IllegalArgumentException("Unable to determine client based on client name " + clientCredentials.getClientName());
-            }
-            val client = BaseClient.class.cast(clientResult.get());
+            val client = clients.findClient(clientCredentials.getClientName())
+                .map(BaseClient.class::cast)
+                .orElseThrow(() -> new IllegalArgumentException("Unable to determine client based on client name "
+                                                                + clientCredentials.getClientName()));
             LOGGER.trace("Delegated client is: [{}]", client);
-            
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             val webContext = new JEEContext(Objects.requireNonNull(request),
@@ -78,10 +76,8 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
                 val credentials = clientCredentials.getCredentials();
                 userProfileResult = client.getUserProfile(credentials, webContext, this.sessionStore);
             }
-            if (userProfileResult.isEmpty()) {
-                throw new PreventedException("Unable to fetch user profile from client " + client.getName());
-            }
-            val userProfile = userProfileResult.get();
+            val userProfile = userProfileResult.orElseThrow(
+                () -> new PreventedException("Unable to fetch user profile from client " + client.getName()));
             LOGGER.debug("Final user profile is: [{}]", userProfile);
             storeUserProfile(webContext, userProfile);
             return createResult(clientCredentials, userProfile, client);

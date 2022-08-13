@@ -55,9 +55,11 @@ import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientLogoutAction
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryAction;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationGenerateClientsAction;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionFinalizeAction;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationFailureAction;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationRedirectAction;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationStoreWebflowStateAction;
+import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.controller.DefaultDelegatedAuthenticationNavigationController;
@@ -299,6 +301,39 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @Configuration(value = "DelegatedAuthenticationWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DelegatedAuthenticationWebflowActionsConfiguration {
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action delegatedAuthenticationClientCredentialSelectionFinalizeAction(
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            final DelegatedClientAuthenticationConfigurationContext context,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new DelegatedClientAuthenticationCredentialSelectionFinalizeAction(context))
+                .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE)
+                .build()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action delegatedAuthenticationClientCredentialSelectionAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> StaticEventExecutionAction.NULL)
+                .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION)
+                .build()
+                .get();
+        }
+
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_FAILURE)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

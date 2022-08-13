@@ -105,6 +105,7 @@ or override log42.component.properties to turn off async
     </Appenders>
     <Loggers>
         <Logger name="org.apereo.cas" level="${sys:cas.log.level}" />
+        <Logger name="org.apereo.cas.web.view.CasReloadableMessageBundle" level="info" />
         <Logger name="org.apereo.cas.services" level="${sys:cas.log.level}" />
         <Logger name="org.apereo.spring" level="${sys:cas.log.level}" />
         <Logger name="org.apereo.services.persondir" level="${sys:cas.log.level}" />

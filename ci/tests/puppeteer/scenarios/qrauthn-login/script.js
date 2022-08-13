@@ -53,8 +53,7 @@ async function connectAndLogin(channelId, page) {
     if (typeof WebSocket !== 'function') {
         client.webSocketFactory = () => new SockJS('https://localhost:8443/cas/qr-websocket');
     }
-
-
+    
     client.onConnect = frame => {
         const deviceId = `QRDevicePuppeteer`;
         cas.logg(`We have now connected ${frame.headers['message']}`);

@@ -8,9 +8,12 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.val;
+import org.pac4j.core.credentials.AnonymousCredentials;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -42,7 +45,7 @@ public class ClientCredential implements Credential {
     /**
      * The internal credentials provided by the authentication at the provider.
      */
-    private final transient Credentials credentials;
+    private final Credentials credentials;
 
     /**
      * Name of the client that established the credential.
@@ -56,13 +59,24 @@ public class ClientCredential implements Credential {
      */
     private UserProfile userProfile;
 
+    public ClientCredential(final String clientName, final UserProfile userProfile) {
+        this.credentials = new AnonymousCredentials();
+        this.clientName = clientName;
+        this.userProfile = userProfile;
+    }
+
+    public UserProfile getUserProfile() {
+        return Optional.ofNullable(userProfile).orElseGet(credentials::getUserProfile);
+    }
+
     @Override
     public String getId() {
-        if (this.userProfile != null) {
+        val up = getUserProfile();
+        if (up != null) {
             if (this.typedIdUsed) {
-                return this.userProfile.getTypedId();
+                return up.getTypedId();
             }
-            return this.userProfile.getId();
+            return up.getId();
         }
         return NOT_YET_AUTHENTICATED + UUID.randomUUID();
     }
