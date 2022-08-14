@@ -27,6 +27,7 @@ enum TestCategories {
     Events,
     FileSystem,
     GeoLocation,
+    Git,
     Groovy,
     Grouper,
     Hazelcast,

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("FileSystem")
+@Tag("Git")
 public class GitRepositoryBuilderTests {
 
     @Autowired
