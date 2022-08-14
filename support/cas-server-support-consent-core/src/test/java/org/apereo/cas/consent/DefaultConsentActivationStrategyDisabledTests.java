@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Simple")
+@Tag("Consent")
 @Getter
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class,
     properties = "cas.consent.core.active=false")

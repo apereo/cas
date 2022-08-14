@@ -155,6 +155,9 @@ while (( "$#" )); do
             cookie)
                 task+="testCookie "
                 ;;
+            consent)
+                task+="testConsent "
+                ;;
             duo|duosecurity)
                 task+="testDuoSecurity "
                 ;;
