@@ -5,6 +5,8 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolver;
+import org.apereo.cas.authentication.principal.GroovyDelegatedClientAuthenticationCredentialResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pac4j.client.ChainingDelegatedClientIdentityProviderRedirectionStrategy;
@@ -203,6 +205,25 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @Configuration(value = "DelegatedAuthenticationWebflowClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DelegatedAuthenticationWebflowClientConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "groovyDelegatedClientAuthenticationCredentialResolver")
+        public DelegatedClientAuthenticationCredentialResolver groovyDelegatedClientAuthenticationCredentialResolver(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("delegatedClientAuthenticationConfigurationContext")
+            final DelegatedClientAuthenticationConfigurationContext configContext) {
+            return BeanSupplier.of(DelegatedClientAuthenticationCredentialResolver.class)
+                .when(BeanCondition.on("cas.authn.pac4j.profile-selection.groovy.location")
+                    .exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val resource = casProperties.getAuthn().getPac4j().getProfileSelection().getGroovy().getLocation();
+                    return new GroovyDelegatedClientAuthenticationCredentialResolver(configContext, resource);
+                })
+                .otherwiseProxy()
+                .get();
+        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

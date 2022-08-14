@@ -9,6 +9,7 @@ import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnEvaluator;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
@@ -147,6 +148,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         AnnotationAwareOrderComparator.sortIfNecessary(strategies);
         val candidateMatches = strategies
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(strategy -> strategy.supports(credentials))
             .map(strategy -> strategy.resolve(context, credentials))
             .flatMap(List::stream)
