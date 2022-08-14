@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
-@Tag("Simple")
+@Tag("Consent")
 public class DefaultConsentEngineTests {
     @Autowired
     @Qualifier(ConsentEngine.BEAN_NAME)
