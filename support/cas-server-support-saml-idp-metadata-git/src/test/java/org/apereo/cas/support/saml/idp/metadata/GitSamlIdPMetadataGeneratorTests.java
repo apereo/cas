@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
     "cas.authn.saml-idp.metadata.git.repository-url=file://${java.io.tmpdir}/cas-saml-metadata"
 })
-@Tag("FileSystem")
+@Tag("Git")
 @Slf4j
 public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     @BeforeAll

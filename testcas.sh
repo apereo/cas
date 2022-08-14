@@ -231,6 +231,9 @@ while (( "$#" )); do
             geolocation|geo)
                 task+="testGeoLocation"
                 ;;
+            git)
+                task+="testGit "
+                ;;
             groovy|script)
                 task+="testGroovy "
                 ;;

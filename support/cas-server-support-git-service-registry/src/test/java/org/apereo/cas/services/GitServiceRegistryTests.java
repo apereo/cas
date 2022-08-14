@@ -68,7 +68,7 @@ import static org.mockito.Mockito.*;
         "cas.service-registry.git.repository-url=file://${java.io.tmpdir}/cas-sample-data"
     })
 @Slf4j
-@Tag("FileSystem")
+@Tag("Git")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     public class GitServiceRegistryTests extends AbstractServiceRegistryTests {

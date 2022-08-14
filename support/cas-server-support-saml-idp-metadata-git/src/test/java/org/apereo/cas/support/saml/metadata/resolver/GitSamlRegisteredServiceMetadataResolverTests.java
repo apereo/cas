@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.git.clone-directory.location=file://${java.io.tmpdir}/cas-saml-metadata-gsrsmrt"
 })
 @Slf4j
-@Tag("FileSystem")
+@Tag("Git")
 public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataTests {
     @BeforeAll
     public static void setup() {
