@@ -82,7 +82,7 @@ import static org.mockito.Mockito.*;
 public class DelegatedClientAuthenticationActionTests {
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-    public abstract class BaseTests {
+    public static abstract class BaseTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION)
         protected Action delegatedAuthenticationAction;

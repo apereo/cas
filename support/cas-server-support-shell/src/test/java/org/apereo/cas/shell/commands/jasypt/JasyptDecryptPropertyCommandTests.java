@@ -26,7 +26,7 @@ public class JasyptDecryptPropertyCommandTests extends BaseCasShellCommandTests 
     @Test
     public void verifyOperationWithInitVector() {
         assertDoesNotThrow(() -> shell.evaluate(() -> "decrypt-value --value {cas-cipher}vGJIJnpRIMoB7cusy2f5ogn9gJI/8n8kBr6D/ce62QjnBLdfe5dcPcNWKL7ypaKp "
-                + "--password JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC --initvector"));
+                + "--password JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
     }
 }
 

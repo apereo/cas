@@ -26,7 +26,7 @@ public class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests 
     @Test
     public void verifyOperationWithInitVector() {
         assertDoesNotThrow(() -> shell.evaluate(() -> "encrypt-value --value SOMEVALUE --password "
-                + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC --initvector"));
+                + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
     }
 }
 
