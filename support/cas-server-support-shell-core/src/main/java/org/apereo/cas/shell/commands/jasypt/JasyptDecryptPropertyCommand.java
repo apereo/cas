@@ -47,8 +47,6 @@ public class JasyptDecryptPropertyCommand {
             help = "Security provider to use to decrypt") final String provider,
         @ShellOption(value = { "password", "--password" },
             help = "Password (encryption key) to decrypt") final String password,
-        @ShellOption(value = { "initvector", "--initvector", "iv", "--iv" },
-                help = "Use initialization vector to encrypt", defaultValue = "false") final Boolean initVector,
         @ShellOption(value = { "iterations", "--iterations" },
             defaultValue = ShellOption.NULL,
             help = "Key obtention iterations to decrypt, default 1000") final String iterations) {
@@ -58,9 +56,6 @@ public class JasyptDecryptPropertyCommand {
         cipher.setPassword(password);
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
-        if (initVector || cipher.isVectorInitializationRequiredFor(alg)) {
-            cipher.configureInitializationVector();
-        }
         val decrypted = cipher.decryptValue(value);
         LOGGER.info("==== Decrypted Value ====\n[{}]", decrypted);
 

@@ -48,22 +48,19 @@ public class JasyptTestAlgorithmsCommand {
                 cipher.setPassword(password);
                 cipher.setKeyObtentionIterations("1");
                 cipher.setProviderName(provider);
-                if (cipher.isVectorInitializationRequiredFor(algorithmStr)) {
-                    cipher.configureInitializationVector();
-                }
                 try {
                     var encryptedValue = StringUtils.EMPTY;
                     try {
                         LOGGER.trace("Testing algorithm [{}]", algorithmStr);
                         cipher.setAlgorithm(algorithmStr);
-                        encryptedValue = cipher.encryptValuePropagateExceptions(value);
+                        encryptedValue = cipher.encryptValueUnchecked(value);
                     } catch (final Exception e) {
                         LOGGER.trace(e.getMessage(), e);
                         continue;
                     }
                     LOGGER.info("Provider: [{}] Algorithm: [{}]", provider, algorithmStr);
                     try {
-                        cipher.decryptValuePropagateExceptions(encryptedValue);
+                        cipher.decryptValueUnchecked(encryptedValue);
                         LOGGER.info("Encrypted Value: [{}] Decryption succeeded", encryptedValue);
                     } catch (final Exception e) {
                         LOGGER.warn("Encrypted Value: [{}] Decryption Failed", encryptedValue);
