@@ -20,7 +20,9 @@
             <h2>
                 <i class="mdi mdi-door-open fas fa-door-open"></i>
                 <span th:utext="#{screen.success.header}">Log In Successful</span>
+                <span id="principalId" th:utext="${authentication.principal.id}" style="display:none;" />
             </h2>
+
             <p th:utext="#{screen.success.success(${authentication.principal.id})}">You, <strong>username</strong>, have successfully logged into the Central Authentication Service.
                 However, you are seeing this page because CAS does not know about your target destination and how
                 to get you there. Examine the authentication request again and make sure a target service/application that is authorized and registered with CAS is specified.</p>
