@@ -79,6 +79,7 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             val userProfile = userProfileResult.orElseThrow(
                 () -> new PreventedException("Unable to fetch user profile from client " + client.getName()));
             LOGGER.debug("Final user profile is: [{}]", userProfile);
+            userProfile.setClientName(clientCredentials.getClientName());
             storeUserProfile(webContext, userProfile);
             return createResult(clientCredentials, userProfile, client);
         } catch (final Exception e) {

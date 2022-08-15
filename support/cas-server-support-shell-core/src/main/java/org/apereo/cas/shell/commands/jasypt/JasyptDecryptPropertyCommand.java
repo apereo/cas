@@ -34,6 +34,7 @@ public class JasyptDecryptPropertyCommand {
      * @param alg        the alg
      * @param provider   the provider
      * @param password   the password
+     * @param initVector the init vector
      * @param iterations the iterations- defaults to {@value StandardPBEByteEncryptor#DEFAULT_KEY_OBTENTION_ITERATIONS}
      */
     @ShellMethod(key = "decrypt-value", value = "Decrypt a CAS property value/setting via Jasypt")

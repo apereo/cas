@@ -9,10 +9,12 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.IvGenerator;
+import org.jasypt.iv.NoIvGenerator;
 import org.jasypt.iv.RandomIvGenerator;
 import org.springframework.core.env.Environment;
 
 import java.security.Security;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutor}.
@@ -25,6 +27,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * Prefix inserted at the beginning of a value to indicate it's encrypted.
      */
     public static final String ENCRYPTED_VALUE_PREFIX = "{cas-cipher}";
+
+    /**
+     * Pattern for algorithms that require an initialization vector.
+     * Regex matches all PBEWITHHMACSHA###ANDAES algorithms that aren't BouncyCastle.
+     */
+    private static final Pattern ALGS_THAT_REQUIRE_IV_PATTERN = Pattern.compile("PBEWITHHMACSHA\\d+ANDAES_.*(?<!-BC)$");
 
     /**
      * The Jasypt instance.
@@ -48,6 +56,13 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         setKeyObtentionIterations(iter);
     }
 
+    /**
+     * Gets jasypt param from env.
+     *
+     * @param environment the environment
+     * @param param       the param
+     * @return the jasypt param from env
+     */
     private static String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
         return environment.getProperty(param.getPropertyName(), param.getDefaultValue());
     }
@@ -59,9 +74,10 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public void setAlgorithm(final String alg) {
         if (StringUtils.isNotBlank(alg)) {
-            LOGGER.trace("Configured Jasypt algorithm [{}]", alg);
+            LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
             jasyptInstance.setAlgorithm(alg);
-            configureInitializationVector();
+            val required = isVectorInitializationRequiredFor(alg);
+            setIvGenerator(required ? new RandomIvGenerator() : new NoIvGenerator());
         }
     }
 
@@ -75,11 +91,15 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
+     * Return true if the algorithm requires initialization vector.
      * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) require an initialization vector.
      * Other algorithms may also use an initialization vector and it will increase the encrypted text's length.
+     *
+     * @param algorithm the algorithm to check
+     * @return true if algorithm requires initialization vector
      */
-    private void configureInitializationVector() {
-
+    private static boolean isVectorInitializationRequiredFor(final String algorithm) {
+        return StringUtils.isNotBlank(algorithm) && ALGS_THAT_REQUIRE_IV_PATTERN.matcher(algorithm).matches();
     }
 
     /**
@@ -89,8 +109,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public void setPassword(final String psw) {
         if (StringUtils.isNotBlank(psw)) {
-            LOGGER.trace("Configured Jasypt password");
-            jasyptInstance.setPasswordCharArray(psw.toCharArray());
+            LOGGER.debug("Configured Jasypt password");
+            jasyptInstance.setPassword(psw);
         }
     }
 
@@ -101,7 +121,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public void setKeyObtentionIterations(final String iter) {
         if (StringUtils.isNotBlank(iter) && NumberUtils.isCreatable(iter)) {
-            LOGGER.trace("Configured Jasypt iterations");
+            LOGGER.debug("Configured Jasypt iterations");
             jasyptInstance.setKeyObtentionIterations(Integer.parseInt(iter));
         }
     }
@@ -113,7 +133,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public void setProviderName(final String pName) {
         if (StringUtils.isNotBlank(pName)) {
-            LOGGER.trace("Configured Jasypt provider");
+            LOGGER.debug("Configured Jasypt provider");
             this.jasyptInstance.setProviderName(pName);
         }
     }
@@ -204,7 +224,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     private void initializeJasyptInstanceIfNecessary() {
         if (!this.jasyptInstance.isInitialized()) {
             LOGGER.trace("Initializing Jasypt...");
-            jasyptInstance.initialize();
+            this.jasyptInstance.initialize();
         }
     }
 

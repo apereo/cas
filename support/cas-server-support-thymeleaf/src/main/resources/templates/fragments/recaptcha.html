@@ -14,7 +14,7 @@
     <main role="main" class="container mt-3 mb-3">
         <div th:fragment="recaptchaToken">
             <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V2')}" th:remove="tag">
-                <script src="//www.google.com/recaptcha/api.js"></script>
+                <script src="https://www.google.com/recaptcha/api.js"></script>
                 <script type="text/javascript"
                         th:if="${recaptchaInvisible != null AND recaptchaInvisible}"
                         th:inline="javascript">
@@ -44,7 +44,7 @@
             </span>
 
             <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'HCAPTCHA')}" th:remove="tag">
-                <script src="//hcaptcha.com/1/api.js" async defer></script>
+                <script src="https://hcaptcha.com/1/api.js" async defer></script>
                 <section id="hcaptchaSection" class="form-group">
                     <div class="h-captcha" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
                 </section>
