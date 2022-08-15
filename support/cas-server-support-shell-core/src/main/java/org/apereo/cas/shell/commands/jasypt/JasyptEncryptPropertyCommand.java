@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
+import org.jasypt.iv.NoIvGenerator;
+import org.jasypt.iv.RandomIvGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -50,16 +52,20 @@ public class JasyptEncryptPropertyCommand {
         @ShellOption(value = {"password", "--password"},
             help = "Password (encryption key) to encrypt")
         final String password,
+        @ShellOption(value = {"initvector", "--initvector", "iv", "--iv"},
+            help = "Use initialization vector to encrypt", defaultValue = "false")
+        final Boolean initVector,
         @ShellOption(value = {"iterations", "--iterations"},
             defaultValue = ShellOption.NULL,
             help = "Key obtention iterations to encrypt, default 1000")
         final String iterations) {
 
-        val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
+        val cipher = new CasConfigurationJasyptCipherExecutor(environment);
         cipher.setAlgorithm(alg);
         cipher.setPassword(password);
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
+        cipher.setIvGenerator(initVector ? new RandomIvGenerator() : new NoIvGenerator());
         val encrypted = cipher.encryptValue(value);
         LOGGER.info("==== Encrypted Value ====\n[{}]", encrypted);
     }

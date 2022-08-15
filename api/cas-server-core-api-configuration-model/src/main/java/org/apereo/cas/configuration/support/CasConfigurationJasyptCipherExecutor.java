@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.IvGenerator;
 import org.jasypt.iv.RandomIvGenerator;
 import org.springframework.core.env.Environment;
 
@@ -32,7 +33,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
 
     public CasConfigurationJasyptCipherExecutor(final String algorithm, final String password) {
         Security.addProvider(new BouncyCastleProvider());
-        this.jasyptInstance = new StandardPBEStringEncryptor();
+        jasyptInstance = new StandardPBEStringEncryptor();
+        setIvGenerator(new RandomIvGenerator());
         setAlgorithm(algorithm);
         setPassword(password);
     }
@@ -64,11 +66,20 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
+     * Sets iv generator.
+     *
+     * @param iv the iv
+     */
+    public void setIvGenerator(final IvGenerator iv) {
+        jasyptInstance.setIvGenerator(iv);
+    }
+
+    /**
      * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) require an initialization vector.
      * Other algorithms may also use an initialization vector and it will increase the encrypted text's length.
      */
     private void configureInitializationVector() {
-        jasyptInstance.setIvGenerator(new RandomIvGenerator());
+
     }
 
     /**
@@ -193,7 +204,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     private void initializeJasyptInstanceIfNecessary() {
         if (!this.jasyptInstance.isInitialized()) {
             LOGGER.trace("Initializing Jasypt...");
-            this.jasyptInstance.initialize();
+            jasyptInstance.initialize();
         }
     }
 

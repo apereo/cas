@@ -2030,7 +2030,9 @@ public class WebUtils {
     /**
      * Gets delegated client authentication resolved credentials.
      *
+     * @param <T>     the type parameter
      * @param context the context
+     * @param clazz   the clazz
      * @return the delegated client authentication resolved credentials
      */
     public static <T extends Serializable> List<T> getDelegatedClientAuthenticationResolvedCredentials(final RequestContext context,
