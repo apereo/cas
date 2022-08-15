@@ -414,6 +414,12 @@ exports.assertPageTitle = async (page, value) => {
     assert(title === value)
 };
 
+exports.assertPageTitleContains = async (page, value) => {
+    const title = await page.title();
+    console.log(`Page Title: ${title}`);
+    assert(title.includes(value))
+};
+
 exports.recordScreen = async (page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = path.join(__dirname, `/recording-${index}.mp4`);
