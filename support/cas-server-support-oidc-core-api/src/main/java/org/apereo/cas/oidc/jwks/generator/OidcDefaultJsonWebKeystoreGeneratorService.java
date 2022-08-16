@@ -43,9 +43,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
 
     @Override
     public void destroy() {
-        if (this.resourceWatcherService != null) {
-            this.resourceWatcherService.close();
-        }
+        FunctionUtils.doIfNotNull(resourceWatcherService, WatcherService::close);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.support;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.registry.AlgorithmRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -87,6 +88,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setProviderName("BC");
         jasyptTest.setAlgorithm("PBEWITHSHAAND256BITAES-CBC-BC");
+        jasyptTest.setIvGenerator(new RandomIvGenerator());
         assertEquals("testing", jasyptTest.decode("{cas-cipher}88HKpXCD888/ZP7hMAg7VdxljZD3fho5r5V7c15kPXovYCk4cBdpcxfd5vgcxTit"));
     }
 

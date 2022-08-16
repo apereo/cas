@@ -8,6 +8,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +43,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
 
     @Override
     public void destroy() {
-        if (this.distributedCacheManager != null) {
-            this.distributedCacheManager.close();
-        }
+        FunctionUtils.doIfNotNull(distributedCacheManager, DistributedCacheManager::close);
     }
 
     @Override
