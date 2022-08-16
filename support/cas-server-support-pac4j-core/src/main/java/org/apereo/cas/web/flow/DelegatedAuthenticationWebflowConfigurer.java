@@ -79,9 +79,12 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     protected void createDelegatedClientCredentialSelectionState(final Flow flow) {
-        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION,
-            "delegated-authn/casDelegatedAuthnSelectionView.html");
-        viewState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION));
+        val viewState = createViewState(flow, "viewDelegatedAuthnCredentials", "delegated-authn/casDelegatedAuthnSelectionView.html");
+        val selectState = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION,
+            CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION);
+        createTransitionForState(selectState, CasWebflowConstants.TRANSITION_ID_SELECT, viewState.getId());
+        createTransitionForState(selectState, CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_FINALIZE);
+
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SELECT, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_FINALIZE);
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_CANCEL, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
 
@@ -90,11 +93,6 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
     }
 
-    /**
-     * Create client action action state.
-     *
-     * @param flow the flow
-     */
     protected void createClientActionState(final Flow flow) {
         val delegatedAuthentication = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION));

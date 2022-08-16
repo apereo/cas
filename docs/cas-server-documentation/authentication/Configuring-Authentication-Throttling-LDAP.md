@@ -9,9 +9,9 @@ category: Authentication
 
 Throttled authentication attempts may be handed down to an LDAP server that would attempt to
 update the user record to reflect the status of the locked account. This capability would attempt to 
-locate the throttled account in LDAP to update the appropriate attribute the represents the account-locked
-status. Presumably, the user account would then be blocked from future LDAP authentication attempts if and when
-the throttled authentication period expires.
+locate the throttled account in LDAP to update the appropriate attribute that represents the account-locked
+status. Presumably, the user account would then be blocked from future LDAP authentication attempts until
+the throttled authentication period expires or the lock from account status is removed. 
 
 <div class="alert alert-info"><strong>Usage</strong><p>
 To locate the user account, the throttled submission must be able to locate the username

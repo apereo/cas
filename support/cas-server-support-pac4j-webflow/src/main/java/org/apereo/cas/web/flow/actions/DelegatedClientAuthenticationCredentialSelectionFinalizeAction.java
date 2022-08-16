@@ -23,11 +23,13 @@ public class DelegatedClientAuthenticationCredentialSelectionFinalizeAction exte
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val key = requestContext.getRequestParameters().getRequired("key");
-        val candidates = WebUtils.getDelegatedClientAuthenticationResolvedCredentials(requestContext, DelegatedAuthenticationCandidateProfile.class);
-        val credential = candidates.stream().filter(candidate -> candidate.getKey().equals(key))
-            .findFirst().orElseThrow(() -> new IllegalArgumentException("Unable to locate selected profile for " + key));
-        requestContext.getFlashScope().put(DelegatedAuthenticationCandidateProfile.class.getName(), credential);
-        return success(credential);
+        if (!WebUtils.hasDelegatedClientAuthenticationCandidateProfile(requestContext)) {
+            val key = requestContext.getRequestParameters().getRequired("key");
+            val candidates = WebUtils.getDelegatedClientAuthenticationResolvedCredentials(requestContext, DelegatedAuthenticationCandidateProfile.class);
+            val credential = candidates.stream().filter(candidate -> candidate.getKey().equals(key))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("Unable to locate selected profile for " + key));
+            WebUtils.putDelegatedClientAuthenticationCandidateProfile(requestContext, credential);
+        }
+        return success();
     }
 }
