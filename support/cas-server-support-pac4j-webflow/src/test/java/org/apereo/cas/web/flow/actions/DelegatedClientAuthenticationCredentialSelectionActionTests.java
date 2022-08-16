@@ -27,17 +27,16 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests}.
+ * This is {@link DelegatedClientAuthenticationCredentialSelectionActionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
  */
 @Tag("WebflowAuthenticationActions")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-public class DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests {
-
+public class DelegatedClientAuthenticationCredentialSelectionActionTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE)
+    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION)
     private Action action;
 
     @Test
@@ -49,16 +48,15 @@ public class DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT, action.execute(context).getId());
+
         val profile = DelegatedAuthenticationCandidateProfile.builder()
             .attributes(CoreAuthenticationTestUtils.getAttributes())
             .id(UUID.randomUUID().toString())
             .key(UUID.randomUUID().toString())
             .linkedId("casuser")
             .build();
-        request.addParameter("key", profile.getKey());
         WebUtils.putDelegatedClientAuthenticationResolvedCredentials(context, List.of(profile));
-        val result = action.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-        assertNotNull(WebUtils.getDelegatedClientAuthenticationCandidateProfile(context, DelegatedAuthenticationCandidateProfile.class));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINALIZE, action.execute(context).getId());
     }
 }

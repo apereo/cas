@@ -2037,6 +2037,41 @@ public class WebUtils {
      */
     public static <T extends Serializable> List<T> getDelegatedClientAuthenticationResolvedCredentials(final RequestContext context,
                                                                                                        final Class<T> clazz) {
-        return (List<T>) context.getFlowScope().get("delegatedAuthenticationCredentials", List.class);
+        val results = context.getFlowScope().get("delegatedAuthenticationCredentials", List.class);
+        return ObjectUtils.defaultIfNull(results, List.of());
+    }
+
+    /**
+     * Gets delegated client authentication candidate profile.
+     *
+     * @param <T>     the type parameter
+     * @param context the context
+     * @param clazz   the clazz
+     * @return the delegated client authentication candidate profile
+     */
+    public static <T> T getDelegatedClientAuthenticationCandidateProfile(final RequestContext context,
+                                                                         final Class<T> clazz) {
+        return context.getFlashScope().get("delegatedClientAuthenticationCandidateProfile", clazz);
+    }
+
+    /**
+     * Has delegated client authentication candidate profile?
+     *
+     * @param context the context
+     * @return true /false
+     */
+    public static boolean hasDelegatedClientAuthenticationCandidateProfile(final RequestContext context) {
+        return context.getFlashScope().contains("delegatedClientAuthenticationCandidateProfile");
+    }
+
+    /**
+     * Put delegated client authentication candidate profile.
+     *
+     * @param context the context
+     * @param profile the profile
+     */
+    public static void putDelegatedClientAuthenticationCandidateProfile(final RequestContext context,
+                                                                        final Serializable profile) {
+        context.getFlashScope().put("delegatedClientAuthenticationCandidateProfile", profile);
     }
 }

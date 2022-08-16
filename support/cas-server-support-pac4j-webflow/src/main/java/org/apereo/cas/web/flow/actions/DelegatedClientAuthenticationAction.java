@@ -90,7 +90,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
             var service = (Service) null;
             val isSingleSignOnSessionActive = !isLogoutRequest(request)
-                                              && !context.getFlashScope().contains(DelegatedAuthenticationCandidateProfile.class.getName())
+                                              && !WebUtils.hasDelegatedClientAuthenticationCandidateProfile(context)
                                               && ssoEvaluator.singleSignOnSessionExists(context)
                                               && StringUtils.isNotBlank(clientName);
             if (isSingleSignOnSessionActive) {
@@ -111,8 +111,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 throw new IllegalArgumentException("Delegated authentication has failed with client " + clientName);
             }
 
-            if (context.getFlashScope().contains(DelegatedAuthenticationCandidateProfile.class.getName())) {
-                val profile = context.getFlashScope().get(DelegatedAuthenticationCandidateProfile.class.getName(), DelegatedAuthenticationCandidateProfile.class);
+            if (WebUtils.hasDelegatedClientAuthenticationCandidateProfile(context)) {
+                val profile = WebUtils.getDelegatedClientAuthenticationCandidateProfile(context, DelegatedAuthenticationCandidateProfile.class);
                 val up = profile.toUserProfile(clientName);
                 val clientCredential = new ClientCredential(clientName, up);
                 WebUtils.putCredential(context, clientCredential);
