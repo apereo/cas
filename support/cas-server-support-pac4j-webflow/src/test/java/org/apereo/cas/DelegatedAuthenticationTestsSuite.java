@@ -22,6 +22,7 @@ import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientFinishLogout
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientLogoutActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationGenerateClientsActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationFailureActionTests;
@@ -67,6 +68,7 @@ import org.junit.platform.suite.api.Suite;
     DelegatedAuthenticationClientRetryActionTests.class,
     DefaultDelegatedClientIdentityProviderAuthorizerTests.class,
     DelegatedAuthenticationWebflowConfigurerTests.class,
+    DelegatedClientAuthenticationCredentialSelectionActionTests.class,
     DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests.class,
     DelegatedSaml2ClientMetadataControllerTests.class
 })
