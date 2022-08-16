@@ -54,6 +54,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         setProviderName(pName);
         val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
+        val required = Boolean.parseBoolean(getJasyptParamFromEnv(environment, JasyptEncryptionParameters.INITIALIZATION_VECTOR));
+        setIvGenerator(required ? new RandomIvGenerator() : new NoIvGenerator());
     }
 
     /**
@@ -248,7 +250,11 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt password to use for encryption and decryption.
          */
-        PASSWORD("cas.standalone.configuration-security.psw", null);
+        PASSWORD("cas.standalone.configuration-security.psw", null),
+        /**
+         * Use (or not) a Jasypt Initialization Vector.
+         */
+        INITIALIZATION_VECTOR("cas.standalone.configuration-security.initialization-vector", "false");
 
         /**
          * The Name.

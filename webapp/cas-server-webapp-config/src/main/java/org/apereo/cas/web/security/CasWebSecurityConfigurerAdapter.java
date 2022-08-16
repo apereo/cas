@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpo
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.CasWebSecurityConstants;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
@@ -61,9 +62,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     @Override
     public void destroy() {
-        if (endpointLdapAuthenticationProvider != null) {
-            endpointLdapAuthenticationProvider.destroy();
-        }
+        FunctionUtils.doIfNotNull(endpointLdapAuthenticationProvider, EndpointLdapAuthenticationProvider::destroy);
     }
 
     /**

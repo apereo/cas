@@ -51,9 +51,7 @@ public class JsonConsentRepository extends BaseConsentRepository implements Disp
 
     @Override
     public void destroy() {
-        if (watcherService != null) {
-            watcherService.close();
-        }
+        FunctionUtils.doIfNotNull(watcherService, WatcherService::close);
     }
 
     @Override
