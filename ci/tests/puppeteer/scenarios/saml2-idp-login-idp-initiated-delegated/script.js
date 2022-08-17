@@ -17,6 +17,13 @@ async function startFlow(context, clientName) {
     const content = JSON.parse(await cas.innerText(page, "body"));
     console.log(content);
     assert(content.form.SAMLResponse != null);
+
+    const service = "https://apereo.github.io";
+    url = `https://localhost:8443/cas/login?service=${service}`;
+    await cas.goto(page, url);
+    await page.waitForTimeout(3000);
+    console.log(await page.url());
+    await cas.assertTicketParameter(page);
 }
 
 (async () => {
