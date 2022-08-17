@@ -163,7 +163,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public String encryptValue(final String value) {
         try {
-            return encryptValueUnchecked(value);
+            return encryptValueAndThrow(value);
         } catch (final Exception e) {
             LOGGER.error("Could not encrypt value [{}]", value, e);
         }
@@ -176,9 +176,9 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    public String encryptValueUnchecked(final String value) {
+    private String encryptValueAndThrow(final String value) {
         initializeJasyptInstanceIfNecessary();
-        return ENCRYPTED_VALUE_PREFIX + this.jasyptInstance.encrypt(value);
+        return ENCRYPTED_VALUE_PREFIX + jasyptInstance.encrypt(value);
     }
 
     /**
@@ -189,11 +189,49 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public String decryptValue(final String value) {
         try {
-            return decryptValueUnchecked(value);
+            return decryptValueAndThrow(value);
         } catch (final Exception e) {
             LOGGER.error("Could not decrypt value [{}]", value, e);
         }
         return null;
+    }
+
+    /**
+     * Decrypt value directly, regardless of prefixes, etc.
+     *
+     * @param value the value
+     * @return the decrypted value, or parameter value as was passed.
+     */
+    private String decryptValueDirect(final String value) {
+        initializeJasyptInstanceIfNecessary();
+        LOGGER.trace("Decrypting value [{}]...", value);
+        val result = jasyptInstance.decrypt(value);
+        if (StringUtils.isNotBlank(result)) {
+            LOGGER.debug("Decrypted value [{}] successfully.", value);
+            return result;
+        }
+        LOGGER.warn("Encrypted value [{}] has no values.", value);
+        return value;
+    }
+
+    /**
+     * Is value encrypted, and does it start with the required prefix.
+     *
+     * @param value the value
+     * @return true/false
+     */
+    public static boolean isValueEncrypted(final String value) {
+        return StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX);
+    }
+
+    /**
+     * Extract encrypted value as string to decode later.
+     *
+     * @param value the value
+     * @return the string
+     */
+    public static String extractEncryptedValue(final String value) {
+        return isValueEncrypted(value) ? value.substring(ENCRYPTED_VALUE_PREFIX.length()) : value;
     }
 
     /**
@@ -202,23 +240,13 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    public String decryptValueUnchecked(final String value) {
-        if (StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX)) {
-            initializeJasyptInstanceIfNecessary();
-
-            val encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
-            LOGGER.trace("Decrypting value [{}]...", encValue);
-            val result = this.jasyptInstance.decrypt(encValue);
-
-            if (StringUtils.isNotBlank(result)) {
-                LOGGER.debug("Decrypted value [{}] successfully.", encValue);
-                return result;
-            }
-            LOGGER.warn("Encrypted value [{}] has no values.", encValue);
+    private String decryptValueAndThrow(final String value) {
+        if (isValueEncrypted(value)) {
+            val encValue = extractEncryptedValue(value);
+            return decryptValueDirect(encValue);
         }
         return value;
     }
-
 
     /**
      * Initialize jasypt instance if necessary.

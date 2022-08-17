@@ -27,6 +27,8 @@ public class FileSystemOidcJsonWebKeystoreProperties implements Serializable {
 
     /**
      * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
+     * Contents of the keystore may be encrpted using encryption mechanism available
+     * for CAS configuration security.
      */
     @RequiredProperty
     @ExpressionLanguageCapable

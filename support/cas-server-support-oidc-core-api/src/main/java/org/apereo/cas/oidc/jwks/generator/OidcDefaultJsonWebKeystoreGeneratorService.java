@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
@@ -11,12 +12,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
@@ -109,8 +112,16 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
 
 
     private AbstractResource determineJsonWebKeystoreResource() throws Exception {
-        val resolve = SpringExpressionLanguageValueResolver.getInstance()
+        val file = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
-        return ResourceUtils.getRawResourceFrom(resolve);
+        val resource = ResourceUtils.getRawResourceFrom(file);
+        if (ResourceUtils.doesResourceExist(file)) {
+            val jwks = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+            if (CasConfigurationJasyptCipherExecutor.isValueEncrypted(jwks)) {
+                val cipher = new CasConfigurationJasyptCipherExecutor(applicationContext.getEnvironment());
+                return new ByteArrayResource(cipher.decryptValue(jwks).getBytes(StandardCharsets.UTF_8));
+            }
+        }
+        return resource;
     }
 }

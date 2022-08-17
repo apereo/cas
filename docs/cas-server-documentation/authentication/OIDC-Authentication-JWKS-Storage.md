@@ -29,6 +29,8 @@ of the keystore file is similar to the following:
   ]
 }
 ```
+ 
+The contents of the keystore may be encrypted via CAS configuration security [outlined here](../configuration/Configuration-Properties-Security.html).
 
 <div class="alert alert-info"><strong>Clustered Deployments</strong><p>
 When deploying CAS in a cluster, you must make sure all CAS server nodes have access to 
