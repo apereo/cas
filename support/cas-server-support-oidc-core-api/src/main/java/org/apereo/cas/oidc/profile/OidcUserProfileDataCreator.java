@@ -37,8 +37,7 @@ public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCre
         super.collectAttributes(principal)
             .forEach((key, value) -> {
                 val collectionValues = mapper.mapClaim(key, principal, value);
-                val claimName = mapper.toMappedClaimName(key);
-                attributes.put(claimName, collectionValues);
+                attributes.put(key, collectionValues);
             });
         return attributes;
     }

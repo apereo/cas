@@ -3,8 +3,10 @@ package org.apereo.cas.oidc.profile;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -15,6 +17,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,10 +42,15 @@ public class OidcUserProfileDataCreatorTests {
         @Test
         public void verifyOperation() throws Exception {
             val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-            val accessToken = getAccessToken();
+            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+                CollectionUtils.wrap("email", List.of("casuser@example.org"),
+                    "email-address", List.of("casuser@apereo.org")));
+            val accessToken = getAccessToken(principal);
             val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
             val attrs = (Map) data.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES);
-            assertTrue(attrs.containsKey("email-address"));
+            assertFalse(attrs.containsKey("email-address"));
+            assertTrue(attrs.containsKey("email"));
+            assertEquals("casuser@apereo.org", CollectionUtils.firstElement(attrs.get("email")).get());
         }
     }
 

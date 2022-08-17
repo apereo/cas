@@ -175,7 +175,7 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJsonWebKeystoreRotationService")
     protected OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService;
-    
+
     @Autowired
     @Qualifier("singleLogoutServiceLogoutUrlBuilder")
     protected SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
@@ -426,7 +426,7 @@ public abstract class AbstractOidcTests {
     protected JwtClaims getClaims(final String clientId) {
         return getClaims("casuser", casProperties.getAuthn().getOidc().getCore().getIssuer(), clientId, clientId);
     }
-    
+
     protected JwtClaims getClaims(final String subject, final String issuer,
                                   final String clientId, final String audience) {
         val claims = new JwtClaims();
@@ -444,6 +444,10 @@ public abstract class AbstractOidcTests {
         return claims;
     }
 
+    protected OAuth20AccessToken getAccessToken(final Principal principal) throws Exception {
+        return getAccessToken(principal, StringUtils.EMPTY, "clientId");
+    }
+
     protected OAuth20AccessToken getAccessToken() throws Exception {
         return getAccessToken(StringUtils.EMPTY, "clientId");
     }
@@ -454,6 +458,13 @@ public abstract class AbstractOidcTests {
 
     protected OAuth20AccessToken getAccessToken(final String idToken, final String clientId) throws Exception {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
+        return getAccessToken(principal, idToken, clientId);
+    }
+
+    protected OAuth20AccessToken getAccessToken(
+        final Principal principal,
+        final String idToken,
+        final String clientId) throws Exception {
         val code = addCode(principal, getOidcRegisteredService());
 
         val accessToken = mock(OAuth20AccessToken.class);
@@ -471,6 +482,7 @@ public abstract class AbstractOidcTests {
         when(accessToken.getIdToken()).thenReturn(idToken);
         return accessToken;
     }
+
 
     protected OAuth20Code addCode(final Principal principal,
                                   final OAuthRegisteredService registeredService) throws Exception {
