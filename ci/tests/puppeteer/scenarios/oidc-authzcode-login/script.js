@@ -44,14 +44,18 @@ const assert = require('assert');
     assert(payload.expires_in != null);
     assert(payload.scope != null);
 
-    console.log("Decoding ID token...");
     let decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub !== null);
     assert(decoded.client_id !== null);
     assert(decoded["preferred_username"] !== null);
-    assert(decoded["identity-name"] !== null);
-    assert(decoded["common-name"] !== null);
-    assert(decoded["lastname"] !== null);
+
+    assert(decoded["identity-name"] === undefined);
+    assert(decoded["common-name"] === undefined);
+    assert(decoded["lastname"] === undefined);
+    
+    assert(decoded["cn"] !== null);
+    assert(decoded["family_name"] !== null);
+    assert(decoded["name"] !== null);
 
 
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
@@ -60,9 +64,12 @@ const assert = require('assert');
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"
     }, res => {
-        console.log(res.data);
-        assert(res.data["common-name"] != null);
-        assert(res.data["lastname"] != null);
+        assert(decoded["common-name"] === undefined);
+        assert(decoded["lastname"] === undefined);
+
+        assert(res.data["cn"] != null);
+        assert(res.data["name"] != null);
+        assert(res.data["family_name"] != null);
         assert(res.data.sub != null)
     }, error => {
         throw `Operation failed: ${error}`;
