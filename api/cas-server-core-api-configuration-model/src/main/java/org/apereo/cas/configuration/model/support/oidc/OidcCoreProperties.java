@@ -54,7 +54,7 @@ public class OidcCoreProperties implements Serializable {
      * the pattern is designed to never match anything.
      */
     private String acceptedIssuersPattern = "a^";
-    
+
     /**
      * Skew value used to massage the authentication issue instance.
      */
@@ -64,6 +64,9 @@ public class OidcCoreProperties implements Serializable {
     /**
      * Mapping of user-defined scopes. Key is the new scope name
      * and value is a comma-separated list of claims mapped to the scope.
+     * Such user-defined scopes are also able to override the definition of system scopes.
+     * User-defined scopes as well as any and all custom claims that are mapped to the scope
+     * must also be defined as scopes and claims supported by CAS in OpenID Connect discovery.
      */
     private Map<String, String> userDefinedScopes = new HashMap<>(0);
 
@@ -71,6 +74,13 @@ public class OidcCoreProperties implements Serializable {
      * Map fixed claims to CAS attributes.
      * Key is the existing claim name for a scope and value is the new attribute
      * that should take its place and value.
+     * Claims associated with a scope (i.e. given_name for profile) are fixed in the OpenID specification.
+     * In the event that custom arbitrary attributes should be mapped to claims, mappings can
+     * be defined in CAS settings to link a CAS-defined attribute to a fixed given scope. For
+     * instance, CAS configuration may allow the value of the attribute {@code sys_given_name} to be
+     * mapped and assigned to the claim {@code given_name} without having an impact on the attribute
+     * resolution configuration and all other CAS-enabled applications.
+     * If mapping is not defined, by default CAS attributes are expected to match claim names.
      */
     private Map<String, String> claimsMap = new HashMap<>(0);
 
