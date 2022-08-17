@@ -14,6 +14,7 @@ import org.jasypt.iv.RandomIvGenerator;
 import org.springframework.core.env.Environment;
 
 import java.security.Security;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -161,13 +162,19 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    public String encryptValue(final String value) {
+    public String encryptValue(final String value, final Function<Exception, String> handler) {
         try {
             return encryptValueAndThrow(value);
         } catch (final Exception e) {
-            LOGGER.error("Could not encrypt value [{}]", value, e);
+            return handler.apply(e);
         }
-        return null;
+    }
+
+    public String encryptValue(final String value) {
+        return encryptValue(value, e -> {
+            LOGGER.warn("Could not encrypt value [{}]", value, e);
+            return null;
+        });
     }
 
     /**
@@ -191,7 +198,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         try {
             return decryptValueAndThrow(value);
         } catch (final Exception e) {
-            LOGGER.error("Could not decrypt value [{}]", value, e);
+            LOGGER.warn("Could not decrypt value [{}]", value, e);
         }
         return null;
     }
@@ -252,9 +259,9 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * Initialize jasypt instance if necessary.
      */
     private void initializeJasyptInstanceIfNecessary() {
-        if (!this.jasyptInstance.isInitialized()) {
+        if (!jasyptInstance.isInitialized()) {
             LOGGER.trace("Initializing Jasypt...");
-            this.jasyptInstance.initialize();
+            jasyptInstance.initialize();
         }
     }
 
