@@ -49,7 +49,11 @@ which will then be used on subsequent attempts to auto-redirect to the identity 
 ## Identity Provider Groovy Selection
 
 The auto-redirection strategy of a given identity provider may also be decided dynamically via a Groovy resource 
-whose path is defined via CAS settings. The Groovy script would have the following outline:
+whose path is defined via CAS settings. 
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.core.groovy-redirection-strategy" %}
+
+The Groovy script would have the following outline:
 
 ```groovy
 import org.apereo.cas.web.*
