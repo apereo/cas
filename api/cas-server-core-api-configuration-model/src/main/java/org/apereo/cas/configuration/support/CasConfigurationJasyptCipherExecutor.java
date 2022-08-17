@@ -137,7 +137,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public void setProviderName(final String pName) {
         if (StringUtils.isNotBlank(pName)) {
             LOGGER.debug("Configured Jasypt provider");
-            this.jasyptInstance.setProviderName(pName);
+            jasyptInstance.setProviderName(pName);
         }
     }
 
@@ -159,7 +159,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     /**
      * Encrypt value string.
      *
-     * @param value the value
+     * @param value   the value
+     * @param handler the handler
      * @return the string
      */
     public String encryptValue(final String value, final Function<Exception, String> handler) {
@@ -170,6 +171,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         }
     }
 
+    /**
+     * Encrypt value as string.
+     *
+     * @param value the value
+     * @return the string
+     */
     public String encryptValue(final String value) {
         return encryptValue(value, e -> {
             LOGGER.warn("Could not encrypt value [{}]", value, e);
