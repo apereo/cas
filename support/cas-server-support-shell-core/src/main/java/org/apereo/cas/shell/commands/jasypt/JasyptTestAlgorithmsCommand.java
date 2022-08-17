@@ -51,7 +51,10 @@ public class JasyptTestAlgorithmsCommand {
                 try {
                     LOGGER.trace("Testing algorithm [{}]", algorithmStr);
                     cipher.setAlgorithm(algorithmStr);
-                    val encryptedValue = cipher.encryptValue(value);
+                    val encryptedValue = cipher.encryptValue(value, e -> {
+                        LOGGER.trace(e.getMessage(), e);
+                        return null;
+                    });
                     if (encryptedValue == null) {
                         continue;
                     }
