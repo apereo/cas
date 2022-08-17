@@ -12,9 +12,7 @@ def run(Object[] args) {
     def appContext = args[4]
     def logger = args[5]
 
-    def request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext)
-    def cname = request.getParameter("CName") as String
-
+    def cname = requestContext.getRequestParameters().get("CName") as String
     providers.forEach(provider -> {
         logger.info("Checking ${provider.name} against CName=${cname}...")
         if ("CasClient".equalsIgnoreCase(cname)) {
@@ -25,6 +23,12 @@ def run(Object[] args) {
         if ("CasClientFancy".equalsIgnoreCase(cname)) {
             provider.autoRedirectType = DelegationAutoRedirectTypes.SERVER
             logger.info("Server auto-redirect set for ${provider.name}...")
+            return provider
+        }
+
+        if ("CasClientNone".equalsIgnoreCase(cname)) {
+            provider.autoRedirectType = DelegationAutoRedirectTypes.NONE
+            logger.info("No auto-redirect set for ${provider.name}...")
             return provider
         }
     })

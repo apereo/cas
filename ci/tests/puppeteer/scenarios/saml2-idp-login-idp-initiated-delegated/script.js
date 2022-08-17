@@ -28,7 +28,7 @@ async function startFlow(context, clientName) {
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const providers = ["CasClient", "CasClientFancy"];
+    const providers = ["CasClient", "CasClientFancy", "CasClientNone"];
     for (const provider of providers) {
         const context = await browser.createIncognitoBrowserContext();
         await startFlow(context, provider);

@@ -26,6 +26,10 @@
     "--cas.authn.pac4j.cas[1].protocol=CAS20",
     "--cas.authn.pac4j.cas[1].client-name=CasClientFancy",
 
+    "--cas.authn.pac4j.cas[2].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[2].protocol=CAS20",
+    "--cas.authn.pac4j.cas[2].client-name=CasClientNone",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
