@@ -21,7 +21,7 @@ fi
 properties='{
   "logging": {
     "level": {
-      "org.apereo.cas": "debug",
+      "org.apereo.cas": "info",
       "org.apereo.cas.web.view": "warn",
       "org.apereo.cas.web.support.filters": "warn"
     }

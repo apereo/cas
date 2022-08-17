@@ -3,15 +3,12 @@ const path = require('path');
 const cas = require('../../cas.js');
 const assert = require("assert");
 
-(async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await cas.newPage(browser);
-
+async function startFlow(context, clientName) {
+    const page = await cas.newPage(context);
     const entityId = encodeURI("https://httpbin.org/shibboleth");
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
-    url += `?providerId=${entityId}&CName=CasClient`;
-
-    console.log(`Navigating to ${url}`);
+    url += `?providerId=${entityId}&CName=${clientName}`;
+    console.log(`Navigating to ${url} for client ${clientName}`);
     await cas.goto(page, url);
     await page.waitForTimeout(3000);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -20,6 +17,16 @@ const assert = require("assert");
     const content = JSON.parse(await cas.innerText(page, "body"));
     console.log(content);
     assert(content.form.SAMLResponse != null);
+}
+
+(async () => {
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const providers = ["CasClient", "CasClientFancy"];
+    for (const provider of providers) {
+        const context = await browser.createIncognitoBrowserContext();
+        await startFlow(context, provider);
+        await context.close();
+    }
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
