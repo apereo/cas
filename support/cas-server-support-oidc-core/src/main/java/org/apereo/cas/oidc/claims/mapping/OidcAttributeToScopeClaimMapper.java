@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -75,8 +74,13 @@ public interface OidcAttributeToScopeClaimMapper {
         return CollectionUtils.toCollection(attributeValues)
             .stream()
             .map(value -> {
-                val bool = BooleanUtils.toBooleanObject(value.toString());
-                return Objects.requireNonNullElse(bool, value);
+                val valueContent = value.toString();
+                if (value instanceof Boolean
+                    || valueContent.equalsIgnoreCase(Boolean.FALSE.toString())
+                    || valueContent.equalsIgnoreCase(Boolean.TRUE.toString())) {
+                    return BooleanUtils.toBoolean(valueContent);
+                }
+                return value;
             })
             .collect(Collectors.toCollection(ArrayList::new));
     }
