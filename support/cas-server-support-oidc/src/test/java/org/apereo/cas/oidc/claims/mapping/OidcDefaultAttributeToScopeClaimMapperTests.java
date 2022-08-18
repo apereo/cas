@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -28,6 +29,22 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("OIDC")
 public class OidcDefaultAttributeToScopeClaimMapperTests extends AbstractOidcTests {
+
+    @Test
+    public void verifyValueTypes() {
+        val mapper = new OidcDefaultAttributeToScopeClaimMapper(
+            CollectionUtils.wrap("active1", "status1", "active2", "status2",
+                "active3", "status3"));
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("status1", "true",
+                "status2", false, "status3", 1));
+        var value = mapper.mapClaim("active1", principal, null).get(0);
+        assertTrue(value instanceof Boolean);
+        value = mapper.mapClaim("active2", principal, null).get(0);
+        assertTrue(value instanceof Boolean);
+        value = mapper.mapClaim("active3", principal, null).get(0);
+        assertTrue(value instanceof Number);
+    }
 
     @Test
     public void verifyOperation() {
