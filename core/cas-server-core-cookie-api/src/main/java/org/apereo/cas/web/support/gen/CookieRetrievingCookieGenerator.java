@@ -108,7 +108,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Override
     public Cookie addCookie(final HttpServletRequest request, final HttpServletResponse response,
                             final boolean rememberMe, final String cookieValue) {
-        val theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
+        val theCookieValue = casCookieValueManager.buildCookieValue(cookieValue, request);
         val cookie = createCookie(theCookieValue);
 
         if (rememberMe) {
