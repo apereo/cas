@@ -33,6 +33,8 @@ const cas = require('../../cas.js');
         assert(response.ok());
         await cas.assertInnerText(page, '#content h2', "SAML2 Identity Provider Error");
 
+        await cas.goto(page, "https://localhost:8443/cas/logout");
+        
     } finally {
         await cas.removeDirectory(path.join(__dirname, '/saml-md'));
         await browser.close();
