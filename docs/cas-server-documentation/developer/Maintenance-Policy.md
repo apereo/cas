@@ -49,7 +49,7 @@ On a good day, the CAS project maintains three active branches/releases at the s
 <div class="alert alert-info"><strong>Documentation</strong><p>
 The documentation maintenance and hosting efforts will cease to exist for EOL versions after some time. If you do need access to the documentation
 for an EOL version, you could always find the original pages in the CAS codebase where you could take the pages and render and host
-them as you would like and take on the maintenance and hosting burdern on your own.
+them as you would like and take on the maintenance and hosting burden on your own.
 </p></div>
 
 ## EOL Schedule
