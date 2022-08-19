@@ -105,12 +105,12 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(521);
-
             verifyGeneration(properties);
         }
 
         private void verifyGeneration(final OidcProperties properties) throws Exception {
             val file = Files.createTempFile(RandomUtils.randomAlphabetic(6), ".jwks").toFile();
+            properties.getJwks().getFileSystem().setJwksFile(file.getAbsolutePath());
             val service = new OidcDefaultJsonWebKeystoreGeneratorService(properties, applicationContext);
             service.generate(new FileSystemResource(file));
             assertTrue(file.exists());

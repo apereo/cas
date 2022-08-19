@@ -30,7 +30,9 @@ import java.util.stream.Stream;
 @Slf4j
 public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     private static final char COOKIE_FIELD_SEPARATOR = '@';
+
     private static final int COOKIE_FIELDS_LENGTH = 3;
+
     private static final long serialVersionUID = -2696352696382374584L;
 
     private final PinnableCookieProperties cookieProperties;
@@ -84,23 +86,30 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
 
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo == null) {
-            throw new InvalidCookieException("Unable to match required remote address "
-                    + cookieIpAddress + " because client ip at time of cookie creation is unknown");
+            val message = "Unable to match required remote address "
+                          + cookieIpAddress + " because client ip at time of cookie creation is unknown";
+            LOGGER.warn(message);
+            throw new InvalidCookieException(message);
         }
 
-        if (!cookieIpAddress.equals(clientInfo.getClientIpAddress())) {
+        val clientIpAddress = clientInfo.getClientIpAddress();
+        if (!cookieIpAddress.equals(clientIpAddress)) {
             if (StringUtils.isBlank(cookieProperties.getAllowedIpAddressesPattern())
-                || !RegexUtils.find(cookieProperties.getAllowedIpAddressesPattern(), clientInfo.getClientIpAddress())) {
-                throw new InvalidCookieException("Invalid cookie. Required remote address "
-                    + cookieIpAddress + " does not match " + clientInfo.getClientIpAddress());
+                || !RegexUtils.find(cookieProperties.getAllowedIpAddressesPattern(), clientIpAddress)) {
+                val message = "Invalid cookie. Required remote address "
+                              + cookieIpAddress + " does not match " + clientIpAddress;
+                LOGGER.warn(message);
+                throw new InvalidCookieException(message);
             }
-            LOGGER.debug("Required remote address [{}] does not match [{}], but it's authorized proceed",
-                cookieIpAddress, clientInfo.getClientIpAddress());
+            LOGGER.debug("Required remote address [{}] does not match [{}], but it's authorized to proceed",
+                cookieIpAddress, clientIpAddress);
         }
 
         val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         if (!cookieUserAgent.equals(agent)) {
-            throw new InvalidCookieException("Invalid cookie. Required user-agent " + cookieUserAgent + " does not match " + agent);
+            val message = "Invalid cookie. Required user-agent " + cookieUserAgent + " does not match " + agent;
+            LOGGER.warn(message);
+            throw new InvalidCookieException(message);
         }
         return cookieValue;
     }
