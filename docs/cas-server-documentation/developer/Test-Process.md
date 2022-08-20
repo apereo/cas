@@ -168,7 +168,7 @@ The following command-line options are supported for test execution:
 | `--rebuild`, `--r`, `--build`     | Rebuild the CAS web application, and disregard previously-built WAR artifacts.
 | `--dry-run`, `--y`                | Launch the CAS web application configured in the test without actually running the test.
 | `--headless`, `--h`               | Launch the test scenario with a headless browser.
-| `--rerun`, `--resume`, `--z`      | Launch and assume the CAS is already running from a previous attempt.
+| `--rerun`, `--resume`, `--r`      | Launch and assume the CAS is already running from a previous attempt.
 | `--hbo`                           | A combination of `--headless` and `--build` and Gradle's `--offline` flag.
 | `--bo`                            | A combination of `--build` and Gradle's `--offline` flag.
 | `--hr`                            | A combination of `--headless` and `--resume`.
@@ -212,11 +212,24 @@ A basic modest outline of the test configuration may be:
 ```json
 {
   "dependencies": "module1,module2,module3,...",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.something=something"
   ],
+  "jvmArgs": "...",
+  "SPRING_APPLICATION_JSON": {},
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh",
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
-  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh",
+  "instances": 2,
+  "instance1": {
+    "properties": [ ]
+  },
+  "instance2": {
+    "properties": [ ]
+  }
 }
 ```
   
