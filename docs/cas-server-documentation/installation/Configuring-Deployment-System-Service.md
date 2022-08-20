@@ -112,8 +112,6 @@ Now run `start cas` and your service will start. Upstart offers many job configu
 
 ## Windows Service
 
-### Windows Service Wrapper
-
 CAS may be started as Windows service using [winsw](https://github.com/kohsuke/winsw). 
 
 Winsw provides programmatic means to `install/uninstall/start/stop` a service. In addition, it may be used to run any kind of executable as a service under Windows.
@@ -141,6 +139,8 @@ Similarly, you may use `uninstall`, `start`, `stop`, etc.
 
 Refer to [this example](https://github.com/snicoll-scratches/spring-boot-daemon) to learn more.
 
-### Others
 
-CAS web applications may also be started as Windows service using [Procrun](http://commons.apache.org/proper/commons-daemon/procrun.html) of the [Apache Commons Daemon project](http://commons.apache.org/daemon/index.html). Procrun is a set of applications that allow Windows users to wrap Java applications as Windows services. Such a service may be set to start automatically when the machine boots and will continue to run without any user being logged on.
+CAS web applications may also be started as Windows service using [Procrun](http://commons.apache.org/proper/commons-daemon/procrun.html) 
+of the [Apache Commons Daemon project](http://commons.apache.org/daemon/index.html). Procrun is a set of 
+applications that allow Windows users to wrap Java applications as Windows services. Such a service may be set 
+to start automatically when the machine boots and will continue to run without any user being logged on.

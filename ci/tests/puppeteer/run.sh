@@ -99,6 +99,12 @@ while (( "$#" )); do
     REBUILD="true"
     shift 1;
     ;;
+  --bod|--dob)
+    REBUILD="true"
+    DEBUG="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    shift 1;
+    ;;
   --hbdo)
     export HEADLESS="true"
     REBUILD="true"
