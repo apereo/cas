@@ -92,45 +92,6 @@ See [this guide](Docker-Installation.html) for more info.
 
 CAS can be deployed to a number of servlet containers. See [this guide](Configuring-Servlet-Container.html) for more info.
 
-## Custom and Third-Party Source
-
-It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or
-to include third-party source by dependency references. Including third-party source is trivial; include
-the relevant dependency in the overlay `build.gradle` file. 
-
-<div class="alert alert-warning"><strong>Stop Coding</strong><p>
-Overlaying or modifying CAS internal components and classes, <i>unless ABSOLUTELY required</i>, should be a last resort and is generally 
-considered a misguided malpractice. Where possible, avoid making custom changes to carry the maintenance burden solely on your own. 
-You will risk the stability and security of your deployment. If the enhancement 
-case is attractive or modest, contribute back to the project. Stop writing code, or write it where it belongs.
-</p></div>
-
-In order to include custom Java source, it should 
-be included under a `src/main/java` directory in the overlay project source tree.
-
-    ├── src
-    │   ├── main
-    │   │   ├── java
-    │   │   │   └── edu
-    │   │   │       └── sso
-    │   │   │           └── middleware
-    │   │   │               └── cas
-    │   │   │                   ├── audit
-    │   │   │                   │   ├── CompactSlf4jAuditTrailManager.java
-    │   │   │                   ├── authentication
-    │   │   │                   │   └── principal
-    │   │   │                   │       └── UsernamePasswordCredentialsToPrincipalResolver.java
-    │   │   │                   ├── services
-    │   │   │                   │   └── JsonServiceRegistryDao.java
-    │   │   │                   ├── util
-    │   │   │                   │   └── X509Helper.java
-    │   │   │                   └── web
-    │   │   │                       ├── HelpController.java
-    │   │   │                       ├── flow
-    │   │   │                       │   ├── AbstractForgottenCredentialAction.java
-    │   │   │                       └── util
-    │   │   │                           ├── ProtocolParameterAuthority.java
-
 ## Dependency Management
 
 Each release of CAS provides a curated list of dependencies it supports. In practice, you do not need to provide a version for any of

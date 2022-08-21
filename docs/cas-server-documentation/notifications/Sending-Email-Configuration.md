@@ -10,10 +10,8 @@ category: Notifications
 
 CAS presents the ability to notify users on select actions via email messages. Example actions include notification 
 of risky authentication attempts or password reset links/tokens, etc. Configuring 
-an email provider (i.e. Amazon Simple Email Service )
-is a matter of defining SMTP settings. Each particular feature 
-in need of email functionality should be able to 
-gracefully continue in case settings are not defined. 
+an email provider (i.e. Amazon Simple Email Service ) is a matter of defining SMTP settings. Each particular feature 
+in need of email functionality should be able to gracefully continue in case settings are not defined. 
 
 Default support for email notifications is automatically 
 enabled/included by the relevant modules using the following module:
@@ -45,7 +43,7 @@ If there are more arguments than format specifiers, the extra arguments are igno
 The configuration setting for the email message body can also accept a path to an external file (i.e. `HTML`).
 The contents of the file are processed for placeholder variables and values using the same default strategy.
 
-The email template template file can also be processed via `GStringTemplateEngine`, if the path ends 
+The email template file can also be processed via `GStringTemplateEngine`, if the path ends 
 with the file extension `.gtemplate`. Input parameters are passed to the template which will
 substitute variables and expressions into placeholders in a template source text to produce the desired output.
 
