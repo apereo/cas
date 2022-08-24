@@ -17,6 +17,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
@@ -53,12 +55,22 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val upc = (UsernamePasswordCredential) c;
 
         val headers = new HttpHeaders();
-        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        headers.put("username", CollectionUtils.wrap(upc.getUsername()));
-        headers.put("password", CollectionUtils.wrap(bean.getPassword()));
-        headers.put("oldPassword", CollectionUtils.wrap(upc.toPassword()));
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
 
-        val entity = new HttpEntity<>(headers);
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+
+        if(rest.isDataAsBody()){
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            body.put(rest.getFieldNameUser(), CollectionUtils.wrap(upc.getUsername()));
+            body.put(rest.getFieldNamePassword(), CollectionUtils.wrap(bean.getPassword()));
+            body.put(rest.getFieldNamePasswordOld(), CollectionUtils.wrap(upc.toPassword()));
+        }else{
+            headers.put(rest.getFieldNameUser(), CollectionUtils.wrap(upc.getUsername()));
+            headers.put(rest.getFieldNamePassword(), CollectionUtils.wrap(bean.getPassword()));
+            headers.put(rest.getFieldNamePasswordOld(), CollectionUtils.wrap(upc.toPassword()));
+        }
+
+        val entity = new HttpEntity<>(body, headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
         return result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()
             && Objects.requireNonNull(result.getBody()).booleanValue();

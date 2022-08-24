@@ -66,4 +66,28 @@ public class RestfulPasswordManagementProperties implements Serializable {
      */
     @RequiredProperty
     private String endpointPassword;
+
+    /**
+     * Send data as body on x-www-form-urlencoded format
+     */
+    @RequiredProperty
+    private boolean dataAsBody;
+
+    /**
+     * Field name for username field
+     */
+    @RequiredProperty
+    private String fieldNameUser = "username";
+
+    /**
+     * Field name for password field
+     */
+    @RequiredProperty
+    private String fieldNamePassword = "password";
+
+    /**
+     * Field name for oldPassword field
+     */
+    @RequiredProperty
+    private String fieldNamePasswordOld = "oldPassword";
 }
