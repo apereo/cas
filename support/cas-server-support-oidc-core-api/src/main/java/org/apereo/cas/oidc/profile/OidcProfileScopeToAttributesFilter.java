@@ -152,8 +152,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         val oidc = casProperties.getAuthn().getOidc();
         val packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
 
-        Collection<Class<? extends BaseOidcScopeAttributeReleasePolicy>> subTypes = ReflectionUtils.findSubclassesInPackage(BaseOidcScopeAttributeReleasePolicy.class, packageName);
-
+        val subTypes = ReflectionUtils.findSubclassesInPackage(BaseOidcScopeAttributeReleasePolicy.class, packageName);
         subTypes.forEach(Unchecked.consumer(t -> {
             if (ClassUtils.hasConstructor(t)) {
                 val ex = t.getDeclaredConstructor().newInstance();

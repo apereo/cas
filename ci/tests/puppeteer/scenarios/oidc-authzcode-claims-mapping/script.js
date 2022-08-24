@@ -32,7 +32,7 @@ const assert = require('assert');
     let decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub !== null);
     assert(decoded.client_id !== null);
-    assert(decoded["preferred_username"] !== null);
+    assert(decoded["preferred_username"] === "apereo-casuser");
     assert(decoded["email"] !== null);
     assert(decoded["family_name"] !== null);
     assert(decoded["given_name"] !== null);

@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -164,7 +165,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                           + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
                                           + "Claims should be requested from the userinfo/profile endpoints in exchange for an access token."))
                 .accept(claims);
-            collectIdTokenClaims(principal, claims);
+            collectIdTokenClaims(principal, registeredService, claims);
         } else {
             LOGGER.debug("Per OpenID Connect specification, individual claims requested by OpenID scopes "
                          + "such as profile, email, address, etc. are only put "
@@ -177,10 +178,13 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     /**
      * Collect id token claims.
      *
-     * @param principal the principal
-     * @param claims    the claims
+     * @param principal         the principal
+     * @param registeredService the registered service
+     * @param claims            the claims
      */
-    protected void collectIdTokenClaims(final Principal principal, final JwtClaims claims) {
+    protected void collectIdTokenClaims(final Principal principal,
+                                        final RegisteredService registeredService,
+                                        final JwtClaims claims) {
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
         LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]",
             principal.getAttributes(), oidc.getDiscovery().getClaims());
@@ -196,28 +200,30 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                     entry.getKey(), oidc.getDiscovery().getClaims());
                 return false;
             })
-            .forEach(entry -> handleMappedClaimOrDefault(entry.getKey(), principal, claims, entry.getValue()));
+            .forEach(entry -> handleMappedClaimOrDefault(entry.getKey(), registeredService, principal, claims, entry.getValue()));
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
             handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
-                principal, claims, principal.getId());
+                registeredService, principal, claims, principal.getId());
         }
     }
 
     /**
      * Handle mapped claim or default.
      *
-     * @param claimName    the claim name
-     * @param principal    the principal
-     * @param claims       the claims
-     * @param defaultValue the default value
+     * @param claimName         the claim name
+     * @param registeredService the registered service
+     * @param principal         the principal
+     * @param claims            the claims
+     * @param defaultValue      the default value
      */
     protected void handleMappedClaimOrDefault(final String claimName,
+                                              final RegisteredService registeredService,
                                               final Principal principal,
                                               final JwtClaims claims,
                                               final Object defaultValue) {
         val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
-        val collectionValues = mapper.mapClaim(claimName, principal, defaultValue);
+        val collectionValues = mapper.mapClaim(claimName, registeredService, principal, defaultValue);
         getConfigurationContext().getIdTokenClaimCollector().collect(claims, claimName, collectionValues);
     }
 

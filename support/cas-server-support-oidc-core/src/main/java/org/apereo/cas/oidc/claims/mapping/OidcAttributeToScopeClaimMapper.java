@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.claims.mapping;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -32,7 +33,7 @@ public interface OidcAttributeToScopeClaimMapper {
      * @param claim the claim
      * @return the mapped attribute
      */
-    String getMappedAttribute(String claim);
+    String getMappedAttribute(String claim, RegisteredService registeredService);
 
     /**
      * Contains mapped attribute boolean.
@@ -40,7 +41,7 @@ public interface OidcAttributeToScopeClaimMapper {
      * @param claim the claim
      * @return true/false
      */
-    boolean containsMappedAttribute(String claim);
+    boolean containsMappedAttribute(String claim, RegisteredService registeredService);
 
     /**
      * Map the claim to the mapped-name, or itself.
@@ -48,24 +49,26 @@ public interface OidcAttributeToScopeClaimMapper {
      * @param claimName the claim name
      * @return the string
      */
-    default String toMappedClaimName(final String claimName) {
-        return containsMappedAttribute(claimName)
-            ? getMappedAttribute(claimName)
+    default String toMappedClaimName(final String claimName, RegisteredService registeredService) {
+        return containsMappedAttribute(claimName, registeredService)
+            ? getMappedAttribute(claimName, registeredService)
             : claimName;
     }
 
     /**
      * Map claim and return values.
      *
-     * @param claimName    the claim name
-     * @param principal    the principal
-     * @param defaultValue the default value
+     * @param claimName         the claim name
+     * @param registeredService the registered service
+     * @param principal         the principal
+     * @param defaultValue      the default value
      * @return the list of values
      */
     default List<Object> mapClaim(final String claimName,
+                                  final RegisteredService registeredService,
                                   final Principal principal,
                                   final Object defaultValue) {
-        val attribute = toMappedClaimName(claimName);
+        val attribute = toMappedClaimName(claimName, registeredService);
         val attributeValues = principal.getAttributes().containsKey(attribute)
             ? principal.getAttributes().get(attribute)
             : defaultValue;

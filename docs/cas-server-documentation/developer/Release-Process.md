@@ -64,7 +64,7 @@ a new release branch should be created.
 ### Create Branch
 
 ```bash
-# Replace $BRANCH with CAS version (i.e. 6.3.x)
+# Replace $BRANCH with CAS version (i.e. 6.5.x)
 git checkout -b $BRANCH
 ```
 

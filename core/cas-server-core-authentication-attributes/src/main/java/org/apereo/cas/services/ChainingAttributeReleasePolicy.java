@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttribu
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicy;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 @Getter
 @Slf4j
 @EqualsAndHashCode
-public class ChainingAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
+public class ChainingAttributeReleasePolicy implements RegisteredServiceChainingAttributeReleasePolicy {
 
     private static final long serialVersionUID = 3795054936775326709L;
 
@@ -108,29 +109,14 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
         return attributes;
     }
 
-    /**
-     * Add policy.
-     *
-     * @param policy the policy
-     */
-    public void addPolicy(final RegisteredServiceAttributeReleasePolicy policy) {
-        this.policies.add(policy);
-    }
-
-    /**
-     * Add all policies at once and then sort them.
-     *
-     * @param policies the policies
-     */
-    public void addPolicies(final RegisteredServiceAttributeReleasePolicy... policies) {
+    @Override
+    @CanIgnoreReturnValue
+    public RegisteredServiceChainingAttributeReleasePolicy addPolicies(final RegisteredServiceAttributeReleasePolicy... policies) {
         this.policies.addAll(Arrays.stream(policies).collect(Collectors.toList()));
+        return this;
     }
 
-    /**
-     * Size int.
-     *
-     * @return the int
-     */
+    @Override
     public int size() {
         return policies.size();
     }
