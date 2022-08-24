@@ -8,7 +8,6 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.shaded.json.JSONObject;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -108,7 +107,7 @@ public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         assertNotNull(body);
         val claims = JwtBuilder.parse(body);
         assertNotNull(claims);
-        assertEquals("casuser@example.org", ((JSONObject) claims.getClaim("attributes")).get("email"));
+        assertEquals("casuser@example.org", ((Map<String, Object>) claims.getClaim("attributes")).get("email"));
         assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
     }
 }

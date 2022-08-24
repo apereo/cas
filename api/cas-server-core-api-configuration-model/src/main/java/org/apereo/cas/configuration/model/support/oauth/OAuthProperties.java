@@ -92,9 +92,7 @@ public class OAuthProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OAuthCoreProperties core = new OAuthCoreProperties();
-
-
-
+    
     public OAuthProperties() {
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);

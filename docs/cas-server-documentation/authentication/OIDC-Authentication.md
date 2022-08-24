@@ -62,7 +62,7 @@ Instead, use the Dynamic Discovery endpoint and parse the discovery document to 
 ## Server Configuration
 
 Remember that OpenID Connect features of CAS require session affinity (and optionally session replication),
-as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
+by default as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
 You will need to configure your deployment environment and load-balancers accordingly.
 
 ## Session Replication

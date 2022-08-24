@@ -53,6 +53,10 @@ the namespace `org.apereo.cas.oidc.claims` and are described below:
 | `o.a.c.o.c.OidcAddressScopeAttributeReleasePolicy` | Release claims mapped to the spec-predefined `address` scope. |
 | `o.a.c.o.c.OidcPhoneScopeAttributeReleasePolicy`   | Release claims mapped to the spec-predefined `phone` scope.   |
 | `o.a.c.o.c.OidcCustomScopeAttributeReleasePolicy`  | Release claims mapped to the CAS-defined `custom` scope.      |
+   
+You are encouraged to use scopes where possible, when deciding on the strategy to share attributes and claims with client applications. 
+CAS will automatically translate scopes and bundled claims within each scope into the appropriate attribute release policy. If the oppurtunity
+presents itself, avoid using an attribute release policy directly.
 
 ## Mapping Claims
 
@@ -64,6 +68,33 @@ allow the value of the attribute `sys_given_name` to be mapped and assigned to t
 without having an impact on the attribute resolution configuration and all other CAS-enabled applications. 
 
 If mapping is not defined, by default CAS attributes are expected to match claim names.
+
+Claim mapping rules that are defined in CAS settings are globally and apply to all applications and requests. Once a claim is mapped
+to an attribute (i.e. `preferred_username` to `uid`), this mapping rule will take over all claim processing rules and conditions. It is
+surely possible to specify claim mapping rules on a per application basis as well to override what is defined globally: 
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^https://...",
+  "name": "Sample",
+  "id": 1,
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy",
+    "claimMappings" : {
+      "@class" : "java.util.TreeMap",
+      "preferred_username" : "uid"
+    }
+  }
+}
+```
+   
+The above configuration will allow CAS to map the value of the `uid` attribute the `preferred_username` claim is constructed in response to 
+an authentication request from application `Sample`. The claim mapping rule here is exclusive to this application only, and does not affect
+any other application or global mapping rule, if any.
 
 ## User-Defined Scopes
 
@@ -136,6 +167,10 @@ the following example to release `userX` as a *claim*:
 }
 ```
 
+<div class="alert alert-info"><strong>Usage</strong><p>You should consider using a scope-free attribute release policy
+only in very advanced and challenging use cases, typically to make a rather diffcult client application integration work.</p>
+</div>
+
 It is also possible to mix *free-form* release policies with those that operate 
 based on a scope by chaining such policies together. For example, the below policy
 allows the release of `user-x` as a claim, as well as all claims assigned 
@@ -203,3 +238,25 @@ to enable clients to correlate the user's activities without permission.
   }
 }
 ```
+
+## Subject Identifier Claim
+
+To control and modify the value of the `sub` claim for each OpenID Connect relying party, you may change the application 
+definition to returns an attribute that is already resolved for the principal as the `sub` claim value for this service. 
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^<https://the-redirect-uri>",
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ]
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "cn"
+  }
+}
+```
+
+In general, all other constructs available to CAS that are [described here](../integration/Attribute-Release-PrincipalId.html) which 
+control the principal identifier that is shared with a client application may also be used to control the `sub` claim.

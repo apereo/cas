@@ -635,7 +635,6 @@ public class CasOAuth20Configuration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20SessionConfiguration {
 
-
         @ConditionalOnMissingBean(name = "oauthDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -643,7 +642,6 @@ public class CasOAuth20Configuration {
             val cookie = casProperties.getSessionReplication().getCookie();
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
         }
-
 
         @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")
         @Bean
