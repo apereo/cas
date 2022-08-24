@@ -77,9 +77,11 @@ public interface OidcAttributeToScopeClaimMapper {
         return CollectionUtils.toCollection(attributeValues)
             .stream()
             .map(value -> {
+                if (value instanceof Boolean) {
+                    return value;
+                }
                 val valueContent = value.toString();
-                if (value instanceof Boolean
-                    || valueContent.equalsIgnoreCase(Boolean.FALSE.toString())
+                if (valueContent.equalsIgnoreCase(Boolean.FALSE.toString())
                     || valueContent.equalsIgnoreCase(Boolean.TRUE.toString())) {
                     return BooleanUtils.toBoolean(valueContent);
                 }
