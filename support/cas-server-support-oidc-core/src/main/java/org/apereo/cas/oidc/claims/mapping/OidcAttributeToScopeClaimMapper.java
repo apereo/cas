@@ -30,7 +30,8 @@ public interface OidcAttributeToScopeClaimMapper {
     /**
      * Gets mapped attribute.
      *
-     * @param claim the claim
+     * @param claim             the claim
+     * @param registeredService the registered service
      * @return the mapped attribute
      */
     String getMappedAttribute(String claim, RegisteredService registeredService);
@@ -38,15 +39,17 @@ public interface OidcAttributeToScopeClaimMapper {
     /**
      * Contains mapped attribute boolean.
      *
-     * @param claim the claim
-     * @return true/false
+     * @param claim             the claim
+     * @param registeredService the registered service
+     * @return true /false
      */
     boolean containsMappedAttribute(String claim, RegisteredService registeredService);
 
     /**
      * Map the claim to the mapped-name, or itself.
      *
-     * @param claimName the claim name
+     * @param claimName         the claim name
+     * @param registeredService the registered service
      * @return the string
      */
     default String toMappedClaimName(final String claimName, RegisteredService registeredService) {
