@@ -229,7 +229,7 @@ while (( "$#" )); do
                 task+="testCasConfiguration "
                 ;;
             geolocation|geo)
-                task+="testGeoLocation"
+                task+="testGeoLocation "
                 ;;
             git)
                 task+="testGit "
@@ -325,10 +325,10 @@ while (( "$#" )); do
                 task+="testIgnite "
                 ;;
             infinispan)
-                task+="testInfinispan"
+                task+="testInfinispan "
                 ;;
             spnego)
-                task+="testSpnego"
+                task+="testSpnego "
                 ;;
             cosmosdb|cosmos)
                 isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
