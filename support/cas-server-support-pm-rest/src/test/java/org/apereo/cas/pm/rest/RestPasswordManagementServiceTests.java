@@ -101,8 +101,12 @@ public class RestPasswordManagementServiceTests {
             "cas.authn.pm.rest.endpoint-url-user=http://localhost:9090",
             "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9092",
             "cas.authn.pm.rest.endpoint-username=username",
-            "cas.authn.pm.rest.endpoint-password=password"
-        })
+            "cas.authn.pm.rest.endpoint-password=password",
+            "cas.authn.pm.rest.field-name-user=username",
+            "cas.authn.pm.rest.field-name-password=password",
+            "cas.authn.pm.rest.field-name-password-old=oldPassword",
+
+            })
     @SuppressWarnings("ClassCanBeStatic")
     public class BasicOperations {
         @Autowired
@@ -258,6 +262,32 @@ public class RestPasswordManagementServiceTests {
                 webServer.stop();
             }
 
+            try (val webServer = new MockWebServer(9309,
+                    new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+                    MediaType.APPLICATION_JSON_VALUE)) {
+                webServer.start();
+
+                val props = new CasConfigurationProperties();
+                val rest = props.getAuthn().getPm().getRest();
+                rest.setEndpointUrlChange("http://localhost:9309");
+                rest.setEndpointUrlSecurityQuestions("http://localhost:9309");
+                rest.setEndpointUrlEmail("http://localhost:9309");
+                rest.setDataAsBody(true);
+                rest.setFieldNameUser("username");
+                rest.setFieldNamePassword("password");
+                rest.setFieldNamePasswordOld("oldPassword");
+
+                val passwordService = new RestPasswordManagementService(passwordManagementCipherExecutor,
+                        props.getServer().getPrefix(),
+                        new RestTemplate(),
+                        props.getAuthn().getPm(),
+                        passwordHistoryService);
+
+                val result = passwordService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+                        new PasswordChangeRequest("casuser", "123456", "123456"));
+                assertTrue(result);
+                webServer.stop();
+            }
             try (val webServer = new MockWebServer(9090, HttpStatus.NO_CONTENT)) {
                 webServer.start();
                 val result = passwordChangeService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
