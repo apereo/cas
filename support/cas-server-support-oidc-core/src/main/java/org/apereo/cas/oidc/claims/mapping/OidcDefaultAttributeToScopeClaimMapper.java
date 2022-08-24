@@ -1,8 +1,17 @@
 package org.apereo.cas.oidc.claims.mapping;
 
+import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceChainingAttributeReleasePolicy;
+
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OidcDefaultAttributeToScopeClaimMapper}.
@@ -25,12 +34,34 @@ public class OidcDefaultAttributeToScopeClaimMapper implements OidcAttributeToSc
     private final Map<String, String> claimsToAttribute;
 
     @Override
-    public String getMappedAttribute(final String claim) {
-        return claimsToAttribute.get(claim);
+    public String getMappedAttribute(final String claim, final RegisteredService registeredService) {
+        val container = getClaimMappingsContainer(registeredService);
+        return Optional.ofNullable(container.get(claim)).orElseGet(() -> claimsToAttribute.get(claim));
     }
 
     @Override
-    public boolean containsMappedAttribute(final String claim) {
-        return claimsToAttribute.containsKey(claim);
+    public boolean containsMappedAttribute(final String claim, final RegisteredService registeredService) {
+        val container = getClaimMappingsContainer(registeredService);
+        return claimsToAttribute.containsKey(claim) || container.containsKey(claim);
+    }
+
+    private static Map<String, String> getClaimMappingsContainer(final RegisteredService registeredService) {
+        var finalMap = Stream.<Map.Entry<String, String>>empty();
+        if (registeredService.getAttributeReleasePolicy() instanceof RegisteredServiceChainingAttributeReleasePolicy) {
+            val chain = (RegisteredServiceChainingAttributeReleasePolicy) registeredService.getAttributeReleasePolicy();
+            for (val policy : chain.getPolicies()) {
+                val result = getClaimMappingsForPolicy(policy);
+                finalMap = Stream.concat(finalMap, result);
+            }
+        }
+        val result = getClaimMappingsForPolicy(registeredService.getAttributeReleasePolicy());
+        val finalResult = Stream.concat(finalMap, result);
+        return finalResult.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private static Stream<Map.Entry<String, String>> getClaimMappingsForPolicy(final RegisteredServiceAttributeReleasePolicy policy) {
+        return policy instanceof OidcRegisteredServiceAttributeReleasePolicy
+            ? ((OidcRegisteredServiceAttributeReleasePolicy) policy).getClaimMappings().entrySet().stream()
+            : Stream.empty();
     }
 }

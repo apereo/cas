@@ -87,7 +87,7 @@ public class OidcPhoneScopeAttributeReleasePolicyTests {
             appCtx.refresh();
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val chain = new ChainingAttributeReleasePolicy();
-            chain.addPolicy(policy);
+            chain.addPolicies(policy);
             val service = getOidcRegisteredService();
             service.setAttributeReleasePolicy(chain);
             val serializer = new RegisteredServiceJsonSerializer(appCtx);

@@ -72,7 +72,7 @@ public class SamlSPUtils {
 
         val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributesToRelease);
         val policy = new ChainingAttributeReleasePolicy();
-        policy.addPolicy(new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(CollectionUtils.wrap(attributes)));
+        policy.addPolicies(new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(CollectionUtils.wrap(attributes)));
         service.setAttributeReleasePolicy(policy);
 
         service.setMetadataCriteriaRoles(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart());

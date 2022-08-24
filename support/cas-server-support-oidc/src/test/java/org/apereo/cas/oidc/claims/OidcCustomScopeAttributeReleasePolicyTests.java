@@ -61,7 +61,7 @@ public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTest
         appCtx.refresh();
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         val chain = new ChainingAttributeReleasePolicy();
-        chain.addPolicy(policy);
+        chain.addPolicies(policy);
         val service = getOidcRegisteredService();
         service.setAttributeReleasePolicy(chain);
         val serializer = new RegisteredServiceJsonSerializer(appCtx);

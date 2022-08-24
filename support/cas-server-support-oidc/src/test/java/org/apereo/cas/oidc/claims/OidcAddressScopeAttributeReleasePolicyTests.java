@@ -48,7 +48,7 @@ public class OidcAddressScopeAttributeReleasePolicyTests extends AbstractOidcTes
         appCtx.refresh();
         val policy = new OidcAddressScopeAttributeReleasePolicy();
         val chain = new ChainingAttributeReleasePolicy();
-        chain.addPolicy(policy);
+        chain.addPolicies(policy);
         val service = getOidcRegisteredService();
         service.setAttributeReleasePolicy(chain);
         val serializer = new RegisteredServiceJsonSerializer(appCtx);

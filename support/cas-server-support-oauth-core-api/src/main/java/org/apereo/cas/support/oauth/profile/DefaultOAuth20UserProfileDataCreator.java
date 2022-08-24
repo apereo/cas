@@ -50,12 +50,13 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
         val modelAttributes = new HashMap<String, Object>();
         modelAttributes.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, principal.getId());
         modelAttributes.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID, accessToken.getClientId());
-        modelAttributes.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, collectAttributes(principal));
+        modelAttributes.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, collectAttributes(principal, registeredService));
         finalizeProfileResponse(accessToken, modelAttributes, principal, registeredService);
         return modelAttributes;
     }
 
-    protected Map<String, List<Object>> collectAttributes(final Principal principal) {
+    protected Map<String, List<Object>> collectAttributes(final Principal principal,
+                                                          final RegisteredService registeredService) {
         return principal.getAttributes();
     }
 

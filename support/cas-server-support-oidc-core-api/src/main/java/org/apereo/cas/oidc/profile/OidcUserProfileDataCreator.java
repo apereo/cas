@@ -31,12 +31,13 @@ public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCre
     }
 
     @Override
-    protected Map<String, List<Object>> collectAttributes(final Principal principal) {
+    protected Map<String, List<Object>> collectAttributes(final Principal principal,
+                                                          final RegisteredService registeredService) {
         val attributes = new HashMap<String, List<Object>>();
         val mapper = getConfigurationContext().getObject().getAttributeToScopeClaimMapper();
-        super.collectAttributes(principal)
+        super.collectAttributes(principal, registeredService)
             .forEach((key, value) -> {
-                val collectionValues = mapper.mapClaim(key, principal, value);
+                val collectionValues = mapper.mapClaim(key, registeredService, principal, value);
                 attributes.put(key, collectionValues);
             });
         return attributes;

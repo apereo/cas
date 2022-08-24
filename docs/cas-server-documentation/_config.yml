@@ -4,6 +4,7 @@ exclude:
   - .history
   - .jekyll-cache
   - .jekyll-metadata
+  - 6.3.x
   - 6.2.x
   - 6.1.x
   - 6.0.x
