@@ -169,7 +169,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
-            val cookie = casProperties.getSessionReplication().getCookie();
+            val cookie = casProperties.getAuthn().getMfa().getAcceptto().getSessionReplication().getCookie();
             val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
             return new DistributedJEESessionStore(ticketRegistry, ticketFactory, cookieGenerator);
         }

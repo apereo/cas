@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -97,11 +96,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
-            val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
-            if (replicate) {
+            final TicketRegistry ticketRegistry) {
+            val replicationProps = casProperties.getAuthn().getPac4j().getCore().getSessionReplication();
+            if (replicationProps.isReplicateSessions()) {
                 return new DistributedJEESessionStore(ticketRegistry,
                     ticketFactory, delegatedClientDistributedSessionCookieGenerator);
             }
@@ -116,8 +113,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
-            val cookie = casProperties.getSessionReplication().getCookie();
+        public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator(
+            final CasConfigurationProperties casProperties) {
+            val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
         }
 
@@ -324,7 +322,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("delegatedClientDistributedSessionStore")
             final SessionStore delegatedClientDistributedSessionStore) {
             return plan -> {
-                val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
+                val replicate = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().isReplicateSessions();
                 if (replicate) {
                     plan.registerLogoutPostProcessor(ticketGrantingTicket -> {
                         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();

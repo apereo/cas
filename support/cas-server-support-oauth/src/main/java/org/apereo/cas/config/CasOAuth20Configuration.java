@@ -639,7 +639,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder oauthDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
-            val cookie = casProperties.getSessionReplication().getCookie();
+            val cookie = casProperties.getAuthn().getOauth().getSessionReplication().getCookie();
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
         }
 
@@ -654,14 +654,13 @@ public class CasOAuth20Configuration {
             @Qualifier("oauthDistributedSessionCookieGenerator")
             final CasCookieBuilder oauthDistributedSessionCookieGenerator,
             final CasConfigurationProperties casProperties) {
-            val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
+            val replicate = casProperties.getAuthn().getOauth().getSessionReplication().isReplicateSessions();
             if (replicate) {
                 return new DistributedJEESessionStore(ticketRegistry,
                     ticketFactory, oauthDistributedSessionCookieGenerator);
             }
             return JEESessionStore.INSTANCE;
         }
-
     }
 
     @Configuration(value = "CasOAuth20LogoutConfiguration", proxyBeanMethods = false)
@@ -676,7 +675,7 @@ public class CasOAuth20Configuration {
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore) {
             return plan -> {
-                val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
+                val replicate = casProperties.getAuthn().getOauth().getSessionReplication().isReplicateSessions();
                 if (replicate) {
                     plan.registerLogoutPostProcessor(ticketGrantingTicket -> {
                         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();

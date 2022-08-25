@@ -201,17 +201,6 @@ endpoints that are supported for throttling.
 
 {% include_cached casproperties.html properties="cas.authn.oauth.csrf-cookie" %}
 
-## Server Configuration
-
-Remember that OAuth features of CAS require session affinity (and optionally session replication),
-as the authorization responses throughout the login flow are stored via 
-server-backed session storage mechanisms. You will need to configure your deployment
-environment and load balancers accordingly.
-
-## Session Replication
-
-{% include_cached casproperties.html properties="cas.session-replication" %}
-
 ## Sample Client Applications
 
 - [OAuth2 Sample Webapp](https://github.com/apereo/oauth2-sample-java-webapp)

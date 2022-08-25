@@ -466,7 +466,7 @@ public class SamlIdPEndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
-            val cookie = casProperties.getSessionReplication().getCookie();
+            val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
         }
 

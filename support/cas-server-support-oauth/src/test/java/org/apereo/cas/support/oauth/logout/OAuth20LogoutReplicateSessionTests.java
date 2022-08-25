@@ -31,15 +31,15 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @SpringBootTest(classes = {
-            OAuth20LogoutReplicateSessionTests.OAuthDistributedSessionTestConfiguration.class,
-            AbstractOAuth20Tests.SharedTestConfiguration.class
-        },
-        properties = {
-                "cas.authn.attribute-repository.stub.attributes.uid=cas",
-                "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
-                "spring.main.allow-bean-definition-overriding=true",
-                "cas.authn.oauth.replicate-sessions=true"
-        })
+    OAuth20LogoutReplicateSessionTests.OAuthDistributedSessionTestConfiguration.class,
+    AbstractOAuth20Tests.SharedTestConfiguration.class
+},
+    properties = {
+        "cas.authn.attribute-repository.stub.attributes.uid=cas",
+        "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
+        "spring.main.allow-bean-definition-overriding=true",
+        "cas.authn.oauth.session-replication.replicate-sessions=true"
+    })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Tag("OAuth")
