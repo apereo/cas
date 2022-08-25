@@ -105,7 +105,7 @@ public class OidcAuthorizeEndpointControllerTests {
             val mockResponse = new MockHttpServletResponse();
 
             val oauthContext = oidcAuthorizeEndpointController.getConfigurationContext();
-            oauthContext.getCasProperties().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
+            oauthContext.getCasProperties().getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
             oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
             val service = getOidcRegisteredService(id);

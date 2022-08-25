@@ -128,16 +128,10 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         return manager.getProfile().isPresent();
     }
 
-    /**
-     * Ensure Session Replication Is Auto-Configured If needed.
-     *
-     * @param request the request
-     */
     protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
-        val casProperties = getConfigurationContext().getCasProperties();
-        val replicationRequested = casProperties.getAuthn().getOauth().isReplicateSessions();
-        val cookieAutoconfigured = casProperties.getSessionReplication().getCookie().isAutoConfigureCookiePath();
-        if (replicationRequested && cookieAutoconfigured) {
+        val replicationProps = getConfigurationContext().getCasProperties().getAuthn().getPac4j().getCore().getSessionReplication();
+        val cookieAutoconfigured = replicationProps.getCookie().isAutoConfigureCookiePath();
+        if (replicationProps.isReplicateSessions() && cookieAutoconfigured) {
             val contextPath = request.getContextPath();
             val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 

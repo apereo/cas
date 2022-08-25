@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -120,6 +121,12 @@ public class AccepttoMultifactorAuthenticationProperties extends BaseMultifactor
     @RequiredProperty
     @NestedConfigurationProperty
     private SpringResourceProperties registrationApiPublicKey = new SpringResourceProperties();
+
+    /**
+     * Control settings for session replication.
+     */
+    @NestedConfigurationProperty
+    private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
 
     public AccepttoMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);

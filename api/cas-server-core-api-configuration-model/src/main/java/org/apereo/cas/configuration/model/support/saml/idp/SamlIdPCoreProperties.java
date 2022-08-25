@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -64,6 +66,12 @@ public class SamlIdPCoreProperties implements Serializable {
      * Example might be {@code urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName}.
      */
     private List<String> attributeFriendlyNames = new ArrayList<>(0);
+
+    /**
+     * Control settings for session replication.
+     */
+    @NestedConfigurationProperty
+    private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
 
     /**
      * Define session storage types.

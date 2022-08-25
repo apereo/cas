@@ -271,8 +271,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val mockResponse = new MockHttpServletResponse();
 
         val properties = oAuth20AuthorizeEndpointController.getConfigurationContext().getCasProperties();
-        properties.getSessionReplication().getCookie().setAutoConfigureCookiePath(true);
-        properties.getAuthn().getOauth().setReplicateSessions(true);
+        properties.getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(true);
+        properties.getAuthn().getOauth().getSessionReplication().setReplicateSessions(true);
         oAuth20AuthorizeEndpointController.getConfigurationContext()
             .getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
@@ -331,7 +331,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val mockResponse = new MockHttpServletResponse();
 
         val oauthContext = oAuth20AuthorizeEndpointController.getConfigurationContext();
-        oauthContext.getCasProperties().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
+        oauthContext.getCasProperties().getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
         oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);

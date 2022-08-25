@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -45,17 +46,6 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
     private boolean lazyInit = true;
 
     /**
-     * Indicates whether profiles and other session data,
-     * collected as part of pac4j flows and requests
-     * that are kept by the container session, should be replicated
-     * across the cluster using CAS and its own ticket registry.
-     * Without this option, profile data and other related
-     * pieces of information should be manually replicated
-     * via means and libraries outside of CAS.
-     */
-    private boolean replicateSessions = true;
-
-    /**
      * The name of the authentication handler in CAS used for delegation.
      */
     private String name;
@@ -84,6 +74,12 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
      * or very often.
      */
     private long cacheSize = 100;
+
+    /**
+     * Control settings for session replication.
+     */
+    @NestedConfigurationProperty
+    private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
 
     /**
      * Path to a groovy script to determine the auto-redirection

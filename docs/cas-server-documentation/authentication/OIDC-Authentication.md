@@ -65,10 +65,6 @@ Remember that OpenID Connect features of CAS require session affinity (and optio
 by default as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
 You will need to configure your deployment environment and load-balancers accordingly.
 
-## Session Replication
-
-{% include_cached casproperties.html properties="cas.session-replication" %}
-
 ## Sample Client Applications
 
 - [MITREid Sample Java Webapp](https://github.com/apereo/oidc-sample-java-webapp)
