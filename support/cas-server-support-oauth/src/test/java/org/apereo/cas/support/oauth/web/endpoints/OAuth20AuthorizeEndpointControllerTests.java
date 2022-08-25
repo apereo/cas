@@ -360,10 +360,10 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         assertNotNull(redirectUrl);
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
-        assertEquals(StringUtils.EMPTY, oAuth20AuthorizeEndpointController.getConfigurationContext()
+        assertEquals("/", oAuth20AuthorizeEndpointController.getConfigurationContext()
             .getOauthDistributedSessionCookieGenerator().getCookiePath());
         val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=Bearer");
-        val accessToken = (OAuth20AccessToken) this.ticketRegistry.getTicket(code);
+        val accessToken = ticketRegistry.getTicket(code, OAuth20AccessToken.class);
         assertNotNull(accessToken);
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());

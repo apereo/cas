@@ -88,7 +88,9 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         }
 
         val userScopes = attributeReleasePolicyFactory.getUserDefinedScopes();
+        val customClaims = new ArrayList<String>();
         val policyChain = new ChainingAttributeReleasePolicy();
+
         definedServiceScopes.forEach(givenScope -> {
             LOGGER.trace("Reviewing scope [{}] for [{}]", givenScope, oidcService.getServiceId());
 
@@ -101,7 +103,9 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                     .stream()
                     .filter(t -> t.getScopeName().equals(givenScope.trim()))
                     .findFirst()
-                    .ifPresent(userPolicy -> addAttributeReleasePolicy(policyChain, userPolicy, givenScope, oidcService));
+                    .ifPresentOrElse(
+                        userPolicy -> addAttributeReleasePolicy(policyChain, userPolicy, givenScope, oidcService),
+                        () -> customClaims.add(givenScope.trim()));
             } else {
                 val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
                 switch (scope) {
@@ -122,6 +126,11 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 }
             }
         });
+        if (!customClaims.isEmpty()) {
+            val userPolicy = attributeReleasePolicyFactory.custom(OidcConstants.CUSTOM_SCOPE_TYPE, customClaims);
+            addAttributeReleasePolicy(policyChain, userPolicy, userPolicy.getScopeName(), oidcService);
+        }
+
         val scopeFree = definedServiceScopes.isEmpty() || (definedServiceScopes.size() == 1
                                                            && definedServiceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
         if (scopeFree) {
