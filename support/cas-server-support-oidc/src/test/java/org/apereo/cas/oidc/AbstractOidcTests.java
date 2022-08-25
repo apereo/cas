@@ -110,6 +110,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -185,6 +186,9 @@ public abstract class AbstractOidcTests {
     @Autowired
     protected ResourceLoader resourceLoader;
 
+    @Autowired
+    @Qualifier("oauthDistributedSessionStore")
+    protected SessionStore oauthDistributedSessionStore;
     @Autowired
     @Qualifier("oauthInterceptor")
     protected HandlerInterceptor oauthInterceptor;

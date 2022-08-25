@@ -2,9 +2,9 @@ package org.apereo.cas.oidc.services;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
-import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceChainingAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,6 +86,19 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     }
 
     @Test
+    public void verifyCustomScope() {
+        var service = getOidcRegisteredService();
+        service.getScopes().clear();
+        val scopes = service.getScopes();
+        scopes.addAll(List.of("cn", "mail"));
+        service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
+        val policy = service.getAttributeReleasePolicy();
+        assertTrue(policy instanceof OidcCustomScopeAttributeReleasePolicy);
+        val custom = (OidcCustomScopeAttributeReleasePolicy) policy;
+        assertTrue(scopes.containsAll(custom.getAllowedAttributes()));
+    }
+
+    @Test
     public void verifyScopeFreeAttributeRelease() {
         var service = getOidcRegisteredService();
         service.getScopes().clear();
@@ -105,17 +119,6 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         service.getScopes().clear();
         val processed = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         assertEquals(service.getAttributeReleasePolicy(), processed.getAttributeReleasePolicy());
-    }
-
-    @Test
-    public void verifyUnknownScope() {
-        var service = getOidcRegisteredService();
-        val scopes = service.getScopes();
-        service.getScopes().clear();
-        scopes.add("unknown");
-        service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
-        val policy = service.getAttributeReleasePolicy();
-        assertTrue(policy instanceof DenyAllAttributeReleasePolicy);
     }
 
     @Test
