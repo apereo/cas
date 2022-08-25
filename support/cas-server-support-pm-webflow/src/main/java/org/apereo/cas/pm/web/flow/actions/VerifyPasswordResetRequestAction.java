@@ -52,6 +52,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
         try {
             passwordResetTicket = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
             TicketState.class.cast(passwordResetTicket).update();
+            centralAuthenticationService.updateTicket(passwordResetTicket);
 
             val token = passwordResetTicket.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
             val username = passwordManagementService.parseToken(token);

@@ -1,7 +1,10 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -71,8 +75,10 @@ public class SendPasswordResetInstructionsActionTests {
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
+            val tickets = ticketRegistry.getTickets();
+            assertEquals(1, tickets.size());
+            assertInstanceOf(HardTimeoutExpirationPolicy.class, tickets.iterator().next().getExpirationPolicy());
         }
-
 
         @Test
         public void verifyNoPhoneOrEmail() throws Exception {
@@ -91,6 +97,38 @@ public class SendPasswordResetInstructionsActionTests {
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
+        }
+    }
+
+    @SuppressWarnings("ClassCanBeStatic")
+    @Nested
+    @SpringBootTest(classes = {
+            BasePasswordManagementActionTests.SharedTestConfiguration.class,
+            CasPersonDirectoryTestConfiguration.class
+    }, properties = {
+            "spring.mail.host=localhost",
+            "spring.mail.port=25000",
+
+            "cas.authn.pm.core.enabled=true",
+            "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
+            "cas.authn.pm.forgot-username.mail.from=cas@example.org",
+            "cas.authn.pm.reset.mail.from=cas@example.org",
+            "cas.authn.pm.reset.security-questions-enabled=true",
+            "cas.authn.pm.reset.number-of-uses=1"
+    })
+    public class MultiUseTests extends BasePasswordManagementActionTests {
+
+        @Test
+        public void verifyActionMultiUse() throws Exception {
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
+            request.addParameter("username", "casuser");
+            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
+            val tickets = ticketRegistry.getTickets();
+            assertEquals(1, tickets.size());
+            assertInstanceOf(MultiTimeUseOrTimeoutExpirationPolicy.class, tickets.iterator().next().getExpirationPolicy());
         }
     }
 
