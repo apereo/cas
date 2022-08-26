@@ -174,12 +174,14 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_CHANGE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public Action passwordChangeAction(
+        public Action passwordChangeAction(final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
             final PasswordManagementService passwordManagementService,
             @Qualifier("passwordValidationService")
-            final PasswordValidationService passwordValidationService) {
-            return new PasswordChangeAction(passwordManagementService, passwordValidationService);
+            final PasswordValidationService passwordValidationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
+            return new PasswordChangeAction(casProperties, passwordManagementService, passwordValidationService, ticketRegistry);
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_SEND_INSTRUCTIONS)

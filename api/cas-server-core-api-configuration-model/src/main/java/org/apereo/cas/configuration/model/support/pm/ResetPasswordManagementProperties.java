@@ -76,6 +76,11 @@ public class ResetPasswordManagementProperties implements Serializable {
      */
     private int numberOfUses = -1;
 
+    /**
+     * Remove the reset password token after a successful password change.
+     */
+    private boolean removeTokenAfterSuccessfulChange;
+
     public ResetPasswordManagementProperties() {
         mail.setAttributeName("mail");
         mail.setText("Reset your password via this link: %s");

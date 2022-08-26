@@ -1,11 +1,13 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -38,9 +40,13 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
 
     private static final String DEFAULT_MESSAGE = "Could not update the account password";
 
+    private final CasConfigurationProperties casProperties;
+
     private final PasswordManagementService passwordManagementService;
 
     private final PasswordValidationService passwordValidationService;
+
+    private final TicketRegistry ticketRegistry;
 
     /**
      * Gets password change request.
@@ -70,6 +76,11 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 val credential = new UsernamePasswordCredential(creds.getUsername(), bean.getPassword());
                 WebUtils.putCredential(requestContext, credential);
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
+                if (casProperties.getAuthn().getPm().getReset().isRemoveTokenAfterSuccessfulChange()) {
+                    val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                    val transientTicket = request.getParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
+                    ticketRegistry.deleteTicket(transientTicket);
+                }
                 return getSuccessEvent(requestContext, bean);
             }
         } catch (final InvalidPasswordException e) {
