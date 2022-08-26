@@ -79,7 +79,9 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 if (casProperties.getAuthn().getPm().getReset().isRemoveTokenAfterSuccessfulChange()) {
                     val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
                     val transientTicket = request.getParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
-                    ticketRegistry.deleteTicket(transientTicket);
+                    if (transientTicket != null) {
+                        ticketRegistry.deleteTicket(transientTicket);
+                    }
                 }
                 return getSuccessEvent(requestContext, bean);
             }
