@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
+@TestPropertySource(properties = "cas.authn.oauth.session-replication.replicate-sessions=false")
 public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthPasswordGrantTypeTokenRequestValidator")

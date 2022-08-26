@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
+@TestPropertySource(properties = "cas.authn.oauth.session-replication.replicate-sessions=false")
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     private static final String SUPPORTING_TICKET = "RT-SUPPORTING";
 
