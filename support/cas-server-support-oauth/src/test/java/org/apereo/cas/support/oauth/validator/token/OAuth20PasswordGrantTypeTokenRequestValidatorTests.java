@@ -69,7 +69,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends Abstract
         val response = new MockHttpServletResponse();
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
-        assertFalse(this.validator.validate(new JEEContext(request, response)));
+        assertFalse(validator.validate(new JEEContext(request, response)));
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
@@ -81,7 +81,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends Abstract
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
-        assertTrue(this.validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(new JEEContext(request, response)));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, nonSupportingService.getClientId());
         profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
