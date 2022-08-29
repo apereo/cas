@@ -6,7 +6,7 @@ category: Installation
 {% include variables.html %}
 
 
-# CAS Command-line Shell
+# Command-line Shell
 
 The CAS command-line shell provides the ability to query the CAS server for help on available settings/modules and
 various other utility functions. 
@@ -42,7 +42,7 @@ The following commands are available and exposed by the CAS command-line shell.
     {% for config in configBlock %}
     	{% for cmdBlock in config %}
 			{% assign cmd = cmdBlock[1] %}
-			<h3><code>{{ cmd.name }}</code></h3>
+			<h3>{{ cmd.name }}</h3>
 			<p>{{ cmd.description }}</p>
 			<table class="cas-datatable paginated-table">
 			    <thead>

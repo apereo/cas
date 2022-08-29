@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @since 3.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface ServiceTicket extends Ticket, TicketGrantingTicketAwareTicket {
+public interface ServiceTicket extends TicketGrantingTicketAwareTicket {
 
     /**
      * Prefix generally applied to unique ids generated

@@ -17,7 +17,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface OAuth20Token extends ServiceTicket, AuthenticationAwareTicket {
+public interface OAuth20Token extends ServiceTicket {
 
     /**
      * Get requested scopes requested at the time of issuing this code.
