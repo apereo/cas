@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
+@TestPropertySource(properties = "cas.authn.oauth.session-replication.replicate-sessions=false")
 public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthPasswordGrantTypeTokenRequestValidator")
@@ -69,7 +71,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends Abstract
         val response = new MockHttpServletResponse();
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
-        assertFalse(this.validator.validate(new JEEContext(request, response)));
+        assertFalse(validator.validate(new JEEContext(request, response)));
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
@@ -81,7 +83,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends Abstract
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
-        assertTrue(this.validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(new JEEContext(request, response)));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, nonSupportingService.getClientId());
         profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);

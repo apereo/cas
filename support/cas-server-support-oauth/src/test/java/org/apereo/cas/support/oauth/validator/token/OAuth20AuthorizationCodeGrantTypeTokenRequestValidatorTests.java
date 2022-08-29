@@ -50,6 +50,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
+@TestPropertySource(properties = "cas.authn.oauth.session-replication.replicate-sessions=false")
 public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
 
     @Nested

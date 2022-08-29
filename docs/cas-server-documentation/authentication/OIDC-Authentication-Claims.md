@@ -69,7 +69,7 @@ without having an impact on the attribute resolution configuration and all other
 
 If mapping is not defined, by default CAS attributes are expected to match claim names.
 
-Claim mapping rules that are defined in CAS settings are globally and apply to all applications and requests. Once a claim is mapped
+Claim mapping rules that are defined in CAS settings are global and apply to all applications and requests. Once a claim is mapped
 to an attribute (i.e. `preferred_username` to `uid`), this mapping rule will take over all claim processing rules and conditions. It is
 surely possible to specify claim mapping rules on a per application basis as well to override what is defined globally: 
 
@@ -92,7 +92,7 @@ surely possible to specify claim mapping rules on a per application basis as wel
 }
 ```
    
-The above configuration will allow CAS to map the value of the `uid` attribute the `preferred_username` claim is constructed in response to 
+The above configuration will allow CAS to map the value of the `uid` attribute to the `preferred_username` claim that is constructed in response to 
 an authentication request from application `Sample`. The claim mapping rule here is exclusive to this application only, and does not affect
 any other application or global mapping rule, if any.
 
@@ -114,6 +114,11 @@ Note that in addition to standard system scopes, you may define your own custom 
  
 These such as `displayName` above, get bundled into a `custom` scope which 
 can be used and requested by services and clients.
+
+<div class="alert alert-info"><strong>Usage</strong><p>All user-defined custom scopes as well any custom claims
+that would be mapped to those scopes must always be advertised via OpenID Connect dioscvery document and specified
+in CAS settings for scopes and claims to be recognized as valid during claim processing.</p>
+</div>
 
 If you however wish to define your custom scopes as an extension of what OpenID Connect defines
 such that you may bundle attributes together, then you need to first register your `scope`,

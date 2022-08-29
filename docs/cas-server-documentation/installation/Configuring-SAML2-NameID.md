@@ -35,6 +35,26 @@ as the final Name ID format, and use the `mail` attribute value as the final Nam
 }
 ```
 
+The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified`
+as the final Name ID format, and use the `sysid` attribute value and the scope `example.org`. The final Name ID value would then
+be constructed as `<sysid-attribute-value>@example.org`.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "the-entity-id-of-the-sp",
+  "name": "SAML Service",
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "id": 1,
+  "requiredNameIdFormat": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "sysid",
+    "scope": "example.org"
+  }
+}
+```
+
 The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:2.0:nameid-format:transient` as the final Name ID format,
 and use the `cn` attribute value in upper-case as the final Name ID value, skipping the generation of transient value per the required format.
 

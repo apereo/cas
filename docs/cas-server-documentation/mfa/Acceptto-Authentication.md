@@ -29,5 +29,5 @@ history of user behavior data to detect anomalies.
 
 ## Configuration
 
-{% include_cached casproperties.html properties="cas.authn.mfa.acceptto,cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.acceptto" %}
 

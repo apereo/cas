@@ -60,7 +60,7 @@ repositories {
 }
 ```
 
-{% include_cached casproperties.html properties="cas.authn.saml-idp.core,cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.core" %}
 
 ### Actuator Endpoints
 

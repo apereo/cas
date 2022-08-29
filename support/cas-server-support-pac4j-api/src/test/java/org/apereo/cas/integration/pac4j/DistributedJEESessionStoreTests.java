@@ -43,7 +43,7 @@ public class DistributedJEESessionStoreTests {
 
     @Test
     public void verifyTracking() {
-        val cookie = casProperties.getSessionReplication().getCookie();
+        val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
         val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
 
         val request = new MockHttpServletRequest();
@@ -61,7 +61,7 @@ public class DistributedJEESessionStoreTests {
 
     @Test
     public void verifySetGet() {
-        val cookie = casProperties.getSessionReplication().getCookie();
+        val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
         val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
 
         val request = new MockHttpServletRequest();

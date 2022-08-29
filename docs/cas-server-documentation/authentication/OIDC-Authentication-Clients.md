@@ -27,6 +27,11 @@ OpenID Connect clients can be *statically* registered with CAS as such:
 Note that OpenID connect clients as service definitions are an 
 extension of [OAuth services](OAuth-Authentication.html) in CAS. All settings 
 that apply to an OAuth service definition should equally apply here as well. 
+
+<div class="alert alert-info"><strong>Redirect URIs</strong><p>Client applicatin redirect URIs are specified
+using the <code>serviceId</code> field which supports regular expression patterns. If you need to support multiple URIs, you can
+try to <i>OR</i> them together or you may be able to construct the pattern that supports and matches all URIs with minor changes.</p></div>
+
 The following fields are specifically available for OpenID connect services:
 
 | Field                               | Description                                                                                                                                                                                                                   |
@@ -67,14 +72,29 @@ Service definitions are typically managed and registered
 with CAS by the [service management](../services/Service-Management.html) facility.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly 
-enforce the collection of authorized supported 
-response/grant types for backward compatibility reasons if left blank. This means that if left 
-undefined, all grant and response types may be allowed by 
-the service definition and related policies. Do please note that this behavior 
-is <strong>subject to change</strong> in future releases 
-and thus, it is strongly recommended that all authorized grant/response types for 
-each profile be declared in the service definition 
-immediately to avoid surprises in the future.</p></div>
+enforce the collection of authorized supported response/grant types for backward compatibility reasons if left blank. This means that if left 
+undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior 
+is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for 
+each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
+
+An example registration record for an OpenID Connect relying party follows that allows the application with the redirect URI `https://app.example.org/oidc`
+to send authorization requests to CAS using the *authorization code* authentication flow. The registration record also instructs CAS to bypass the 
+approval/consent screen and to assume access to requested scopes and claims should be granted automatically without the user's explicit permission.
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client-id",
+  "clientSecret": "secret",
+  "serviceId": "^https://app.example.org/oidc",
+  "name": "MyApplication",
+  "id": 1,
+  "bypassApprovalPrompt": true,
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "scopes" : [ "java.util.HashSet", [ "profile", "openid", "email" ] ]
+}
+```
 
 ## Dynamic Registration
 

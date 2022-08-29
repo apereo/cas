@@ -75,15 +75,6 @@ Please [see this guide](Delegate-Authentication-Provisioning.html).
 
 Please [see this guide](Delegate-Authentication-PostProcessing.html).
 
-## Session Replication
-                
-For the current active session, the selected identity provider, the relying party
-and all other relevant details for the given authentication request are tracked as 
-*session attributes* inside a dedicated session store capable of replication, which is specially
-more relevant for clustered deployments.
-
-{% include_cached casproperties.html properties="cas.session-replication" %}
-
 ## Webflow
 
 Certain aspects of the webflow configuration for delegated authentication can be controlled

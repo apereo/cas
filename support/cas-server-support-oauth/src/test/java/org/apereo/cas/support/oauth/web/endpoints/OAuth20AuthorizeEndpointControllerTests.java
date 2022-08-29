@@ -271,8 +271,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val mockResponse = new MockHttpServletResponse();
 
         val properties = oAuth20AuthorizeEndpointController.getConfigurationContext().getCasProperties();
-        properties.getSessionReplication().getCookie().setAutoConfigureCookiePath(true);
-        properties.getAuthn().getOauth().setReplicateSessions(true);
+        properties.getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(true);
+        properties.getAuthn().getOauth().getSessionReplication().setReplicateSessions(true);
         oAuth20AuthorizeEndpointController.getConfigurationContext()
             .getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
@@ -331,7 +331,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val mockResponse = new MockHttpServletResponse();
 
         val oauthContext = oAuth20AuthorizeEndpointController.getConfigurationContext();
-        oauthContext.getCasProperties().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
+        oauthContext.getCasProperties().getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
         oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -360,10 +360,10 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         assertNotNull(redirectUrl);
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
-        assertEquals(StringUtils.EMPTY, oAuth20AuthorizeEndpointController.getConfigurationContext()
+        assertEquals("/", oAuth20AuthorizeEndpointController.getConfigurationContext()
             .getOauthDistributedSessionCookieGenerator().getCookiePath());
         val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=Bearer");
-        val accessToken = (OAuth20AccessToken) this.ticketRegistry.getTicket(code);
+        val accessToken = ticketRegistry.getTicket(code, OAuth20AccessToken.class);
         assertNotNull(accessToken);
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
