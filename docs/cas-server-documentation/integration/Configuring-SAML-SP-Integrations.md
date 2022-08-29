@@ -179,7 +179,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.atlassian.com/software/jira">
 <img src="https://user-images.githubusercontent.com/1205228/55322296-cb733800-5430-11e9-93e7-0f57e1a1ae89.png" height="78" width="90"></a>
 
-<a href="https://www.pagerduty.com/">
+<a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/55322626-b34fe880-5431-11e9-8574-74cc9ab9643f.png" height="78" width="120"></a>
 
 <a href="https://www.crashplan.com/">
