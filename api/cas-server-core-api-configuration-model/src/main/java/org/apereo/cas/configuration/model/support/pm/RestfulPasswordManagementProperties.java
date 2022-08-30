@@ -50,6 +50,12 @@ public class RestfulPasswordManagementProperties implements Serializable {
     private String endpointUrlSecurityQuestions;
 
     /**
+     * Endpoint URL to use when unlocking account.
+     */
+    @RequiredProperty
+    private String endpointUrlAccountUnlock;
+
+    /**
      * Endpoint URL to use when updating passwords..
      */
     @RequiredProperty

@@ -1,3 +1,4 @@
+import org.apereo.cas.authentication.Credential
 import org.apereo.cas.pm.*
 
 def change(Object[] args) {
@@ -53,4 +54,11 @@ def updateSecurityQuestions(Object[] args) {
     def query = args[0] as PasswordManagementQuery
     def logger = args[1]
     // Execute update...
+}
+
+def unlockAccount(Object[] args) {
+    def query = args[0] as Credential
+    def logger = args[1]
+    // Execute unlock...
+    return true
 }

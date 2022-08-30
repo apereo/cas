@@ -43,15 +43,14 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) {
+    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
         val rest = properties.getRest();
 
         if (StringUtils.isBlank(rest.getEndpointUrlChange())) {
             return false;
         }
 
-        val upc = (UsernamePasswordCredential) c;
-
+        val upc = (UsernamePasswordCredential) credential;
         val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(upc.getUsername()));
@@ -61,7 +60,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
         return result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()
-            && Objects.requireNonNull(result.getBody()).booleanValue();
+               && Objects.requireNonNull(result.getBody()).booleanValue();
     }
 
     @Override
@@ -150,5 +149,20 @@ public class RestPasswordManagementService extends BasePasswordManagementService
             val entity = new HttpEntity<>(query.getSecurityQuestions(), headers);
             restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(), HttpMethod.POST, entity, Integer.class);
         }
+    }
+
+    @Override
+    public boolean unlockAccount(final Credential credential) {
+        val rest = properties.getRest();
+        var result = true;
+        if (StringUtils.isNotBlank(rest.getEndpointUrlAccountUnlock())) {
+            val headers = new HttpHeaders();
+            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+            headers.put("username", CollectionUtils.wrap(credential.getId()));
+            val url = StringUtils.appendIfMissing(rest.getEndpointUrlAccountUnlock(), "/").concat(credential.getId());
+            result = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(headers), Boolean.class)
+                .getStatusCode().is2xxSuccessful();
+        }
+        return result;
     }
 }

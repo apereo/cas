@@ -49,6 +49,13 @@ def updateSecurityQuestions(Object[] args) {
     def logger = args[1]
     // Execute update...
 }
+
+def unlockAccount(Object[] args) {
+    def query = args[0] as Credential
+    def logger = args[1]
+    // Execute unlock...
+    return true
+}
 ```
 
 {% include_cached casproperties.html properties="cas.authn.pm.groovy" %}

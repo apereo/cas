@@ -166,8 +166,9 @@ public class PasswordManagementWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS)
-        public Action accountUnlockStatusAction() {
-            return new AccountUnlockStatusAction();
+        public Action accountUnlockStatusAction(@Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+                                                final PasswordManagementService passwordManagementService) {
+            return new AccountUnlockStatusAction(passwordManagementService);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
