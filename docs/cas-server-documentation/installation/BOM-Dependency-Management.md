@@ -21,7 +21,4 @@ Support for BOM is enabled by including the following dependency in the WAR over
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-bom" ignoreBOM="true" %}
 
-Please [use this guide](https://plugins.gradle.org/plugin/io.spring.dependency-management)
-and configure the Gradle build accordingly.
-
 Please note that the [CAS Initializr](WAR-Overlay-Initializr.html) is preconfigured to use the CAS BOM.

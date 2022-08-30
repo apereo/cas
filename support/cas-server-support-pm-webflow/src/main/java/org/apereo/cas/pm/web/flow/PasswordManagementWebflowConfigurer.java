@@ -85,14 +85,16 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                 state.getRenderActionList().add(enableUnlockAction);
                 state.getEntryActionList().add(createEvaluateAction("accountUnlockStatusPrepareAction"));
             });
+
+            val unlockedView = createEndState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_UNLOCKED, "login-error/casAccountUnlockedView");
             createTransitionForState(accountLockedState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "unlockAccountStatus");
             val unlockAction = createActionState(flow, "unlockAccountStatus", CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS);
-            createTransitionForState(unlockAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, startState.getId());
+            createTransitionForState(unlockAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, unlockedView.getId());
             createTransitionForState(unlockAction, CasWebflowConstants.TRANSITION_ID_ERROR, accountLockedState.getId());
 
             createTransitionForState(accountDisabledState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "enableAccountStatus");
             val enableAction = createActionState(flow, "enableAccountStatus", CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS);
-            createTransitionForState(enableAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, startState.getId());
+            createTransitionForState(enableAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, unlockedView.getId());
             createTransitionForState(enableAction, CasWebflowConstants.TRANSITION_ID_ERROR, accountDisabledState.getId());
 
         } else {

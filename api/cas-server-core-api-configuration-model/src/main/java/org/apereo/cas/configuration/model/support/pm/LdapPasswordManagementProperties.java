@@ -34,6 +34,14 @@ public class LdapPasswordManagementProperties extends AbstractLdapSearchProperti
     private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>(0);
 
     /**
+     * Name of LDAP attribute that represents the account locked status.
+     * The value of the attribute is set to {@code "true"} if the account is
+     * ever updated to indicated a locked status.
+     */
+    @RequiredProperty
+    private String accountLockedAttribute = "pwdLockout";
+
+    /**
      * The specific variant of LDAP
      * based on which update operations will be constructed.
      * Accepted values are:
