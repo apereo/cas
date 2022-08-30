@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -57,5 +58,6 @@ public class ClearWebflowCredentialActionTests {
         context.setCurrentEvent(new Event(this, currentEvent));
         assertNull(action.execute(context));
         assertNotNull(WebUtils.getCredential(context));
+        assertNotNull(context.getConversationScope().get(Credential.class.getName()));
     }
 }

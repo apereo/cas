@@ -62,38 +62,3 @@
         cas.init();
     });
 })(mdc, jQuery);
-
-function resourceLoadedSuccessfully() {
-
-    $(document).ready(() => {
-
-        if (trackGeoLocation) {
-            requestGeoPosition();
-        }
-
-        if ($(':focus').length === 0) {
-            $('input:visible:enabled:first').focus();
-        }
-
-        preserveAnchorTagOnForm();
-        preventFormResubmission();
-        $('#fm1 input[name="username"],[name="password"]').trigger('input');
-        $('#fm1 input[name="username"]').focus();
-
-        $('.reveal-password').click(ev => {
-            if ($('.pwd').attr('type') != 'text') {
-                $('.pwd').attr('type', 'text');
-                $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
-            } else {
-                $('.pwd').attr('type', 'password');
-                $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
-            }
-            ev.preventDefault();
-        });
-        // console.log(`JQuery Ready: ${typeof (jqueryReady)}`);
-        if (typeof (jqueryReady) == 'function') {
-            jqueryReady();
-        }
-    });
-
-}

@@ -17,6 +17,8 @@ import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.AccountProfilePasswordChangeRequestAction;
 import org.apereo.cas.pm.web.flow.actions.AccountProfilePreparePasswordManagementAction;
 import org.apereo.cas.pm.web.flow.actions.AccountProfileUpdateSecurityQuestionsAction;
+import org.apereo.cas.pm.web.flow.actions.AccountUnlockStatusAction;
+import org.apereo.cas.pm.web.flow.actions.AccountUnlockStatusPrepareAction;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetAction;
@@ -154,6 +156,19 @@ public class PasswordManagementWebflowConfiguration {
     @Configuration(value = "PasswordManagementWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class PasswordManagementWebflowActionsConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "accountUnlockStatusPrepareAction")
+        public Action accountUnlockStatusPrepareAction() {
+            return new AccountUnlockStatusPrepareAction();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS)
+        public Action accountUnlockStatusAction() {
+            return new AccountUnlockStatusAction();
+        }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
