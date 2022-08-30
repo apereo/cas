@@ -1267,6 +1267,12 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA = "forgotUsernameInitializeCaptchaAction";
 
+
+    /**
+     * Action id 'accountUnlockStatusAction .
+     */
+    String ACTION_ID_UNLOCK_ACCOUNT_STATUS = "accountUnlockStatusAction";
+
     /**
      * Action id 'initPasswordChangeAction .
      */

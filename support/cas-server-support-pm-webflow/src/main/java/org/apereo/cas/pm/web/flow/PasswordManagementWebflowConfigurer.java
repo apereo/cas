@@ -19,6 +19,7 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * This is {@link PasswordManagementWebflowConfigurer}.
@@ -59,11 +60,13 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createViewState(flow, CasWebflowConstants.STATE_ID_AUTHENTICATION_BLOCKED, "login-error/casAuthenticationBlockedView");
         createViewState(flow, CasWebflowConstants.STATE_ID_INVALID_WORKSTATION, "login-error/casBadWorkstationView");
         createViewState(flow, CasWebflowConstants.STATE_ID_INVALID_AUTHENTICATION_HOURS, "login-error/casBadHoursView");
-        createViewState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_LOCKED, "login-error/casAccountLockedView");
-        createViewState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_DISABLED, "login-error/casAccountDisabledView");
         createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS, "password-reset/casPasswordUpdateSuccessView");
 
-        if (casProperties.getAuthn().getPm().getCore().isEnabled()) {
+        val accountLockedState = createViewState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_LOCKED, "login-error/casAccountLockedView");
+        val accountDisabledState = createViewState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_DISABLED, "login-error/casAccountDisabledView");
+
+        val pm = casProperties.getAuthn().getPm();
+        if (pm.getCore().isEnabled()) {
             configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD, "login-error/casExpiredPassView");
             configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD, "login-error/casMustChangePassView");
             configurePasswordMustChangeForAuthnWarnings(flow);
@@ -76,6 +79,22 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                 CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW);
             createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW,
                 "password-reset/casResetPasswordErrorView");
+
+            val enableUnlockAction = createSetAction("viewScope.enableAccountUnlock", "true");
+            Stream.of(accountLockedState, accountDisabledState).forEach(state -> {
+                state.getRenderActionList().add(enableUnlockAction);
+                state.getEntryActionList().add(createEvaluateAction("accountUnlockStatusPrepareAction"));
+            });
+            createTransitionForState(accountLockedState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "unlockAccountStatus");
+            val unlockAction = createActionState(flow, "unlockAccountStatus", CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS);
+            createTransitionForState(unlockAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, startState.getId());
+            createTransitionForState(unlockAction, CasWebflowConstants.TRANSITION_ID_ERROR, accountLockedState.getId());
+
+            createTransitionForState(accountDisabledState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "enableAccountStatus");
+            val enableAction = createActionState(flow, "enableAccountStatus", CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS);
+            createTransitionForState(enableAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, startState.getId());
+            createTransitionForState(enableAction, CasWebflowConstants.TRANSITION_ID_ERROR, accountDisabledState.getId());
+
         } else {
             val expiredState = createViewState(flow, CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD, "login-error/casExpiredPassView");
             expiredState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE));
