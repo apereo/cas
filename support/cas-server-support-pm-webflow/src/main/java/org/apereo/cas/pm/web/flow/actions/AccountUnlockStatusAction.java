@@ -37,6 +37,8 @@ public class AccountUnlockStatusAction extends BaseCasWebflowAction {
             if (!givenValue.equals(providedValue) || !passwordManagementService.unlockAccount(credential)) {
                 throw new AccountLockedException("Captcha value does not match, or CAS cannot unlock the account for " + credential.getId());
             }
+            val message = new MessageBuilder().info().code("screen.account.unlock.success").build();
+            requestContext.getMessageContext().addMessage(message);
             return success();
         } catch (final Exception e) {
             val message = new MessageBuilder().error().code("screen.account.unlock.fail").build();

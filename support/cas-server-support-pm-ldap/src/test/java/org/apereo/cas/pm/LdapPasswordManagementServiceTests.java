@@ -2,6 +2,7 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].base-dn=ou=people,dc=example,dc=org",
     "cas.authn.pm.ldap[0].search-filter=(|(cn={user})(mail={user}))",
     "cas.authn.pm.ldap[0].type=GENERIC",
+    "cas.authn.pm.ldap[0].account-locked-attribute=businessCategory",
     "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber",
     "cas.authn.pm.ldap[0].security-questions-attributes.postalCode=teletexTerminalIdentifier"
 })
@@ -76,6 +78,12 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
         assertEquals("caspm@example.org", email);
         assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("unknown").build()));
         assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("invalid").build()));
+    }
+
+    @Test
+    public void verifyUnlockAccount() {
+        val credential = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("caspm");
+        assertTrue(passwordChangeService.unlockAccount(credential));
     }
 
     @Test

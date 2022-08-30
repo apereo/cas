@@ -103,6 +103,19 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
+    public boolean unlockAccount(final Credential credential) {
+        findEntries(CollectionUtils.wrap(credential.getId()))
+            .forEach((entry, ldap) -> {
+                LOGGER.debug("Located LDAP entry [{}] in the response", entry);
+                val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(ldap.getLdapUrl()));
+                val attributes = new LinkedHashMap<String, Set<String>>();
+                attributes.put(ldap.getAccountLockedAttribute(), Set.of("false"));
+                ldapConnectionFactory.executeModifyOperation(entry.getDn(), attributes);
+            });
+        return true;
+    }
+
+    @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
         val results = new LinkedHashMap<String, String>(0);
         findEntries(CollectionUtils.wrap(query.getUsername()))

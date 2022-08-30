@@ -915,6 +915,11 @@ public interface CasWebflowConstants {
     String STATE_ID_ACCOUNT_LOCKED = "casAccountLockedView";
 
     /**
+     * State id 'casAccountUnlockedView'.
+     */
+    String STATE_ID_ACCOUNT_UNLOCKED = "casAccountUnlockedView";
+
+    /**
      * State id 'casBadHoursView'.
      */
     String STATE_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";

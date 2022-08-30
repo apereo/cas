@@ -52,7 +52,7 @@ public class AccountUnlockStatusActionTests extends BasePasswordManagementAction
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-        final MockParameterMap requestParameters = new MockParameterMap();
+        val requestParameters = new MockParameterMap();
         requestParameters.put("captchaValue", givenCaptcha);
         when(context.getRequestParameters()).thenReturn(requestParameters);
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
