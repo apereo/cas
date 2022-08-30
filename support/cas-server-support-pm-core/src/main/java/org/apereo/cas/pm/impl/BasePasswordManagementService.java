@@ -130,14 +130,14 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
         actionResolverName = AuditActionResolvers.CHANGE_PASSWORD_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
-    public boolean change(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
+    public boolean change(final Credential credential, final PasswordChangeRequest bean) throws InvalidPasswordException {
         if (passwordHistoryService != null && passwordHistoryService.exists(bean)) {
-            LOGGER.debug("Password history policy disallows reusing the password for [{}]", c.getId());
+            LOGGER.debug("Password history policy disallows reusing the password for [{}]", credential.getId());
             return false;
         }
-        if (changeInternal(c, bean)) {
+        if (changeInternal(credential, bean)) {
             if (passwordHistoryService != null) {
-                LOGGER.debug("Password successfully changed; storing used password in history for [{}]...", c.getId());
+                LOGGER.debug("Password successfully changed; storing used password in history for [{}]...", credential.getId());
                 return passwordHistoryService.store(bean);
             }
             return true;

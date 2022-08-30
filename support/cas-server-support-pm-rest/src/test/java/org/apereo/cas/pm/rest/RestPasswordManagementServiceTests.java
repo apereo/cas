@@ -89,6 +89,7 @@ public class RestPasswordManagementServiceTests {
             assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().username("casuser").build()));
             assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build()));
             assertNull(passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build()));
+            assertTrue(passwordChangeService.unlockAccount(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
         }
     }
 
@@ -100,6 +101,7 @@ public class RestPasswordManagementServiceTests {
             "cas.authn.pm.rest.endpoint-url-email=http://localhost:9091",
             "cas.authn.pm.rest.endpoint-url-user=http://localhost:9090",
             "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9092",
+            "cas.authn.pm.rest.endpoint-url-account-unlock=http://localhost:9092",
             "cas.authn.pm.rest.endpoint-username=username",
             "cas.authn.pm.rest.endpoint-password=password"
         })
@@ -189,11 +191,7 @@ public class RestPasswordManagementServiceTests {
                 rest.setEndpointUrlChange("http://localhost:9308");
                 rest.setEndpointUrlSecurityQuestions("http://localhost:9308");
                 rest.setEndpointUrlEmail("http://localhost:9308");
-                val passwordService = new RestPasswordManagementService(passwordManagementCipherExecutor,
-                    props.getServer().getPrefix(),
-                    new RestTemplate(),
-                    props.getAuthn().getPm(),
-                    passwordHistoryService);
+                val passwordService = getRestPasswordManagementService(props);
 
                 val questions = passwordService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build());
                 assertFalse(questions.isEmpty());
@@ -221,14 +219,30 @@ public class RestPasswordManagementServiceTests {
                 rest.setEndpointUrlChange("http://localhost:9308");
                 rest.setEndpointUrlSecurityQuestions("http://localhost:9308");
                 rest.setEndpointUrlEmail("http://localhost:9308");
-                val passwordService = new RestPasswordManagementService(
-                    passwordManagementCipherExecutor,
-                    props.getServer().getPrefix(),
-                    new RestTemplate(),
-                    props.getAuthn().getPm(),
-                    passwordHistoryService);
+                val passwordService = getRestPasswordManagementService(props);
 
                 assertDoesNotThrow(() -> passwordService.updateSecurityQuestions(query));
+            }
+        }
+
+        private RestPasswordManagementService getRestPasswordManagementService(final CasConfigurationProperties props) {
+            return new RestPasswordManagementService(
+                passwordManagementCipherExecutor,
+                props.getServer().getPrefix(),
+                new RestTemplate(),
+                props.getAuthn().getPm(),
+                passwordHistoryService);
+        }
+
+        @Test
+        public void verifyUnlockAccount() {
+            try (val webServer = new MockWebServer(9308, HttpStatus.OK)) {
+                webServer.start();
+                val props = new CasConfigurationProperties();
+                val rest = props.getAuthn().getPm().getRest();
+                rest.setEndpointUrlAccountUnlock("http://localhost:9308");
+                val passwordService = getRestPasswordManagementService(props);
+                assertDoesNotThrow(() -> passwordService.unlockAccount(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
             }
         }
 
@@ -246,11 +260,7 @@ public class RestPasswordManagementServiceTests {
                 rest.setEndpointUrlChange("http://localhost:9309");
                 rest.setEndpointUrlSecurityQuestions("http://localhost:9309");
                 rest.setEndpointUrlEmail("http://localhost:9309");
-                val passwordService = new RestPasswordManagementService(passwordManagementCipherExecutor,
-                    props.getServer().getPrefix(),
-                    new RestTemplate(),
-                    props.getAuthn().getPm(),
-                    passwordHistoryService);
+                val passwordService = getRestPasswordManagementService(props);
 
                 val result = passwordService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                     new PasswordChangeRequest("casuser", "123456", "123456"));

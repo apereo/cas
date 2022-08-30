@@ -67,6 +67,11 @@ public class JdbcPasswordManagementProperties extends AbstractJpaProperties {
     private String sqlUpdateSecurityQuestions;
 
     /**
+     * SQL query to unlock accounts.
+     */
+    private String sqlUnlockAccount;
+
+    /**
      * SQL query to delete security questions for the account, if any.
      */
     private String sqlDeleteSecurityQuestions;

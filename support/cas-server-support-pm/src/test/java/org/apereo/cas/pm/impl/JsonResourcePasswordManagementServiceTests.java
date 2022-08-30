@@ -27,6 +27,7 @@ import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -110,6 +111,12 @@ public class JsonResourcePasswordManagementServiceTests {
     public void verifyUserEmailCanNotBeFound() {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casusernotfound").build());
         assertNull(email);
+    }
+
+    @Test
+    public void verifyUnlock() {
+        val credentials = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
+        assertTrue(passwordChangeService.unlockAccount(credentials));
     }
 
     @Test

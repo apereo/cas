@@ -19,6 +19,7 @@ The outline of the JSON file may match the following:
     "email" : "casuser@example.org",
     "password" : "p@ssw0rd",
     "phone" : "1234567890",
+    "status": "OK",
     "securityQuestions" : {
       "question1" : "answer1",
       "question2" : "answer2"

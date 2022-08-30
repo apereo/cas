@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.jdbc;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
@@ -73,7 +74,13 @@ public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManageme
         passwordChangeService.updateSecurityQuestions(query);
         assertFalse(passwordChangeService.getSecurityQuestions(query).isEmpty());
     }
-    
+
+    @Test
+    public void verifyUnlockAccount() {
+        val locked = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("locked");
+        assertTrue(passwordChangeService.unlockAccount(locked));
+    }
+
     @BeforeEach
     public void before() {
         this.jdbcPasswordManagementTransactionTemplate.executeWithoutResult(action -> {
@@ -81,12 +88,13 @@ public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManageme
             dropTablesBeforeTest(jdbcTemplate);
 
             jdbcTemplate.execute("create table pm_table_accounts (userid varchar(255),"
-                + "password varchar(255), email varchar(255), phone varchar(255));");
-            jdbcTemplate.execute("insert into pm_table_accounts values ('casuser', 'password', 'casuser@example.org', '1234567890');");
-            jdbcTemplate.execute("insert into pm_table_accounts values ('baduser', 'password', '', '');");
+                                 + "password varchar(255), email varchar(255), phone varchar(255), enabled tinyint);");
+            jdbcTemplate.execute("insert into pm_table_accounts values ('casuser', 'password', 'casuser@example.org', '1234567890', 1);");
+            jdbcTemplate.execute("insert into pm_table_accounts values ('locked', 'password', 'locked@example.org', '1234567890', 0);");
+            jdbcTemplate.execute("insert into pm_table_accounts values ('baduser', 'password', '', '', 1);");
 
             jdbcTemplate.execute("create table pm_table_questions (userid varchar(255),"
-                + " question varchar(255), answer varchar(255));");
+                                 + " question varchar(255), answer varchar(255));");
             jdbcTemplate.execute("insert into pm_table_questions values ('casuser', 'question1', 'answer1');");
             jdbcTemplate.execute("insert into pm_table_questions values ('casuser', 'question2', 'answer2');");
         });

@@ -19,7 +19,8 @@ JDBC support is enabled by including the following dependencies in the WAR overl
 The expected database schema for the user accounts is:
 
 ```sql
-create table pm_table_accounts (id int, userid varchar(255), password varchar(255), email varchar(255), phone varchar(255));
+create table pm_table_accounts (id int, userid varchar(255), password varchar(255), 
+    email varchar(255), phone varchar(255), enabled tinyint);
 ```
 
 The expected database schema for account security questions is:
