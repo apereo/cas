@@ -55,12 +55,13 @@ public class AccountUnlockStatusActionTests extends BasePasswordManagementAction
         val requestParameters = new MockParameterMap();
         requestParameters.put("captchaValue", givenCaptcha);
         when(context.getRequestParameters()).thenReturn(requestParameters);
-        when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
+        val conversation = new LocalAttributeMap<>();
+        val credential = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
+        conversation.put(Credential.class.getName(), credential);
+        conversation.put("captchaValue", captcha);
+        when(context.getConversationScope()).thenReturn(conversation);
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
-        val credential = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        context.getConversationScope().put(Credential.class.getName(), credential);
-        context.getConversationScope().put("captchaValue", captcha);
         return context;
     }
 }
