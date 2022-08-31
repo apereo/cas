@@ -17,7 +17,7 @@
         <button
                 class="mdc-button mdc-button--raised btn btn-primary btn-primary"
                 th:if="${recaptchaSiteKey == null}"
-                name="submit"
+                name="submitBtn"
                 accesskey="l"
                 type="submit">
             <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
@@ -27,7 +27,7 @@
              <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V2')}">
                 <button th:unless="${recaptchaInvisible != null AND recaptchaInvisible}"
                         class="mdc-button mdc-button--raised btn btn-primary btn btn-primary"
-                        name="submit"
+                        name="submitBtn"
                         accesskey="l"
                         type="submit"
                         value="Login3">
@@ -45,7 +45,7 @@
 
             <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V3')}">
                 <button class="mdc-button mdc-button--raised btn btn-primary btn btn-primary"
-                        name="submit"
+                        name="submitBtn"
                         th:attr="data-sitekey=${recaptchaSiteKey}"
                         accesskey="l"
                         th:value="#{screen.welcome.button.login}"
@@ -58,7 +58,7 @@
 
             <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'HCAPTCHA')}" th:remove="tag">
                 <button class="mdc-button mdc-button--raised btn btn-primary btn btn-primary"
-                        name="submit"
+                        name="submitBtn"
                         accesskey="l"
                         type="submit"
                         value="Login3">

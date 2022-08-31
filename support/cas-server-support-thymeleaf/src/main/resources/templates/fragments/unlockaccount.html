@@ -50,14 +50,14 @@
         <section>
             <div class="captcha-area">
                 <div class="captcha-img">
-                    <img th:src="@{/images/captcha.png}">
-                    <span class="captcha" />
+                    <img id="captchaImage" th:src="@{/images/captcha.png}">
+                    <span id="captcha" class="captcha" />
                 </div>
             </div>
         </section>
         <section>
             <div>
-                <form name="fm1" method="post" th:action="@{/login}">
+                <form id="fm1" method="post" th:action="@{/login}">
                     <label class="mdc-text-field mdc-text-field--outlined">
                         <input class="mdc-text-field__input"
                                id="captchaValue"
