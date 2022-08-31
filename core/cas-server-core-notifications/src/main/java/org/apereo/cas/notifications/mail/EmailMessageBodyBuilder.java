@@ -72,7 +72,7 @@ public class EmailMessageBodyBuilder {
                 val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().get();
                 val script = cacheMgr.resolveScriptableResource(properties.getText(), properties.getText());
                 val args = CollectionUtils.wrap("parameters", this.parameters, "logger", LOGGER);
-                locale.ifPresent(l -> args.put("locale", l));
+                locale.ifPresent(loc -> args.put("locale", loc));
                 script.setBinding(args);
                 return script.execute(args.values().toArray(), String.class);
             }
@@ -83,7 +83,7 @@ public class EmailMessageBodyBuilder {
             if (templateFile.getName().endsWith(".gtemplate")) {
                 val engine = new GStringTemplateEngine();
                 val templateParams = new LinkedHashMap<>(this.parameters);
-                locale.ifPresent(l -> templateParams.put("locale", l));
+                locale.ifPresent(loc -> templateParams.put("locale", loc));
                 val template = engine.createTemplate(contents).make(templateParams);
                 return template.toString();
             }
@@ -101,10 +101,10 @@ public class EmailMessageBodyBuilder {
      * @return the file
      */
     protected File determineEmailTemplateFile() {
-        return locale.map(Unchecked.function(l -> {
+        return locale.map(Unchecked.function(loc -> {
             val originalFile = new File(properties.getText());
             val localizedName = String.format("%s_%s.%s", FilenameUtils.getBaseName(originalFile.getName()),
-                l.getLanguage(), FilenameUtils.getExtension(originalFile.getName()));
+                loc.getLanguage(), FilenameUtils.getExtension(originalFile.getName()));
             val localizedFile = new File(originalFile.getParentFile(), localizedName);
             LOGGER.debug("Checking for localized email template file at [{}]", localizedFile.getPath());
             if (ResourceUtils.doesResourceExist(localizedFile.getPath())) {

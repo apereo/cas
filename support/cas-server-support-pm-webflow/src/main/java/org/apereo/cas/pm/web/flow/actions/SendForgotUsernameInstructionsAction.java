@@ -26,10 +26,12 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -125,8 +127,10 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
             }).accept(person);
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val body = EmailMessageBodyBuilder.builder().properties(reset)
-            .locale(Optional.ofNullable(request.getLocale()))
+        val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
+        val body = EmailMessageBodyBuilder.builder()
+            .properties(reset)
+            .locale(Optional.of(locale))
             .parameters(parameters).build().produce();
         return this.communicationsManager.email(reset, query.getEmail(), body);
     }

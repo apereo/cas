@@ -56,8 +56,10 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined()) {
             val mail = serviceRegistry.getMail();
-            val body = EmailMessageBodyBuilder.builder().properties(mail)
-                .parameters(Map.of("service", serviceName)).build().produce();
+            val body = EmailMessageBodyBuilder.builder()
+                .properties(mail)
+                .parameters(Map.of("service", serviceName))
+                .build().produce();
             contacts
                 .stream()
                 .filter(c -> StringUtils.isNotBlank(c.getEmail()))

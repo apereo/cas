@@ -12,10 +12,12 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -70,8 +72,10 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
         if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
             val mail = passwordlessProperties.getTokens().getMail();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val body = EmailMessageBodyBuilder.builder().properties(mail)
-                .locale(Optional.ofNullable(request.getLocale()))
+            val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
+            val body = EmailMessageBodyBuilder.builder()
+                .properties(mail)
+                .locale(Optional.of(locale))
                 .parameters(Map.of("token", token)).build().produce();
             communicationsManager.email(mail, user.getEmail(), body);
         }
