@@ -52,19 +52,11 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
     private final BucketConsumer bucketConsumer;
 
-    /**
-     * Send a SMS.
-     *
-     * @param communicationsManager the communication manager
-     * @param properties            the properties
-     * @param principal             the principal
-     * @param token                 the token
-     * @return whether the SMS has been sent.
-     */
     protected boolean isSmsSent(final CommunicationsManager communicationsManager,
                                 final CasSimpleMultifactorAuthenticationProperties properties,
                                 final Principal principal,
-                                final Ticket token) {
+                                final Ticket token,
+                                final RequestContext requestContext) {
         if (communicationsManager.isSmsSenderDefined()) {
             val smsProperties = properties.getSms();
             val smsText = StringUtils.isNotBlank(smsProperties.getText())
@@ -107,14 +99,6 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         return EmailCommunicationResult.builder().build();
     }
 
-    /**
-     * Send a notification.
-     *
-     * @param communicationsManager the communication manager
-     * @param principal             the principal
-     * @param token                 the token
-     * @return whether the notification has been sent.
-     */
     protected boolean isNotificationSent(final CommunicationsManager communicationsManager,
                                          final Principal principal,
                                          final Ticket token) {
@@ -140,7 +124,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
         val strategy = tokenCommunicationStrategy.determineStrategy(token);
         val smsSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.SMS)
-                      && isSmsSent(communicationsManager, properties, principal, token);
+                      && isSmsSent(communicationsManager, properties, principal, token, requestContext);
 
         val emailSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.EMAIL)
                         && isMailSent(communicationsManager, properties, principal, token, requestContext).isSuccess();

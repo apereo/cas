@@ -44,6 +44,12 @@ public class EmailProperties implements Serializable {
      * The template engine uses JSP style &lt;% %&gt; script and &lt;%= %&gt; expression syntax or
      * GString style expressions. The variable {@code out} is bound to
      * the writer that the template is being written to.
+     * <p>
+     * If using plain text, the contents are processed for string subtitution candidates using named variables.
+     * For example, you may refer to an expected url variable in the email text via {@code ${url}},
+     * or use {@code ${token}} to locate the token variable. In certain cases, additional parameters
+     * are passed to the email body processor that might include authentication and/or principal attributes,
+     * the available locale, client http information, etc.
      */
     private String text;
 

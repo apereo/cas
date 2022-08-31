@@ -18,7 +18,7 @@
 
     "--cas.authn.mfa.simple.mail.from=cas@example.com",
     "--cas.authn.mfa.simple.mail.subject=CAS Token",
-    "--cas.authn.mfa.simple.mail.text=CAS token is %s",
+    "--cas.authn.mfa.simple.mail.text=CAS token is ${token}",
     "--cas.authn.mfa.simple.mail.attribute-name=email",
 
     "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json"

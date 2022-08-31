@@ -35,7 +35,7 @@ public class CasSimpleMultifactorSendTokenActionTests {
 
         "cas.authn.mfa.simple.mail.from=admin@example.org",
         "cas.authn.mfa.simple.mail.subject=CAS Token",
-        "cas.authn.mfa.simple.mail.text=CAS Token is %s",
+        "cas.authn.mfa.simple.mail.text=CAS Token is ${token}",
 
         "cas.authn.mfa.simple.sms.from=347746512"
     })

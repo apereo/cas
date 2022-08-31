@@ -98,7 +98,7 @@ Service provider or identity provider metadata can also be managed using any one
 | Groovy                            | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).  
 | Amazon S3                         | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html).
 
-### SAML Services
+## SAML Services
 
 Please [see this guide](../services/SAML2-Service-Management.html) to learn more
 about how to configure SAML2 service providers.
