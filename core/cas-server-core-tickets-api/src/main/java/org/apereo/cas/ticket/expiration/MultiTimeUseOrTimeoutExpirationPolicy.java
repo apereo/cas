@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket.expiration;
 
-
-
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -31,9 +29,8 @@ import java.time.temporal.ChronoUnit;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
-
     private static final long serialVersionUID = -5704993954986738308L;
-
+    
     @JsonProperty("timeToLive")
     private long timeToKillInSeconds;
 
@@ -45,28 +42,28 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
                                                  @JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.numberOfUses = numberOfUses;
-        Assert.isTrue(this.numberOfUses > 0, "numberOfUses must be greater than 0.");
-        Assert.isTrue(this.timeToKillInSeconds > 0, "timeToKillInSeconds must be greater than 0.");
+        Assert.isTrue(numberOfUses > 0, "numberOfUses must be greater than 0.");
+        Assert.isTrue(timeToKillInSeconds > 0, "timeToKillInSeconds must be greater than 0.");
     }
 
     @Override
     public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         if (ticketState == null) {
-            LOGGER.debug("Ticket state is null for [{}]. Ticket has expired.", this.getClass().getSimpleName());
+            LOGGER.debug("Ticket state is null for [{}]. Ticket has expired.", getClass().getSimpleName());
             return true;
         }
         val countUses = ticketState.getCountOfUses();
-        if (countUses >= this.numberOfUses) {
+        if (countUses >= numberOfUses) {
             LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]. Ticket [{}] has expired",
-                countUses, this.numberOfUses, ticketState.getId());
+                countUses, numberOfUses, ticketState.getId());
             return true;
         }
         val systemTime = ZonedDateTime.now(getClock());
-        val lastTimeUsed = ticketState.getLastTimeUsed();
-        val expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val creationTime = ticketState.getCreationTime();
+        val expirationTime = creationTime.plus(timeToKillInSeconds, ChronoUnit.SECONDS);
         if (systemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket [{}] has expired; difference between current time [{}] and ticket time [{}] is greater than or equal to [{}].",
-                ticketState.getId(), systemTime, lastTimeUsed, this.timeToKillInSeconds);
+                ticketState.getId(), systemTime, creationTime, timeToKillInSeconds);
             return true;
         }
         return super.isExpired(ticketState);
@@ -74,7 +71,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
     @Override
     public Long getTimeToLive() {
-        return this.timeToKillInSeconds;
+        return timeToKillInSeconds;
     }
 
     @JsonIgnore

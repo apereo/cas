@@ -158,7 +158,7 @@ public class PasswordManagementWebflowConfiguration {
     public static class PasswordManagementWebflowActionsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "accountUnlockStatusPrepareAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_UNLOCK_PREPARE)
         public Action accountUnlockStatusPrepareAction() {
             return new AccountUnlockStatusPrepareAction();
         }

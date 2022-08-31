@@ -25,7 +25,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface TransientSessionTicket extends Ticket {
+public interface TransientSessionTicket extends Ticket, TicketGrantingTicketAwareTicket {
     /**
      * Ticket prefix for the delegated authentication request.
      */

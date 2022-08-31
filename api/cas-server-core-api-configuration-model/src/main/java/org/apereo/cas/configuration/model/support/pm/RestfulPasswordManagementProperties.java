@@ -72,4 +72,25 @@ public class RestfulPasswordManagementProperties implements Serializable {
      */
     @RequiredProperty
     private String endpointPassword;
+
+    /**
+     * Field name for username field
+     * when password change requests are submitted.
+     */
+    @RequiredProperty
+    private String fieldNameUser = "username";
+
+    /**
+     * Field name for password field
+     * when password change requests are submitted.
+     */
+    @RequiredProperty
+    private String fieldNamePassword = "password";
+
+    /**
+     * Field name for oldPassword field
+     * when password change requests are submitted.
+     */
+    @RequiredProperty
+    private String fieldNamePasswordOld = "oldPassword";
 }
