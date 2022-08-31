@@ -76,6 +76,22 @@ import java.util.stream.Collectors;
 public class CoreAuthenticationUtils {
 
     /**
+     * Convert attribute values to objects.
+     *
+     * @param attributes the attributes
+     * @return the map
+     */
+    public static Map<String, Object> convertAttributeValuesToObjects(final Map<String, List<Object>> attributes) {
+        val entries = attributes.entrySet();
+        return entries
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                val value = entry.getValue();
+                return value.size() == 1 ? value.get(0) : value;
+            }));
+    }
+
+    /**
      * Convert attribute values to multi valued objects.
      *
      * @param attributes the attributes

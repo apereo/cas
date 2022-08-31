@@ -27,11 +27,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -187,10 +189,11 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             val person = principalResolver.resolve(credential);
             FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
             val text = EmailMessageBodyBuilder.builder()
                 .properties(reset)
                 .parameters(parameters)
-                .locale(Optional.ofNullable(request.getLocale()))
+                .locale(Optional.of(locale))
                 .build()
                 .produce();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);

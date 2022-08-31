@@ -1,6 +1,7 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
@@ -21,12 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -90,9 +92,16 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val body = EmailMessageBodyBuilder.builder().properties(mailProperties)
-                .locale(Optional.ofNullable(request.getLocale()))
-                .parameters(Map.of("token", token.getId())).build().produce();
+            val parameters = CoreAuthenticationUtils.convertAttributeValuesToObjects(principal.getAttributes());
+            parameters.put("token", token.getId());
+
+            val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
+            val body = EmailMessageBodyBuilder.builder()
+                .properties(mailProperties)
+                .locale(Optional.of(locale))
+                .parameters(parameters)
+                .build()
+                .produce();
             return communicationsManager.email(principal, mailProperties.getAttributeName(), mailProperties, body);
         }
         return EmailCommunicationResult.builder().build();

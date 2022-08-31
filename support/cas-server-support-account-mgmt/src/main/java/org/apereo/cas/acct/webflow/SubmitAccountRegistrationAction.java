@@ -22,10 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -108,10 +110,11 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
             val emailProps = casProperties.getAccountRegistration().getMail();
             val parameters = CollectionUtils.<String, Object>wrap("url", url);
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
             val text = EmailMessageBodyBuilder.builder()
                 .properties(emailProps)
                 .parameters(parameters)
-                .locale(Optional.ofNullable(request.getLocale()))
+                .locale(Optional.of(locale))
                 .build()
                 .produce();
             return communicationsManager.email(emailProps, registrationRequest.getEmail(), text);
