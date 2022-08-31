@@ -1193,6 +1193,12 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * Action id 'accountUnlockStatusPrepareAction'.
+     */
+    String ACTION_ID_ACCOUNT_UNLOCK_PREPARE = "accountUnlockStatusPrepareAction";
+
+
+    /**
      * Action id 'delegatedAuthenticationClientCredentialSelectionFinalizeAction'.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE = "delegatedAuthenticationClientCredentialSelectionFinalizeAction";

@@ -83,7 +83,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             val enableUnlockAction = createSetAction("viewScope.enableAccountUnlock", "true");
             Stream.of(accountLockedState, accountDisabledState).forEach(state -> {
                 state.getRenderActionList().add(enableUnlockAction);
-                state.getEntryActionList().add(createEvaluateAction("accountUnlockStatusPrepareAction"));
+                state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCOUNT_UNLOCK_PREPARE));
             });
 
             val unlockedView = createEndState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_UNLOCKED, "login-error/casAccountUnlockedView");
