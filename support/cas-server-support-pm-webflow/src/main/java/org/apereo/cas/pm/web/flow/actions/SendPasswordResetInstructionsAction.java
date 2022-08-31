@@ -169,16 +169,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         return false;
     }
 
-    /**
-     * Send password reset email to account.
-     *
-     * @param username       the username
-     * @param to             the to
-     * @param url            the url
-     * @param requestContext the request context
-     * @return true /false
-     */
-    protected EmailCommunicationResult sendPasswordResetEmailToAccount(final String username, final String to,
+    protected EmailCommunicationResult sendPasswordResetEmailToAccount(final String username,
+                                                                       final String to,
                                                                        final URL url,
                                                                        final RequestContext requestContext) {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();

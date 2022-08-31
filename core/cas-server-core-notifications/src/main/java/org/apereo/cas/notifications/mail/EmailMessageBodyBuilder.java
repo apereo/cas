@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringSubstitutor;
 import org.jooq.lambda.Unchecked;
 
 import java.io.File;
@@ -88,11 +89,16 @@ public class EmailMessageBodyBuilder {
                 return template.toString();
             }
 
-            return String.format(contents, parameters.values().toArray());
+            return formatEmailBody(contents);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
-            return String.format(properties.getText(), parameters.values().toArray());
+            return formatEmailBody(properties.getText());
         }
+    }
+
+    protected String formatEmailBody(final String contents) {
+        val sub = new StringSubstitutor(this.parameters, "${", "}");
+        return sub.replace(contents);
     }
 
     /**

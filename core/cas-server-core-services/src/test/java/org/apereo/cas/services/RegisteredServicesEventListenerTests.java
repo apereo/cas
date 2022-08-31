@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.sms.from=3477563421",
     "cas.service-registry.mail.from=admin@example.org",
     "cas.service-registry.mail.subject=Sample Subject",
-    "cas.service-registry.mail.text=Service %s has expired in CAS service registry"
+    "cas.service-registry.mail.text=Service ${service} has expired in CAS service registry"
 })
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)

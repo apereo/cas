@@ -44,16 +44,16 @@ public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimp
     @Override
     public void store(final CasSimpleMultifactorAuthenticationTicket token) {
         token.update();
-        FunctionUtils.doAndHandle(ticket -> {
-            LOGGER.debug("Updating existing token [{}] to registry", token.getId());
-            val trackingToken = ticketRegistry.getTicket(ticket.getId());
-            ticketRegistry.updateTicket(trackingToken);
-        }, throwable -> {
-            LOGGER.trace(throwable.getMessage(), throwable);
-            LOGGER.debug("Adding token [{}] to registry", token.getId());
-            ticketRegistry.addTicket(token);
-            return token;
-        }).accept(token);
+        val trackingToken = ticketRegistry.getTicket(token.getId());
+        FunctionUtils.doUnchecked(us -> {
+            if (trackingToken != null) {
+                LOGGER.debug("Updating existing token [{}] to registry", token.getId());
+                ticketRegistry.updateTicket(trackingToken);
+            } else {
+                LOGGER.debug("Adding token [{}] to registry", token.getId());
+                ticketRegistry.addTicket(token);
+            }
+        });
     }
 
     @Override

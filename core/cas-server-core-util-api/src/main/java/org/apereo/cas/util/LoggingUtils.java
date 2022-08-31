@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -38,7 +39,7 @@ public class LoggingUtils {
     public static void error(final Logger logger, final String msg, final Throwable throwable) {
         FunctionUtils.doIf(logger.isDebugEnabled(),
                 unused -> logger.error(msg, throwable),
-                unused -> logger.error(msg))
+                unused -> logger.error(summarizeStackTrace(msg, throwable)))
             .accept(throwable);
     }
 
@@ -72,8 +73,17 @@ public class LoggingUtils {
     public static void warn(final Logger logger, final String message, final Throwable throwable) {
         FunctionUtils.doIf(logger.isDebugEnabled(),
                 unused -> logger.warn(message, throwable),
-                unused -> logger.warn(message))
+                unused -> logger.warn(summarizeStackTrace(message, throwable)))
             .accept(throwable);
+    }
+
+    private static String summarizeStackTrace(final String message, final Throwable throwable) {
+        val builder = new StringBuilder(message).append('\n');
+        Arrays.stream(throwable.getStackTrace()).limit(3).forEach(trace -> {
+            val error = String.format("\t%s:%s:%s%n", trace.getFileName(), trace.getMethodName(), trace.getLineNumber());
+            builder.append(error);
+        });
+        return builder.toString();
     }
 
     /**
