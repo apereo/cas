@@ -44,7 +44,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 
 The `x509.pem` file should be uploaded into Google Apps under Security/SSO.
 
-{% include_cached casproperties.html properties="cas.google-apps.key" %}
+{% include_cached casproperties.html properties="cas.google-apps" %}
 
 ## Register Google Apps
 
