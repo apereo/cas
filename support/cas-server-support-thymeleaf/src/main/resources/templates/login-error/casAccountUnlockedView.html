@@ -12,10 +12,9 @@
             <div layout:fragment="content" class="my-2 mdc-card card p-4 m-auto w-lg-66">
                 <h2 th:utext="#{screen.accountunlocked.heading}">Your account is unlocked.</h2>
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="${message.text}">Message Text</p>
-                
                 <div>
                     <p/>
-                    <a class="mdc-button mdc-button--raised" th:href="@{/login}">
+                    <a id="loginbtn" class="mdc-button mdc-button--raised" th:href="@{/login}">
                         <span class="mdc-button__label" th:text="#{screen.error.page.loginagain}">Login</span>
                     </a>
                 </div>
