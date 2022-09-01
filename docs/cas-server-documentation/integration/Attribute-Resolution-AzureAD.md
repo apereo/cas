@@ -11,4 +11,6 @@ category: Attributes
 The following configuration describes how to fetch and retrieve 
 attributes from Microsoft Azure Active Directory attribute repositories.
 
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-azuread-authentication" %}
+
 {% include_cached casproperties.html properties="cas.authn.attribute-repository.azure-active-directory" %}
