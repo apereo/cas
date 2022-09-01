@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
@@ -40,6 +41,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Slf4j
 public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver implements DisposableBean {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -64,6 +66,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         val metadataDir = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(location).getFile());
 
         this.jsonResource = new FileSystemResource(new File(metadataDir, "saml-sp-metadata.json"));
+        LOGGER.debug("Service provider metadata as JSON may be found at [{}]", jsonResource);
         if (this.jsonResource.exists()) {
             this.metadataMap = readDecisionsFromJsonResource();
             this.watcherService = FunctionUtils.doUnchecked(() -> new FileWatcherService(jsonResource.getFile(),
