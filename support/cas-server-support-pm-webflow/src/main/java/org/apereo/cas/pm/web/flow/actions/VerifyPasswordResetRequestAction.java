@@ -83,7 +83,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             LoggingUtils.error(LOGGER, "Password reset token could not be located or verified", e);
             return error();
         } finally {
-            if (passwordResetTicket != null && passwordResetTicket.isExpired()) {
+            if (passwordResetTicket != null && passwordResetTicket.getExpirationPolicy().isExpired(passwordResetTicket)) {
                 ticketRegistry.deleteTicket(passwordResetTicket);
             }
         }
