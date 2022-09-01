@@ -538,13 +538,15 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
                 addDeviceAttributeAsRow("Credential Nickname", reg.credentialNickname);
                 addDeviceAttributeAsRow("Registration Date", reg.registrationTime);
                 addDeviceAttributeAsRow("Session Token", data.sessionToken);
-                addDeviceAttributeAsRow("Device Id", reg.attestationMetadata.deviceProperties.deviceId);
-                addDeviceAttributeAsRow("Device Name", reg.attestationMetadata.deviceProperties.displayName);
-
-                showDeviceInfo({
-                    "displayName": reg.attestationMetadata.deviceProperties.displayName,
-                    "imageUrl": reg.attestationMetadata.deviceProperties.imageUrl
-                })
+                if (reg.attestationMetadata.deviceProperties) {
+                    addDeviceAttributeAsRow("Device Id", reg.attestationMetadata.deviceProperties.deviceId);
+                    addDeviceAttributeAsRow("Device Name", reg.attestationMetadata.deviceProperties.displayName);
+    
+                    showDeviceInfo({
+                        "displayName": reg.attestationMetadata.deviceProperties.displayName,
+                        "imageUrl": reg.attestationMetadata.deviceProperties.imageUrl
+                    })   
+                }
             });
 
             $('#authnButton').hide();
