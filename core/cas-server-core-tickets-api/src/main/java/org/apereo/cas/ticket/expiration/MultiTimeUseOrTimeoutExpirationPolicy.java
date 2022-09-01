@@ -62,11 +62,11 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
             return true;
         }
         val systemTime = ZonedDateTime.now(getClock());
-        val lastTimeUsed = ticketState.getLastTimeUsed();
-        val expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        if (systemTime.isAfter(expirationTime)) {
-            LOGGER.debug("Ticket [{}] has expired; difference between current time [{}] and ticket time [{}] is greater than or equal to [{}].",
-                ticketState.getId(), systemTime, lastTimeUsed, this.timeToKillInSeconds);
+        val creationTime = ticketState.getCreationTime();
+        val expiringTime = creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        if (expiringTime.isBefore(systemTime)) {
+            LOGGER.debug("Ticket [{}] has expired; difference between current time [{}] and ticket creation time [{}] is greater than or equal to [{}].",
+                ticketState.getId(), systemTime, creationTime, this.timeToKillInSeconds);
             return true;
         }
         return super.isExpired(ticketState);
