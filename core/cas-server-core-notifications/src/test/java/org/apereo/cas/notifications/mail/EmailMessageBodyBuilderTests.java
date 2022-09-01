@@ -64,7 +64,7 @@ public class EmailMessageBodyBuilderTests {
 
     @Test
     public void verifyOperation() {
-        val props = new EmailProperties().setText("%s, %s");
+        val props = new EmailProperties().setText("${key1}, ${key2}");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
             .locale(Optional.of(Locale.ITALIAN))

@@ -10,6 +10,8 @@ category: Attributes
      
 The following configuration describes how to fetch and retrieve attributes from Grouper attribute repositories.
 
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-grouper" %}
+
 This option reads all the groups from [Grouper](https://incommon.org/software/grouper/) for
 the given CAS principal and adopts them as CAS attributes under a `grouperGroups` multi-valued attribute.
 

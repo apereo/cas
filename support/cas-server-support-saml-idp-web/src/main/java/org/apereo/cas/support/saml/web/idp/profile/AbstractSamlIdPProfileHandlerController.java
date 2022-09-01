@@ -613,9 +613,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      */
     protected void autoConfigureCookiePath(final HttpServletRequest request) {
         val casProperties = configurationContext.getCasProperties();
-        val sessionStorageType = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
+        val core = casProperties.getAuthn().getSamlIdp().getCore();
+        val sessionStorageType = core.getSessionStorageType();
         if (sessionStorageType == SamlIdPCoreProperties.SessionStorageTypes.TICKET_REGISTRY
-            && casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie().isAutoConfigureCookiePath()) {
+            && core.getSessionReplication().getCookie().isAutoConfigureCookiePath()) {
 
             val contextPath = request.getContextPath();
             val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
