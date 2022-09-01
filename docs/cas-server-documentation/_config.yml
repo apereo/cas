@@ -20,6 +20,7 @@ markdown: kramdown
 plugins:
   - jekyll-sitemap
   - jekyll-include-cache
+  - jekyll-tabs
 relative_links:
   enabled:     true
 kramdown:
