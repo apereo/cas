@@ -63,6 +63,15 @@ public class EmailProperties implements Serializable {
 
     /**
      * Email subject line.
+     * <p>
+     * The subject can either be defined verbaitm, or it
+     * may point to a message key in the language bundle
+     * using the syntax {@code #{subject-language-key}}.
+     * This key should point to a valid message
+     * defined in the appropriate language bundle that is
+     * then picked up via the active locale. In case where
+     * the language code cannot resolve the real subject,
+     * a default subject value would be used.
      */
     @RequiredProperty
     @ExpressionLanguageCapable

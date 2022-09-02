@@ -191,6 +191,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);
 
             val emailRequest = EmailMessageRequest.builder().emailProperties(reset)
+                .principal(person)
                 .to(List.of(to)).body(text).build();
             return this.communicationsManager.email(emailRequest);
         }

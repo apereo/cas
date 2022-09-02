@@ -142,5 +142,4 @@ public class RegexUtils {
     public static boolean find(final String pattern, final String string) {
         return StringUtils.isNotBlank(string) && createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();
     }
-
 }
