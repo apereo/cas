@@ -181,11 +181,12 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             val person = principalResolver.resolve(credential);
             FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
+            val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+                .map(resolver -> resolver.resolveLocale(request));
             val text = EmailMessageBodyBuilder.builder()
                 .properties(reset)
                 .parameters(parameters)
-                .locale(Optional.of(locale))
+                .locale(locale)
                 .build()
                 .produce();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);

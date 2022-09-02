@@ -110,11 +110,12 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
             val emailProps = casProperties.getAccountRegistration().getMail();
             val parameters = CollectionUtils.<String, Object>wrap("url", url);
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
+            val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+                .map(resolver -> resolver.resolveLocale(request));
             val text = EmailMessageBodyBuilder.builder()
                 .properties(emailProps)
                 .parameters(parameters)
-                .locale(Optional.of(locale))
+                .locale(locale)
                 .build()
                 .produce();
             return communicationsManager.email(emailProps, registrationRequest.getEmail(), text);

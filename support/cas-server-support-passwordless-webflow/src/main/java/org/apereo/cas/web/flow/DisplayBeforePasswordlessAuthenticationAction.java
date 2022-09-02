@@ -72,10 +72,11 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
         if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
             val mail = passwordlessProperties.getTokens().getMail();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
+            val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+                .map(resolver -> resolver.resolveLocale(request));
             val body = EmailMessageBodyBuilder.builder()
                 .properties(mail)
-                .locale(Optional.of(locale))
+                .locale(locale)
                 .parameters(Map.of("token", token)).build().produce();
             communicationsManager.email(mail, user.getEmail(), body);
         }
