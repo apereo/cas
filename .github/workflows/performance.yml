@@ -167,4 +167,6 @@ jobs:
         run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} cas
       - name: JMeter OIDC Performance Tests
         run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} oidc
+      - name: JMeter SAML2 Performance Tests
+        run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} saml
 ##########################################################################
