@@ -13,7 +13,7 @@ function printgreen() {
   printf "${GREEN}$1${ENDCOLOR}\n"
 }
 
-jmeterVersion=5.4.3
+jmeterVersion=5.5
 gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 "
@@ -22,8 +22,19 @@ testCategory="${2:-cas}"
 
 casProperties=""
 case "$testCategory" in
+  saml)
+    rm -Rf "${PWD}"/ci/tests/perf/saml/md/*
+    casProperties="--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp"
+    casProperties="${casProperties} --cas.authn.saml-idp.metadata.file-system.location=file://${PWD}/ci/tests/perf/saml/md"
+    casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/saml/services"
+    casProperties="${casProperties} --cas.http-client.host-name-verifier=none "
+    casProperties="${casProperties} --cas.audit.slf4j.use-single-line=true "
+    jmeterScript="etc/loadtests/jmeter/CAS_SAML2.jmx"
+    casModules="saml-idp,reports"
+    ;;
   oidc)
-    casProperties="--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services"
+    casProperties="--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc "
+    casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services "
     jmeterScript="etc/loadtests/jmeter/CAS_OIDC.jmx"
     casModules="oidc,reports"
     ;;
@@ -69,6 +80,7 @@ if [ $retVal == 0 ]; then
   casOutput="/tmp/cas.log"
 
   # -Xdebug -Xrunjdwp:transport=dt_socket,address=*:5000,server=y,suspend=n
+  echo "Properties: ${casProperties}"
   java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
       --server.ssl.key-store=${keystore} --cas.service-registry.core.init-from-json=true \
       --cas.server.name=https://localhost:8443 --cas.server.prefix=https://localhost:8443/cas \
@@ -83,8 +95,23 @@ if [ $retVal == 0 ]; then
     echo -n '.'
     sleep 2
   done
-  printgreen -e "\n\nReady!"
+  printgreen "\n\nReady!"
 
+  case "$testCategory" in
+    saml)
+      metadataDirectory=""
+      cert=$(cat "${PWD}/ci/tests/perf/saml/md/idp-signing.crt" | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g')
+      export IDP_SIGNING_CERTIFICATE=$cert
+      echo -e "Using signing certificate:\n$IDP_SIGNING_CERTIFICATE"
+      cert=$(cat "${PWD}/ci/tests/perf/saml/md/idp-encryption.crt" | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g')
+      export IDP_ENCRYPTION_CERTIFICATE=$cert
+      echo -e "Using encryption certificate:\n$IDP_ENCRYPTION_CERTIFICATE"
+      "${PWD}/ci/tests/saml2/run-saml-server.sh"
+      ;;
+  esac
+  
+#  read -r
+  
   if [[ ! -f "/tmp/apache-jmeter-${jmeterVersion}.zip" ]]; then
       printgreen "Downloading JMeter ${jmeterVersion}..."
       curl -o /tmp/apache-jmeter-${jmeterVersion}.zip \
@@ -94,7 +121,7 @@ if [ $retVal == 0 ]; then
       printgreen "Unzipped /tmp/apache-jmeter-${jmeterVersion}.zip rc=$?"
       chmod +x /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter
   fi
-  
+  clear
   echo -e "***************************************************************************************"
   printgreen "Running JMeter tests via ${jmeterScript}..."
   export HEAP="-Xms1g -Xmx4g -XX:MaxMetaspaceSize=512m"

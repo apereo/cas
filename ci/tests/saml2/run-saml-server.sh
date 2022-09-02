@@ -40,6 +40,9 @@ else
   echo -e "Found existing IDP entity id at ${IDP_ENTITYID}"
 fi
 
+echo -e "Using IDP signing certificate:\n$IDP_SIGNING_CERTIFICATE"
+echo -e "Using IDP encryption certificate:\n$IDP_ENCRYPTION_CERTIFICATE"
+
 docker run --name=simplesamlphp-idp -p 9443:8080 \
   -e SIMPLESAMLPHP_SP_ENTITY_ID="${SP_ENTITY_ID}" \
   -e SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE="${SP_ACS_SERVICE}" \
