@@ -7,8 +7,9 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
+    "--cas.audit.engine.enabled=false",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
