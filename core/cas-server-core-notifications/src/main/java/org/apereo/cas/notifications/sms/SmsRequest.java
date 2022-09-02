@@ -65,4 +65,13 @@ public class SmsRequest {
             () -> getAttributeValue().map(Object::toString).orElseGet(this::getTo),
             this::getTo).get();
     }
+
+    /**
+     * Whether this request contains sufficient data to proceed.
+     *
+     * @return true/false
+     */
+    public boolean isSufficient() {
+        return StringUtils.isNotBlank(getText()) && StringUtils.isNotBlank(getRecipient());
+    }
 }
