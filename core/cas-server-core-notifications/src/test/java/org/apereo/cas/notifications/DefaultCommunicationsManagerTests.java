@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link CommunicationsManagerTests}.
+ * This is {@link DefaultCommunicationsManagerTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -46,7 +47,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
-public class CommunicationsManagerTests {
+public class DefaultCommunicationsManagerTests {
     @Autowired
     @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;
@@ -75,6 +76,19 @@ public class CommunicationsManagerTests {
     }
 
     @Test
+    public void verifyEmailWithLocalizedSubject() {
+        val props = new EmailProperties();
+        props.setText("Hello World");
+        props.setSubject("#{my.subject}");
+        props.setFrom("cas@example.org");
+        val body = EmailMessageBodyBuilder.builder().properties(props).build().get();
+        val emailRequest = EmailMessageRequest.builder().emailProperties(props)
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .to(List.of("sample@example.org")).body(body).build();
+        assertTrue(communicationsManager.email(emailRequest).isSuccess());
+    }
+
+    @Test
     public void verifyMailSenderWithTemplateBody() throws Exception {
         assertTrue(communicationsManager.isMailSenderDefined());
 
@@ -88,6 +102,7 @@ public class CommunicationsManagerTests {
         val body = EmailMessageBodyBuilder.builder().properties(props)
             .parameters(Map.of("k1", "param1", "k2", "param2")).build().get();
         val emailRequest = EmailMessageRequest.builder().emailProperties(props)
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
             .to(List.of("sample@example.org")).body(body).build();
         assertTrue(communicationsManager.email(emailRequest).isSuccess());
     }
