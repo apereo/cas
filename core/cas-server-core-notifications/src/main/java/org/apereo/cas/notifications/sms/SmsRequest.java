@@ -34,15 +34,32 @@ public class SmsRequest {
 
     private final String to;
 
+    /**
+     * Has attribute value for the principal?
+     *
+     * @return the boolean
+     */
     public boolean hasAttributeValue() {
         return StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute);
     }
 
+    /**
+     * Gets the first attribute value from the principal.
+     *
+     * @return the attribute value
+     */
     public Optional<Object> getAttributeValue() {
         val value = principal.getAttributes().get(attribute);
         return CollectionUtils.firstElement(value);
     }
 
+    /**
+     * Gets recipients by first using the attribute
+     * from the principal. If none found or empty value,
+     * uses the provided address.
+     *
+     * @return the recipients
+     */
     public String getRecipient() {
         return FunctionUtils.doIf(hasAttributeValue(),
             () -> getAttributeValue().map(Object::toString).orElseGet(this::getTo),
