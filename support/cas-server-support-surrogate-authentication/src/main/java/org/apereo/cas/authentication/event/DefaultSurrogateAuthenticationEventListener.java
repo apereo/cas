@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
@@ -45,7 +46,11 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
         val eventDetails = event.toString();
         if (communicationsManager.isSmsSenderDefined()) {
             val sms = casProperties.getAuthn().getSurrogate().getSms();
-            val text = sms.getFormattedText("\n\n".concat(eventDetails));
+            val text = SmsBodyBuilder.builder()
+                .properties(sms)
+                .parameters(Map.of("details", eventDetails))
+                .build().get();
+
             val smsRequest = SmsRequest.builder()
                 .principal(principal)
                 .attribute(sms.getAttributeName())
@@ -63,7 +68,7 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
             if (to != null) {
                 CollectionUtils.firstElement(to).ifPresent(address -> {
                     val body = EmailMessageBodyBuilder.builder().properties(mail)
-                        .parameters(Map.of("event", eventDetails)).build().produce();
+                        .parameters(Map.of("event", eventDetails)).build().get();
                     val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
                         .to(List.of(address.toString())).body(body).build();
                     communicationsManager.email(emailRequest);

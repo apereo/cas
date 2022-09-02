@@ -32,7 +32,7 @@ public class EmailMessageBodyBuilderTests {
             .locale(Optional.of(Locale.GERMAN))
             .parameters(CollectionUtils.wrap("firstname", "Bob"))
             .build();
-        val result = results.produce();
+        val result = results.get();
         assertTrue(result.isBlank());
     }
 
@@ -44,7 +44,7 @@ public class EmailMessageBodyBuilderTests {
             .locale(Optional.of(Locale.GERMAN))
             .parameters(CollectionUtils.wrap("firstname", "Bob"))
             .build();
-        val result = results.produce();
+        val result = results.get();
         assertNotNull(result);
         assertTrue(result.contains("Hallo Bob! Dies ist eine E-Mail-Nachricht"));
     }
@@ -57,7 +57,7 @@ public class EmailMessageBodyBuilderTests {
             .locale(Optional.of(Locale.JAPAN))
             .parameters(CollectionUtils.wrap("firstname", "Bob"))
             .build();
-        val result = results.produce();
+        val result = results.get();
         assertNotNull(result);
         assertTrue(result.contains("Hello, World! Bob"));
     }
@@ -71,7 +71,7 @@ public class EmailMessageBodyBuilderTests {
             .parameters(CollectionUtils.wrap("key1", "Hello"))
             .build()
             .addParameter("key2", "World");
-        val result = results.produce();
+        val result = results.get();
         assertEquals("Hello, World", result);
     }
 
@@ -86,7 +86,7 @@ public class EmailMessageBodyBuilderTests {
                 "lastname", "Smith", "accepted", true,
                 "title", "Advanced Title"))
             .build();
-        val result = results.produce();
+        val result = results.get();
         assertNotNull(result);
         assertTrue(result.startsWith("Dear Bob Smith,"));
     }
@@ -107,7 +107,7 @@ public class EmailMessageBodyBuilderTests {
             .parameters(CollectionUtils.wrap("key", "Hello"))
             .build()
             .addParameter("key2", "World");
-        val result = results.produce();
+        val result = results.get();
         assertEquals("Hello, World", result);
     }
 }

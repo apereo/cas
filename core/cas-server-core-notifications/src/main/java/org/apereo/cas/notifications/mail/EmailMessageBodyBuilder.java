@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * This is {@link EmailMessageBodyBuilder}.
@@ -35,7 +36,7 @@ import java.util.Optional;
  */
 @Slf4j
 @SuperBuilder
-public class EmailMessageBodyBuilder {
+public class EmailMessageBodyBuilder implements Supplier<String> {
     @NonNull
     private final EmailProperties properties;
 
@@ -58,12 +59,8 @@ public class EmailMessageBodyBuilder {
         return this;
     }
 
-    /**
-     * Produce.
-     *
-     * @return the message body
-     */
-    public String produce() {
+    @Override
+    public String get() {
         if (StringUtils.isBlank(properties.getText())) {
             LOGGER.warn("No email body is defined");
             return StringUtils.EMPTY;

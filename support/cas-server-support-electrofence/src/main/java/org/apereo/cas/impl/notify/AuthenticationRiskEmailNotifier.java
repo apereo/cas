@@ -36,7 +36,7 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
             return;
         }
         val addresses = (List) principal.getAttributes().get(mail.getAttributeName());
-        val body = EmailMessageBodyBuilder.builder().properties(mail).build().produce();
+        val body = EmailMessageBodyBuilder.builder().properties(mail).build().get();
         val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
             .to(addresses).body(body).build();
         addresses.forEach(address -> this.communicationsManager.email(emailRequest));

@@ -489,6 +489,8 @@ layout: null
                 *   [Metadata Management](/cas/{{ version }}/installation/SAML2-ServiceProvider-Metadata.html)  
             *   [Attribute Release](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Release.html)
             *   [Attribute Value Types](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-ValueTypes.html)
+            *   [Attribute Friendly Name](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-FriendlyName.html)
+            *   [Attribute Name Format](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-NameFormat.html)
             *   [Metadata Management](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata.html)
             *   [NameID Selection](/cas/{{ version }}/installation/Configuring-SAML2-NameID.html)
             *   [Authentication Context](/cas/{{ version }}/installation/Configuring-SAML2-AuthnContextClass.html)

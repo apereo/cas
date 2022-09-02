@@ -9,6 +9,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -30,6 +31,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -90,8 +92,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
     protected boolean sendAccountRegistrationActivationSms(final AccountRegistrationRequest registrationRequest, final String url) {
         if (StringUtils.isNotBlank(registrationRequest.getPhone())) {
             val smsProps = casProperties.getAccountRegistration().getSms();
-            val message = smsProps.getFormattedText(url);
-
+            val message = SmsBodyBuilder.builder().properties(smsProps).parameters(Map.of("url", url)).build().get();
             val smsRequest = SmsRequest.builder().from(smsProps.getFrom())
                 .to(registrationRequest.getPhone()).text(message).build();
             return communicationsManager.sms(smsRequest);
@@ -122,7 +123,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
                 .parameters(parameters)
                 .locale(locale)
                 .build()
-                .produce();
+                .get();
             val emailRequest = EmailMessageRequest.builder().emailProperties(emailProps)
                 .to(List.of(registrationRequest.getEmail())).body(text).build();
             return communicationsManager.email(emailRequest);

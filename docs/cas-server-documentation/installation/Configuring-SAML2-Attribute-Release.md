@@ -48,60 +48,11 @@ To learn more about attribute definitions, please [see this guide](../integratio
 
 ## Attribute Name Formats
 
-Attribute name formats can be specified per relying party in the service registry.
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name": "SAML Service",
-  "metadataLocation" : "../../sp-metadata.xml",
-  "id": 100001,
-  "attributeNameFormats": {
-    "@class": "java.util.HashMap",
-    "attributeName": "basic|uri|unspecified|custom-format-etc"
-  }
-}
-```
-
-Name formats for an individual attribute can be mapped to a
-number of pre-defined formats, or a custom format of your own choosing.
-A given attribute that is to be encoded in the final SAML response
-may contain any of the following name formats:
-
-| Type                | Description                                                                     |
-|---------------------|---------------------------------------------------------------------------------|
-| `basic`             | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.       |
-| `uri`               | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.         |
-| `unspecified`       | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified`. |
-| `urn:my:own:format` | Map the attribute to `urn:my:own:format`.                                       |
-
-You may also have the option to define attributes and their relevant name format globally
-via CAS properties. 
-
-{% include_cached casproperties.html properties="cas.authn.saml-idp.core" %}
+[See this guide](Configuring-SAML2-Attribute-NameFormat.html).
 
 ## Attribute Friendly Names
 
-Attribute friendly names can be specified per relying party in the service registry, as well as globally via CAS settings. 
-If there is no friendly name defined for the attribute, the 
-attribute name will be used instead in its place. Note that the name of the 
-attribute is one that is designed to be released to the service provider,
-specially if the original attribute is *mapped* to a different name.
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name": "SAML Service",
-  "metadataLocation" : "../../sp-metadata.xml",
-  "id": 100001,
-  "attributeFriendlyNames": {
-    "@class": "java.util.HashMap",
-    "urn:oid:2.5.4.42": "friendly-name-to-use"
-  }
-}
-```
+[See this guide](Configuring-SAML2-Attribute-FriendlyName.html).
 
 ## InCommon Research and Scholarship
 

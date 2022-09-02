@@ -8,13 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.ResourceUtils;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link SmsProperties}.
@@ -59,26 +55,5 @@ public class SmsProperties implements Serializable {
      */
     public boolean isDefined() {
         return StringUtils.isNotBlank(getText()) && StringUtils.isNotBlank(getFrom());
-    }
-
-    /**
-     * Format body.
-     *
-     * @param arguments the arguments
-     * @return the string
-     */
-    public String getFormattedText(final Object... arguments) {
-        if (StringUtils.isBlank(this.text)) {
-            LOGGER.warn("No SMS text is defined");
-            return StringUtils.EMPTY;
-        }
-        try {
-            val templateFile = ResourceUtils.getFile(this.text);
-            val contents = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
-            return String.format(contents, arguments);
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-            return String.format(this.text, arguments);
-        }
     }
 }
