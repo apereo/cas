@@ -114,7 +114,7 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
     @Override
     public boolean sms(final SmsRequest smsRequest) {
         val recipient = smsRequest.getRecipient();
-        if (!isSmsSenderDefined() || StringUtils.isBlank(smsRequest.getText()) || recipient.isEmpty()) {
+        if (!isSmsSenderDefined() || !smsRequest.isSufficient()) {
             LOGGER.warn("Could not send SMS to [{}]; No from/text is found or SMS settings are undefined.", recipient);
             return false;
         }
