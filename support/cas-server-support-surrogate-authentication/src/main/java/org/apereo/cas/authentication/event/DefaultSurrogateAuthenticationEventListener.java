@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
@@ -12,8 +14,8 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DefaultSurrogateAuthenticationEventListener implements SurrogateAuthenticationEventListener {
     private final CommunicationsManager communicationsManager;
+
     private final CasConfigurationProperties casProperties;
 
     @Override
@@ -42,14 +45,14 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
         val eventDetails = event.toString();
         if (communicationsManager.isSmsSenderDefined()) {
             val sms = casProperties.getAuthn().getSurrogate().getSms();
-            val smsAttribute = sms.getAttributeName();
-            val to = principal.getAttributes().get(smsAttribute);
-            if (to != null && StringUtils.isNotBlank(sms.getText())) {
-                val text = sms.getFormattedText("\n\n".concat(eventDetails));
-                this.communicationsManager.sms(sms.getFrom(), to.toString(), text);
-            } else {
-                LOGGER.trace("The principal has no [{}] attribute, cannot send SMS notification", smsAttribute);
-            }
+            val text = sms.getFormattedText("\n\n".concat(eventDetails));
+            val smsRequest = SmsRequest.builder()
+                .principal(principal)
+                .attribute(sms.getAttributeName())
+                .from(sms.getFrom())
+                .text(text)
+                .build();
+            communicationsManager.sms(smsRequest);
         } else {
             LOGGER.trace("CAS is unable to send surrogate-authentication SMS messages given no settings are defined to account for servers, etc");
         }
@@ -61,7 +64,9 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
                 CollectionUtils.firstElement(to).ifPresent(address -> {
                     val body = EmailMessageBodyBuilder.builder().properties(mail)
                         .parameters(Map.of("event", eventDetails)).build().produce();
-                    communicationsManager.email(mail, address.toString(), body);
+                    val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
+                        .to(List.of(address.toString())).body(body).build();
+                    communicationsManager.email(emailRequest);
                 });
             } else {
                 LOGGER.trace("The principal has no [{}] attribute, cannot send email notification", emailAttribute);

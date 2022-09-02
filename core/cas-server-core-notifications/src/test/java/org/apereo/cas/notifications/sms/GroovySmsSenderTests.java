@@ -3,6 +3,7 @@ package org.apereo.cas.notifications.sms;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.notifications.CommunicationsManager;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ public class GroovySmsSenderTests {
     @Test
     public void verifyOperation() {
         assertTrue(communicationsManager.isSmsSenderDefined());
-        assertTrue(communicationsManager.sms("CAS", "CAS", "Hello CAS"));
+        val smsRequest = SmsRequest.builder().from("CAS")
+            .to("1234567890").text("Hello CAS").build();
+        assertTrue(communicationsManager.sms(smsRequest));
     }
 }

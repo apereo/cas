@@ -68,6 +68,8 @@ public class RestfulSmsSenderTests {
     @Test
     public void verifySms() {
         assertTrue(communicationsManager.isSmsSenderDefined());
-        assertTrue(communicationsManager.sms("CAS", "CAS", "Hello CAS"));
+        val smsRequest = SmsRequest.builder().from("CAS")
+            .to("1234567890").text("Hello CAS").build();
+        assertTrue(communicationsManager.sms(smsRequest));
     }
 }

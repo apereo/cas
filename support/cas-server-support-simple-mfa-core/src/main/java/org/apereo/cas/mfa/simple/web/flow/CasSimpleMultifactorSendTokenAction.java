@@ -12,6 +12,8 @@ import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationSe
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
@@ -61,7 +63,11 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             val smsText = StringUtils.isNotBlank(smsProperties.getText())
                 ? smsProperties.getFormattedText(token.getId())
                 : token.getId();
-            return communicationsManager.sms(principal, smsProperties.getAttributeName(), smsText, smsProperties.getFrom());
+
+            val smsRequest = SmsRequest.builder().from(smsProperties.getFrom())
+                .principal(principal).attribute(smsProperties.getAttributeName())
+                .text(smsText).build();
+            return communicationsManager.sms(smsRequest);
         }
         return false;
     }
@@ -94,7 +100,10 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                 .parameters(parameters)
                 .build()
                 .produce();
-            return communicationsManager.email(principal, mailProperties.getAttributeName(), mailProperties, body);
+            val emailRequest = EmailMessageRequest.builder().emailProperties(mailProperties)
+                .principal(principal).attribute(mailProperties.getAttributeName())
+                .body(body).build();
+            return communicationsManager.email(emailRequest);
         }
         return EmailCommunicationResult.builder().build();
     }
