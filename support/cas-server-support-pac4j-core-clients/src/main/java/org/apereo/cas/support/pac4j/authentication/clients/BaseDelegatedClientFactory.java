@@ -458,7 +458,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         cfg.setCustomParams(oidc.getCustomParams());
         cfg.setLogoutUrl(oidc.getLogoutUrl());
         cfg.setAllowUnsignedIdTokens(oidc.isAllowUnsignedIdTokens());
-
+        cfg.setIncludeAccessTokenClaimsInProfile(oidc.isIncludeAccessTokenClaims());
         cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
         if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
             cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());

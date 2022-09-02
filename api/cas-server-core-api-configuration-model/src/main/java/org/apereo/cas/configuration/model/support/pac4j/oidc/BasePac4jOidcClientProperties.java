@@ -122,4 +122,11 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
      * Whether unsigned id tokens issued as plain JWTs are accepted.
      */
     private boolean allowUnsignedIdTokens;
+
+    /**
+     * If enabled, try to process the access token as a JWT and include its claims in the profile.
+     * Only enable this if there is an agreement between the IdP and CAS about the format of
+     * the access token. If not, the token format could change at any time.
+     */
+    private boolean includeAccessTokenClaims;
 }
