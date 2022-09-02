@@ -29,6 +29,16 @@ public interface OidcIdTokenClaimCollector {
     }
 
     /**
+     * Listable collector forces all claims to be collected
+     * as list regardless of the number of values found for the claim.
+     *
+     * @return the oidc id token claim collector
+     */
+    static OidcIdTokenClaimCollector listableCollector() {
+        return JwtClaims::setClaim;
+    }
+
+    /**
      * Collect.
      *
      * @param claims the claims
