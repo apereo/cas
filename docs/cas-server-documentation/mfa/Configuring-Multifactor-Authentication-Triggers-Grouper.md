@@ -8,8 +8,7 @@ category: Multifactor Authentication
 
 # Grouper - Multifactor Authentication Triggers
 
-MFA can be triggered by [Grouper](https://incommon.org/software/grouper/)
-groups to which the authenticated principal is assigned.
+MFA can be triggered by [Grouper](https://github.com/Internet2/grouper) groups to which the authenticated principal is assigned.
 Groups are collected by CAS and then cross-checked against all available/configured MFA providers.
 The group's comparing factor **MUST** be defined in CAS to activate this behavior
 and it can be based on the group's name, display name, etc where
