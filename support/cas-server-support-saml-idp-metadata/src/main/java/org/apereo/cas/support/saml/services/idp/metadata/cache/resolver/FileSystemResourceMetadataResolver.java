@@ -54,7 +54,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     public boolean supports(final SamlRegisteredService service) {
         return FunctionUtils.doAndHandle(() -> {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
-            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            val metadataResource = ResourceUtils.isUrl(metadataLocation) ? null : ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof FileSystemResource;
         }, throwable -> false).get();
     }
