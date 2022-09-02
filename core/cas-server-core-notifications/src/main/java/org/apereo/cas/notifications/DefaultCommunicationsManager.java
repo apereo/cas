@@ -23,7 +23,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link DefaultCommunicationsManager}.
