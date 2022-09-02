@@ -8,6 +8,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -27,6 +29,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -88,7 +91,10 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         if (StringUtils.isNotBlank(registrationRequest.getPhone())) {
             val smsProps = casProperties.getAccountRegistration().getSms();
             val message = smsProps.getFormattedText(url);
-            return communicationsManager.sms(smsProps.getFrom(), registrationRequest.getPhone(), message);
+
+            val smsRequest = SmsRequest.builder().from(smsProps.getFrom())
+                .to(registrationRequest.getPhone()).text(message).build();
+            return communicationsManager.sms(smsRequest);
         }
         return false;
     }
@@ -117,7 +123,9 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
                 .locale(locale)
                 .build()
                 .produce();
-            return communicationsManager.email(emailProps, registrationRequest.getEmail(), text);
+            val emailRequest = EmailMessageRequest.builder().emailProperties(emailProps)
+                .to(List.of(registrationRequest.getEmail())).body(text).build();
+            return communicationsManager.email(emailRequest);
         }
         return EmailCommunicationResult.builder().success(false).build();
     }

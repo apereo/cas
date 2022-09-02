@@ -1,23 +1,24 @@
 package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.push.NotificationSender;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.notifications.sms.SmsSender;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link DefaultCommunicationsManager}.
@@ -34,10 +35,7 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
 
     private final NotificationSender notificationSender;
 
-    private static Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
-        val value = principal.getAttributes().get(attribute);
-        return CollectionUtils.firstElement(value);
-    }
+    private final HierarchicalMessageSource messageSource;
 
     @Override
     public boolean isMailSenderDefined() {
@@ -60,93 +58,66 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
     }
 
     @Override
-    public EmailCommunicationResult email(final Principal principal,
-                                          final String attribute,
-                                          final EmailProperties emailProperties,
-                                          final String body) {
-        if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
-            val to = getFirstAttributeByName(principal, attribute);
-            if (to.isPresent()) {
-                return email(emailProperties, to.get().toString(), body);
-            }
-        }
-        LOGGER.debug("Email attribute [{}] cannot be found or no configuration for email provider is defined", attribute);
-        return EmailCommunicationResult.builder().body(body).build();
-    }
-
-    @Override
-    public EmailCommunicationResult email(final EmailProperties emailProperties, final String to, final String body) {
+    public EmailCommunicationResult email(final EmailMessageRequest emailRequest) {
+        val recipients = emailRequest.getRecipients();
         try {
-            LOGGER.trace("Attempting to send email [{}] to [{}]", body, to);
-            if (!isMailSenderDefined() || emailProperties.isUndefined() || StringUtils.isBlank(to)) {
+            LOGGER.trace("Attempting to send email [{}] to [{}]", emailRequest.getBody(), recipients);
+            if (!isMailSenderDefined() || emailRequest.getEmailProperties().isUndefined() || recipients.isEmpty()) {
                 throw new IllegalAccessException("Could not send email; from/to/subject/text or email settings are undefined.");
             }
 
             val message = mailSender.createMimeMessage();
             val helper = new MimeMessageHelper(message);
-            helper.setTo(to);
-            helper.setText(body, emailProperties.isHtml());
+            helper.setTo(recipients.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+            helper.setText(emailRequest.getBody(), emailRequest.getEmailProperties().isHtml());
 
-            val subject = SpringExpressionLanguageValueResolver.getInstance().resolve(emailProperties.getSubject());
+            val subject = determineEmailSubject(emailRequest);
             helper.setSubject(subject);
 
-            helper.setFrom(emailProperties.getFrom());
-            if (StringUtils.isNotBlank(emailProperties.getReplyTo())) {
-                helper.setReplyTo(emailProperties.getReplyTo());
+            helper.setFrom(emailRequest.getEmailProperties().getFrom());
+            if (StringUtils.isNotBlank(emailRequest.getEmailProperties().getReplyTo())) {
+                helper.setReplyTo(emailRequest.getEmailProperties().getReplyTo());
             }
-            helper.setValidateAddresses(emailProperties.isValidateAddresses());
-            helper.setPriority(1);
-
-            if (StringUtils.isNotBlank(emailProperties.getCc())) {
-                helper.setCc(emailProperties.getCc());
-            }
-
-            if (StringUtils.isNotBlank(emailProperties.getBcc())) {
-                helper.setBcc(emailProperties.getBcc());
-            }
+            helper.setValidateAddresses(emailRequest.getEmailProperties().isValidateAddresses());
+            helper.setPriority(emailRequest.getEmailProperties().getPriority());
+            helper.setCc(emailRequest.getEmailProperties().getCc().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+            helper.setBcc(emailRequest.getEmailProperties().getBcc().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
             this.mailSender.send(message);
-            return EmailCommunicationResult.builder().success(true).to(to).body(body).build();
+            return EmailCommunicationResult.builder().success(true)
+                .to(recipients).body(emailRequest.getBody()).build();
         } catch (final Exception ex) {
             LoggingUtils.error(LOGGER, ex);
         }
-        return EmailCommunicationResult.builder().to(to).body(body).build();
+        return EmailCommunicationResult.builder().success(false)
+            .to(recipients).body(emailRequest.getBody()).build();
+    }
+
+    protected String determineEmailSubject(final EmailMessageRequest emailRequest) {
+        return SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(emailRequest.getEmailProperties().getSubject());
     }
 
     @Override
-    public boolean sms(final Principal principal,
-                       final String attribute,
-                       final String text, final String from) {
-        if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
-            val to = getFirstAttributeByName(principal, attribute);
-            if (to.isPresent()) {
-                return sms(from, to.get().toString(), text);
-            }
-        }
-        LOGGER.debug("Phone attribute [{}] cannot be found or no configuration for sms provider is defined", attribute);
-        return false;
-    }
-
-    @Override
-    public boolean sms(final String from, final String to, final String text) {
-        if (!isSmsSenderDefined() || StringUtils.isBlank(text) || StringUtils.isBlank(from)) {
-            LOGGER.warn("Could not send SMS to [{}] because either no from/text is found or SMS settings are not configured.", to);
+    public boolean sms(final SmsRequest smsRequest) {
+        val recipient = smsRequest.getRecipient();
+        if (!isSmsSenderDefined() || StringUtils.isBlank(smsRequest.getText()) || recipient.isEmpty()) {
+            LOGGER.warn("Could not send SMS to [{}]; No from/text is found or SMS settings are undefined.", recipient);
             return false;
         }
-        return this.smsSender.send(from, to, text);
+        return smsSender.send(smsRequest.getFrom(), recipient, smsRequest.getText());
     }
 
     @Override
     public boolean validate() {
         if (!isMailSenderDefined()) {
-            LOGGER.info("CAS is unable to send email given no settings are defined to account for email servers, etc");
+            LOGGER.info("CAS will not send emails because settings are undefined to account for email servers");
         }
         if (!isSmsSenderDefined()) {
-            LOGGER.info("CAS is unable to send sms messages given no settings are defined to account for sms providers, etc");
+            LOGGER.info("CAS will not send sms messages because settings are undefined to account for sms providers");
         }
         if (!isNotificationSenderDefined()) {
-            LOGGER.info("CAS is unable to send notifications given no providers are defined to handle messages, etc");
+            LOGGER.info("CAS will not send notifications because providers are undefined to handle messages");
         }
-
         return isMailSenderDefined() || isSmsSenderDefined() || isNotificationSenderDefined();
     }
 

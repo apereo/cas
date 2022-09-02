@@ -11,6 +11,8 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
@@ -33,6 +35,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -151,27 +154,22 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         return builder.username(username).build();
     }
 
-    /**
-     * Send password reset sms to account.
-     *
-     * @param to  the to
-     * @param url the url
-     * @return true/false
-     */
     protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) {
         if (StringUtils.isNotBlank(to)) {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url.toExternalForm(), to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
             val message = reset.getFormattedText(url.toExternalForm());
-            return communicationsManager.sms(reset.getFrom(), to, message);
+            val smsRequest = SmsRequest.builder().from(reset.getFrom()).to(to).text(message).build();
+            return communicationsManager.sms(smsRequest);
         }
         return false;
     }
 
-    protected EmailCommunicationResult sendPasswordResetEmailToAccount(final String username,
-                                                                       final String to,
-                                                                       final URL url,
-                                                                       final RequestContext requestContext) {
+    protected EmailCommunicationResult sendPasswordResetEmailToAccount(
+        final String username,
+        final String to,
+        final URL url,
+        final RequestContext requestContext) {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();
         val parameters = CollectionUtils.<String, Object>wrap("url", url.toExternalForm());
         if (StringUtils.isNotBlank(to)) {
@@ -189,9 +187,12 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
                 .build()
                 .produce();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);
-            return this.communicationsManager.email(reset, to, text);
+
+            val emailRequest = EmailMessageRequest.builder().emailProperties(reset)
+                .to(List.of(to)).body(text).build();
+            return this.communicationsManager.email(emailRequest);
         }
-        return EmailCommunicationResult.builder().success(false).to(to).build();
+        return EmailCommunicationResult.builder().success(false).to(List.of(to)).build();
     }
 
     /**

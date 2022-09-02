@@ -11,6 +11,8 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link EmailProperties}.
@@ -69,12 +71,12 @@ public class EmailProperties implements Serializable {
     /**
      * Email CC address, if any.
      */
-    private String cc;
+    private List<String> cc = new ArrayList<>();
 
     /**
      * Email BCC address, if any.
      */
-    private String bcc;
+    private List<String> bcc = new ArrayList<>();
 
     /**
      * Email Reply-To address, if any.
@@ -91,6 +93,12 @@ public class EmailProperties implements Serializable {
      * Set whether to validate all addresses which get passed to this helper.
      */
     private boolean validateAddresses;
+
+    /**
+     * Set the priority ({@code X-Priority} header) of the message.
+     * Values: {@code 1 (Highest)}, {@code 2 (High)}, {@code 3 (Normal)}, {@code 4 (Low)}, {@code 5 (Lowest)}.
+     */
+    private int priority = 1;
 
     /**
      * Indicate whether email settings are defined.

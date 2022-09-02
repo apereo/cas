@@ -6,6 +6,8 @@ import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -77,12 +80,15 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
                 .properties(mail)
                 .locale(locale)
                 .parameters(Map.of("token", token)).build().produce();
-            communicationsManager.email(mail, user.getEmail(), body);
+            val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
+                .to(List.of(user.getEmail())).body(body).build();
+            communicationsManager.email(emailRequest);
         }
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
             val smsProperties = passwordlessProperties.getTokens().getSms();
-            communicationsManager.sms(smsProperties.getFrom(),
-                user.getPhone(), smsProperties.getFormattedText(token));
+            val smsRequest = SmsRequest.builder().from(smsProperties.getFrom())
+                .to(user.getPhone()).text(smsProperties.getFormattedText(token)).build();
+            communicationsManager.sms(smsRequest);
         }
         passwordlessTokenRepository.deleteTokens(user.getUsername());
         passwordlessTokenRepository.saveToken(user.getUsername(), token);

@@ -4,12 +4,13 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,16 +59,19 @@ public class CommunicationsManagerTests {
         props.setText("Test Body");
         props.setSubject("Subject");
         props.setFrom("cas@example.org");
-        props.setCc("cc@example.org");
-        props.setBcc("bcc@example.org");
+        props.setCc(List.of("cc@example.org"));
+        props.setBcc(List.of("bcc@example.org"));
         props.setReplyTo("bcc1@example.org");
-
         val body = EmailMessageBodyBuilder.builder().properties(props).build().produce();
-        assertTrue(communicationsManager.email(props, "sample@example.org", body).isSuccess());
+        var emailRequest = EmailMessageRequest.builder().emailProperties(props)
+            .to(List.of("sample@example.net")).body(body).build();
+        assertTrue(communicationsManager.email(emailRequest).isSuccess());
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("casuser");
         when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", List.of("cas@example.org")));
-        assertTrue(communicationsManager.email(p, "email", props, body).isSuccess());
+        emailRequest = EmailMessageRequest.builder().emailProperties(props)
+            .principal(p).attribute("email").body(body).build();
+        assertTrue(communicationsManager.email(emailRequest).isSuccess());
     }
 
     @Test
@@ -83,27 +87,37 @@ public class CommunicationsManagerTests {
         props.setFrom("cas@example.org");
         val body = EmailMessageBodyBuilder.builder().properties(props)
             .parameters(Map.of("k1", "param1", "k2", "param2")).build().produce();
-        assertTrue(communicationsManager.email(props, "sample@example.org", body).isSuccess());
+        val emailRequest = EmailMessageRequest.builder().emailProperties(props)
+            .to(List.of("sample@example.org")).body(body).build();
+        assertTrue(communicationsManager.email(emailRequest).isSuccess());
     }
 
     @Test
     public void verifyMailNoAtr() {
         assertTrue(communicationsManager.isMailSenderDefined());
-        assertFalse(communicationsManager.email(mock(Principal.class), "bad-attribute",
-            new EmailProperties(), StringUtils.EMPTY).isSuccess());
+        val emailRequest = EmailMessageRequest.builder()
+            .principal(mock(Principal.class))
+            .attribute("bad-attribute")
+            .emailProperties(new EmailProperties())
+            .build();
+        assertFalse(communicationsManager.email(emailRequest).isSuccess());
     }
 
     @Test
     public void verifySmsNoAtr() {
         assertFalse(communicationsManager.isSmsSenderDefined());
-        assertFalse(communicationsManager.sms(mock(Principal.class), "bad-attribute",
-            "sms text", StringUtils.EMPTY));
+        val smsRequest = SmsRequest.builder()
+            .principal(mock(Principal.class))
+            .attribute("bad-attribute")
+            .text("sms text")
+            .build();
+        assertFalse(communicationsManager.sms(smsRequest));
     }
 
     @Test
     public void verifyNoSmsSender() {
         assertFalse(communicationsManager.isSmsSenderDefined());
-        assertFalse(communicationsManager.sms(StringUtils.EMPTY, null, null));
+        assertFalse(communicationsManager.sms(SmsRequest.builder().build()));
     }
 
     @Test

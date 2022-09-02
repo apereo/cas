@@ -1,8 +1,9 @@
 package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsRequest;
 
 /**
  * This is {@link CommunicationsManager}.
@@ -50,50 +51,18 @@ public interface CommunicationsManager {
     /**
      * Email.
      *
-     * @param principal       the principal
-     * @param attribute       the email attribute
-     * @param emailProperties the email properties
-     * @param body            the body
+     * @param emailRequest the email request
      * @return the result
      */
-    EmailCommunicationResult email(Principal principal,
-                  String attribute,
-                  EmailProperties emailProperties,
-                  String body);
-
-    /**
-     * Email.
-     *
-     * @param emailProperties the email properties
-     * @param to              the to
-     * @param body            the body
-     * @return the result
-     */
-    EmailCommunicationResult email(EmailProperties emailProperties, String to, String body);
+    EmailCommunicationResult email(EmailMessageRequest emailRequest);
 
     /**
      * Sms.
      *
-     * @param principal the principal
-     * @param attribute the attribute
-     * @param text      the text
-     * @param from      the from
-     * @return true/false
+     * @param request the request
+     * @return true /false
      */
-    boolean sms(Principal principal,
-                String attribute,
-                String text,
-                String from);
-
-    /**
-     * Sms.
-     *
-     * @param from the from
-     * @param to   the to
-     * @param text the text
-     * @return true/false
-     */
-    boolean sms(String from, String to, String text);
+    boolean sms(SmsRequest request);
 
     /**
      * Validate.

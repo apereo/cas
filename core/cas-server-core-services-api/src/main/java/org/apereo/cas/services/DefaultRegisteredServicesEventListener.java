@@ -3,6 +3,8 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 
@@ -12,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,18 +63,27 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
                 .properties(mail)
                 .parameters(Map.of("service", serviceName))
                 .build().produce();
+
             contacts
                 .stream()
-                .filter(c -> StringUtils.isNotBlank(c.getEmail()))
-                .forEach(c -> communicationsManager.email(mail, c.getEmail(), body));
+                .filter(contact -> StringUtils.isNotBlank(contact.getEmail()))
+                .forEach(contact -> {
+                    val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
+                        .to(List.of(contact.getEmail())).body(body).build();
+                    communicationsManager.email(emailRequest);
+                });
         }
         if (communicationsManager.isSmsSenderDefined()) {
             val sms = serviceRegistry.getSms();
             val message = sms.getFormattedText(serviceName);
             contacts
                 .stream()
-                .filter(c -> StringUtils.isNotBlank(c.getPhone()))
-                .forEach(c -> communicationsManager.sms(sms.getFrom(), c.getPhone(), message));
+                .filter(contact -> StringUtils.isNotBlank(contact.getPhone()))
+                .forEach(contact -> {
+                    val smsRequest = SmsRequest.builder().from(sms.getFrom())
+                        .to(contact.getPhone()).text(message).build();
+                    communicationsManager.sms(smsRequest);
+                });
         }
     }
 }
