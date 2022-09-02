@@ -26,7 +26,7 @@ Support is enabled by including the following module in the WAR Overlay:
 The following SAML SP integrations, as samples, are provided by CAS:
 
 <div class="img-cloud">
-<a href="http://www.incommon.org/federation">
+<a href="#">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052578/47d6f570-dd60-11e6-8f03-02cb99d6106d.gif" height="48" width="110"></a> 
 
 <a href="https://zoom.us">
