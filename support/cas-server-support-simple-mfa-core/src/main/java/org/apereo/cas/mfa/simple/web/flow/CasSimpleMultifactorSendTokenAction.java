@@ -13,6 +13,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -30,6 +31,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -61,7 +63,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         if (communicationsManager.isSmsSenderDefined()) {
             val smsProperties = properties.getSms();
             val smsText = StringUtils.isNotBlank(smsProperties.getText())
-                ? smsProperties.getFormattedText(token.getId())
+                ? SmsBodyBuilder.builder().properties(smsProperties).parameters(Map.of("token", token.getId())).build().get()
                 : token.getId();
 
             val smsRequest = SmsRequest.builder().from(smsProperties.getFrom())
@@ -99,7 +101,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                 .locale(locale)
                 .parameters(parameters)
                 .build()
-                .produce();
+                .get();
             val emailRequest = EmailMessageRequest.builder().emailProperties(mailProperties)
                 .principal(principal).attribute(mailProperties.getAttributeName())
                 .body(body).build();

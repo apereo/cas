@@ -135,7 +135,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
             .locale(locale)
             .parameters(parameters)
             .build()
-            .produce();
+            .get();
         val emailRequest = EmailMessageRequest.builder().emailProperties(reset)
             .to(List.of(query.getEmail())).body(body).build();
         return communicationsManager.email(emailRequest);

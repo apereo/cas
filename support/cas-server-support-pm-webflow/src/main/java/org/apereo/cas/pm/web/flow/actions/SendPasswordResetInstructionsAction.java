@@ -12,6 +12,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -36,6 +37,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -158,7 +160,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         if (StringUtils.isNotBlank(to)) {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url.toExternalForm(), to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
-            val message = reset.getFormattedText(url.toExternalForm());
+            val message = SmsBodyBuilder.builder().properties(reset).parameters(Map.of("url", url.toExternalForm())).build().get();
             val smsRequest = SmsRequest.builder().from(reset.getFrom()).to(to).text(message).build();
             return communicationsManager.sms(smsRequest);
         }
@@ -185,7 +187,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
                 .parameters(parameters)
                 .locale(locale)
                 .build()
-                .produce();
+                .get();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);
 
             val emailRequest = EmailMessageRequest.builder().emailProperties(reset)

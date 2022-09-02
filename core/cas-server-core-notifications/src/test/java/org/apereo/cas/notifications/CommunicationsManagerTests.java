@@ -62,7 +62,7 @@ public class CommunicationsManagerTests {
         props.setCc(List.of("cc@example.org"));
         props.setBcc(List.of("bcc@example.org"));
         props.setReplyTo("bcc1@example.org");
-        val body = EmailMessageBodyBuilder.builder().properties(props).build().produce();
+        val body = EmailMessageBodyBuilder.builder().properties(props).build().get();
         var emailRequest = EmailMessageRequest.builder().emailProperties(props)
             .to(List.of("sample@example.net")).body(body).build();
         assertTrue(communicationsManager.email(emailRequest).isSuccess());
@@ -86,7 +86,7 @@ public class CommunicationsManagerTests {
         props.setSubject("Subject");
         props.setFrom("cas@example.org");
         val body = EmailMessageBodyBuilder.builder().properties(props)
-            .parameters(Map.of("k1", "param1", "k2", "param2")).build().produce();
+            .parameters(Map.of("k1", "param1", "k2", "param2")).build().get();
         val emailRequest = EmailMessageRequest.builder().emailProperties(props)
             .to(List.of("sample@example.org")).body(body).build();
         assertTrue(communicationsManager.email(emailRequest).isSuccess());

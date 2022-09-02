@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    "cas.service-registry.sms.text=Service %s has expired in CAS service registry",
+    "cas.service-registry.sms.text=Service ${service} has expired in CAS service registry",
     "cas.service-registry.sms.from=3477563421",
     "cas.service-registry.mail.from=admin@example.org",
     "cas.service-registry.mail.subject=Sample Subject",

@@ -26,3 +26,16 @@ grouperClient.webService.password = password
 ```
 
 {% include_cached casproperties.html properties="cas.authn.mfa.triggers.grouper" %}
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<Logger name="" level="edu.internet2.middleware" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+...
+```

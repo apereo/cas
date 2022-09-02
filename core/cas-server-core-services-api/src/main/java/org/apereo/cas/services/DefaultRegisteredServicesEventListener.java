@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
@@ -62,7 +63,7 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
             val body = EmailMessageBodyBuilder.builder()
                 .properties(mail)
                 .parameters(Map.of("service", serviceName))
-                .build().produce();
+                .build().get();
 
             contacts
                 .stream()
@@ -75,7 +76,7 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
         }
         if (communicationsManager.isSmsSenderDefined()) {
             val sms = serviceRegistry.getSms();
-            val message = sms.getFormattedText(serviceName);
+            val message = SmsBodyBuilder.builder().properties(sms).parameters(Map.of("service", serviceName)).build().get();
             contacts
                 .stream()
                 .filter(contact -> StringUtils.isNotBlank(contact.getPhone()))
