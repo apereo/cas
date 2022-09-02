@@ -45,7 +45,7 @@ public class ForgotUsernamePasswordManagementProperties implements Serializable 
 
     public ForgotUsernamePasswordManagementProperties() {
         this.mail.setAttributeName("mail");
-        this.mail.setText("Your current username is: %s");
+        this.mail.setText("Your current username is: ${username}");
         this.mail.setSubject("Forgot Username");
     }
 }

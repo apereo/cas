@@ -127,11 +127,14 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
             }).accept(person);
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
+        val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+            .map(resolver -> resolver.resolveLocale(request));
         val body = EmailMessageBodyBuilder.builder()
             .properties(reset)
-            .locale(Optional.of(locale))
-            .parameters(parameters).build().produce();
+            .locale(locale)
+            .parameters(parameters)
+            .build()
+            .produce();
         return this.communicationsManager.email(reset, query.getEmail(), body);
     }
 

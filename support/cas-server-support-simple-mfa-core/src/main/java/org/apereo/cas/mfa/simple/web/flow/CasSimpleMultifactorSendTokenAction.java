@@ -87,10 +87,11 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             val parameters = CoreAuthenticationUtils.convertAttributeValuesToObjects(principal.getAttributes());
             parameters.put("token", token.getId());
 
-            val locale = Objects.requireNonNull(RequestContextUtils.getLocaleResolver(request)).resolveLocale(request);
+            val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+                .map(resolver -> resolver.resolveLocale(request));
             val body = EmailMessageBodyBuilder.builder()
                 .properties(mailProperties)
-                .locale(Optional.of(locale))
+                .locale(locale)
                 .parameters(parameters)
                 .build()
                 .produce();
