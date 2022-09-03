@@ -12,10 +12,12 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.DefaultLocalDynamicSourceKeyGenerator;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
@@ -67,7 +69,9 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     private AbstractMetadataResolver getMetadataResolver(final AbstractResource metadataResource,
                                                          final File metadataFile) throws Exception {
         if (metadataFile.isDirectory()) {
-            return new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
+            val sourceStrategy = new DefaultLocalDynamicSourceKeyGenerator(StringUtils.EMPTY, ".xml", StringUtils.EMPTY);
+            val manager = new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool());
+            return new LocalDynamicMetadataResolver(manager, sourceStrategy);
         }
         return new InMemoryResourceMetadataResolver(metadataResource, configBean);
     }
