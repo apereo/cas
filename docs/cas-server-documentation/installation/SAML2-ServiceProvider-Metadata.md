@@ -43,6 +43,29 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
 }
 ```
 {% endtab %}
+
+{% tab metadata Directory %}
+
+This option fetches metadata from a local directory source as needed. You are responsible 
+for populating the directory with metadata files, which may be done while CAS is running. 
+New metadata will be seen automatically the first time it is requested.
+
+```json
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : ".+",
+  "name" : "SAMLService",
+  "id" : 1,
+  "metadataLocation" : "/path/to/metadata/directory"
+}
+```
+
+Metadata files in the specified directory location must be stored as the lower case 
+hex-encoded SHA-1 digest of the service provider entity id suffixed with `.xml`. For example, a servife provider
+with the entity id `sp1:example` should be stored in as `3494744350abe1fd8efa68c5e2696dbbdca4c33a.xml`. 
+
+{% endtab %}
+
 {% endtabs %}
 
 ## Dynamic Metadata

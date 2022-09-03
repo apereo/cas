@@ -4,12 +4,14 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
+import com.google.common.collect.Iterables;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -36,22 +38,25 @@ import static org.mockito.Mockito.*;
 public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     private static File METADATA_FILE;
 
-    private static SamlIdPProperties PROPERTIES;
+    private SamlRegisteredServiceMetadataResolver resolver;
 
     @BeforeAll
     public static void setup() throws Exception {
         METADATA_FILE = File.createTempFile("sp-saml-metadata", ".xml");
         val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(METADATA_FILE, content, StandardCharsets.UTF_8);
-
-        PROPERTIES = new SamlIdPProperties();
-        val path = new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath();
-        PROPERTIES.getMetadata().getFileSystem().setLocation(path);
     }
 
+    @BeforeEach
+    public void beforeEach() throws Exception {
+        val properties = new SamlIdPProperties();
+        val path = new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath();
+        properties.getMetadata().getFileSystem().setLocation(path);
+        this.resolver = new FileSystemResourceMetadataResolver(properties, openSamlConfigBean);
+    }
+    
     @Test
     public void verifyResolverSupports() throws Exception {
-        val resolver = new FileSystemResourceMetadataResolver(PROPERTIES, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
         assertTrue(resolver.supports(service));
@@ -61,7 +66,6 @@ public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServices
 
     @Test
     public void verifyResolverWithBadSigningCert() throws Exception {
-        val resolver = new FileSystemResourceMetadataResolver(PROPERTIES, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataMaxValidity(30000);
         service.setMetadataCriteriaRoles(String.join(",", Set.of(
@@ -74,7 +78,6 @@ public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServices
 
     @Test
     public void verifyResolverWithDirectory() throws Exception {
-        val resolver = new FileSystemResourceMetadataResolver(PROPERTIES, openSamlConfigBean);
         val service = new SamlRegisteredService();
         val file = new FileSystemResource("src/test/resources/md-dir").getFile().getCanonicalPath();
         service.setMetadataLocation(file);
@@ -84,15 +87,15 @@ public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServices
         val directoryResolver = resolvers.iterator().next();
 
         val criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIdCriterion("https://idp.example.net/idp/shibboleth"));
+        criteriaSet.add(new EntityIdCriterion("sp1:example"));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        assertNotNull(directoryResolver.resolve(criteriaSet));
+        assertEquals(1, Iterables.size(directoryResolver.resolve(criteriaSet)));
     }
 
     @Test
     public void verifyDefaultImpl() {
-        val resolver = mock(SamlRegisteredServiceMetadataResolver.class);
-        doCallRealMethod().when(resolver).saveOrUpdate(any());
-        assertThrows(NotImplementedException.class, () -> resolver.saveOrUpdate(null));
+        val mock = mock(SamlRegisteredServiceMetadataResolver.class);
+        doCallRealMethod().when(mock).saveOrUpdate(any());
+        assertThrows(NotImplementedException.class, () -> mock.saveOrUpdate(null));
     }
 }
