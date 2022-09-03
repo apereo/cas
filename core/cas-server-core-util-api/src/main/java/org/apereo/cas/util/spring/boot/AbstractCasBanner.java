@@ -6,7 +6,6 @@ import org.apereo.cas.util.SystemUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
 
 import java.io.PrintStream;
@@ -20,15 +19,12 @@ import java.util.ServiceLoader;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractCasBanner implements Banner {
+public abstract class AbstractCasBanner implements CasBanner {
 
     private static final int SEPARATOR_REPEAT_COUNT = 60;
 
     private static final String SEPARATOR_CHAR = "-";
 
-    /**
-     * Line separator string.
-     */
     protected static final String LINE_SEPARATOR = String.join(StringUtils.EMPTY,
         Collections.nCopies(SEPARATOR_REPEAT_COUNT, SEPARATOR_CHAR));
 
@@ -37,7 +33,8 @@ public abstract class AbstractCasBanner implements Banner {
         AsciiArtUtils.printAsciiArt(out, getTitle(), collectEnvironmentInfo(environment, sourceClass));
     }
 
-    protected String getTitle() {
+    @Override
+    public String getTitle() {
         return '\n'
             + "     _    ____  _____ ____  _____ ___     ____    _    ____  \n"
             + "    / \\  |  _ \\| ____|  _ \\| ____/ _ \\   / ___|  / \\  / ___| \n"
@@ -67,31 +64,19 @@ public abstract class AbstractCasBanner implements Banner {
 
         try (val formatter = new Formatter()) {
             val sysInfo = SystemUtils.getSystemInfo();
-            sysInfo.forEach((k, v) -> {
-                if (k.startsWith(SEPARATOR_CHAR)) {
+            sysInfo.forEach((key, v) -> {
+                if (key.startsWith(SEPARATOR_CHAR)) {
                     formatter.format("%s%n", LINE_SEPARATOR);
                 } else {
-                    formatter.format("%s: %s%n", k, v);
+                    formatter.format("%s: %s%n", key, v);
                 }
             });
             formatter.format("%s%n", LINE_SEPARATOR);
-            injectEnvironmentInfoIntoBanner(formatter, environment, sourceClass);
+            injectEnvironmentInfo(formatter, environment, sourceClass);
             ServiceLoader.load(BannerContributor.class).stream()
-                .forEach(c -> c.get().contribute(formatter, environment));
+                .forEach(clz -> clz.get().contribute(formatter, environment));
             formatter.format("%s%n", LINE_SEPARATOR);
             return formatter.toString();
         }
-    }
-
-    /**
-     * Inject environment info into banner.
-     *
-     * @param formatter   the formatter
-     * @param environment the environment
-     * @param sourceClass the source class
-     */
-    protected void injectEnvironmentInfoIntoBanner(final Formatter formatter,
-                                                   final Environment environment,
-                                                   final Class<?> sourceClass) {
     }
 }

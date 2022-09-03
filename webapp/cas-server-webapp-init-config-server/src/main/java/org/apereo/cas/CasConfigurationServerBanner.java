@@ -11,7 +11,7 @@ import org.apereo.cas.util.spring.boot.AbstractCasBanner;
  */
 public class CasConfigurationServerBanner extends AbstractCasBanner {
     @Override
-    protected String getTitle() {
+    public String getTitle() {
         return '\n'
             + "   ____    _    ____     ____             __ _         ____                           \n"
             + "  / ___|  / \\  / ___|   / ___|___  _ __  / _(_) __ _  / ___|  ___ _ ____   _____ _ __ \n"
