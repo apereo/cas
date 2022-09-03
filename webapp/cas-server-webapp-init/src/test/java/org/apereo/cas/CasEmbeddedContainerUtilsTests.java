@@ -64,7 +64,7 @@ public class CasEmbeddedContainerUtilsTests {
         }
 
         @Override
-        protected String getTitle() {
+        public String getTitle() {
             return "Custom";
         }
     }

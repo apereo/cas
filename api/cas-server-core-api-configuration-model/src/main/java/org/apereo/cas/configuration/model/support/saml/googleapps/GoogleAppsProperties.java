@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.googleapps;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class GoogleAppsProperties implements Serializable {
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")
+    @RequiredProperty
     private String publicKeyLocation = "file:/etc/cas/public.key";
 
     /**
@@ -36,6 +38,7 @@ public class GoogleAppsProperties implements Serializable {
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")
+    @RequiredProperty
     private String privateKeyLocation = "file:/etc/cas/private.key";
 
     /**

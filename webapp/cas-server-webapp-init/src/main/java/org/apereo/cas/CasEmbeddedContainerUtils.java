@@ -1,22 +1,22 @@
 package org.apereo.cas;
 
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.logging.LoggingInitialization;
-import org.apereo.cas.util.spring.boot.AbstractCasBanner;
+import org.apereo.cas.util.spring.boot.CasBanner;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.Banner;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
 import org.springframework.core.metrics.ApplicationStartup;
 import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
 
 import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasEmbeddedContainerUtils}.
@@ -50,22 +50,11 @@ public class CasEmbeddedContainerUtils {
      *
      * @return the cas banner instance
      */
-    public static Banner getCasBannerInstance() {
-        val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-
-        val subTypes = ReflectionUtils.findSubclassesInPackage(AbstractCasBanner.class, packageName);
-        subTypes.remove(DefaultCasBanner.class);
-
-        if (subTypes.isEmpty()) {
-            return new DefaultCasBanner();
-        }
-        try {
-            val clz = subTypes.iterator().next();
-            return clz.getDeclaredConstructor().newInstance();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new DefaultCasBanner();
+    public static CasBanner getCasBannerInstance() {
+        val subTypes = ServiceLoader.load(CasBanner.class).stream()
+            .map(ServiceLoader.Provider::get)
+            .collect(Collectors.toList());
+        return subTypes.isEmpty() ? new DefaultCasBanner() : subTypes.get(0);
     }
 
     /**
