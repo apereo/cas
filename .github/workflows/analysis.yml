@@ -12,10 +12,10 @@ env:
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 6.6.x ]
   pull_request:
     types: [ labeled ]
-    branches: [ master ]
+    branches: [ 6.6.x ]
 
 ##########################################################################
 
@@ -122,7 +122,7 @@ jobs:
         category:
           - checkstyleMain
           - checkstyleTest
-          - checkLicense
+          # - checkLicense
     name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v3

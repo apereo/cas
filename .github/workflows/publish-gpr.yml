@@ -19,9 +19,8 @@ env:
 # Trigger on four digit tags where the fourth digit differentiates build from official builds
 on:
   push:
-    tags:
-      - 6.*.*.*
-      - 7.*.*.*
+    branches-ignore:
+      - '**'
 
 ##########################################################################
 

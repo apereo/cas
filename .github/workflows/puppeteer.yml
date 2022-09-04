@@ -30,13 +30,13 @@ env:
 on:
   push:
     branches:
-      - master
+      - 6.6.x
       - '!**.**.**'
       - 'pr-*'
   pull_request:
     types: [ labeled ]
     branches:
-      - master
+      - 6.6.x
       - '!**.**.**'
 
 ##########################################################################
