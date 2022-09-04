@@ -444,7 +444,6 @@ layout: null
     *   [CAS](#casprotocol)
         * [Overview](/cas/{{ version }}/protocol/CAS-Protocol.html)
         * [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)
-    *   [OpenID](/cas/{{ version }}/protocol/OpenID-Protocol.html)
     *   [OAuth2](#oauth2)
         *   [Overview](/cas/{{ version }}/protocol/OAuth-Protocol.html)
         *   [Identity Provider](#oauthprovider)

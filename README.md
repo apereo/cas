@@ -62,10 +62,10 @@ The following features are supported by the CAS project:
 * CAS v1, v2 and v3 Protocol
 * SAML v1 and v2 Protocol
 * OAuth v2 Protocol
-* OpenID & OpenID Connect Protocol
+* OpenID Connect Protocol
 * WS-Federation Passive Requestor Protocol
 * Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
-* Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID, OpenID Connect, CAS and more.
+* Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID Connect, CAS and more.
 * Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
 * HA clustered deployments via Hazelcast, Ehcache, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDb, Redis, DynamoDb, Couchbase and more.
 * Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, Couchbase, MongoDb, DynamoDb, Redis and more.

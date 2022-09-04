@@ -67,7 +67,6 @@ Supported protocols:
 * [CAS (versions 1, 2, and 3)](../protocol/CAS-Protocol.html)
 * [SAML 1.1 and 2](../protocol/SAML-Protocol.html)
 * [OpenID Connect](../protocol/OIDC-Protocol.html)
-* [OpenID](../protocol/OpenID-Protocol.html)
 * [OAuth 2.0](../protocol/OAuth-Protocol.html)
 * [WS Federation](../protocol/WS-Federation-Protocol.html)
 

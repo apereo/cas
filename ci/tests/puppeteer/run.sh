@@ -413,7 +413,7 @@ if [[ "${RERUN}" != "true" ]]; then
       printgreen "Remote debugging is enabled on port $DEBUG_PORT"
       runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
     fi
-    runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
+    runArgs="${runArgs} -XX:TieredStopAtLevel=1 "
     printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]\n" "${c}" "${properties}" "${runArgs}" "${dependencies}"
 
     springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")

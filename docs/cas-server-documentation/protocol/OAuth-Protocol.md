@@ -11,7 +11,7 @@ category: Protocols
 You can configure the CAS server with:
 
 * [OAuth client support](../integration/Delegate-Authentication.html), which means authentication can be delegated 
-through a link on the login page to a CAS, OpenID or OAuth provider. 
+through a link on the login page to a CAS, SAML2 or OpenID Connect provider. 
 * [OAuth server support](../authentication/OAuth-Authentication.html), which means you will be able to 
 communicate with your CAS server through the [OAuth 2.0 protocol](http://oauth.net/2/).
 

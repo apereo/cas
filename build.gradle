@@ -61,7 +61,6 @@ ext {
         '**/soap/generated/**',
         '**/com/duosecurity/**',
         '**/com/yubico/**',
-        '**/support/openid/**',
         '**/saml/sts/SamlToken**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
