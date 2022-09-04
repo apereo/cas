@@ -54,7 +54,7 @@ org.gradle.parallel=false
 ```
 
 - Checkout the CAS project: `git clone git@github.com:apereo/cas.git cas-server`
-- Make sure you have the [latest version of JDK 11](https://openjdk.java.net/projects/jdk/11/) installed via `java -version`. 
+- Make sure you have the [latest version of JDK 17](https://openjdk.java.net/projects/jdk/17/) installed via `java -version`. 
 
 ## Preparing the Release
 
