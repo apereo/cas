@@ -825,11 +825,6 @@ public interface CasWebflowConstants {
     String STATE_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
 
     /**
-     * State id 'openIdSingleSignOnAction'.
-     */
-    String STATE_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
-
-    /**
      * The state id 'registerDeviceView'.
      */
     String STATE_ID_REGISTER_DEVICE_VIEW = "registerDeviceView";
@@ -1155,11 +1150,6 @@ public interface CasWebflowConstants {
      */
     String DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
 
-    /**
-     * Action state 'selectFirstAction'.
-     */
-    String DECISION_STATE_OPEN_ID_SELECT_FIRST_ACTION = "selectFirstAction";
-
     /*
      ****************************************
      * Variables & Attributes.
@@ -1474,14 +1464,6 @@ public interface CasWebflowConstants {
      * Action id `renewAuthenticationRequestCheckAction`.
      */
     String ACTION_ID_RENEW_AUTHN_REQUEST = "renewAuthenticationRequestCheckAction";
-
-    /**
-     * Action id 'openIdSingleSignOnAction .
-     *
-     * @deprecated Since 6.2
-     */
-    @Deprecated(since = "6.2.0")
-    String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
     /**
      * Action id 'negociateSpneg .

@@ -47,7 +47,6 @@ One of the most powerful feature of the CAS protocol is the ability for a CAS se
 
 Even if the primary goal of the CAS server is to implement the CAS protocol, other protocols are also supported as extensions:
 
-- [OpenID](../protocol/OpenID-Protocol.html)
 - [OAuth2](../protocol/OAuth-Protocol.html)
 - [SAML](../protocol/SAML-Protocol.html)
 - [OpenID Connect](../protocol/OIDC-Protocol.html)

@@ -23,7 +23,7 @@ The following items include a summary of features and technologies presented by 
 [JAAS](authentication/JAAS-Authentication.html), [JWT](authentication/JWT-Authentication.html), 
 [RADIUS](mfa/RADIUS-Authentication.html), [MongoDb](authentication/MongoDb-Authentication.html), etc)
 * Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML v1](protocol/SAML-Protocol.html), [SAML v2](authentication/Configuring-SAML2-Authentication.html), [WS-Federation](protocol/WS-Federation-Protocol.html),
-[OAuth2](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
+[OAuth2](protocol/OAuth-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
 * Support for [multifactor authentication](mfa/Configuring-Multifactor-Authentication.html) via a variety of 
 providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO U2F](mfa/FIDO-U2F-Authentication.html), 
 [YubiKey](mfa/YubiKey-Authentication.html), [FIDO2 WebAuthN](mfa/FIDO2-WebAuthn-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Authy](mfa/AuthyAuthenticator-Authentication.html), [Acceptto](mfa/Acceptto-Authentication.html), [Inwebo](mfa/Inwebo-Authentication.html), etc.)

@@ -11,7 +11,6 @@ category: Protocols
 The following protocols are supported and provided by CAS:
 
 *   [CAS](CAS-Protocol.html)
-*   [OpenID](OpenID-Protocol.html)
 *   [OAuth](OAuth-Protocol.html)
 *   [OpenID Connect](OIDC-Protocol.html)
 *   [WS Federation](WS-Federation-Protocol.html)
