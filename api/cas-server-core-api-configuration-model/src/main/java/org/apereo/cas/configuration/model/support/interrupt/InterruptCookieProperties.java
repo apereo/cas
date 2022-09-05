@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.interrupt;
 
-import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("InterruptCookieProperties")
-public class InterruptCookieProperties extends PinnableCookieProperties {
+public class InterruptCookieProperties extends CookieProperties {
     private static final long serialVersionUID = -266090748600049578L;
 
     /**

@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -70,7 +70,7 @@ public class DeviceFingerprintProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-trusted-mfa")
-    public static class Cookie extends PinnableCookieProperties {
+    public static class Cookie extends CookieProperties {
         private static final long serialVersionUID = -9022498833437602657L;
 
         /**
