@@ -58,8 +58,8 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ## Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases 
-and scenarios. At the moment, total number of jobs stands at approximately 317 distinct scenarios. The overall 
-test coverage of the CAS codebase is approximately 94%.
+and scenarios. At the moment, total number of jobs stands at approximately `330` distinct scenarios. The overall 
+test coverage of the CAS codebase is approximately `94%`.
 
 ## Removed Modules
 
