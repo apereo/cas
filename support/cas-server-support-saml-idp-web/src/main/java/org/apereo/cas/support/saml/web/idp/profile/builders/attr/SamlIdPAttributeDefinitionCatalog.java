@@ -55,9 +55,9 @@ class SamlIdPAttributeDefinitionCatalog {
                 .friendlyName("eduPersonUniqueId").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.13").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.11")
                 .friendlyName("eduPersonAssurance").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.11").build(),
-            SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.11")
-                .friendlyName("eduPersonNickname").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.2").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.2")
+                .friendlyName("eduPersonNickname").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.2").build(),
+            SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.14")
                 .friendlyName("eduPersonOrcid").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.14").build()
         );
     }

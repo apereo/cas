@@ -11,49 +11,6 @@ category: Attributes
 Attribute filtering and release policies are defined per 
 SAML service. See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
-## Attribute Definitions
-
-Attribute definitions that specifically apply to the release of attributes as part of SAML response can be 
-defined using the `SamlIdPAttributeDefinition`. Defining an attribute with this definition does not
-prevent it from being released by other protocols.
-
-```json
-{
-  "@class": "java.util.TreeMap",
-  "eduPersonPrincipalName": {
-    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
-    "key": "eduPersonPrincipalName",
-    "name": "eduPersonPrincipalName",
-    "urn": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
-    "scoped": true,
-    "encrypted": false,
-    "attribute": "uid",
-    "friendlyName": "eduPersonPrincipalName"
-  }
-}
-```
-
-The following additional settings can be specified for a Saml IdP attribute definition:
-
-| Name           | Description                                                                                            |
-|----------------|--------------------------------------------------------------------------------------------------------|
-| `friendlyName` | (Optional) Friendly name of the attribute shared with the target application during attribute release. |
-| `urn`          | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`). |
-
-To learn more about attribute definitions, please [see this guide](../integration/Attribute-Definitions.html).
-
-## Attribute Value Types
-
-[See this guide](Configuring-SAML2-Attribute-ValueTypes.html).
-
-## Attribute Name Formats
-
-[See this guide](Configuring-SAML2-Attribute-NameFormat.html).
-
-## Attribute Friendly Names
-
-[See this guide](Configuring-SAML2-Attribute-FriendlyName.html).
-
 ## InCommon Research and Scholarship
 
 A specific attribute release policy is available to release 

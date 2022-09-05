@@ -71,6 +71,8 @@ The following operations in the order given should take place, if an attribute d
 - Produce attribute values based on the `canonicalizationMode` setting specified in the attribute definition, if any.
 
 ## Examples
+          
+The following examples demonstrate different forms of attribute definitions. 
 
 ### Basic
 
