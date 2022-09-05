@@ -7,15 +7,12 @@ import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDire
 import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.couchdb.authentication.CouchDbAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.digest.DigestProperties;
-import org.apereo.cas.configuration.model.support.fortress.FortressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.GroovyAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.JsonResourceAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
@@ -193,12 +190,6 @@ public class AuthenticationProperties implements Serializable {
     private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
 
     /**
-     * Digest authentication settings.
-     */
-    @NestedConfigurationProperty
-    private DigestProperties digest = new DigestProperties();
-
-    /**
      * REST-based authentication settings.
      */
     @NestedConfigurationProperty
@@ -263,16 +254,7 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private ShibbolethIdPProperties shibIdp = new ShibbolethIdPProperties();
-
-    /**
-     * Shiro-based authentication.
-     *
-     * @deprecated This component is deprecated as of 6.6.0 and is scheduled to be removed.
-     */
-    @NestedConfigurationProperty
-    @Deprecated(since = "6.6.0")
-    private ShiroAuthenticationProperties shiro = new ShiroAuthenticationProperties();
-
+    
     /**
      * Trusted authentication.
      */
@@ -368,12 +350,6 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
-
-    /**
-     * Apache Fortress authentication settings.
-     */
-    @NestedConfigurationProperty
-    private FortressAuthenticationProperties fortress = new FortressAuthenticationProperties();
 
     /**
      * Authentication attribute release settings.

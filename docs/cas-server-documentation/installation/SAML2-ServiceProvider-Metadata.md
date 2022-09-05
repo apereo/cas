@@ -61,7 +61,7 @@ New metadata will be seen automatically the first time it is requested.
 ```
 
 Metadata files in the specified directory location must be stored as the lower case 
-hex-encoded SHA-1 digest of the service provider entity id suffixed with `.xml`. For example, a servife provider
+hex-encoded SHA-1 digest of the service provider entity id suffixed with `.xml`. For example, a service provider
 with the entity id `sp1:example` should be stored in as `3494744350abe1fd8efa68c5e2696dbbdca4c33a.xml`. 
 
 {% endtab %}

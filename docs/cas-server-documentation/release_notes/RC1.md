@@ -66,9 +66,10 @@ test coverage of the CAS codebase is approximately 94%.
 The following modules that were previously marked as deprecared are now removed from CAS and will no longer
 be supported, maintained or released:
 
-- OpenID
-- Apache Shiro
-- Apache Fortress
+- OpenID Protocol
+- Digest Authentication
+- Apache Shiro Authentication
+- Apache Fortress Authentication
 
 ## Other Stuff
   
