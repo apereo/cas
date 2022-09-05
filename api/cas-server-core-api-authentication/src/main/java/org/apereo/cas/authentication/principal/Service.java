@@ -16,6 +16,9 @@ import java.util.Map;
  * @since 3.0.0
  */
 public interface Service extends Principal {
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(Service.class);
 
     /**

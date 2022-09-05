@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 public interface OidcAttributeToScopeClaimMapper {
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(OidcAttributeToScopeClaimMapper.class);
 
     /**

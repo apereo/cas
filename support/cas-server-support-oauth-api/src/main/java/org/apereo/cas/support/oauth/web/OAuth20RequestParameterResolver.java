@@ -28,7 +28,9 @@ public interface OAuth20RequestParameterResolver {
      * Default bean name.
      */
     String BEAN_NAME = "oauthRequestParameterResolver";
-
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(OAuth20RequestParameterResolver.class);
 
     /**

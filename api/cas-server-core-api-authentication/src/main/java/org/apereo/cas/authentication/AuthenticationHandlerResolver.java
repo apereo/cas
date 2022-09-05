@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public interface AuthenticationHandlerResolver extends Ordered {
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(AuthenticationHandlerResolver.class);
 
     /**
