@@ -48,9 +48,31 @@ cas.version=7.0.0-RC1
 
 ## New & Noteworthy
 
-The following items are new improvements and enhancements presented in this release.
- 
+The following items are new improvements and enhancements presented in this release. 
+   
+## JDK Requirement
+
+The JDK baseline requirement for this CAS release is JDK `17`. All compatible distributions
+such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
+
+## Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases 
+and scenarios. At the moment, total number of jobs stands at approximately 317 distinct scenarios. The overall 
+test coverage of the CAS codebase is approximately 94%.
+
+## Removed Modules
+
+The following modules that were previously marked as deprecared are now removed from CAS and will no longer
+be supported, maintained or released:
+
+- OpenID
+- Apache Shiro
+- Apache Fortress
+
 ## Other Stuff
   
 ## Library Upgrades
 
+- Spring 
+- Spring Boot

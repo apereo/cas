@@ -97,8 +97,6 @@ layout: null
         *   [Remote Address](/cas/{{ version }}/authentication/Remote-Address-Authentication.html)
         *   [Trusted](/cas/{{ version }}/authentication/Trusted-Authentication.html)
         *   [Apache Cassandra](/cas/{{ version }}/authentication/Cassandra-Authentication.html)
-        *   [~~Apache Fortress~~](/cas/{{ version }}/authentication/Configuring-Fortress-Authentication.html)
-        *   [~~Apache Shiro~~](/cas/{{ version }}/authentication/Shiro-Authentication.html)
         *   [Apache Syncope](/cas/{{ version }}/authentication/Syncope-Authentication.html)
         *   [JWT](#jwtauthn)
             *   [Overview](/cas/{{ version }}/authentication/JWT-Authentication.html)
