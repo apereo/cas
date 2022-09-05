@@ -1704,13 +1704,6 @@ ext.libraries = [
                     exclude(group: "org.mongodb", module: "mongodb-driver-core")
                 }
         ],
-        openid4java             : dependencies.create("org.openid4java:openid4java:$openidVersion") {
-            exclude(group: "xerces", module: "xercesImpl")
-            exclude(group: "org.apache.httpcomponents", module: "httpclient")
-            exclude(group: "commons-logging", module: "commons-logging")
-            exclude(group: "org.slf4j", module: "slf4j-api")
-
-        },
         opensaml                : [
                 dependencies.create("xerces:xercesImpl:$xercesVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")

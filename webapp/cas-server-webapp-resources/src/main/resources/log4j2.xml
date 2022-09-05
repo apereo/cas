@@ -156,7 +156,6 @@ or override log42.component.properties to turn off async
 
         <Logger name="net.sf.ehcache" level="warn"/>
         <Logger name="net.jradius" level="warn"/>
-        <Logger name="org.openid4java" level="warn"/>
         <Logger name="org.ldaptive" level="${sys:ldap.log.level}"/>
         <Logger name="com.hazelcast" level="${sys:hazelcast.log.level}" />
         <Logger name="org.jasig.spring" level="warn" />
