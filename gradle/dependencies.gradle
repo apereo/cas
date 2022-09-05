@@ -14,25 +14,19 @@ ext.libraries = [
                 }
         ],
         jaxb                    : [
-                dependencies.create("javax.xml.bind:jaxb-api:$jaxbApiVersion") {
+                dependencies.create("jakarta.xml.bind:jakarta.xml.bind-api:$jaxbApiVersion") {
                     transitive = false
                 },
-                dependencies.create("javax.xml.ws:jaxws-api:$jaxbApiVersion") {
+                dependencies.create("com.sun.xml.bind:jaxb-impl:$jaxbApiVersion") {
                     transitive = false
                 },
-                dependencies.create("org.glassfish.main.javaee-api:javax.jws:$javaxJwsVersion") {
+                dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$jaxbApiVersion") {
                     transitive = false
                 },
-                dependencies.create("org.glassfish.main.javaee-api:javax.jms:$javaxJmsVersion") {
+                dependencies.create("com.sun.xml.ws:jaxws-rt:$jaxbApiVersion") {
                     transitive = false
                 },
-                dependencies.create("javax.xml.soap:javax.xml.soap-api:$javaxSoapApiVersion") {
-                    transitive = false
-                },
-                dependencies.create("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion") {
-                    transitive = false
-                },
-                dependencies.create("com.sun.istack:istack-commons-runtime:$istackVersion") {
+                dependencies.create("jakarta.xml.soap:jakarta.xml.soap-api:$javaxSoapApiVersion") {
                     transitive = false
                 }
         ],
@@ -49,12 +43,7 @@ ext.libraries = [
                 }
         ],
         javaxel : [
-                dependencies.create("javax.el:javax.el-api:$javaxElVersion") {
-                },
-                dependencies.create("org.glassfish.web:el-impl:$glassfishElImplVersion") {
-                    exclude(group: "javax.el", module: "javax.el-api")
-                    exclude(group: "javax.el", module: "el-api")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
+                dependencies.create("jakarta.el:jakarta.el-api:$javaxElVersion") {
                 }
         ],
         aspectj                 : [
@@ -454,8 +443,6 @@ ext.libraries = [
                     exclude(group: "org.ehcache.modules", module: "ehcache-impl")
                     exclude(group: "org.ehcache.modules", module: "ehcache-xml")
                     exclude(group: "org.ehcache.modules", module: "ehcache-api")
-                },
-                dependencies.create("javax.cache:cache-api:$jcacheVersion") {
                 }
         ],
         groovy                  : [
@@ -1030,14 +1017,14 @@ ext.libraries = [
                 }
         ],
         javax                   : [
-                dependencies.create("javax.servlet:javax.servlet-api:$javaxServletVersion") {
+                dependencies.create("jakarta.servlet:jakarta.servlet-api:$javaxServletVersion") {
                 },
-                dependencies.create("javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion") {
+                dependencies.create("jakarta.annotation:jakarta.annotation-api:$javaxAnnotationApiVersion") {
                 }
         ],
         javaximpl               : [
-                dependencies.create("javax.servlet:jstl:$javaxJstlVersion"),
-                dependencies.create("javax.transaction:jta:$jtaVersion")
+                dependencies.create("jakarta.servlet.jsp:jstl-api:$javaxJstlVersion"),
+                dependencies.create("jakarta.transaction:jakarta.transaction-api:$jtaVersion")
         ],
         activemq                : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion") {
@@ -1058,7 +1045,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
 
                 },
-                dependencies.create("org.messaginghub:pooled-jms:2.0.5") {
+                dependencies.create("org.messaginghub:pooled-jms:3.0.0") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.apache.commons", module: "commons-pool2")
@@ -2015,7 +2002,7 @@ ext.libraries = [
                     exclude(group: "org.cryptacular", module: "cryptacular")
 
                 },
-                dependencies.create("org.pac4j:pac4j-javaee:$pac4jVersion") {
+                dependencies.create("org.pac4j:pac4j-jakartaee:$pac4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "commons-codec", module: "commons-codec")
@@ -2615,11 +2602,11 @@ ext.libraries = [
                     exclude(group: "org.ow2.asm", module: "asm")
 
                 },
-                dependencies.create("javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion")
+                dependencies.create("jakarta.annotation:jakarta.annotation-api:$javaxAnnotationApiVersion")
         ],
         springbootundertow      : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-undertow:$springBootVersion"),
-                dependencies.create("javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion")
+                dependencies.create("jakarta.annotation:jakarta.annotation-api:$javaxAnnotationApiVersion")
         ],
         redis         : [
                 dependencies.create("org.springframework.data:spring-data-redis:$springDataRedisVersion") {
@@ -3423,7 +3410,7 @@ ext.libraries = [
                 }
         ],
         springwebflow : [
-                dependencies.create("org.springframework.webflow:spring-webflow:$springWebflowVersion") {
+                dependencies.create("org.apereo.springwebflow:spring-webflow:$springWebflowVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-web")
@@ -3432,7 +3419,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                 },
-                dependencies.create("org.springframework.webflow:spring-binding:$springWebflowVersion") {
+                dependencies.create("org.apereo.springwebflow:spring-binding:$springWebflowVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-web")
@@ -3681,7 +3668,7 @@ ext.libraries = [
                     exclude(group: "jakarta.xml.bind", module: "jakarta.xml.bind-api")
                 }
         ],
-        validationapi           : dependencies.create("javax.validation:validation-api:$javaxValidationVersion"),
+        validationapi           : dependencies.create("jakarta.validation:jakarta.validation-api:$javaxValidationVersion"),
         yubicoapi               :
                 dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
