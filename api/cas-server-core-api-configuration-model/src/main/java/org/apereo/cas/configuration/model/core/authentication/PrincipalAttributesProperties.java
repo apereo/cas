@@ -93,14 +93,7 @@ public class PrincipalAttributesProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CouchbasePrincipalAttributesProperties couchbase = new CouchbasePrincipalAttributesProperties();
-
-    /**
-     * Retrieve attributes from multiple scripted repositories.
-     * @deprecated Since 6.2
-     */
-    @Deprecated(since = "6.2")
-    private List<ScriptedPrincipalAttributesProperties> script = new ArrayList<>(0);
-
+    
     /**
      * Use stubbed attribute definitions as the underlying attribute repository source.
      * Static attributes that need to be mapped to a hardcoded value belong here.
