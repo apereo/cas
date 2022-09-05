@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.replication;
 
-import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-pac4j-api")
 @JsonFilter("CookieSessionReplicationProperties")
-public class CookieSessionReplicationProperties extends PinnableCookieProperties {
+public class CookieSessionReplicationProperties extends CookieProperties {
     private static final long serialVersionUID = 6165162204295764362L;
 
     /**
