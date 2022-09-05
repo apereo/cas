@@ -22,7 +22,6 @@ import java.util.Map;
  * Authentication attribute it will look at is the authMethod (if supplied).
  * <p>
  * Note that this class will currently not handle proxy authentication.
- * <p>
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
