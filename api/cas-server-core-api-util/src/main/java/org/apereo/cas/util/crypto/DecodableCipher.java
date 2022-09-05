@@ -16,6 +16,9 @@ import java.util.Map;
  */
 @FunctionalInterface
 public interface DecodableCipher<I, O> {
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(DecodableCipher.class);
 
     /**

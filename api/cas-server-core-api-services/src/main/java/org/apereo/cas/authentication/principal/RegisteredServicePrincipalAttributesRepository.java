@@ -25,6 +25,9 @@ import java.util.Set;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServicePrincipalAttributesRepository extends Serializable {
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePrincipalAttributesRepository.class);
 
     /**

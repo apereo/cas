@@ -25,6 +25,9 @@ import java.util.Map;
  * @since 4.1
  */
 public interface ProtocolAttributeEncoder {
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(ProtocolAttributeEncoder.class);
 
     /**

@@ -27,7 +27,9 @@ public interface MultifactorAuthenticationProviderResolver {
      * Default bean name.
      */
     String BEAN_NAME = "multifactorAuthenticationProviderResolver";
-
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationProviderResolver.class);
 
     /**

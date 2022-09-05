@@ -31,7 +31,7 @@ public interface AttributeDefinitionStore {
     String BEAN_NAME = "attributeDefinitionStore";
 
     /**
-     * The constant LOGGER.
+     * Logger instance.
      */
     Logger LOGGER = LoggerFactory.getLogger(AttributeDefinitionStore.class);
 
