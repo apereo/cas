@@ -35,4 +35,3 @@ The following providers are available to produce usernames.
 | Groovy         | [See this guide](Attribute-Release-PrincipalId-Groovy.html).        |
 | Anonymous      | [See this guide](Attribute-Release-PrincipalId-Anonymous.html).     |
 | Encrypted      | [See this guide](Attribute-Release-PrincipalId-Encrypted.html).     |
-| Script Engines | [See this guide](Attribute-Release-PrincipalId-ScriptEngines.html). |

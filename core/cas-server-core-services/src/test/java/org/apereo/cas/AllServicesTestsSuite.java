@@ -45,7 +45,6 @@ import org.apereo.cas.services.RegisteredServicesEventListenerTests;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategyTests;
 import org.apereo.cas.services.RestfulRegisteredServiceProxyPolicyTests;
 import org.apereo.cas.services.ReturnEncryptedAttributeReleasePolicyTests;
-import org.apereo.cas.services.ScriptedRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.SimpleServiceTests;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.UnauthorizedProxyingExceptionTests;
@@ -102,7 +101,6 @@ import org.junit.platform.suite.api.Suite;
     DefaultRegisteredServiceProxyTicketExpirationPolicyTests.class,
     DefaultRegisteredServiceServiceTicketExpirationPolicyTests.class,
     DefaultServicesManagerByEnvironmentTests.class,
-    ScriptedRegisteredServiceUsernameProviderTests.class,
     RemoteEndpointServiceAccessStrategyTests.class,
     ShibbolethCompatiblePersistentIdGeneratorTests.class,
     SimpleWebApplicationServiceImplTests.class,

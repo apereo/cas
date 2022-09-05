@@ -51,8 +51,6 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnStaticAttributeReleasePolicy;
-import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.services.ScriptedRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceChainingAttributeFilter;
@@ -118,7 +116,6 @@ public class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(GroovyRegisteredServiceUsernameProvider.class);
             plan.registerSerializableClass(DefaultRegisteredServiceUsernameProvider.class);
             plan.registerSerializableClass(DefaultRegisteredServiceWebflowInterruptPolicy.class);
-            plan.registerSerializableClass(ScriptedRegisteredServiceUsernameProvider.class);
             plan.registerSerializableClass(RegisteredServiceRegexAttributeFilter.class);
             plan.registerSerializableClass(RegisteredServiceChainingAttributeFilter.class);
             plan.registerSerializableClass(RegisteredServiceMappedRegexAttributeFilter.class);
@@ -131,7 +128,6 @@ public class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(ReturnStaticAttributeReleasePolicy.class);
             plan.registerSerializableClass(ReturnMappedAttributeReleasePolicy.class);
             plan.registerSerializableClass(GroovyScriptAttributeReleasePolicy.class);
-            plan.registerSerializableClass(ScriptedRegisteredServiceAttributeReleasePolicy.class);
             plan.registerSerializableClass(ReturnRestfulAttributeReleasePolicy.class);
             plan.registerSerializableClass(PatternMatchingAttributeReleasePolicy.class);
             plan.registerSerializableClass(PatternMatchingAttributeReleasePolicy.Rule.class);

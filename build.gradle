@@ -229,6 +229,7 @@ allprojects {
 
     tasks.named('javadoc') {
         options.addBooleanOption('html5', true)
+        options.addStringOption('Xdoclint:html,reference,syntax', '-quiet')
         failOnError = providers.systemProperty("ignoreJavadocFailures").present
         excludes = ['**/generated/**', '**/com/duosecurity/**']
     }

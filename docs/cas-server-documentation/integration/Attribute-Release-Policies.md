@@ -75,7 +75,6 @@ authentication protocol at hand. Remember to verify attribute release capabiliti
 | Pattern Matching     | [See this page](Attribute-Release-Policy-PatternMatching.html).   |
 | Groovy Script        | [See this page](Attribute-Release-Policy-GroovyScript.html).      |
 | REST                 | [See this page](Attribute-Release-Policy-REST.html).              |
-| Script Engines       | [See this page](Attribute-Release-Policy-ScriptEngines.html).     |
 
 ## Attribute Repository Filtering
 
