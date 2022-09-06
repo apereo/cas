@@ -53,14 +53,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
         buildGroovyAccessStrategyInstanceIfNeeded();
         return this.groovyStrategyInstance.isServiceAccessAllowed();
     }
-
-    @Override
-    @JsonIgnore
-    public void setServiceAccessAllowed(final boolean enabled) {
-        buildGroovyAccessStrategyInstanceIfNeeded();
-        this.groovyStrategyInstance.setServiceAccessAllowed(enabled);
-    }
-
+    
     @Override
     @JsonIgnore
     public boolean isServiceAccessAllowedForSso() {

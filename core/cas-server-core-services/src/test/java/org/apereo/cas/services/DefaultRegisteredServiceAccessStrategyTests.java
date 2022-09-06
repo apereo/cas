@@ -51,7 +51,6 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkDefaultImpls() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.postLoad();
-        authz.setServiceAccessAllowed(true);
         assertEquals(0, authz.getOrder());
     }
 

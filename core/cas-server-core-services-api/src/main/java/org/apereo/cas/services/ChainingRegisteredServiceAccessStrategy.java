@@ -76,12 +76,6 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
 
     @Override
     @JsonIgnore
-    public void setServiceAccessAllowed(final boolean enabled) {
-        strategies.forEach(strategy -> strategy.setServiceAccessAllowed(enabled));
-    }
-
-    @Override
-    @JsonIgnore
     public boolean isServiceAccessAllowedForSso() {
         if (operator == RegisteredServiceChainOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);

@@ -60,18 +60,11 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 {% include_cached casproperties.html thirdPartyStartsWith="server.tomcat." %}
 
-#### HTTP Proxying
+#### HTTP && HTTP Proxying
 
-{% include_cached casproperties.html properties="cas.server.tomcat.http-proxy." %}
-                       
-
-#### HTTP
-
-{% include_cached casproperties.html properties="cas.server.tomcat.http." %}
-                
-
+{% include_cached casproperties.html properties="cas.server.tomcat.http" %}
+             
 #### AJP
-
 
 {% include_cached casproperties.html properties="cas.server.tomcat.ajp." %}
 
