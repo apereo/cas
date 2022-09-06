@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
-    private static final List<String> EXTENSIONS = Arrays.asList("properties", "yml", "yaml");
+    private static final List<String> EXTENSIONS = Arrays.asList("yml", "yaml", "properties");
 
     private static final List<String> PROFILE_PATTERNS = Arrays.asList("application-%s.%s", "%s.%s");
 
@@ -199,13 +199,11 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 .map(ext -> String.format("classpath:/application-%s.%s", profile, ext))
                 .collect(Collectors.toList()))
             .flatMap(List::stream)
-            .sorted()
             .map(resourceLoader::getResource)
             .collect(Collectors.toList());
 
         configFiles.addAll(EXTENSIONS.stream()
             .map(ext -> String.format("classpath:/application.%s", ext))
-            .sorted()
             .map(resourceLoader::getResource)
             .collect(Collectors.toList()));
 
