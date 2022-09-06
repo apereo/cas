@@ -55,6 +55,7 @@ async function cleanUp(spDir) {
 
         await browser.close();
         await cleanUp(spDir);
+        await process.exit(0);
     }, async error => {
         await cleanUp(spDir);
         await cas.logg(error);
