@@ -113,9 +113,9 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         if (encryptionKeySize > MINIMUM_ENCRYPTION_KEY_LENGTH) {
             System.arraycopy(this.encryptionSecretKey, 0, iv, 0, encryptionSecretKey.length);
         }
-        return encryptionKeySize <= MINIMUM_ENCRYPTION_KEY_LENGTH
-            ? new IvParameterSpec(iv)
-            : new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+        // FIX: <Unsupported parameter: javax.crypto.spec.IvParameterSpec@36f8204d>
+        return GCMParameterSpec(GCM_TAG_LENGTH, iv);
+    
     }
 
     private void ensureEncryptionKeyExists(final String encryptionSecretKey, final int encryptionKeySize) {
