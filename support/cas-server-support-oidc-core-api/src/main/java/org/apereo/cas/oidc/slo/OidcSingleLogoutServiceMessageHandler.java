@@ -102,7 +102,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(msg.getUrl().toExternalForm())
-                .parameters(CollectionUtils.wrap("logout_token", payload))
+                .entity("logout_token=" + payload)
                 .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
                 .build();
             response = HttpUtils.execute(exec);
