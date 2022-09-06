@@ -4,18 +4,18 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapTestUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.ehcache.UserManagedCache;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.config.builders.UserManagedCacheBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -138,7 +138,7 @@ public class LdaptiveResourceCRLFetcherTests {
 
         @Test
         public void getCrlFromLdap() throws Exception {
-            val cache = getCache(100);
+            val cache = getCache();
             for (var i = 0; i < 10; i++) {
                 val checker =
                     new CRLDistributionPointRevocationChecker(false, new AllowRevocationPolicy(), null,
@@ -151,7 +151,7 @@ public class LdaptiveResourceCRLFetcherTests {
         @Test
         public void getCrlFromLdapWithNoCaching() throws Exception {
             for (var i = 0; i < 10; i++) {
-                val cache = getCache(100);
+                val cache = getCache();
                 val checker = new CRLDistributionPointRevocationChecker(
                     false, new AllowRevocationPolicy(), null,
                     cache, fetcher, true);
@@ -160,9 +160,11 @@ public class LdaptiveResourceCRLFetcherTests {
             }
         }
 
-        private UserManagedCache<URI, byte[]> getCache(final int entries) {
-            return UserManagedCacheBuilder.newUserManagedCacheBuilder(URI.class, byte[].class)
-                .withResourcePools(ResourcePoolsBuilder.heap(entries)).build();
+        private static Cache<URI, byte[]> getCache() {
+            return Caffeine.newBuilder()
+                .maximumSize(1000)
+                .expireAfterWrite(Beans.newDuration("PT1H"))
+                .build();
         }
     }
 }

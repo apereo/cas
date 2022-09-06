@@ -154,7 +154,6 @@ or override log42.component.properties to turn off async
         <Logger name="org.opensaml" level="${sys:opensaml.log.level}"/>
         <Logger name="PROTOCOL_MESSAGE" level="${sys:opensaml.log.level}" />
 
-        <Logger name="net.sf.ehcache" level="warn"/>
         <Logger name="net.jradius" level="warn"/>
         <Logger name="org.ldaptive" level="${sys:ldap.log.level}"/>
         <Logger name="com.hazelcast" level="${sys:hazelcast.log.level}" />

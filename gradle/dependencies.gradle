@@ -259,7 +259,6 @@ ext.libraries = [
         apachefediz             : [
                 dependencies.create("org.apache.cxf.fediz:fediz-core:$apacheFedizVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.apache.santuario", module: "xmlsec")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
@@ -294,7 +293,6 @@ ext.libraries = [
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.ow2.asm", module: "asm")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-stax")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-policy-stax")
@@ -310,7 +308,6 @@ ext.libraries = [
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
@@ -322,7 +319,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.ow2.asm", module: "asm")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-stax")
@@ -364,7 +360,6 @@ ext.libraries = [
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.ow2.asm", module: "asm")
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -424,38 +419,6 @@ ext.libraries = [
                 dependencies.create("commons-collections:commons-collections:$commonsCollections3Version") {
                 },
                 dependencies.create("org.apache.commons:commons-collections4:$commonsCollectionsVersion") {
-                }
-        ],
-        ehcache                 : [
-                dependencies.create("net.sf.ehcache:ehcache:$ehcacheVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("org.ehcache:jcache:$ehcacheJcacheVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
-                }
-        ],
-        ehcache3                : [
-                dependencies.create("org.ehcache:ehcache:$ehcache3Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.glassfish.jaxb", module: "jaxb-runtime")
-                },
-                dependencies.create("org.ehcache:ehcache-clustered:$ehcache3Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("org.ehcache.modules:ehcache-client:$ehcache3Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("org.ehcache.modules:ehcache-common:$ehcache3Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("org.ehcache.modules:ehcache-107:$ehcache3Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.ehcache.modules", module: "ehcache-impl")
-                    exclude(group: "org.ehcache.modules", module: "ehcache-xml")
-                    exclude(group: "org.ehcache.modules", module: "ehcache-api")
-                },
-                dependencies.create("javax.cache:cache-api:$jcacheVersion") {
                 }
         ],
         groovy                  : [
@@ -598,7 +561,6 @@ ext.libraries = [
                     exclude(group: "jini", module: "reggie")
                     exclude(group: "jini", module: "start")
                     exclude(group: "jini", module: "webster")
-                    exclude(group: "ehcache", module: "ehcache")
                     exclude(group: "gigaspaces", module: "gigaspaces-ce")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "org.springframework", module: "spring")
@@ -1290,7 +1252,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "net.sf.ehcache", module: "ehcache-core")
                 },
                 dependencies.create("net.jradius:jradius-apps:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1306,7 +1267,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "net.sf.ehcache", module: "ehcache-core")
                 },
                 dependencies.create("net.jradius:jradius-dictionary:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1322,7 +1282,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "net.sf.ehcache", module: "ehcache-core")
                 },
                 dependencies.create("net.jradius:jradius-client:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1338,7 +1297,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "net.sf.ehcache", module: "ehcache-core")
                 },
                 dependencies.create("net.jradius:jradius-extended:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1358,7 +1316,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "net.sf.ehcache", module: "ehcache-core")
                 },
                 dependencies.create("net.jradius:jradius-core:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1374,7 +1331,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "net.sf.ehcache", module: "ehcache-core")
                 },
                 dependencies.create("net.jradius:jradius-server:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1390,7 +1346,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "net.sf.ehcache", module: "ehcache-core")
                 }
         ],
         tests                   : [
@@ -3411,7 +3366,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "javax.annotation", module: "jsr250-api")
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.aspectj", module: "aspectjrt")
                     exclude(group: "org.slf4j", module: "slf4j-api")
 
@@ -3430,7 +3384,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "javax.annotation", module: "jsr250-api")
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.aspectj", module: "aspectjrt")
                     exclude(group: "org.slf4j", module: "slf4j-api")
 
@@ -3448,7 +3401,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "javax.annotation", module: "jsr250-api")
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.aspectj", module: "aspectjrt")
                     exclude(group: "org.slf4j", module: "slf4j-api")
 
@@ -3477,7 +3429,6 @@ ext.libraries = [
 
                 },
                 dependencies.create("org.springframework.security:spring-security-cas:$springSecurityVersion") {
-                    exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.jasig.cas.client", module: "cas-client-core")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework", module: "spring-beans")
