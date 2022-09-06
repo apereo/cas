@@ -383,7 +383,6 @@ layout: null
         *   [Ignite](/cas/{{ version }}/ticketing/Ignite-Ticket-Registry.html)
         *   [~~Couchbase~~](/cas/{{ version }}/ticketing/Couchbase-Ticket-Registry.html)
         *   [CouchDb](/cas/{{ version }}/ticketing/CouchDb-Ticket-Registry.html)
-        *   [~~Infinispan~~](/cas/{{ version }}/ticketing/Infinispan-Ticket-Registry.html)
         *   [Redis](/cas/{{ version }}/ticketing/Redis-Ticket-Registry.html)
         *   [Cassandra](/cas/{{ version }}/ticketing/Cassandra-Ticket-Registry.html)
         *   [MongoDb](/cas/{{ version }}/ticketing/MongoDb-Ticket-Registry.html)

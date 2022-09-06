@@ -70,6 +70,10 @@ be supported, maintained or released:
 - Digest Authentication
 - Apache Shiro Authentication
 - Apache Fortress Authentication
+- Infinispan Ticket Registry
+- Scripted Attribute Repository
+- Scripted Registered Service Attribute Release Policy
+- Scripted Username Attribute Provider
 
 ## Other Stuff
   

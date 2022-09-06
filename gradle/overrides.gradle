@@ -31,9 +31,6 @@ configurations.all {
                 if (requested.group == "com.hazelcast" && requested.name == "hazelcast")  {
                     details.useVersion("${hazelcastVersion}")
                 }
-                if (requested.group == "org.infinispan")  {
-                    details.useVersion("${infinispanVersion}")
-                }
                 if (requested.group == "org.springframework")  {
                     details.useVersion("${springVersion}")
                 }
@@ -146,7 +143,6 @@ ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
 ext["hazelcast.version"] = ext["hazelcastVersion"]
 ext["hibernate.version"] = ext["hibernateVersion"]
 ext["tomcat.version"] = ext["tomcatVersion"]
-ext["infinispan.version"] = ext["infinispanVersion"]
 ext["h2.version"] = ext["h2Version"]
 ext["spring.version"] = ext["springVersion"]
 ext["jackson.version"] = ext["jacksonVersion"]

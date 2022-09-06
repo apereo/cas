@@ -324,9 +324,6 @@ while (( "$#" )); do
             ignite)
                 task+="testIgnite "
                 ;;
-            infinispan)
-                task+="testInfinispan "
-                ;;
             spnego)
                 task+="testSpnego "
                 ;;
