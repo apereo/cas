@@ -33,7 +33,6 @@ enum TestCategories {
     Hazelcast,
     Ignite,
     Impersonation,
-    Infinispan,
     InfluxDb,
     JDBC,
     JDBCAuthentication,
@@ -194,6 +193,8 @@ tasks.withType(Test).configureEach {
     list.add("java.base/java.util=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.time=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.net=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.nio=ALL-UNNAMED")
     list.add("--add-opens")

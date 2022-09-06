@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.support.ehcache.Ehcache3Properties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
-import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jms.JmsTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
@@ -49,12 +48,6 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private DynamoDbTicketRegistryProperties dynamoDb = new DynamoDbTicketRegistryProperties();
-
-    /**
-     * Infinispan registry settings.
-     */
-    @NestedConfigurationProperty
-    private InfinispanProperties infinispan = new InfinispanProperties();
 
     /**
      * Couchbase registry settings.

@@ -17,13 +17,16 @@ async function cleanUp(spDir) {
         console.log("Trying without an exising SSO session...");
         await cas.goto(page, "https://localhost:9876/fediz");
         await page.waitForTimeout(2000);
+        await cas.screenshot(page);
         await page.waitForSelector('#logincas', {visible: true});
         await cas.click(page, "#logincas");
         await page.waitForTimeout(2000);
+        await cas.screenshot(page);
         await page.waitForSelector('#username', {visible: true});
         await cas.loginWith(page, "casuser", "Mellon");
         await page.waitForResponse(response => response.status() === 200);
         await page.waitForTimeout(2000);
+        await cas.screenshot(page);
         console.log(`Page URL: ${page.url()}`);
         await cas.assertInnerText(page, "#principalId", "casuser");
         await cas.assertVisibility(page, "#assertion");
