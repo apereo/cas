@@ -68,9 +68,6 @@ As stated previously, connections to other systems must be secured. But if the C
 the same applies to the CAS server itself. If a cache-based ticket registry runs without any security issue on a single
 CAS server, synchronization can become a security problem when using multiple nodes if the network is not protected.
 
-Any disk storage is also vulnerable if not properly secured. EhCache overflow to disk may be turned off to increase
-protection whereas advanced encryption data mechanism should be used for the database disk storage.
-
 ## Deployment-Driven Security Features
 
 CAS supports a number of features that can be leveraged to implement various security policies.

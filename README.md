@@ -67,7 +67,7 @@ The following features are supported by the CAS project:
 * Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
 * Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID Connect, CAS and more.
 * Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
-* HA clustered deployments via Hazelcast, Ehcache, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDb, Redis, DynamoDb, Couchbase and more.
+* HA clustered deployments via Hazelcast, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDb, Redis, DynamoDb, and more.
 * Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, Couchbase, MongoDb, DynamoDb, Redis and more.
 * Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator, U2F, WebAuthn and more.
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.

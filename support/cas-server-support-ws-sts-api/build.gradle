@@ -4,7 +4,6 @@ dependencies {
     implementation libraries.dropwizard
     implementation libraries.bouncycastle
     implementation libraries.apachecxf
-    implementation libraries.ehcache
     implementation libraries.wss4j
     
     implementation project(":core:cas-server-core-web-api")

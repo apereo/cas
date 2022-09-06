@@ -206,7 +206,7 @@ and availability considerations. It's hardly valuable to have a high-performance
 expertise to troubleshoot when problems invariably arise.
 
 The technology considerations of the various storage components merit some discussion since there are notable
-differences that impact availability and performance characteristics. Cache systems like Ehcache and Hazelcast
+differences that impact availability and performance characteristics. Cache systems like Hazelcast
 offer a distributed cache that presents a single, consistent view of entries regardless
 of the node contacted. Distributed caches rely on replication to provide for consistency. Cache systems like memcached
 store the ticket on exactly 1 node and use a deterministic algorithm to locate the node containing the ticket:

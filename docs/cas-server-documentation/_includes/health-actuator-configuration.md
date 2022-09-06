@@ -24,7 +24,6 @@ The following health indicator names are available, given the presence of the ap
 | `systemHealthIndicator`                        | Reports back on the health of the system of the CAS server.(Load, Uptime, Heap, CPU etc.) |
 | `sessionHealthIndicator`                       | Reports back on the health status of CAS tickets and SSO session usage.                   |
 | `duoSecurityHealthIndicator`                   | Reports back on the health status of Duo Security APIs.                                   |
-| `ehcacheHealthIndicator`                       | Reports back on the health status of Ehcache caches.                                      |
 | `hazelcastHealthIndicator`                     | Reports back on the health status of Hazelcast caches.                                    |
 | `dataSourceHealthIndicator`                    | Reports back on the health status of JDBC connections.                                    |
 | `pooledLdapConnectionFactoryHealthIndicator`   | Reports back on the health status of LDAP connection pools.                               |

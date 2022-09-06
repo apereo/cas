@@ -70,6 +70,7 @@ be supported, maintained or released:
 - Digest Authentication
 - Apache Shiro Authentication
 - Apache Fortress Authentication
+- Ehcache Ticket Registry
 - Infinispan Ticket Registry
 - Couchbase Ticket Registry
 - Scripted Attribute Repository

@@ -346,10 +346,6 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/memcached/run-memcached-server.sh
                 task+="testMemcached "
                 ;;
-            ehcache)
-                isDockerOnLinux && ./ci/tests/ehcache/run-terracotta-server.sh
-                task+="testEhcache "
-                ;;
             ldap|ad|activedirectory)
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
                 isDockerOnLinux && ./ci/tests/ldap/run-ad-server.sh true

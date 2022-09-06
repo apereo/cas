@@ -22,7 +22,6 @@ enum TestCategories {
     Delegation,
     DuoSecurity,
     DynamoDb,
-    Ehcache,
     ExpirationPolicy,
     Events,
     FileSystem,
