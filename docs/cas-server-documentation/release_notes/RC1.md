@@ -71,6 +71,7 @@ be supported, maintained or released:
 - Apache Shiro Authentication
 - Apache Fortress Authentication
 - Infinispan Ticket Registry
+- Couchbase Ticket Registry
 - Scripted Attribute Repository
 - Scripted Registered Service Attribute Release Policy
 - Scripted Username Attribute Provider

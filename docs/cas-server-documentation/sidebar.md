@@ -381,7 +381,6 @@ layout: null
         *   [Memcached](/cas/{{ version }}/ticketing/Memcached-Ticket-Registry.html)
         *   [JPA](/cas/{{ version }}/ticketing/JPA-Ticket-Registry.html)
         *   [Ignite](/cas/{{ version }}/ticketing/Ignite-Ticket-Registry.html)
-        *   [~~Couchbase~~](/cas/{{ version }}/ticketing/Couchbase-Ticket-Registry.html)
         *   [CouchDb](/cas/{{ version }}/ticketing/CouchDb-Ticket-Registry.html)
         *   [Redis](/cas/{{ version }}/ticketing/Redis-Ticket-Registry.html)
         *   [Cassandra](/cas/{{ version }}/ticketing/Cassandra-Ticket-Registry.html)
