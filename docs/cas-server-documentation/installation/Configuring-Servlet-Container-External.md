@@ -8,18 +8,18 @@ category: Installation
 # External Servlet Container Configuration
 
 A CAS deployment may be deployed to any number of external servlet containers. The container **MUST** support
-the servlet specification `v4.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
+the servlet specification `5.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
 may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}
 
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
-* [Apache Tomcat](http://tomcat.apache.org/) (At a minimum, Apache Tomcat 9 is required)
+* [Apache Tomcat](http://tomcat.apache.org/) (At a minimum, Apache Tomcat 10 is required)
 * [JBoss](http://www.jboss.org/)
 * [Wildfly](http://wildfly.org/)
 * [Undertow](http://undertow.io/)
-* [Jetty](http://www.eclipse.org/jetty/) (At a minimum, Jetty 9.4 is required)
+* [Jetty](http://www.eclipse.org/jetty/) (At a minimum, Jetty 11 is required)
 * [GlassFish](http://glassfish.java.net/)
 * [WebSphere](http://www.ibm.com/software/websphere/)
 

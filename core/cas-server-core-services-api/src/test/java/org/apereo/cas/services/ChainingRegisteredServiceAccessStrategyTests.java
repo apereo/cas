@@ -127,17 +127,6 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySetAccess() {
-        val chain = new ChainingRegisteredServiceAccessStrategy();
-        chain.setOperator(RegisteredServiceChainOperatorTypes.AND);
-        chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
-        chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
-        chain.setServiceAccessAllowed(true);
-        assertTrue(chain.getStrategies().get(0).isServiceAccessAllowed());
-        assertTrue(chain.getStrategies().get(1).isServiceAccessAllowed());
-    }
-
-    @Test
     public void verifyOrOperation() throws Exception {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setUnauthorizedRedirectUrl(new URI("https://google.com"));

@@ -30,16 +30,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     default boolean isServiceAccessAllowed() {
         return true;
     }
-
-    /**
-     * Sets service access allowed.
-     *
-     * @param enabled the value
-     */
-    @JsonIgnore
-    default void setServiceAccessAllowed(final boolean enabled) {
-    }
-
+    
     /**
      * Assert that the service can participate in sso.
      *

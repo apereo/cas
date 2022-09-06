@@ -157,12 +157,6 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
         return true;
     }
 
-    @JsonIgnore
-    @Override
-    public void setServiceAccessAllowed(final boolean value) {
-        this.enabled = value;
-    }
-
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         return RegisteredServiceAccessStrategyEvaluator.builder()

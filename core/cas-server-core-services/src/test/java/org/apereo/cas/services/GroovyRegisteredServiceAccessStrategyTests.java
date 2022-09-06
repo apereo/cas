@@ -32,8 +32,6 @@ public class GroovyRegisteredServiceAccessStrategyTests {
     public void checkDefaultAuthzStrategyConfig() {
         val authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
-
-        authz.setServiceAccessAllowed(true);
         assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<>()));
