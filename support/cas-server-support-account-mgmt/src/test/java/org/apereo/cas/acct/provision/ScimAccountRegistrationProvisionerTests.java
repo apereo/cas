@@ -45,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.scim.target=http://localhost:9666/scim/v2",
         "cas.scim.enabled=false",
-        "cas.scim.version=2",
         "cas.scim.username=scim-user",
         "cas.scim.password=changeit",
         "cas.account-registration.provisioning.scim.enabled=true"

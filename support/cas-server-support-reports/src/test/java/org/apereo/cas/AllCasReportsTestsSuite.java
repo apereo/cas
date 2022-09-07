@@ -14,8 +14,6 @@ import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpointTests;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpointTests;
 import org.apereo.cas.web.report.SpringWebflowEndpointTests;
 import org.apereo.cas.web.report.StatisticsEndpointTests;
-import org.apereo.cas.web.report.StatusEndpointTests;
-import org.apereo.cas.web.report.StatusEndpointWithHealthTests;
 import org.apereo.cas.web.report.TicketExpirationPoliciesEndpointTests;
 
 import org.junit.platform.suite.api.SelectClasses;
@@ -33,8 +31,6 @@ import org.junit.platform.suite.api.Suite;
     RegisteredServicesEndpointTests.class,
     CasFeaturesEndpointTests.class,
     RegisteredAuthenticationHandlersEndpointTests.class,
-    StatusEndpointTests.class,
-    StatusEndpointWithHealthTests.class,
     CasRuntimeModulesEndpointTests.class,
     TicketExpirationPoliciesEndpointTests.class,
     StatisticsEndpointTests.class,

@@ -71,11 +71,14 @@ be supported, maintained or released:
 - Apache Shiro Authentication
 - Apache Fortress Authentication
 - Ehcache Ticket Registry
+- SwivelSecure Multifactor Authentication
 - Infinispan Ticket Registry
 - Couchbase Ticket Registry
 - Scripted Attribute Repository
 - Scripted Registered Service Attribute Release Policy
 - Scripted Username Attribute Provider
+- NTLM Authentication
+- SCIM v1 Provisioning 
 
 ## Other Stuff
   

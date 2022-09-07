@@ -104,11 +104,6 @@ public class SpnegoProperties implements Serializable {
     private String spnegoAttributeName = "distinguishedName";
 
     /**
-     * Determines the header to set and the message prefix when negotiating spnego.
-     */
-    private boolean ntlm;
-
-    /**
      * If true, does not terminate authentication and allows CAS to resume
      * and fallback to normal authentication means such as uid/psw via the login page.
      * If disallowed, considers spnego authentication to be final in the event of failures.

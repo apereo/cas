@@ -59,7 +59,7 @@ public class SpnegoWebflowActionsConfiguration {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
-            spnegoProperties.isNtlm(), spnegoProperties.isSend401OnAuthenticationFailure());
+            spnegoProperties.isSend401OnAuthenticationFailure());
     }
 
     @Bean
@@ -69,7 +69,7 @@ public class SpnegoWebflowActionsConfiguration {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
         return new SpnegoNegotiateCredentialsAction(supportedBrowsers,
-            spnegoProperties.isNtlm(), spnegoProperties.isMixedModeAuthentication());
+            spnegoProperties.isMixedModeAuthentication());
     }
 
     @Bean
