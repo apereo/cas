@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import java.util.Map;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class SurrogatePrincipal implements Principal {
+    @Serial
     private static final long serialVersionUID = 5672386093026290631L;
 
     private final Principal primary;

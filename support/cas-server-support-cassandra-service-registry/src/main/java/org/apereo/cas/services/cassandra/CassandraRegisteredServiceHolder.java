@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -30,6 +31,7 @@ public class CassandraRegisteredServiceHolder implements Serializable {
      */
     public static final String TABLE_NAME = "casservices";
 
+    @Serial
     private static final long serialVersionUID = -8911404192063509340L;
 
     @PrimaryKey

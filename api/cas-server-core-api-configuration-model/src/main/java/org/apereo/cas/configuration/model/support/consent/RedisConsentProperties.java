@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RedisConsentProperties}.
  *
@@ -18,5 +20,6 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class RedisConsentProperties extends BaseRedisProperties {
+    @Serial
     private static final long serialVersionUID = -1347683393318585262L;
 }

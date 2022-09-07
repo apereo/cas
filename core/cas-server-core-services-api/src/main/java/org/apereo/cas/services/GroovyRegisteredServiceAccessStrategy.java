@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 import lombok.val;
 
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,7 @@ import java.util.Set;
 @EqualsAndHashCode(of = {"order", "groovyScript"}, callSuper = true)
 public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = -2407494148882123062L;
 
     /**

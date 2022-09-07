@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link QueryEncodeJdbcAuthenticationProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("QueryEncodeJdbcAuthenticationProperties")
 public class QueryEncodeJdbcAuthenticationProperties extends BaseJdbcAuthenticationProperties {
 
+    @Serial
     private static final long serialVersionUID = -6647373426301411768L;
 
     /**

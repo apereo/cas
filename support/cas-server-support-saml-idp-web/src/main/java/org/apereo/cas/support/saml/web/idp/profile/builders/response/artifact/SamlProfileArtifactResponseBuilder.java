@@ -15,6 +15,7 @@ import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -25,6 +26,7 @@ import java.time.ZonedDateTime;
  * @since 5.2.0
  */
 public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
+    @Serial
     private static final long serialVersionUID = -5582616946993706815L;
 
     public SamlProfileArtifactResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext ctx) {

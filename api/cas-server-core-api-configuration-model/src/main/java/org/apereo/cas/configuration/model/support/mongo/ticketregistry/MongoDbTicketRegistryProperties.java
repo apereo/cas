@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link MongoDbTicketRegistryProperties}.
  *
@@ -21,6 +23,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class MongoDbTicketRegistryProperties extends BaseMongoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 8243690796900311918L;
 
     /**

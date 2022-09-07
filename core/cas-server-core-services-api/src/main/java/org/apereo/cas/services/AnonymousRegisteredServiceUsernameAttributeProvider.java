@@ -15,6 +15,8 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * Generates a persistent id as username for anonymous service access.
  * By default, the generation is handled by
@@ -33,6 +35,7 @@ import lombok.val;
 @Setter
 public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
+    @Serial
     private static final long serialVersionUID = 7050462900237284803L;
 
     /**

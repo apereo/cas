@@ -21,6 +21,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -32,6 +33,7 @@ import java.util.Optional;
 @Slf4j
 public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnStatement> {
 
+    @Serial
     private static final long serialVersionUID = 8761566449790497226L;
 
     private final SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder;

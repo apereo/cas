@@ -40,6 +40,7 @@ import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
 import javax.xml.namespace.QName;
+import java.io.Serial;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -57,6 +58,7 @@ import java.util.Map;
  */
 @Slf4j
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
+    @Serial
     private static final long serialVersionUID = -4325127376598205277L;
 
     protected AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {

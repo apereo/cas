@@ -3,6 +3,7 @@ package org.apereo.cas.notifications.mail;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @SuperBuilder
 @Getter
 public class EmailCommunicationResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8625548429667623291L;
 
     private final List<String> to;

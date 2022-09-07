@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,6 +27,7 @@ import java.io.Serializable;
 @JsonFilter("SurrogateAuthenticationProperties")
 public class SurrogateAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2088813217398883623L;
 
     /**

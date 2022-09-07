@@ -15,6 +15,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.StreamSupport;
@@ -148,6 +149,7 @@ public class ConfigurationMetadataPropertyCreator {
     }
 
     private static class ComparableConfigurationMetadataProperty extends ConfigurationMetadataProperty {
+        @Serial
         private static final long serialVersionUID = -7924691650447203471L;
 
         @Override

@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class U2FAuthentication implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 334984331545697641L;
 
     private final String challenge;

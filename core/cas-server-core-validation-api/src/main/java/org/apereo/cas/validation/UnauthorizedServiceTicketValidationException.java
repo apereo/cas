@@ -3,6 +3,8 @@ package org.apereo.cas.validation;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicketValidationException;
 
+import java.io.Serial;
+
 
 /**
  * An exception that may be thrown during service ticket validation
@@ -17,6 +19,7 @@ public class UnauthorizedServiceTicketValidationException extends AbstractTicket
      */
     protected static final String CODE = "INVALID_SERVICE";
 
+    @Serial
     private static final long serialVersionUID = -8076771862820008358L;
 
     public UnauthorizedServiceTicketValidationException(final Service service) {

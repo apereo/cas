@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("StandaloneConfigurationSecurityProperties")
 public class StandaloneConfigurationSecurityProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8571848605614437022L;
 
     /**

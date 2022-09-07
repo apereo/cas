@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasSimpleMultifactorAuthenticationProperties}.
  *
@@ -28,6 +30,7 @@ public class CasSimpleMultifactorAuthenticationProperties extends BaseMultifacto
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-simple";
 
+    @Serial
     private static final long serialVersionUID = -9211748853833491119L;
 
     /**

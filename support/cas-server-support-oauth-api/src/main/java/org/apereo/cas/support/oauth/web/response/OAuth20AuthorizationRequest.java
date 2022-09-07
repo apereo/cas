@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Jacksonized
 public class OAuth20AuthorizationRequest implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3119467088485455394L;
 
     private final String responseType;

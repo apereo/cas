@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jDelegatedAuthenticationCookieProperties}.
  *
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class Pac4jDelegatedAuthenticationCookieProperties extends CookieProperties {
+    @Serial
     private static final long serialVersionUID = -1460460726554772979L;
 
     /**

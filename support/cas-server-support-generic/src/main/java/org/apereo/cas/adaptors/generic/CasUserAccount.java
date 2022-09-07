@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class CasUserAccount implements Serializable {
     private static final int SIZE = 8;
 
+    @Serial
     private static final long serialVersionUID = 7579594722197541062L;
 
     private String password;

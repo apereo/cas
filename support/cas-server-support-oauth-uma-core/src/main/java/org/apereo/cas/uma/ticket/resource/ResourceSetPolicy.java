@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 
@@ -37,6 +38,7 @@ public class ResourceSetPolicy implements Serializable {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
     
+    @Serial
     private static final long serialVersionUID = 1664113523427391736L;
 
     @org.springframework.data.annotation.Id

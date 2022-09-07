@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
 @JsonFilter("LdapAuthenticationProperties")
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
+    @Serial
     private static final long serialVersionUID = -5357843463521189892L;
 
     /**

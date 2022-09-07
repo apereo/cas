@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jIdentifiableClientProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("Pac4jIdentifiableClientProperties")
 public class Pac4jIdentifiableClientProperties extends Pac4jBaseClientProperties {
 
+    @Serial
     private static final long serialVersionUID = 3007013267786902465L;
 
     /**

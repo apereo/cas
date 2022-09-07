@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import lombok.val;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 @Accessors(chain = true)
 @JsonFilter("ActuatorEndpointsMonitorProperties")
 public class ActuatorEndpointsMonitorProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -3375777593395683691L;
 
     /**

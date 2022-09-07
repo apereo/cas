@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jKeyCloakOidcClientProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("Pac4jKeyCloakOidcClientProperties")
 public class Pac4jKeyCloakOidcClientProperties extends BasePac4jOidcClientProperties {
+    @Serial
     private static final long serialVersionUID = 3209382317533639638L;
 
     /**

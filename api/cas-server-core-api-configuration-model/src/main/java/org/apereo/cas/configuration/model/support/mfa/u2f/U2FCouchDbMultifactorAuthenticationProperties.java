@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link U2FCouchDbMultifactorAuthenticationProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("U2FCouchDbMultifactorAuthenticationProperties")
 public class U2FCouchDbMultifactorAuthenticationProperties extends BaseAsynchronousCouchDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 2751957521987245445L;
 
     public U2FCouchDbMultifactorAuthenticationProperties() {

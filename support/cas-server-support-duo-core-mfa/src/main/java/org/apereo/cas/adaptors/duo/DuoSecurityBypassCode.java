@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public class DuoSecurityBypassCode implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1570722888772919096L;
 
     private final String id;

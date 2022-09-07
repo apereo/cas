@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Getter
 @ToString
 public class DuoSecurityAuthenticationResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = 7395705948526013102L;
 
     private final boolean success;

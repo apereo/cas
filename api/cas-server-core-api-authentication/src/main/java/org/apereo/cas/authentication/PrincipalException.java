@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import java.io.Serial;
 import java.util.Map;
 
 /**
@@ -11,6 +12,7 @@ import java.util.Map;
  */
 public class PrincipalException extends AuthenticationException {
 
+    @Serial
     private static final long serialVersionUID = -6590363469748313596L;
 
     private static final String CODE = "service.principal.resolution.error";

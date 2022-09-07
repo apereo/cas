@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @Setter
 @JsonFilter("UmaProperties")
 public class UmaProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 865028615694269276L;
 
     /**

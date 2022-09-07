@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,7 @@ import java.io.Serializable;
 @JsonFilter("AcceptAuthenticationProperties")
 public class AcceptAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2448007503183227617L;
 
     /**

@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import java.util.Map;
  */
 @NoArgsConstructor
 public class OAuth20DefaultCode extends BaseOAuth20Token implements OAuth20Code {
+    @Serial
     private static final long serialVersionUID = -8203878835348247880L;
 
     public OAuth20DefaultCode(final String id,

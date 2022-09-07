@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
+    @Serial
     private static final long serialVersionUID = -1690808348975271382L;
 
     private final Client duoClient;

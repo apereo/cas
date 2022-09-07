@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link SamlArtifactTicketExpirationPolicyBuilder}.
  *
@@ -20,6 +22,7 @@ import lombok.ToString;
 @ToString
 @Getter
 public class SamlArtifactTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<SamlArtifactTicket> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
     /**
      * The Cas properties.

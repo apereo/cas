@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.authentication.RootCasException;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ public class SamlException extends RootCasException {
      */
     public static final String CODE = "UNSATISFIED_SAML_REQUEST";
 
+    @Serial
     private static final long serialVersionUID = 801270467754480446L;
 
     public SamlException(final String msg) {

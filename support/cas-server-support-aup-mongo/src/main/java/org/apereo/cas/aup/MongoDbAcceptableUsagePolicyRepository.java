@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
+
 /**
  * This is {@link MongoDbAcceptableUsagePolicyRepository}.
  * Examines the principal attribute collection to determine if
@@ -25,6 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class MongoDbAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
+    @Serial
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final MongoOperations mongoTemplate;

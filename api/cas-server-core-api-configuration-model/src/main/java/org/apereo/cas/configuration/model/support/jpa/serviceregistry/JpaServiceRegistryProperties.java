@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * Configuration properties class for JPA service registry.
  *
@@ -22,6 +24,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("JpaServiceRegistryProperties")
 public class JpaServiceRegistryProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = 352435146313504995L;
 
     /**

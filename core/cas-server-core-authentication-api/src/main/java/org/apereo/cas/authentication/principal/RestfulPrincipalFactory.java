@@ -17,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import java.util.Map;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
+    @Serial
     private static final long serialVersionUID = -1344968589212057694L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

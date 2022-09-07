@@ -6,6 +6,8 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 
 /**
  * This is {@link CasAuthenticationTransactionCompletedEvent}.
@@ -16,6 +18,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Getter
 public class CasAuthenticationTransactionCompletedEvent extends AbstractCasEvent {
+    @Serial
     private static final long serialVersionUID = -1862538693590213844L;
 
     private final Authentication authentication;

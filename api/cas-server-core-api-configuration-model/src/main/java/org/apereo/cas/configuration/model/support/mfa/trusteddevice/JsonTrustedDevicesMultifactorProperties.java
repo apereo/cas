@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JsonTrustedDevicesMultifactorProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @RequiresModule(name = "cas-server-support-trusted-mfa")
 @JsonFilter("JsonTrustedDevicesMultifactorProperties")
 public class JsonTrustedDevicesMultifactorProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = -8690563713141571620L;
 }

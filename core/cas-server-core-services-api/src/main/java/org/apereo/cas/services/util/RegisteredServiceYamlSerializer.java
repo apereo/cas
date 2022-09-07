@@ -9,6 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 
 import java.io.File;
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
  */
 @Slf4j
 public class RegisteredServiceYamlSerializer extends RegisteredServiceJsonSerializer {
+    @Serial
     private static final long serialVersionUID = -6026921045861422473L;
 
     public RegisteredServiceYamlSerializer(final ConfigurableApplicationContext applicationContext) {

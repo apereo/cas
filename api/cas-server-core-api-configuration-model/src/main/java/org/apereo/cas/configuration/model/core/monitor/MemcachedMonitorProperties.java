@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link MemcachedMonitorProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("MemcachedMonitorProperties")
 public class MemcachedMonitorProperties extends BaseMemcachedProperties {
+    @Serial
     private static final long serialVersionUID = -9139788158851782673L;
 }

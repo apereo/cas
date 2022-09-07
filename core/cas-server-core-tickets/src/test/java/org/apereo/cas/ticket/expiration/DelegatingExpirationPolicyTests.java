@@ -8,6 +8,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,6 +25,7 @@ public class DelegatingExpirationPolicyTests {
     @Test
     public void verifyOperation() {
         val policy = new BaseDelegatingExpirationPolicy() {
+            @Serial
             private static final long serialVersionUID = -5896270899735612574L;
 
             @Override

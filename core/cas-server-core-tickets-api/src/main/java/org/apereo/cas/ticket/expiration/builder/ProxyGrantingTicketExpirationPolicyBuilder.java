@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link ProxyGrantingTicketExpirationPolicyBuilder}.
  *
@@ -22,6 +24,7 @@ import lombok.ToString;
 @ToString
 @Getter
 public class ProxyGrantingTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<ProxyGrantingTicket> {
+    @Serial
     private static final long serialVersionUID = -1597980180617072826L;
 
     /**

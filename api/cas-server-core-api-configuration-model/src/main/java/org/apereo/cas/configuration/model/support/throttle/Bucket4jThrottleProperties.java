@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * Configuration properties class for cas.throttle.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("Bucket4jThrottleProperties")
 public class Bucket4jThrottleProperties extends BaseBucket4jProperties {
+    @Serial
     private static final long serialVersionUID = 5813165633105563813L;
 }

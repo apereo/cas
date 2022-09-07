@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.util.UUID;
 
 /**
@@ -22,6 +23,7 @@ import java.util.UUID;
 @Setter
 @Accessors(chain = true)
 public class StreamServicesKafkaProperties extends BaseKafkaProperties {
+    @Serial
     private static final long serialVersionUID = -7126701588226903867L;
 
     /**

@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
+
 /**
  * This is {@link DefaultBrowserSessionStorage}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.SuperBuilder;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
 public class DefaultBrowserSessionStorage implements BrowserSessionStorage {
+    @Serial
     private static final long serialVersionUID = 775566570310426414L;
 
     private final String payload;

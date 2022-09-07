@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbAuthenticationProperties}.
  *
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class CouchDbAuthenticationProperties extends BaseCouchDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 1830797033934229732L;
     /**
      * Principal transformation settings.

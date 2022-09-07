@@ -15,6 +15,7 @@ import lombok.val;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -29,6 +30,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("AccountManagementRegistrationCoreProperties")
 public class AccountManagementRegistrationCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4679683905941523034L;
 
     /**

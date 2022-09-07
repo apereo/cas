@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -31,6 +32,7 @@ public class MessageBundleProperties implements Serializable {
      */
     public static final String DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE = "authenticationFailure.";
 
+    @Serial
     private static final long serialVersionUID = 3769733438559663237L;
 
     /**

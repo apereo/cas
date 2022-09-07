@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link AccepttoEmailCredential}.
  *
@@ -20,6 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class AccepttoEmailCredential extends BasicIdentifiableCredential {
+    @Serial
     private static final long serialVersionUID = -4245622701132144037L;
 
     public AccepttoEmailCredential(final String email) {

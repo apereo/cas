@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.Map;
 @JsonFilter("HttpClientProperties")
 public class HttpClientProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7494946569869245770L;
 
     /**

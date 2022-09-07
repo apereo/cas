@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("CookieProperties")
 public class CookieProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6804770601645126835L;
 
     /**

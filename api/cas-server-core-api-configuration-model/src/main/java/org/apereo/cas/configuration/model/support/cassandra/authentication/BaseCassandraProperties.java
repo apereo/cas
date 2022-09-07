@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 @JsonFilter("BaseCassandraProperties")
 public abstract class BaseCassandraProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3708645268337674572L;
 
     /**

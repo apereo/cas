@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 @Getter
 public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
 
+    @Serial
     private static final long serialVersionUID = 8059647975948452375L;
 
     private final Map<String, Throwable> failures;

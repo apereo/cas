@@ -15,6 +15,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -55,6 +57,7 @@ public class JdbcCloudConfigBootstrapConfigurationTests {
     }
 
     public static class Jpa extends AbstractJpaProperties {
+        @Serial
         private static final long serialVersionUID = 1210163210567513705L;
     }
 }

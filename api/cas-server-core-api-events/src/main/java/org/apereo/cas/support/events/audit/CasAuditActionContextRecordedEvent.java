@@ -5,6 +5,8 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditActionContext;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasAuditActionContextRecordedEvent}.
  *
@@ -14,6 +16,7 @@ import org.apereo.inspektr.audit.AuditActionContext;
 @Getter
 public class CasAuditActionContextRecordedEvent extends AbstractCasEvent {
 
+    @Serial
     private static final long serialVersionUID = -1262975970594313844L;
 
     private final AuditActionContext auditActionContext;

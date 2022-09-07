@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.Map;
 @Setter
 public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
+    @Serial
     private static final long serialVersionUID = -851233878780818494L;
 
     private int order = Integer.MAX_VALUE;

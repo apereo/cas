@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
+    @Serial
     private static final long serialVersionUID = 852145306984610128L;
 
     private Map<String, Object> patterns;

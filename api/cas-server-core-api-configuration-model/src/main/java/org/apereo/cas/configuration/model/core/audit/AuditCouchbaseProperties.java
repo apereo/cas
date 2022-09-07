@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link AuditCouchbaseProperties}.
  *
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class AuditCouchbaseProperties extends BaseCouchbaseProperties {
+    @Serial
     private static final long serialVersionUID = 580545095591694L;
 
     /**

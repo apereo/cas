@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+
 /**
  * This is {@link OAuth20IntrospectionAccessTokenSuccessResponse}.
  *
@@ -15,6 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OAuth20IntrospectionAccessTokenSuccessResponse extends BaseOAuth20IntrospectionAccessTokenResponse {
+    @Serial
     private static final long serialVersionUID = -7917281748569741345L;
 
     private String token;

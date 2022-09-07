@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 @Accessors(chain = true)
 @JsonFilter("ActuatorEndpointProperties")
 public class ActuatorEndpointProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -2463521198550485506L;
     /**
      * Required user roles.

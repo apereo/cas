@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.Authentication;
 import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
 
+import java.io.Serial;
+
 /**
  * Base Spring {@code ApplicationEvent} representing a abstract single sign on action executed within running CAS server.
  * This event encapsulates {@link Authentication} that is associated with an SSO action
@@ -18,6 +20,7 @@ import org.springframework.context.ApplicationEvent;
 @ToString
 public abstract class AbstractCasEvent extends ApplicationEvent {
 
+    @Serial
     private static final long serialVersionUID = 8059647975948452375L;
     
     protected AbstractCasEvent(final Object source) {

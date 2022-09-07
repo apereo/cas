@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("HttpHeadersRequestProperties")
 public class HttpHeadersRequestProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5993704062519851359L;
 
     /**

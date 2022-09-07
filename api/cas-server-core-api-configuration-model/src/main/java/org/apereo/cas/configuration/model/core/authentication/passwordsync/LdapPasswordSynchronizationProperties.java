@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapPasswordSynchronizationProperties}.
  *
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class LdapPasswordSynchronizationProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -2521286056194686825L;
 
     /**

@@ -3,6 +3,8 @@ package org.apereo.cas.support.events.service;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasRegisteredServicesDeletedEvent}.
  *
@@ -12,6 +14,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Getter
 public class CasRegisteredServicesDeletedEvent extends BaseCasRegisteredServiceEvent {
+    @Serial
     private static final long serialVersionUID = -8963214046458085393L;
 
     public CasRegisteredServicesDeletedEvent(final Object source) {

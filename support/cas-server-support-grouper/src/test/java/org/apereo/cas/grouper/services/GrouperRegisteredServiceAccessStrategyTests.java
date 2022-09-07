@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -74,6 +75,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     @Test
     public void checkGrouperAttributes() {
         val strategy = new GrouperRegisteredServiceAccessStrategy() {
+            @Serial
             private static final long serialVersionUID = 8533229193475808261L;
 
             @Override
@@ -97,6 +99,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     @Test
     public void checkGrouperNoGroups() {
         val strategy = new GrouperRegisteredServiceAccessStrategy() {
+            @Serial
             private static final long serialVersionUID = 8533229193475808261L;
 
             @Override

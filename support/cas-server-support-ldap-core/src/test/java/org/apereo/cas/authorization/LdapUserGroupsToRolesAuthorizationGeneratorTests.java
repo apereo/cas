@@ -14,6 +14,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jee.context.session.JEESessionStore;
 
+import java.io.Serial;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,6 +65,7 @@ public class LdapUserGroupsToRolesAuthorizationGeneratorTests {
     }
 
     private static class Ldap extends AbstractLdapAuthenticationProperties {
+        @Serial
         private static final long serialVersionUID = 7979417317490698363L;
     }
 }

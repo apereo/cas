@@ -23,6 +23,7 @@ import lombok.val;
 
 import javax.persistence.PostLoad;
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceScriptedAttributeFilter implements RegisteredServiceAttributeFilter {
 
+    @Serial
     private static final long serialVersionUID = 122972056984610198L;
 
     private int order;

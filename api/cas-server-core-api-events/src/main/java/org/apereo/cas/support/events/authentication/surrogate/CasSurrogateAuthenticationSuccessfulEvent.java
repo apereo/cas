@@ -6,6 +6,8 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasSurrogateAuthenticationSuccessfulEvent}.
  *
@@ -16,6 +18,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class CasSurrogateAuthenticationSuccessfulEvent extends AbstractCasEvent {
 
+    @Serial
     private static final long serialVersionUID = 8059647975948452375L;
 
     private final Principal principal;

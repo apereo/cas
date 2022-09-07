@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestfulAccountManagementRegistrationProvisioningProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("RestfulAccountManagementRegistrationProvisioningProperties")
 public class RestfulAccountManagementRegistrationProvisioningProperties extends BaseRestEndpointProperties {
+    @Serial
     private static final long serialVersionUID = 6855936824474022021L;
 }

@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link DefaultRegisteredServiceWebflowInterruptPolicy}.
  *
@@ -22,6 +24,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceWebflowInterruptPolicy implements RegisteredServiceWebflowInterruptPolicy {
+    @Serial
     private static final long serialVersionUID = -9011530431859480167L;
 
     private boolean enabled = true;

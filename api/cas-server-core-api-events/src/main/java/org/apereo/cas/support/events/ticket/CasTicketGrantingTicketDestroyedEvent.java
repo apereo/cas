@@ -5,6 +5,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing single sign on session
  * destruction event e.g. user logged out
@@ -17,6 +19,7 @@ import lombok.ToString;
 @Getter
 public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasTicketGrantingTicketEvent {
 
+    @Serial
     private static final long serialVersionUID = 584961303690286494L;
 
     /**

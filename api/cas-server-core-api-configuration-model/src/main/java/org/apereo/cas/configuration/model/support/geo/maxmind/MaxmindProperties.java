@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
+
 /**
  * This is {@link MaxmindProperties}.
  *
@@ -21,6 +23,7 @@ import org.springframework.core.io.Resource;
 @Accessors(chain = true)
 public class MaxmindProperties extends BaseGeoLocationProperties {
 
+    @Serial
     private static final long serialVersionUID = 7883029275219817797L;
 
     /**

@@ -15,6 +15,7 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.LocalizedName;
 import org.opensaml.saml.saml2.metadata.LocalizedURI;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @Getter
 public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInfo {
 
+    @Serial
     private static final long serialVersionUID = -1434801982864628179L;
 
     private transient UIInfo uiInfo;

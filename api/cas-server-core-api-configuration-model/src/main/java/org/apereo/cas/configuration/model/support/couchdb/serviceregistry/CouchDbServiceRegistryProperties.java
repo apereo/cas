@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbServiceRegistryProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Setter
 @JsonFilter("CouchDbServiceRegistryProperties")
 public class CouchDbServiceRegistryProperties extends BaseCouchDbProperties {
+    @Serial
     private static final long serialVersionUID = -5101551655756163621L;
 
     public CouchDbServiceRegistryProperties() {

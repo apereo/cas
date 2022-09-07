@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 /**
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 @Setter
 public class CouchDbGoogleAuthenticatorToken extends GoogleAuthenticatorToken {
 
+    @Serial
     private static final long serialVersionUID = 2768980948846869252L;
 
     @JsonProperty("_id")

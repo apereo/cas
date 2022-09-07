@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
+
 /**
  * Resolves the username for the service to be the default principal id.
  *
@@ -22,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
+    @Serial
     private static final long serialVersionUID = 5823989148794052951L;
 
     public DefaultRegisteredServiceUsernameProvider(final String canonicalizationMode) {

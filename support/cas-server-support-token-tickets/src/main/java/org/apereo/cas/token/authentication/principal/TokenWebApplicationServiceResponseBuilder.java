@@ -14,6 +14,8 @@ import org.apereo.cas.web.UrlValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serial;
 import java.util.Map;
 
 /**
@@ -24,6 +26,7 @@ import java.util.Map;
  */
 @Slf4j
 public class TokenWebApplicationServiceResponseBuilder extends WebApplicationServiceResponseBuilder {
+    @Serial
     private static final long serialVersionUID = -2863268279032438778L;
 
     private final transient TokenTicketBuilder tokenTicketBuilder;

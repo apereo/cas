@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class EncryptionJwtCryptoProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 616825635591169628L;
 
     /**

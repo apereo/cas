@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +46,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      */
     public static final String POLICY_NAME_DEFAULT = "DEFAULT";
 
+    @Serial
     private static final long serialVersionUID = 5927936344949518688L;
 
     private final Map<String, ExpirationPolicy> policies = new LinkedHashMap<>();

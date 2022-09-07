@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import lombok.Getter;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 @Getter
 public class UnauthorizedServiceForPrincipalException extends UnauthorizedServiceException {
 
+    @Serial
     private static final long serialVersionUID = 8909291297815558561L;
 
     /**

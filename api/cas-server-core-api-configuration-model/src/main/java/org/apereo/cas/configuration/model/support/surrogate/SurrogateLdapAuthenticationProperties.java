@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link SurrogateLdapAuthenticationProperties}.
  *
@@ -22,6 +24,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("SurrogateLdapAuthenticationProperties")
 public class SurrogateLdapAuthenticationProperties extends AbstractLdapSearchProperties {
 
+    @Serial
     private static final long serialVersionUID = -3848837302921751926L;
 
     /**

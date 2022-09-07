@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Map;
 @JsonFilter("BasePac4jOidcClientProperties")
 public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
 
+    @Serial
     private static final long serialVersionUID = 3359382317533639638L;
 
     /**

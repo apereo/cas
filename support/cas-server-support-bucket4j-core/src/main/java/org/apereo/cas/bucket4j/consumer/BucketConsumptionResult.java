@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.Map;
 @SuperBuilder
 @Getter
 public class BucketConsumptionResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = -3289639572775949915L;
 
     private final boolean consumed;

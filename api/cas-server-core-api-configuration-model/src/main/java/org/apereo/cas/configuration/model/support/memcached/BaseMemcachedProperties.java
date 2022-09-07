@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-memcached-core")
 public class BaseMemcachedProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 514520518053691666L;
 
     /**

@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -18,6 +19,7 @@ import java.util.Collection;
 @Getter
 public class CasRegisteredServicesLoadedEvent extends BaseCasRegisteredServiceEvent {
 
+    @Serial
     private static final long serialVersionUID = 291168299712263298L;
 
     private final Collection<RegisteredService> services;

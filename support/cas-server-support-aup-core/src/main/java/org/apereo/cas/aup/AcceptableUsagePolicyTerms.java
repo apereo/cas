@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -29,6 +30,7 @@ public class AcceptableUsagePolicyTerms implements Serializable {
      */
     public static final String CODE = "screen.aup.policyterms";
 
+    @Serial
     private static final long serialVersionUID = -5583211907625747831L;
 
     private final String code;

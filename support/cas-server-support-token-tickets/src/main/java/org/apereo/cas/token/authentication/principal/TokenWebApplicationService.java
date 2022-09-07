@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.io.Serial;
 
 /**
  * This is {@link TokenWebApplicationService}.
@@ -18,6 +19,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 public class TokenWebApplicationService extends AbstractWebApplicationService {
 
+    @Serial
     private static final long serialVersionUID = -8844121291312069964L;
 
     public TokenWebApplicationService(final String id, final String originalUrl, final String artifactId) {

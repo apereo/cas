@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @ToString(exclude = {"record", "securityQuestions"})
 @EqualsAndHashCode(of = "username")
 public class PasswordManagementQuery implements Serializable {
+    @Serial
     private static final long serialVersionUID = -769463174930246283L;
 
     private final String email;

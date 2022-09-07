@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import lombok.Getter;
 
+import java.io.Serial;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class AuthenticationException extends RootCasException {
 
     private static final String CODE = "INVALID_AUTHN_REQUEST";
 
+    @Serial
     private static final long serialVersionUID = -6032827784134751797L;
 
     /**

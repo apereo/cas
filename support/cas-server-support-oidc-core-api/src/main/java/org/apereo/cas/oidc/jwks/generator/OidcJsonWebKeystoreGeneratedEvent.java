@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
+
 /**
  * This is {@link OidcJsonWebKeystoreGeneratedEvent}.
  *
@@ -16,6 +18,7 @@ import org.springframework.core.io.Resource;
 @Getter
 public class OidcJsonWebKeystoreGeneratedEvent extends AbstractCasEvent {
 
+    @Serial
     private static final long serialVersionUID = 8159647975948252375L;
 
     private final Resource file;

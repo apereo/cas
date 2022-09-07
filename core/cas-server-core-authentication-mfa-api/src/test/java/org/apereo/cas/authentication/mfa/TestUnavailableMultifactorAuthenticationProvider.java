@@ -6,6 +6,8 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serial;
+
 /**
  * This is {@link TestUnavailableMultifactorAuthenticationProvider}.
  *
@@ -18,6 +20,7 @@ public class TestUnavailableMultifactorAuthenticationProvider extends AbstractMu
      */
     public static final String ID = "mfa-dummy-unavailable";
 
+    @Serial
     private static final long serialVersionUID = -9184556172646207560L;
 
     /**

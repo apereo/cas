@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+
 /**
  * Represents a remote address as CAS credential.
  *
@@ -20,6 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RemoteAddressCredential extends AbstractCredential {
 
+    @Serial
     private static final long serialVersionUID = -3638145328441211073L;
 
     private String remoteAddress;

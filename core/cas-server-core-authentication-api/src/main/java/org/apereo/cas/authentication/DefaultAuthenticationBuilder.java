@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.function.Predicate;
 @Slf4j
 @Getter
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
+    @Serial
     private static final long serialVersionUID = -8504842011648432398L;
 
     private final List<CredentialMetaData> credentials = new ArrayList<>();

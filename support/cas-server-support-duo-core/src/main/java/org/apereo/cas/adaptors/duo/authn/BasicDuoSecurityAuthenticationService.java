@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +41,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    @Serial
     private static final long serialVersionUID = -6690808348975271382L;
 
     public BasicDuoSecurityAuthenticationService(

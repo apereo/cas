@@ -4,6 +4,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +41,7 @@ public class ServicesManagerTests {
 
 
     private abstract static class BaseMockRegisteredService implements RegisteredService {
+        @Serial
         private static final long serialVersionUID = 5470970585502265482L;
     }
 }

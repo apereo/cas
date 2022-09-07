@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import java.util.Map;
  */
 @Slf4j
 public class GroovyWsFederationAttributeMutator implements WsFederationAttributeMutator {
+    @Serial
     private static final long serialVersionUID = -3864465057274774578L;
 
     private final transient WatchableGroovyScriptResource watchableScript;

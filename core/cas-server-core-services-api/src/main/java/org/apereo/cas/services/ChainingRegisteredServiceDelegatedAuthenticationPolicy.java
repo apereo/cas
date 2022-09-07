@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @JsonIgnoreProperties("order")
 public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
+    @Serial
     private static final long serialVersionUID = -2127874606493954025L;
 
     private List<RegisteredServiceDelegatedAuthenticationPolicy> strategies = new ArrayList<>();

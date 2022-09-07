@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @ToString
 @Getter
 public class CasRuntimeModule implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1581604787854700568L;
 
     private final String name;

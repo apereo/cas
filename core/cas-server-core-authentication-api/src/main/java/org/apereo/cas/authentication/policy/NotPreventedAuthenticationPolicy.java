@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -32,6 +33,7 @@ import java.util.Set;
 @Getter
 public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValidatedAuthenticationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -591956246302374794L;
 
     public NotPreventedAuthenticationPolicy() {

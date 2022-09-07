@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link PasswordlessAuthenticationLdapAccountsProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("PasswordlessAuthenticationLdapAccountsProperties")
 public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -1102345678378393382L;
 
     /**

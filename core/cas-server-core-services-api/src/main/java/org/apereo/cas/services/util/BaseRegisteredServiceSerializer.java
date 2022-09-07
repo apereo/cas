@@ -8,6 +8,8 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serial;
+
 /**
  * This is {@link BaseRegisteredServiceSerializer}.
  *
@@ -15,6 +17,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @since 6.6.0
  */
 public abstract class BaseRegisteredServiceSerializer extends AbstractJacksonBackedStringSerializer<RegisteredService> {
+    @Serial
     private static final long serialVersionUID = -86170670153712101L;
 
     /**

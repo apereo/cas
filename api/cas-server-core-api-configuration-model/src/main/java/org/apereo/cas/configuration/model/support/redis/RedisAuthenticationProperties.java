@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * Configuration properties for Redis.
  *
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("RedisAuthenticationProperties")
 public class RedisAuthenticationProperties extends BaseRedisProperties {
 
+    @Serial
     private static final long serialVersionUID = -1232996050439638782L;
 
     /**

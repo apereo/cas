@@ -13,6 +13,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
 
+import java.io.Serial;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @JsonIgnoreProperties("order")
 public class ChainingRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
+    @Serial
     private static final long serialVersionUID = 5018603912161923218L;
 
     private List<RegisteredServiceAccessStrategy> strategies = new ArrayList<>();

@@ -9,6 +9,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.io.Serial;
 
 
 /**
@@ -22,5 +23,6 @@ import javax.persistence.Entity;
 @AttributeOverrides(@AttributeOverride(name = "body", column = @Column(columnDefinition = "text")))
 @Entity(name = "PostgresJpaTicketEntity")
 public class PostgresJpaTicketEntity extends BaseTicketEntity {
+    @Serial
     private static final long serialVersionUID = 6546716187959834795L;
 }

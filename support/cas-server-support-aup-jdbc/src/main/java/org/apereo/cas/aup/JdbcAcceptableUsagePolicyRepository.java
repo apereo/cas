@@ -18,6 +18,7 @@ import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.sql.DataSource;
+import java.io.Serial;
 
 /**
  * This is {@link JdbcAcceptableUsagePolicyRepository}.
@@ -31,6 +32,7 @@ import javax.sql.DataSource;
  */
 @Slf4j
 public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
+    @Serial
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final JdbcTemplate jdbcTemplate;

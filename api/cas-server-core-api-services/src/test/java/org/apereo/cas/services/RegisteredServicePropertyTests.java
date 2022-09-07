@@ -8,6 +8,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,6 +62,7 @@ public class RegisteredServicePropertyTests {
     @Getter(onMethod = @__({@Override}))
     @RequiredArgsConstructor
     private static class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
+        @Serial
         private static final long serialVersionUID = -4878764188998002053L;
 
         private final String value;

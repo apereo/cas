@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 @Accessors(chain = true)
 public class IgniteProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5259465262649559156L;
 
     /**
@@ -193,6 +195,7 @@ public class IgniteProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-ignite-ticket-registry")
     public static class TicketsCache implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 4715167757542984471L;
 
         /**

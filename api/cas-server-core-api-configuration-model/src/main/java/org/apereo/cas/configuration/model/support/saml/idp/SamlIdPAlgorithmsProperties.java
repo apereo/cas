@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 @JsonFilter("SamlIdPAlgorithmsProperties")
 public class SamlIdPAlgorithmsProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6547093517788229284L;
 
     /**

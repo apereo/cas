@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -36,6 +37,7 @@ import java.time.temporal.ChronoUnit;
 @Builder
 public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -7636642464326939536L;
 
     /**

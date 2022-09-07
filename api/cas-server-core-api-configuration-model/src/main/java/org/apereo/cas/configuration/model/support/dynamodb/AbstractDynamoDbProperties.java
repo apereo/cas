@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link AbstractDynamoDbProperties}.
  *
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesProperties {
+    @Serial
     private static final long serialVersionUID = -8349917272283787550L;
 
     /**

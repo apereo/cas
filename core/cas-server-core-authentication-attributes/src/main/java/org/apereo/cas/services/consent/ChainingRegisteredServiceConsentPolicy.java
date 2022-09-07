@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ChainingRegisteredServiceConsentPolicy implements RegisteredServiceConsentPolicy {
+    @Serial
     private static final long serialVersionUID = -2949244688986345692L;
 
     private final List<RegisteredServiceConsentPolicy> policies = new ArrayList<>(0);

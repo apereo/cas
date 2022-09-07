@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseConsentRepository implements ConsentRepository {
+    @Serial
     private static final long serialVersionUID = 1736846688546785564L;
 
     private Set<ConsentDecision> consentDecisions = Collections.synchronizedSet(new LinkedHashSet<>(0));

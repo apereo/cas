@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
 @JsonFilter("ConsentCoreProperties")
 public class ConsentCoreProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5211308051524438384L;
 
     /**

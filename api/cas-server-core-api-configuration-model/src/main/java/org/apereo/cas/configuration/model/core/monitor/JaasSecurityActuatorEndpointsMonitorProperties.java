@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class JaasSecurityActuatorEndpointsMonitorProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3024678577827371641L;
 
     /**

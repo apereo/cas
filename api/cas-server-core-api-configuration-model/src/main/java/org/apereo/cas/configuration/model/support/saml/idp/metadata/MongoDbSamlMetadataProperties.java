@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * Configuration properties class mongodb service registry.
  *
@@ -22,6 +24,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class MongoDbSamlMetadataProperties extends SingleCollectionMongoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = -227092724742371662L;
 
     /**

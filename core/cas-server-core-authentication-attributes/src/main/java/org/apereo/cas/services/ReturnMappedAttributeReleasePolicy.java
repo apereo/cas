@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ReturnMappedAttributeReleasePolicy extends BaseMappedAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -6249488544306639050L;
 
     @Override

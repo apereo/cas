@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapGraphicalUserAuthenticationProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class LdapGraphicalUserAuthenticationProperties extends AbstractLdapSearchProperties {
 
+    @Serial
     private static final long serialVersionUID = 4666838063728336692L;
 
     /**

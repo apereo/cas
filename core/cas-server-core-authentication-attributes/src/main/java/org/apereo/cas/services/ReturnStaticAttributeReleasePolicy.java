@@ -14,6 +14,7 @@ import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ReturnStaticAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = 1239257723778012771L;
 
     @JsonProperty("allowedAttributes")

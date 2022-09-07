@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link SwivelMultifactorAuthenticationProperties}.
  *
@@ -28,6 +30,7 @@ public class SwivelMultifactorAuthenticationProperties extends BaseMultifactorAu
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-swivel";
 
+    @Serial
     private static final long serialVersionUID = -7409451053833491119L;
 
     /**

@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ import java.util.Map;
 @SuppressWarnings("UnescapedEntity")
 public abstract class AbstractJpaProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 761486823496930920L;
 
     /**

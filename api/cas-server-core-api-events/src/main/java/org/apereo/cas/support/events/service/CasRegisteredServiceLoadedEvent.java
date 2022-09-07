@@ -5,6 +5,8 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasRegisteredServiceLoadedEvent} that is signaled
  * when a registered service is loaded from the registry.
@@ -16,6 +18,7 @@ import lombok.ToString;
 @Getter
 public class CasRegisteredServiceLoadedEvent extends BaseCasRegisteredServiceEvent {
 
+    @Serial
     private static final long serialVersionUID = 290968299766263298L;
 
     private final RegisteredService registeredService;

@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+
 /**
  * This is {@link SamlAttributeQueryTicketImpl}.
  *
@@ -21,6 +23,7 @@ import lombok.Setter;
 @Setter
 public class SamlAttributeQueryTicketImpl extends AbstractTicket implements SamlAttributeQueryTicket {
 
+    @Serial
     private static final long serialVersionUID = 6276140828446447398L;
 
     private String relyingParty;

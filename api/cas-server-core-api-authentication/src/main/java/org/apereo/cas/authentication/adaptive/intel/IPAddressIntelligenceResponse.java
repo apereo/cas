@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
@@ -19,6 +20,7 @@ import java.util.TreeMap;
 @Getter
 public class IPAddressIntelligenceResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6438211402312848819L;
 
     /**

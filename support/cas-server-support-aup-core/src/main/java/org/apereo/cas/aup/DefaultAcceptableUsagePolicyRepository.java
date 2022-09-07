@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
 
+    @Serial
     private static final long serialVersionUID = -3059445754626980894L;
 
     private static final String AUP_ACCEPTED = "AUP_ACCEPTED";

@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcServiceRegistryListener implements ServiceRegistryListener {
+    @Serial
     private static final long serialVersionUID = -2492163812728091841L;
 
     private final OidcAttributeReleasePolicyFactory attributeReleasePolicyFactory;

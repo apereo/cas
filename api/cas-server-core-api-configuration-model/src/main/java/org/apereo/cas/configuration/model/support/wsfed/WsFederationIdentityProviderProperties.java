@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-ws-idp")
 @JsonFilter("WsFederationIdentityProviderProperties")
 public class WsFederationIdentityProviderProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 5190493517277610788L;
 
     /**

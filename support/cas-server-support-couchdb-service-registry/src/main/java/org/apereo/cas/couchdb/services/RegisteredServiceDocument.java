@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.ektorp.support.CouchDbDocument;
 
+import java.io.Serial;
+
 /**
  * This is {@link RegisteredServiceDocument}. Wraps a {@link RegisteredService} for use with CouchDB.
  *
@@ -17,6 +19,7 @@ import org.ektorp.support.CouchDbDocument;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 public class RegisteredServiceDocument extends CouchDbDocument {
+    @Serial
     private static final long serialVersionUID = -6787906520673248670L;
     private RegisteredService service;
 

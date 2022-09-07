@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CouchDbConsentRepository implements ConsentRepository {
 
+    @Serial
     private static final long serialVersionUID = 5058836218210655958L;
 
     private final ConsentDecisionCouchDbRepository couchDb;

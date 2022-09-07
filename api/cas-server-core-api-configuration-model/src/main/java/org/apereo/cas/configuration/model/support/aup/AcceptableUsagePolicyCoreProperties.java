@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @JsonFilter("AcceptableUsagePolicyCoreProperties")
 public class AcceptableUsagePolicyCoreProperties implements Serializable, CasFeatureModule {
 
+    @Serial
     private static final long serialVersionUID = -7703477581675908899L;
 
     /**

@@ -19,6 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    @Serial
     private static final long serialVersionUID = 1600024683199961892L;
 
     public RestAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,

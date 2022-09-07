@@ -13,6 +13,7 @@ import lombok.val;
 import org.ektorp.UpdateConflictException;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -24,6 +25,7 @@ import java.util.List;
 @Slf4j
 public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
 
+    @Serial
     private static final long serialVersionUID = -2391630070546362552L;
 
     private final transient ProfileCouchDbRepository couchDb;

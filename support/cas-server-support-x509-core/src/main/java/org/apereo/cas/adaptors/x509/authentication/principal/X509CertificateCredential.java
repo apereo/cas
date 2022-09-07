@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.io.Serial;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
@@ -31,6 +32,7 @@ import java.util.Arrays;
 @Setter
 public class X509CertificateCredential extends AbstractCredential {
 
+    @Serial
     private static final long serialVersionUID = 631753409512746474L;
 
     /**

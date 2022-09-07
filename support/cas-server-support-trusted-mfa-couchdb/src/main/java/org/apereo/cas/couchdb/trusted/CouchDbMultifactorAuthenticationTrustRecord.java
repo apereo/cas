@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.ektorp.support.TypeDiscriminator;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
@@ -24,6 +25,7 @@ import java.util.Date;
 @TypeDiscriminator("doc.principal && doc.deviceFingerprint && doc.recordDate")
 public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuthenticationTrustRecord {
 
+    @Serial
     private static final long serialVersionUID = 3362756698370049408L;
 
     @JsonProperty("_id")

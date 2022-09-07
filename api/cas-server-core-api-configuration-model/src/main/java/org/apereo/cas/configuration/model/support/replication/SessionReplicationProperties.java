@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("SessionReplicationProperties")
 public class SessionReplicationProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -3839399712674610962L;
 
     /**

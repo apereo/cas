@@ -16,6 +16,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.TrustManagerFactorySpi;
 import javax.net.ssl.X509TrustManager;
+import java.io.Serial;
 import java.security.KeyStore;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
@@ -167,6 +168,7 @@ public interface CasSSLContext {
         @Override
         public TrustManagerFactory getTrustManagerFactory() {
             val provider = new Provider(StringUtils.EMPTY, "0.0", StringUtils.EMPTY) {
+                @Serial
                 private static final long serialVersionUID = -2680540247105807895L;
             };
 

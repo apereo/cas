@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class DefaultAuthenticationTransaction implements AuthenticationTransaction {
 
+    @Serial
     private static final long serialVersionUID = 6213904009424725484L;
 
     private final Service service;
