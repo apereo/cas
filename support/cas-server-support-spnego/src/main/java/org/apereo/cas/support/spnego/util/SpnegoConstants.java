@@ -24,18 +24,4 @@ public interface SpnegoConstants {
      */
     String NEGOTIATE = "Negotiate";
 
-    /**
-     * The spnego first time.
-     */
-    String SPNEGO_FIRST_TIME = "spnegoFirstTime";
-
-    /**
-     * The spnego credentials.
-     */
-    String SPNEGO_CREDENTIALS = "spnegoCredentials";
-
-    /**
-     * The ntlm.
-     */
-    String NTLM = "NTLM";
 }

@@ -31,11 +31,6 @@ public class ScimProperties implements Serializable {
     private boolean enabled = true;
 
     /**
-     * Indicate what version of the scim protocol is and should be used.
-     */
-    private long version = 2;
-
-    /**
      * The SCIM provisioning target URI.
      */
     @RequiredProperty

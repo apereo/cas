@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.scim.target=http://localhost:8218",
-    "cas.scim.version=2",
     "cas.scim.username=casuser",
     "cas.scim.password=Mellon",
     "cas.scim.oauth-token=mfh834bsd202usn10snf"

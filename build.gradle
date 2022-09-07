@@ -62,7 +62,6 @@ ext {
         '**/com/yubico/**',
         '**/saml/sts/SamlToken**',
         '**/**ConfigurationMetadata**',
-        '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDb**',
         '**/**NimbusOAuthJacksonModule**',
         '**/**Application**',

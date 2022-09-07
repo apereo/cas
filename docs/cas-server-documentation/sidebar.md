@@ -299,7 +299,6 @@ layout: null
             *   [MongoDb](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication-Registration-MongoDb.html)
             *   [Redis](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication-Registration-Redis.html)
             *   [REST](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication-Registration-Rest.html)
-        *   [~~Swivel Secure~~](/cas/{{ version }}/mfa/SwivelSecure-Authentication.html)
         *   [Inwebo](/cas/{{ version }}/mfa/Inwebo-Authentication.html)
         *   [Custom](/cas/{{ version }}/mfa/Custom-MFA-Authentication.html)
     *   [Triggers](#mfatriggers)

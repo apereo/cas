@@ -19,7 +19,6 @@ import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationPropert
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mongo.MongoDbAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
@@ -292,12 +291,6 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CouchDbAuthenticationProperties couchDb = new CouchDbAuthenticationProperties();
-
-    /**
-     * NTLM authentication settings.
-     */
-    @NestedConfigurationProperty
-    private NtlmProperties ntlm = new NtlmProperties();
 
     /**
      * OAuth authentication settings.

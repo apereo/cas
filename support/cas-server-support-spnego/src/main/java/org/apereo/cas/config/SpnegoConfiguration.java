@@ -12,19 +12,15 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
-import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import jcifs.spnego.Authentication;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -107,35 +103,6 @@ public class SpnegoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public AuthenticationHandler ntlmAuthenticationHandler(
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier("ntlmPrincipalFactory")
-        final PrincipalFactory ntlmPrincipalFactory,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        final CasConfigurationProperties casProperties) {
-        return BeanSupplier.of(AuthenticationHandler.class)
-            .when(BeanCondition.on("cas.authn.ntlm.enabled").isTrue().given(applicationContext.getEnvironment()))
-            .supply(() -> {
-                val ntlmProperties = casProperties.getAuthn().getNtlm();
-                return new NtlmAuthenticationHandler(ntlmProperties.getName(),
-                    servicesManager, ntlmPrincipalFactory,
-                    ntlmProperties.isLoadBalance(), ntlmProperties.getDomainController(),
-                    ntlmProperties.getIncludePattern(), ntlmProperties.getOrder());
-            })
-            .otherwiseProxy()
-            .get();
-    }
-
-    @ConditionalOnMissingBean(name = "ntlmPrincipalFactory")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public PrincipalFactory ntlmPrincipalFactory() {
-        return PrincipalFactoryUtils.newPrincipalFactory();
-    }
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver(
         @Qualifier("spnegoPrincipalFactory")
@@ -162,15 +129,10 @@ public class SpnegoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer spnegoAuthenticationEventExecutionPlanConfigurer(
-        @Qualifier("ntlmAuthenticationHandler")
-        final ObjectProvider<AuthenticationHandler> ntlmAuthenticationHandler,
         @Qualifier("spnegoPrincipalResolver")
         final PrincipalResolver spnegoPrincipalResolver,
         @Qualifier("spnegoHandler")
         final AuthenticationHandler spnegoHandler) {
-        return plan -> {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(spnegoHandler, spnegoPrincipalResolver);
-            ntlmAuthenticationHandler.ifAvailable(plan::registerAuthenticationHandler);
-        };
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(spnegoHandler, spnegoPrincipalResolver);
     }
 }
