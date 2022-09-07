@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -45,7 +44,7 @@ public class RemoteEndpointServiceAccessStrategyTests {
         try (val webServer = new MockWebServer(8755,
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("casuser", CoreAuthenticationTestUtils.getAttributes()));
+            assertTrue(strategy.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
         }
     }
 
@@ -57,7 +56,7 @@ public class RemoteEndpointServiceAccessStrategyTests {
         try (val webServer = new MockWebServer(8756,
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertFalse(strategy.doPrincipalAttributesAllowServiceAccess("casuser", CoreAuthenticationTestUtils.getAttributes()));
+            assertFalse(strategy.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
         }
     }
 }

@@ -41,28 +41,21 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
     private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>(0);
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
-        if (isSurrogateAuthenticationSession(attributes)) {
-            return isSurrogateEnabled() && doPrincipalAttributesAllowSurrogateServiceAccess(principal, attributes);
+    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+        if (isSurrogateAuthenticationSession(request)) {
+            return isSurrogateEnabled() && doPrincipalAttributesAllowSurrogateServiceAccess(request);
         }
         return true;
     }
 
-    /**
-     * Do principal attributes allow surrogate service access?.
-     *
-     * @param principal           the principal
-     * @param principalAttributes the principal attributes
-     * @return true /false
-     */
-    protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final String principal,
-                                                                       final Map<String, Object> principalAttributes) {
+
+    protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         return RegisteredServiceAccessStrategyEvaluator.builder()
             .caseInsensitive(this.caseInsensitive)
             .requireAllAttributes(this.requireAllAttributes)
             .requiredAttributes(this.surrogateRequiredAttributes)
             .rejectedAttributes(new LinkedHashMap<>(0))
             .build()
-            .evaluate(principal, principalAttributes);
+            .evaluate(request);
     }
 }

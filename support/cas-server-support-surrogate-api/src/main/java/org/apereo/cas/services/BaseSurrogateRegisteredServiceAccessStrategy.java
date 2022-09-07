@@ -2,8 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 
-import java.util.Map;
-
 /**
  * This is {@link BaseSurrogateRegisteredServiceAccessStrategy}.
  *
@@ -16,10 +14,10 @@ public abstract class BaseSurrogateRegisteredServiceAccessStrategy extends BaseR
     /**
      * Is surrogate authentication session?.
      *
-     * @param attributes the attributes
+     * @param request the request
      * @return true /false
      */
-    protected boolean isSurrogateAuthenticationSession(final Map<String, Object> attributes) {
-        return attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
+    protected boolean isSurrogateAuthenticationSession(final RegisteredServiceAccessStrategyRequest request) {
+        return request.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
     }
 }

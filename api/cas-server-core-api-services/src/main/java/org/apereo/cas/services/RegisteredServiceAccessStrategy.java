@@ -60,13 +60,11 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      * <li>Otherwise, access is denied</li>
      * </ul>
      *
-     * @param principal  The authenticated principal
-     * @param attributes the attributes. Rather than passing the principal directly, we are only allowing principal attributes
-     *                   given they may be coming from a source external to the principal itself. (Cached principal attributes, etc)
+     * @param request the request
      * @return true /false if service access can be granted to principal
      */
     @JsonIgnore
-    default boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
+    default boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         return true;
     }
 

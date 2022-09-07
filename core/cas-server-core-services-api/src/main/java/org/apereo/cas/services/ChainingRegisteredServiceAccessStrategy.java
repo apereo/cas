@@ -84,11 +84,11 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     }
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
+    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         if (operator == RegisteredServiceChainOperatorTypes.OR) {
-            return strategies.stream().anyMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(principal, attributes));
+            return strategies.stream().anyMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));
         }
-        return strategies.stream().allMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(principal, attributes));
+        return strategies.stream().allMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));
     }
 
     @Override

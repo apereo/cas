@@ -1,5 +1,6 @@
 package org.apereo.cas.services.util;
 
+import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,25 +57,24 @@ public class RegisteredServiceAccessStrategyEvaluator {
     /**
      * Evaluate access.
      *
-     * @param principal           the principal
-     * @param attributes the principal attributes
+     * @param request the request
      * @return the boolean
      */
-    public boolean evaluate(final String principal, final Map<String, Object> attributes) {
+    public boolean evaluate(final RegisteredServiceAccessStrategyRequest request) {
         if ((this.rejectedAttributes == null || this.rejectedAttributes.isEmpty())
             && (this.requiredAttributes == null || this.requiredAttributes.isEmpty())) {
             LOGGER.trace("Skipping access strategy policy, since no attributes rules are defined");
             return true;
         }
-        if (!enoughAttributesAvailableToProcess(principal, attributes)) {
+        if (!enoughAttributesAvailableToProcess(request)) {
             LOGGER.debug("Access is denied. There are not enough attributes available to satisfy requirements");
             return false;
         }
-        if (doRejectedAttributesRefusePrincipalAccess(attributes)) {
+        if (doRejectedAttributesRefusePrincipalAccess(request.getAttributes())) {
             LOGGER.debug("Access is denied. The principal carries attributes that would reject service access");
             return false;
         }
-        if (!doRequiredAttributesAllowPrincipalAccess(attributes, this.requiredAttributes)) {
+        if (!doRequiredAttributesAllowPrincipalAccess(request.getAttributes(), this.requiredAttributes)) {
             LOGGER.debug("Access is denied. The principal does not have the required attributes [{}]", this.requiredAttributes);
             return false;
         }
@@ -87,7 +88,7 @@ public class RegisteredServiceAccessStrategyEvaluator {
      * @param requiredAttributes  the required attributes
      * @return true/false
      */
-    protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes,
+    protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, List<Object>> principalAttributes,
                                                                final Map<String, Set<String>> requiredAttributes) {
         LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
             requiredAttributes, principalAttributes);
@@ -100,7 +101,7 @@ public class RegisteredServiceAccessStrategyEvaluator {
      * @param principalAttributes the principal attributes
      * @return true/false
      */
-    protected boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
+    protected boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, List<Object>> principalAttributes) {
         LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", rejectedAttributes, principalAttributes);
         return !rejectedAttributes.isEmpty() && requiredAttributesFoundInMap(principalAttributes, rejectedAttributes);
     }
@@ -109,17 +110,16 @@ public class RegisteredServiceAccessStrategyEvaluator {
      * Enough attributes available to process? Check collection sizes and determine
      * if we have enough data to move on.
      *
-     * @param principal           the principal
-     * @param principalAttributes the principal attributes
+     * @param request the request
      * @return true /false
      */
-    protected boolean enoughAttributesAvailableToProcess(final String principal, final Map<String, Object> principalAttributes) {
-        if (!enoughRequiredAttributesAvailableToProcess(principalAttributes, this.requiredAttributes)) {
+    protected boolean enoughAttributesAvailableToProcess(final RegisteredServiceAccessStrategyRequest request) {
+        if (!enoughRequiredAttributesAvailableToProcess(request.getAttributes(), this.requiredAttributes)) {
             return false;
         }
-        if (principalAttributes.size() < this.rejectedAttributes.size()) {
+        if (request.getAttributes().size() < this.rejectedAttributes.size()) {
             LOGGER.debug("The size of the principal attributes that are [{}] does not match defined rejected attributes, "
-                         + "which means the principal is not carrying enough data to grant authorization", principalAttributes);
+                         + "which means the principal is not carrying enough data to grant authorization", request.getAttributes());
             return false;
         }
         return true;
@@ -133,7 +133,7 @@ public class RegisteredServiceAccessStrategyEvaluator {
      * @param requiredAttributes  the required attributes
      * @return true /false
      */
-    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, Object> principalAttributes,
+    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, List<Object>> principalAttributes,
                                                                  final Map<String, Set<String>> requiredAttributes) {
         if (principalAttributes.isEmpty() && !requiredAttributes.isEmpty()) {
             LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
@@ -154,7 +154,7 @@ public class RegisteredServiceAccessStrategyEvaluator {
      * @param requiredAttributes  the attributes
      * @return true/false
      */
-    protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes,
+    protected boolean requiredAttributesFoundInMap(final Map<String, List<Object>> principalAttributes,
                                                    final Map<String, Set<String>> requiredAttributes) {
         val difference = requiredAttributes.keySet()
             .stream()
@@ -179,7 +179,7 @@ public class RegisteredServiceAccessStrategyEvaluator {
      * @return the boolean
      */
     protected boolean requiredAttributeFound(final String attributeName,
-                                           final Map<String, Object> principalAttributes,
+                                           final Map<String, List<Object>> principalAttributes,
                                            final Map<String, Set<String>> requiredAttributes) {
         val requiredValues = requiredAttributes.get(attributeName);
         val availableValues = CollectionUtils.toCollection(principalAttributes.get(attributeName));

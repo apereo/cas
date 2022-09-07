@@ -63,9 +63,9 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
 
     @Override
     @JsonIgnore
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
+    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         buildGroovyAccessStrategyInstanceIfNeeded();
-        return this.groovyStrategyInstance.doPrincipalAttributesAllowServiceAccess(principal, attributes);
+        return this.groovyStrategyInstance.doPrincipalAttributesAllowServiceAccess(request);
     }
 
     @JsonIgnore
