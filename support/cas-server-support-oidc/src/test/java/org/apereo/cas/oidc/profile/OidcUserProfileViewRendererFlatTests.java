@@ -18,6 +18,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,7 +56,8 @@ public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         assertTrue(result.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID));
         assertTrue(result.containsKey(CasProtocolConstants.PARAMETER_SERVICE));
         assertTrue(result.containsKey("email"));
-        assertEquals("casuser@example.org", result.get("email"));
+        val values = (Collection) result.get("email");
+        assertEquals("casuser@example.org", values.iterator().next());
     }
 
     @Test

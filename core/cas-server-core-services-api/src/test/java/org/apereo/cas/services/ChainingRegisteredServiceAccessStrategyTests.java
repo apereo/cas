@@ -114,7 +114,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
         assertFalse(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
         assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
-            .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value1"))).build()));
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))).build()));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
 
         assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
-            .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value1"))).build()));
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))).build()));
         assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key3", Set.of("value3"))).build()));
     }

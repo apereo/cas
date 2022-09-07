@@ -50,13 +50,6 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     private static final String CN = "cn";
 
     @Test
-    public void checkDefaultImpls() {
-        val authz = new DefaultRegisteredServiceAccessStrategy();
-        authz.postLoad();
-        assertEquals(0, authz.getOrder());
-    }
-
-    @Test
     public void checkLoad() {
         val authz = new DefaultRegisteredServiceAccessStrategy(getRequiredAttributes(), getRejectedAttributes());
         authz.postLoad();
@@ -105,6 +98,14 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
         assertTrue(authz.isRequireAllAttributes());
+    }
+
+    @Test
+    public void checkAuthzPrincipalInactive() {
+        val authz = new DefaultRegisteredServiceAccessStrategy()
+            .setActivationCriteria((RegisteredServiceAccessStrategyActivationCriteria) request -> false);
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder()
+            .principalId(TEST).build()));
     }
 
     @Test
