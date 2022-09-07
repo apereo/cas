@@ -97,6 +97,9 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
      */
     protected boolean caseInsensitive;
 
+    protected RegisteredServiceAccessStrategyActivationCriteria activationCriteria =
+        RegisteredServiceAccessStrategyActivationCriteria.always();
+
     public DefaultRegisteredServiceAccessStrategy() {
         this(true, true);
     }
@@ -161,12 +164,15 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
-        return RegisteredServiceAccessStrategyEvaluator.builder()
-            .caseInsensitive(this.caseInsensitive)
-            .requireAllAttributes(this.requireAllAttributes)
-            .requiredAttributes(this.requiredAttributes)
-            .rejectedAttributes(this.rejectedAttributes)
-            .build()
-            .evaluate(request);
+        if (activationCriteria.shouldActivate(request)) {
+            return RegisteredServiceAccessStrategyEvaluator.builder()
+                .caseInsensitive(this.caseInsensitive)
+                .requireAllAttributes(this.requireAllAttributes)
+                .requiredAttributes(this.requiredAttributes)
+                .rejectedAttributes(this.rejectedAttributes)
+                .build()
+                .evaluate(request);
+        }
+        return activationCriteria.shouldAllowIfInactive();
     }
 }
