@@ -32,7 +32,6 @@ import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.GroovyRegisteredServiceAuthenticationPolicyCriteria;
-import org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
 import org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategy;
@@ -133,7 +132,6 @@ public class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(PatternMatchingAttributeReleasePolicy.Rule.class);
 
             plan.registerSerializableClass(DefaultRegisteredServiceMultifactorPolicy.class);
-            plan.registerSerializableClass(GroovyRegisteredServiceMultifactorPolicy.class);
             plan.registerSerializableClass(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.class);
 
             plan.registerSerializableClass(CachingPrincipalAttributesRepository.class);
