@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 /**
  * This is {@link DefaultCasConfigurationPropertiesSourceLocator}.
  * <p>
- * Note: The order of the elements in {@link #EXTENSIONS} is important, last one overrides previous ones.
+ * Note: The order of the elements in {@link #EXTENSIONS} is important, first one overrides previous ones.
  *
  * @author Misagh Moayyed
  * @since 5.3.0

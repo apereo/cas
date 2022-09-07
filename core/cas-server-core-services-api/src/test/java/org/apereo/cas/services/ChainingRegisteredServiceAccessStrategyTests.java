@@ -109,10 +109,12 @@ public class ChainingRegisteredServiceAccessStrategyTests {
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
-        assertFalse(chain.doPrincipalAttributesAllowServiceAccess("casuser", CollectionUtils.wrap("key1", Set.of("value1"))));
-        assertFalse(chain.doPrincipalAttributesAllowServiceAccess("casuser", CollectionUtils.wrap("key2", Set.of("value2"))));
-        assertTrue(chain.doPrincipalAttributesAllowServiceAccess("casuser",
-            CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))));
+        assertFalse(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
+        assertFalse(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
+        assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value1"))).build()));
     }
 
     @Test
@@ -122,8 +124,10 @@ public class ChainingRegisteredServiceAccessStrategyTests {
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
-        assertTrue(chain.doPrincipalAttributesAllowServiceAccess("casuser", CollectionUtils.wrap("key1", Set.of("value1"))));
-        assertTrue(chain.doPrincipalAttributesAllowServiceAccess("casuser", CollectionUtils.wrap("key2", Set.of("value2"))));
+        assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
+        assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
     }
 
     @Test
@@ -165,14 +169,14 @@ public class ChainingRegisteredServiceAccessStrategyTests {
         parentChain.setOperator(RegisteredServiceChainOperatorTypes.OR);
         parentChain.addStrategies(chain1, chain2);
 
-        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess("casuser",
-            CollectionUtils.wrap("key1", Set.of("value1"))));
-        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess("casuser",
-            CollectionUtils.wrap("key2", Set.of("value2"))));
+        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
+        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
 
-        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess("casuser",
-            CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))));
-        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess("casuser",
-            CollectionUtils.wrap("key3", Set.of("value3"))));
+        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value1"))).build()));
+        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .attributes(CollectionUtils.wrap("key3", Set.of("value3"))).build()));
     }
 }

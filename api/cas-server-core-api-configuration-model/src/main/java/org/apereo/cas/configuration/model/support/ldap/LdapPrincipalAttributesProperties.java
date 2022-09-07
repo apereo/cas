@@ -27,6 +27,7 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
 
     private static final long serialVersionUID = 5760065368731012063L;
 
+
     /**
      * The order of this attribute repository in the chain of repositories.
      * Can be used to explicitly position this source in chain and affects
@@ -74,4 +75,6 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      * and the value is the column/field that should map.
      */
     private Map<String, String> queryAttributes = new HashMap<>(0);
+
+    
 }

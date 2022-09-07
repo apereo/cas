@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +33,7 @@ public class GroovyRegisteredServiceAccessStrategyTests {
         authz.setGroovyScript("classpath:accessstrategy.groovy");
         assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<>()));
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("test").build()));
         assertNull(authz.getUnauthorizedRedirectUrl());
         assertNull(authz.getDelegatedAuthenticationPolicy());
         assertNotNull(authz.getRequiredAttributes());

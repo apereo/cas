@@ -158,13 +158,13 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
     }
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
+    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         return RegisteredServiceAccessStrategyEvaluator.builder()
             .caseInsensitive(this.caseInsensitive)
             .requireAllAttributes(this.requireAllAttributes)
             .requiredAttributes(this.requiredAttributes)
             .rejectedAttributes(this.rejectedAttributes)
             .build()
-            .evaluate(principal, principalAttributes);
+            .evaluate(request);
     }
 }
