@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.Clock;
 import java.util.UUID;
 
@@ -28,6 +29,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = 8042104336580063690L;
 
     private String name;

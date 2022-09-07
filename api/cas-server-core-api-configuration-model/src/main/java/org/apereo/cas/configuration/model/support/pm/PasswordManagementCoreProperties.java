@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @JsonFilter("PasswordManagementCoreProperties")
 public class PasswordManagementCoreProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -261644582798411176L;
 
     /**

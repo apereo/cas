@@ -55,6 +55,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
@@ -77,6 +78,7 @@ public class CasConfigurationProperties implements Serializable {
      */
     public static final String PREFIX = "cas";
 
+    @Serial
     private static final long serialVersionUID = -8620267783496071683L;
 
     /**
@@ -368,6 +370,7 @@ public class CasConfigurationProperties implements Serializable {
     @Getter
     @SuppressWarnings("UnusedMethod")
     private static class Holder implements Serializable {
+        @Serial
         private static final long serialVersionUID = -3129941286238115568L;
 
         /**

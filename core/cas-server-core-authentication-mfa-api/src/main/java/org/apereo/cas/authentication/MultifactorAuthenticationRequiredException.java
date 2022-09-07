@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serial;
+
 /**
  * This is {@link MultifactorAuthenticationRequiredException}.
  *
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class MultifactorAuthenticationRequiredException extends AuthenticationException {
+    @Serial
     private static final long serialVersionUID = 5909155188558680032L;
 
     private static final String CODE = "MULTIFACTOR_AUTHN_REQUIRED";

@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
+
 /**
  * This is {@link SamlIdPAttributeDefinition}.
  *
@@ -26,6 +28,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SamlIdPAttributeDefinition extends DefaultAttributeDefinition {
+    @Serial
     private static final long serialVersionUID = -144152003366303322L;
 
     private String friendlyName;

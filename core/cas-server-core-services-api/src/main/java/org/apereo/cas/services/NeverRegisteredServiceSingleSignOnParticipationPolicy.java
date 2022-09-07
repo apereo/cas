@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link NeverRegisteredServiceSingleSignOnParticipationPolicy}.
  *
@@ -25,6 +27,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @RequiredArgsConstructor
 public class NeverRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
+    @Serial
     private static final long serialVersionUID = -1123946898337761319L;
 
     @Override

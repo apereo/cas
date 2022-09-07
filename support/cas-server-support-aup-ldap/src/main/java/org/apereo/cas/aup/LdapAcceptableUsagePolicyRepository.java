@@ -18,6 +18,7 @@ import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
@@ -35,6 +36,7 @@ import java.util.Set;
  */
 @Slf4j
 public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository implements DisposableBean {
+    @Serial
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final Map<String, ConnectionFactory> connectionFactoryList;

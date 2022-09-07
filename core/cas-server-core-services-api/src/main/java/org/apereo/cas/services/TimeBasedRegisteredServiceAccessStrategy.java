@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -35,6 +36,7 @@ import java.time.ZonedDateTime;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TimeBasedRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = -6180748828025837047L;
 
     @ExpressionLanguageCapable

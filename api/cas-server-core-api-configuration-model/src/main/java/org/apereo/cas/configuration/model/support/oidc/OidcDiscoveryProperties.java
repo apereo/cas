@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 @JsonFilter("OidcDiscoveryProperties")
 public class OidcDiscoveryProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 813028615694269276L;
 
     /**

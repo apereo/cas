@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link SwivelTokenCredential}.
  *
@@ -22,6 +24,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Deprecated(since = "6.6")
 public class SwivelTokenCredential extends OneTimeTokenCredential {
+    @Serial
     private static final long serialVersionUID = 361318678073819595L;
 
     public SwivelTokenCredential(final String token) {

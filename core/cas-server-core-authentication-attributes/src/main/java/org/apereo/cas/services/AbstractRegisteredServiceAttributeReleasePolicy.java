@@ -21,6 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.PostLoad;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.TreeMap;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = 5325460875620586503L;
 
     private RegisteredServiceAttributeFilter attributeFilter;

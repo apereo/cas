@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link DynamoDbConsentProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("DynamoDbConsentProperties")
 public class DynamoDbConsentProperties extends AbstractDynamoDbProperties {
+    @Serial
     private static final long serialVersionUID = -9012260892496773705L;
 
     /**

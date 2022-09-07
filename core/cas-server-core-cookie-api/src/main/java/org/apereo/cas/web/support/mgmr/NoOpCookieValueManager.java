@@ -3,6 +3,7 @@ package org.apereo.cas.web.support.mgmr;
 import org.apereo.cas.web.cookie.CookieValueManager;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serial;
 
 /**
  * Default cookie value builder that returns the given cookie value
@@ -18,6 +19,7 @@ public class NoOpCookieValueManager implements CookieValueManager {
      */
     public static final CookieValueManager INSTANCE = new NoOpCookieValueManager();
 
+    @Serial
     private static final long serialVersionUID = -8464839674747772197L;
 
     @Override

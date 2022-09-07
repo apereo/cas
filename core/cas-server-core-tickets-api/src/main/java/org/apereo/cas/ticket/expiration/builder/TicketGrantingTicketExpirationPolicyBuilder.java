@@ -22,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
+
 /**
  * This is {@link TicketGrantingTicketExpirationPolicyBuilder}.
  *
@@ -34,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 @Getter
 public class TicketGrantingTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<TicketGrantingTicket> {
+    @Serial
     private static final long serialVersionUID = -4197980180617072826L;
 
     /**

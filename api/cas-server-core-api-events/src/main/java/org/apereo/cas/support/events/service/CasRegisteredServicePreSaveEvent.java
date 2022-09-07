@@ -5,6 +5,8 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasRegisteredServicePreSaveEvent} that is signaled
  * when a registered service about to be saved into the registry.
@@ -16,6 +18,7 @@ import lombok.ToString;
 @Getter
 public class CasRegisteredServicePreSaveEvent extends BaseCasRegisteredServiceEvent {
 
+    @Serial
     private static final long serialVersionUID = 291988299766263298L;
 
     private final RegisteredService registeredService;

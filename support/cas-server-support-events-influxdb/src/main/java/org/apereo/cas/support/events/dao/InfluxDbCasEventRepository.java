@@ -16,6 +16,7 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Map;
@@ -85,6 +86,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     @Setter
     @ToString
     public static class InfluxDbEvent implements Serializable {
+        @Serial
         private static final long serialVersionUID = -90633813914510237L;
 
         @Column(timestamp = true)

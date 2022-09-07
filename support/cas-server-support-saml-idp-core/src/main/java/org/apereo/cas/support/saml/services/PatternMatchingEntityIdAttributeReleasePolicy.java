@@ -13,6 +13,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.Map;
 @Setter
 public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = 2633701342213724854L;
 
     private String entityIds = RegexUtils.MATCH_NOTHING_PATTERN.pattern();

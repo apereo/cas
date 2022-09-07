@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @JsonFilter("ThrottledTimeoutTicketExpirationPolicyProperties")
 @Accessors(chain = true)
 public class ThrottledTimeoutTicketExpirationPolicyProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -2370751379747804646L;
 
     /**

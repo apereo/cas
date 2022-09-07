@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link InterruptCookieProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("InterruptCookieProperties")
 public class InterruptCookieProperties extends CookieProperties {
+    @Serial
     private static final long serialVersionUID = -266090748600049578L;
 
     /**

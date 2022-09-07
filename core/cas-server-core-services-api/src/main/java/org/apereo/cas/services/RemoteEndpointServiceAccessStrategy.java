@@ -17,6 +17,8 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
+import java.io.Serial;
+
 /**
  * This is {@link RemoteEndpointServiceAccessStrategy} that reaches out
  * to a remote endpoint, passing the CAS principal id to determine if access is allowed.
@@ -37,6 +39,7 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Serial
     private static final long serialVersionUID = -1108201604115278440L;
 
     private String endpointUrl;

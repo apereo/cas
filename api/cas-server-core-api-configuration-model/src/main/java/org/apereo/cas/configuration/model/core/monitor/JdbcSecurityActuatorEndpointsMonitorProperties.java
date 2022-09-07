@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link JdbcSecurityActuatorEndpointsMonitorProperties}.
  *
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class JdbcSecurityActuatorEndpointsMonitorProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = 2625666117528467867L;
 
     /**

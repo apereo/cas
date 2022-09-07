@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DuoSecurityUserAccount implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 403995883439339241L;
 
     private final String username;

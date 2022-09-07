@@ -20,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.time.ZoneOffset;
@@ -48,6 +49,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      */
     public static final String TABLE_NAME_SCRATCH_CODES = "scratch_codes";
 
+    @Serial
     private static final long serialVersionUID = -8289105320642735252L;
 
     @Id

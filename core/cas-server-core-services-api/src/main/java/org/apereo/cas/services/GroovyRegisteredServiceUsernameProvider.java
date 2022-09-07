@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.PostLoad;
 import javax.persistence.Transient;
+import java.io.Serial;
 
 /**
  * Resolves the username for the service to be the default principal id.
@@ -43,6 +44,7 @@ import javax.persistence.Transient;
 @Accessors(chain = true)
 public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
+    @Serial
     private static final long serialVersionUID = 5823989148794052951L;
 
     @ExpressionLanguageCapable

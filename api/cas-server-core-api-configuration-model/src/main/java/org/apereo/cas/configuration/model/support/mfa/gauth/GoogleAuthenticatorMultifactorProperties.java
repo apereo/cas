@@ -12,6 +12,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link GoogleAuthenticatorMultifactorProperties}.
  *
@@ -30,6 +32,7 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorAut
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-gauth";
 
+    @Serial
     private static final long serialVersionUID = -7401748853833491119L;
 
     /**

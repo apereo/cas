@@ -21,6 +21,7 @@ import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -125,6 +126,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     @Data
     @SuppressWarnings("UnusedMethod")
     private static class JsonBackedAccount implements Serializable {
+        @Serial
         private static final long serialVersionUID = -8522936598053838986L;
 
         private String email;

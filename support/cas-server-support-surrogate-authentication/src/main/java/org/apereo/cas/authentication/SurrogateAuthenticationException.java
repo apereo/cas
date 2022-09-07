@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import java.io.Serial;
+
 /**
  * This is {@link SurrogateAuthenticationException}.
  *
@@ -7,6 +9,7 @@ package org.apereo.cas.authentication;
  * @since 5.2.0
  */
 public class SurrogateAuthenticationException extends AuthenticationException {
+    @Serial
     private static final long serialVersionUID = -3250559691638860076L;
 
     public SurrogateAuthenticationException(final String msg) {

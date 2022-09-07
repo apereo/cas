@@ -14,6 +14,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.Serial;
+
 /**
  * This is {@link PairwiseOidcRegisteredServiceUsernameAttributeProvider}.
  * This provides a different sub value to each Client, so as not to enable
@@ -42,6 +44,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Setter
 public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
+    @Serial
     private static final long serialVersionUID = 469929103943101717L;
 
     private PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();

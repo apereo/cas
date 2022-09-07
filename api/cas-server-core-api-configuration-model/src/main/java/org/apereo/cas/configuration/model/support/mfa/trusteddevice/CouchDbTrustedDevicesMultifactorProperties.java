@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbTrustedDevicesMultifactorProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("CouchDbTrustedDevicesMultifactorProperties")
 public class CouchDbTrustedDevicesMultifactorProperties extends BaseCouchDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 5887850351177564308L;
 
     public CouchDbTrustedDevicesMultifactorProperties() {

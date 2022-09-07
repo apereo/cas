@@ -7,6 +7,7 @@ import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.util.Set;
 
 /**
@@ -17,6 +18,7 @@ import java.util.Set;
  */
 @Slf4j
 public class GroovyConsentRepository extends BaseConsentRepository implements DisposableBean {
+    @Serial
     private static final long serialVersionUID = 3482998768083902246L;
 
     private final WatchableGroovyScriptResource watchableScript;

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link U2FGroovyMultifactorAuthenticationProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("U2FGroovyMultifactorAuthenticationProperties")
 public class U2FGroovyMultifactorAuthenticationProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = -1261683393319585262L;
 }

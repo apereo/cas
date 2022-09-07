@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,6 +29,7 @@ import java.util.Map;
 @JsonFilter("ViewProperties")
 public class ViewProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2719748442042197738L;
 
     /**

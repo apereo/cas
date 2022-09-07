@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 @Accessors(chain = true)
 @JsonFilter("HazelcastClusterProperties")
 public class HazelcastNetworkClusterProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8474968308106013185L;
 
     /**

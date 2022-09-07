@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
+
 /**
  * This is {@link DeleteTicketMessageQueueCommand}.
  *
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand {
 
+    @Serial
     private static final long serialVersionUID = 8183330712274484245L;
 
     @JsonProperty

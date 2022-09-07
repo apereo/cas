@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * This is {@link UmaPermissionTicketExpirationPolicyBuilder}.
  *
@@ -23,6 +25,7 @@ import lombok.val;
 @ToString
 @Getter
 public class UmaPermissionTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<UmaPermissionTicket> {
+    @Serial
     private static final long serialVersionUID = -3897980180617072826L;
     /**
      * The Cas properties.

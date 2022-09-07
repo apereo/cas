@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.Set;
 @Getter
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
 
+    @Serial
     private static final long serialVersionUID = 6180465589526463843L;
     
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>(0));

@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.KeyStore;
 
@@ -21,6 +22,7 @@ import java.security.KeyStore;
 @Setter
 @Accessors(chain = true)
 public class HttpClientTrustStoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1357168622083627654L;
 
     /**

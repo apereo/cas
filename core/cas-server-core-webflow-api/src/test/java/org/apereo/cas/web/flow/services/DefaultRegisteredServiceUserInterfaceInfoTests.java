@@ -6,6 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
     @Test
     public void verifyOperation() {
         val info = new DefaultRegisteredServiceUserInterfaceInfo(mock(WebBasedRegisteredService.class)) {
+            @Serial
             private static final long serialVersionUID = 2331519665722637762L;
 
             @Override
@@ -64,6 +66,7 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
         when(service.getLogo()).thenReturn("https://apereo.org/cas");
 
         val info = new DefaultRegisteredServiceUserInterfaceInfo(service) {
+            @Serial
             private static final long serialVersionUID = 2331519665722637762L;
 
             @Override
@@ -102,6 +105,7 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
     public void verifyDefault() {
         val service = mock(WebBasedRegisteredService.class);
         val info = new DefaultRegisteredServiceUserInterfaceInfo(service) {
+            @Serial
             private static final long serialVersionUID = 2331519665722637762L;
 
             @Override

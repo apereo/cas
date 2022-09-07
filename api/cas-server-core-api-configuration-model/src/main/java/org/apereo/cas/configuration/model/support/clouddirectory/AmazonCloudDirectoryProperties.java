@@ -12,6 +12,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link AmazonCloudDirectoryProperties}.
  *
@@ -25,6 +27,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("AmazonCloudDirectoryProperties")
 public class AmazonCloudDirectoryProperties extends BaseAmazonWebServicesProperties {
 
+    @Serial
     private static final long serialVersionUID = 6725526133973304269L;
 
     /**

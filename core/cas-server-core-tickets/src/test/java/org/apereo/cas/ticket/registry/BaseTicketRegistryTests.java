@@ -73,6 +73,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serial;
 import java.time.Clock;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -125,6 +126,7 @@ public abstract class BaseTicketRegistryTests {
 
     protected static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
         return new ExpirationPolicyBuilder() {
+            @Serial
             private static final long serialVersionUID = -9043565995104313970L;
 
             @Override

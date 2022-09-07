@@ -10,6 +10,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -22,6 +23,7 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @Setter
 public class CouchDbConsentDecision extends ConsentDecision {
+    @Serial
     private static final long serialVersionUID = -685282558102325489L;
 
     @JsonProperty("_rev")

@@ -23,6 +23,7 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -218,6 +219,7 @@ public class DynamoDbTableUtils {
 
     static class TableNeverTransitionedToStateException extends SdkClientException {
 
+        @Serial
         private static final long serialVersionUID = 8920567021104846647L;
 
         /**

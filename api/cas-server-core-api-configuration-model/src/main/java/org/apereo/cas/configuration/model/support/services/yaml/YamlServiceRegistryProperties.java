@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.Serial;
+
 /**
  * This is {@link YamlServiceRegistryProperties}.
  *
@@ -22,6 +24,7 @@ import org.springframework.core.io.ClassPathResource;
 @JsonFilter("YamlServiceRegistryProperties")
 public class YamlServiceRegistryProperties extends SpringResourceProperties {
 
+    @Serial
     private static final long serialVersionUID = 4863603996990314548L;
 
     /**

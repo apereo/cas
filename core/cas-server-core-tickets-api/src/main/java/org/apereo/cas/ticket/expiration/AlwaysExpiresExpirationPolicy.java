@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+
 /**
  * AlwaysExpiresExpirationPolicy always answers true when asked if a Ticket is
  * expired.
@@ -26,6 +28,7 @@ public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
      */
     public static final ExpirationPolicy INSTANCE = new AlwaysExpiresExpirationPolicy();
 
+    @Serial
     private static final long serialVersionUID = 3836547698242303540L;
 
     @Override

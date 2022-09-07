@@ -3,6 +3,8 @@ package org.apereo.cas.support.events.service;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasRegisteredServicesRefreshEvent} that is signaled
  * when a registered service is saved into the CAS registry.
@@ -14,6 +16,7 @@ import lombok.ToString;
 @Getter
 public class CasRegisteredServicesRefreshEvent extends BaseCasRegisteredServiceEvent {
 
+    @Serial
     private static final long serialVersionUID = 291168299766263298L;
 
     /**

@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ektorp.support.CouchDbDocument;
 
+import java.io.Serial;
+
 /**
  * This is {@link TicketDocument}. Wraps a {@link Ticket} for use with CouchDB.
  *
@@ -21,6 +23,7 @@ import org.ektorp.support.CouchDbDocument;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 public class TicketDocument extends CouchDbDocument {
+    @Serial
     private static final long serialVersionUID = -5460618381339711000L;
 
     private Ticket ticket;

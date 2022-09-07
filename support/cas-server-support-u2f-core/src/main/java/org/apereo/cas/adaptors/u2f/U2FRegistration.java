@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.u2f;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @Getter
 @RequiredArgsConstructor
 public class U2FRegistration implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8478965906212939618L;
 
     private final String challenge;

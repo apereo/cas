@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Getter
 @SuperBuilder
 public class QRAuthenticationTokenValidationRequest implements Serializable {
+    @Serial
     private static final long serialVersionUID = -2010576443419962855L;
 
     private final String token;

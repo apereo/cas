@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import lombok.val;
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -19,6 +20,7 @@ import java.util.function.Supplier;
  * @since 6.6.0
  */
 public class JacksonInjectableValueSupplier extends InjectableValues.Std {
+    @Serial
     private static final long serialVersionUID = -7327438202032303292L;
 
     public JacksonInjectableValueSupplier(final Supplier<? extends Map<String, Object>> valueSupplier) {

@@ -18,6 +18,8 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
+
 /**
  * This is {@link AccepttoMultifactorValidateUserDeviceRegistrationAction}.
  *
@@ -68,6 +70,7 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Bas
     }
 
     public static class AccepttoUserDeviceRegistrationException extends RuntimeException {
+        @Serial
         private static final long serialVersionUID = -8225610355713310470L;
 
         AccepttoUserDeviceRegistrationException(final String message) {

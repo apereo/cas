@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.Assert;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -29,6 +30,7 @@ import java.time.temporal.ChronoUnit;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
+    @Serial
     private static final long serialVersionUID = -5704993954986738308L;
     
     @JsonProperty("timeToLive")
@@ -87,6 +89,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     @ToString(callSuper = true)
     public static class ProxyTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
+        @Serial
         private static final long serialVersionUID = -5814201080268311070L;
 
         /**
@@ -109,6 +112,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     @ToString(callSuper = true)
     public static class ServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
+        @Serial
         private static final long serialVersionUID = -5814201080268311070L;
 
         @JsonCreator
@@ -125,6 +129,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     @ToString(callSuper = true)
     public static class TransientSessionTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
+        @Serial
         private static final long serialVersionUID = -5814201080268311070L;
 
         @JsonCreator

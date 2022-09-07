@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * This is {@link SamlAttributeQueryTicketExpirationPolicyBuilder}.
  *
@@ -23,6 +25,7 @@ import lombok.val;
 @ToString
 @Getter
 public class SamlAttributeQueryTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<SamlAttributeQueryTicket> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
 
     /**

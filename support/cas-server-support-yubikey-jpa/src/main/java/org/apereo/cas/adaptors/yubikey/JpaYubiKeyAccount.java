@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -28,6 +29,7 @@ import java.util.List;
 @SuperBuilder
 @Accessors(chain = true)
 public class JpaYubiKeyAccount extends YubiKeyAccount {
+    @Serial
     private static final long serialVersionUID = 8996204730235225057L;
 
     @Id

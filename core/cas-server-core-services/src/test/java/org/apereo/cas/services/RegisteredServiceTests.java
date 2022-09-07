@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,7 @@ public class RegisteredServiceTests {
     private static final String ATTR_3 = "attr3";
 
     private final BaseRegisteredService baseService = new BaseRegisteredService() {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         @Override

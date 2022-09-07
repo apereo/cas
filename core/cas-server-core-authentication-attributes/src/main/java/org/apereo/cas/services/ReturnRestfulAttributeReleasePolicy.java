@@ -25,6 +25,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import java.util.TreeMap;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ReturnRestfulAttributeReleasePolicy extends BaseMappedAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -6249488544306639050L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

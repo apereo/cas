@@ -9,6 +9,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Map;
 @Getter
 @ToString(of = {"id", "linkedId"})
 public class DelegatedAuthenticationCandidateProfile implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6377783357802049769L;
 
     @Nonnull

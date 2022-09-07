@@ -6,6 +6,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public interface AcceptableUsagePolicyRepository extends Serializable {
      */
     static AcceptableUsagePolicyRepository noOp() {
         return new AcceptableUsagePolicyRepository() {
+            @Serial
             private static final long serialVersionUID = 8784500942988440997L;
 
             @Override

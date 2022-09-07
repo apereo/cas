@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ import java.util.List;
 @JsonFilter("PrincipalAttributesProperties")
 public class PrincipalAttributesProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4515569588579072890L;
     
     /**

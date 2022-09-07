@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class WsFederationCredential implements Credential {
 
+    @Serial
     private static final long serialVersionUID = -824605020472810939L;
 
     private String audience;

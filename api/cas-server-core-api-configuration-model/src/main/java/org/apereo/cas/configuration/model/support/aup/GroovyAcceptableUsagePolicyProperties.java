@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link GroovyAcceptableUsagePolicyProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("GroovyAcceptableUsagePolicyProperties")
 public class GroovyAcceptableUsagePolicyProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = 9164227843747126083L;
 }

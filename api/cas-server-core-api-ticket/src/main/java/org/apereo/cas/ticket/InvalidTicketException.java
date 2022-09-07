@@ -2,6 +2,8 @@ package org.apereo.cas.ticket;
 
 import lombok.Getter;
 
+import java.io.Serial;
+
 /**
  * AbstractTicketException to alert that a Ticket was not found or that it is expired.
  *
@@ -11,6 +13,7 @@ import lombok.Getter;
 @Getter
 public class InvalidTicketException extends AbstractTicketException {
 
+    @Serial
     private static final long serialVersionUID = 9141891414482490L;
 
     /**

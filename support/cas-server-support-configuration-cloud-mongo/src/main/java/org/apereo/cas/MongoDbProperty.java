@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class MongoDbProperty implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8152946700415601078L;
     
     @Id

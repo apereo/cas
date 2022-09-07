@@ -29,6 +29,7 @@ import org.springframework.core.io.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -117,6 +118,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
     @Getter
     @Setter
     public static class SamlServiceProviderMetadata implements Serializable {
+        @Serial
         private static final long serialVersionUID = -7347473226470492601L;
 
         private String entityId;

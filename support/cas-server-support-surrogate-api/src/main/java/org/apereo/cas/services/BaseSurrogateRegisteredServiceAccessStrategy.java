@@ -2,6 +2,8 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 
+import java.io.Serial;
+
 /**
  * This is {@link BaseSurrogateRegisteredServiceAccessStrategy}.
  *
@@ -9,6 +11,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
  * @since 5.3.0
  */
 public abstract class BaseSurrogateRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
+    @Serial
     private static final long serialVersionUID = -3975861635454453130L;
 
     /**

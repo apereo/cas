@@ -2,6 +2,8 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import java.io.Serial;
+
 
 /**
  * An exception that may be thrown during service ticket validation
@@ -17,6 +19,7 @@ public class UnrecognizableServiceForServiceTicketValidationException extends Ab
      */
     protected static final String CODE = "INVALID_SERVICE";
 
+    @Serial
     private static final long serialVersionUID = -8076771862820008358L;
 
     /**

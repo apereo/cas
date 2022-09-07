@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -33,6 +34,7 @@ import java.io.Serializable;
 @SuperBuilder
 public class SamlMetadataDocument implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -721955605616455236L;
     
     @JsonProperty("id")

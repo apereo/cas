@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @RequiresModule(name = "cas-server-support-redis-core")
 @JsonFilter("RedisClusterProperties")
 public class RedisClusterProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 5236837157740950831L;
 
     /**

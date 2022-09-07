@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.val;
 import org.opensaml.saml.saml2.core.Attribute;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
         "sn", "urn:oid:2.5.4.4",
         "eduPersonScopedAffiliation", "urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
 
+    @Serial
     private static final long serialVersionUID = 1532960981124784595L;
 
     @Getter

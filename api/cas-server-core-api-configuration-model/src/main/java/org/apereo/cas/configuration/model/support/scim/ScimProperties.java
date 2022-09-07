@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class ScimProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7943229230342691009L;
 
     /**

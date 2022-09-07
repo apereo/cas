@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 @JsonFilter("U2FCoreMultifactorAuthenticationProperties")
 public class U2FCoreMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
+    @Serial
     private static final long serialVersionUID = 6152350313777066398L;
 
     /**

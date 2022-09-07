@@ -14,6 +14,8 @@ import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapUserGraphicalAuthenticationRepository}.
  *
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.DisposableBean;
  */
 @RequiredArgsConstructor
 public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalAuthenticationRepository, DisposableBean {
+    @Serial
     private static final long serialVersionUID = 421732017215881244L;
 
     private final CasConfigurationProperties casProperties;

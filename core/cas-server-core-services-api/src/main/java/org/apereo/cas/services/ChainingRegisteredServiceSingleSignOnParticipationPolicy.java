@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @JsonIgnoreProperties("order")
 public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
+    @Serial
     private static final long serialVersionUID = -2923946898337761319L;
 
     private List<RegisteredServiceSingleSignOnParticipationPolicy> policies = new ArrayList<>(0);

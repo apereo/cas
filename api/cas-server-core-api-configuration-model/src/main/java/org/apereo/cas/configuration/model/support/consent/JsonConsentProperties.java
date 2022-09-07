@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JsonConsentProperties}.
  *
@@ -19,5 +21,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class JsonConsentProperties extends SpringResourceProperties {
 
+    @Serial
     private static final long serialVersionUID = 7079027843747126083L;
 }

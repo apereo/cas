@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ public class DefaultResponse implements Response {
 
     private static final int RESPONSE_INITIAL_CAPACITY = 200;
 
+    @Serial
     private static final long serialVersionUID = -8251042088720603062L;
 
     private final ResponseType responseType;

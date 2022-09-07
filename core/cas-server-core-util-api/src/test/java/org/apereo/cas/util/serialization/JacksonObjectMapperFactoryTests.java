@@ -14,6 +14,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,6 +99,7 @@ public class JacksonObjectMapperFactoryTests {
     @Accessors(chain = true)
     @EqualsAndHashCode
     private static class Payload implements Serializable {
+        @Serial
         private static final long serialVersionUID = -4319570781108105888L;
 
         @JacksonInject("number")

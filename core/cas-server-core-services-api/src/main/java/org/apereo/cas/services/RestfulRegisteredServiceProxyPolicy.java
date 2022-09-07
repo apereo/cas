@@ -23,6 +23,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Map;
@@ -45,6 +46,7 @@ import java.util.TreeMap;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RestfulRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
+    @Serial
     private static final long serialVersionUID = -222069319543047324L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

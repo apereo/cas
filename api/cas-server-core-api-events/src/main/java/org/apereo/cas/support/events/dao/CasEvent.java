@@ -19,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -81,6 +82,7 @@ public class CasEvent implements Serializable {
      */
     public static final String FIELD_GEO_TIMESTAMP = "geoTimestamp";
 
+    @Serial
     private static final long serialVersionUID = -4206712375316470417L;
 
     @Id

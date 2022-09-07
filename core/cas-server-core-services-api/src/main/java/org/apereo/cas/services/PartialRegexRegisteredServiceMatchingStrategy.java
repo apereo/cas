@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.Transient;
 
+import java.io.Serial;
 import java.util.regex.Pattern;
 
 /**
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @AllArgsConstructor
 public class PartialRegexRegisteredServiceMatchingStrategy implements RegisteredServiceMatchingStrategy {
+    @Serial
     private static final long serialVersionUID = -8345895859210185565L;
 
     @JsonIgnore

@@ -4,6 +4,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.ToString;
 
+import java.io.Serial;
+
 
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing single sign on session establishment
@@ -16,6 +18,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class CasTicketGrantingTicketCreatedEvent extends AbstractCasTicketGrantingTicketEvent {
 
+    @Serial
     private static final long serialVersionUID = -1862937393590213844L;
 
     /**

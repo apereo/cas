@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apereo.inspektr.audit.AuditActionContext;
 
+import java.io.Serial;
+
 /**
  * This is {@link AuditActionContextJsonSerializer}.
  *
@@ -13,6 +15,7 @@ import org.apereo.inspektr.audit.AuditActionContext;
  * @since 5.3.0
  */
 public class AuditActionContextJsonSerializer extends AbstractJacksonBackedStringSerializer<AuditActionContext> {
+    @Serial
     private static final long serialVersionUID = -8983370764375218898L;
 
     @Override

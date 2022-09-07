@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 @Accessors(chain = true)
 @JsonFilter("OktaPrincipalAttributesProperties")
 public class OktaPrincipalAttributesProperties extends BaseOktaProperties {
+    @Serial
     private static final long serialVersionUID = -6573755681498251678L;
 
     /**

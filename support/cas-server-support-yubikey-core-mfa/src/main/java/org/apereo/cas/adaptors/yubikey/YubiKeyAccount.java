@@ -22,6 +22,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,7 @@ public class YubiKeyAccount implements Serializable, Cloneable {
      */
     public static final String FIELD_DEVICES = "devices";
 
+    @Serial
     private static final long serialVersionUID = 311869140885521905L;
 
     @Id

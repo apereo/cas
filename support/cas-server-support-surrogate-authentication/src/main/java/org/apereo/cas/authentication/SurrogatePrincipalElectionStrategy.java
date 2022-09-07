@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Map;
  */
 @Slf4j
 public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElectionStrategy {
+    @Serial
     private static final long serialVersionUID = -3112906686072339162L;
 
     @Override

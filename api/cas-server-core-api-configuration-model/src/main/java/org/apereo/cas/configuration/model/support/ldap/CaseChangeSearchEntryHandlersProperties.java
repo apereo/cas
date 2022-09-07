@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 @JsonFilter("CaseChangeSearchEntryHandlersProperties")
 public class CaseChangeSearchEntryHandlersProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2420895955116725666L;
 
     /**

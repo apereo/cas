@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 public class ChainingAttributeReleasePolicy implements RegisteredServiceChainingAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = 3795054936775326709L;
 
     private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>(0);

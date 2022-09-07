@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString(of = "properties")
 public class AccountRegistrationResponse implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1822843820128948428L;
 
     @Getter

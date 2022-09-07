@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class RedisConsentRepository implements ConsentRepository {
      */
     public static final String CAS_CONSENT_DECISION_PREFIX = ConsentDecision.class.getSimpleName() + ':';
 
+    @Serial
     private static final long serialVersionUID = 1234168609139907616L;
 
     private final transient CasRedisTemplate<String, ConsentDecision> redisTemplate;

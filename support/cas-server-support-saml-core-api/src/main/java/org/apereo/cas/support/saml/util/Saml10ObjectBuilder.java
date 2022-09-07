@@ -33,6 +33,7 @@ import org.opensaml.saml.saml1.core.SubjectConfirmation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -50,6 +51,7 @@ import java.util.Map;
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
 
+    @Serial
     private static final long serialVersionUID = -4711012620700270554L;
 
     public Saml10ObjectBuilder(final OpenSamlConfigBean configBean) {

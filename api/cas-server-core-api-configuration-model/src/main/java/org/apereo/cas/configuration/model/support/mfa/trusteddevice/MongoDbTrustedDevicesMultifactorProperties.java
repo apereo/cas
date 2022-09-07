@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link MongoDbTrustedDevicesMultifactorProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("MongoDbTrustedDevicesMultifactorProperties")
 public class MongoDbTrustedDevicesMultifactorProperties extends SingleCollectionMongoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 4940497540189318943L;
 
     public MongoDbTrustedDevicesMultifactorProperties() {

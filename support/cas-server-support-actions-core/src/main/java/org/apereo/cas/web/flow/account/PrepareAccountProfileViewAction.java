@@ -29,6 +29,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.LocalDate;
@@ -116,6 +117,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     @Getter
     @SuppressWarnings("UnusedMethod")
     private static class AccountAuditActionContext extends AuditActionContext {
+        @Serial
         private static final long serialVersionUID = 8935451143814878214L;
 
         private final String json;
@@ -131,6 +133,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     @Getter
     @SuppressWarnings("UnusedMethod")
     class SingleSignOnSession implements Serializable {
+        @Serial
         private static final long serialVersionUID = 8935451143814878214L;
 
         private final String payload;

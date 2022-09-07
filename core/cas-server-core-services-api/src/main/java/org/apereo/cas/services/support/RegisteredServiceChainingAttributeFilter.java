@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Map;
 @EqualsAndHashCode
 public class RegisteredServiceChainingAttributeFilter implements RegisteredServiceAttributeFilter {
 
+    @Serial
     private static final long serialVersionUID = 903015750234610128L;
 
     private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>(0);

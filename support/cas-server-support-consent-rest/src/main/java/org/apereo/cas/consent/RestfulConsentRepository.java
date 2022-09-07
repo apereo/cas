@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +38,7 @@ public class RestfulConsentRepository implements ConsentRepository {
         .build()
         .toObjectMapper();
 
+    @Serial
     private static final long serialVersionUID = 6583408864586270206L;
 
     private final RestfulConsentProperties properties;

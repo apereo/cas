@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.validator.token.device;
 
 import org.apereo.cas.ticket.InvalidTicketException;
 
+import java.io.Serial;
+
 /**
  * This is {@link UnapprovedOAuth20DeviceUserCodeException}.
  *
@@ -9,6 +11,7 @@ import org.apereo.cas.ticket.InvalidTicketException;
  * @since 6.0.0
  */
 public class UnapprovedOAuth20DeviceUserCodeException extends InvalidTicketException {
+    @Serial
     private static final long serialVersionUID = -3323066598613188666L;
 
     public UnapprovedOAuth20DeviceUserCodeException(final String ticketId) {

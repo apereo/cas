@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link AuditCouchDbProperties}.
  *
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class AuditCouchDbProperties extends BaseAsynchronousCouchDbProperties {
+    @Serial
     private static final long serialVersionUID = -5607529769937667881L;
 
     public AuditCouchDbProperties() {

@@ -4,6 +4,7 @@ package com.yubico.webauthn.attestation;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,7 @@ import lombok.Value;
 @Builder(toBuilder = true)
 public class Attestation implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2324150228329213721L;
 
     /**

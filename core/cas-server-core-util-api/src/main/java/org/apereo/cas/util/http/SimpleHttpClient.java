@@ -19,6 +19,7 @@ import org.apache.http.impl.client.FutureRequestExecutionService;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,6 +42,7 @@ import java.util.concurrent.RejectedExecutionException;
 @RequiredArgsConstructor
 public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
+    @Serial
     private static final long serialVersionUID = -4949380008568071855L;
 
     /**

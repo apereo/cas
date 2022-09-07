@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -27,6 +28,7 @@ import java.util.Optional;
 @Setter
 @Getter
 public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
+    @Serial
     private static final long serialVersionUID = -2059445756475980894L;
 
     private final String casServiceUrlPattern;

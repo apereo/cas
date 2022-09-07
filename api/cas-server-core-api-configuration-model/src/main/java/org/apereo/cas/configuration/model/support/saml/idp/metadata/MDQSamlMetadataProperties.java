@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("MDQSamlMetadataProperties")
 public class MDQSamlMetadataProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1311568960413770598L;
 
     /**

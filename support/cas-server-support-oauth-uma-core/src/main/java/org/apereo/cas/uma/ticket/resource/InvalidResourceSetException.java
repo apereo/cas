@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serial;
+
 /**
  * This is {@link InvalidResourceSetException}.
  *
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 @Getter
 public class InvalidResourceSetException extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = 7631083183310661586L;
 
     private final int code;

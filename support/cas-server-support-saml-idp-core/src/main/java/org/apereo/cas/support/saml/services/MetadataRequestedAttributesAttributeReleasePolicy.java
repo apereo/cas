@@ -15,6 +15,7 @@ import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -3483733307124962357L;
 
     private boolean useFriendlyName;

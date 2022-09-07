@@ -17,6 +17,7 @@ import org.jooq.lambda.Unchecked;
 
 import javax.persistence.Transient;
 
+import java.io.Serial;
 import java.util.Set;
 
 /**
@@ -33,6 +34,7 @@ import java.util.Set;
 @Deprecated(since = "6.2.0")
 @Slf4j
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
+    @Serial
     private static final long serialVersionUID = -3075860754996106437L;
 
     private String groovyScript;

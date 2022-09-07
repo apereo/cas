@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-saml-idp")
 public abstract class AbstractSamlSPProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5381463661659831898L;
 
     /**

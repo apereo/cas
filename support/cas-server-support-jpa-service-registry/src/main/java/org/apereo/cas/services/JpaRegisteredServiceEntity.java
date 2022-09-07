@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -39,6 +40,7 @@ public class JpaRegisteredServiceEntity implements Serializable {
      */
     public static final String ENTITY_NAME = "JpaRegisteredServiceEntity";
 
+    @Serial
     private static final long serialVersionUID = 6534421912995436609L;
 
     @Id

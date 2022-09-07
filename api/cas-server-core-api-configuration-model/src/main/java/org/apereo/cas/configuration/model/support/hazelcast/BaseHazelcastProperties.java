@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -66,6 +67,7 @@ public class BaseHazelcastProperties implements Serializable, CasFeatureModule {
      */
     public static final String IPV4_STACK_PROP = "hazelcast.prefer.ipv4.stack";
 
+    @Serial
     private static final long serialVersionUID = 4204884717547468480L;
 
     /**

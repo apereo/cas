@@ -4,6 +4,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -18,6 +20,7 @@ public class RegisteredServiceAcceptableUsagePolicyTests {
     @Test
     public void verifyOperation() {
         val input = new RegisteredServiceAcceptableUsagePolicy() {
+            @Serial
             private static final long serialVersionUID = -4878764188998002053L;
         };
         assertNull(input.getMessageCode());

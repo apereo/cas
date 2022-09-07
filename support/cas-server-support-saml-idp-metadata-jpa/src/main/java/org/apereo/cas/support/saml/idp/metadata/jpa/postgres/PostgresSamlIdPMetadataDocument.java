@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link PostgresSamlIdPMetadataDocument}.
@@ -33,6 +34,7 @@ import javax.persistence.Table;
 @Entity(name = "SamlIdPMetadataDocument")
 @Table(name = "SamlIdPMetadataDocument")
 public class PostgresSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
+    @Serial
     private static final long serialVersionUID = 2576062504192441866L;
 
     @Id

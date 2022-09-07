@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link CassandraTicketRegistryProperties}.
  *
@@ -21,6 +23,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @JsonFilter("CassandraTicketRegistryProperties")
 public class CassandraTicketRegistryProperties extends BaseCassandraProperties {
+    @Serial
     private static final long serialVersionUID = -2468250557119133004L;
 
     /**

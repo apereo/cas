@@ -15,6 +15,7 @@ import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecut
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.util.UUID;
 
 /**
@@ -32,6 +33,7 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
 
     private static final String KEY_FORMAT = "<uuid>_<base64-encoded-flow-state>";
 
+    @Serial
     private static final long serialVersionUID = 3514659327458916297L;
 
     private UUID id;
@@ -75,10 +77,12 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
         return this.id + "_" + CodecUtil.b64(this.data);
     }
 
+    @Serial
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.writeUTF(toString());
     }
 
+    @Serial
     private void readObject(final ObjectInputStream in) throws Exception {
         val temp = parse(in.readUTF());
         this.id = temp.id;

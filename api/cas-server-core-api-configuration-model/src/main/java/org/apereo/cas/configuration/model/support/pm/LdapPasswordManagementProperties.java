@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 @JsonFilter("LdapPasswordManagementProperties")
 @Accessors(chain = true)
 public class LdapPasswordManagementProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -2610186056194686825L;
 
     /**

@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -25,6 +26,7 @@ import java.util.List;
 @Getter
 public class ImmutableAssertion implements Assertion {
 
+    @Serial
     private static final long serialVersionUID = -3348826049921010423L;
 
     /**

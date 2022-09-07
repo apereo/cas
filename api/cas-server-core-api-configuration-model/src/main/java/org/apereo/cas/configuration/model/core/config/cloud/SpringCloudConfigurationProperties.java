@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 public class SpringCloudConfigurationProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -2749293768878152908L;
 
     /**
@@ -35,6 +37,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Getter
     @Setter
     public static class Cloud implements Serializable {
+        @Serial
         private static final long serialVersionUID = -6326706651416825269L;
 
         /**
@@ -68,6 +71,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class MongoDb implements Serializable {
+        @Serial
         private static final long serialVersionUID = -6509143371334754469L;
 
         /**
@@ -82,6 +86,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Accessors(chain = true)
     @Setter
     public static class Rest extends RestEndpointProperties {
+        @Serial
         private static final long serialVersionUID = -4509143371334754469L;
     }
 
@@ -90,6 +95,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Accessors(chain = true)
     @Setter
     public static class Jdbc implements Serializable {
+        @Serial
         private static final long serialVersionUID = -7575240387340025345L;
 
         /**
@@ -123,6 +129,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class AmazonWebServicesConfiguration implements Serializable {
+        @Serial
         private static final long serialVersionUID = -124404249388429120L;
 
         /**
@@ -151,6 +158,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class AmazonSecretsManager extends BaseAmazonWebServicesProperties {
+        @Serial
         private static final long serialVersionUID = -124404249387429120L;
     }
 
@@ -159,6 +167,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class AmazonSystemsManagerParameterStore extends BaseAmazonWebServicesProperties {
+        @Serial
         private static final long serialVersionUID = -224404249387429120L;
     }
 
@@ -167,6 +176,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class AmazonS3 extends BaseAmazonWebServicesProperties {
+        @Serial
         private static final long serialVersionUID = -124404249387429120L;
 
         /**
@@ -180,6 +190,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class AmazonDynamoDb extends AbstractDynamoDbProperties {
+        @Serial
         private static final long serialVersionUID = -123404249388429120L;
     }
 

@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class TicketGrantingTicketImpl extends AbstractTicket implements AuthenticatedServicesAwareTicketGrantingTicket {
 
+    @Serial
     private static final long serialVersionUID = -8608149809180911599L;
 
     /**

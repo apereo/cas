@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestfulViewProperties}.
  *
@@ -18,5 +20,6 @@ import lombok.Setter;
 @Setter
 @JsonFilter("RestfulViewProperties")
 public class RestfulViewProperties extends RestEndpointProperties {
+    @Serial
     private static final long serialVersionUID = -8102345678378393382L;
 }

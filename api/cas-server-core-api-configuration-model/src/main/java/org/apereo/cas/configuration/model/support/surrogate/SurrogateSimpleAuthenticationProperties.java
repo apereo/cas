@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import java.util.Map;
 @Accessors(chain = true)
 @JsonFilter("SurrogateSimpleAuthenticationProperties")
 public class SurrogateSimpleAuthenticationProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = 16938920863432222L;
 
     /**

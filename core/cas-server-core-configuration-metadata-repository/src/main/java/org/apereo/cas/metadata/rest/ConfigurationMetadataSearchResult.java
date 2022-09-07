@@ -18,6 +18,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
 import java.util.regex.Pattern;
 
 /**
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
 @EqualsAndHashCode(of = {"order", "group"}, callSuper = true)
 public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProperty implements Ordered, Comparable<ConfigurationMetadataSearchResult> {
 
+    @Serial
     private static final long serialVersionUID = 7767348341760984539L;
 
     private static final Pattern PATTERN_DESCRIPTION_CODE = RegexUtils.createPattern("\\{@code (.+)\\}");

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 
 import javax.persistence.PostLoad;
+import java.io.Serial;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +43,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = 1245279151345635245L;
 
     /**

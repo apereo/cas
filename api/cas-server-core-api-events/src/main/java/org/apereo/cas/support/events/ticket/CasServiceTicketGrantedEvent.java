@@ -7,6 +7,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing granting of a
  * service ticket by a CAS server.
@@ -18,6 +20,7 @@ import lombok.ToString;
 @Getter
 public class CasServiceTicketGrantedEvent extends AbstractCasEvent {
 
+    @Serial
     private static final long serialVersionUID = 128616377249711105L;
 
     private final TicketGrantingTicket ticketGrantingTicket;

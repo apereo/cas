@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Setter
 @SuperBuilder
 public class DelegatedClientIdentityProviderConfiguration implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6216882278086699364L;
 
     private final String name;

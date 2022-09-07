@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apereo.inspektr.audit.AuditActionContext;
 
+import java.io.Serial;
 import java.util.Date;
 
 /**
@@ -17,6 +18,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class CouchDbAuditActionContext extends AuditActionContext {
+    @Serial
     private static final long serialVersionUID = 5316526142085559254L;
 
     @JsonProperty("_id")

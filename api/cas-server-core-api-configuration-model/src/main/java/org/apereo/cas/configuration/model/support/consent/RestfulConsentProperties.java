@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestfulConsentProperties}.
  *
@@ -21,5 +23,6 @@ import lombok.experimental.Accessors;
 @JsonFilter("RestfulConsentProperties")
 public class RestfulConsentProperties extends BaseRestEndpointProperties {
 
+    @Serial
     private static final long serialVersionUID = -6909617495470495341L;
 }

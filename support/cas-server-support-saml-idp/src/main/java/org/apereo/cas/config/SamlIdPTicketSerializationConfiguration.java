@@ -16,6 +16,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import java.io.Serial;
+
 /**
  * This is {@link SamlIdPTicketSerializationConfiguration}.
  *
@@ -40,6 +42,7 @@ public class SamlIdPTicketSerializationConfiguration {
     }
 
     private static class SamlArtifactTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlArtifactTicketImpl> {
+        @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         @Override
@@ -49,6 +52,7 @@ public class SamlIdPTicketSerializationConfiguration {
     }
 
     private static class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlAttributeQueryTicketImpl> {
+        @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         @Override

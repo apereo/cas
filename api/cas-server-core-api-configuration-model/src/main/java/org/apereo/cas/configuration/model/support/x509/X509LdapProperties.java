@@ -6,6 +6,8 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+
 /**
  * This is {@link X509LdapProperties}.
  *
@@ -17,6 +19,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-x509-webflow")
 public class X509LdapProperties extends AbstractLdapSearchProperties {
 
+    @Serial
     private static final long serialVersionUID = -1655068554291000206L;
 
     /**

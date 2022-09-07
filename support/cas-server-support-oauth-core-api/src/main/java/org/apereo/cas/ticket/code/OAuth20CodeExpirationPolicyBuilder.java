@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * This is {@link OAuth20CodeExpirationPolicyBuilder}.
  *
@@ -21,6 +23,7 @@ import lombok.val;
 @ToString
 @Getter
 public class OAuth20CodeExpirationPolicyBuilder implements ExpirationPolicyBuilder<OAuth20Code> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
     /**
      * The Cas properties.

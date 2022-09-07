@@ -22,6 +22,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(of = {"mergingStrategy", "attributeRepositoryIds"})
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class AbstractPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository, AutoCloseable {
+    @Serial
     private static final long serialVersionUID = 6350245643948535906L;
 
     @JsonIgnore

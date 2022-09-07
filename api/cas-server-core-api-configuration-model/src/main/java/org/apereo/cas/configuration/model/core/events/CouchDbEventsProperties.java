@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbEventsProperties}.
  *
@@ -22,6 +24,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("CouchDbEventsProperties")
 public class CouchDbEventsProperties extends BaseAsynchronousCouchDbProperties {
 
+    @Serial
     private static final long serialVersionUID = -1587160128953366615L;
 
     public CouchDbEventsProperties() {

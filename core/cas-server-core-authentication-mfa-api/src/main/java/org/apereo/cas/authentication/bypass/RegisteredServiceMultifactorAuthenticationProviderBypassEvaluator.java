@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serial;
 
 /**
  * Multifactor Bypass Provider based on Service Multifactor Policy.
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 6.0
  */
 public class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = -3553888418344342672L;
 
     public RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(final String providerId) {

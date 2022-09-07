@@ -14,6 +14,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
@@ -33,6 +34,7 @@ import java.time.ZonedDateTime;
 @ToString(callSuper = true)
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = 205979491183779408L;
 
     /**

@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+
 /**
  * This is {@link OidcDefaultPushedAuthorizationRequest}.
  *
@@ -22,6 +24,7 @@ import lombok.NoArgsConstructor;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class OidcDefaultPushedAuthorizationRequest extends AbstractTicket
     implements OidcPushedAuthorizationRequest {
+    @Serial
     private static final long serialVersionUID = 5050969039357176961L;
 
     @JsonIgnore

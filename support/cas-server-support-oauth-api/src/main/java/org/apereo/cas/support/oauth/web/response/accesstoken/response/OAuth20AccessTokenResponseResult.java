@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import org.pac4j.core.profile.UserProfile;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @Jacksonized
 public class OAuth20AccessTokenResponseResult implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1229778562782271609L;
 
     private final RegisteredService registeredService;

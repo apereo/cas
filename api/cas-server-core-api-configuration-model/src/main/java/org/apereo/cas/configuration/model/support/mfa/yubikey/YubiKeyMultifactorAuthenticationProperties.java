@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-yubikey";
 
+    @Serial
     private static final long serialVersionUID = 9138057706201201089L;
 
     /**

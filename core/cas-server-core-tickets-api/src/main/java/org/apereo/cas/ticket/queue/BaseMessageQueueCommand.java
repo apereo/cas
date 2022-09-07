@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -29,6 +30,7 @@ import java.io.Serializable;
 @Setter
 public abstract class BaseMessageQueueCommand implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7050449807845156228L;
 
     private final PublisherIdentifier id;

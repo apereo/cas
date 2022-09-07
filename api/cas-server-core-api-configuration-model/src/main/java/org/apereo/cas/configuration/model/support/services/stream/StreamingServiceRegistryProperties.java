@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @JsonFilter("StreamingServiceRegistryProperties")
 public class StreamingServiceRegistryProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4957127900906059461L;
 
     /**

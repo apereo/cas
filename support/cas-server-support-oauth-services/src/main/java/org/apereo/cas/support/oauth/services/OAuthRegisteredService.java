@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
+    @Serial
     private static final long serialVersionUID = 5318897374067731021L;
 
     private String clientSecret;

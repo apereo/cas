@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.val;
 import org.springframework.core.OrderComparator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @Setter
 @RequiredArgsConstructor
 public class DefaultChainingMultifactorAuthenticationProvider implements ChainingMultifactorAuthenticationProvider {
+    @Serial
     private static final long serialVersionUID = -3199297701531604341L;
 
     private final List<MultifactorAuthenticationProvider> multifactorAuthenticationProviders = new ArrayList<>(0);

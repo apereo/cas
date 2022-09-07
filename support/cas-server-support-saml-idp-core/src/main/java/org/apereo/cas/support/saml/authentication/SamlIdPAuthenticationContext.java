@@ -10,6 +10,7 @@ import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLProtocolContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.Objects;
  * @since 6.4.0
  */
 public class SamlIdPAuthenticationContext implements Serializable {
+    @Serial
     private static final long serialVersionUID = 696048495600124624L;
 
     private final Map<String, SamlIdPAuthenticationContext> contexts = new LinkedHashMap<>();

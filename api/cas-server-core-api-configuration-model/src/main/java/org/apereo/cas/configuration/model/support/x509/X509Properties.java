@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class X509Properties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -9032744084671270366L;
 
     /**

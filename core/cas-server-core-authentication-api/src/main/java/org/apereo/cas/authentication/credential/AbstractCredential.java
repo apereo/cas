@@ -13,6 +13,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
 
+import java.io.Serial;
+
 /**
  * Base class for CAS credentials that are safe for long-term storage.
  *
@@ -23,6 +25,7 @@ import org.springframework.binding.validation.ValidationContext;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class AbstractCredential implements Credential, CredentialMetaData {
 
+    @Serial
     private static final long serialVersionUID = 8196868021183513898L;
 
     @JsonIgnore

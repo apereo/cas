@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -30,6 +31,7 @@ import java.time.temporal.ChronoUnit;
 @ToString(callSuper = true)
 public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -7144233906843566234L;
 
     /**
@@ -90,6 +92,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
     @EqualsAndHashCode(callSuper = true)
     @ToString(callSuper = true)
     public static class OAuthRefreshTokenStandaloneExpirationPolicy extends OAuth20RefreshTokenExpirationPolicy {
+        @Serial
         private static final long serialVersionUID = -7768661082888351104L;
 
         @JsonCreator

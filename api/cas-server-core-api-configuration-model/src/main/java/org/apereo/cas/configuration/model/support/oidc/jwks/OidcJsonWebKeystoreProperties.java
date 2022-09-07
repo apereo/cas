@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("OidcJsonWebKeystoreProperties")
 public class OidcJsonWebKeystoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1696060572027445151L;
 
     /**

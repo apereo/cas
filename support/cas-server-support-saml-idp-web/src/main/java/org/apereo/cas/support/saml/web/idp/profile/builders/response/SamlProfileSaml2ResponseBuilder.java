@@ -29,6 +29,7 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -41,6 +42,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
+    @Serial
     private static final long serialVersionUID = 1488837627964481272L;
 
     public SamlProfileSaml2ResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link MongoDbMonitorProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("MongoDbMonitorProperties")
 public class MongoDbMonitorProperties extends BaseMongoDbProperties {
+    @Serial
     private static final long serialVersionUID = -1918436901491275547L;
 }

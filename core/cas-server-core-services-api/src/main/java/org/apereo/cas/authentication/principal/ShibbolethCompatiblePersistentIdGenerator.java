@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.Map;
 @EqualsAndHashCode
 public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
+    @Serial
     private static final long serialVersionUID = 6182838799563190289L;
 
     private static final byte CONST_SEPARATOR = '!';

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(of = "key")
 @Getter
 public class OidcJsonWebKeyCacheKey implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1238573226470492601L;
 
     private final String key;

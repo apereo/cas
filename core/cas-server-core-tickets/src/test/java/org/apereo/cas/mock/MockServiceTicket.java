@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -33,6 +34,7 @@ import java.util.Optional;
 @EqualsAndHashCode(of = "id")
 public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket, ProxyGrantingTicketIssuerTicket {
 
+    @Serial
     private static final long serialVersionUID = 8203377063087967768L;
 
     private final String id;

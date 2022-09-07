@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.http.HttpMethod;
 
+import java.io.Serial;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -29,6 +30,7 @@ import java.net.URL;
 @Deprecated(since = "6.6")
 public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
+    @Serial
     private static final long serialVersionUID = 498455080794156917L;
 
     private String swivelUrl;

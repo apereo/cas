@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * This is {@link SurrogateAuthenticationExpirationPolicyBuilder}.
  *
@@ -25,6 +27,7 @@ import lombok.val;
 @ToString
 @Getter
 public class SurrogateAuthenticationExpirationPolicyBuilder implements ExpirationPolicyBuilder<TicketGrantingTicket> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
 
     /**

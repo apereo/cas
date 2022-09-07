@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,6 +66,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     @Test
     public void checkDefaultInterfaceImpls() {
         val authz = new RegisteredServiceAccessStrategy() {
+            @Serial
             private static final long serialVersionUID = -6993120869616143038L;
         };
         assertEquals(Integer.MAX_VALUE, authz.getOrder());

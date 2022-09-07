@@ -21,6 +21,7 @@ import lombok.val;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.util.ObjectUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -37,6 +38,7 @@ import java.io.Serializable;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7572316677901391166L;
 
     /**

@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * Handles both remember me services and username and password.
  *
@@ -22,6 +24,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class RememberMeUsernamePasswordCredential extends UsernamePasswordCredential implements RememberMeCredential {
+    @Serial
     private static final long serialVersionUID = -6710007659431302397L;
 
     private boolean rememberMe;
