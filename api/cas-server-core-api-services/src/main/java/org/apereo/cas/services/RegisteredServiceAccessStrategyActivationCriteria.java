@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 
@@ -12,7 +13,7 @@ import java.io.Serializable;
  */
 @FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface RegisteredServiceAccessStrategyActivationCriteria extends Serializable {
+public interface RegisteredServiceAccessStrategyActivationCriteria extends Serializable, Ordered {
     /**
      * Should activate policy based on this request?
      *
@@ -28,6 +29,20 @@ public interface RegisteredServiceAccessStrategyActivationCriteria extends Seria
      */
     default boolean shouldAllowIfInactive() {
         return true;
+    }
+
+    @Override
+    default int getOrder() {
+        return 0;
+    }
+
+    /**
+     * Never activate criteria.
+     *
+     * @return the registered service access strategy activation criteria
+     */
+    static RegisteredServiceAccessStrategyActivationCriteria never() {
+        return request -> false;
     }
 
     /**

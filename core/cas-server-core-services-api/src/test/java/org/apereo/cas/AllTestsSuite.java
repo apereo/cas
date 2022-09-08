@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.services.CasYamlHttpMessageConverterTests;
+import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyActivationCriteriaTests;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.ChainingRegisteredServiceDelegatedAuthenticationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServicePropertyTests;
@@ -23,6 +24,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultRegisteredServicePropertyTests.class,
     RegisteredServiceAccessStrategyAuditableEnforcerTests.class,
     CasYamlHttpMessageConverterTests.class,
+    ChainingRegisteredServiceAccessStrategyActivationCriteriaTests.class,
     RegisteredServiceAccessStrategyActivationCriteriaTests.class,
     ChainingRegisteredServiceDelegatedAuthenticationPolicyTests.class,
     ChainingRegisteredServiceAccessStrategyTests.class,
