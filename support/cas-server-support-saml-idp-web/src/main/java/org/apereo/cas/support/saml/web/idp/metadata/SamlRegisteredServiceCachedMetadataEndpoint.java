@@ -30,6 +30,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -116,7 +117,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
         var matchedServices = (Collection<RegisteredService>) null;
         if (NumberUtils.isCreatable(serviceId)) {
             val id = Long.parseLong(serviceId);
-            matchedServices = servicesManager.findServiceBy(svc -> svc instanceof SamlRegisteredService && svc.getId() == id);
+            matchedServices = List.of(servicesManager.findServiceBy(id));
         } else {
             matchedServices = servicesManager.findServiceBy(svc -> svc instanceof SamlRegisteredService
                 && (svc.getName().equalsIgnoreCase(serviceId) || svc.getServiceId().equalsIgnoreCase(serviceId)));
@@ -124,7 +125,6 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
         if (matchedServices.isEmpty()) {
             throw new IllegalArgumentException("Unable to locate service " + serviceId);
         }
-
         val registeredService = (SamlRegisteredService) matchedServices.iterator().next();
         val ctx = AuditableContext.builder()
             .registeredService(registeredService)

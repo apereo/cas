@@ -112,6 +112,10 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     private boolean skipValidatingAuthnRequest;
 
+    private boolean skipGeneratingServiceProviderNameIdQualifier;
+
+    private boolean skipGeneratingNameIdQualifier;
+
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
     @JacksonInject("signResponses")
     private TriStateBoolean signResponses = TriStateBoolean.TRUE;
