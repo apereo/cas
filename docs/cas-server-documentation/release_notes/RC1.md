@@ -50,18 +50,18 @@ cas.version=7.0.0-RC1
 
 The following items are new improvements and enhancements presented in this release. 
    
-## JDK Requirement
+### JDK Requirement
 
 The JDK baseline requirement for this CAS release is JDK `17`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
 
-## Testing Strategy
+### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases 
 and scenarios. At the moment, total number of jobs stands at approximately `330` distinct scenarios. The overall 
 test coverage of the CAS codebase is approximately `94%`.
 
-## Removed Modules
+### Removed Modules
 
 The following modules that were previously marked as deprecared are now removed from CAS and will no longer
 be supported, maintained or released:
@@ -80,9 +80,16 @@ be supported, maintained or released:
 - NTLM Authentication
 - SCIM v1 Provisioning 
 
+### Conditional Access Strategy
+
+The ABAC authorization policy assigned to a registered service can 
+now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activation.html).
+
 ## Other Stuff
   
 ## Library Upgrades
 
 - Spring 
 - Spring Boot
+- Mockito
+- Nimbus
