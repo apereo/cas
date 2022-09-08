@@ -32,7 +32,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     @Test
     public void verifyDelegatedAccessAnd() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
-        chain.setOperator(RegisteredServiceChainOperatorTypes.AND);
+        chain.setOperator(LogicalOperatorTypes.AND);
         var s1 = new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1")));
         s1.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
             .setExclusive(true).setPermitUndefined(true).setAllowedProviders(List.of("P1")));
@@ -56,7 +56,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     @Test
     public void verifyDelegatedAccessOr() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
-        chain.setOperator(RegisteredServiceChainOperatorTypes.OR);
+        chain.setOperator(LogicalOperatorTypes.OR);
         var s1 = new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1")));
         s1.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
             .setExclusive(true).setPermitUndefined(true).setAllowedProviders(List.of("P1")));
@@ -79,7 +79,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     @Test
     public void verifyRequiredAttributes() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
-        chain.setOperator(RegisteredServiceChainOperatorTypes.AND);
+        chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value3"))));
@@ -95,7 +95,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     @Test
     public void verifyAndOperation() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
-        chain.setOperator(RegisteredServiceChainOperatorTypes.AND);
+        chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         assertFalse(chain.isServiceAccessAllowed());
@@ -105,7 +105,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     @Test
     public void verifyPrincipalAccessAnd() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
-        chain.setOperator(RegisteredServiceChainOperatorTypes.AND);
+        chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
@@ -120,7 +120,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     @Test
     public void verifyPrincipalAccessOr() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
-        chain.setOperator(RegisteredServiceChainOperatorTypes.OR);
+        chain.setOperator(LogicalOperatorTypes.OR);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
@@ -134,7 +134,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     public void verifyOrOperation() throws Exception {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setUnauthorizedRedirectUrl(new URI("https://google.com"));
-        chain.setOperator(RegisteredServiceChainOperatorTypes.OR);
+        chain.setOperator(LogicalOperatorTypes.OR);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         assertTrue(chain.isServiceAccessAllowed());
@@ -147,7 +147,7 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     public void verifySerializeToJson() throws Exception {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setUnauthorizedRedirectUrl(new URI("https://google.com"));
-        chain.setOperator(RegisteredServiceChainOperatorTypes.OR);
+        chain.setOperator(LogicalOperatorTypes.OR);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
 
@@ -159,14 +159,14 @@ public class ChainingRegisteredServiceAccessStrategyTests {
     @Test
     public void verifyPrincipalAccessMixedRules() throws Exception {
         val chain1 = new ChainingRegisteredServiceAccessStrategy();
-        chain1.setOperator(RegisteredServiceChainOperatorTypes.AND);
+        chain1.setOperator(LogicalOperatorTypes.AND);
         chain1.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain1.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
         val chain2 = new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key3", Set.of("value3")));
 
         val parentChain = new ChainingRegisteredServiceAccessStrategy();
-        parentChain.setOperator(RegisteredServiceChainOperatorTypes.OR);
+        parentChain.setOperator(LogicalOperatorTypes.OR);
         parentChain.addStrategies(chain1, chain2);
 
         assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")

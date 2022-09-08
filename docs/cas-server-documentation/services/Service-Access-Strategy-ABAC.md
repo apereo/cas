@@ -22,6 +22,9 @@ The ABAC strategy allows one to configure a service with the following propertie
 | `requireAllAttributes`    | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully. |
 | `caseInsensitive`         | Indicates whether matching on required attribute values should be done in a case-insensitive manner. Default is `false`                                                                                                                                                                                                                                                                                                                                                         |
 | `rejectedAttributes`      | A `Map` of rejected principal attribute names along with the set of values for each attribute. These attributes **MUST NOT** be available to the authenticated Principal so that access may be granted. If none is defined, the check is entirely ignored.                                                                                                                                                                                                                      |
+     
+You can also tune the ABAC strategy to conditionally activate and enforce 
+the policy. [See this guide](Service-Access-Strategy-ABAC-Activation.html) for more info.
 
 ## Enforce Attributes
 
@@ -70,7 +73,7 @@ To access the service, the principal must have a `cn` attribute with the value o
 }
 ```
 
-To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`.
+To access the service, the principal must have a `cn` attribute whose value is either `admin`, `Admin` or `TheAdmin`.
 
 ```json
 {
@@ -95,8 +98,8 @@ require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>.</p></div>
 
 ## Enforce Combined Attribute Conditions
 
-To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
-**OR** the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`.
+To access the service, the principal must have a `cn` attribute whose value is either `admin`, `Admin` or `TheAdmin`,
+**OR** the principal must have a `member` attribute whose value is either `admins`, `adminGroup` or `staff`.
 
 ```json
 {
@@ -121,8 +124,8 @@ To access the service, the principal must have a `cn` attribute whose value is e
 ## Enforce Must-Not-Have Attributes
 
 To access the service, the principal must have a `cn` attribute whose value
-is either of `admin`, `Admin` or `TheAdmin`, OR the principal must have a `member` attribute
-whose value is either of `admins`, `adminGroup` or `staff`. The principal also must not have an
+is either `admin`, `Admin` or `TheAdmin`, OR the principal must have a `member` attribute
+whose value is either `admins`, `adminGroup` or `staff`. The principal also must not have an
 attribute `role` whose value matches the pattern `deny.+`.
 
 ```json

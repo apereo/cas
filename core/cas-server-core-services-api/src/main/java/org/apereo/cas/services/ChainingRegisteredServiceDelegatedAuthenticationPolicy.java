@@ -34,7 +34,7 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
 
     private List<RegisteredServiceDelegatedAuthenticationPolicy> strategies = new ArrayList<>();
 
-    private RegisteredServiceChainOperatorTypes operator = RegisteredServiceChainOperatorTypes.AND;
+    private LogicalOperatorTypes operator = LogicalOperatorTypes.AND;
 
     /**
      * Add policy/strategy.
@@ -67,7 +67,7 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
     @Override
     @JsonIgnore
     public boolean isExclusive() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceDelegatedAuthenticationPolicy::isExclusive);
         }
         return strategies.stream().allMatch(RegisteredServiceDelegatedAuthenticationPolicy::isExclusive);
@@ -76,7 +76,7 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
     @Override
     @JsonIgnore
     public boolean isPermitUndefined() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceDelegatedAuthenticationPolicy::isPermitUndefined);
         }
         return strategies.stream().allMatch(RegisteredServiceDelegatedAuthenticationPolicy::isPermitUndefined);
@@ -85,7 +85,7 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
     @Override
     @JsonIgnore
     public boolean isProviderAllowed(final String provider, final RegisteredService registeredService) {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(policy -> policy.isProviderAllowed(provider, registeredService));
         }
         return strategies.stream().allMatch(policy -> policy.isProviderAllowed(provider, registeredService));
@@ -95,7 +95,7 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
     @Override
     @JsonIgnore
     public boolean isProviderRequired() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceDelegatedAuthenticationPolicy::isProviderRequired);
         }
         return strategies.stream().allMatch(RegisteredServiceDelegatedAuthenticationPolicy::isProviderRequired);

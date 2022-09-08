@@ -32,7 +32,7 @@ public class ChainingRegisteredServiceAccessStrategyActivationCriteria implement
 
     private List<RegisteredServiceAccessStrategyActivationCriteria> conditions = new ArrayList<>();
 
-    private RegisteredServiceChainOperatorTypes operator = RegisteredServiceChainOperatorTypes.AND;
+    private LogicalOperatorTypes operator = LogicalOperatorTypes.AND;
 
     /**
      * Add policy/strategy.
@@ -54,7 +54,7 @@ public class ChainingRegisteredServiceAccessStrategyActivationCriteria implement
 
     @Override
     public boolean shouldActivate(final RegisteredServiceAccessStrategyRequest request) {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return conditions.stream()
                 .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
                 .anyMatch(condition -> condition.shouldActivate(request));
@@ -65,14 +65,14 @@ public class ChainingRegisteredServiceAccessStrategyActivationCriteria implement
     }
 
     @Override
-    public boolean shouldAllowIfInactive() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+    public boolean isAllowIfInactive() {
+        if (operator == LogicalOperatorTypes.OR) {
             return conditions.stream()
                 .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
-                .anyMatch(RegisteredServiceAccessStrategyActivationCriteria::shouldAllowIfInactive);
+                .anyMatch(RegisteredServiceAccessStrategyActivationCriteria::isAllowIfInactive);
         }
         return conditions.stream()
             .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
-            .allMatch(RegisteredServiceAccessStrategyActivationCriteria::shouldAllowIfInactive);
+            .allMatch(RegisteredServiceAccessStrategyActivationCriteria::isAllowIfInactive);
     }
 }
