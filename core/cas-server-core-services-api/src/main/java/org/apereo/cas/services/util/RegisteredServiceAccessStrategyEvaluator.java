@@ -179,8 +179,8 @@ public class RegisteredServiceAccessStrategyEvaluator {
      * @return the boolean
      */
     protected boolean requiredAttributeFound(final String attributeName,
-                                           final Map<String, List<Object>> principalAttributes,
-                                           final Map<String, Set<String>> requiredAttributes) {
+                                             final Map<String, List<Object>> principalAttributes,
+                                             final Map<String, Set<String>> requiredAttributes) {
         val requiredValues = requiredAttributes.get(attributeName);
         val availableValues = CollectionUtils.toCollection(principalAttributes.get(attributeName));
         val pattern = RegexUtils.concatenate(requiredValues, this.caseInsensitive);

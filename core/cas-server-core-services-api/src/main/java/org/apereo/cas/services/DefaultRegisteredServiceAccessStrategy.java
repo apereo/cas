@@ -173,6 +173,6 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
                 .build()
                 .evaluate(request);
         }
-        return activationCriteria.shouldAllowIfInactive();
+        return activationCriteria.isAllowIfInactive();
     }
 }

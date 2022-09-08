@@ -42,7 +42,7 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
 
     private List<RegisteredServiceAccessStrategy> strategies = new ArrayList<>();
 
-    private RegisteredServiceChainOperatorTypes operator = RegisteredServiceChainOperatorTypes.AND;
+    private LogicalOperatorTypes operator = LogicalOperatorTypes.AND;
 
     /**
      * The unauthorized redirect url.
@@ -72,7 +72,7 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     @Override
     @JsonIgnore
     public boolean isServiceAccessAllowed() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowed);
         }
         return strategies.stream().allMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowed);
@@ -81,7 +81,7 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     @Override
     @JsonIgnore
     public boolean isServiceAccessAllowedForSso() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);
         }
         return strategies.stream().allMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);
@@ -89,7 +89,7 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));
         }
         return strategies.stream().allMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));

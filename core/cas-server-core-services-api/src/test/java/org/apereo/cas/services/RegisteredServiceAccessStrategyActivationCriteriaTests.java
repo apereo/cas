@@ -18,7 +18,7 @@ public class RegisteredServiceAccessStrategyActivationCriteriaTests {
     public void verifyAlways() throws Exception {
         val criteria = RegisteredServiceAccessStrategyActivationCriteria.always();
         assertTrue(criteria.shouldActivate(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
-        assertTrue(criteria.shouldAllowIfInactive());
+        assertTrue(criteria.isAllowIfInactive());
         assertEquals(0, criteria.getOrder());
     }
 
@@ -26,7 +26,7 @@ public class RegisteredServiceAccessStrategyActivationCriteriaTests {
     public void verifyNever() throws Exception {
         val criteria = RegisteredServiceAccessStrategyActivationCriteria.never();
         assertFalse(criteria.shouldActivate(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
-        assertTrue(criteria.shouldAllowIfInactive());
+        assertTrue(criteria.isAllowIfInactive());
         assertEquals(0, criteria.getOrder());
     }
 }

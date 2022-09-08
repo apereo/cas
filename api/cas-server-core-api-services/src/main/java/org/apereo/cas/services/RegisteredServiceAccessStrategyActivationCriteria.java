@@ -27,7 +27,7 @@ public interface RegisteredServiceAccessStrategyActivationCriteria extends Seria
      *
      * @return the deactivation status
      */
-    default boolean shouldAllowIfInactive() {
+    default boolean isAllowIfInactive() {
         return true;
     }
 

@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
 /**
- * This is {@link RegisteredServiceChainOperatorTypes}.
+ * This is {@link LogicalOperatorTypes}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-public enum RegisteredServiceChainOperatorTypes {
+public enum LogicalOperatorTypes {
     /**
      * Operator to {@code AND} expressions together.
      * All conditions must pass.

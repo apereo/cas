@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,9 +39,9 @@ public class ChainingRegisteredServiceAccessStrategyActivationCriteriaTests {
         val chain = new ChainingRegisteredServiceAccessStrategyActivationCriteria();
         chain.addConditions(RegisteredServiceAccessStrategyActivationCriteria.always(),
             RegisteredServiceAccessStrategyActivationCriteria.never());
-        chain.setOperator(RegisteredServiceChainOperatorTypes.OR);
+        chain.setOperator(LogicalOperatorTypes.OR);
         assertTrue(chain.shouldActivate(request));
-        assertTrue(chain.shouldAllowIfInactive());
+        assertTrue(chain.isAllowIfInactive());
     }
 
     @Test
@@ -49,17 +51,25 @@ public class ChainingRegisteredServiceAccessStrategyActivationCriteriaTests {
         val chain = new ChainingRegisteredServiceAccessStrategyActivationCriteria();
         chain.addConditions(RegisteredServiceAccessStrategyActivationCriteria.always(),
             RegisteredServiceAccessStrategyActivationCriteria.never());
-        chain.setOperator(RegisteredServiceChainOperatorTypes.AND);
+        chain.setOperator(LogicalOperatorTypes.AND);
         assertFalse(chain.shouldActivate(request));
-        assertTrue(chain.shouldAllowIfInactive());
+        assertTrue(chain.isAllowIfInactive());
     }
 
     @Test
     public void verifySerializeToJson() throws Exception {
         val chain = new ChainingRegisteredServiceAccessStrategyActivationCriteria();
-        chain.addConditions(new AttributeBasedRegisteredServiceAccessStrategyActivationCriteria(),
-            new GroovyRegisteredServiceAccessStrategyActivationCriteria());
-        chain.setOperator(RegisteredServiceChainOperatorTypes.AND);
+
+        val criteria1 = new AttributeBasedRegisteredServiceAccessStrategyActivationCriteria()
+            .setOrder(1)
+            .setOperator(LogicalOperatorTypes.AND)
+            .setAllowIfInactive(true)
+            .setRequiredAttributes(Map.of("cn", List.of("name1", "name2")));
+        val criteria2 = new GroovyRegisteredServiceAccessStrategyActivationCriteria()
+            .setOrder(2)
+            .setGroovyScript("groovy { return false }");
+        chain.addConditions(criteria1, criteria2);
+        chain.setOperator(LogicalOperatorTypes.AND);
         MAPPER.writeValue(JSON_FILE, chain);
         val policyRead = MAPPER.readValue(JSON_FILE, RegisteredServiceAccessStrategyActivationCriteria.class);
         assertEquals(chain, policyRead);
