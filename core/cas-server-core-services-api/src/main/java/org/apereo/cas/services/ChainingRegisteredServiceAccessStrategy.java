@@ -49,6 +49,8 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
      */
     private URI unauthorizedRedirectUrl;
 
+    private int order;
+    
     /**
      * Add policy/strategy.
      *

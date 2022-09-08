@@ -10,9 +10,11 @@ import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticat
 import org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
+import org.apereo.cas.services.AttributeBasedRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.ChainingRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -31,6 +33,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.GroovyRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
@@ -119,6 +122,9 @@ public class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(RegisteredServiceChainingAttributeFilter.class);
             plan.registerSerializableClass(RegisteredServiceMappedRegexAttributeFilter.class);
             plan.registerSerializableClass(RegisteredServiceScriptedAttributeFilter.class);
+            plan.registerSerializableClass(ChainingRegisteredServiceAccessStrategyActivationCriteria.class);
+            plan.registerSerializableClass(AttributeBasedRegisteredServiceAccessStrategyActivationCriteria.class);
+            plan.registerSerializableClass(GroovyRegisteredServiceAccessStrategyActivationCriteria.class);
 
             plan.registerSerializableClass(ChainingAttributeReleasePolicy.class);
             plan.registerSerializableClass(DenyAllAttributeReleasePolicy.class);
