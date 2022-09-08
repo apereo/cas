@@ -55,8 +55,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         setProviderName(pName);
         val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
-        val required = Boolean.parseBoolean(getJasyptParamFromEnv(environment, JasyptEncryptionParameters.INITIALIZATION_VECTOR));
-        setIvGenerator(required ? new RandomIvGenerator() : new NoIvGenerator());
+
+        val initialize = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.INITIALIZATION_VECTOR);
+        if (StringUtils.isNotBlank(initialize)) {
+            val required = Boolean.parseBoolean(initialize);
+            setIvGenerator(required ? new RandomIvGenerator() : new NoIvGenerator());
+        }
     }
 
     /**
@@ -296,7 +300,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Use (or not) a Jasypt Initialization Vector.
          */
-        INITIALIZATION_VECTOR("cas.standalone.configuration-security.initialization-vector", "false");
+        INITIALIZATION_VECTOR("cas.standalone.configuration-security.initialization-vector", null);
 
         /**
          * The Name.
