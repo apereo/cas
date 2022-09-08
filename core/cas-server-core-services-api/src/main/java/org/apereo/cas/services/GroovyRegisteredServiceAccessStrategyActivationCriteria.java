@@ -1,36 +1,79 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.GroovyShellScript;
+import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This is {@link GroovyRegisteredServiceAccessStrategyActivationCriteria}.
  *
  * @author Misagh Moayyed
- * @since 6.5.0
+ * @since 7.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
-@EqualsAndHashCode
 @NoArgsConstructor
+@Accessors(chain = true)
+@Slf4j
+@EqualsAndHashCode(of = {"order", "groovyScript"})
 public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements RegisteredServiceAccessStrategyActivationCriteria {
     @Serial
     private static final long serialVersionUID = 5228603912161923218L;
 
+    private int order;
+
+    @ExpressionLanguageCapable
+    private String groovyScript;
+
+    @JsonIgnore
+    @Transient
+    @org.springframework.data.annotation.Transient
+    private transient ExecutableCompiledGroovyScript executableScript;
+
     @Override
     public boolean shouldActivate(final RegisteredServiceAccessStrategyRequest request) {
-        return false;
+        initializeWatchableScriptIfNeeded();
+        return getGroovyAttributeValue(request);
+    }
+
+    @PostLoad
+    private void initializeWatchableScriptIfNeeded() {
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(groovyScript);
+        if (matcherFile.find()) {
+            val script = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
+            val resource = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(script));
+            this.executableScript = new WatchableGroovyScriptResource(resource);
+        }
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(groovyScript);
+        if (matcherInline.find()) {
+            this.executableScript = new GroovyShellScript(matcherInline.group(1));
+        }
+    }
+
+    protected Boolean getGroovyAttributeValue(final RegisteredServiceAccessStrategyRequest request) {
+        val args = CollectionUtils.wrap("accessRequest", request, "logger", LOGGER);
+        executableScript.setBinding(args);
+        return executableScript.execute(args.values().toArray(), Boolean.class);
     }
 }
