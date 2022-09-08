@@ -7,6 +7,7 @@ import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.ChainingRegisteredServiceDelegatedAuthenticationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServicePropertyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicyTests;
+import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyActivationCriteriaTests;
 import org.apereo.cas.services.NeverRegisteredServiceSingleSignOnParticipationPolicyTests;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyActivationCriteriaTests;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyAuditableEnforcerTests;
@@ -27,6 +28,7 @@ import org.junit.platform.suite.api.Suite;
     CasYamlHttpMessageConverterTests.class,
     ChainingRegisteredServiceAccessStrategyActivationCriteriaTests.class,
     RegisteredServiceAccessStrategyActivationCriteriaTests.class,
+    GroovyRegisteredServiceAccessStrategyActivationCriteriaTests.class,
     ChainingRegisteredServiceDelegatedAuthenticationPolicyTests.class,
     AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests.class,
     ChainingRegisteredServiceAccessStrategyTests.class,

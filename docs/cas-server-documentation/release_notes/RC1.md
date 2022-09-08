@@ -7,9 +7,9 @@ category: Planning
 # RC1 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
-you up for unpleasant surprises. A `GA`
-is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS releases are *strictly* time-based
-releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain confidence in a particular
+you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note 
+that CAS releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, 
+statistics or completion of features. To gain confidence in a particular
 release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
@@ -43,7 +43,7 @@ cas.version=7.0.0-RC1
 ```
 
 <div class="alert alert-info">
-<strong>System Requirements</strong><br/>This CAS release is based on and will require JDK 17.
+<strong>System Requirements</strong><br/>This CAS release is based on and will require JDK 17. This is a <strong>MUST</strong>.
 </div>
 
 ## New & Noteworthy
@@ -86,7 +86,9 @@ The ABAC authorization policy assigned to a registered service can
 now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activation.html).
 
 ## Other Stuff
-  
+            
+- [Registered Service ABAC policy](../services/Service-Access-Strategy-ABAC.html) can now support inline Groovy conditions for attributes.
+
 ## Library Upgrades
 
 - Spring 

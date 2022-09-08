@@ -11,7 +11,7 @@ category: Configuration
 If you are running CAS in standalone mode without the presence of the configuration server,
 you can take advantage of built-in [Jasypt](http://www.jasypt.org/) functionality to decrypt 
 sensitive CAS settings. Configuration security specified here should apply to all configuration 
-files and settings loaded by CASin all supported formats (i.e. `properties`, `yaml`, `yml`).
+files and settings loaded by CAS in all supported formats (i.e. `properties`, `yaml`, `yml`).
 
 Jasypt supplies command-line tools useful for performing encryption, decryption, etc. In 
 order to use the tools, you should download the Jasypt distribution. Once unzipped, you will find a `jasypt-$VERSION/bin` 

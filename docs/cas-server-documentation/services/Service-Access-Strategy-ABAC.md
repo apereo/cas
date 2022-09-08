@@ -27,7 +27,15 @@ You can also tune the ABAC strategy to conditionally activate and enforce
 the policy. [See this guide](Service-Access-Strategy-ABAC-Activation.html) for more info.
 
 ## Enforce Attributes
+    
+Control access using a `Map` of required principal attribute names along with the set of values for each attribute.
 
+<div class="alert alert-info"><strong>Supported Syntax</strong><p>Required values for a given attribute support regular expression patterns. For example, a <code>phone</code> attribute could
+require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>.</p></div>
+
+{% tabs metadata %}
+
+{% tab metadata Example #1 %}
 To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
 `givenName` attribute with the value of `Administrator`:
 
@@ -49,7 +57,9 @@ To access the service, the principal must have a `cn` attribute with the value o
   }
 }
 ```
+{% endtab %}
 
+{% tab metadata Example #2 %}
 To access the service, the principal must have a `cn` attribute with the value of `admin` **OR** a
 `givenName` attribute with the value of `Administrator`:
 
@@ -72,7 +82,9 @@ To access the service, the principal must have a `cn` attribute with the value o
   }
 }
 ```
+{% endtab %}
 
+{% tab metadata Example #3 %}
 To access the service, the principal must have a `cn` attribute whose value is either `admin`, `Admin` or `TheAdmin`.
 
 ```json
@@ -92,9 +104,9 @@ To access the service, the principal must have a `cn` attribute whose value is e
   }
 }
 ```
+{% endtab %}
 
-<div class="alert alert-info"><strong>Supported Syntax</strong><p>Required values for a given attribute support regular expression patterns. For example, a <code>phone</code> attribute could
-require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>.</p></div>
+{% endtabs %}
 
 ## Enforce Combined Attribute Conditions
 
@@ -116,6 +128,32 @@ To access the service, the principal must have a `cn` attribute whose value is e
       "@class" : "java.util.HashMap",
       "cn" : [ "java.util.HashSet", [ "admin", "Admin", "TheAdmin" ] ],
       "member" : [ "java.util.HashSet", [ "admins", "adminGroup", "staff" ] ]
+    }
+  }
+}
+```
+
+## Enforce Inline Groovy Attributem
+
+To access the service, the principal must have a `cn` attribute whose values must contain `admin`
+and the overall set of resolved principal attributes must already have found an attribute for `name`.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "requireAllAttributes" : false,
+    "ssoEnabled" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ 
+        "groovy { return attributes.containsKey('name') && currentValues.contains('admin') }" 
+      ]]
     }
   }
 }

@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 
 import javax.persistence.PostLoad;
@@ -97,8 +98,7 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
      */
     protected boolean caseInsensitive;
 
-    protected RegisteredServiceAccessStrategyActivationCriteria activationCriteria =
-        RegisteredServiceAccessStrategyActivationCriteria.always();
+    protected RegisteredServiceAccessStrategyActivationCriteria activationCriteria;
 
     public DefaultRegisteredServiceAccessStrategy() {
         this(true, true);
@@ -164,14 +164,15 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
-        if (activationCriteria.shouldActivate(request)) {
+        val proceed = activationCriteria == null || activationCriteria.shouldActivate(request);
+        if (proceed) {
             return RegisteredServiceAccessStrategyEvaluator.builder()
                 .caseInsensitive(this.caseInsensitive)
                 .requireAllAttributes(this.requireAllAttributes)
                 .requiredAttributes(this.requiredAttributes)
                 .rejectedAttributes(this.rejectedAttributes)
                 .build()
-                .evaluate(request);
+                .apply(request);
         }
         return activationCriteria.isAllowIfInactive();
     }
