@@ -218,6 +218,35 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         assertEquals(service.getIssuerEntityId(), subject.getNameID().getNameQualifier());
     }
 
+    @Test
+    public void verifyNameIdFormatSkipQualifiers() throws Exception {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setRequiredNameIdFormat(NameIDType.PERSISTENT);
+        service.setIssuerEntityId(UUID.randomUUID().toString());
+        service.setSkipGeneratingNameIdQualifier(true);
+        service.setSkipGeneratingServiceProviderNameIdQualifier(true);
+
+        val authnRequest = getAuthnRequestFor(service);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val subject = samlProfileSamlSubjectBuilder.build(buildContext);
+        assertNotNull(subject.getNameID());
+        assertEquals(NameIDType.PERSISTENT, subject.getNameID().getFormat());
+        assertNull(subject.getNameID().getSPNameQualifier());
+        assertNull(subject.getNameID().getNameQualifier());
+    }
+
 
     @Test
     @SuppressWarnings("JavaUtilDate")

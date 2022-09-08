@@ -122,7 +122,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     /**
      * Build name id.
      * If there are no explicitly defined NameIDFormats, include the default format.
-     * see: http://saml2int.org/profile/current/#section92
+     * see: <a href="http://saml2int.org/profile/current/#section92">here</a>.
      *
      * @param context the context
      * @return the name id
@@ -139,15 +139,23 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     protected NameID finalizeNameId(final NameID nameid,
                                     final SamlProfileBuilderContext context) {
         if (nameid != null) {
-            if (StringUtils.isNotBlank(context.getRegisteredService().getNameIdQualifier())) {
-                nameid.setNameQualifier(context.getRegisteredService().getNameIdQualifier());
-            } else {
-                nameid.setNameQualifier(SamlIdPUtils.determineNameIdNameQualifier(context.getRegisteredService(), samlIdPMetadataResolver));
+            val registeredService = context.getRegisteredService();
+            if (!StringUtils.equalsIgnoreCase(registeredService.getNameIdQualifier(), "none")
+                && !registeredService.isSkipGeneratingNameIdQualifier()) {
+                if (StringUtils.isNotBlank(registeredService.getNameIdQualifier())) {
+                    nameid.setNameQualifier(registeredService.getNameIdQualifier());
+                } else {
+                    nameid.setNameQualifier(SamlIdPUtils.determineNameIdNameQualifier(registeredService, samlIdPMetadataResolver));
+                }
             }
-            FunctionUtils.doIf(StringUtils.isNotBlank(context.getRegisteredService().getServiceProviderNameIdQualifier()),
-                    value -> nameid.setSPNameQualifier(context.getRegisteredService().getServiceProviderNameIdQualifier()),
-                    value -> nameid.setSPNameQualifier(context.getAdaptor().getEntityId()))
-                .accept(context.getRegisteredService());
+
+            if (!StringUtils.equalsIgnoreCase(registeredService.getServiceProviderNameIdQualifier(), "none")
+                 && !registeredService.isSkipGeneratingServiceProviderNameIdQualifier()) {
+                FunctionUtils.doIf(StringUtils.isNotBlank(registeredService.getServiceProviderNameIdQualifier()),
+                        value -> nameid.setSPNameQualifier(registeredService.getServiceProviderNameIdQualifier()),
+                        value -> nameid.setSPNameQualifier(context.getAdaptor().getEntityId()))
+                    .accept(registeredService);
+            }
         }
         return nameid;
     }
