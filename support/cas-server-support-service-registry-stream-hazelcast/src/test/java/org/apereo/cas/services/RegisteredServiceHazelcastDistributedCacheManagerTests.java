@@ -63,8 +63,8 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         assertFalse(mgr.getAll().isEmpty());
         obj = mgr.get(registeredService);
         assertNotNull(obj);
-        val c = mgr.findAll(obj1 -> obj1.getValue().equals(registeredService));
-        assertFalse(c.isEmpty());
+        val result = mgr.findAll(obj1 -> obj1.getValue().equals(registeredService));
+        assertFalse(result.isEmpty());
         mgr.remove(registeredService, cache, true);
         assertTrue(mgr.getAll().isEmpty());
     }

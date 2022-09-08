@@ -80,7 +80,7 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
         return RegisteredServiceAccessStrategyEvaluator.builder()
             .requiredAttributes(this.requiredAttributes)
             .build()
-            .evaluate(request.withAttributes(allAttributes));
+            .apply(request.withAttributes(allAttributes));
     }
 
     @Synchronized

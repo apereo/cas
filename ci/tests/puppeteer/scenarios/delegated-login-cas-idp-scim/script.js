@@ -38,7 +38,8 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
-    console.log(page.url());
+    console.log(`Page URL: ${page.url()}`);
+    await cas.screenshot(page);
     assert(page.url().startsWith("https://oidcdebugger.com/debug"));
 
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",

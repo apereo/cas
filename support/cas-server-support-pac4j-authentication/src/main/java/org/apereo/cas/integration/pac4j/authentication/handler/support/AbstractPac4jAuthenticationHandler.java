@@ -79,15 +79,6 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         return finalizeAuthenticationHandlerResult(credentials, principal, profile, client);
     }
 
-    /**
-     * Finalize authentication handler result.
-     *
-     * @param credentials the credentials
-     * @param principal   the principal
-     * @param profile     the profile
-     * @param client      the client
-     * @return the authentication handler execution result
-     */
     protected AuthenticationHandlerExecutionResult finalizeAuthenticationHandlerResult(final ClientCredential credentials,
                                                                                        final Principal principal,
                                                                                        final UserProfile profile,
@@ -96,14 +87,6 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         return createHandlerResult(credentials, principal, new ArrayList<>(0));
     }
 
-    /**
-     * Pre finalize authentication handler result.
-     *
-     * @param credentials the credentials
-     * @param principal   the principal
-     * @param profile     the profile
-     * @param client      the client
-     */
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
                                                           final UserProfile profile, final BaseClient client) {
     }
@@ -144,8 +127,8 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
                 }
             } else {
                 LOGGER.warn("CAS cannot use [{}] as the principal attribute id, since the profile attributes do not contain the attribute. "
-                    + "Either adjust the CAS configuration to use a different attribute, or contact the authentication provider noted by [{}] "
-                    + "to release the expected attribute to CAS", principalAttributeId, profile.getAttributes());
+                            + "Either adjust the CAS configuration to use a different attribute, or contact the authentication provider noted by [{}] "
+                            + "to release the expected attribute to CAS", principalAttributeId, profile.getAttributes());
             }
             LOGGER.debug("Authentication indicates usage of attribute [{}] for the identifier [{}]", principalAttributeId, id);
         } else if (isTypedIdUsed) {

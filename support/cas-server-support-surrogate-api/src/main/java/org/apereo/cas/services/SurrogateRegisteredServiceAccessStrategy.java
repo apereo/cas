@@ -58,6 +58,6 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
             .requiredAttributes(this.surrogateRequiredAttributes)
             .rejectedAttributes(new LinkedHashMap<>(0))
             .build()
-            .evaluate(request);
+            .apply(request);
     }
 }
