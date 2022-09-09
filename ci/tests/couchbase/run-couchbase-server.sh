@@ -89,15 +89,15 @@ echo -e "\n*************************************************************"
 echo -e "Creating primary index..."
 echo -e "*************************************************************"
 curl -u 'admin:password'  http://localhost:8093/query/service -d \
-'statement=CREATE PRIMARY INDEX `primary-idx` ON `testbucket` USING GSI;' \
+'statement=CREATE PRIMARY INDEX `primary-idx` ON `testbucket`;' \
 -d 'namespace=default'
 sleep 5
 curl -u 'admin:password'  http://localhost:8093/query/service -d \
-'statement=CREATE PRIMARY INDEX `primary-idx` ON `pplbucket` USING GSI;' \
+'statement=CREATE PRIMARY INDEX `primary-idx` ON `pplbucket`;' \
 -d 'namespace=default'
 sleep 5
 curl -u 'admin:password'  http://localhost:8093/query/service -d \
-'statement=CREATE PRIMARY INDEX `primary-idx` ON `casbucket` USING GSI;' \
+'statement=CREATE PRIMARY INDEX `primary-idx` ON `casbucket`;' \
 -d 'namespace=default'
 sleep 5
 
