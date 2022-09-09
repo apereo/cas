@@ -13,20 +13,5 @@ import lombok.ToString;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Getter
-@EqualsAndHashCode
-@ToString
-@RequiredArgsConstructor
-public class ServiceContext {
-
-    /**
-     * Service principal.
-     */
-    private final Service service;
-
-    /**
-     * Registered service corresponding to service principal.
-     */
-    private final RegisteredService registeredService;
-
+public record ServiceContext(Service service, RegisteredService registeredService) {
 }

@@ -31,20 +31,11 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class DefaultConsentEngine implements ConsentEngine {
+public record DefaultConsentEngine(ConsentRepository consentRepository, ConsentDecisionBuilder consentDecisionBuilder, CasConfigurationProperties casProperties,
+                                   List<ConsentableAttributeBuilder> consentableAttributeBuilders) implements ConsentEngine {
     @Serial
     private static final long serialVersionUID = -617809298856160625L;
 
-    private final ConsentRepository consentRepository;
-
-    private final ConsentDecisionBuilder consentDecisionBuilder;
-
-    private final CasConfigurationProperties casProperties;
-
-    private final List<ConsentableAttributeBuilder> consentableAttributeBuilders;
-    
     @Audit(action = AuditableActions.SAVE_CONSENT,
         actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER)

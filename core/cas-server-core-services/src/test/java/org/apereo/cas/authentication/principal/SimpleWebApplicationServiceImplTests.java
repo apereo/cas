@@ -61,7 +61,7 @@ public class SimpleWebApplicationServiceImplTests {
         val response = new WebApplicationServiceResponseBuilder(getServicesManager(applicationContext), SimpleUrlValidator.getInstance())
             .build(impl, "ticketId", RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
-        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.responseType());
     }
 
     @Test
@@ -93,8 +93,8 @@ public class SimpleWebApplicationServiceImplTests {
         val response = new WebApplicationServiceResponseBuilder(getServicesManager(applicationContext), SimpleUrlValidator.getInstance())
             .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
-        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
-        assertFalse(response.getUrl().contains("ticket="));
+        assertEquals(Response.ResponseType.REDIRECT, response.responseType());
+        assertFalse(response.url().contains("ticket="));
     }
 
     @Test
@@ -109,9 +109,9 @@ public class SimpleWebApplicationServiceImplTests {
             .build(impl, null,
                 RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
-        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
-        assertFalse(response.getUrl().contains("ticket="));
-        assertEquals("http://foo.com/", response.getUrl());
+        assertEquals(Response.ResponseType.REDIRECT, response.responseType());
+        assertFalse(response.url().contains("ticket="));
+        assertEquals("http://foo.com/", response.url());
     }
 
     @Test
@@ -125,8 +125,8 @@ public class SimpleWebApplicationServiceImplTests {
         val response = new WebApplicationServiceResponseBuilder(getServicesManager(applicationContext), SimpleUrlValidator.getInstance())
             .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
-        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
-        assertEquals("http://foo.com/?param=test", response.getUrl());
+        assertEquals(Response.ResponseType.REDIRECT, response.responseType());
+        assertEquals("http://foo.com/?param=test", response.url());
     }
 
     private static ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {

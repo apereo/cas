@@ -19,13 +19,7 @@ import java.util.stream.Collectors;
  * @author Daniel Frett
  * @since 5.3.0
  */
-@RequiredArgsConstructor
-@Getter
-public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrategy {
-    private final List<DeviceFingerprintComponentManager> deviceFingerprintComponentManagers;
-
-    private final String componentSeparator;
-
+public record DefaultDeviceFingerprintStrategy(List<DeviceFingerprintComponentManager> deviceFingerprintComponentManagers, String componentSeparator) implements DeviceFingerprintStrategy {
     @Override
     public String determineFingerprintComponent(final String principal,
                                                 final HttpServletRequest request,

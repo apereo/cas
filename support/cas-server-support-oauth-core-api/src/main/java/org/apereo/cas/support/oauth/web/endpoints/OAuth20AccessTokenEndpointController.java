@@ -77,8 +77,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     private static ModelAndView handleAccessTokenException(final Exception exception, final HttpServletResponse response) {
         val data = ACCESS_TOKEN_RESPONSE_EXCEPTIONS.getOrDefault(exception.getClass().getName(),
             new AccessTokenExceptionResponses(OAuth20Constants.INVALID_GRANT, "Invalid or unauthorized grant"));
-        LoggingUtils.error(LOGGER, data.getMessage(), exception);
-        return OAuth20Utils.writeError(response, data.getCode());
+        LoggingUtils.error(LOGGER, data.message(), exception);
+        return OAuth20Utils.writeError(response, data.code());
     }
 
     /**
@@ -161,11 +161,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     }
 
     @RequiredArgsConstructor
-    @Getter
-    private static class AccessTokenExceptionResponses {
-        private final String code;
-
-        private final String message;
+        @Getter
+        private record AccessTokenExceptionResponses(String code, String message) {
     }
 
     private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,

@@ -40,17 +40,11 @@ import java.util.stream.Stream;
  * @since 6.5.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
 @SuppressWarnings("JavaUtilDate")
-public class DynamoDbConsentFacilitator {
+public record DynamoDbConsentFacilitator(DynamoDbConsentProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
-
-    private final DynamoDbConsentProperties dynamoDbProperties;
-
-    private final DynamoDbClient amazonDynamoDBClient;
 
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final ConsentDecision record) {
         val values = new HashMap<String, AttributeValue>();
@@ -91,7 +85,7 @@ public class DynamoDbConsentFacilitator {
             .keyType(KeyType.HASH)
             .build());
         FunctionUtils.doUnchecked(unused -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-                dynamoDbProperties.getTableName(), deleteTables, attributes, schema));
+            dynamoDbProperties.getTableName(), deleteTables, attributes, schema));
     }
 
     /**

@@ -154,7 +154,7 @@ public class WebAuthnServer {
                 ),
                 Optional.of(sessions.createSession(registrationUserId.getId()))
             );
-            registerRequestStorage.put(request.getRequestId(), request);
+            registerRequestStorage.put(request.requestId(), request);
             return Either.right(request);
         } else {
             return Either.left("The username \"" + username + "\" is already registered.");
@@ -181,24 +181,24 @@ public class WebAuthnServer {
             try {
                 val registration = rp.finishRegistration(
                     FinishRegistrationOptions.builder()
-                        .request(request.getPublicKeyCredentialCreationOptions())
+                        .request(request.publicKeyCredentialCreationOptions())
                         .response(response.getCredential())
                         .build()
                 );
 
-                if (userStorage.userExists(request.getUsername())) {
+                if (userStorage.userExists(request.username())) {
                     var permissionGranted = false;
 
-                    val isValidSession = request.getSessionToken().map(token ->
-                        sessions.isSessionForUser(request.getPublicKeyCredentialCreationOptions().getUser().getId(), token)
+                    val isValidSession = request.sessionToken().map(token ->
+                        sessions.isSessionForUser(request.publicKeyCredentialCreationOptions().getUser().getId(), token)
                     ).orElse(false);
 
-                    LOGGER.debug("Session token: {}", request.getSessionToken());
+                    LOGGER.debug("Session token: {}", request.sessionToken());
                     LOGGER.debug("Valid session: {}", isValidSession);
 
                     if (isValidSession) {
                         permissionGranted = true;
-                        LOGGER.info("Session token accepted for user {}", request.getPublicKeyCredentialCreationOptions().getUser().getId());
+                        LOGGER.info("Session token accepted for user {}", request.publicKeyCredentialCreationOptions().getUser().getId());
                     }
 
                     LOGGER.debug("permissionGranted: {}", permissionGranted);
@@ -206,7 +206,7 @@ public class WebAuthnServer {
                     if (!permissionGranted) {
                         throw new RegistrationFailedException(new IllegalArgumentException(String.format(
                             "User %s already exists",
-                            request.getUsername()
+                            request.username()
                         )));
                     }
                 }
@@ -216,12 +216,12 @@ public class WebAuthnServer {
                         request,
                         response,
                         addRegistration(
-                            request.getPublicKeyCredentialCreationOptions().getUser(),
-                            request.getCredentialNickname(),
+                            request.publicKeyCredentialCreationOptions().getUser(),
+                            request.credentialNickname(),
                             registration
                         ),
                         registration.isAttestationTrusted(),
-                        sessions.createSession(request.getPublicKeyCredentialCreationOptions().getUser().getId())
+                        sessions.createSession(request.publicKeyCredentialCreationOptions().getUser().getId())
                     )
                 );
             } catch (final RegistrationFailedException e) {
@@ -353,7 +353,7 @@ public class WebAuthnServer {
                 })
                 .map(AttestationCertInfo::new);
             this.authData = response.getCredential().getResponse().getParsedAuthenticatorData();
-            this.username = request.getUsername();
+            this.username = request.username();
             this.sessionToken = sessionToken;
         }
 

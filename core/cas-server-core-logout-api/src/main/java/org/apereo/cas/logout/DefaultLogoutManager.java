@@ -30,13 +30,7 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class DefaultLogoutManager implements LogoutManager {
-    private final boolean singleLogoutCallbacksDisabled;
-
-    private final LogoutExecutionPlan logoutExecutionPlan;
-
+public record DefaultLogoutManager(boolean singleLogoutCallbacksDisabled, LogoutExecutionPlan logoutExecutionPlan) implements LogoutManager {
     @Override
     public List<SingleLogoutRequestContext> performLogout(final SingleLogoutExecutionRequest context) {
         val ticket = context.getTicketGrantingTicket();

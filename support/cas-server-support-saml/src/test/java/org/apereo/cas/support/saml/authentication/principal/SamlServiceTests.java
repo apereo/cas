@@ -82,8 +82,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context), this.urlValidator)
             .build(impl, "ticketId", CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
-        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
-        assertTrue(response.getUrl().contains(SamlProtocolConstants.CONST_PARAM_ARTIFACT.concat("=")));
+        assertEquals(Response.ResponseType.REDIRECT, response.responseType());
+        assertTrue(response.url().contains(SamlProtocolConstants.CONST_PARAM_ARTIFACT.concat("=")));
     }
 
     @Test
@@ -111,8 +111,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context), this.urlValidator)
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
-        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
-        assertFalse(response.getUrl().contains(SamlProtocolConstants.CONST_PARAM_ARTIFACT.concat("=")));
+        assertEquals(Response.ResponseType.REDIRECT, response.responseType());
+        assertFalse(response.url().contains(SamlProtocolConstants.CONST_PARAM_ARTIFACT.concat("=")));
     }
 
     @Test

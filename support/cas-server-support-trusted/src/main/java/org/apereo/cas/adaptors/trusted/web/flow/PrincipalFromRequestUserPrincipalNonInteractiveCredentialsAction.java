@@ -43,8 +43,8 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction ex
         val principal = request.getUserPrincipal();
 
         if (principal != null) {
-            LOGGER.debug("Principal [{}] found in HttpServletRequest", principal.getName());
-            return principal.getName();
+            LOGGER.debug("Principal [{}] found in HttpServletRequest", principal.name());
+            return principal.name();
         }
         return null;
     }

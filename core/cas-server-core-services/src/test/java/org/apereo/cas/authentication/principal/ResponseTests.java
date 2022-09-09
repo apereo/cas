@@ -24,7 +24,7 @@ public class ResponseTests {
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals(url + "?ticket=foobar", response.getUrl());
+        assertEquals(url + "?ticket=foobar", response.url());
     }
 
     @Test
@@ -33,7 +33,7 @@ public class ResponseTests {
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals(url + "&ticket=foobar", response.getUrl());
+        assertEquals(url + "&ticket=foobar", response.url());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ResponseTests {
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("http://localhost:8080/foo?test=boo&ticket=foobar#hello", response.getUrl());
+        assertEquals("http://localhost:8080/foo?test=boo&ticket=foobar#hello", response.url());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ResponseTests {
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("http://localhost:8080/foo?ticket=foobar#hello", response.getUrl());
+        assertEquals("http://localhost:8080/foo?ticket=foobar#hello", response.url());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ResponseTests {
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("http://localhost:8080/foo?ticket=foobar#hello?test=boo", response.getUrl());
+        assertEquals("http://localhost:8080/foo?ticket=foobar#hello?test=boo", response.url());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ResponseTests {
         attributes.put(TICKET_PARAM, "ST-12345");
         val response = DefaultResponse.getRedirectResponse(url, attributes);
         assertEquals("https://www.example.com Location: javascript: <script>alert(document.cookie)</script>?ticket=ST-12345",
-            response.getUrl());
+            response.url());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class ResponseTests {
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-12345");
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("https://www.example.com/πολιτικῶν?ticket=ST-12345", response.getUrl());
+        assertEquals("https://www.example.com/πολιτικῶν?ticket=ST-12345", response.url());
     }
 
     @Test
@@ -88,6 +88,6 @@ public class ResponseTests {
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-123456");
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("urn:applis-cri:java-sso?ticket=ST-123456", response.getUrl());
+        assertEquals("urn:applis-cri:java-sso?ticket=ST-123456", response.url());
     }
 }

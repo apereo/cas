@@ -17,11 +17,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Getter
-@RequiredArgsConstructor
-public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvider {
-    private final List<AuditPrincipalIdProvider> providers;
-
+public record ChainingAuditPrincipalIdProvider(List<AuditPrincipalIdProvider> providers) implements AuditPrincipalIdProvider {
     /**
      * Add provider.
      *
