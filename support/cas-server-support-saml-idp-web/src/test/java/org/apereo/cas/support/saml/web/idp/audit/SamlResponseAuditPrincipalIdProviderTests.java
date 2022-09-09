@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 public class SamlResponseAuditPrincipalIdProviderTests {
     @Test
     public void verifyAction() {

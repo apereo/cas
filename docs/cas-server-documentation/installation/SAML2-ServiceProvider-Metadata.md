@@ -10,6 +10,12 @@ category: Services
 
 This document describes how SAML2 service providers registered with CAS can control their certain aspects of their metadata management.
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache" %}
+
 ## Metadata Aggregates
 
 CAS services are fundamentally recognized and loaded by service identifiers taught to CAS typically via

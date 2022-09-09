@@ -25,12 +25,6 @@ metadata overrides that may have been specified.
 You may use [this service](https://www.samltool.com/idp_metadata.php) to experiment with the metadata generation process
 and produce an example metadata for review and study.
 
-## Actuator Endpoints
-        
-The following endpoints are provided by CAS:
-
-{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache,caches" %}
-
 ## Metadata Management
 
 Service provider or identity provider metadata can also be managed using the following strategies.
