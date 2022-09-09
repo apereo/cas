@@ -314,7 +314,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx);
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), getService());
-        val auth = assertion.getPrimaryAuthentication();
+        val auth = assertion.primaryAuthentication();
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
     }
 
@@ -328,7 +328,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
-        val auth = assertion.getPrimaryAuthentication();
+        val auth = assertion.primaryAuthentication();
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
     }
 
@@ -356,7 +356,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
-        assertEquals("developer", assertion.getPrimaryAuthentication().getPrincipal().getId());
+        assertEquals("developer", assertion.primaryAuthentication().getPrincipal().getId());
     }
 
     @Test
@@ -399,7 +399,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service);
-        val auth = assertion.getPrimaryAuthentication();
+        val auth = assertion.primaryAuthentication();
         assertEquals(0, auth.getPrincipal().getAttributes().size());
     }
 
@@ -411,7 +411,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service);
-        val auth = assertion.getPrimaryAuthentication();
+        val auth = assertion.primaryAuthentication();
         assertEquals(4, auth.getPrincipal().getAttributes().size());
     }
 
@@ -423,7 +423,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service);
-        val auth = assertion.getPrimaryAuthentication();
+        val auth = assertion.primaryAuthentication();
         val attributes = auth.getPrincipal().getAttributes();
         assertEquals(1, attributes.size());
         assertEquals("adopters", attributes.get("groupMembership").get(0));
@@ -438,7 +438,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service);
-        val auth = assertion.getPrimaryAuthentication();
+        val auth = assertion.primaryAuthentication();
         assertNotEquals(cred.getUsername(), auth.getPrincipal().getId());
     }
 
@@ -452,7 +452,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
-        val auth = assertion.getPrimaryAuthentication();
+        val auth = assertion.primaryAuthentication();
 
         /*
          * The attribute specified for this service does not resolve.

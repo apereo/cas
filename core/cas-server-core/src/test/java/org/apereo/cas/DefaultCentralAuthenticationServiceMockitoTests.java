@@ -249,23 +249,18 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         val assertion = this.cas.validateServiceTicket(st.getId(), svc);
         assertNotNull(assertion);
 
-        assertEquals(assertion.getService(), svc);
-        assertEquals(PRINCIPAL, assertion.getPrimaryAuthentication().getPrincipal().getId());
-        assertSame(2, assertion.getChainedAuthentications().size());
-        IntStream.range(0, assertion.getChainedAuthentications().size())
-            .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
+        assertEquals(assertion.service(), svc);
+        assertEquals(PRINCIPAL, assertion.primaryAuthentication().getPrincipal().getId());
+        assertSame(2, assertion.chainedAuthentications().size());
+        IntStream.range(0, assertion.chainedAuthentications().size())
+            .forEach(i -> assertEquals(assertion.chainedAuthentications().get(i), authentication));
     }
 
-    private static class VerifyServiceByIdMatcher implements ArgumentMatcher<Service> {
-        private final String id;
-
-        VerifyServiceByIdMatcher(final String id) {
-            this.id = id;
-        }
-
+    @SuppressWarnings("UnusedVariable")
+    private record VerifyServiceByIdMatcher(String id) implements ArgumentMatcher<Service> {
         @Override
-        public boolean matches(final Service s) {
-            return s != null && s.getId().equals(this.id);
+        public boolean matches(final Service service) {
+            return service != null && service.getId().equals(id());
         }
     }
 

@@ -1,9 +1,5 @@
 package org.apereo.cas.api;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-
 import java.math.BigDecimal;
 
 /**
@@ -12,19 +8,14 @@ import java.math.BigDecimal;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@ToString
-@RequiredArgsConstructor
-@Getter
-public class AuthenticationRiskScore {
-
-    private final BigDecimal score;
+public record AuthenticationRiskScore(BigDecimal score) {
 
     public boolean isHighestRisk() {
-        return getScore().compareTo(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE) == 0;
+        return score().compareTo(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE) == 0;
     }
 
     public boolean isLowestRisk() {
-        return getScore().compareTo(AuthenticationRequestRiskCalculator.LOWEST_RISK_SCORE) == 0;
+        return score().compareTo(AuthenticationRequestRiskCalculator.LOWEST_RISK_SCORE) == 0;
     }
 
     /**
@@ -34,6 +25,6 @@ public class AuthenticationRiskScore {
      * @return true/false
      */
     public boolean isRiskGreaterThan(final double threshold) {
-        return getScore().compareTo(BigDecimal.valueOf(threshold)) > 0;
+        return score().compareTo(BigDecimal.valueOf(threshold)) > 0;
     }
 }

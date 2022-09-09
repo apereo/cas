@@ -32,7 +32,7 @@ public class PasswordManagementSingleSignOnParticipationStrategy extends BaseSin
         val token = ssoRequest.getRequestParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
         try {
             if (token.isPresent() && StringUtils.isNotBlank(token.get())) {
-                val ticket = ticketRegistrySupport.getTicketRegistry().getTicket(token.get(), TransientSessionTicket.class);
+                val ticket = ticketRegistrySupport.ticketRegistry().getTicket(token.get(), TransientSessionTicket.class);
                 LOGGER.trace("Token ticket [{}] is valid. SSO will be disabled to allow password-resets", ticket);
                 return false;
             }

@@ -82,7 +82,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                 .publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
 
             LOGGER.debug("Calculated risk score [{}] for authentication request by [{}] is above the risk threshold [{}].",
-                score.getScore(), authentication.getPrincipal(), threshold);
+                score.score(), authentication.getPrincipal(), threshold);
 
             applicationContext
                 .publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));
@@ -90,7 +90,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
             applicationContext
                 .publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
 
-            return CollectionUtils.wrapSet(res.getResult());
+            return CollectionUtils.wrapSet(res.result());
         }
 
         LOGGER.debug("Authentication request for [{}] is below the risk threshold", authentication.getPrincipal());
