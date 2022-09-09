@@ -84,6 +84,22 @@ be supported, maintained or released:
 
 The ABAC authorization policy assigned to a registered service can 
 now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activation.html).
+ 
+### Docker Images
+
+A number of Docker images used for integration testing are now upgraded to their latest available versions:
+
+- LocalStack
+- Apereo CAS
+- Apache Cassandra
+- Couchbase Server
+- Amazon DynamoDb
+- InfluxDb
+- MariaDb
+- MongoDb
+- MySQL
+- PostgreSQL
+- Redis
 
 ## Other Stuff
             
