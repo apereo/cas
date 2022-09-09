@@ -94,13 +94,8 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             LOGGER.debug("Logout response binding type is determined as [{}]", binding);
 
             switch (StringUtils.defaultString(binding)) {
-                case SAMLConstants.SAML2_POST_BINDING_URI:
-                    handleSingleLogoutForPostBinding(context, samlLogoutRequest, samlRegisteredService, adaptor);
-                    break;
-                case SAMLConstants.SAML2_REDIRECT_BINDING_URI:
-                default:
-                    handleSingleLogoutForRedirectBinding(context, samlLogoutRequest, samlRegisteredService, adaptor);
-                    break;
+                case SAMLConstants.SAML2_POST_BINDING_URI -> handleSingleLogoutForPostBinding(context, samlLogoutRequest, samlRegisteredService, adaptor);
+                case SAMLConstants.SAML2_REDIRECT_BINDING_URI -> handleSingleLogoutForRedirectBinding(context, samlLogoutRequest, samlRegisteredService, adaptor);
             }
         }
     }

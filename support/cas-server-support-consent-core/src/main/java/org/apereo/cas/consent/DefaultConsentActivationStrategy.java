@@ -31,16 +31,16 @@ public class DefaultConsentActivationStrategy implements ConsentActivationStrate
         val consentPolicy = registeredService.getAttributeReleasePolicy().getConsentPolicy();
         if (consentPolicy != null) {
             switch (consentPolicy.getStatus()) {
-                case TRUE:
+                case TRUE -> {
                     LOGGER.trace("Attribute consent is enabled for registered service [{}]", registeredService.getName());
                     return consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
-                case FALSE:
+                }
+                case FALSE -> {
                     LOGGER.trace("Attribute consent will be skipped as the attribute consent policy for service [{}] "
                                  + "is disabled for this request", registeredService.getName());
                     return false;
-                case UNDEFINED:
-                default:
-                    LOGGER.trace("Attribute consent policy for service [{}] is undefined", registeredService.getName());
+                }
+                case UNDEFINED -> LOGGER.trace("Attribute consent policy for service [{}] is undefined", registeredService.getName());
             }
         }
         if (casProperties.getConsent().getCore().isActive()) {

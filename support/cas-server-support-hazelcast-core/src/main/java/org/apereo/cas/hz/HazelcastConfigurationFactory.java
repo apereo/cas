@@ -307,28 +307,13 @@ public class HazelcastConfigurationFactory {
         val mergePolicyConfig = new MergePolicyConfig();
         if (StringUtils.hasText(cluster.getCore().getMapMergePolicy())) {
             switch (cluster.getCore().getMapMergePolicy().trim().toLowerCase()) {
-                case "discard":
-                    mergePolicyConfig.setPolicy(DiscardMergePolicy.class.getName());
-                    break;
-                case "pass_through":
-                    mergePolicyConfig.setPolicy(PassThroughMergePolicy.class.getName());
-                    break;
-                case "expiration_time":
-                    mergePolicyConfig.setPolicy(ExpirationTimeMergePolicy.class.getName());
-                    break;
-                case "higher_hits":
-                    mergePolicyConfig.setPolicy(HigherHitsMergePolicy.class.getName());
-                    break;
-                case "latest_update":
-                    mergePolicyConfig.setPolicy(LatestUpdateMergePolicy.class.getName());
-                    break;
-                case "latest_access":
-                    mergePolicyConfig.setPolicy(LatestAccessMergePolicy.class.getName());
-                    break;
-                case "put_if_absent":
-                default:
-                    mergePolicyConfig.setPolicy(PutIfAbsentMergePolicy.class.getName());
-                    break;
+                case "discard" -> mergePolicyConfig.setPolicy(DiscardMergePolicy.class.getName());
+                case "pass_through" -> mergePolicyConfig.setPolicy(PassThroughMergePolicy.class.getName());
+                case "expiration_time" -> mergePolicyConfig.setPolicy(ExpirationTimeMergePolicy.class.getName());
+                case "higher_hits" -> mergePolicyConfig.setPolicy(HigherHitsMergePolicy.class.getName());
+                case "latest_update" -> mergePolicyConfig.setPolicy(LatestUpdateMergePolicy.class.getName());
+                case "latest_access" -> mergePolicyConfig.setPolicy(LatestAccessMergePolicy.class.getName());
+                case "put_if_absent" -> mergePolicyConfig.setPolicy(PutIfAbsentMergePolicy.class.getName());
             }
         }
 

@@ -78,8 +78,8 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
                 val result = MAPPER.readTree(response);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                    && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
-                    && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+                    && "pong".equalsIgnoreCase(result.get(RESULT_KEY_RESPONSE).asText())
+                    && "OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
                     return true;
                 }
                 LOGGER.warn("Could not reach/ping Duo. Response returned is [{}]", result);

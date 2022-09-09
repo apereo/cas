@@ -87,24 +87,16 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 .build();
             response = HttpUtils.execute(exec);
             val status = HttpStatus.resolve(Objects.requireNonNull(response).getStatusLine().getStatusCode());
-            switch (Objects.requireNonNull(status)) {
-                case OK:
-                    return buildPrincipalFromResponse(credential, response);
-                case FORBIDDEN:
-                    throw new AccountDisabledException("Could not authenticate forbidden account for " + credential.getUsername());
-                case UNAUTHORIZED:
-                    throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
-                case NOT_FOUND:
-                    throw new AccountNotFoundException("Could not locate account for " + credential.getUsername());
-                case LOCKED:
-                    throw new AccountLockedException("Could not authenticate locked account for " + credential.getUsername());
-                case PRECONDITION_FAILED:
-                    throw new AccountExpiredException("Could not authenticate expired account for " + credential.getUsername());
-                case PRECONDITION_REQUIRED:
-                    throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
-                default:
-                    throw new FailedLoginException("Rest endpoint returned an unknown status code " + status + " for " + credential.getUsername());
-            }
+            return switch (Objects.requireNonNull(status)) {
+                case OK -> buildPrincipalFromResponse(credential, response);
+                case FORBIDDEN -> throw new AccountDisabledException("Could not authenticate forbidden account for " + credential.getUsername());
+                case UNAUTHORIZED -> throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
+                case NOT_FOUND -> throw new AccountNotFoundException("Could not locate account for " + credential.getUsername());
+                case LOCKED -> throw new AccountLockedException("Could not authenticate locked account for " + credential.getUsername());
+                case PRECONDITION_FAILED -> throw new AccountExpiredException("Could not authenticate expired account for " + credential.getUsername());
+                case PRECONDITION_REQUIRED -> throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
+                default -> throw new FailedLoginException("Rest endpoint returned an unknown status code " + status + " for " + credential.getUsername());
+            };
         } finally {
             HttpUtils.close(response);
         }

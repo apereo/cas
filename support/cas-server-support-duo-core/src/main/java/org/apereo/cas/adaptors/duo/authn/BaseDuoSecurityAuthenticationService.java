@@ -115,7 +115,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 throw new DuoWebException("Invalid response format received from Duo");
             }
 
-            if (result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+            if ("OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
                 val response = result.get(RESULT_KEY_RESPONSE);
                 val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
 

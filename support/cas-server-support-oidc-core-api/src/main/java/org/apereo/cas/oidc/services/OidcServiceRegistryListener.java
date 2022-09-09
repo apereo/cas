@@ -109,20 +109,15 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             } else {
                 val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
                 switch (scope) {
-                    case EMAIL:
-                    case ADDRESS:
-                    case PROFILE:
-                    case PHONE:
+                    case EMAIL, ADDRESS, PROFILE, PHONE -> {
                         val policyToAdd = attributeReleasePolicyFactory.get(scope);
                         addAttributeReleasePolicy(policyChain, policyToAdd, givenScope, oidcService);
-                        break;
-                    case OPENID:
-                        LOGGER.debug("Scope [{}] is found for service [{}]", givenScope, oidcService.getId());
-                        break;
-                    case OFFLINE_ACCESS:
+                    }
+                    case OPENID -> LOGGER.debug("Scope [{}] is found for service [{}]", givenScope, oidcService.getId());
+                    case OFFLINE_ACCESS -> {
                         LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", givenScope, oidcService.getId());
                         oidcService.setGenerateRefreshToken(true);
-                        break;
+                    }
                 }
             }
         });

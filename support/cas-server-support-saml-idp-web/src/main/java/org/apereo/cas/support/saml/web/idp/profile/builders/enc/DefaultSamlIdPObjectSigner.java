@@ -375,14 +375,14 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
             LOGGER.trace("Requested credential type [{}] is found for service [{}]", credType, service.getName());
 
             switch (credType) {
-                case BASIC:
+                case BASIC -> {
                     LOGGER.debug("Building credential signing key [{}] based on requested credential type", credType);
                     if (credential.getPublicKey() == null) {
                         throw new IllegalArgumentException("Unable to identify the public key from the signing credential");
                     }
                     return finalizeSigningCredential(new BasicCredential(credential.getPublicKey(), privateKey), credential);
-                case X509:
-                default:
+                }
+                case X509 -> {
                     if (credential instanceof BasicX509Credential) {
                         val certificate = BasicX509Credential.class.cast(credential).getEntityCertificate();
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
@@ -392,6 +392,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
                     val certificate = SamlUtils.readCertificate(signingCert);
                     return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), credential);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

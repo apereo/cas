@@ -46,7 +46,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends BaseCas
             val results = AccepttoApiUtils.authenticate(authentication, acceptto, requestContext, this.apiPublicKey);
 
             val responseCode = ObjectUtils.defaultIfNull(results.get("response_code"), StringUtils.EMPTY).toString();
-            val isApproved = results.containsKey("status") && responseCode.equalsIgnoreCase("approved");
+            val isApproved = results.containsKey("status") && "approved".equalsIgnoreCase(responseCode);
 
             if (isApproved) {
                 LOGGER.trace("Account status is approved for [{}]. Moving on...", email);
@@ -65,7 +65,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends BaseCas
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
             }
 
-            val shouldPairDevice = responseCode.equalsIgnoreCase("pair_device");
+            val shouldPairDevice = "pair_device".equalsIgnoreCase(responseCode);
             if (shouldPairDevice && results.containsKey("invite_token")) {
                 val originalToken = results.get("invite_token").toString();
                 LOGGER.trace("Located invitation token as [{}] for [{}].", originalToken, email);
@@ -88,7 +88,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends BaseCas
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
             }
 
-            val isSuccessResponseCode = responseCode.equalsIgnoreCase("success");
+            val isSuccessResponseCode = "success".equalsIgnoreCase(responseCode);
             if (isSuccessResponseCode && results.containsKey("channel")) {
                 val channel = results.get("channel").toString();
                 AccepttoWebflowUtils.setChannel(requestContext, channel);

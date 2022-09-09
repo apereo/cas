@@ -87,17 +87,11 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
         LOGGER.debug("Located account [{}]", account);
         switch (account.getStatus()) {
-            case DISABLED:
-                throw new AccountDisabledException();
-            case EXPIRED:
-                throw new AccountExpiredException();
-            case LOCKED:
-                throw new AccountLockedException();
-            case MUST_CHANGE_PASSWORD:
-                throw new AccountPasswordMustChangeException();
-            case OK:
-            default:
-                LOGGER.debug("Account status is OK");
+            case DISABLED -> throw new AccountDisabledException();
+            case EXPIRED -> throw new AccountExpiredException();
+            case LOCKED -> throw new AccountLockedException();
+            case MUST_CHANGE_PASSWORD -> throw new AccountPasswordMustChangeException();
+            case OK -> LOGGER.debug("Account status is OK");
         }
 
         val clientInfo = ClientInfoHolder.getClientInfo();

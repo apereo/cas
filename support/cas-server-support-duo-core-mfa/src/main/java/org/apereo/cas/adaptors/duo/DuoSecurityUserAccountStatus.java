@@ -35,15 +35,10 @@ public enum DuoSecurityUserAccountStatus {
      * @return the duo security user account status
      */
     public static DuoSecurityUserAccountStatus from(final String status) {
-        switch (status.toLowerCase()) {
-            case "bypass":
-                return ALLOW;
-            case "disabled":
-            case "locked":
-            case "pending_deletion":
-                return DENY;
-            default:
-                return AUTH;
-        }
+        return switch (status.toLowerCase()) {
+            case "bypass" -> ALLOW;
+            case "disabled", "locked", "pending_deletion" -> DENY;
+            default -> AUTH;
+        };
     }
 }

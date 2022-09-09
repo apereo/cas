@@ -65,19 +65,17 @@ public class AddPropertiesToConfigurationCommand {
         LOGGER.info("Located [{}] properties matching [{}]", results.size(), group);
 
         switch (FilenameUtils.getExtension(filePath.getName()).toLowerCase()) {
-            case "properties":
+            case "properties" -> {
                 createConfigurationFileIfNeeded(filePath);
                 val props = loadPropertiesFromConfigurationFile(filePath);
                 writeConfigurationPropertiesToFile(filePath, results, props);
-                break;
-            case "yaml":
-            case "yml":
+            }
+            case "yaml", "yml" -> {
                 createConfigurationFileIfNeeded(filePath);
                 val yamlProps = CasCoreConfigurationUtils.loadYamlProperties(new FileSystemResource(filePath));
                 writeYamlConfigurationPropertiesToFile(filePath, results, yamlProps);
-                break;
-            default:
-                LOGGER.warn("Configuration file format [{}] is not recognized", filePath.getCanonicalPath());
+            }
+            default -> LOGGER.warn("Configuration file format [{}] is not recognized", filePath.getCanonicalPath());
         }
 
     }
