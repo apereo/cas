@@ -99,7 +99,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      * @return the cached metadata object
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get SAML2 cached metadata", parameters = {
+    @Operation(summary = "Get SAML2 cached metadata for a SAML2 registered service", parameters = {
         @Parameter(name = "serviceId", required = true),
         @Parameter(name = "entityId")
     })

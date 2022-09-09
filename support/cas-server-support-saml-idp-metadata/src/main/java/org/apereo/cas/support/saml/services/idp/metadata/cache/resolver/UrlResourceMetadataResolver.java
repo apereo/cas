@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -32,6 +35,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
@@ -80,6 +84,10 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         }
     }
 
+
+    @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
+        actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         HttpResponse response = null;
@@ -168,7 +176,9 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             output.flush();
         }
         EntityUtils.consume(entity);
-        return new InMemoryResourceMetadataResolver(backupFile, configBean);
+        val metadataResolver = new InMemoryResourceMetadataResolver(backupFile, configBean);
+        metadataResolver.setId("RegisteredServiceMetadata-" + backupFile.getName());
+        return metadataResolver;
     }
 
     /**
