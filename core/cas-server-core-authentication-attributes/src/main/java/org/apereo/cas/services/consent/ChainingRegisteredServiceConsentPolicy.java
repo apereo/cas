@@ -46,7 +46,7 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
      * @param policy the policy
      */
     public void addPolicies(final Collection<RegisteredServiceConsentPolicy> policy) {
-        if (policies.addAll(policy.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList()))) {
+        if (policies.addAll(policy.stream().filter(BeanSupplier::isNotProxy).toList())) {
             AnnotationAwareOrderComparator.sortIfNecessary(this.policies);
         }
     }

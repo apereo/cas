@@ -23,7 +23,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasGeoLocationConfiguration}.
@@ -42,8 +41,7 @@ public class CasGeoLocationConfiguration {
         val services = providers.stream()
             .map(GeoLocationServiceConfigurer::configure)
             .filter(BeanSupplier::isNotProxy)
-            .sorted(AnnotationAwareOrderComparator.INSTANCE)
-            .collect(Collectors.toList());
+            .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
         return BeanSupplier.of(GeoLocationService.class)
             .when(!services.isEmpty())
             .supply(() -> services.get(0))

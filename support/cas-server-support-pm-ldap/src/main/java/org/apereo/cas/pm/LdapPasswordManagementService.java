@@ -158,8 +158,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     }
                     LOGGER.error("Could not update the LDAP entry's password for [{}]", dn);
                     return Boolean.FALSE;
-                })
-                .collect(Collectors.toList());
+                }).toList();
             return results.stream().allMatch(result -> result);
         }, e -> false).get();
     }

@@ -18,7 +18,6 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingRegisteredServiceSingleSignOnParticipationPolicy}.
@@ -63,7 +62,7 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
      * @param policy the policy
      */
     public void addPolicies(final @NonNull RegisteredServiceSingleSignOnParticipationPolicy... policy) {
-        policies.addAll(Arrays.stream(policy).collect(Collectors.toList()));
+        policies.addAll(Arrays.stream(policy).toList());
     }
 
     @JsonIgnore

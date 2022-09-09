@@ -13,7 +13,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -47,7 +46,7 @@ public class HazelcastNetworkClusterProperties implements Serializable {
      * indicates multiple members are going to be added.
      */
     @RequiredProperty
-    private List<String> members = Stream.of("localhost").collect(Collectors.toList());
+    private List<String> members = Stream.of("localhost").toList();
 
     /**
      * You may also want to choose to use only one port. In that case,

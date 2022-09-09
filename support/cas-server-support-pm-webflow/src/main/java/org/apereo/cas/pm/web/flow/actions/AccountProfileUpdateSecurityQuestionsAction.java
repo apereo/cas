@@ -20,7 +20,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link AccountProfileUpdateSecurityQuestionsAction}.
@@ -48,11 +47,9 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
         try {
             val requestParameters = requestContext.getRequestParameters();
             val questions = Arrays.stream(requestParameters.getRequiredArray("questions", String.class))
-                .distinct()
-                .collect(Collectors.toList());
+                .distinct().toList();
             val answers = Arrays.stream(requestParameters.getRequiredArray("answers", String.class))
-                .distinct()
-                .collect(Collectors.toList());
+                .distinct().toList();
             FunctionUtils.throwIf(questions.size() != answers.size(),
                 () -> new IllegalArgumentException("Security questions do not match the given answers"));
             val securityQuestions = new LinkedMultiValueMap<String, String>();

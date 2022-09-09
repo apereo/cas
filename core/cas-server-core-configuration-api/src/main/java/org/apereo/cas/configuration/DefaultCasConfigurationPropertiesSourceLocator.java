@@ -115,8 +115,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 .stream()
                 .flatMap(ext -> PROFILE_PATTERNS
                     .stream().map(pattern -> new File(configDirectory, String.format(pattern, profile, ext)))))
-            .filter(File::exists)
-            .collect(Collectors.toList()));
+            .filter(File::exists).toList());
 
         fileNames.addAll(profiles
             .stream()
@@ -129,8 +128,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                     .collect(Collectors.toList()))
                 .flatMap(List::stream)
                 .collect(Collectors.toList()))
-            .flatMap(List::stream)
-            .collect(Collectors.toList()));
+            .flatMap(List::stream).toList());
 
         val groovyFile = new File(configDirectory, appNameLowerCase.concat(".groovy"));
         FunctionUtils.doIf(groovyFile.exists(), o -> fileNames.add(groovyFile)).accept(groovyFile);
@@ -204,8 +202,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
         configFiles.addAll(EXTENSIONS.stream()
             .map(ext -> String.format("classpath:/application.%s", ext))
-            .map(resourceLoader::getResource)
-            .collect(Collectors.toList()));
+            .map(resourceLoader::getResource).toList());
 
         LOGGER.debug("Loading embedded configuration files [{}]", configFiles);
 

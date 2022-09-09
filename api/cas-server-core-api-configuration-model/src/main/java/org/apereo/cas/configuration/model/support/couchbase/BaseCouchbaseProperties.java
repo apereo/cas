@@ -11,7 +11,6 @@ import lombok.experimental.Accessors;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -33,7 +32,7 @@ public abstract class BaseCouchbaseProperties implements Serializable {
      * Node addresses.
      */
     @RequiredProperty
-    private List<String> addresses = Stream.of("localhost").collect(Collectors.toList());
+    private List<String> addresses = Stream.of("localhost").toList();
 
     /**
      * String representation of connection timeout.

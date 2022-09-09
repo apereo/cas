@@ -11,7 +11,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -94,7 +93,7 @@ public class AuditEngineProperties implements Serializable {
      * can be treated as a regular expression to match against built-in
      * CAS actions.
      */
-    private List<String> supportedActions = Stream.of("*").collect(Collectors.toList());
+    private List<String> supportedActions = Stream.of("*").toList();
 
     /**
      * Indicate a list of supported audit actions that should be excluded,

@@ -9,8 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
-import java.util.stream.Collectors;
-
 /**
  * This is {@link DefaultServiceTicketSessionTrackingPolicy}.
  *
@@ -38,8 +36,7 @@ public class DefaultServiceTicketSessionTrackingPolicy implements ServiceTicketS
                 .filter(entry -> {
                     val normalizedExistingPath = normalizePath(entry.getValue());
                     return path.equals(normalizedExistingPath);
-                })
-                .collect(Collectors.toList());
+                }).toList();
 
             toRemove.forEach(Unchecked.consumer(entry -> {
                 ownerTicket.getServices().remove(entry.getKey());
