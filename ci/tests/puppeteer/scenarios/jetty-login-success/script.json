@@ -1,4 +1,4 @@
 {
   "dependencies": "core",
-  "project": "jetty"
+  "server": "jetty"
 }
