@@ -4,7 +4,6 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**
  * This is {@link SamlRegisteredServiceCachingMetadataResolver}
@@ -28,7 +27,7 @@ public interface SamlRegisteredServiceCachingMetadataResolver {
      * @param criteriaSet the criteria set
      * @return the chaining metadata resolver
      */
-    MetadataResolver resolve(SamlRegisteredService service, CriteriaSet criteriaSet);
+    CachedMetadataResolverResult resolve(SamlRegisteredService service, CriteriaSet criteriaSet);
 
     /**
      * Invalid and clean the result of all previous operations.
