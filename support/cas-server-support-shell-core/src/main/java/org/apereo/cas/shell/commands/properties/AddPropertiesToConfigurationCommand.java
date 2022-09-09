@@ -109,8 +109,7 @@ public class AddPropertiesToConfigurationCommand {
 
     private static void putResultsIntoProperties(final Map<String, ConfigurationMetadataProperty> results, final Map<String, Object> p) {
         val lines = results.values().stream()
-            .sorted(Comparator.comparing(ConfigurationMetadataProperty::getName))
-            .collect(Collectors.toList());
+            .sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).toList();
         lines.forEach(v -> {
             val value = getDefaultValueForProperty(v);
             LOGGER.info("Adding property [{}]=[{}]", v.getId(), value);

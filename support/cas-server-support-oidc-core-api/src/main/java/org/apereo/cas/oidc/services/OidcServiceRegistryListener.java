@@ -19,7 +19,6 @@ import lombok.val;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcServiceRegistryListener}.
@@ -52,8 +51,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 .stream()
                 .filter(p -> p instanceof OidcRegisteredServiceAttributeReleasePolicy)
                 .map(OidcRegisteredServiceAttributeReleasePolicy.class::cast)
-                .filter(p -> p.getScopeType().equalsIgnoreCase(givenScope))
-                .collect(Collectors.toList()));
+                .filter(p -> p.getScopeType().equalsIgnoreCase(givenScope)).toList());
         } else if (policy instanceof OidcRegisteredServiceAttributeReleasePolicy) {
             val oidcPolicy = (OidcRegisteredServiceAttributeReleasePolicy) policy;
             if (oidcPolicy.getScopeType().equalsIgnoreCase(givenScope)) {

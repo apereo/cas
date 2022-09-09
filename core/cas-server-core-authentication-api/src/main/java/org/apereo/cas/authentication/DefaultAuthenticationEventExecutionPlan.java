@@ -89,7 +89,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public void registerAuthenticationPolicies(final Collection<AuthenticationPolicy> authenticationPolicy) {
-        this.authenticationPolicies.addAll(authenticationPolicy.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList()));
+        this.authenticationPolicies.addAll(authenticationPolicy.stream().filter(BeanSupplier::isNotProxy).toList());
     }
 
     @Override

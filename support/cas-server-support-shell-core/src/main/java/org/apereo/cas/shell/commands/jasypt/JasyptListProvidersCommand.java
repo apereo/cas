@@ -10,7 +10,6 @@ import org.springframework.shell.standard.ShellOption;
 
 import java.security.Provider;
 import java.security.Security;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link JasyptListProvidersCommand}.
@@ -42,8 +41,7 @@ public class JasyptListProvidersCommand {
             val services = provider.getServices();
             val algorithms = services.stream()
                 .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
-                .map(Provider.Service::getAlgorithm)
-                .collect(Collectors.toList());
+                .map(Provider.Service::getAlgorithm).toList();
             if (!algorithms.isEmpty()) {
                 LOGGER.info("Provider: Name: [{}] Class: [{}]", provider.getName(), provider.getClass().getName());
                 for (val algorithm : algorithms) {

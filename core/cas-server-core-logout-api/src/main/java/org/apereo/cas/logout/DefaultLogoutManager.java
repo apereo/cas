@@ -67,8 +67,7 @@ public class DefaultLogoutManager implements LogoutManager {
             .stream()
             .filter(entry -> entry.getValue() instanceof WebApplicationService)
             .filter(Objects::nonNull)
-            .map(entry -> Pair.of(entry.getKey(), (WebApplicationService) entry.getValue()))
-            .collect(Collectors.toList());
+            .map(entry -> Pair.of(entry.getKey(), (WebApplicationService) entry.getValue())).toList();
 
         val sloHandlers = logoutExecutionPlan.getSingleLogoutServiceMessageHandlers();
         return logoutServices

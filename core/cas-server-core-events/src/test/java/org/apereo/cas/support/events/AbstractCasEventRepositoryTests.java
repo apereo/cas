@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,7 +51,7 @@ public abstract class AbstractCasEventRepositoryTests {
         val dto2 = getCasEvent("casuser");
         getEventRepository().save(dto2);
 
-        val col = getEventRepository().load().collect(Collectors.toList());
+        val col = getEventRepository().load().toList();
         assertEquals(2, col.size());
 
         assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created Event IDs are equal");

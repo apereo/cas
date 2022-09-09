@@ -21,7 +21,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link GoogleAuthenticatorOneTimeTokenCredentialValidator}.
@@ -110,7 +109,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
         return accounts
             .stream()
             .filter(ac -> isCredentialAssignedToAccount(tokenCredential, ac)
-                          && ac.getScratchCodes().stream().map(Number::intValue).collect(Collectors.toList()).contains(otp))
+                          && ac.getScratchCodes().stream().map(Number::intValue).toList().contains(otp))
             .map(GoogleAuthenticatorAccount.class::cast)
             .peek(acct -> {
                 LOGGER.info("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);

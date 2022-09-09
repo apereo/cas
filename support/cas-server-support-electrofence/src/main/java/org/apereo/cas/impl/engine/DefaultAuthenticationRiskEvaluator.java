@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationRiskEvaluator}.
@@ -43,8 +42,7 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
 
         val activeCalculators = this.calculators
             .stream()
-            .filter(BeanSupplier::isNotProxy)
-            .collect(Collectors.toList());
+            .filter(BeanSupplier::isNotProxy).toList();
 
         if (activeCalculators.isEmpty()) {
             return new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE);
@@ -53,8 +51,7 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
         val scores = activeCalculators
             .stream()
             .map(r -> r.calculate(authentication, service, request))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .filter(Objects::nonNull).toList();
 
         val sum = scores.stream()
             .map(AuthenticationRiskScore::getScore)

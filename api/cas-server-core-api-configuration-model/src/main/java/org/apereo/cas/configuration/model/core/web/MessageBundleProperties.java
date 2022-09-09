@@ -11,7 +11,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -75,7 +74,7 @@ public class MessageBundleProperties implements Serializable {
      * Note that message definitions in a previous resource bundle will override ones in a later bundle, due to the sequential lookup.
      */
     private List<String> baseNames = Stream.of("file:/etc/cas/config/custom_messages",
-        "classpath:custom_messages", "classpath:messages").collect(Collectors.toList());
+        "classpath:custom_messages", "classpath:messages").toList();
 
     /**
      * A list of strings representing common names for this message bundle.
@@ -85,5 +84,5 @@ public class MessageBundleProperties implements Serializable {
      * Entries in last common names override first values (as opposed to baseNames used in message bundles).
      */
     private List<String> commonNames = Stream.of("classpath:common_messages.properties",
-        "file:/etc/cas/config/common_messages.properties").collect(Collectors.toList());
+        "file:/etc/cas/config/common_messages.properties").toList();
 }

@@ -11,8 +11,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.util.stream.Collectors;
-
 /**
  * This is {@link NexmoSmsSender}.
  *
@@ -39,8 +37,7 @@ public class NexmoSmsSender implements SmsSender {
             val response = nexmoClient.getSmsClient().submitMessage(textMessage);
             if (response.getMessageCount() > 0) {
                 val results = response.getMessages().stream()
-                    .filter(res -> res.getStatus() != MessageStatus.OK)
-                    .collect(Collectors.toList());
+                    .filter(res -> res.getStatus() != MessageStatus.OK).toList();
                 if (results.isEmpty()) {
                     return true;
                 }

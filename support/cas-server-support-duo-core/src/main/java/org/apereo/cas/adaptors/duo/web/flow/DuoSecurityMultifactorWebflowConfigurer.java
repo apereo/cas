@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DuoSecurityMultifactorWebflowConfigurer}.
@@ -68,9 +67,8 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
                 val duoFlowRegistryInstance = ApplicationContextProvider.registerBeanIntoApplicationContext(
                     applicationContext, duoFlowRegistry, duo.getId());
                 return Pair.of(duo.getId(), duoFlowRegistryInstance);
-            })
-            .collect(Collectors.toList());
-        val flowRegistries = flowRegistryBeans.stream().map(Pair::getValue).collect(Collectors.toList());
+            }).toList();
+        val flowRegistries = flowRegistryBeans.stream().map(Pair::getValue).toList();
         getMultifactorAuthenticationFlowDefinitionRegistries().addAll(flowRegistries);
         flowRegistryBeans.forEach(duo -> registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getKey(), duo.getKey()));
 

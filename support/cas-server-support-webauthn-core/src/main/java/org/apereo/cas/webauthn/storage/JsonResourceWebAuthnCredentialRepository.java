@@ -20,7 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -67,8 +66,7 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
                     return record.withRegistrationTime(Instant.now(Clock.systemUTC()));
                 }
                 return record;
-            })
-            .collect(Collectors.toList());
+            }).toList();
         storage.put(username.trim().toLowerCase(), new LinkedHashSet<>(records));
         FunctionUtils.doUnchecked(u -> WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage));
     }

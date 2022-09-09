@@ -114,7 +114,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
     @Override
     @CanIgnoreReturnValue
     public RegisteredServiceChainingAttributeReleasePolicy addPolicies(final RegisteredServiceAttributeReleasePolicy... policies) {
-        this.policies.addAll(Arrays.stream(policies).collect(Collectors.toList()));
+        this.policies.addAll(Arrays.stream(policies).toList());
         return this;
     }
 

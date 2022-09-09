@@ -12,7 +12,6 @@ import lombok.experimental.Accessors;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -51,9 +50,10 @@ public abstract class BaseCassandraProperties implements Serializable {
 
     /**
      * The list of contact points to use for the new cluster.
+     * Each contact point should be defined using the syntax {@code address:port}.
      */
     @RequiredProperty
-    private List<String> contactPoints = Stream.of("localhost:9042").collect(Collectors.toList());
+    private List<String> contactPoints = Stream.of("localhost:9042").toList();
 
     /**
      * Used by a DC-ware round-robin load balancing policy.

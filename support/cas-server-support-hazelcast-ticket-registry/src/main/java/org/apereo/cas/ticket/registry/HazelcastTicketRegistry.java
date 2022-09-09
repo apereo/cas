@@ -134,8 +134,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
                 if (pageSize > 0) {
                     return tickets.stream()
                         .limit(pageSize)
-                        .map(HazelcastTicketHolder::getTicket)
-                        .collect(Collectors.toList())
+                        .map(HazelcastTicketHolder::getTicket).toList()
                         .stream();
                 }
                 return tickets

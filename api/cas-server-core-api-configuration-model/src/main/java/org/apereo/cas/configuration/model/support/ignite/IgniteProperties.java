@@ -13,7 +13,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -54,7 +53,7 @@ public class IgniteProperties implements Serializable {
      * </ul>
      */
     @RequiredProperty
-    private List<String> igniteAddress = Stream.of("localhost:47500").collect(Collectors.toList());
+    private List<String> igniteAddress = Stream.of("localhost:47500").toList();
 
     /**
      * Settings related to tickets cache.

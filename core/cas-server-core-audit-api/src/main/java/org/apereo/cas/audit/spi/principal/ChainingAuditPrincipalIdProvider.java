@@ -10,7 +10,6 @@ import lombok.val;
 import org.aspectj.lang.JoinPoint;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingAuditPrincipalIdProvider}.
@@ -40,7 +39,7 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
      * @param provider the provider
      */
     public void addProviders(final List<AuditPrincipalIdProvider> provider) {
-        providers.addAll(provider.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList()));
+        providers.addAll(provider.stream().filter(BeanSupplier::isNotProxy).toList());
     }
 
     @Override
