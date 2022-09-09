@@ -268,7 +268,7 @@ if [[ "${RERUN}" != "true" ]]; then
   [ -f "${keystore}" ] && echo "Created ${keystore}"
 fi
 
-project=$(jq -j '.project // "tomcat"' "${config}")
+project=$(jq -j '.server // "tomcat"' "${config}")
 projectType=war
 if [[ $project == starter* ]]; then
   projectType=jar

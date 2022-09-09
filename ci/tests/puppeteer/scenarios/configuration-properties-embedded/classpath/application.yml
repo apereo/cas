@@ -1,0 +1,13 @@
+cas:
+  authn:
+    accept:
+      users: "{cas-cipher}E4PZgO/Io4ou9dV2q+vpEwpvO0aMy4VcEkwY2sQ9I3w="
+spring:
+  security:
+    user:
+      password: "{cas-cipher}d7H36d2JryjjaOq8HSN9Iw=="
+logging:
+  level:
+    org:
+      springframework:
+        boot: info
