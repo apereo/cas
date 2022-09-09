@@ -52,5 +52,5 @@ public interface SamlIdPObjectSigner {
      *
      * @return the saml id p metadata resolver
      */
-    MetadataResolver getSamlIdPMetadataResolver();
+    MetadataResolver samlIdPMetadataResolver();
 }

@@ -83,7 +83,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
 
     @Override
     @JsonIgnore
-    public String getValue() {
+    public String value() {
         if (values.isEmpty()) {
             return null;
         }

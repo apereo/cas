@@ -158,7 +158,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         }
     }
 
-    @ToString
+    @SuppressWarnings("UnusedVariable")
     private record IgniteInternalTicketExpiryPolicy(ExpirationPolicy expirationPolicy) implements ExpiryPolicy {
         @Override
         public Duration getExpiryForCreation() {

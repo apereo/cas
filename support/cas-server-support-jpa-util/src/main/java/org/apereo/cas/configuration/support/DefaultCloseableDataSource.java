@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.support;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 
 import javax.sql.DataSource;

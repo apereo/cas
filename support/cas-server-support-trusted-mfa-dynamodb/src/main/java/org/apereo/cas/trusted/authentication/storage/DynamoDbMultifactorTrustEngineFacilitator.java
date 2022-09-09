@@ -39,14 +39,8 @@ import java.util.stream.Stream;
  * @since 6.1.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
 @SuppressWarnings("JavaUtilDate")
-public class DynamoDbMultifactorTrustEngineFacilitator {
-    private final DynamoDbTrustedDevicesMultifactorProperties dynamoDbProperties;
-
-    private final DynamoDbClient amazonDynamoDBClient;
-
+public record DynamoDbMultifactorTrustEngineFacilitator(DynamoDbTrustedDevicesMultifactorProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
     private static MultifactorAuthenticationTrustRecord extractAttributeValuesFrom(final Map<String, AttributeValue> item) {
         val record = new MultifactorAuthenticationTrustRecord();
         record.setId(Long.parseLong(item.get(ColumnNames.ID.getColumnName()).s()));

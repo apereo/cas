@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -177,17 +176,8 @@ public class CasConfigurationMetadataCatalog {
     }
 
     /**
-         * The type Cas properties container.
-         */
-        public record CasPropertiesContainer(TreeSet<CasReferenceProperty> properties) {
-            /**
-             * Properties list.
-             *
-             * @return the list
-             */
-            @Override
-            public TreeSet<CasReferenceProperty> properties() {
-                return this.properties;
-            }
-        }
+     * The type Cas properties container.
+     */
+    public record CasPropertiesContainer(TreeSet<CasReferenceProperty> properties) {
+    }
 }

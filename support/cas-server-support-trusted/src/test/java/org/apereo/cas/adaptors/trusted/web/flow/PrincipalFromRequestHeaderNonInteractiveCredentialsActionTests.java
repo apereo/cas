@@ -48,7 +48,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         val principal = mock(Principal.class);
-        when(principal.name()).thenReturn("casuser");
+        when(principal.getName()).thenReturn("casuser");
         request.setUserPrincipal(principal);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
 

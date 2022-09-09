@@ -88,6 +88,6 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
 
     private Token verifyAuthyToken(final AuthyTokenCredential tokenCredential, final User user,
                                    final Map<String, String> options) throws Exception {
-        return instance.getAuthyClient().getTokens().verify(user.getId(), tokenCredential.getToken(), options);
+        return instance.authyClient().getTokens().verify(user.getId(), tokenCredential.getToken(), options);
     }
 }

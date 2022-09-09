@@ -257,7 +257,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         attributes.put("username", Arrays.asList(new Object[]{"uid"}));
 
         val person = mock(IPersonAttributes.class);
-        when(person.name()).thenReturn("uid");
+        when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
 
         val stub = new StubPersonAttributeDao(attributes);
@@ -293,7 +293,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         attributes.put("username", Arrays.asList(new Object[]{"uid"}));
 
         val person = mock(IPersonAttributes.class);
-        when(person.name()).thenReturn("uid");
+        when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
 
         val stub = new StubPersonAttributeDao(attributes);

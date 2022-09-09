@@ -14,7 +14,6 @@ import java.io.Serial;
 /**
  * This is {@link CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder}.
  *
- * @param casProperties The Cas properties.
  * @author Misagh Moayyed
  * @since 6.1.0
  */

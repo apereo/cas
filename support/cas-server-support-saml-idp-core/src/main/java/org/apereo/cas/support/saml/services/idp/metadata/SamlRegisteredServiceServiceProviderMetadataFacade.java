@@ -7,7 +7,6 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -49,16 +48,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class SamlRegisteredServiceServiceProviderMetadataFacade {
-
-    private final SPSSODescriptor ssoDescriptor;
-
-    private final EntityDescriptor entityDescriptor;
-
-    @Getter
-    private final MetadataResolver metadataResolver;
+public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor ssoDescriptor, EntityDescriptor entityDescriptor, @Getter MetadataResolver metadataResolver) {
 
     /**
      * Adapt saml metadata and parse. Acts as a facade.

@@ -27,7 +27,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.google.common.collect.Multimap;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -357,30 +356,30 @@ public class LdapUtils {
         if (ResourceUtils.doesResourceExist(filterQuery)) {
             ApplicationContextProvider.getScriptResourceCacheManager()
                 .ifPresentOrElse(cacheMgr -> {
-                        val cacheKey = ScriptResourceCacheManager.computeKey(filterQuery);
-                        var script = (ExecutableCompiledGroovyScript) null;
-                        if (cacheMgr.containsKey(cacheKey)) {
-                            script = cacheMgr.get(cacheKey);
-                            LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
-                        } else {
-                            val resource = Unchecked.supplier(() -> ResourceUtils.getRawResourceFrom(filterQuery)).get();
-                            LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
-                            script = new WatchableGroovyScriptResource(resource);
-                            cacheMgr.put(cacheKey, script);
-                            LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
-                        }
-                        if (script != null) {
-                            val parameters = new LinkedHashMap<String, String>();
-                            IntStream.range(0, values.size())
-                                .forEachOrdered(i -> parameters.put(paramName.get(i), values.get(i)));
-                            val args = CollectionUtils.<String, Object>wrap("filter", filter,
-                                "parameters", parameters,
-                                "applicationContext", ApplicationContextProvider.getApplicationContext(),
-                                "logger", LOGGER);
-                            script.setBinding(args);
-                            script.execute(args.values().toArray(), FilterTemplate.class);
-                        }
-                    },
+                    val cacheKey = ScriptResourceCacheManager.computeKey(filterQuery);
+                    var script = (ExecutableCompiledGroovyScript) null;
+                    if (cacheMgr.containsKey(cacheKey)) {
+                        script = cacheMgr.get(cacheKey);
+                        LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
+                    } else {
+                        val resource = Unchecked.supplier(() -> ResourceUtils.getRawResourceFrom(filterQuery)).get();
+                        LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
+                        script = new WatchableGroovyScriptResource(resource);
+                        cacheMgr.put(cacheKey, script);
+                        LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
+                    }
+                    if (script != null) {
+                        val parameters = new LinkedHashMap<String, String>();
+                        IntStream.range(0, values.size())
+                            .forEachOrdered(i -> parameters.put(paramName.get(i), values.get(i)));
+                        val args = CollectionUtils.<String, Object>wrap("filter", filter,
+                            "parameters", parameters,
+                            "applicationContext", ApplicationContextProvider.getApplicationContext(),
+                            "logger", LOGGER);
+                        script.setBinding(args);
+                        script.execute(args.values().toArray(), FilterTemplate.class);
+                    }
+                },
                     () -> {
                         throw new RuntimeException("Script cache manager unavailable to handle LDAP filter");
                     });
@@ -974,7 +973,7 @@ public class LdapUtils {
      * @return the authentication password policy handling strategy
      */
     public static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
-    createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l,
+        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l,
                                              final ApplicationContext applicationContext) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blocked authentication result codes");
@@ -1166,10 +1165,8 @@ public class LdapUtils {
         }
     }
 
-    @RequiredArgsConstructor
-    private static class ChainingLdapEntryResolver implements EntryResolver {
-        private final List<? extends EntryResolver> resolvers;
-
+    @SuppressWarnings("UnusedVariable")
+    private record ChainingLdapEntryResolver(List<? extends EntryResolver> resolvers) implements EntryResolver {
         @Override
         public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response) {
             return resolvers.stream()

@@ -1,8 +1,9 @@
 package org.apereo.cas.util.spring;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * This is {@link DirectObjectProvider}.
@@ -10,9 +11,7 @@ import org.springframework.beans.factory.ObjectProvider;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@RequiredArgsConstructor
-public class DirectObjectProvider<T> implements ObjectProvider<T> {
-    private final T object;
+public record DirectObjectProvider<T>(T object) implements ObjectProvider<T> {
 
     @Override
     public T getIfAvailable() throws BeansException {
@@ -25,11 +24,13 @@ public class DirectObjectProvider<T> implements ObjectProvider<T> {
     }
 
     @Override
+    @NotNull
     public T getObject() throws BeansException {
         return object;
     }
-    
+
     @Override
+    @NotNull
     public T getObject(final Object... objects) throws BeansException {
         return object;
     }

@@ -42,7 +42,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     public void handleFederationRequest(final HttpServletResponse response,
                                         final HttpServletRequest request) throws Exception {
         val fedRequest = WSFederationRequest.of(request);
-        val wa = fedRequest.getWa();
+        val wa = fedRequest.wa();
         if (StringUtils.isBlank(wa)) {
             throw new UnauthorizedAuthenticationException("Unable to determine the [WA] parameter", new HashMap<>(0));
         }
@@ -63,12 +63,12 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     protected void handleLogoutRequest(final WSFederationRequest fedRequest, final HttpServletRequest request,
                                        final HttpServletResponse response) throws Exception {
 
-        val logoutUrl = FunctionUtils.doIf(StringUtils.isNotBlank(fedRequest.getWreply()),
+        val logoutUrl = FunctionUtils.doIf(StringUtils.isNotBlank(fedRequest.wreply()),
                 () -> {
                     val service = createService(fedRequest);
                     val registeredService = getWsFederationRegisteredService(service);
                     LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
-                        fedRequest, fedRequest.getWreply(), registeredService);
+                        fedRequest, fedRequest.wreply(), registeredService);
                     val logoutParam = getConfigContext().getCasProperties().getLogout().getRedirectParameter();
                     return getConfigContext().getCasProperties()
                         .getServer().getLogoutUrl().concat("?").concat(logoutParam).concat("=").concat(service.getId());
@@ -90,10 +90,10 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     }
 
     private WebApplicationService createService(final WSFederationRequest fedRequest) {
-        val targetService = getConfigContext().getWebApplicationServiceFactory().createService(fedRequest.getWreply());
-        targetService.getAttributes().put(WSFederationConstants.WREPLY, CollectionUtils.wrapList(fedRequest.getWreply()));
-        targetService.getAttributes().put(WSFederationConstants.WTREALM, CollectionUtils.wrapList(fedRequest.getWtrealm()));
-        targetService.getAttributes().put(WSFederationConstants.WCTX, CollectionUtils.wrapList(fedRequest.getWctx()));
+        val targetService = getConfigContext().getWebApplicationServiceFactory().createService(fedRequest.wreply());
+        targetService.getAttributes().put(WSFederationConstants.WREPLY, CollectionUtils.wrapList(fedRequest.wreply()));
+        targetService.getAttributes().put(WSFederationConstants.WTREALM, CollectionUtils.wrapList(fedRequest.wtrealm()));
+        targetService.getAttributes().put(WSFederationConstants.WCTX, CollectionUtils.wrapList(fedRequest.wctx()));
         return targetService;
     }
 

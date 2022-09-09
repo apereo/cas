@@ -11,8 +11,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpMethod;
@@ -30,17 +28,9 @@ import java.net.URL;
  * @since 6.4.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class InweboService {
+public record InweboService(CasConfigurationProperties casProperties, InweboConsoleAdmin consoleAdmin, SSLContext context) {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
-
-    private final CasConfigurationProperties casProperties;
-
-    private final InweboConsoleAdmin consoleAdmin;
-
-    private final SSLContext context;
 
     /**
      * Retrieve device name.
@@ -48,7 +38,7 @@ public class InweboService {
      * @param json     the json
      * @param response the response
      */
-    protected static void retrieveDeviceName(final JsonNode json,
+    static void retrieveDeviceName(final JsonNode json,
                                              final InweboDeviceNameResponse response) {
         if (response.isOk()) {
             val name = json.get("name");
@@ -172,7 +162,7 @@ public class InweboService {
      * @return the json node
      * @throws Exception the exception
      */
-    protected JsonNode call(final String url) throws Exception {
+    JsonNode call(final String url) throws Exception {
         val conn = (HttpURLConnection) new URL(url).openConnection();
         if (conn instanceof HttpsURLConnection) {
             HttpsURLConnection.class.cast(conn)
@@ -190,7 +180,7 @@ public class InweboService {
      * @param err       the err
      * @return the abstract inwebo response
      */
-    protected AbstractInweboResponse buildResponse(final AbstractInweboResponse response, final String operation, final String err) {
+    AbstractInweboResponse buildResponse(final AbstractInweboResponse response, final String operation, final String err) {
         if ("OK".equals(err)) {
             response.setResult(InweboResult.OK);
         } else {

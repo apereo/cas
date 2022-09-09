@@ -85,10 +85,8 @@ public class SecurityTokenServiceClientBuilder {
         return sts;
     }
 
-    @RequiredArgsConstructor
-    private static class CasHTTPConduitConfigurer implements HTTPConduitConfigurer {
-        private final TLSClientParameters tlsClientParameters;
-
+    @SuppressWarnings("UnusedVariable")
+    private record CasHTTPConduitConfigurer(TLSClientParameters tlsClientParameters) implements HTTPConduitConfigurer {
         @Override
         public void configure(final String name, final String addr, final HTTPConduit httpConduit) {
             httpConduit.setTlsClientParameters(tlsClientParameters);

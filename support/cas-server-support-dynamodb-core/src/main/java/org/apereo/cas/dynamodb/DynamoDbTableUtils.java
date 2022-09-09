@@ -165,7 +165,7 @@ public class DynamoDbTableUtils {
      */
     public static <T> Stream<T> getRecordsByKeys(final DynamoDbClient dynamoDbClient,
                                                  final String tableName,
-                                                 final List<DynamoDbQueryBuilder> queries,
+                                                 final List<? extends DynamoDbQueryBuilder> queries,
                                                  final Function<Map<String, AttributeValue>, T> itemMapper) {
         try {
             val scanFilter = queries.stream()

@@ -160,7 +160,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                 return new HashMap<>(0);
             }
 
-            val entityDescriptor = facade.get().getEntityDescriptor();
+            val entityDescriptor = facade.get().entityDescriptor();
             return getAttributesForSamlRegisteredService(attributes, applicationContext,
                 resolver, facade.get(), entityDescriptor, context);
         }

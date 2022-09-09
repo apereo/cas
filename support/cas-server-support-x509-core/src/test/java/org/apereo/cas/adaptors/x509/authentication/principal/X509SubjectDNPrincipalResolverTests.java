@@ -60,7 +60,7 @@ public class X509SubjectDNPrincipalResolverTests {
     public void verifyResolvePrincipalInternal() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
-        assertEquals(VALID_CERTIFICATE.getSubjectDN().name(), this.resolver.resolve(c,
+        assertEquals(VALID_CERTIFICATE.getSubjectDN().getName(), this.resolver.resolve(c,
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())).getId());
     }

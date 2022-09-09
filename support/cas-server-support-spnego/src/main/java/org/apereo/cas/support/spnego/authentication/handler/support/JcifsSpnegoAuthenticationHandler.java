@@ -73,7 +73,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
                 authentication.process(spnegoCredential.getInitToken());
                 principal = authentication.getPrincipal();
                 LOGGER.debug("Authenticated SPNEGO principal [{}]. Retrieving the next token for authentication...",
-                    Optional.ofNullable(principal).map(java.security.Principal::name).orElse(null));
+                    Optional.ofNullable(principal).map(java.security.Principal::getName).orElse(null));
                 nextToken = authentication.getNextToken();
             } catch (final jcifs.spnego.AuthenticationException e) {
                 LOGGER.debug("Processing SPNEGO authentication failed with exception", e);
@@ -90,11 +90,11 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         var success = false;
         if (principal != null) {
             if (spnegoCredential.isNtlm()) {
-                LOGGER.debug("NTLM Credential is valid for user [{}]", principal.name());
+                LOGGER.debug("NTLM Credential is valid for user [{}]", principal.getName());
             } else {
-                LOGGER.debug("Kerberos Credential is valid for user [{}]", principal.name());
+                LOGGER.debug("Kerberos Credential is valid for user [{}]", principal.getName());
             }
-            spnegoCredential.setPrincipal(getPrincipal(principal.name(), spnegoCredential.isNtlm()));
+            spnegoCredential.setPrincipal(getPrincipal(principal.getName(), spnegoCredential.isNtlm()));
             success = true;
         }
         if (!success) {

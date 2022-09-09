@@ -250,7 +250,7 @@ public record DynamoDbConsentFacilitator(DynamoDbConsentProperties dynamoDbPrope
         private final String columnName;
     }
 
-    private Stream<ConsentDecision> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
+    private Stream<ConsentDecision> getRecordsByKeys(final List<? extends DynamoDbQueryBuilder> queries) {
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient,
             dynamoDbProperties.getTableName(),
             queries,

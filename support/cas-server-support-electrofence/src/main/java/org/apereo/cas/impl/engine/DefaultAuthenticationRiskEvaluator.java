@@ -10,8 +10,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
@@ -27,11 +25,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Getter
-@RequiredArgsConstructor
-public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEvaluator {
-    private final List<AuthenticationRequestRiskCalculator> calculators;
-
+public record DefaultAuthenticationRiskEvaluator(List<AuthenticationRequestRiskCalculator> calculators) implements AuthenticationRiskEvaluator {
     @Audit(action = AuditableActions.EVALUATE_RISKY_AUTHENTICATION,
         actionResolverName = AuditActionResolvers.ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER)

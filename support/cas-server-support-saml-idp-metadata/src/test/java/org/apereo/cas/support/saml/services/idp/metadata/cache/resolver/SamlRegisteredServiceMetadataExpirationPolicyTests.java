@@ -57,9 +57,9 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
         assertEquals(entityCacheDuration.toNanos(), policy.expireAfterCreate(cacheKey, result, System.currentTimeMillis()));
 
         when(resolver.resolveSingle(any())).thenThrow(new IllegalArgumentException());
-        assertEquals(policy.getDefaultExpiration().toNanos(), policy.expireAfterCreate(cacheKey, result, System.currentTimeMillis()));
-        assertEquals(policy.getDefaultExpiration().toNanos(),
-            policy.expireAfterUpdate(cacheKey, result, 1000, policy.getDefaultExpiration().toNanos()));
+        assertEquals(policy.defaultExpiration().toNanos(), policy.expireAfterCreate(cacheKey, result, System.currentTimeMillis()));
+        assertEquals(policy.defaultExpiration().toNanos(),
+            policy.expireAfterUpdate(cacheKey, result, 1000, policy.defaultExpiration().toNanos()));
     }
 
     @Test
@@ -108,6 +108,6 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
         when(resolver.resolveSingle(argThat(argument -> argument != null && argument.size() > 1))).thenReturn(null);
 
         val result = CachedMetadataResolverResult.builder().metadataResolver(resolver).build();
-        assertNotEquals(policy.getDefaultExpiration().toNanos(), policy.expireAfterCreate(cacheKey, result, System.currentTimeMillis()));
+        assertNotEquals(policy.defaultExpiration().toNanos(), policy.expireAfterCreate(cacheKey, result, System.currentTimeMillis()));
     }
 }

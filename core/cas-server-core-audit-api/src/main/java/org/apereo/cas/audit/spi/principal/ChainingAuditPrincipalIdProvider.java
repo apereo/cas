@@ -4,8 +4,6 @@ import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
 

@@ -135,7 +135,7 @@ public class CasX509Certificate extends X509Certificate {
         }
         
         val principal = mock(Principal.class);
-        when(principal.name()).thenReturn(this.subjectDn);
+        when(principal.getName()).thenReturn(this.subjectDn);
         return principal;
     }
 

@@ -31,7 +31,7 @@ public class TicketGrantingTicketExpirationPolicyBuilderTests {
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
         assertTrue(builder.buildTicketExpirationPolicy() instanceof RememberMeDelegatingExpirationPolicy);
         assertNotNull(builder.toString());
-        assertNotNull(builder.getCasProperties());
+        assertNotNull(builder.casProperties());
     }
 
     @Test

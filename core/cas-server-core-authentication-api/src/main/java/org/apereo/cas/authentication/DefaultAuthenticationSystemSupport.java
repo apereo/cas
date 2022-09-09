@@ -2,9 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
 
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.Objects;
@@ -17,18 +15,10 @@ import java.util.stream.Stream;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Getter
-@RequiredArgsConstructor
-public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
+public record DefaultAuthenticationSystemSupport(AuthenticationTransactionManager authenticationTransactionManager, PrincipalElectionStrategy principalElectionStrategy,
+                                                 AuthenticationResultBuilderFactory authenticationResultBuilderFactory, AuthenticationTransactionFactory authenticationTransactionFactory)
+    implements AuthenticationSystemSupport {
 
-    private final AuthenticationTransactionManager authenticationTransactionManager;
-
-    private final PrincipalElectionStrategy principalElectionStrategy;
-
-    private final AuthenticationResultBuilderFactory authenticationResultBuilderFactory;
-
-    private final AuthenticationTransactionFactory authenticationTransactionFactory;
-    
     @Override
     public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
                                                                               final Credential... credential) throws AuthenticationException {
@@ -62,8 +52,10 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResult finalizeAllAuthenticationTransactions(@NonNull final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                      final Service service) {
+    public AuthenticationResult finalizeAllAuthenticationTransactions(
+        @NonNull
+        final AuthenticationResultBuilder authenticationResultBuilder,
+        final Service service) {
         return authenticationResultBuilder.build(principalElectionStrategy, service);
     }
 

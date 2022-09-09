@@ -36,7 +36,7 @@ public interface RegisteredServiceProperty extends Serializable {
      * @return the value, or null if the collection is empty.
      */
     @JsonIgnore
-    String getValue();
+    String value();
 
     /**
      * Gets property value.
@@ -47,7 +47,7 @@ public interface RegisteredServiceProperty extends Serializable {
      */
     @JsonIgnore
     default <T> T getValue(final Class<T> clazz) {
-        val value = getValue();
+        val value = value();
         if (StringUtils.isNotBlank(value)) {
             return clazz.cast(value);
         }
@@ -69,7 +69,7 @@ public interface RegisteredServiceProperty extends Serializable {
      */
     @JsonIgnore
     default boolean getBooleanValue() {
-        val value = getValue();
+        val value = value();
         return StringUtils.isNotBlank(value) && BooleanUtils.toBoolean(value);
     }
 
@@ -562,7 +562,7 @@ public interface RegisteredServiceProperty extends Serializable {
             if (isAssignedTo(service)) {
                 val property = service.getProperties().entrySet()
                     .stream().filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
-                        && StringUtils.isNotBlank(entry.getValue().getValue()))
+                        && StringUtils.isNotBlank(entry.getValue().value()))
                     .distinct().findFirst();
                 if (property.isPresent()) {
                     return property.get().getValue();
@@ -584,7 +584,7 @@ public interface RegisteredServiceProperty extends Serializable {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
-                    return clazz.cast(prop.getValue());
+                    return clazz.cast(prop.value());
                 }
             }
             return null;
@@ -620,7 +620,7 @@ public interface RegisteredServiceProperty extends Serializable {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
-                    return Integer.parseInt(prop.getValue());
+                    return Integer.parseInt(prop.value());
                 }
             }
             return Integer.MIN_VALUE;
@@ -637,7 +637,7 @@ public interface RegisteredServiceProperty extends Serializable {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
-                    return Long.parseLong(prop.getValue());
+                    return Long.parseLong(prop.value());
                 }
             }
             return Long.MIN_VALUE;
@@ -654,7 +654,7 @@ public interface RegisteredServiceProperty extends Serializable {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
-                    return Double.parseDouble(prop.getValue());
+                    return Double.parseDouble(prop.value());
                 }
             }
             return Double.NaN;
@@ -671,7 +671,7 @@ public interface RegisteredServiceProperty extends Serializable {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
-                    return BooleanUtils.toBoolean(prop.getValue());
+                    return BooleanUtils.toBoolean(prop.value());
                 }
             }
             return BooleanUtils.toBoolean(getDefaultValue());
@@ -700,8 +700,8 @@ public interface RegisteredServiceProperty extends Serializable {
             return service != null && service.getProperties().entrySet()
                 .stream()
                 .anyMatch(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
-                    && StringUtils.isNotBlank(entry.getValue().getValue())
-                    && valueFilter.test(entry.getValue().getValue()));
+                    && StringUtils.isNotBlank(entry.getValue().value())
+                    && valueFilter.test(entry.getValue().value()));
         }
 
         /**
@@ -721,7 +721,7 @@ public interface RegisteredServiceProperty extends Serializable {
                 case BOOLEAN:
                     return getPropertyBooleanValue(registeredService);
                 default:
-                    return getPropertyValue(registeredService).getValue();
+                    return getPropertyValue(registeredService).value();
             }
         }
     }

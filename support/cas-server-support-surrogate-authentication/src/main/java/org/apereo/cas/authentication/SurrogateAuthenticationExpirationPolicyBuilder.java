@@ -9,9 +9,6 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
 
 import java.io.Serial;
@@ -22,23 +19,11 @@ import java.io.Serial;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class SurrogateAuthenticationExpirationPolicyBuilder implements ExpirationPolicyBuilder<TicketGrantingTicket> {
+public record SurrogateAuthenticationExpirationPolicyBuilder(ExpirationPolicyBuilder<TicketGrantingTicket> ticketGrantingTicketExpirationPolicyBuilder,
+                                                             CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<TicketGrantingTicket> {
     @Serial
     private static final long serialVersionUID = -3597980180617072826L;
-
-    /**
-     * The Ticket granting ticket expiration policy builder.
-     */
-    protected final ExpirationPolicyBuilder<TicketGrantingTicket> ticketGrantingTicketExpirationPolicyBuilder;
-
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {

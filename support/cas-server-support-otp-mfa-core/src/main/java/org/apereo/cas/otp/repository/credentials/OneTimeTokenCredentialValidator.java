@@ -50,12 +50,12 @@ public interface OneTimeTokenCredentialValidator<C extends OneTimeTokenCredentia
      *
      * @return the token repository
      */
-    OneTimeTokenRepository getTokenRepository();
+    OneTimeTokenRepository tokenRepository();
 
     /**
      * Gets credential repository.
      *
      * @return the credential repository
      */
-    OneTimeTokenCredentialRepository getCredentialRepository();
+    OneTimeTokenCredentialRepository credentialRepository();
 }

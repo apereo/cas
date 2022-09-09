@@ -4,8 +4,6 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,21 +23,19 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @Slf4j
-@Getter
-public class OidcWebFingerDiscoveryService {
+public record OidcWebFingerDiscoveryService(OidcWebFingerUserInfoRepository userInfoRepository, OidcServerDiscoverySettings discovery) {
     private static final Pattern RESOURCE_NORMALIZED_PATTERN = Pattern.compile('^'
-        + "((https|acct|http|mailto|tel|device):(//)?)?"
-        + '('
-        + "(([^@]+)@)?"
-        + "(([^\\?#:/]+)"
-        + "(:(\\d*))?)"
-        + ')'
-        + "([^\\?#]+)?"
-        + "(\\?([^#]+))?"
-        + "(#(.*))?"
-        + '$'
+                                                                               + "((https|acct|http|mailto|tel|device):(//)?)?"
+                                                                               + '('
+                                                                               + "(([^@]+)@)?"
+                                                                               + "(([^\\?#:/]+)"
+                                                                               + "(:(\\d*))?)"
+                                                                               + ')'
+                                                                               + "([^\\?#]+)?"
+                                                                               + "(\\?([^#]+))?"
+                                                                               + "(#(.*))?"
+                                                                               + '$'
     );
 
     private static final int PATTERN_GROUP_INDEX_SCHEME = 2;
@@ -55,10 +51,6 @@ public class OidcWebFingerDiscoveryService {
     private static final int PATTERN_GROUP_INDEX_QUERY = 13;
 
     private static final int PATTERN_GROUP_INDEX_FRAGMENT = 15;
-
-    private final OidcWebFingerUserInfoRepository userInfoRepository;
-
-    private final OidcServerDiscoverySettings discovery;
 
     /**
      * Handle web finger discovery request and produce response entity.
@@ -117,7 +109,7 @@ public class OidcWebFingerDiscoveryService {
      * @param message the message
      * @return the response entity
      */
-    protected ResponseEntity buildNotFoundResponseEntity(final String message) {
+    ResponseEntity buildNotFoundResponseEntity(final String message) {
         return new ResponseEntity<>(CollectionUtils.wrap("message", message), HttpStatus.NOT_FOUND);
     }
 
@@ -127,7 +119,7 @@ public class OidcWebFingerDiscoveryService {
      * @param resource the resource
      * @return the uri components
      */
-    protected UriComponents normalize(final String resource) {
+    UriComponents normalize(final String resource) {
         val builder = UriComponentsBuilder.newInstance();
 
         val matcher = RESOURCE_NORMALIZED_PATTERN.matcher(resource);

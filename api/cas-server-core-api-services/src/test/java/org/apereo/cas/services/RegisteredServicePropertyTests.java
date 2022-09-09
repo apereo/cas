@@ -2,8 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -59,13 +57,10 @@ public class RegisteredServicePropertyTests {
         assertNotNull(RegisteredServiceProperties.DELEGATED_AUTHN_SAML2_MAXIMUM_AUTHN_LIFETIME.getTypedPropertyValue(service));
     }
 
-    @Getter(onMethod = @__({@Override}))
-    @RequiredArgsConstructor
-    private static class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
+    @SuppressWarnings("UnusedVariable")
+    private record DefaultRegisteredServiceProperty(String value) implements RegisteredServiceProperty {
         @Serial
         private static final long serialVersionUID = -4878764188998002053L;
-
-        private final String value;
 
         @Override
         public Set<String> getValues() {

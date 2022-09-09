@@ -32,9 +32,9 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests 
         val client = new CasClient();
         when(clients.findClient(anyString())).thenReturn(Optional.of(client));
         val locator = new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(producer, clients, properties);
-        assertNotNull(locator.getProviderProducer());
-        assertNotNull(locator.getCasProperties());
-        assertNotNull(locator.getClients());
+        assertNotNull(locator.providerProducer());
+        assertNotNull(locator.casProperties());
+        assertNotNull(locator.clients());
         
         val request = DelegatedAuthenticationDynamicDiscoveryProviderLocator.DynamicDiscoveryProviderRequest
             .builder()

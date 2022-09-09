@@ -13,6 +13,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,7 +61,9 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
+                             @Nonnull
                              final HttpServletResponse response,
+                             @Nonnull
                              final Object handler) throws ServletException {
         val requestUrl = request.getRequestURL().toString();
         if (casProperties.getObject().getLocale().isForceDefaultLocale()) {

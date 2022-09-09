@@ -229,7 +229,7 @@ public class LdapUtilsTests {
                 props.getCaseChange().setDnCaseChange(CaseChangeEntryHandler.CaseChange.UPPER.name());
                 props.getCaseChange().setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.UPPER.name());
                 ldap.getSearchEntryHandlers().add(props);
-                val resolver = LdapUtils.newLdaptiveSearchEntryResolver(ldap, factory.getConnectionFactory());
+                val resolver = LdapUtils.newLdaptiveSearchEntryResolver(ldap, factory.connectionFactory());
                 assertNotNull(resolver);
             });
         factory.close();

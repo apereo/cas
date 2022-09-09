@@ -2,8 +2,6 @@ package org.apereo.cas.configuration;
 
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;

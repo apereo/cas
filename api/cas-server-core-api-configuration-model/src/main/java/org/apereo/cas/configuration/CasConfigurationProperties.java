@@ -49,7 +49,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -365,17 +364,11 @@ public class CasConfigurationProperties implements Serializable {
     public Serializable withHolder() {
         return new Holder(this);
     }
-
-    @RequiredArgsConstructor
-    @Getter
-    @SuppressWarnings("UnusedMethod")
-    private static class Holder implements Serializable {
+    
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
+    private record Holder(CasConfigurationProperties cas) implements Serializable {
         @Serial
         private static final long serialVersionUID = -3129941286238115568L;
 
-        /**
-         * Reference to configuration settings.
-         */
-        private final CasConfigurationProperties cas;
     }
 }
