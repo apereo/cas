@@ -42,8 +42,8 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
     public String getRemotePrincipalId(final HttpServletRequest request) {
         val principal = request.getUserPrincipal();
         if (principal != null) {
-            LOGGER.debug("Principal [{}] found in request", principal.name());
-            return principal.name();
+            LOGGER.debug("Principal [{}] found in request", principal.getName());
+            return principal.getName();
         }
         val remoteUser = request.getRemoteUser();
         if (StringUtils.isNotBlank(remoteUser)) {

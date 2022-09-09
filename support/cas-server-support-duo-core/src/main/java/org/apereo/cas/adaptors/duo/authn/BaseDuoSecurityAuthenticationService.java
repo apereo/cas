@@ -221,7 +221,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @param request the request
      */
     protected void configureHttpRequest(final Http request) {
-        val factory = this.httpClient.getHttpClientFactory();
+        val factory = this.httpClient.httpClientFactory();
         if (factory.getProxy() != null) {
             request.setProxy(factory.getProxy().getHostName(), factory.getProxy().getPort());
         }

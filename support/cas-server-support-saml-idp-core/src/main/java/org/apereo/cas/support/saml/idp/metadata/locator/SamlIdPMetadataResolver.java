@@ -81,7 +81,7 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
         val results = new ArrayList<Optional<SamlRegisteredService>>();
         if (criteria.contains(SamlIdPSamlRegisteredServiceCriterion.class)) {
             val criterion = criteria.get(SamlIdPSamlRegisteredServiceCriterion.class);
-            results.add(Optional.of(Objects.requireNonNull(criterion).getRegisteredService()));
+            results.add(Optional.of(Objects.requireNonNull(criterion).registeredService()));
         }
         results.add(Optional.empty());
         return results;

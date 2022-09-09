@@ -95,22 +95,8 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
         return -1;
     }
 
-    private static class Validator implements Callable<Health.Builder> {
-        private final AbstractPoolHealthIndicator monitor;
-
-        private final Health.Builder builder;
-
-        /**
-         * Instantiates a new Validator.
-         *
-         * @param monitor the monitor
-         * @param builder the health check builder
-         */
-        Validator(final AbstractPoolHealthIndicator monitor, final Health.Builder builder) {
-            this.monitor = monitor;
-            this.builder = builder;
-        }
-
+    @SuppressWarnings("UnusedVariable")
+    private record Validator(AbstractPoolHealthIndicator monitor, Health.Builder builder) implements Callable<Health.Builder> {
         @Override
         public Health.Builder call() throws Exception {
             return this.monitor.checkPool(this.builder);

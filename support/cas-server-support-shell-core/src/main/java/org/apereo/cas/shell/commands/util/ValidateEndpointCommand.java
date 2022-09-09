@@ -131,8 +131,8 @@ public class ValidateEndpointCommand {
                 e -> "invalid: " + e.getMessage()
             ).apply(certificate);
 
-            LOGGER.info("\tsubject: [{}]", certificate.getSubjectDN().name());
-            LOGGER.info("\tissuer: [{}]", certificate.getIssuerDN().name());
+            LOGGER.info("\tsubject: [{}]", certificate.getSubjectDN().getName());
+            LOGGER.info("\tissuer: [{}]", certificate.getIssuerDN().getName());
             LOGGER.info("\texpiration: [{}] - [{}] [{}]", certificate.getNotBefore(), certificate.getNotAfter(), validity);
             LOGGER.info("\ttrust anchor [{}]", checkTrustedCertStatus(certificate, systemTrustManagers));
             LOGGER.info("---");
@@ -145,9 +145,9 @@ public class ValidateEndpointCommand {
             for (val trustedCert : trustManager.getAcceptedIssuers()) {
                 try {
                     certificate.verify(trustedCert.getPublicKey());
-                    return "Matches found: " + trustedCert.getIssuerDN().name();
+                    return "Matches found: " + trustedCert.getIssuerDN().getName();
                 } catch (final Exception e) {
-                    LOGGER.trace("[{}]: [{}]", trustedCert.getIssuerDN().name(), e.getMessage());
+                    LOGGER.trace("[{}]: [{}]", trustedCert.getIssuerDN().getName(), e.getMessage());
                 }
             }
         }

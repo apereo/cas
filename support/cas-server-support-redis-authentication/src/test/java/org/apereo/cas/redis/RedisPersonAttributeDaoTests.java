@@ -108,7 +108,7 @@ public class RedisPersonAttributeDaoTests {
         val person = attributeRepository.getPerson(USER_ID, IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
         val attributes = person.getAttributes();
-        assertEquals(USER_ID, person.name());
+        assertEquals(USER_ID, person.getName());
         assertTrue(attributes.containsKey("name"));
         assertTrue(attributes.containsKey("age"));
     }

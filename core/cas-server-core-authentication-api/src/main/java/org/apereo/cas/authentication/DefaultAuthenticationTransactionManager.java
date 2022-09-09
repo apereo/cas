@@ -3,9 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationEvent;
@@ -18,18 +16,15 @@ import org.springframework.context.ApplicationEventPublisher;
  * @since 4.2.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
-
-    private final ApplicationEventPublisher eventPublisher;
-
-    private final AuthenticationManager authenticationManager;
+public record DefaultAuthenticationTransactionManager(ApplicationEventPublisher eventPublisher, AuthenticationManager authenticationManager) implements AuthenticationTransactionManager {
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationTransactionManager handle(@NonNull final AuthenticationTransaction authenticationTransaction,
-                                                   @NonNull final AuthenticationResultBuilder authenticationResult)
+    public AuthenticationTransactionManager handle(
+        @NonNull
+        final AuthenticationTransaction authenticationTransaction,
+        @NonNull
+        final AuthenticationResultBuilder authenticationResult)
         throws AuthenticationException {
         if (authenticationTransaction.getCredentials().isEmpty()) {
             LOGGER.debug("Transaction ignored since there are no credentials to authenticate");

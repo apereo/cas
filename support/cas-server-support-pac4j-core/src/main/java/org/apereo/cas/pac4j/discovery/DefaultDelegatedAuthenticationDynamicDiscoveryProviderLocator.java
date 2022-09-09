@@ -8,8 +8,6 @@ import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProdu
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Clients;
@@ -25,18 +23,11 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@RequiredArgsConstructor
-@Getter
 @Slf4j
-public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator implements DelegatedAuthenticationDynamicDiscoveryProviderLocator {
+public record DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(DelegatedClientIdentityProviderConfigurationProducer providerProducer, Clients clients,
+                                                                            CasConfigurationProperties casProperties) implements DelegatedAuthenticationDynamicDiscoveryProviderLocator {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
-
-    private final DelegatedClientIdentityProviderConfigurationProducer providerProducer;
-
-    private final Clients clients;
-
-    private final CasConfigurationProperties casProperties;
 
     @Override
     public Optional<IndirectClient> locate(final DynamicDiscoveryProviderRequest request) {

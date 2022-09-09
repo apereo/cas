@@ -175,7 +175,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         ReflectionUtils.makeAccessible(Objects.requireNonNull(hostField));
         ReflectionUtils.setField(hostField, request, originalHost);
 
-        val factory = this.httpClient.getHttpClientFactory();
+        val factory = this.httpClient.httpClientFactory();
         val okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)

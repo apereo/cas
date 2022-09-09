@@ -28,7 +28,7 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
     public String getRealmFromToken(final SamlAssertionWrapper assertion) {
         val ki = assertion.getSignatureKeyInfo();
         val certs = ki.getCerts();
-        val parsed = parseCNValue(certs[0].getSubjectX500Principal().name());
+        val parsed = parseCNValue(certs[0].getSubjectX500Principal().getName());
         LOGGER.debug("Realm parsed from certificate CN of the SAML assertion: [{}]", parsed);
         if (StringUtils.equals(parsed, realm)) {
             return parsed;

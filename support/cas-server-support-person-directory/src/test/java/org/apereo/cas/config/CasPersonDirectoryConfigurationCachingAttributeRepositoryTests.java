@@ -38,11 +38,11 @@ public class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
     @Test
     public void verifyOperation() {
         val p1 = cachingAttributeRepository.getPerson("tensada");
-        assertEquals("tensada", p1.name());
+        assertEquals("tensada", p1.getName());
         assertEquals("Tens", p1.getAttributeValue("oldName"));
 
         val p2 = cachingAttributeRepository.getPerson("friabili");
-        assertEquals("friabili", p2.name());
+        assertEquals("friabili", p2.getName());
         assertEquals("Fri", p2.getAttributeValue("oldName"));
     }
 }

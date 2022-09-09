@@ -5,9 +5,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.DateTimeUtils;
 
 import com.github.benmanes.caffeine.cache.Expiry;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -28,11 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
-    private final Duration defaultExpiration;
-
+public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpiration) implements Expiry<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
     @Override
     public long expireAfterCreate(
         @NonNull
@@ -88,8 +82,8 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
         return currentDuration;
     }
 
-    protected long getCacheDurationForServiceProvider(final SamlRegisteredService service,
-                                                      final CachedMetadataResolverResult cacheResult) {
+    long getCacheDurationForServiceProvider(final SamlRegisteredService service,
+                                            final CachedMetadataResolverResult cacheResult) {
         try {
             if (StringUtils.isBlank(service.getServiceId())) {
                 LOGGER.warn("Unable to determine duration for SAML service [{}] with no entity id", service.getName());

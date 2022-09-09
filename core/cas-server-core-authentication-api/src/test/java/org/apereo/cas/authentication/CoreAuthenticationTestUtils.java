@@ -253,7 +253,7 @@ public class CoreAuthenticationTestUtils {
 
     public static AuthenticationSystemSupport getAuthenticationSystemSupport() {
         val authSupport = mock(AuthenticationSystemSupport.class);
-        when(authSupport.getPrincipalElectionStrategy()).thenReturn(new DefaultPrincipalElectionStrategy());
+        when(authSupport.principalElectionStrategy()).thenReturn(new DefaultPrincipalElectionStrategy());
         return authSupport;
     }
 }

@@ -2,8 +2,6 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.util.EncodingUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
@@ -12,13 +10,7 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiredArgsConstructor
-@Getter
-public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFactory {
-
-    private final UniqueTicketIdGenerator ticketUniqueTicketIdGenerator;
-
-    private final ExpirationPolicyBuilder expirationPolicy;
+public record DefaultSecurityTokenTicketFactory(UniqueTicketIdGenerator ticketUniqueTicketIdGenerator, ExpirationPolicyBuilder expirationPolicy) implements SecurityTokenTicketFactory {
 
     @Override
     public SecurityTokenTicket create(final TicketGrantingTicket ticket,

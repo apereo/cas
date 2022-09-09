@@ -106,10 +106,10 @@ public class ServiceTicketResource {
 
                 return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
             }
-            val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
+            val builder = authenticationSystemSupport.authenticationResultBuilderFactory().newBuilder();
             val authenticationResult = builder
                 .collect(authn)
-                .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
+                .build(this.authenticationSystemSupport.principalElectionStrategy(), service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
 
         } catch (final InvalidTicketException e) {

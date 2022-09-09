@@ -51,7 +51,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
                 return null;
             }
             val prop = properties.get(property.getPropertyName());
-            return prop.getValue();
+            return prop.value();
         }
         LOGGER.trace("Resolved registered service from request can not be located");
         return null;

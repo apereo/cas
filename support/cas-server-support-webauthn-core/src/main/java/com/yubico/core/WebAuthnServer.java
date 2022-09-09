@@ -171,8 +171,8 @@ public class WebAuthnServer {
             return Either.left(Arrays.asList("Registration failed!", "Failed to decode response object.", e.getMessage()));
         }
 
-        val request = registerRequestStorage.getIfPresent(response.getRequestId());
-        registerRequestStorage.invalidate(response.getRequestId());
+        val request = registerRequestStorage.getIfPresent(response.requestId());
+        registerRequestStorage.invalidate(response.requestId());
 
         if (request == null) {
             LOGGER.debug("fail finishRegistration responseJson: {}", responseJson);
@@ -182,7 +182,7 @@ public class WebAuthnServer {
                 val registration = rp.finishRegistration(
                     FinishRegistrationOptions.builder()
                         .request(request.publicKeyCredentialCreationOptions())
-                        .response(response.getCredential())
+                        .response(response.credential())
                         .build()
                 );
 
@@ -264,8 +264,8 @@ public class WebAuthnServer {
             return Either.left(Arrays.asList("Assertion failed!", "Failed to decode response object.", e.getMessage()));
         }
 
-        val request = assertRequestStorage.getIfPresent(response.getRequestId());
-        assertRequestStorage.invalidate(response.getRequestId());
+        val request = assertRequestStorage.getIfPresent(response.requestId());
+        assertRequestStorage.invalidate(response.requestId());
 
         if (request == null) {
             return Either.left(Arrays.asList("Assertion failed!", "No such assertion in progress."));
@@ -274,7 +274,7 @@ public class WebAuthnServer {
                 val result = rp.finishAssertion(
                     FinishAssertionOptions.builder()
                         .request(request.getRequest())
-                        .response(response.getCredential())
+                        .response(response.credential())
                         .build()
                 );
 
@@ -285,7 +285,7 @@ public class WebAuthnServer {
                         LOGGER.error(
                             "Failed to update signature count for user \"{}\", credential \"{}\"",
                             result.getUsername(),
-                            response.getCredential().getId(),
+                            response.credential().getId(),
                             e
                         );
                     }
@@ -341,7 +341,7 @@ public class WebAuthnServer {
             this.registration = registration;
             this.attestationTrusted = attestationTrusted;
             attestationCert = Optional.ofNullable(
-                    response.getCredential().getResponse().getAttestation().getAttestationStatement().get("x5c")
+                    response.credential().getResponse().getAttestation().getAttestationStatement().get("x5c")
                 ).map(certs -> certs.get(0))
                 .flatMap((JsonNode certDer) -> {
                     try {
@@ -352,7 +352,7 @@ public class WebAuthnServer {
                     }
                 })
                 .map(AttestationCertInfo::new);
-            this.authData = response.getCredential().getResponse().getParsedAuthenticatorData();
+            this.authData = response.credential().getResponse().getParsedAuthenticatorData();
             this.username = request.username();
             this.sessionToken = sessionToken;
         }
@@ -406,7 +406,7 @@ public class WebAuthnServer {
                 request,
                 response,
                 registrations,
-                response.getCredential().getResponse().getParsedAuthenticatorData(),
+                response.credential().getResponse().getParsedAuthenticatorData(),
                 username,
                 sessionToken
             );

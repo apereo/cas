@@ -80,7 +80,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     protected Optional<CipherOperationsStrategyType> getCipherOperationsStrategyType(final RegisteredService registeredService) {
         val property = getCipherStrategyTypeRegisteredServiceProperty(registeredService);
         if (property.isAssignedTo(registeredService)) {
-            val order = property.getPropertyValue(registeredService).getValue();
+            val order = property.getPropertyValue(registeredService).value();
             return Optional.of(CipherOperationsStrategyType.valueOf(order));
         }
         return Optional.empty();
@@ -114,7 +114,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     public Optional<String> getSigningKey(final RegisteredService registeredService) {
         val property = getSigningKeyRegisteredServiceProperty();
         if (property.isAssignedTo(registeredService)) {
-            val signingKey = property.getPropertyValue(registeredService).getValue();
+            val signingKey = property.getPropertyValue(registeredService).value();
             return Optional.of(signingKey);
         }
         return Optional.empty();
@@ -129,7 +129,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     public Optional<String> getEncryptionKey(final RegisteredService registeredService) {
         val property = getEncryptionKeyRegisteredServiceProperty();
         if (property.isAssignedTo(registeredService)) {
-            val key = property.getPropertyValue(registeredService).getValue();
+            val key = property.getPropertyValue(registeredService).value();
             return Optional.of(key);
         }
         return Optional.empty();

@@ -59,7 +59,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
             WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.invalid.user");
             return error();
         }
-        if (multifactorTriggerSelectionStrategy.getMultifactorAuthenticationTriggers().isEmpty()) {
+        if (multifactorTriggerSelectionStrategy.multifactorAuthenticationTriggers().isEmpty()) {
             LOGGER.debug("No multifactor authentication triggers are available or defined");
             return success();
         }
@@ -100,10 +100,10 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
      */
     protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication auth,
                                                            final WebApplicationService service) {
-        val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
+        val builder = authenticationSystemSupport.authenticationResultBuilderFactory().newBuilder();
         val authenticationResult = builder
             .collect(auth)
-            .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
+            .build(this.authenticationSystemSupport.principalElectionStrategy(), service);
 
         WebUtils.putAuthenticationResultBuilder(builder, requestContext);
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);

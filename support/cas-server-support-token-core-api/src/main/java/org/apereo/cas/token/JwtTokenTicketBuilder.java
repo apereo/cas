@@ -10,8 +10,6 @@ import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -30,20 +28,9 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Getter
-@RequiredArgsConstructor
 @Slf4j
-public class JwtTokenTicketBuilder implements TokenTicketBuilder {
-    private final TicketValidator ticketValidator;
-
-    private final ExpirationPolicyBuilder expirationPolicy;
-
-    private final JwtBuilder jwtBuilder;
-
-    private final ServicesManager servicesManager;
-
-    private final CasConfigurationProperties casProperties;
-
+public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationPolicyBuilder expirationPolicy, JwtBuilder jwtBuilder, ServicesManager servicesManager,
+                                    CasConfigurationProperties casProperties) implements TokenTicketBuilder {
     @Override
     @SuppressWarnings("JavaUtilDate")
     public String build(final String serviceTicketId, final WebApplicationService webApplicationService) {
@@ -103,7 +90,7 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
      *
      * @return the time to live
      */
-    protected Long getTimeToLive() {
+    private Long getTimeToLive() {
         val timeToLive = expirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
         return Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
     }

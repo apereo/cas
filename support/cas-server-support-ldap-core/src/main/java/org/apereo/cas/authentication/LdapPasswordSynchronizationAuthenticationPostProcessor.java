@@ -61,7 +61,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
                 val dn = response.getEntry().getDn();
                 LOGGER.trace("Updating account password for [{}]", dn);
 
-                val operation = new ModifyOperation(searchFactory.getConnectionFactory());
+                val operation = new ModifyOperation(searchFactory.connectionFactory());
                 val mod = new AttributeModification(AttributeModification.Type.REPLACE, getLdapPasswordAttribute(credential));
                 val updateResponse = operation.execute(new ModifyRequest(dn, mod));
                 LOGGER.trace("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());

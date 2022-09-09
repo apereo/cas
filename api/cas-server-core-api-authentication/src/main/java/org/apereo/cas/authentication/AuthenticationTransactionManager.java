@@ -27,5 +27,5 @@ public interface AuthenticationTransactionManager {
      *
      * @return the authentication manager
      */
-    AuthenticationManager getAuthenticationManager();
+    AuthenticationManager authenticationManager();
 }

@@ -2,8 +2,6 @@ package org.apereo.cas.util.http;
 
 import org.apereo.cas.util.LoggingUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -38,32 +36,11 @@ import java.util.concurrent.RejectedExecutionException;
  * @since 3.1
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
+public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClient wrappedHttpClient, FutureRequestExecutionService requestExecutorService,
+                               SimpleHttpClientFactoryBean httpClientFactory) implements HttpClient, Serializable, DisposableBean {
 
     @Serial
     private static final long serialVersionUID = -4949380008568071855L;
-
-    /**
-     * the acceptable codes supported by this client.
-     */
-    private final List<Integer> acceptableCodes;
-
-    /**
-     * the HTTP client for this client.
-     */
-    private final transient CloseableHttpClient wrappedHttpClient;
-
-    /**
-     * the request executor service for this client.
-     */
-    private final FutureRequestExecutionService requestExecutorService;
-
-    /**
-     * The client factory that created and initialized this client instance.
-     */
-    private final SimpleHttpClientFactoryBean httpClientFactory;
 
     @Override
     public boolean sendMessageToEndPoint(final HttpMessage message) {

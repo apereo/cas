@@ -33,9 +33,9 @@ Control access using a `Map` of required principal attribute names along with th
 <div class="alert alert-info"><strong>Supported Syntax</strong><p>Required values for a given attribute support regular expression patterns. For example, a <code>phone</code> attribute could
 require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>.</p></div>
 
-{% tabs metadata %}
+{% tabs accessstrategy %}
 
-{% tab metadata Example #1 %}
+{% tab accessstrategy Example 1 %}
 To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
 `givenName` attribute with the value of `Administrator`:
 
@@ -59,7 +59,7 @@ To access the service, the principal must have a `cn` attribute with the value o
 ```
 {% endtab %}
 
-{% tab metadata Example #2 %}
+{% tab accessstrategy Example 2 %}
 To access the service, the principal must have a `cn` attribute with the value of `admin` **OR** a
 `givenName` attribute with the value of `Administrator`:
 
@@ -84,7 +84,7 @@ To access the service, the principal must have a `cn` attribute with the value o
 ```
 {% endtab %}
 
-{% tab metadata Example #3 %}
+{% tab accessstrategy Example 3 %}
 To access the service, the principal must have a `cn` attribute whose value is either `admin`, `Admin` or `TheAdmin`.
 
 ```json

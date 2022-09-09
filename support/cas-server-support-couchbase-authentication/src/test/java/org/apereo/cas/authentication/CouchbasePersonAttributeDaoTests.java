@@ -51,7 +51,7 @@ public class CouchbasePersonAttributeDaoTests {
         val attributes = person.getAttributes();
         assertTrue(attributes.containsKey("firstname"));
         assertTrue(attributes.containsKey("lastname"));
-        assertEquals("casuser", person.name());
+        assertEquals("casuser", person.getName());
     }
 
     @Test

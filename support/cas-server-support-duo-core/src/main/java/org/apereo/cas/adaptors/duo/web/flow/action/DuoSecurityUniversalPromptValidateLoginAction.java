@@ -127,7 +127,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         val authenticationResultBuilder = ticket.getProperty(AuthenticationResultBuilder.class.getSimpleName(),
             AuthenticationResultBuilder.class);
         WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
-        val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
+        val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.principalElectionStrategy());
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);
         WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
     }

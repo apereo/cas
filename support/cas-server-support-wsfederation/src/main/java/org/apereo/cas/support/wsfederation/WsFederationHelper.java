@@ -307,7 +307,7 @@ public class WsFederationHelper {
             if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
                 LOGGER.debug("Determined relying party identifier from service [{}] to be [{}]", service, relyingPartyIdentifier);
                 val propertyValue = RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService);
-                return propertyValue != null ? propertyValue.getValue() : relyingPartyIdentifier;
+                return propertyValue != null ? propertyValue.value() : relyingPartyIdentifier;
             }
         }
         LOGGER.debug("Determined relying party identifier to be [{}]", relyingPartyIdentifier);

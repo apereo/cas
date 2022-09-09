@@ -26,19 +26,19 @@ public class DefaultX509AttributeExtractor implements X509AttributeExtractor {
             }
             val subjectDn = certificate.getSubjectDN();
             if (subjectDn != null) {
-                attributes.put("subjectDn", CollectionUtils.wrapList(subjectDn.name()));
+                attributes.put("subjectDn", CollectionUtils.wrapList(subjectDn.getName()));
             }
             val subjectPrincipal = certificate.getSubjectX500Principal();
             if (subjectPrincipal != null) {
-                attributes.put("subjectX500Principal", CollectionUtils.wrapList(subjectPrincipal.name()));
+                attributes.put("subjectX500Principal", CollectionUtils.wrapList(subjectPrincipal.getName()));
             }
             val issuerDn = certificate.getIssuerDN();
             if (issuerDn != null) {
-                attributes.put("issuerDn", CollectionUtils.wrapList(issuerDn.name()));
+                attributes.put("issuerDn", CollectionUtils.wrapList(issuerDn.getName()));
             }
             val issuerPrincipal = certificate.getIssuerX500Principal();
             if (issuerPrincipal != null) {
-                attributes.put("issuerX500Principal", CollectionUtils.wrapList(issuerPrincipal.name()));
+                attributes.put("issuerX500Principal", CollectionUtils.wrapList(issuerPrincipal.getName()));
             }
             val subjectAltNames = X509ExtractorUtils.getSubjectAltNames(certificate);
             X509ExtractorUtils.getRFC822EmailAddress(subjectAltNames).ifPresent(

@@ -20,8 +20,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import com.google.common.base.Supplier;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -160,9 +158,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
     }
 
-    @RequiredArgsConstructor
-        @Getter
-        private record AccessTokenExceptionResponses(String code, String message) {
+    @SuppressWarnings("UnusedVariable")
+    private record AccessTokenExceptionResponses(String code, String message) {
     }
 
     private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,

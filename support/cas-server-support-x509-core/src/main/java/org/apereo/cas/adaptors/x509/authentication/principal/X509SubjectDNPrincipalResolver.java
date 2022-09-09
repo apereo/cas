@@ -26,7 +26,7 @@ public class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolve
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         return subjectDnFormat == null
-            ? certificate.getSubjectDN().name()
+            ? certificate.getSubjectDN().getName()
             : certificate.getSubjectX500Principal().getName(subjectDnFormat);
     }
 }

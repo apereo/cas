@@ -5,8 +5,6 @@ import org.apereo.cas.configuration.model.support.mfa.AuthyMultifactorAuthentica
 
 import com.authy.AuthyApiClient;
 import com.authy.api.User;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
@@ -15,13 +13,7 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Getter
-@RequiredArgsConstructor
-public class DefaultAuthyClientInstance implements AuthyClientInstance {
-    private final AuthyApiClient authyClient;
-
-    private final AuthyMultifactorAuthenticationProperties properties;
-
+public record DefaultAuthyClientInstance(AuthyApiClient authyClient, AuthyMultifactorAuthenticationProperties properties) implements AuthyClientInstance {
     /**
      * Gets or create user.
      *

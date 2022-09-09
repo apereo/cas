@@ -85,7 +85,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
                                                                                        final HttpServletResponse response,
                                                                                        final String endpoint) {
         if (isIssuerValidForEndpoint(request, response, endpoint)) {
-            val discovery = this.webFingerDiscoveryService.getDiscovery();
+            val discovery = this.webFingerDiscoveryService.discovery();
             return new ResponseEntity<>(discovery, HttpStatus.OK);
         }
         LOGGER.warn("Unable to accept request; issuer for endpoint [{}] is invalid", endpoint);

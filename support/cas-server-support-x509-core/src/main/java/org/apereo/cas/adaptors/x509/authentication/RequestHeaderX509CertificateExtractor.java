@@ -3,8 +3,6 @@ package org.apereo.cas.adaptors.x509.authentication;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -43,20 +41,17 @@ import java.util.Objects;
  * @since 5.3.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class RequestHeaderX509CertificateExtractor implements X509CertificateExtractor {
+public record RequestHeaderX509CertificateExtractor(String sslClientCertHeader) implements X509CertificateExtractor {
 
     /**
      * X509 Cert header.
      */
     public static final String X509_HEADER = "-----BEGIN CERTIFICATE-----";
+
     /**
      * X509 Cert footer.
      */
     public static final String X509_FOOTER = "-----END CERTIFICATE-----";
-
-    private final String sslClientCertHeader;
 
     /**
      * Extract base64 encoded certificate from header and convert to {@link X509Certificate}.
@@ -87,7 +82,7 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
         LOGGER.trace("Located value [{}] from header [{}]. Parsing...", certHeaderValue, sslClientCertHeader);
         val body = sanitizeCertificateBody(certHeaderValue);
         LOGGER.debug("Certificate body to parse is [{}]", body);
-        
+
         try (val input = new ByteArrayInputStream(body.getBytes(StandardCharsets.ISO_8859_1))) {
             val cert = CertUtils.readCertificate(input);
             LOGGER.debug("Certificate extracted from header [{}] with subject: [{}]", sslClientCertHeader, cert.getSubjectDN());

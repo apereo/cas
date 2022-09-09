@@ -15,7 +15,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.EncodingUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -129,10 +128,8 @@ public class RegisteredServiceResourceTests {
         }
     }
 
-    @RequiredArgsConstructor
-    private static class AuthenticationCredentialMatcher implements ArgumentMatcher<AuthenticationTransaction> {
-        private final String id;
-
+    @SuppressWarnings("UnusedVariable")
+    private record AuthenticationCredentialMatcher(String id) implements ArgumentMatcher<AuthenticationTransaction> {
         @Override
         public boolean matches(final AuthenticationTransaction t) {
             return t != null && t.getPrimaryCredential().get().getId().equalsIgnoreCase(this.id);

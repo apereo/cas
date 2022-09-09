@@ -3,7 +3,6 @@ package org.apereo.cas.support.oauth.web.response.introspection;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serial;
@@ -52,9 +51,6 @@ public class OAuth20IntrospectionAccessTokenSuccessResponse extends BaseOAuth20I
     @JsonProperty("cnf")
     private DPopConfirmation dPopConfirmation;
 
-    @Getter
-    @RequiredArgsConstructor
-    public static class DPopConfirmation {
-        private final String jkt;
+    public record DPopConfirmation(String jkt) {
     }
 }
