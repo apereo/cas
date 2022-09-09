@@ -22,6 +22,7 @@ import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificate
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataHealthIndicator;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.CachedMetadataResolverResult;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCacheKey;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceDefaultCachingMetadataResolver;
@@ -191,9 +192,9 @@ public class SamlIdPMetadataConfiguration {
             plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, openSamlConfigBean));
 
             val configurers = Optional.ofNullable(configurersList.getIfAvailable()).orElseGet(ArrayList::new);
-            configurers.forEach(c -> {
-                LOGGER.trace("Configuring saml metadata resolution plan [{}]", c.getName());
-                c.configureMetadataResolutionPlan(plan);
+            configurers.forEach(cfg -> {
+                LOGGER.trace("Configuring saml metadata resolution plan [{}]", cfg.getName());
+                cfg.configureMetadataResolutionPlan(plan);
             });
             return plan;
         }
@@ -286,7 +287,7 @@ public class SamlIdPMetadataConfiguration {
         @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> chainingMetadataResolverCacheLoader(
+        public CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> chainingMetadataResolverCacheLoader(
             @Qualifier("samlRegisteredServiceMetadataResolvers")
             final SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers,
             @Qualifier("httpClient")
@@ -308,7 +309,7 @@ public class SamlIdPMetadataConfiguration {
         public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("chainingMetadataResolverCacheLoader")
-            final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> chainingMetadataResolverCacheLoader,
+            final CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> chainingMetadataResolverCacheLoader,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlRegisteredServiceDefaultCachingMetadataResolver(

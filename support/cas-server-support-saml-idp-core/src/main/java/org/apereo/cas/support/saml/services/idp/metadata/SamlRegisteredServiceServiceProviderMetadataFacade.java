@@ -101,11 +101,11 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
             LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
             criterions.add(new EntityIdCriterion(entityID), true);
             LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-            val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
+            val cachedMetadataResolver = resolver.resolve(registeredService, criterions).getMetadataResolver();
             LOGGER.debug("Resolved metadata chain from [{}] using [{}]. Filtering the chain by entity ID [{}]",
-                registeredService.getMetadataLocation(), chainingMetadataResolver.getId(), entityID);
+                registeredService.getMetadataLocation(), cachedMetadataResolver.getId(), entityID);
 
-            val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
+            val entityDescriptor = cachedMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 LOGGER.warn("Cannot find entity [{}] in metadata provider for criteria [{}]", entityID, criterions);
                 return Optional.empty();
@@ -120,7 +120,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
                     return Optional.empty();
                 }
             }
-            return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
+            return getServiceProviderSsoDescriptor(entityID, cachedMetadataResolver, entityDescriptor);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
