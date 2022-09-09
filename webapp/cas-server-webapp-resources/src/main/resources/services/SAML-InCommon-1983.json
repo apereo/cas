@@ -1,0 +1,22 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": ".+",
+  "name": "SAML-InCommon",
+  "id": 1983,
+  "evaluationOrder": 10,
+//  "metadataLocation": "http://md.incommon.org/InCommon/InCommon-metadata.xml",
+  "metadataLocation": "https://raw.githubusercontent.com/mmoayyed/sample-data/master/saml-metadata-aggregate.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+//        { "@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy" },
+//        { "@class": "org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicy" },
+        { "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "cn" ] ]
+        }
+      ]
+    ]
+  }
+}
