@@ -204,7 +204,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         public void configureAuthorizersExecutionPlan(final ServiceTicketValidationAuthorizersExecutionPlan plan) {
             val authz = mock(ServiceTicketValidationAuthorizer.class);
             doThrow(new IllegalArgumentException()).when(authz).authorize(any(),
-                argThat(service -> service.getId().equals("not-authorized")), any());
+                argThat(service -> "not-authorized".equals(service.getId())), any());
             plan.registerAuthorizer(authz);
         }
     }

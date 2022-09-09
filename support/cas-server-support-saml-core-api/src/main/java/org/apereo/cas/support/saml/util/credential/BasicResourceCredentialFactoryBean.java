@@ -147,15 +147,11 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
     }
 
     private byte[] decodeSecretKey(final byte[] data) {
-        switch (getSecretKeyEncoding()) {
-            case BINARY:
-                return data;
-            case HEX:
-                return Hex.decode(data);
-            case BASE64:
-            default:
-                return Base64.decodeBase64(data);
-        }
+        return switch (getSecretKeyEncoding()) {
+            case BINARY -> data;
+            case HEX -> Hex.decode(data);
+            case BASE64 -> Base64.decodeBase64(data);
+        };
     }
 
     private SecretKey getSecretKey() {

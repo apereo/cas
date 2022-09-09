@@ -64,7 +64,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
                 val properties = casProperties.getAuthn().getMfa().getAuthy();
                 val authyUrl = StringUtils.defaultIfBlank(properties.getApiUrl(), AuthyApiClient.DEFAULT_API_URI);
                 val url = new URL(authyUrl);
-                val testFlag = url.getProtocol().equalsIgnoreCase("http");
+                val testFlag = "http".equalsIgnoreCase(url.getProtocol());
                 val authyClient = new AuthyApiClient(properties.getApiKey(), authyUrl, testFlag);
                 return new DefaultAuthyClientInstance(authyClient, properties);
             }))

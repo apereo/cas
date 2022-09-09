@@ -113,15 +113,11 @@ public class X509AuthenticationConfiguration {
                                                         final RevocationPolicy allowRevocationPolicy,
                                                         final RevocationPolicy thresholdExpiredCRLRevocationPolicy,
                                                         final RevocationPolicy denyRevocationPolicy) {
-        switch (policy.trim().toLowerCase()) {
-            case "allow":
-                return allowRevocationPolicy;
-            case "threshold":
-                return thresholdExpiredCRLRevocationPolicy;
-            case "deny":
-            default:
-                return denyRevocationPolicy;
-        }
+        return switch (policy.trim().toLowerCase()) {
+            case "allow" -> allowRevocationPolicy;
+            case "threshold" -> thresholdExpiredCRLRevocationPolicy;
+            default -> denyRevocationPolicy;
+        };
     }
 
     private static PrincipalResolver getPrincipalResolver(final CasConfigurationProperties casProperties,
@@ -234,15 +230,12 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "crlFetcher")
     public CRLFetcher crlFetcher(final CasConfigurationProperties casProperties) {
         val x509 = casProperties.getAuthn().getX509();
-        switch (x509.getCrlFetcher().toLowerCase()) {
-            case "ldap":
-                return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
-                    LdapUtils.newLdaptiveSearchOperation(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
-                    x509.getLdap().getCertificateAttribute());
-            case "resource":
-            default:
-                return new ResourceCRLFetcher();
-        }
+        return switch (x509.getCrlFetcher().toLowerCase()) {
+            case "ldap" -> new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
+                LdapUtils.newLdaptiveSearchOperation(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
+                x509.getLdap().getCertificateAttribute());
+            default -> new ResourceCRLFetcher();
+        };
     }
 
     @Bean

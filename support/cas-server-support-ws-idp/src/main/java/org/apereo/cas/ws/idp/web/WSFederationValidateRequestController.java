@@ -48,15 +48,9 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         }
 
         switch (wa.toLowerCase()) {
-            case WSFederationConstants.WSIGNOUT10:
-            case WSFederationConstants.WSIGNOUT_CLEANUP10:
-                handleLogoutRequest(fedRequest, request, response);
-                break;
-            case WSFederationConstants.WSIGNIN10:
-                handleInitialAuthenticationRequest(fedRequest, response, request);
-                break;
-            default:
-                throw new UnauthorizedAuthenticationException("The authentication request is not recognized", new HashMap<>(0));
+            case WSFederationConstants.WSIGNOUT10, WSFederationConstants.WSIGNOUT_CLEANUP10 -> handleLogoutRequest(fedRequest, request, response);
+            case WSFederationConstants.WSIGNIN10 -> handleInitialAuthenticationRequest(fedRequest, response, request);
+            default -> throw new UnauthorizedAuthenticationException("The authentication request is not recognized", new HashMap<>(0));
         }
     }
 

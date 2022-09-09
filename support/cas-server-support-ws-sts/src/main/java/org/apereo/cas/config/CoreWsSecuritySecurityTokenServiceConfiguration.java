@@ -194,22 +194,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
                 s.setSubjectNameQualifier(wsfed.getSubjectNameQualifier());
             }
             switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
-                case "email":
-                    s.setSubjectNameIDFormat(NameIDType.EMAIL);
-                    break;
-                case "entity":
-                    s.setSubjectNameIDFormat(NameIDType.ENTITY);
-                    break;
-                case "transient":
-                    s.setSubjectNameIDFormat(NameIDType.TRANSIENT);
-                    break;
-                case "persistent":
-                    s.setSubjectNameIDFormat(NameIDType.PERSISTENT);
-                    break;
-                case "unspecified":
-                default:
-                    s.setSubjectNameIDFormat(NameIDType.UNSPECIFIED);
-                    break;
+                case "email" -> s.setSubjectNameIDFormat(NameIDType.EMAIL);
+                case "entity" -> s.setSubjectNameIDFormat(NameIDType.ENTITY);
+                case "transient" -> s.setSubjectNameIDFormat(NameIDType.TRANSIENT);
+                case "persistent" -> s.setSubjectNameIDFormat(NameIDType.PERSISTENT);
+                default -> s.setSubjectNameIDFormat(NameIDType.UNSPECIFIED);
             }
             val c = new DefaultConditionsProvider();
             c.setAcceptClientLifetime(wsfed.isConditionsAcceptClientLifetime());

@@ -73,21 +73,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         val compareFormat = nameFormat.trim().toLowerCase();
         switch (compareFormat) {
-            case "basic":
-            case Attribute.BASIC:
-                attribute.setNameFormat(Attribute.BASIC);
-                break;
-            case "uri":
-            case Attribute.URI_REFERENCE:
-                attribute.setNameFormat(Attribute.URI_REFERENCE);
-                break;
-            case "unspecified":
-            case Attribute.UNSPECIFIED:
-                attribute.setNameFormat(Attribute.UNSPECIFIED);
-                break;
-            default:
-                attribute.setNameFormat(nameFormat);
-                break;
+            case "basic", Attribute.BASIC -> attribute.setNameFormat(Attribute.BASIC);
+            case "uri", Attribute.URI_REFERENCE -> attribute.setNameFormat(Attribute.URI_REFERENCE);
+            case "unspecified", Attribute.UNSPECIFIED -> attribute.setNameFormat(Attribute.UNSPECIFIED);
+            default -> attribute.setNameFormat(nameFormat);
         }
     }
 

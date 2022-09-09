@@ -49,17 +49,11 @@ public class RedisAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             throw new FailedLoginException();
         }
         switch (account.getStatus()) {
-            case DISABLED:
-                throw new AccountDisabledException();
-            case EXPIRED:
-                throw new AccountExpiredException();
-            case LOCKED:
-                throw new AccountLockedException();
-            case MUST_CHANGE_PASSWORD:
-                throw new AccountPasswordMustChangeException();
-            case OK:
-            default:
-                LOGGER.debug("Account status is OK");
+            case DISABLED -> throw new AccountDisabledException();
+            case EXPIRED -> throw new AccountExpiredException();
+            case LOCKED -> throw new AccountLockedException();
+            case MUST_CHANGE_PASSWORD -> throw new AccountPasswordMustChangeException();
+            case OK -> LOGGER.debug("Account status is OK");
         }
         val principal = principalFactory.createPrincipal(account.getUsername(), account.getAttributes());
         return createHandlerResult(credential, principal, new ArrayList<>(0));

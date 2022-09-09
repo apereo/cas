@@ -254,7 +254,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
                 s -> Proxy.newProxyInstance(getClass().getClassLoader(),
                     new Class[]{clazz},
                     (proxy, method, args) -> {
-                        if (method.getName().equals("toString")) {
+                        if ("toString".equals(method.getName())) {
                             return PROXY_BEAN_TOSTRING_PREFIX + clazz.getName();
                         }
                         val returnType = method.getReturnType();

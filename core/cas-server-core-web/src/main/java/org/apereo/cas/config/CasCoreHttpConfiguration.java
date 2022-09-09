@@ -68,7 +68,7 @@ public class CasCoreHttpConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HostnameVerifier hostnameVerifier(final CasConfigurationProperties casProperties) {
-            if (casProperties.getHttpClient().getHostNameVerifier().equalsIgnoreCase("none")) {
+            if ("none".equalsIgnoreCase(casProperties.getHttpClient().getHostNameVerifier())) {
                 return NoopHostnameVerifier.INSTANCE;
             }
             return new DefaultHostnameVerifier();
@@ -90,7 +90,7 @@ public class CasCoreHttpConfiguration {
                 return new DefaultCasSSLContext(client.getFile(), client.getPsw(),
                     client.getType(), casProperties.getHttpClient(), hostnameVerifier);
             }
-            if (casProperties.getHttpClient().getHostNameVerifier().equalsIgnoreCase("none")) {
+            if ("none".equalsIgnoreCase(casProperties.getHttpClient().getHostNameVerifier())) {
                 return CasSSLContext.disabled();
             }
             return CasSSLContext.system();

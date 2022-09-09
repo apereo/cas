@@ -711,18 +711,13 @@ public interface RegisteredServiceProperty extends Serializable {
          * @return the typed property value
          */
         public Object getTypedPropertyValue(final RegisteredService registeredService) {
-            switch (getType()) {
-                case SET:
-                    return getPropertyValues(registeredService, Set.class);
-                case INTEGER:
-                    return getPropertyIntegerValue(registeredService);
-                case LONG:
-                    return getPropertyLongValue(registeredService);
-                case BOOLEAN:
-                    return getPropertyBooleanValue(registeredService);
-                default:
-                    return getPropertyValue(registeredService).value();
-            }
+            return switch (getType()) {
+                case SET -> getPropertyValues(registeredService, Set.class);
+                case INTEGER -> getPropertyIntegerValue(registeredService);
+                case LONG -> getPropertyLongValue(registeredService);
+                case BOOLEAN -> getPropertyBooleanValue(registeredService);
+                default -> getPropertyValue(registeredService).value();
+            };
         }
     }
 }

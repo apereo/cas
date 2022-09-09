@@ -57,7 +57,7 @@ public class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfiguratio
             val locator = mock(SamlIdPMetadataLocator.class);
             when(locator.exists(argThat(Optional::isEmpty))).thenAnswer((Answer<Boolean>) invocationOnMock -> {
                 var property = System.getProperty("test.runtime");
-                if (property != null && property.equals("fail")) {
+                if (property != null && "fail".equals(property)) {
                     throw new RuntimeException("Failed");
                 }
                 return true;

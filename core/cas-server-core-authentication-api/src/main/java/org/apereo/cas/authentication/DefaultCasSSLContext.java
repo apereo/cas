@@ -52,7 +52,7 @@ public class DefaultCasSSLContext implements CasSSLContext {
                                 final String trustStoreType,
                                 final HttpClientProperties httpClientProperties,
                                 final HostnameVerifier hostnameVerifier) throws Exception {
-        val disabled = httpClientProperties.getHostNameVerifier().equalsIgnoreCase("none");
+        val disabled = "none".equalsIgnoreCase(httpClientProperties.getHostNameVerifier());
         if (disabled) {
             this.trustManagers = CasSSLContext.disabled().getTrustManagers();
             this.keyManagerFactory = CasSSLContext.disabled().getKeyManagerFactory();

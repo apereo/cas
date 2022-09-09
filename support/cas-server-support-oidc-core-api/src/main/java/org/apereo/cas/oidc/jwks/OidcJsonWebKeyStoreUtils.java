@@ -203,7 +203,7 @@ public class OidcJsonWebKeyStoreUtils {
     public static PublicJsonWebKey generateJsonWebKey(final String jwksType, final int jwksKeySize,
                                                       final OidcJsonWebKeyUsage usage) {
         switch (jwksType.trim().toLowerCase()) {
-            case "ec":
+            case "ec" -> {
                 if (jwksKeySize == JWK_EC_P384_SIZE) {
                     val jwk = generateJsonWebKeyEC(EllipticCurves.P384);
                     jwk.setKeyId(UUID.randomUUID().toString());
@@ -223,12 +223,13 @@ public class OidcJsonWebKeyStoreUtils {
                 jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
                 usage.assignTo(jwk);
                 return jwk;
-            case "rsa":
-            default:
+            }
+            default -> {
                 val newJwk = FunctionUtils.doUnchecked(() -> RsaJwkGenerator.generateJwk(jwksKeySize));
                 newJwk.setKeyId(UUID.randomUUID().toString());
                 usage.assignTo(newJwk);
                 return newJwk;
+            }
         }
     }
 }

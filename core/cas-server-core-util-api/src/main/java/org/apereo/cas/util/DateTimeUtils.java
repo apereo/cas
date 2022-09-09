@@ -300,24 +300,16 @@ public class DateTimeUtils {
         if (tu == null) {
             return null;
         }
-        switch (tu) {
-            case DAYS:
-                return TimeUnit.DAYS;
-            case HOURS:
-                return TimeUnit.HOURS;
-            case MINUTES:
-                return TimeUnit.MINUTES;
-            case SECONDS:
-                return TimeUnit.SECONDS;
-            case MICROS:
-                return TimeUnit.MICROSECONDS;
-            case MILLIS:
-                return TimeUnit.MILLISECONDS;
-            case NANOS:
-                return TimeUnit.NANOSECONDS;
-            default:
-                throw new UnsupportedOperationException("Temporal unit is not supported");
-        }
+        return switch (tu) {
+            case DAYS -> TimeUnit.DAYS;
+            case HOURS -> TimeUnit.HOURS;
+            case MINUTES -> TimeUnit.MINUTES;
+            case SECONDS -> TimeUnit.SECONDS;
+            case MICROS -> TimeUnit.MICROSECONDS;
+            case MILLIS -> TimeUnit.MILLISECONDS;
+            case NANOS -> TimeUnit.NANOSECONDS;
+            default -> throw new UnsupportedOperationException("Temporal unit is not supported");
+        };
     }
 
     /**
@@ -330,22 +322,14 @@ public class DateTimeUtils {
         if (tu == null) {
             return null;
         }
-        switch (tu) {
-            case DAYS:
-                return ChronoUnit.DAYS;
-            case HOURS:
-                return ChronoUnit.HOURS;
-            case MINUTES:
-                return ChronoUnit.MINUTES;
-            case MICROSECONDS:
-                return ChronoUnit.MICROS;
-            case MILLISECONDS:
-                return ChronoUnit.MILLIS;
-            case NANOSECONDS:
-                return ChronoUnit.NANOS;
-            case SECONDS:
-            default:
-                return ChronoUnit.SECONDS;
-        }
+        return switch (tu) {
+            case DAYS -> ChronoUnit.DAYS;
+            case HOURS -> ChronoUnit.HOURS;
+            case MINUTES -> ChronoUnit.MINUTES;
+            case MICROSECONDS -> ChronoUnit.MICROS;
+            case MILLISECONDS -> ChronoUnit.MILLIS;
+            case NANOSECONDS -> ChronoUnit.NANOS;
+            case SECONDS -> ChronoUnit.SECONDS;
+        };
     }
 }

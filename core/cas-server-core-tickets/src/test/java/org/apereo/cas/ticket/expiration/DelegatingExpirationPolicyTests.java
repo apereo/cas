@@ -30,7 +30,7 @@ public class DelegatingExpirationPolicyTests {
 
             @Override
             protected String getExpirationPolicyNameFor(final AuthenticationAwareTicket ticketState) {
-                if (ticketState.getAuthentication().getPrincipal().getId().equals("expired")) {
+                if ("expired".equals(ticketState.getAuthentication().getPrincipal().getId())) {
                     return AlwaysExpiresExpirationPolicy.class.getSimpleName();
                 }
                 return POLICY_NAME_DEFAULT;

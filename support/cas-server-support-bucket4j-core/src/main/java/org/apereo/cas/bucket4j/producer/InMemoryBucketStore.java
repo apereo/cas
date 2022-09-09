@@ -36,18 +36,12 @@ public class InMemoryBucketStore implements BucketStore {
         properties.getBandwidth()
             .stream()
             .map(bandwidth -> {
-                var limit = (Bandwidth) null;
-                switch (bandwidth.getRefillStrategy()) {
-                    case INTERVALLY:
-                        limit = Bandwidth.classic(bandwidth.getCapacity(), Refill.intervally(bandwidth.getRefillCount(),
-                            Beans.newDuration(bandwidth.getRefillDuration())));
-                        break;
-                    case GREEDY:
-                    default:
-                        limit = Bandwidth.simple(bandwidth.getCapacity(), Beans.newDuration(bandwidth.getDuration()))
-                            .withInitialTokens(bandwidth.getInitialTokens() <= 0 ? bandwidth.getCapacity() : bandwidth.getInitialTokens());
-                        break;
-                }
+                var limit = switch (bandwidth.getRefillStrategy()) {
+                    case INTERVALLY -> Bandwidth.classic(bandwidth.getCapacity(), Refill.intervally(bandwidth.getRefillCount(),
+                        Beans.newDuration(bandwidth.getRefillDuration())));
+                    case GREEDY -> Bandwidth.simple(bandwidth.getCapacity(), Beans.newDuration(bandwidth.getDuration()))
+                        .withInitialTokens(bandwidth.getInitialTokens() <= 0 ? bandwidth.getCapacity() : bandwidth.getInitialTokens());
+                };
                 limit = limit.withInitialTokens(bandwidth.getInitialTokens() <= 0
                     ? bandwidth.getCapacity() : bandwidth.getInitialTokens());
                 return limit;

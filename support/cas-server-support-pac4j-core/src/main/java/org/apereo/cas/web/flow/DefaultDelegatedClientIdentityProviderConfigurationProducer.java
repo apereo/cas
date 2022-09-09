@@ -68,15 +68,14 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             val casProperties = configurationContext.getObject().getCasProperties();
             val selectionType = casProperties.getAuthn().getPac4j().getCore().getDiscoverySelection().getSelectionType();
             switch (selectionType) {
-                case DYNAMIC:
+                case DYNAMIC -> {
                     WebUtils.putDelegatedAuthenticationProviderConfigurations(context, new HashSet<>());
                     WebUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.TRUE);
-                    break;
-                case MENU:
-                default:
+                }
+                case MENU -> {
                     WebUtils.putDelegatedAuthenticationProviderConfigurations(context, providers);
                     WebUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.FALSE);
-                    break;
+                }
             }
 
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
