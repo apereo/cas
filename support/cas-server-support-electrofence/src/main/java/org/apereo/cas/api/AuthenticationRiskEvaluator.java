@@ -19,7 +19,7 @@ public interface AuthenticationRiskEvaluator {
      *
      * @return the calculators
      */
-    List<AuthenticationRequestRiskCalculator> calculators();
+    List<AuthenticationRequestRiskCalculator> getCalculators();
 
     /**
      * Calculate final authentication risk score.
