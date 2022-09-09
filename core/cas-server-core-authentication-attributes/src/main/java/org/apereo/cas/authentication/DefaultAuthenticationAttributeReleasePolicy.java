@@ -63,7 +63,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
         }
 
         if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
-            var forceAuthn = assertion != null && assertion.isFromNewLogin();
+            var forceAuthn = assertion != null && assertion.fromNewLogin();
             if (!forceAuthn) {
                 val values = authentication.getAttributes().getOrDefault(
                     CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, List.of(Boolean.FALSE));

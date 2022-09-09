@@ -38,7 +38,7 @@ public class DelegatedAuthenticationServiceTicketValidationAuthorizerTests {
         val assertion = mock(Assertion.class);
         val principal = CoreAuthenticationTestUtils
             .getPrincipal("casuser", CollectionUtils.wrap(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of("CasClient")));
-        when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal, principal.getAttributes()));
+        when(assertion.primaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal, principal.getAttributes()));
 
         val az = new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager,
             new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer());

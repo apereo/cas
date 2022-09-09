@@ -32,8 +32,8 @@ public class ProtocolSpecificationValidationAuditResourceResolverTests {
 
         val resolver = new ProtocolSpecificationValidationAuditResourceResolver(props);
         val assertion = mock(Assertion.class);
-        when(assertion.getService()).thenReturn(RegisteredServiceTestUtils.getService());
-        when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(assertion.service()).thenReturn(RegisteredServiceTestUtils.getService());
+        when(assertion.primaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         resolver.setAuditFormat(AuditTrailManager.AuditFormats.JSON);
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{new MockHttpServletRequest(), assertion});

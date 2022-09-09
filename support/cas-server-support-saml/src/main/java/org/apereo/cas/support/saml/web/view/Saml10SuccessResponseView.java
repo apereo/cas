@@ -42,7 +42,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
-        val service = getAssertionFrom(model).getService();
+        val service = getAssertionFrom(model).service();
         val authentication = getPrimaryAuthenticationFrom(model);
         val principal = getPrincipal(model);
         val registeredService = this.servicesManager.findServiceBy(service);

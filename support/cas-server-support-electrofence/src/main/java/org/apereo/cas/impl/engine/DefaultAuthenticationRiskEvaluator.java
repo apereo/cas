@@ -54,7 +54,7 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
             .filter(Objects::nonNull).toList();
 
         val sum = scores.stream()
-            .map(AuthenticationRiskScore::getScore)
+            .map(AuthenticationRiskScore::score)
             .filter(Objects::nonNull)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         val score = sum.divide(BigDecimal.valueOf(activeCalculators.size()), 2, RoundingMode.UP);
