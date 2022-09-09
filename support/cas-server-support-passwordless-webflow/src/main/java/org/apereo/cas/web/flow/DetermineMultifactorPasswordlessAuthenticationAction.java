@@ -100,10 +100,10 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
      */
     protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication auth,
                                                            final WebApplicationService service) {
-        val builder = authenticationSystemSupport.authenticationResultBuilderFactory().newBuilder();
+        val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
         val authenticationResult = builder
             .collect(auth)
-            .build(this.authenticationSystemSupport.principalElectionStrategy(), service);
+            .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
 
         WebUtils.putAuthenticationResultBuilder(builder, requestContext);
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);

@@ -30,28 +30,28 @@ public interface AuthenticationSystemSupport {
      *
      * @return the authentication transaction manager
      */
-    AuthenticationTransactionManager authenticationTransactionManager();
+    AuthenticationTransactionManager getAuthenticationTransactionManager();
 
     /**
      * Gets principal election strategy.
      *
      * @return the principal election strategy
      */
-    PrincipalElectionStrategy principalElectionStrategy();
+    PrincipalElectionStrategy getPrincipalElectionStrategy();
 
     /**
      * Gets authentication transaction factory.
      *
      * @return the authentication transaction factory
      */
-    AuthenticationTransactionFactory authenticationTransactionFactory();
+    AuthenticationTransactionFactory getAuthenticationTransactionFactory();
 
     /**
      * Gets authentication result builder factory.
      *
      * @return the authentication result builder factory
      */
-    AuthenticationResultBuilderFactory authenticationResultBuilderFactory();
+    AuthenticationResultBuilderFactory getAuthenticationResultBuilderFactory();
 
     /**
      * Initiate potential multi-transaction authentication event by handling the initial authentication transaction.
