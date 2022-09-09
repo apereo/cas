@@ -1003,8 +1003,8 @@ public class WebUtils {
      * @param response       the response
      */
     public static void putServiceResponseIntoRequestScope(final RequestContext requestContext, final Response response) {
-        requestContext.getRequestScope().put("parameters", response.getAttributes());
-        putServiceRedirectUrl(requestContext, response.getUrl());
+        requestContext.getRequestScope().put("parameters", response.attributes());
+        putServiceRedirectUrl(requestContext, response.url());
     }
 
     /**

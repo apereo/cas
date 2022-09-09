@@ -24,9 +24,9 @@ public class InjectResponseHeadersAction extends RedirectToServiceAction {
     @Override
     protected String getFinalResponseEventId(final WebApplicationService service, final Response response, final RequestContext requestContext) {
         val httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        httpResponse.addHeader(CasProtocolConstants.PARAMETER_SERVICE, response.getUrl());
-        response.getAttributes().forEach(httpResponse::addHeader);
-        if (response.getAttributes().containsKey(Response.ResponseType.REDIRECT.name().toLowerCase())) {
+        httpResponse.addHeader(CasProtocolConstants.PARAMETER_SERVICE, response.url());
+        response.attributes().forEach(httpResponse::addHeader);
+        if (response.attributes().containsKey(Response.ResponseType.REDIRECT.name().toLowerCase())) {
             return CasWebflowConstants.TRANSITION_ID_REDIRECT;
         }
         return CasWebflowConstants.TRANSITION_ID_SUCCESS;

@@ -28,14 +28,8 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredArgsConstructor
-@Getter
 @Slf4j
-public class CasAuthenticationAuthenticationEventListener implements CasAuthenticationEventListener {
-
-    private final CasEventRepository casEventRepository;
-
-    private final MessageSanitizer messageSanitizer;
+public record CasAuthenticationAuthenticationEventListener(CasEventRepository casEventRepository, MessageSanitizer messageSanitizer) implements CasAuthenticationEventListener {
 
     private static CasEvent prepareCasEvent(final AbstractCasEvent event) {
         val dto = new CasEvent();

@@ -23,9 +23,7 @@ import java.util.Objects;
  */
 
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class CasConfigurationPropertiesEnvironmentManager {
+public record CasConfigurationPropertiesEnvironmentManager(ConfigurationPropertiesBindingPostProcessor binder) {
 
     /**
      * Property name passed to the environment that indicates the path to the standalone configuration file.
@@ -45,8 +43,6 @@ public class CasConfigurationPropertiesEnvironmentManager {
         new File("/opt/cas/config"),
         new File("/var/cas/config")
     };
-
-    private final ConfigurationPropertiesBindingPostProcessor binder;
 
     /**
      * Rebind cas configuration properties.

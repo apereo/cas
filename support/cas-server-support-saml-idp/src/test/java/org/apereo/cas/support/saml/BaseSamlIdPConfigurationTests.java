@@ -64,7 +64,6 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import lombok.Data;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -306,14 +305,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         }
     }
 
-    @Data
-    public static class PermissionSamlAttributeValue {
-        private final String type;
-
-        private final String group;
-
-        private final String user;
-
+    public record PermissionSamlAttributeValue(String type, String group, String user) {
         @Override
         public String toString() {
             return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)

@@ -24,7 +24,7 @@ public class EDIPIX509AttributeExtractor extends DefaultX509AttributeExtractor {
     public Map<String, List<Object>> extractPersonAttributes(final X509Certificate certificate) {
         val personAttributes = super.extractPersonAttributes(certificate);
         val subjectPrincipal = certificate.getSubjectX500Principal();
-        val commonName = X509ExtractorUtils.retrieveTheCommonName(subjectPrincipal.getName());
+        val commonName = X509ExtractorUtils.retrieveTheCommonName(subjectPrincipal.name());
         val result = X509ExtractorUtils.retrieveTheEDIPI(commonName);
         result.ifPresentOrElse(edipi -> personAttributes.put("x509EDIPI", CollectionUtils.wrapList(edipi)),
             () -> LOGGER.trace("EDIPI not found in certificate common name: [{}]", commonName));

@@ -177,19 +177,17 @@ public class CasConfigurationMetadataCatalog {
     }
 
     /**
-     * The type Cas properties container.
-     */
-    @RequiredArgsConstructor
-    public static class CasPropertiesContainer {
-        private final TreeSet<CasReferenceProperty> properties;
-
-        /**
-         * Properties list.
-         *
-         * @return the list
+         * The type Cas properties container.
          */
-        public TreeSet<CasReferenceProperty> properties() {
-            return this.properties;
+        public record CasPropertiesContainer(TreeSet<CasReferenceProperty> properties) {
+            /**
+             * Properties list.
+             *
+             * @return the list
+             */
+            @Override
+            public TreeSet<CasReferenceProperty> properties() {
+                return this.properties;
+            }
         }
-    }
 }

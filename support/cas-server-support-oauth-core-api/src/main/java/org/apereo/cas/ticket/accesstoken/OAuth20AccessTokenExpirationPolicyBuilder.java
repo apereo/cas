@@ -16,6 +16,7 @@ import java.io.Serial;
 /**
  * This is {@link OAuth20AccessTokenExpirationPolicyBuilder}.
  *
+ * @param casProperties The Cas properties.
  * @author Misagh Moayyed
  * @since 6.1.0
  */
@@ -23,13 +24,9 @@ import java.io.Serial;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @Getter
-public class OAuth20AccessTokenExpirationPolicyBuilder implements ExpirationPolicyBuilder<OAuth20AccessToken> {
+public record OAuth20AccessTokenExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<OAuth20AccessToken> {
     @Serial
     private static final long serialVersionUID = -3597980180617072826L;
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {

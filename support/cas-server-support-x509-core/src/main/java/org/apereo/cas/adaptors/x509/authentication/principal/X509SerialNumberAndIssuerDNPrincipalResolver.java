@@ -45,6 +45,6 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         return new StringBuilder(this.serialNumberPrefix)
             .append(certificate.getSerialNumber()).append(this.valueDelimiter)
-            .append(certificate.getIssuerDN().getName()).toString();
+            .append(certificate.getIssuerDN().name()).toString();
     }
 }

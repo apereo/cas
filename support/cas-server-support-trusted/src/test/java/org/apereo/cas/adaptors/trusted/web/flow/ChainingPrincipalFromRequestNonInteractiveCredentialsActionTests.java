@@ -28,7 +28,7 @@ public class ChainingPrincipalFromRequestNonInteractiveCredentialsActionTests ex
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val principal = mock(Principal.class);
-        when(principal.getName()).thenReturn("casuser");
+        when(principal.name()).thenReturn("casuser");
         request.setUserPrincipal(principal);
         assertNotNull(remoteUserAuthenticationAction.getRemotePrincipalId(request));
     }

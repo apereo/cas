@@ -21,9 +21,7 @@ import java.util.stream.Collectors;
  * @since 3.1
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class DefaultResponse implements Response {
+public record DefaultResponse(ResponseType responseType, String url, Map<String, String> attributes) implements Response {
 
     /**
      * Pattern to detect unprintable ASCII characters.
@@ -34,12 +32,6 @@ public class DefaultResponse implements Response {
 
     @Serial
     private static final long serialVersionUID = -8251042088720603062L;
-
-    private final ResponseType responseType;
-
-    private final String url;
-
-    private final Map<String, String> attributes;
 
     /**
      * Gets the post response.

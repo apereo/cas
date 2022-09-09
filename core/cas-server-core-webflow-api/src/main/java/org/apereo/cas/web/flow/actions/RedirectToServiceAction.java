@@ -67,7 +67,7 @@ public class RedirectToServiceAction extends BaseCasWebflowAction {
      * @return the final response event id
      */
     protected String getFinalResponseEventId(final WebApplicationService service, final Response response, final RequestContext requestContext) {
-        val eventId = response.getResponseType().name().toLowerCase();
+        val eventId = response.responseType().name().toLowerCase();
         LOGGER.debug("Signaling flow to redirect to service [{}] via event [{}]", service, eventId);
         return eventId;
     }

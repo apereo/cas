@@ -56,7 +56,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load().values();
+            val properties = accountRegistrationService.accountRegistrationPropertyLoader().load().values();
             val registrationRequest = new AccountRegistrationRequest();
             properties.forEach(entry -> {
                 var value = entry.isRequired()
@@ -65,7 +65,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
                 registrationRequest.putProperty(entry.getName(), value);
             });
 
-            val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
+            val username = accountRegistrationService.accountRegistrationUsernameBuilder().build(registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequestUsername(requestContext, username);
 

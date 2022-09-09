@@ -56,7 +56,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolverTests {
         c.setCertificate(VALID_CERTIFICATE);
         val value = "SERIALNUMBER="
             + VALID_CERTIFICATE.getSerialNumber().toString()
-            + ", " + VALID_CERTIFICATE.getIssuerDN().getName();
+            + ", " + VALID_CERTIFICATE.getIssuerDN().name();
 
         assertEquals(value, this.resolver.resolve(c, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())).getId());

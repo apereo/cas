@@ -43,15 +43,7 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class DynamoDbTicketRegistryFacilitator {
-    private final TicketCatalog ticketCatalog;
-
-    private final DynamoDbTicketRegistryProperties dynamoDbProperties;
-
-    private final DynamoDbClient amazonDynamoDBClient;
-
+public record DynamoDbTicketRegistryFacilitator(TicketCatalog ticketCatalog, DynamoDbTicketRegistryProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
     private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
         val encoded = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
         LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);

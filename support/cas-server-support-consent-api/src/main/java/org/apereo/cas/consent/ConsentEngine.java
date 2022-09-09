@@ -90,5 +90,5 @@ public interface ConsentEngine extends Serializable {
      *
      * @return the consent repository
      */
-    ConsentRepository getConsentRepository();
+    ConsentRepository consentRepository();
 }

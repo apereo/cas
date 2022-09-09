@@ -39,7 +39,7 @@ public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction
             val registrationRequest = accountRegistrationService.validateToken(token);
             accountRegTicket.update();
 
-            val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
+            val username = accountRegistrationService.accountRegistrationUsernameBuilder().build(registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequestUsername(requestContext, username);
 

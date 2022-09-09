@@ -15,11 +15,9 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -92,14 +90,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
     /**
      * The Rest endpoint entity passed along to the API.
      */
-    @Getter
-    @RequiredArgsConstructor
-    @ToString
-    @EqualsAndHashCode
-    public static class RestEndpointEntity {
-        private final String principalId;
-
-        private final String serviceId;
+    public record RestEndpointEntity(String principalId, String serviceId) {
     }
 
     /**
