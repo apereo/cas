@@ -18,7 +18,7 @@ public interface AuthenticationRiskMitigator {
      *
      * @return the contingency plans
      */
-    AuthenticationRiskContingencyPlan contingencyPlan();
+    AuthenticationRiskContingencyPlan getContingencyPlan();
 
     /**
      * Mitigate.
