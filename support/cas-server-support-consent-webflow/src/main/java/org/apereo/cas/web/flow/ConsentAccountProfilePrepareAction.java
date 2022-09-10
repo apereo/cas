@@ -39,7 +39,7 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
-        val decisions = consentEngine.consentRepository().findConsentDecisions(principal.getId());
+        val decisions = consentEngine.getConsentRepository().findConsentDecisions(principal.getId());
         val resolved = decisions
             .stream()
             .map(Unchecked.function(d -> {

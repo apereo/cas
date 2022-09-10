@@ -8,6 +8,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,10 +27,20 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@RequiredArgsConstructor
+@Getter
 @Slf4j
-public record DefaultAccountRegistrationService(AccountRegistrationPropertyLoader accountRegistrationPropertyLoader, CasConfigurationProperties casProperties,
-                                                CipherExecutor<Serializable, String> cipherExecutor, AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder,
-                                                AccountRegistrationProvisioner accountRegistrationProvisioner) implements AccountRegistrationService {
+public class DefaultAccountRegistrationService implements AccountRegistrationService {
+    private final AccountRegistrationPropertyLoader accountRegistrationPropertyLoader;
+
+    private final CasConfigurationProperties casProperties;
+
+    private final CipherExecutor<Serializable, String> cipherExecutor;
+
+    private final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder;
+
+    private final AccountRegistrationProvisioner accountRegistrationProvisioner;
+
     @Audit(action = AuditableActions.ACCOUNT_REGISTRATION,
         actionResolverName = AuditActionResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_RESOURCE_RESOLVER)
