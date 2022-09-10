@@ -30,12 +30,13 @@ the policy. [See this guide](Service-Access-Strategy-ABAC-Activation.html) for m
     
 Control access using a `Map` of required principal attribute names along with the set of values for each attribute.
 
-<div class="alert alert-info"><strong>Supported Syntax</strong><p>Required values for a given attribute support regular expression patterns. For example, a <code>phone</code> attribute could
+<div class="alert alert-info"><strong>Supported Syntax</strong><p>Required values for a given attribute support 
+regular expression patterns. For example, a <code>phone</code> attribute could
 require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>.</p></div>
 
 {% tabs accessstrategy %}
 
-{% tab accessstrategy Example 1 %}
+{% tab accessstrategy Required Attributes %}
 To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
 `givenName` attribute with the value of `Administrator`:
 
@@ -59,7 +60,7 @@ To access the service, the principal must have a `cn` attribute with the value o
 ```
 {% endtab %}
 
-{% tab accessstrategy Example 2 %}
+{% tab accessstrategy Optional Attributes %}
 To access the service, the principal must have a `cn` attribute with the value of `admin` **OR** a
 `givenName` attribute with the value of `Administrator`:
 
@@ -82,9 +83,7 @@ To access the service, the principal must have a `cn` attribute with the value o
   }
 }
 ```
-{% endtab %}
 
-{% tab accessstrategy Example 3 %}
 To access the service, the principal must have a `cn` attribute whose value is either `admin`, `Admin` or `TheAdmin`.
 
 ```json
@@ -106,10 +105,7 @@ To access the service, the principal must have a `cn` attribute whose value is e
 ```
 {% endtab %}
 
-{% endtabs %}
-
-## Enforce Combined Attribute Conditions
-
+{% tab accessstrategy Combined Conditions %}
 To access the service, the principal must have a `cn` attribute whose value is either `admin`, `Admin` or `TheAdmin`,
 **OR** the principal must have a `member` attribute whose value is either `admins`, `adminGroup` or `staff`.
 
@@ -132,9 +128,9 @@ To access the service, the principal must have a `cn` attribute whose value is e
   }
 }
 ```
+{% endtab %}
 
-## Enforce Inline Groovy Attribute
-
+{% tab accessstrategy Groovy %}
 To access the service, the principal must have a `cn` attribute whose values must contain `admin`
 and the overall set of resolved principal attributes must already have found an attribute for `name`.
 
@@ -158,9 +154,9 @@ and the overall set of resolved principal attributes must already have found an 
   }
 }
 ```
+{% endtab %}
 
-## Enforce Must-Not-Have Attributes
-
+{% tab accessstrategy Rejected Attributes %}
 To access the service, the principal must have a `cn` attribute whose value
 is either `admin`, `Admin` or `TheAdmin`, OR the principal must have a `member` attribute
 whose value is either `admins`, `adminGroup` or `staff`. The principal also must not have an
@@ -190,6 +186,9 @@ attribute `role` whose value matches the pattern `deny.+`.
 }
 ```
 
-<div class="alert alert-info"><strong>Supported Syntax</strong><p>Rejected values for a given attribute support regular expression patterns. For example, a <code>role</code> attribute could
+<div class="alert alert-info"><strong>Supported Syntax</strong><p>Rejected values for a given attribute support regular 
+expression patterns. For example, a <code>role</code> attribute could
 be designed with a value value pattern of <code>admin-.*</code>.</p></div>
+{% endtab %}
 
+{% endtabs %}

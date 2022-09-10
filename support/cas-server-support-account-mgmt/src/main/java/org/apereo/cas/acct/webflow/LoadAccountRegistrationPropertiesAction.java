@@ -24,7 +24,7 @@ public class LoadAccountRegistrationPropertiesAction extends BaseCasWebflowActio
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val properties = accountRegistrationService.accountRegistrationPropertyLoader().load();
+        val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load();
         requestContext.getFlowScope().put("registrationProperties", properties
             .values()
             .stream()

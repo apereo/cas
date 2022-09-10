@@ -5,6 +5,8 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
@@ -24,7 +26,14 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @Slf4j
-public record DefaultSSOSamlHttpRequestExtractor(ParserPool parserPool) implements SSOSamlHttpRequestExtractor {
+@RequiredArgsConstructor
+@Getter
+public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExtractor {
+    /**
+     * The Parser pool.
+     */
+    private final ParserPool parserPool;
+
     @Audit(action = AuditableActions.SAML2_REQUEST,
         actionResolverName = AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER)

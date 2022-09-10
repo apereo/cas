@@ -30,7 +30,7 @@ public class FinalizeAccountRegistrationAction extends BaseCasWebflowAction {
         try {
             val registrationRequest = AccountRegistrationUtils.getAccountRegistrationRequest(requestContext);
             Objects.requireNonNull(registrationRequest).putProperties(requestContext.getRequestParameters().asAttributeMap().asMap());
-            val response = accountRegistrationService.accountRegistrationProvisioner().provision(registrationRequest);
+            val response = accountRegistrationService.getAccountRegistrationProvisioner().provision(registrationRequest);
             if (response.isSuccess()) {
                 return success(response);
             }

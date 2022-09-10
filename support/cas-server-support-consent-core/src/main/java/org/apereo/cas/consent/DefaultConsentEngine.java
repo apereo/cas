@@ -10,6 +10,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -29,10 +31,19 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
-public record DefaultConsentEngine(ConsentRepository consentRepository, ConsentDecisionBuilder consentDecisionBuilder, CasConfigurationProperties casProperties,
-                                   List<ConsentableAttributeBuilder> consentableAttributeBuilders) implements ConsentEngine {
+@RequiredArgsConstructor
+@Getter
+public class DefaultConsentEngine implements ConsentEngine {
     @Serial
     private static final long serialVersionUID = -617809298856160625L;
+
+    private final ConsentRepository consentRepository;
+
+    private final ConsentDecisionBuilder consentDecisionBuilder;
+
+    private final CasConfigurationProperties casProperties;
+
+    private final List<ConsentableAttributeBuilder> consentableAttributeBuilders;
 
     @Audit(action = AuditableActions.SAVE_CONSENT,
         actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,

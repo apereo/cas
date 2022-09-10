@@ -19,21 +19,21 @@ public interface AccountRegistrationService {
      *
      * @return the account mgmt registration property loader
      */
-    AccountRegistrationPropertyLoader accountRegistrationPropertyLoader();
+    AccountRegistrationPropertyLoader getAccountRegistrationPropertyLoader();
 
     /**
      * Gets account registration username builder.
      *
      * @return the account registration username builder
      */
-    AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder();
+    AccountRegistrationUsernameBuilder getAccountRegistrationUsernameBuilder();
 
     /**
      * Gets account registration provisioner.
      *
      * @return the account registration provisioner
      */
-    AccountRegistrationProvisioner accountRegistrationProvisioner();
+    AccountRegistrationProvisioner getAccountRegistrationProvisioner();
 
     /**
      * Create token.
