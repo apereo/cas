@@ -10,6 +10,8 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +22,11 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public record DefaultAuthenticationRiskMitigator(AuthenticationRiskContingencyPlan contingencyPlan) implements AuthenticationRiskMitigator {
+@RequiredArgsConstructor
+@Getter
+public class DefaultAuthenticationRiskMitigator implements AuthenticationRiskMitigator {
+    private final AuthenticationRiskContingencyPlan contingencyPlan;
+
     @Audit(action = AuditableActions.MITIGATE_RISKY_AUTHENTICATION,
         actionResolverName = AuditActionResolvers.ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER)
