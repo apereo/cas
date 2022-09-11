@@ -211,6 +211,7 @@ public class CasDocumentationApplication {
             .forEach(it -> {
                 var event = new LinkedHashMap();
                 event.put("name", it.getName());
+                LOGGER.info("Adding audit [{}]", event);
                 properties.add(event);
             });
         if (!properties.isEmpty()) {
@@ -234,7 +235,7 @@ public class CasDocumentationApplication {
             LOGGER.info("Locating shell command group for [{}]", clazz.getSimpleName());
             var group = clazz.getAnnotation(ShellCommandGroup.class);
             if (group == null) {
-                LOGGER.warn("Shell command group is missing for " + clazz.getName());        
+                LOGGER.warn("Shell command group is missing for {}", clazz.getName());
             }
 
             var methods = new LinkedHashMap();
