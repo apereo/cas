@@ -48,7 +48,7 @@ In the above example, the access strategy is only activated if the current princ
 - **...AND...**  (This is controlled by the `operator` field, which you can also alter to use `OR`)
 - has a `firstName` attribute with values `Holdoor` or `Hodor`
   
-Note that if the access strategy fails to activate and must remain inactive, the access is denied via `allowIfInactive`.
+Note that if the access strategy fails to activate and must remain inactive, then access is denied via `allowIfInactive`.
 
 ## Groovy 
  
