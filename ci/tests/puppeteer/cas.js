@@ -130,7 +130,7 @@ exports.loginWith = async (page, user, password,
     await this.type(page, passwordField, password);
 
     await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    return await page.waitForNavigation();
 };
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {

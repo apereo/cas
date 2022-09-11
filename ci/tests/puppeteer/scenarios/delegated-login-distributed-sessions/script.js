@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
     await page1.waitForTimeout(1000);
 
     await cas.assertMissingParameter(page1, "service");
-``;
+
     await browser1.close();
     await browser2.close();
 })();
