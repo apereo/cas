@@ -106,7 +106,7 @@ A number of Docker images used for integration testing are now upgraded to their
 - [Registered Service ABAC policy](../services/Service-Access-Strategy-ABAC.html) can now support inline Groovy conditions for attributes.
 - [CAS configuration security](../configuration/Configuration-Properties-Security-CAS.html) via Jasypt is able to respect the IV 
   generation flag based on algorithms.
-- Embedded YAML application configuration files are able to override default application properties that ship with CAS
+- Embedded YAML application configuration files are able to override default application properties that ship with CAS.
 
 ## Library Upgrades
 
