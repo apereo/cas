@@ -26,17 +26,17 @@ The ABAC strategy allows one to configure a service with the following propertie
 You can also tune the ABAC strategy to conditionally activate and enforce 
 the policy. [See this guide](Service-Access-Strategy-ABAC-Activation.html) for more info.
 
-## Enforce Attributes
-    
+
+{% tabs accessstrategy %}
+
+{% tab accessstrategy Required Attributes %}
+
 Control access using a `Map` of required principal attribute names along with the set of values for each attribute.
 
 <div class="alert alert-info"><strong>Supported Syntax</strong><p>Required values for a given attribute support 
 regular expression patterns. For example, a <code>phone</code> attribute could
 require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>.</p></div>
 
-{% tabs accessstrategy %}
-
-{% tab accessstrategy Required Attributes %}
 To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
 `givenName` attribute with the value of `Administrator`:
 
