@@ -23,7 +23,6 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
-import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -139,10 +138,8 @@ public class CasOAuth20ThrottleConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry) {
-            val interceptor = new SecurityInterceptor(oauthSecConfig,
-                Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
-            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
-            interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
+            val interceptor = new SecurityInterceptor(oauthSecConfig, Authenticators.CAS_OAUTH_CLIENT,
+                    DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
 
             val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
             interceptor.setSecurityLogic(logic);
@@ -160,9 +157,8 @@ public class CasOAuth20ThrottleConfiguration {
                 .filter(client -> client instanceof DirectClient)
                 .map(Client::getName)
                 .collect(Collectors.joining(","));
-            val interceptor = new SecurityInterceptor(oauthSecConfig, clients, JEEHttpActionAdapter.INSTANCE);
-            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
-            interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
+            val interceptor = new SecurityInterceptor(oauthSecConfig, clients,
+                    DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
 
             val logic = new DefaultSecurityLogic();
             logic.setLoadProfilesFromSession(false);
