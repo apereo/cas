@@ -34,25 +34,13 @@ operates. If you consider your CAS deployment to be a critical part of the ident
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
 
-## Overlay
-
-In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-Installation.html), adjust the following setting:
-
-```properties
-cas.version=7.0.0-RC1
-```
-
-<div class="alert alert-info">
-<strong>System Requirements</strong><br/>This CAS release is based on and will require JDK 17. This is a <strong>MUST</strong>.
-</div>
-
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release. 
    
 ### JDK Requirement
 
-The JDK baseline requirement for this CAS release is JDK `17`. All compatible distributions
+The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
 
 ### Testing Strategy
@@ -107,7 +95,7 @@ A number of Docker images used for integration testing are now upgraded to their
 - [CAS configuration security](../configuration/Configuration-Properties-Security-CAS.html) via Jasypt is able to respect the IV 
   generation flag based on algorithms.
 - Embedded YAML application configuration files are able to override default application properties that ship with CAS.
-- Authentication context classes in the SAML2 response can be determined from context mapping settings even when no specific context class is present in the 
+- Authentication context classes in the SAML2 response can be determined from context mapping settings when no specific context class is present in the 
   SAML2 authentication context.
 
 ## Library Upgrades
@@ -121,3 +109,5 @@ A number of Docker images used for integration testing are now upgraded to their
 - JGit
 - Spring Cloud
 - Pac4j
+- Couchbase Client
+- Micrometer
