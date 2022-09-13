@@ -227,7 +227,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
         LOGGER.debug("Metadata backup directory is at [{}]", this.metadataBackupDirectory.getCanonicalPath());
         val metadataFileName = getBackupMetadataFilenamePrefix(metadataResource, service).concat(FILENAME_EXTENSION_XML);
-        val backupFile = new File(this.metadataBackupDirectory, metadataFileName);
+        val backupFile = new File(metadataBackupDirectory, metadataFileName);
         if (backupFile.exists()) {
             LOGGER.info("Metadata file designated for service [{}] already exists at path [{}].", service.getName(), backupFile.getCanonicalPath());
         } else {

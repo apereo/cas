@@ -32,7 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.ticket.registry.cassandra.keyspace=cas",
         "cas.ticket.registry.cassandra.local-dc=datacenter1",
-        "cas.ticket.registry.cassandra.drop-tables-on-startup=true"
+        "cas.ticket.registry.cassandra.drop-tables-on-startup=true",
+        "cas.ticket.registry.cassandra.ssl-protocols=TLSv1.2",
+        "cas.http-client.host-name-verifier=none"
     })
 @Tag("Cassandra")
 @EnabledIfListeningOnPort(port = 9042)

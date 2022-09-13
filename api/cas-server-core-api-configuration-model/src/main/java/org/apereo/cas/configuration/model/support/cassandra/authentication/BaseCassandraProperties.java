@@ -56,6 +56,18 @@ public abstract class BaseCassandraProperties implements Serializable {
     private List<String> contactPoints = Stream.of("localhost:9042").toList();
 
     /**
+     * Set the protocol versions enabled for use on this engine. Once the setting is set,
+     * only protocols listed in the protocols parameter are enabled for use.
+     */
+    private String[] sslProtocols;
+
+    /**
+     * The cipher suites to use, or empty/null to use the default ones.
+     * Note that host name validation will always be done using HTTPS algorithm.
+     */
+    private String[] sslCipherSuites;
+
+    /**
      * Used by a DC-ware round-robin load balancing policy.
      * This policy provides round-robin queries over the node of the local data center. It also includes in the query plans returned a
      * configurable number of hosts in the remote data centers, but those are always tried after the local nodes.

@@ -82,8 +82,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
 
     @Override
     public void deleteAll() {
-        cassandraSessionFactory.getCassandraTemplate()
-            .getCqlOperations().execute("TRUNCATE TABLE " + CassandraRegisteredServiceHolder.TABLE_NAME);
+        cassandraSessionFactory.getCassandraTemplate().truncate(CassandraRegisteredServiceHolder.class);
     }
 
     @Override
