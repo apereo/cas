@@ -107,6 +107,8 @@ A number of Docker images used for integration testing are now upgraded to their
 - [CAS configuration security](../configuration/Configuration-Properties-Security-CAS.html) via Jasypt is able to respect the IV 
   generation flag based on algorithms.
 - Embedded YAML application configuration files are able to override default application properties that ship with CAS.
+- Authentication context classes in the SAML2 response can be determined from context mapping settings even when no specific context class is present in the 
+  SAML2 authentication context.
 
 ## Library Upgrades
 
