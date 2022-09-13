@@ -30,6 +30,8 @@ import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataController;
 import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducer;
+import org.apereo.cas.ws.idp.services.DefaultWSFederationRelyingPartyAttributeWriter;
+import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyAttributeWriter;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationServiceRegistry;
 import org.apereo.cas.ws.idp.services.WsFederationServicesManagerRegisteredServiceLocator;
@@ -157,15 +159,25 @@ public class CoreWsSecurityIdentityProviderConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "defaultWSFederationRelyingPartyAttributeWriter")
+        public WSFederationRelyingPartyAttributeWriter defaultWSFederationRelyingPartyAttributeWriter(
+            final CasConfigurationProperties casProperties) {
+            val claims = new HashSet<>(casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims());
+            return new DefaultWSFederationRelyingPartyAttributeWriter(claims);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationRelyingPartyTokenProducer")
         public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
+            @Qualifier("defaultWSFederationRelyingPartyAttributeWriter")
+            final WSFederationRelyingPartyAttributeWriter relyingPartyAttributeWriter,
             @Qualifier("securityTokenServiceCredentialCipherExecutor")
             final CipherExecutor securityTokenServiceCredentialCipherExecutor,
             @Qualifier("securityTokenServiceClientBuilder")
-            final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
-            final CasConfigurationProperties casProperties) {
+            final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
             return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder,
-                securityTokenServiceCredentialCipherExecutor, new HashSet<>(casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims()));
+                securityTokenServiceCredentialCipherExecutor, relyingPartyAttributeWriter);
         }
 
         @Bean
