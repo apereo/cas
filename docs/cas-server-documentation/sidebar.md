@@ -398,6 +398,7 @@ layout: null
         *   [Groovy](/cas/{{ version }}/services/Service-Access-Strategy-Groovy.html)
         *   [Grouper](/cas/{{ version }}/services/Service-Access-Strategy-Grouper.html)
         *   [HTTP](/cas/{{ version }}/services/Service-Access-Strategy-Http.html)
+        *   [REST](/cas/{{ version }}/services/Service-Access-Strategy-REST.html)
         *   [Time](/cas/{{ version }}/services/Service-Access-Strategy-Time.html)
         *   [Unauthorized URL](/cas/{{ version }}/services/Service-Access-Strategy-URL.html)
     *   [Attribute Release](/cas/{{ version }}/integration/Attribute-Release-Policies.html)
