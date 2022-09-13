@@ -1,14 +1,11 @@
 package org.apereo.cas.ws.idp.services;
 
-import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.ticket.TicketValidator;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
@@ -22,17 +19,16 @@ import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSUtils;
-import org.jooq.lambda.Unchecked;
 import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.XMLConstants;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
-import java.util.Set;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.
@@ -47,7 +43,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
     private final CipherExecutor<String, String> credentialCipherExecutor;
 
-    private final Set<String> customClaims;
+    private final WSFederationRelyingPartyAttributeWriter attributeWriter;
 
     private static String serializeRelyingPartyToken(final Element rpToken) throws Exception {
         val sw = new StringWriter();
@@ -69,65 +65,27 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         return serializeRelyingPartyToken(rpToken);
     }
 
-    /**
-     * Write attribute value.
-     *
-     * @param writer         the writer
-     * @param uri            the uri
-     * @param attributeValue the attribute value
-     * @param service        the service
-     * @throws Exception the exception
-     */
-    protected void writeAttributeValue(final W3CDOMStreamWriter writer, final String uri,
-                                       final Object attributeValue,
-                                       final WSFederationRegisteredService service) throws Exception {
-        LOGGER.trace("Mapping attribute [{}] with value [{}] for service [{}]", uri, attributeValue, service.getServiceId());
-        writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-        writer.writeAttribute("Uri", uri);
-        writer.writeAttribute("Optional", Boolean.TRUE.toString());
 
-        val values = CollectionUtils.toCollection(attributeValue);
-        for (val value : values) {
-            writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-            writer.writeCharacters(value.toString());
-            writer.writeEndElement();
-        }
-        writer.writeEndElement();
-    }
-
-    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service,
-                                                final SecurityTokenServiceClient sts,
-                                                final TicketValidator.ValidationResult assertion) throws Exception {
+    protected void mapAttributesToRequestedClaims(final WSFederationRegisteredService service,
+                                                  final SecurityTokenServiceClient sts,
+                                                  final TicketValidator.ValidationResult assertion) throws Exception {
         val writer = new W3CDOMStreamWriter();
         writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
         writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
         writer.writeNamespace("ic", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
         writer.writeAttribute("Dialect", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
 
-        val attributes = assertion.getPrincipal().getAttributes();
-        LOGGER.debug("Mapping principal attributes [{}] to claims for service [{}]", attributes, service);
-
-        attributes.forEach(Unchecked.biConsumer((k, v) -> {
-            val claimName = ProtocolAttributeEncoder.decodeAttribute(k);
-            if (WSFederationClaims.contains(claimName)) {
-                val uri = WSFederationClaims.valueOf(k).getUri();
-                LOGGER.debug("Requested claim [{}] mapped to [{}]", k, uri);
-                writeAttributeValue(writer, uri, v, service);
-            } else if (WSFederationClaims.containsUri(claimName)) {
-                LOGGER.debug("Requested claim [{}] directly mapped to [{}]", k, claimName);
-                writeAttributeValue(writer, claimName, v, service);
-            } else if (customClaims.contains(claimName)) {
-                LOGGER.debug("Requested custom claim [{}]", claimName);
-                writeAttributeValue(writer, claimName, v, service);
-            } else {
-                LOGGER.debug("Requested claim [{}] is not defined/supported by CAS", claimName);
-                writeAttributeValue(writer, WSFederationConstants.getClaimInCasNamespace(claimName), v, service);
-            }
-        }));
+        writeAttributes(writer, assertion, service);
 
         writer.writeEndElement();
         val claims = writer.getDocument().getDocumentElement();
         sts.setClaims(claims);
+    }
+
+    protected void writeAttributes(final XMLStreamWriter writer,
+                                   final TicketValidator.ValidationResult assertion,
+                                   final WSFederationRegisteredService service) {
+        attributeWriter.write(writer, assertion.getPrincipal(), service);
     }
 
     private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
