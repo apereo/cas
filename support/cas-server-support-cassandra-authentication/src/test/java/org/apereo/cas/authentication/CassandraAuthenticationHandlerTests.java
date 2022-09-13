@@ -68,7 +68,9 @@ import static org.mockito.Mockito.*;
     "cas.authn.cassandra.password-attribute=pwd_attr",
     "cas.authn.cassandra.keyspace=cas",
     "cas.authn.cassandra.username=casuser",
-    "cas.authn.cassandra.password=password"
+    "cas.authn.cassandra.password=password",
+    "cas.authn.cassandra.ssl-protocols=TLSv1.2",
+    "cas.http-client.host-name-verifier=none"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Cassandra")
