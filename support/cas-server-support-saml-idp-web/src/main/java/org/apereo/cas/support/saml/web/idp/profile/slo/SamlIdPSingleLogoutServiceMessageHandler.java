@@ -139,6 +139,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                     .url(msg.getUrl().toExternalForm())
                     .parameters(CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_REQUEST, message))
                     .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
+                    .httpClient(getHttpClient())
                     .build();
                 response = HttpUtils.execute(exec);
             }
