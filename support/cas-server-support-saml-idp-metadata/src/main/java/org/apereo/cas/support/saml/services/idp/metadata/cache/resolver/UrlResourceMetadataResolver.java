@@ -74,13 +74,14 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         val location = SpringExpressionLanguageValueResolver.getInstance().resolve(backupLocation);
         this.metadataBackupDirectory = FunctionUtils.doUnchecked(
             () -> new File(ResourceUtils.getRawResourceFrom(location).getFile(), DIRNAME_METADATA_BACKUPS));
-        FunctionUtils.doAndHandle(u -> {
-            LOGGER.trace("Creating metadata backup directory at [{}]", this.metadataBackupDirectory);
-            FileUtils.forceMkdir(this.metadataBackupDirectory);
+        FunctionUtils.doAndHandle(file -> {
+            LOGGER.trace("Creating metadata backup directory at [{}]", file);
+            FileUtils.forceMkdir(file);
         }, e -> {
             LOGGER.error("Unable to create metadata backup directory [{}] to store downloaded metadata. "
-                         + "This is likely due to a permission issue", this.metadataBackupDirectory);
+                         + "This is likely due to a permission issue", metadataBackupDirectory);
             LOGGER.debug(e.getMessage(), e);
+            return metadataBackupDirectory;
         }).accept(metadataBackupDirectory);
     }
 

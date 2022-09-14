@@ -105,24 +105,24 @@ public class CasCoreHttpConfiguration {
             final HostnameVerifier hostnameVerifier,
             final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) {
-            val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+            val client = new SimpleHttpClientFactoryBean.DefaultHttpClient();
 
             val httpClient = casProperties.getHttpClient();
-            c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
-            c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
+            client.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
+            client.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
 
             if (StringUtils.isNotBlank(httpClient.getProxyHost()) && httpClient.getProxyPort() > 0) {
-                c.setProxy(new HttpHost(httpClient.getProxyHost(), httpClient.getProxyPort()));
+                client.setProxy(new HttpHost(httpClient.getProxyHost(), httpClient.getProxyPort()));
             }
-            c.setSslSocketFactory(trustStoreSslSocketFactory);
-            c.setHostnameVerifier(hostnameVerifier);
-            c.setSslContext(casSslContext.getSslContext());
-            c.setTrustManagers(casSslContext.getTrustManagers());
+            client.setSslSocketFactory(trustStoreSslSocketFactory);
+            client.setHostnameVerifier(hostnameVerifier);
+            client.setSslContext(casSslContext.getSslContext());
+            client.setTrustManagers(casSslContext.getTrustManagers());
             val defaultHeaders = new ArrayList<Header>();
             httpClient.getDefaultHeaders().forEach((name, value) -> defaultHeaders.add(new BasicHeader(name, value)));
-            c.setDefaultHeaders(defaultHeaders);
+            client.setDefaultHeaders(defaultHeaders);
 
-            return c;
+            return client;
         }
 
         private static SimpleHttpClient getHttpClient(final boolean redirectEnabled,
@@ -130,10 +130,10 @@ public class CasCoreHttpConfiguration {
                                                       final HostnameVerifier hostnameVerifier,
                                                       final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
                                                       final CasConfigurationProperties casProperties) {
-            val c = buildHttpClientFactoryBean(casSslContext, hostnameVerifier, trustStoreSslSocketFactory, casProperties);
-            c.setRedirectsEnabled(redirectEnabled);
-            c.setCircularRedirectsAllowed(redirectEnabled);
-            return c.getObject();
+            val factoryBean = buildHttpClientFactoryBean(casSslContext, hostnameVerifier, trustStoreSslSocketFactory, casProperties);
+            factoryBean.setRedirectsEnabled(redirectEnabled);
+            factoryBean.setCircularRedirectsAllowed(redirectEnabled);
+            return factoryBean.getObject();
         }
 
         @ConditionalOnMissingBean(name = "httpClient")
