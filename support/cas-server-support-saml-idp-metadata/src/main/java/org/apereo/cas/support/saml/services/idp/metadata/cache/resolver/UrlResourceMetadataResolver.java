@@ -74,16 +74,15 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         val location = SpringExpressionLanguageValueResolver.getInstance().resolve(backupLocation);
         this.metadataBackupDirectory = FunctionUtils.doUnchecked(
             () -> new File(ResourceUtils.getRawResourceFrom(location).getFile(), DIRNAME_METADATA_BACKUPS));
-        try {
+        FunctionUtils.doAndHandle(u -> {
             LOGGER.trace("Creating metadata backup directory at [{}]", this.metadataBackupDirectory);
             FileUtils.forceMkdir(this.metadataBackupDirectory);
-        } catch (final Exception e) {
+        }, e -> {
             LOGGER.error("Unable to create metadata backup directory [{}] to store downloaded metadata. "
                          + "This is likely due to a permission issue", this.metadataBackupDirectory);
             LOGGER.debug(e.getMessage(), e);
-        }
+        }).accept(metadataBackupDirectory);
     }
-
 
     @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
         actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
@@ -100,11 +99,31 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
             val backupFile = getMetadataBackupFile(metadataResource, service);
             if (backupFile.exists() && samlIdPProperties.getMetadata().getHttp().isForceMetadataRefresh()) {
+                LOGGER.debug("CAS is configured to forcefully refresh metadata for service [{}]. Old metadata backup files "
+                             + "will now be deleted for this service.", service.getName());
                 cleanUpExpiredBackupMetadataFilesFor(metadataResource, service);
             }
             val canonicalPath = backupFile.getCanonicalPath();
-            LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
+            LOGGER.debug("Metadata backup file for [{}] will be at [{}]", service.getName(), canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
+
+            if (backupFile.exists() && backupFile.canRead()) {
+                try {
+                    val metadataProvider = getMetadataResolverFromFile(backupFile);
+                    configureAndInitializeSingleMetadataResolver(metadataProvider, service);
+                    if (Boolean.TRUE.equals(metadataProvider.isRootValid())) {
+                        LOGGER.debug("Metadata backup file for service [{}] at [{}] is valid. CAS will reuse the SAML2 metadata file "
+                                     + "at [{}] and will not download new metadata from [{}]", service.getName(), canonicalPath, canonicalPath, metadataLocation);
+                        return CollectionUtils.wrap(metadataProvider);
+                    }
+                } catch (final Exception e) {
+                    LoggingUtils.error(LOGGER, e);
+                }
+                LOGGER.info("Metadata backup file found for service [{}] at [{}] is invalid and will be disregarded. "
+                            + "CAS will proceed to download new metadata from [{}]",
+                    service.getName(), canonicalPath, metadataLocation);
+                FileUtils.forceDelete(backupFile);
+            }
 
             response = fetchMetadata(service, metadataLocation, criteriaSet, backupFile);
             val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
@@ -176,6 +195,10 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             output.flush();
         }
         EntityUtils.consume(entity);
+        return getMetadataResolverFromFile(backupFile);
+    }
+
+    private InMemoryResourceMetadataResolver getMetadataResolverFromFile(final File backupFile) throws Exception {
         val metadataResolver = new InMemoryResourceMetadataResolver(backupFile, configBean);
         metadataResolver.setId("RegisteredServiceMetadata-" + backupFile.getName());
         return metadataResolver;
@@ -203,25 +226,10 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         return HttpUtils.execute(exec);
     }
 
-    /**
-     * Gets metadata location for service.
-     *
-     * @param service     the service
-     * @param criteriaSet the criteria set
-     * @return the metadata location for service
-     */
     protected String getMetadataLocationForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         return SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
     }
 
-    /**
-     * Gets metadata backup file.
-     *
-     * @param metadataResource the metadata resource
-     * @param service          the service
-     * @return the metadata backup file
-     * @throws IOException the io exception
-     */
     protected File getMetadataBackupFile(final AbstractResource metadataResource,
                                          final SamlRegisteredService service) throws IOException {
 
@@ -236,17 +244,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         return backupFile;
     }
 
-    /**
-     * Gets backup metadata filename prefix.
-     * <p>
-     * The metadata source may be an aggregate, representing more than on entity id
-     * inside the single registered service definition. Therefor, using the service's
-     * name or id may not be appropriate choice as compounds in the metadata file name.
-     *
-     * @param metadataResource the metadata resource
-     * @param service          the service
-     * @return the backup metadata filename prefix
-     */
     protected String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final SamlRegisteredService service) {
         val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         val fileName = SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation)

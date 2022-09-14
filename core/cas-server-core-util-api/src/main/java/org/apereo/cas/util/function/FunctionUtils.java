@@ -261,6 +261,29 @@ public class FunctionUtils {
     }
 
     /**
+     * Do and handle consumer.
+     *
+     * @param <R>          the type parameter
+     * @param function     the function
+     * @param errorHandler the error handler
+     * @return the consumer
+     */
+    public static <R> Consumer<R> doAndHandle(final CheckedConsumer<R> function,
+                                              final CheckedConsumer<Throwable> errorHandler) {
+        return value -> {
+            try {
+                function.accept(value);
+            } catch (final Throwable e) {
+                try {
+                    errorHandler.accept(e);
+                } catch (final Throwable ex) {
+                    throw new IllegalArgumentException(ex);
+                }
+            }
+        };
+    }
+
+    /**
      * Do and handle checked consumer.
      *
      * @param <R>          the type parameter

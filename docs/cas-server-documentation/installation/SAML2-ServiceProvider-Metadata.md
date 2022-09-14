@@ -74,6 +74,12 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
   "metadataLocation" : "https://url/to/metadata.xml"
 }
 ```
+
+CAS may attempt to reuse the metadata from a previously-downloaded backup file on disk if the metadata file is still seen as valid. 
+This capability will require the forceful fetching of the metadata over HTTP to be disabled.
+
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.http" %}
+
 {% endtab %}
 
 {% tab metadata File %}
