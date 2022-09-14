@@ -15,10 +15,6 @@ with additional support to map principal attributes into the appropriate claims 
 
 SCIM v2 is supported, thanks to the SDK provided by [UnboundID](https://github.com/PingIdentity).
 
-<div class="alert alert-warning"><strong>SCIM v1 Usage</strong>
-<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
-</div>
-
 Typical use case for enabling SCIM is to synchronize and provision user accounts, just in time, 
 to services and applications that are integrated with CAS for single sign-on. In cases where 
 the application also has its own account store, a mapping of user accounts between 
