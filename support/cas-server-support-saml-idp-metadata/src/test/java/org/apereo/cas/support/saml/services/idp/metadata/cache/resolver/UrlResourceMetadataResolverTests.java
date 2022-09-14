@@ -13,8 +13,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
+
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +48,46 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
             assertFalse(resolver.supports(service));
             service.setMetadataLocation(MDQ_URL);
             assertFalse(resolver.supports(service));
+        }
+    }
+
+    @Test
+    public void verifyResolverFromBackup() throws Exception {
+        val service = new SamlRegisteredService();
+        service.setName("TestShib");
+        service.setId(1000);
+        service.setMetadataLocation("http://localhost:9155");
+
+        try (val webServer = new MockWebServer(9155, new ClassPathResource("sample-metadata.xml"), HttpStatus.OK)) {
+            webServer.start();
+            val props = new SamlIdPProperties();
+            props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+            props.getMetadata().getHttp().setForceMetadataRefresh(true);
+            val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+            val results = resolver.resolve(service);
+            assertFalse(results.isEmpty());
+        }
+
+        val props = new SamlIdPProperties();
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getHttp().setForceMetadataRefresh(false);
+        val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+        val results = resolver.resolve(service);
+        assertFalse(results.isEmpty());
+
+        val backupFile = resolver.getMetadataBackupFile(new UrlResource(service.getMetadataLocation()), service);
+        FileUtils.writeByteArrayToFile(backupFile, UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
+        try (val webServer = new MockWebServer(9155, new ClassPathResource("sample-metadata.xml"), HttpStatus.OK)) {
+            webServer.start();
+            val finalResults = resolver.resolve(service);
+            assertFalse(finalResults.isEmpty());
+        }
+
+        FileUtils.writeByteArrayToFile(backupFile, new ClassPathResource("metadata-invalid.xml").getInputStream().readAllBytes());
+        try (val webServer = new MockWebServer(9155, new ClassPathResource("sample-metadata.xml"), HttpStatus.OK)) {
+            webServer.start();
+            val finalResults = resolver.resolve(service);
+            assertFalse(finalResults.isEmpty());
         }
     }
 

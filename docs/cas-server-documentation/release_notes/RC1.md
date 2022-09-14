@@ -72,6 +72,12 @@ be supported, maintained or released:
 
 The ABAC authorization policy assigned to a registered service can 
 now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activation.html).
+
+### SAML2 Metadata Resolution
+
+In the event that a SAML2 service provider is configured to download metadata from a URL, CAS may now attempt to reuse the previously-downloaded
+backup file on disk for the service provider, if the metadata file is still seen as valid. This capability will require the forceful fetching
+of the metadata over HTTP to be disabled.
  
 ### Docker Images
 
