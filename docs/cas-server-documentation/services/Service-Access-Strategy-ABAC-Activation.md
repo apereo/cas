@@ -12,10 +12,11 @@ The ABAC strategy can be modified to conditionally activate the access strategy 
 the final access strategy result if the strategy is determined to remain inactive. 
 
 You can implement the conditions using the following strategies.
-     
-## ABAC
-           
-The activation strategy can be conditionally activated based on available principal attributes. 
+
+{% tabs abacconditions %}
+
+{% tab abacconditions Attributes %}
+The activation strategy can be conditionally activated based on available principal attributes.
 
 ```json
 {
@@ -41,23 +42,21 @@ The activation strategy can be conditionally activated based on available princi
   }
 }
 ```
-  
-In the above example, the access strategy is only activated if the current principal 
+
+In the above example, the access strategy is only activated if the current principal
 
 - has a `lastName` attribute with values `Jon` or `John`
 - **...AND...**  (This is controlled by the `operator` field, which you can also alter to use `OR`)
 - has a `firstName` attribute with values `Holdoor` or `Hodor`
-  
-Note that if the access strategy fails to activate and must remain inactive, then access is denied via `allowIfInactive`.
 
-## Groovy 
- 
+Note that if the access strategy fails to activate and must remain inactive, then access is denied via `allowIfInactive`.
+{% endtab %}
+
+{% tab abacconditions Groovy %}
 You can decide whether the access strategy should be activated using a Groovy script, that may be defined either inline
 or outsourced to an external Groovy script.
-   
-### Inline Groovy
 
-This is the option where you define the Groovy script directly within the body of the service definition:
+Below shows the option where you define the Groovy script directly within the body of the service definition:
 
 ```json
 {
@@ -88,9 +87,7 @@ The `accessRequest` object allows one to define conditions based on the followin
 | `service`           | The `Service` object representing the current application request.                       |
 | `registeredService` | The registered service definition in CAS that is mapped to the `Service`.                |
 
-### External Groovy
-            
-You could also outsource the Groovy script to an external file:
+Alternatively, you could also outsource the Groovy script to an external file:
 
 ```json
 {
@@ -111,7 +108,7 @@ You could also outsource the Groovy script to an external file:
   }
 }
 ```
-   
+
 The script itself may be designed as:
 
 ```groovy
@@ -124,9 +121,9 @@ def run(Object[] args) {
     return true
 }
 ```
-    
-## Chaining
-    
+{% endtab %}
+
+{% tab abacconditions Chaining %}
 You can also combine multiple activation criteria using a chaining setup:
 
 ```json
@@ -162,3 +159,7 @@ You can also combine multiple activation criteria using a chaining setup:
   }
 }
 ```
+
+{% endtab %}
+
+{% endtabs %}
