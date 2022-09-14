@@ -278,7 +278,7 @@ public class MockWebServer implements AutoCloseable {
                 try {
                     val socket = serverSocket.accept();
                     val givenHeaders = new HashMap<String, String>();
-                    val in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    val in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
                     var line = StringUtils.EMPTY;
                     while ((line = in.readLine()) != null && !line.isEmpty()) {
                         if (line.contains(":")) {
