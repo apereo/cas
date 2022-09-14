@@ -103,7 +103,9 @@ A number of Docker images used for integration testing are now upgraded to their
 - Embedded YAML application configuration files are able to override default application properties that ship with CAS.
 - Authentication context classes in the SAML2 response can be determined from context mapping settings when no specific context class is present in the 
   SAML2 authentication context.
+- SAML2 metadata resolution for service providers are now sent to the CAS audit log and recorded under `SAML2_METADATA_RESOLUTION`.
 - Support for [Google Analytics 4](../integration/Configuring-Google-Analytics.html) is now included.
+- [Auditable CAS events](../audits/Audits.html) are now automatically collected and displayed in the documentation.
 
 ## Library Upgrades
 

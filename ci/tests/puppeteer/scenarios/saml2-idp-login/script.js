@@ -20,6 +20,9 @@ const cas = require('../../cas.js');
         let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
         console.log(authData);
 
+        console.log("Removing cached metadata for service providers");
+        await cas.doRequest("https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadataCache", "DELETE", {}, 204);
+
         const entityId = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
         const endpoints = ["health", `samlIdPRegisteredServiceMetadataCache?serviceId=Sample&entityId=${entityId}`];
         const baseUrl = "https://localhost:8443/cas/actuator/";

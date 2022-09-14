@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.Builder;
@@ -23,6 +24,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
@@ -36,6 +38,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link HttpUtils}.
@@ -73,13 +76,7 @@ public class HttpUtils {
                 request.addHeader(headerKey, headerValue);
             });
             prepareHttpRequest(request, execution);
-            val builder = getHttpClientBuilder();
-            if (StringUtils.isNotBlank(execution.getProxyUrl())) {
-                val proxyEndpoint = new URL(execution.getProxyUrl());
-                val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort(), proxyEndpoint.getProtocol());
-                builder.setProxy(proxy);
-            }
-            val client = builder.build();
+            val client = getHttpClient(execution);
             return client.execute(request);
         } catch (final SSLHandshakeException e) {
             val sanitizedUrl = FunctionUtils.doUnchecked(
@@ -93,14 +90,23 @@ public class HttpUtils {
         return null;
     }
 
+    private static CloseableHttpClient getHttpClient(final HttpExecutionRequest execution) throws Exception {
+        val builder = getHttpClientBuilder(execution);
+        if (StringUtils.isNotBlank(execution.getProxyUrl())) {
+            val proxyEndpoint = new URL(execution.getProxyUrl());
+            val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort(), proxyEndpoint.getProtocol());
+            builder.setProxy(proxy);
+        }
+        return builder.build();
+    }
+
     /**
      * Close the response.
      *
      * @param response the response to close
      */
     public void close(final HttpResponse response) {
-        if (response instanceof CloseableHttpResponse) {
-            val closeableHttpResponse = (CloseableHttpResponse) response;
+        if (response instanceof CloseableHttpResponse closeableHttpResponse) {
             try {
                 closeableHttpResponse.close();
             } catch (final Exception e) {
@@ -117,7 +123,7 @@ public class HttpUtils {
      * @return http headers
      */
     public org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
-                                                                              final String basicAuthPassword) {
+                                                                       final String basicAuthPassword) {
         return HttpUtils.createBasicAuthHeaders(basicAuthUser, basicAuthPassword, "US-ASCII");
     }
 
@@ -130,8 +136,8 @@ public class HttpUtils {
      * @return the org . springframework . http . http headers
      */
     public org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
-                                                                              final String basicAuthPassword,
-                                                                              final String basicCharset) {
+                                                                       final String basicAuthPassword,
+                                                                       final String basicCharset) {
         val acceptHeaders = new org.springframework.http.HttpHeaders();
         acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         if (StringUtils.isNotBlank(basicAuthUser) && StringUtils.isNotBlank(basicAuthPassword)) {
@@ -167,7 +173,7 @@ public class HttpUtils {
      * @param execution the execution request
      */
     private void prepareHttpRequest(final HttpUriRequest request,
-                                           final HttpExecutionRequest execution) {
+                                    final HttpExecutionRequest execution) {
         if (execution.isBasicAuthentication()) {
             val auth = EncodingUtils.encodeBase64(execution.getBasicAuthUsername() + ':' + execution.getBasicAuthPassword());
             request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + auth);
@@ -185,23 +191,33 @@ public class HttpUtils {
         });
     }
 
-    private HttpClientBuilder getHttpClientBuilder() {
+    private HttpClientBuilder getHttpClientBuilder(final HttpExecutionRequest execution) {
         val requestConfig = RequestConfig.custom();
         requestConfig.setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS);
         requestConfig.setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS);
         requestConfig.setSocketTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS);
-
-        return HttpClientBuilder
+        
+        val builder = HttpClientBuilder
             .create()
             .useSystemProperties()
             .setMaxConnTotal(MAX_CONNECTIONS)
             .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE)
             .setDefaultRequestConfig(requestConfig.build());
+        Optional.ofNullable(execution.getHttpClient())
+            .ifPresent(client -> {
+                val httpClientFactory = client.httpClientFactory();
+                builder.setSSLHostnameVerifier(httpClientFactory.getHostnameVerifier());
+                builder.setSSLContext(httpClientFactory.getSslContext());
+                builder.setSSLSocketFactory(httpClientFactory.getSslSocketFactory());
+            });
+        return builder;
     }
 
     @SuperBuilder
     @Getter
     public static class HttpExecutionRequest {
+        private final HttpClient httpClient;
+
         @NonNull
         private final HttpMethod method;
 

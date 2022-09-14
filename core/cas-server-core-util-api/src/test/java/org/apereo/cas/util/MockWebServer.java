@@ -18,7 +18,9 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -148,7 +150,9 @@ public class MockWebServer implements AutoCloseable {
             val addr = new InetSocketAddress("0.0.0.0", port);
             return sslContext.getServerSocketFactory().createServerSocket(port, 0, addr.getAddress());
         }
-        return new ServerSocket(port);
+        val ss = new ServerSocket(port);
+        ss.setSoTimeout(30000);
+        return ss;
     }
 
     public void responseBody(final String data) {
@@ -156,8 +160,9 @@ public class MockWebServer implements AutoCloseable {
     }
 
     public void responseBodySupplier(final Supplier<Resource> sup) {
-         this.worker.setResourceSupplier(sup);
+        this.worker.setResourceSupplier(sup);
     }
+
     /**
      * Starts the Web server so it can accept requests on the listening port.
      */
@@ -271,7 +276,18 @@ public class MockWebServer implements AutoCloseable {
         public synchronized void run() {
             while (this.running) {
                 try {
-                    val socket = this.serverSocket.accept();
+                    val socket = serverSocket.accept();
+                    val givenHeaders = new HashMap<String, String>();
+                    val in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    var line = StringUtils.EMPTY;
+                    while ((line = in.readLine()) != null && !line.isEmpty()) {
+                        if (line.contains(":")) {
+                            val name = line.substring(0, line.indexOf(':')).trim();
+                            val value = line.substring(line.indexOf(':') + 1).trim();
+                            givenHeaders.put(name, value);
+                        }
+                    }
+                    LOGGER.debug("Headers are [{}]", givenHeaders);
                     if (this.functionToExecute != null) {
                         LOGGER.trace("Executed function with result [{}]", functionToExecute.apply(socket));
                     } else {
@@ -300,7 +316,7 @@ public class MockWebServer implements AutoCloseable {
             if (resource == null) {
                 this.resource = this.resourceSupplier.get();
             }
-            
+
             if (resource != null) {
                 LOGGER.debug("Socket response for resource [{}]", resource.getDescription());
                 val out = socket.getOutputStream();
@@ -327,6 +343,8 @@ public class MockWebServer implements AutoCloseable {
                 }
                 out.flush();
                 LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getDescription(), resource.contentLength());
+                out.close();
+                socket.close();
             }
         }
     }

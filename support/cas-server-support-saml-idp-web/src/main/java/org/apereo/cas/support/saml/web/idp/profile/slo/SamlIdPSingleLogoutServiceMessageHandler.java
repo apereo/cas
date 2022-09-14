@@ -124,6 +124,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 val exec = HttpUtils.HttpExecutionRequest.builder()
                     .method(HttpMethod.GET)
                     .url(redirectUrl)
+                    .httpClient(getHttpClient())
                     .build();
                 response = HttpUtils.execute(exec);
             } else {
