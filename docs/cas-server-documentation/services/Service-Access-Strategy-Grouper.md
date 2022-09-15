@@ -72,6 +72,16 @@ to override the defaults:
 }
 ```
 
+
+You may also consider externalizing the Grouper client condfiguration file
+by modifying `/src/main/resources/grouper.client.properties` to contain the following:
+
+```properties
+grouperClient.config.hierarchy = classpath:/grouper.client.base.properties,file:/etc/cas/config/grouper.client.properties
+```
+
+...where `/etc/cas/config/grouper.client.properties` would then contain the actual Grouper related settings.
+
 ## Troubleshooting
 
 To enable additional logging, configure the log4j configuration file to add the following levels:
