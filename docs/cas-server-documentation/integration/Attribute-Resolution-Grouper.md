@@ -25,6 +25,15 @@ with the following configured properties:
 # grouperClient.webService.login = banderson
 # grouperClient.webService.password = password
 ```
+    
+You may also consider externalizing the Grouper client condfiguration file 
+by modifying `/src/main/resources/grouper.client.properties` to contain the following:
+
+```properties
+grouperClient.config.hierarchy = classpath:/grouper.client.base.properties,file:/etc/cas/config/grouper.client.properties
+```
+    
+...where `/etc/cas/config/grouper.client.properties` would then contain the actual Grouper related settings. 
 
 ## Troubleshooting
 
