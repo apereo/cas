@@ -569,13 +569,11 @@ exports.killProcess = async (command, arguments) => {
     });
 };
 
-exports.sha256 = async(value) => {
-    return CryptoJS.SHA256(value)
-};
+exports.sha256 = async(value) => CryptoJS.SHA256(value);
 
-exports.base64Url = async(value) => {
-    return CryptoJS.enc.Base64url.stringify(value);
-};
+exports.base64Url = async(value) => CryptoJS.enc.Base64url.stringify(value);
+
+exports.pageVariable = async(page, name) => await page.evaluate(name);
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
