@@ -339,8 +339,6 @@ public class MockWebServer implements Closeable {
                     throw e;
                 }
                 out.flush();
-                out.close();
-                socket.close();
                 LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getDescription(), resource.contentLength());
             }
         }

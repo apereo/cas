@@ -79,12 +79,12 @@ public class RestAcceptableUsagePolicyRepositoryTests {
 
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         val props = new AcceptableUsagePolicyProperties();
-        props.getRest().setUrl("http://localhost:9299");
+        props.getRest().setUrl("http://localhost:9219");
         props.getCore().setAupAttributeName("givenName");
         val r = new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, props);
 
         val data = StringUtils.EMPTY;
-        try (val webServer = new MockWebServer(9299,
+        try (val webServer = new MockWebServer(9219,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.SERVICE_UNAVAILABLE)) {
             webServer.start();
             assertFalse(r.fetchPolicy(context).isPresent());
