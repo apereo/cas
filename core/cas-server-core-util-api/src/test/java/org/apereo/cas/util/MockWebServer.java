@@ -19,6 +19,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
@@ -42,7 +43,7 @@ import java.util.function.Supplier;
  * @since 3.4.6
  */
 @Slf4j
-public class MockWebServer implements AutoCloseable {
+public class MockWebServer implements Closeable {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -175,11 +176,8 @@ public class MockWebServer implements AutoCloseable {
      * Stops the Web server after processing any pending requests.
      */
     public void stop() {
-        if (!isRunning()) {
-            return;
-        }
-        this.worker.stop();
         try {
+            this.worker.stop();
             this.workerThread.join();
         } catch (final InterruptedException e) {
             LoggingUtils.error(LOGGER, e);
@@ -275,8 +273,7 @@ public class MockWebServer implements AutoCloseable {
         @Override
         public synchronized void run() {
             while (this.running) {
-                try {
-                    val socket = serverSocket.accept();
+                try (val socket = serverSocket.accept()) {
                     val givenHeaders = new HashMap<String, String>();
                     val in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
                     var line = StringUtils.EMPTY;
@@ -306,7 +303,7 @@ public class MockWebServer implements AutoCloseable {
 
         public void stop() {
             try {
-                this.serverSocket.close();
+                serverSocket.close();
             } catch (final IOException e) {
                 LOGGER.trace("Exception when closing the server socket: [{}]", e.getMessage());
             }
@@ -314,7 +311,7 @@ public class MockWebServer implements AutoCloseable {
 
         private void writeResponse(final Socket socket) throws IOException {
             if (resource == null) {
-                this.resource = this.resourceSupplier.get();
+                this.resource = resourceSupplier.get();
             }
 
             if (resource != null) {
@@ -330,7 +327,7 @@ public class MockWebServer implements AutoCloseable {
 
                 val buffer = new byte[BUFFER_SIZE];
                 try {
-                    try (val in = this.resource.getInputStream()) {
+                    try (val in = resource.getInputStream()) {
                         var count = 0;
                         while ((count = in.read(buffer)) > -1) {
                             out.write(buffer, 0, count);
@@ -342,9 +339,9 @@ public class MockWebServer implements AutoCloseable {
                     throw e;
                 }
                 out.flush();
-                LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getDescription(), resource.contentLength());
                 out.close();
                 socket.close();
+                LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getDescription(), resource.contentLength());
             }
         }
     }
