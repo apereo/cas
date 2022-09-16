@@ -83,6 +83,13 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     String getBypassPrincipalAttributeValue();
 
     /**
+     * Indicates whether bypass should be enabled and activated
+     * if the defined bypass principal attribute is not found.
+     * @return true/false
+     */
+    boolean isBypassIfMissingPrincipalAttribute();
+
+    /**
      * Path to an external/embedded script
      * that allows for triggering of MFA.
      *

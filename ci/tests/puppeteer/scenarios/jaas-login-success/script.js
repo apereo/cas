@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
-const assert = require('assert');
 
 async function execLogin(page, uid) {
     console.log(`Logging in with user ${uid}`);
