@@ -12,6 +12,10 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface OidcIdTokenClaimCollector {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "oidcIdTokenClaimCollector";
 
     /**
      * Default system behavior when collecting id token claims.

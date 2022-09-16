@@ -7,12 +7,13 @@ import org.apereo.cas.oidc.authn.OidcJwtAuthenticatorHMacTests;
 import org.apereo.cas.oidc.authn.OidcJwtAuthenticatorRsaTests;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicyTests;
+import org.apereo.cas.oidc.claims.OidcDefaultAttributeToScopeClaimMapperTests;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollectorTests;
 import org.apereo.cas.oidc.claims.OidcOpenIdScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicyTests;
-import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapperTests;
+import org.apereo.cas.oidc.claims.OidcSimpleIdTokenClaimCollectorTests;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcEchoingWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcGroovyWebFingerUserInfoRepositoryTests;
@@ -185,6 +186,7 @@ import org.junit.platform.suite.api.Suite;
     OidcClientSecretValidatorTests.class,
     OidcMessageSanitizerTests.class,
     OidcDPoPAuthenticatorTests.class,
+    OidcSimpleIdTokenClaimCollectorTests.class,
     OidcIdTokenClaimCollectorTests.class,
     OidcIdTokenExpirationPolicyBuilderTests.class,
     OidcInitialAccessTokenControllerTests.class,

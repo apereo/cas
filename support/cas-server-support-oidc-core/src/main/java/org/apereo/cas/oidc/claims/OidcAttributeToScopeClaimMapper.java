@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.claims.mapping;
+package org.apereo.cas.oidc.claims;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;

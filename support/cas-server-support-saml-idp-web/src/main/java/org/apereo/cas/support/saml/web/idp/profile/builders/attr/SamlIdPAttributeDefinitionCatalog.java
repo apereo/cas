@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.stream.Stream;
 
 /**
@@ -8,6 +10,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@UtilityClass
 class SamlIdPAttributeDefinitionCatalog {
 
     /**
