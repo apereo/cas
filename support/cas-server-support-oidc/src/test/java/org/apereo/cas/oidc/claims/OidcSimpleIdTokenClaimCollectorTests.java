@@ -37,8 +37,15 @@ public class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
     @Test
     public void verifyUnknownDefinition() throws Exception {
         val claims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(claims, "unknown", List.of("value"));
-        assertEquals(1, claims.getStringListClaimValue("unknown").size());
+        oidcIdTokenClaimCollector.collect(claims, "unknown", List.of("value1", "value2"));
+        assertEquals(2, claims.getStringListClaimValue("unknown").size());
+    }
+
+    @Test
+    public void verifyUnknownDefinitionAsSingle() throws Exception {
+        val claims = new JwtClaims();
+        oidcIdTokenClaimCollector.collect(claims, "unknown", List.of("value1"));
+        assertEquals("value1", claims.getStringClaimValue("unknown"));
     }
 
     @Test

@@ -1,7 +1,9 @@
 package org.apereo.cas.oidc.profile;
 
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.OidcAttributeDefinition;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -11,9 +13,7 @@ import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
@@ -24,7 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -38,15 +38,17 @@ import java.util.UUID;
  */
 @Slf4j
 public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRenderer {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
-
     private final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService;
+
+    private final AttributeDefinitionStore attributeDefinitionStore;
 
     public OidcUserProfileViewRenderer(final OAuthProperties oauthProperties,
                                        final ServicesManager servicesManager,
-                                       final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService) {
+                                       final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
+                                       final AttributeDefinitionStore attributeDefinitionStore) {
         super(servicesManager, oauthProperties);
         this.signingAndEncryptionService = signingAndEncryptionService;
+        this.attributeDefinitionStore = attributeDefinitionStore;
     }
 
     @Override
@@ -71,24 +73,29 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
     protected ResponseEntity<String> buildPlainUserProfileClaims(final Map<String, Object> userProfile,
                                                                  final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        val result = MAPPER.writeValueAsString(userProfile);
-        return ResponseEntity.ok(result);
+        val claims = convertUserProfileIntoClaims(userProfile);
+        return ResponseEntity.ok(claims.toJson());
     }
 
-    protected ResponseEntity<String> signAndEncryptUserProfileClaims(final Map<String, Object> userProfile,
-                                                                     final HttpServletResponse response,
-                                                                     final OidcRegisteredService registeredService) {
+    private JwtClaims convertUserProfileIntoClaims(final Map<String, Object> userProfile) {
         val claims = new JwtClaims();
         userProfile.forEach((key, value) -> {
             if (OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES.equals(key)) {
                 val attributes = (Map<String, Object>) value;
                 val newAttributes = new HashMap<String, Object>();
-                attributes.forEach((k, v) -> newAttributes.put(k, useSingleValueForSingletonList(v)));
+                attributes.forEach((attrName, attrValue) -> newAttributes.put(attrName, determineAttributeValue(attrName, attrValue)));
                 claims.setClaim(key, newAttributes);
             } else {
-                claims.setClaim(key, useSingleValueForSingletonList(value));
+                claims.setClaim(key, determineAttributeValue(key, value));
             }
         });
+        return claims;
+    }
+
+    protected ResponseEntity<String> signAndEncryptUserProfileClaims(final Map<String, Object> userProfile,
+                                                                     final HttpServletResponse response,
+                                                                     final OidcRegisteredService registeredService) {
+        val claims = convertUserProfileIntoClaims(userProfile);
         claims.setAudience(registeredService.getClientId());
         claims.setIssuedAt(NumericDate.now());
         claims.setJwtId(UUID.randomUUID().toString());
@@ -104,10 +111,10 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
 
-    private static Object useSingleValueForSingletonList(final Object value) {
-        if (value instanceof Collection && ((Collection) value).size() == 1) {
-            return ((Collection) value).iterator().next();
-        }
-        return value;
+    protected Object determineAttributeValue(final String name, final Object attrValue) {
+        val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
+        val result = attributeDefinitionStore.locateAttributeDefinition(name, OidcAttributeDefinition.class);
+        return result.map(defn -> defn.isSingleValue() && values.size() == 1 ? values.get(0) : attrValue)
+            .orElseGet(() -> values.size() == 1 ? values.get(0) : values);
     }
 }
