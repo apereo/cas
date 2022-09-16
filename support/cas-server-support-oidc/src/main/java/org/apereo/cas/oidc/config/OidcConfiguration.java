@@ -223,13 +223,15 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier("oidcUserProfileSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) throws Exception {
             return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
-                servicesManager, oidcUserProfileSigningAndEncryptionService);
+                servicesManager, oidcUserProfileSigningAndEncryptionService, attributeDefinitionStore);
         }
 
         @Bean
