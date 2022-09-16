@@ -173,7 +173,7 @@ the following example to release `userX` as a *claim*:
 ```
 
 <div class="alert alert-info"><strong>Usage</strong><p>You should consider using a scope-free attribute release policy
-only in very advanced and challenging use cases, typically to make a rather diffcult client application integration work.</p>
+only in very advanced and challenging use cases, typically to make a rather difficult client application integration work.</p>
 </div>
 
 It is also possible to mix *free-form* release policies with those that operate 
