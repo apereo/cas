@@ -43,6 +43,14 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
 
             if (bypassEnabled) {
                 val principal = resolvePrincipal(authentication.getPrincipal());
+
+                val matchingAttributes = locateMatchingAttributeName(principal.getAttributes(), mfaPolicy.getBypassPrincipalAttributeName());
+                if (matchingAttributes.isEmpty()) {
+                    LOGGER.debug("No matching principal attribute name from [{}] can be found for [{}]",
+                        principal.getAttributes().keySet(), mfaPolicy.getBypassPrincipalAttributeName());
+                    return !mfaPolicy.isBypassIfMissingPrincipalAttribute();
+                }
+
                 val bypass = locateMatchingAttributeValue(mfaPolicy.getBypassPrincipalAttributeName(),
                     mfaPolicy.getBypassPrincipalAttributeValue(),
                     principal.getAttributes(), true);
