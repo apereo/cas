@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.claims;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;

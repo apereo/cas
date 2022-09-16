@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc;
 
+import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
-import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.util.OidcRequestSupport;

@@ -1,6 +1,5 @@
-package org.apereo.cas.oidc.claims.mapping;
+package org.apereo.cas.oidc.claims;
 
-import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceChainingAttributeReleasePolicy;
