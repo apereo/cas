@@ -27,9 +27,6 @@ CAS is configured for SLO, it attempts to send logout messages to every applicat
 CAS during the SSO session. While this is a best-effort process, in many cases it works well and provides a consistent
 user experience by creating symmetry between login and logout.
 
-<div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session. See <a href="../monitoring/Monitoring-Statistics.html">this page</a>.</p></div>
-
 ## CAS Logout
 
 Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session.
@@ -38,7 +35,6 @@ link via the `service` parameter. The specified `service` must be registered in 
 CAS must be allowed to follow service redirects.
 
 {% include_cached casproperties.html properties="cas.logout" %}
-
 
 ## Single Logout (SLO)
 
@@ -157,7 +153,8 @@ This behavior can be modified via CAS settings.
 In order to better understand the SSO session management of CAS and how it regards application sessions,
 one important note is to be first and foremost considered:
 
-<div class="alert alert-info"><strong>CAS is NOT a session manager</strong><p>Application session is the responsibility of the application.</p></div>
+<div class="alert alert-info"><strong>CAS is NOT a session manager!</strong>
+<p>Application session is the responsibility of the application.</p></div>
 
 CAS wants to maintain and control the SSO session in the form of
 the `TicketGrantingTicket` and a TGT id which is shared between the

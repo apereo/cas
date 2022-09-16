@@ -11,7 +11,10 @@ category: Services
 Applications registered with CAS that intend to use the CAS protocol are given the option to indicate their support
 for specific CAS protocol versions. If the service registration record declares support for specific CAS protocol versions, 
 then attempts at validating service tickets using other CAS protocol versions would be blocked and should fail.
-                    
+
+<div class="alert alert-info"><strong>Usage</strong>
+<p>This feature specifically applies to CAS registered services applications.</p></div>
+
 By default and for backward compatibility reasons, if no supported protocols are specified for the service 
 registration record then all CAS protocol versions are allowed.
 
