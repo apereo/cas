@@ -461,7 +461,7 @@ layout: null
                 * [Rotation](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Rotation.html)
             * [Logout](/cas/{{ version }}/authentication/OIDC-Authentication-Logout.html)
             * [Claims](/cas/{{ version }}/authentication/OIDC-Authentication-Claims.html)
-                *   [Attribute Definitions](/cas/{{ version }}/installation/OIDC-Attribute-Definitions.html)
+                *   [Attribute Definitions](/cas/{{ version }}/authentication/OIDC-Attribute-Definitions.html)
             * [Expiration Policies](/cas/{{ version }}/authentication/OIDC-Authentication-TokenExpirationPolicy.html)
             * [PAR](/cas/{{ version }}/authentication/OIDC-Authentication-PAR.html)
             * [WebFinger Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-WebFinger.html)
