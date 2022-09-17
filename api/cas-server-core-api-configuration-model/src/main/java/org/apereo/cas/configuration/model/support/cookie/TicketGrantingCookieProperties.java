@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * Configuration properties class for tgc.
  *
@@ -24,6 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("TicketGrantingCookieProperties")
 public class TicketGrantingCookieProperties extends PinnableCookieProperties {
 
+    @Serial
     private static final long serialVersionUID = 7392972818105536350L;
 
     /**

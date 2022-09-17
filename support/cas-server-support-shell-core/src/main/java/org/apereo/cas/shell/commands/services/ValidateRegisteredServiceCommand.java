@@ -69,27 +69,15 @@ public class ValidateRegisteredServiceCommand {
 
     private void validate(final File filePath) {
         try {
-            var validator = (RegisteredServiceJsonSerializer) null;
             val basicFileAttributes = Files.readAttributes(filePath.toPath(), BasicFileAttributes.class);
             if (basicFileAttributes.isRegularFile() && filePath.exists()
                 && filePath.canRead() && basicFileAttributes.size() > 0) {
-                switch (FilenameUtils.getExtension(filePath.getPath()).toLowerCase()) {
-                    case "json":
-                        validator = new RegisteredServiceJsonSerializer(applicationContext);
-                        break;
-                    case "yml":
-                    case "yaml":
-                        validator = new RegisteredServiceYamlSerializer(applicationContext);
-                        break;
-                    default:
-                        LOGGER.debug("Unknown file [{}]", filePath.getCanonicalPath());
-                        break;
-                }
-
-                if (validator != null) {
-                    val svc = Objects.requireNonNull(validator).from(filePath);
-                    LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
-                }
+                val validator = switch (FilenameUtils.getExtension(filePath.getPath()).toLowerCase()) {
+                    case "yml", "yaml" -> new RegisteredServiceYamlSerializer(applicationContext);
+                    default -> new RegisteredServiceJsonSerializer(applicationContext);
+                };
+                val svc = Objects.requireNonNull(validator).from(filePath);
+                LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());
             }

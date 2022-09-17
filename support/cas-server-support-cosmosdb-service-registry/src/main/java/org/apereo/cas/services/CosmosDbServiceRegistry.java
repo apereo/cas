@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CosmosDbServiceRegistry}.
@@ -84,8 +83,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
             .forEach(response -> services.addAll(response.getResults()
                 .stream()
                 .map(this::getRegisteredServiceFromDocumentBody)
-                .peek(this::invokeServiceRegistryListenerPostLoad)
-                .collect(Collectors.toList())));
+                .peek(this::invokeServiceRegistryListenerPostLoad).toList()));
         return services;
     }
 
@@ -102,8 +100,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
                 .map(this::getRegisteredServiceFromDocumentBody)
                 .sorted()
                 .filter(r -> r.matches(id))
-                .peek(this::invokeServiceRegistryListenerPostLoad)
-                .collect(Collectors.toList())));
+                .peek(this::invokeServiceRegistryListenerPostLoad).toList()));
         return services.isEmpty() ? null : services.get(0);
     }
 

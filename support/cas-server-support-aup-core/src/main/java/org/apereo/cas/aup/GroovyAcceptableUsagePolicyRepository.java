@@ -11,6 +11,7 @@ import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -21,6 +22,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
+    @Serial
     private static final long serialVersionUID = 2773808902502739L;
 
     private final transient WatchableGroovyScriptResource watchableScript;

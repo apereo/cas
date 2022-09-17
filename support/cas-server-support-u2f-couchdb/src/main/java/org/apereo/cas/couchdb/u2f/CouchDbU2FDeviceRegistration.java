@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.time.LocalDate;
 
 /**
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 public class CouchDbU2FDeviceRegistration extends U2FDeviceRegistration {
 
+    @Serial
     private static final long serialVersionUID = -5891058831508619021L;
 
     @JsonProperty("_id")

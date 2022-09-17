@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -36,6 +37,7 @@ public interface RegisteredServiceServiceTicketExpirationPolicy extends Serializ
      */
     static RegisteredServiceServiceTicketExpirationPolicy undefined() {
         return new RegisteredServiceServiceTicketExpirationPolicy() {
+            @Serial
             private static final long serialVersionUID = -6204076273553630977L;
 
             @Override

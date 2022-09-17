@@ -25,7 +25,6 @@ import static org.mockito.Mockito.*;
 /**
  * Tests the {@link RequestParameterPolicyEnforcementFilter}.
  * <p>
- * <p>
  * First there are test cases for the Filter as a whole against the Filter API.  The advantage of these is that they
  * are testing at the level we care about, the way the filter will actually be used,
  * against the API it really exposes to adopters.  So, great.  The disadvantage of these is that it's

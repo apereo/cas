@@ -20,10 +20,7 @@ public class RegisteredServiceAccessStrategyTests {
         val component = mock(RegisteredServiceAccessStrategy.class);
         when(component.getDelegatedAuthenticationPolicy()).thenCallRealMethod();
         when(component.getRequiredAttributes()).thenCallRealMethod();
-        doCallRealMethod().when(component).setServiceAccessAllowed(anyBoolean());
-
         assertTrue(component.getRequiredAttributes().isEmpty());
         assertNull(component.getDelegatedAuthenticationPolicy());
-        assertDoesNotThrow(() -> component.setServiceAccessAllowed(false));
     }
 }

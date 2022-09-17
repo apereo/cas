@@ -5,6 +5,8 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasRegisteredServiceExpiredEvent} that is signaled
  * when a registered service is expired.
@@ -16,6 +18,7 @@ import lombok.ToString;
 @Getter
 public class CasRegisteredServiceExpiredEvent extends BaseCasRegisteredServiceEvent {
 
+    @Serial
     private static final long serialVersionUID = 291168299766263298L;
 
     private final RegisteredService registeredService;

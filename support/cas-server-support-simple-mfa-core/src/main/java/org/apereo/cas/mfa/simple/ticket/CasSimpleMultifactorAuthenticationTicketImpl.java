@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.Map;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class CasSimpleMultifactorAuthenticationTicketImpl extends AbstractTicket
     implements CasSimpleMultifactorAuthenticationTicket {
+    @Serial
     private static final long serialVersionUID = -6580305495605099699L;
 
     /**

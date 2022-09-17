@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Optional;
 @SuperBuilder
 @ToString(doNotUseGetters = true, exclude = "registeredService")
 public class OAuth20TokenGeneratedResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4111380934505564576L;
 
     private final OAuth20AccessToken accessToken;

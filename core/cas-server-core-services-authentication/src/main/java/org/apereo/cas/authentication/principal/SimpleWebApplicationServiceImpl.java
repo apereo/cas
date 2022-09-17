@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.io.Serial;
 
 /**
  * Represents a service which wishes to use the CAS protocol.
@@ -20,6 +21,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
 
+    @Serial
     private static final long serialVersionUID = 8334068957483758042L;
 
     /**

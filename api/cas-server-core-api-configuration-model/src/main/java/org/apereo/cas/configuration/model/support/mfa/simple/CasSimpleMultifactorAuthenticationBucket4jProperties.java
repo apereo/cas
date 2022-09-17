@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasSimpleMultifactorAuthenticationBucket4jProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("CasSimpleMultifactorAuthenticationBucket4jProperties")
 public class CasSimpleMultifactorAuthenticationBucket4jProperties extends BaseBucket4jProperties {
+    @Serial
     private static final long serialVersionUID = -2432886337199727140L;
 
     public CasSimpleMultifactorAuthenticationBucket4jProperties() {

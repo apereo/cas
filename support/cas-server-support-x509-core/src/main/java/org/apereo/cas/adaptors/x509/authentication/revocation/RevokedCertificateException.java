@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -30,6 +31,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
      */
     public static final String CRL_REASON_OID = "2.5.29.21";
 
+    @Serial
     private static final long serialVersionUID = 8827788431199129708L;
 
     /**

@@ -22,6 +22,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasOAuth20TicketSerializationConfiguration}.
  *
@@ -52,6 +54,7 @@ public class CasOAuth20TicketSerializationConfiguration {
     }
 
     private static class OAuthCodeTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultCode> {
+        @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         @Override
@@ -61,6 +64,7 @@ public class CasOAuth20TicketSerializationConfiguration {
     }
 
     private static class AccessTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultAccessToken> {
+        @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         @Override
@@ -70,6 +74,7 @@ public class CasOAuth20TicketSerializationConfiguration {
     }
 
     private static class RefreshTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultRefreshToken> {
+        @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         @Override
@@ -79,6 +84,7 @@ public class CasOAuth20TicketSerializationConfiguration {
     }
 
     private static class DeviceTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultDeviceToken> {
+        @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         @Override
@@ -88,6 +94,7 @@ public class CasOAuth20TicketSerializationConfiguration {
     }
 
     private static class DeviceUserCodeTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultDeviceUserCode> {
+        @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         @Override

@@ -74,14 +74,10 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
             }
         }
 
-        switch (res.getStatus()) {
-            case TRUE:
-                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
-            case FALSE:
-                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
-            case UNDEFINED:
-            default:
-                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
-        }
+        return switch (res.getStatus()) {
+            case TRUE -> eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
+            case FALSE -> eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
+            case UNDEFINED -> eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
+        };
     }
 }

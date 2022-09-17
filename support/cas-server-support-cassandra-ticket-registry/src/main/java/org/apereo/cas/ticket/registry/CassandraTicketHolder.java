@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @NoArgsConstructor
 public class CassandraTicketHolder implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4308217682209741077L;
 
     /**

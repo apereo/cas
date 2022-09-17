@@ -6,6 +6,7 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 public class PseudoPlatformTransactionManager implements PlatformTransactionManager, Serializable {
+    @Serial
     private static final long serialVersionUID = -3501861804821200893L;
 
     @Override

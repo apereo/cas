@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -16,9 +17,10 @@ import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcDPoPAuthenticator;
 import org.apereo.cas.oidc.authn.OidcJwtAuthenticator;
+import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
+import org.apereo.cas.oidc.claims.OidcDefaultAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
-import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
-import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapper;
+import org.apereo.cas.oidc.claims.OidcSimpleIdTokenClaimCollector;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
@@ -111,7 +113,6 @@ import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
-import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -190,11 +191,9 @@ public class OidcConfiguration {
             final SecurityLogic oidcAuthorizationSecurityLogic,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            val interceptor = new SecurityInterceptor(oauthSecConfig,
-                Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
-            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
-            interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
-            interceptor.setSecurityLogic(oidcAuthorizationSecurityLogic);
+            val interceptor = SecurityInterceptor.build(oauthSecConfig, Authenticators.CAS_OAUTH_CLIENT,
+                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS,
+                oidcAuthorizationSecurityLogic);
             return interceptor;
         }
     }
@@ -224,13 +223,15 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier("oidcUserProfileSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) throws Exception {
             return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
-                servicesManager, oidcUserProfileSigningAndEncryptionService);
+                servicesManager, oidcUserProfileSigningAndEncryptionService, attributeDefinitionStore);
         }
 
         @Bean
@@ -589,7 +590,7 @@ public class OidcConfiguration {
             final ExpirationPolicyBuilder oidcIdTokenExpirationPolicy,
             @Qualifier("oidcUserProfileViewRenderer")
             final OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer,
-            @Qualifier("oidcIdTokenClaimCollector")
+            @Qualifier(OidcIdTokenClaimCollector.BEAN_NAME)
             final OidcIdTokenClaimCollector oidcIdTokenClaimCollector,
             @Qualifier("callbackAuthorizeViewResolver")
             final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver,
@@ -741,9 +742,11 @@ public class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "oidcIdTokenClaimCollector")
-        public OidcIdTokenClaimCollector oidcIdTokenClaimCollector() {
-            return OidcIdTokenClaimCollector.defaultCollector();
+        @ConditionalOnMissingBean(name = OidcIdTokenClaimCollector.BEAN_NAME)
+        public OidcIdTokenClaimCollector oidcIdTokenClaimCollector(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore) {
+            return new OidcSimpleIdTokenClaimCollector(attributeDefinitionStore);
         }
 
         @Bean

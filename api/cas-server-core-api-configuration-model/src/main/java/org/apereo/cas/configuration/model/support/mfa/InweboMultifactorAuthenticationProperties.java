@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * The Inwebo MFA properties.
  *
@@ -27,6 +29,7 @@ public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAu
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-inwebo";
 
+    @Serial
     private static final long serialVersionUID = -942637204816051814L;
 
     /**

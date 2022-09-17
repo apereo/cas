@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.ektorp.support.OpenCouchDbDocument;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbSurrogateAuthorization}.
  *
@@ -16,6 +18,7 @@ import org.ektorp.support.OpenCouchDbDocument;
 @Setter
 public class CouchDbSurrogateAuthorization extends OpenCouchDbDocument {
 
+    @Serial
     private static final long serialVersionUID = 2579922772241446709L;
 
     /**

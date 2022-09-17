@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * The Inwebo credentials.
  *
@@ -21,6 +23,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class InweboCredential extends BasicIdentifiableCredential {
 
+    @Serial
     private static final long serialVersionUID = 7458888463097030052L;
 
     private String otp;

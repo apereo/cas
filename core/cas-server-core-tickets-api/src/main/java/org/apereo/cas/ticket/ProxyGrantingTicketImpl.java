@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * Concrete implementation of a proxy granting ticket (PGT). A PGT is
  * used by a service to obtain proxy tickets for obtaining access to a back-end
@@ -29,6 +31,7 @@ import lombok.val;
 @NoArgsConstructor
 public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements ProxyGrantingTicket {
 
+    @Serial
     private static final long serialVersionUID = -8126909926138945649L;
 
     /**

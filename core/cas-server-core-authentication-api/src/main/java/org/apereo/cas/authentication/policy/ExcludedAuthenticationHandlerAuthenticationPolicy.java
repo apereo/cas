@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.Set;
 
 /**
@@ -28,6 +29,7 @@ import java.util.Set;
 @Getter
 public class ExcludedAuthenticationHandlerAuthenticationPolicy extends BaseAuthenticationHandlerAuthenticationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -3871692225877293627L;
 
     public ExcludedAuthenticationHandlerAuthenticationPolicy(final Set<String> handlerNames, final boolean tryAll) {

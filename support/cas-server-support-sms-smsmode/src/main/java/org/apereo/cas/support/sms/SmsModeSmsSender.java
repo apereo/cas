@@ -6,8 +6,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -28,13 +26,9 @@ import java.util.HashMap;
  * @author Jérôme Rautureau
  * @since 6.5.0
  */
-@Getter
-@RequiredArgsConstructor
 @Slf4j
-public class SmsModeSmsSender implements SmsSender {
+public record SmsModeSmsSender(SmsModeProperties properties) implements SmsSender {
     private static final String SMSMODE_SENT_SMS_RESPONSE_CODE = "0";
-
-    private final SmsModeProperties properties;
 
     @Override
     public boolean send(final String from, final String to, final String message) {

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link U2FTokenCredential}.
  *
@@ -20,6 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class U2FTokenCredential extends OneTimeTokenCredential {
+    @Serial
     private static final long serialVersionUID = -970682410132111037L;
 
     public U2FTokenCredential(final String token) {

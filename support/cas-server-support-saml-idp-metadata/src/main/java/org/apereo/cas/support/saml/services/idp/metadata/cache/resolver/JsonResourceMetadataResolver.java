@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -19,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.hjson.JsonValue;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.DisposableBean;
@@ -29,6 +33,7 @@ import org.springframework.core.io.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -75,6 +80,9 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         }
     }
 
+    @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
+        actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         if (metadataMap.containsKey(service.getServiceId())) {
@@ -117,6 +125,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
     @Getter
     @Setter
     public static class SamlServiceProviderMetadata implements Serializable {
+        @Serial
         private static final long serialVersionUID = -7347473226470492601L;
 
         private String entityId;

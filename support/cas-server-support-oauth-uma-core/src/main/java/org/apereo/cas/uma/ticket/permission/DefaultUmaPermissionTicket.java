@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -26,6 +27,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor(force = true)
 public class DefaultUmaPermissionTicket extends AbstractTicket implements UmaPermissionTicket {
+    @Serial
     private static final long serialVersionUID = 2963749819727757623L;
 
     private Map<String, Object> claims = new LinkedHashMap<>();

@@ -11,6 +11,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
  * expired. Use this policy when you want a Ticket to live forever, or at least
@@ -31,6 +33,7 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
      */
     public static final ExpirationPolicy INSTANCE = new NeverExpiresExpirationPolicy();
 
+    @Serial
     private static final long serialVersionUID = 3833747698242303540L;
 
     @Override

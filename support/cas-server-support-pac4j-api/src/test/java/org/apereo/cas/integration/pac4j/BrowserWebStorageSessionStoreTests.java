@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class BrowserWebStorageSessionStoreTests {
     }
 
     private static class Dummy implements Serializable {
+        @Serial
         private static final long serialVersionUID = 7015295901443767970L;
     }
 }

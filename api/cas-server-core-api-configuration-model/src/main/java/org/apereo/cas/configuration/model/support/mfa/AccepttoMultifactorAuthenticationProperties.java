@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link AccepttoMultifactorAuthenticationProperties}.
  *
@@ -28,6 +30,7 @@ public class AccepttoMultifactorAuthenticationProperties extends BaseMultifactor
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-acceptto";
 
+    @Serial
     private static final long serialVersionUID = -2309444053833490009L;
 
     /**

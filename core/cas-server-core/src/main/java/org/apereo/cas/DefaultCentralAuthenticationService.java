@@ -51,6 +51,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 
+import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -66,6 +67,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class DefaultCentralAuthenticationService extends AbstractCentralAuthenticationService {
+    @Serial
     private static final long serialVersionUID = -8943828074939533986L;
 
     public DefaultCentralAuthenticationService(final CentralAuthenticationServiceContext context) {

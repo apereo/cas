@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchbaseAuthenticationProperties}.
  *
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-couchbase-authentication")
 public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties {
 
+    @Serial
     private static final long serialVersionUID = -7257332242368463818L;
 
     /**

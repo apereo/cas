@@ -57,6 +57,6 @@ public class AuthyAuthenticationRegistrationWebflowAction extends BaseCasWebflow
     }
 
     private Hash submitAuthyRegistrationRequest(final User user) throws Exception {
-        return instance.getAuthyClient().getUsers().requestSms(user.getId());
+        return instance.authyClient().getUsers().requestSms(user.getId());
     }
 }

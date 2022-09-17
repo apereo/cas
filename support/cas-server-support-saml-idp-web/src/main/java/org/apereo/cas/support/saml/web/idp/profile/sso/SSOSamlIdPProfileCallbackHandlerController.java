@@ -124,7 +124,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         Objects.requireNonNull(asserted, "Validation assertion cannot be null");
         return AuthenticatedAssertionContext.builder()
             .name(assertion.getPrincipal().getId())
-            .authenticationDate(DateTimeUtils.zonedDateTimeOf(asserted.getPrimaryAuthentication().getAuthenticationDate()))
+            .authenticationDate(DateTimeUtils.zonedDateTimeOf(asserted.primaryAuthentication().getAuthenticationDate()))
             .attributes(CollectionUtils.merge(assertion.getAttributes(), assertion.getPrincipal().getAttributes()))
             .build();
     }

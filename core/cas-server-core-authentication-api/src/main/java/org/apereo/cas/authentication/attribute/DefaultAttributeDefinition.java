@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Slf4j
 public class DefaultAttributeDefinition implements AttributeDefinition {
+    @Serial
     private static final long serialVersionUID = 6898745248727445565L;
 
     private String key;

@@ -90,10 +90,10 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
     public AuthenticationContextValidationResult validateAuthenticationContext(final Assertion assertion,
                                                                                final HttpServletRequest request,
                                                                                final HttpServletResponse response) {
-        LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
-        val registeredService = servicesManager.findServiceBy(assertion.getService());
-        val authentication = assertion.getPrimaryAuthentication();
-        return validateAuthenticationContext(request, response, registeredService, authentication, assertion.getService());
+        LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.service());
+        val registeredService = servicesManager.findServiceBy(assertion.service());
+        val authentication = assertion.primaryAuthentication();
+        return validateAuthenticationContext(request, response, registeredService, authentication, assertion.service());
     }
 
     @Override

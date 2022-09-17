@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -18,6 +21,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.hjson.JsonValue;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.http.HttpMethod;
@@ -43,6 +47,9 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         super(samlIdPProperties, configBean);
     }
 
+    @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
+        actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         HttpResponse response = null;

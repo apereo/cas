@@ -15,6 +15,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasWsSecurityTokenTicketComponentSerializationConfiguration}.
  *
@@ -42,6 +44,7 @@ public class CasWsSecurityTokenTicketComponentSerializationConfiguration {
     }
 
     private static class SecurityTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultSecurityTokenTicket> {
+        @Serial
         private static final long serialVersionUID = -3198623586274810263L;
 
         @Override

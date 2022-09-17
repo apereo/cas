@@ -16,7 +16,6 @@ import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
 
 import java.util.Optional;
 import java.util.ServiceLoader;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasEmbeddedContainerUtils}.
@@ -52,8 +51,7 @@ public class CasEmbeddedContainerUtils {
      */
     public static CasBanner getCasBannerInstance() {
         val subTypes = ServiceLoader.load(CasBanner.class).stream()
-            .map(ServiceLoader.Provider::get)
-            .collect(Collectors.toList());
+            .map(ServiceLoader.Provider::get).toList();
         return subTypes.isEmpty() ? new DefaultCasBanner() : subTypes.get(0);
     }
 

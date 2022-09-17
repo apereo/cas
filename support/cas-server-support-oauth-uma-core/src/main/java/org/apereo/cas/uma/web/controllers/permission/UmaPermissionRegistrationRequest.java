@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -25,6 +26,7 @@ public class UmaPermissionRegistrationRequest implements Serializable {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    @Serial
     private static final long serialVersionUID = 3614209506339611242L;
 
     @JsonProperty("resource_id")

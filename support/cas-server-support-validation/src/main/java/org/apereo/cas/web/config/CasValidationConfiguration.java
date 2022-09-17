@@ -124,26 +124,20 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "cas3ProtocolAttributesRenderer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolAttributesRenderer cas3ProtocolAttributesRenderer(final CasConfigurationProperties casProperties) {
-            switch (casProperties.getView().getCas3().getAttributeRendererType()) {
-                case INLINE:
-                    return new InlinedCas30ProtocolAttributesRenderer();
-                case DEFAULT:
-                default:
-                    return new DefaultCas30ProtocolAttributesRenderer();
-            }
+            return switch (casProperties.getView().getCas3().getAttributeRendererType()) {
+                case INLINE -> new InlinedCas30ProtocolAttributesRenderer();
+                case DEFAULT -> new DefaultCas30ProtocolAttributesRenderer();
+            };
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "cas1ProtocolAttributesRenderer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer(final CasConfigurationProperties casProperties) {
-            switch (casProperties.getView().getCas1().getAttributeRendererType()) {
-                case VALUES_PER_LINE:
-                    return new AttributeValuesPerLineProtocolAttributesRenderer();
-                case DEFAULT:
-                default:
-                    return NoOpProtocolAttributesRenderer.INSTANCE;
-            }
+            return switch (casProperties.getView().getCas1().getAttributeRendererType()) {
+                case VALUES_PER_LINE -> new AttributeValuesPerLineProtocolAttributesRenderer();
+                case DEFAULT -> NoOpProtocolAttributesRenderer.INSTANCE;
+            };
         }
 
     }

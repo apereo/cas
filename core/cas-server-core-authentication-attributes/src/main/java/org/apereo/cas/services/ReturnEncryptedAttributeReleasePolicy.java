@@ -15,6 +15,7 @@ import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jooq.lambda.Unchecked;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -5771481877391140569L;
 
     static {

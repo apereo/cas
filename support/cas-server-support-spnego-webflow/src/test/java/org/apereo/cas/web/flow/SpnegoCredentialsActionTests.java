@@ -66,7 +66,7 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
         val err = new EventFactorySupport().error(this);
         when(stResolver.resolveSingle(any())).thenReturn(err);
         val action = new SpnegoCredentialsAction(mock(CasDelegatingWebflowEventResolver.class),
-            stResolver, mock(AdaptiveAuthenticationPolicy.class), false, true);
+            stResolver, mock(AdaptiveAuthenticationPolicy.class), false);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());
     }
 

@@ -19,7 +19,6 @@ import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationPropert
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mongo.MongoDbAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
@@ -50,6 +49,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +67,7 @@ import java.util.List;
 @JsonFilter("AuthenticationProperties")
 public class AuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1233126985007049516L;
 
     /**
@@ -290,12 +291,6 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CouchDbAuthenticationProperties couchDb = new CouchDbAuthenticationProperties();
-
-    /**
-     * NTLM authentication settings.
-     */
-    @NestedConfigurationProperty
-    private NtlmProperties ntlm = new NtlmProperties();
 
     /**
      * OAuth authentication settings.

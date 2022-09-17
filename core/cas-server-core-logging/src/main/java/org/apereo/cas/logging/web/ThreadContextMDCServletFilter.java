@@ -82,7 +82,7 @@ public class ThreadContextMDCServletFilter implements Filter {
             val params = request.getParameterMap();
             params.keySet()
                 .stream()
-                .filter(k -> !k.equalsIgnoreCase("password"))
+                .filter(k -> !"password".equalsIgnoreCase(k))
                 .forEach(k -> {
                     val values = params.get(k);
                     addContextAttribute(k, Arrays.toString(values));

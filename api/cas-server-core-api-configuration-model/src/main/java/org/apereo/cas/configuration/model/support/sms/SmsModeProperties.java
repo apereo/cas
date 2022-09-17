@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Map;
 @JsonFilter("SmsModeProperties")
 public class SmsModeProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4185702036613030013L;
 
     /**

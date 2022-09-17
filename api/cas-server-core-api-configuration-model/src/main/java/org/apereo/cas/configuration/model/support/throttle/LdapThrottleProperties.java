@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapThrottleProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("LdapThrottleProperties")
 public class LdapThrottleProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = 7519847618333749780L;
 
     /**

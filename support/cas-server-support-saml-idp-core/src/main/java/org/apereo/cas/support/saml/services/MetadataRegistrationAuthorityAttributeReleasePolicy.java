@@ -15,6 +15,7 @@ import org.opensaml.saml.ext.saml2mdrpi.RegistrationInfo;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.Optional;
 @EqualsAndHashCode(callSuper = true)
 public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -4273733307124962357L;
 
     private String registrationAuthority;

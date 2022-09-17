@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RedisPrincipalAttributesProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("RedisPrincipalAttributesProperties")
 public class RedisPrincipalAttributesProperties extends BaseRedisProperties {
 
+    @Serial
     private static final long serialVersionUID = -2373755681488251678L;
 
     /**

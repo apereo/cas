@@ -51,6 +51,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.io.Serial;
+
 /**
  * This is {@link BaseCasCoreTests}.
  *
@@ -75,6 +77,7 @@ public abstract class BaseCasCoreTests {
 
     public static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
         return new ExpirationPolicyBuilder() {
+            @Serial
             private static final long serialVersionUID = -9043565995104313970L;
 
             @Override

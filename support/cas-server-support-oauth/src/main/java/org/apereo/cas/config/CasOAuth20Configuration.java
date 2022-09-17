@@ -416,7 +416,7 @@ public class CasOAuth20Configuration {
                 val registeredService = (RegisteredService) result.getContext().get(RegisteredService.class.getName());
                 val assertion = (Assertion) result.getContext().get(Assertion.class.getName());
                 val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
-                    assertion.getPrimaryAuthentication(), assertion, new HashMap<>(0), registeredService);
+                    assertion.primaryAuthentication(), assertion, new HashMap<>(0), registeredService);
                 return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes);
             });
             val oauthCasClient = new CasClient(cfg);

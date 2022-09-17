@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link SurrogateUsernamePasswordCredential},
  * able to substitute a target username on behalf of the given credentials.
@@ -20,6 +22,7 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class SurrogateUsernamePasswordCredential extends RememberMeUsernamePasswordCredential {
+    @Serial
     private static final long serialVersionUID = 8760695298971444249L;
 
     private String surrogateUsername;

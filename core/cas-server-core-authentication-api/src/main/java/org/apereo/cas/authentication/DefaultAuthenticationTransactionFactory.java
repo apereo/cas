@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 public class DefaultAuthenticationTransactionFactory implements AuthenticationTransactionFactory {
+    @Serial
     private static final long serialVersionUID = -3106762590844787854L;
 
     /**

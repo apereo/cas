@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+
 /**
  * This is {@link BaseWebBasedRegisteredService}.
  *
@@ -16,6 +18,7 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class BaseWebBasedRegisteredService extends BaseRegisteredService implements WebBasedRegisteredService {
+    @Serial
     private static final long serialVersionUID = 7766178156998290373L;
 
     private RegisteredServiceAcceptableUsagePolicy acceptableUsagePolicy = new DefaultRegisteredServiceAcceptableUsagePolicy();

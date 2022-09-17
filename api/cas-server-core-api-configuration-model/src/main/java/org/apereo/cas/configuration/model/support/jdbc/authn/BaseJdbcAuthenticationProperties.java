@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link BaseJdbcAuthenticationProperties}.
  *
@@ -22,6 +24,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @Accessors(chain = true)
 public abstract class BaseJdbcAuthenticationProperties extends AbstractJpaProperties {
+    @Serial
     private static final long serialVersionUID = 8460723293967413501L;
 
     /**

@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 
+import java.io.Serial;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -16,6 +17,7 @@ import java.util.TimeZone;
  */
 public class ISOStandardDateFormat extends FastDateFormat {
 
+    @Serial
     private static final long serialVersionUID = 9196017562782775535L;
 
     /**

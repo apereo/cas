@@ -206,12 +206,12 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             val resolverName = resolver == null ? authenticationHandlerName : resolver.getName();
             if (this.principalResolutionFailureFatal) {
                 LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
-                    + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
+                            + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
                 throw new UnresolvedPrincipalException();
             }
             LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
-                + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
-                + "produced by the authentication handler, if any.", resolverName);
+                        + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
+                        + "produced by the authentication handler, if any.", resolverName);
         } else {
             builder.setPrincipal(principal);
         }
@@ -302,9 +302,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                             proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
                         } catch (final Exception e) {
                             LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
-                                + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
-                                + "ensure a method of authentication is defined and analyze CAS logs at DEBUG level to trace "
-                                + "the authentication event.", credential, credential.getClass().getSimpleName());
+                                         + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
+                                         + "ensure a method of authentication is defined and analyze CAS logs at DEBUG level to trace "
+                                         + "the authentication event.", credential, credential.getClass().getSimpleName());
 
                             handleAuthenticationException(e, handler.getName(), builder);
                             proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
@@ -371,7 +371,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val principalElectionStrategy = authenticationSystemSupport.getPrincipalElectionStrategy();
         val resultAuthentication = resultBuilder.build(principalElectionStrategy).getAuthentication();
         LOGGER.trace("Final authentication used for authentication policy evaluation is [{}]", resultAuthentication);
-        
+
         policies.forEach(policy -> {
             try {
                 val simpleName = policy.getClass().getSimpleName();

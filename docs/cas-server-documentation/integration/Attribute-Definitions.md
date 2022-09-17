@@ -52,7 +52,7 @@ The following settings can be specified by an attribute definition:
 
 | Name                   | Description                                                                                                                           |
 |------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| `key`                  | Attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html)                                       |
+| `key`                  | Attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html).                                      |
 | `name`                 | Comma-separated list of attribute name(s) to virtually rename/remap and share with the target application during attribute release.   |
 | `scoped`               | (Optional) If `true`, the attribute value be scoped to the scope of the CAS server deployment defined in settings.                    |
 | `encrypted`            | (Optional) If `true`, the attribute value will be encrypted and encoded in base-64 using the service definition's defined public key. |
@@ -70,13 +70,12 @@ The following operations in the order given should take place, if an attribute d
 - Produce attribute values based on the `encrypted` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `canonicalizationMode` setting specified in the attribute definition, if any.
 
-## Examples
-          
-The following examples demonstrate different forms of attribute definitions. 
 
-### Basic
+{% tabs attrdefinitions %}
 
-Define an attribute definition for `employeeId` to produce scoped attributes 
+{% tab attrdefinitions Basic %}
+
+Define an attribute definition for `employeeId` to produce scoped attributes
 based on another attribute `empl_identifier` as the source:
 
 ```json 
@@ -91,7 +90,7 @@ based on another attribute `empl_identifier` as the source:
 }
 ```  
 
-Now that the definition is available globally, the attribute [can then be released](Attribute-Release-Policies.html) 
+Now that the definition is available globally, the attribute [can then be released](Attribute-Release-Policies.html)
 as usual with the following definition:
 
 ```json
@@ -103,8 +102,10 @@ as usual with the following definition:
 ...
 ```
 
-### Encrypted Attribute
+{% endtab %}
 
+
+{% tab attrdefinitions Encrypted %}
 Same use case as above, except the attribute value will be encrypted and encoded using the service definition's public key:
 
 ```json 
@@ -138,9 +139,9 @@ openssl genrsa -out private.key 1024
 openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
 ```
+{% endtab %}
 
-### Pattern Formats
-
+{% tab attrdefinitions Pattern Format %}
 Define an attribute definition to produce values based on a pattern format:
 
 ```json 
@@ -158,12 +159,13 @@ Define an attribute definition to produce values based on a pattern format:
 }
 ```
 
-If the resolved set of attributes are `uid=[test1, test2]` and the CAS server has a scope of `example.org`, 
+If the resolved set of attributes are `uid=[test1, test2]` and the CAS server has a scope of `example.org`,
 the final values of `eduPersonPrincipalName` would be [`hello,test1@example.org`,`hello,test2@example.org`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.
 
-### Embedded Script
+{% endtab %}
 
+{% tab attrdefinitions Embedded Script %}
 Same use case as above, except the attribute value be additional processed by an embedded Groovy script
 
 ```json 
@@ -180,12 +182,12 @@ Same use case as above, except the attribute value be additional processed by an
 }
 ```  
 
-If the CAS server has a scope of `example.org`, 
+If the CAS server has a scope of `example.org`,
 the final values of `eduPersonPrincipalName` would be [`Hi, casuser`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.
+{% endtab %}
 
-### External Script
-
+{% tab attrdefinitions External Script %}
 Same use case as above, except the attribute value be additionally processed by an external Groovy script:
 
 ```json 
@@ -217,6 +219,10 @@ def run(Object[] args) {
 }
 ```
 
-If the CAS server has a scope of `example.org`, 
+If the CAS server has a scope of `example.org`,
 the final values of `eduPersonPrincipalName` would be [`Hello casuser`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.
+
+{% endtab %}
+
+{% endtabs %}

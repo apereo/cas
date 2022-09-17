@@ -17,6 +17,7 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
 
 import javax.validation.constraints.Size;
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
      **/
     public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
 
+    @Serial
     private static final long serialVersionUID = -700605081472810939L;
 
     private @Size(min = 1, message = "username.required") String username;
@@ -63,7 +65,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
     @Override
     public void validate(final ValidationContext context) {
         val messages = context.getMessageContext();
-        if (!context.getUserEvent().equalsIgnoreCase("submit") || messages.hasErrorMessages()) {
+        if (!"submit".equalsIgnoreCase(context.getUserEvent()) || messages.hasErrorMessages()) {
             return;
         }
 

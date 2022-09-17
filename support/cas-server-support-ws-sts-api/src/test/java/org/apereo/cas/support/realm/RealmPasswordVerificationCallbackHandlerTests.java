@@ -23,7 +23,7 @@ public class RealmPasswordVerificationCallbackHandlerTests {
         val callback = new WSPasswordCallback("casuser", "password", "type", WSPasswordCallback.USERNAME_TOKEN);
         assertDoesNotThrow(() -> {
             realm.handle(new Callback[]{callback});
-            assertEquals(new String(realm.getPassword()), callback.getPassword());
+            assertEquals(new String(realm.password()), callback.getPassword());
         });
     }
 }

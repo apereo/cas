@@ -7,6 +7,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.springframework.http.HttpMethod;
 
+import java.io.Serial;
 import java.util.EnumMap;
 
 /**
@@ -16,6 +17,7 @@ import java.util.EnumMap;
  * @since 6.1.0
  */
 public class HttpServletRequestXMLMessageDecodersMap extends EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder> {
+    @Serial
     private static final long serialVersionUID = -461142665557954114L;
 
     public HttpServletRequestXMLMessageDecodersMap(final Class<HttpMethod> keyType) {

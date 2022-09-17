@@ -43,7 +43,7 @@ public class RegisteredServiceKafkaDistributedCacheListenerTests {
 
     @BeforeEach
     public void tearDown() {
-        this.listener.getCacheManager().clear();
+        this.listener.cacheManager().clear();
     }
 
     @Test

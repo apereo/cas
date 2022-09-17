@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
+
 /**
  * This is {@link BaseAuthenticationPolicy}.
  *
@@ -19,6 +21,7 @@ import org.springframework.core.Ordered;
 @Setter
 @Getter
 public abstract class BaseAuthenticationPolicy implements AuthenticationPolicy {
+    @Serial
     private static final long serialVersionUID = -2825457764398118845L;
 
     private int order = Ordered.LOWEST_PRECEDENCE;

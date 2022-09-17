@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("Pac4jDelegatedAuthenticationCoreProperties")
 public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -3561947621312270068L;
 
     /**

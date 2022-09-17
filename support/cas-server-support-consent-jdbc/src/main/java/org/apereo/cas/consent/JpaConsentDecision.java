@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link JpaConsentDecision}.
@@ -27,6 +28,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class JpaConsentDecision extends ConsentDecision {
+    @Serial
     private static final long serialVersionUID = -1370242034035828803L;
 
     @Id

@@ -6,6 +6,8 @@ import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorM
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
+
 /**
  * The authentication provider for google authenticator.
  *
@@ -15,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 public class GoogleAuthenticatorMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
+    @Serial
     private static final long serialVersionUID = 4789727148634156909L;
 
     @Override

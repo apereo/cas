@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link JpaResourceSet}.
@@ -19,6 +20,7 @@ import javax.persistence.Table;
 @Entity
 @Getter
 public class JpaResourceSet extends ResourceSet {
+    @Serial
     private static final long serialVersionUID = -592895072654246305L;
 
     @Id

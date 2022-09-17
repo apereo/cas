@@ -9,7 +9,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,8 +24,7 @@ public abstract class BaseCRLRevocationCheckerTests {
     protected static void checkCertificate(final AbstractCRLRevocationChecker checker, final String[] certFiles,
                                            final GeneralSecurityException expected) {
         val certificates = Arrays.stream(certFiles)
-            .map(file -> CertUtils.readCertificate(new ClassPathResource(file)))
-            .collect(Collectors.toList());
+            .map(file -> CertUtils.readCertificate(new ClassPathResource(file))).toList();
 
         if (expected != null) {
             assertNotNull(expected.getMessage());

@@ -17,6 +17,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.audit.SamlMetadataResolverAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProvider;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditResourceResolver;
@@ -549,6 +550,7 @@ public class SamlIdPConfiguration {
         }
 
     }
+
     @Configuration(value = "SamlIdPTicketFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPTicketFactoryPlanConfiguration {
@@ -570,6 +572,7 @@ public class SamlIdPConfiguration {
             return () -> samlArtifactTicketFactory;
         }
     }
+
     @Configuration(value = "SamlIdPTicketExpirationPolicyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPTicketExpirationPolicyConfiguration {
@@ -587,6 +590,7 @@ public class SamlIdPConfiguration {
             return new SamlArtifactTicketExpirationPolicyBuilder(casProperties);
         }
     }
+
     @Configuration(value = "SamlIdPTicketConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPTicketConfiguration {
@@ -617,6 +621,7 @@ public class SamlIdPConfiguration {
             return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy,
                 openSamlConfigBean, samlIdPServiceFactory);
         }
+
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SAMLArtifactMap samlArtifactMap(
@@ -637,6 +642,7 @@ public class SamlIdPConfiguration {
             return map;
         }
     }
+
     @Configuration(value = "SamlIdPLogoutConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPLogoutConfiguration {
@@ -662,6 +668,7 @@ public class SamlIdPConfiguration {
             return () -> samlSingleLogoutServiceLogoutUrlBuilder;
         }
     }
+
     @Configuration(value = "SamlIdPCryptoConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPCryptoConfiguration {
@@ -687,6 +694,7 @@ public class SamlIdPConfiguration {
             return new DefaultSamlIdPObjectSigner(casSamlIdPMetadataResolver, casProperties, samlIdPMetadataLocator);
         }
     }
+
     @Configuration(value = "SamlIdPAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPAuditConfiguration {
@@ -705,9 +713,14 @@ public class SamlIdPConfiguration {
                 plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER, new SamlResponseAuditResourceResolver());
                 plan.registerAuditActionResolver(AuditActionResolvers.SAML2_RESPONSE_ACTION_RESOLVER,
                     new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+
                 plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER, new SamlRequestAuditResourceResolver());
                 plan.registerAuditActionResolver(AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER,
                     new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+
+                plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER,
+                    new SamlMetadataResolverAuditResourceResolver());
+                plan.registerAuditActionResolver(AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER, new DefaultAuditActionResolver());
             };
         }
     }

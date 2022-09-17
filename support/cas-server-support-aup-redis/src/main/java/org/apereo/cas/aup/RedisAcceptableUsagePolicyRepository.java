@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
+
 /**
  * This is {@link RedisAcceptableUsagePolicyRepository}.
  * Examines the principal attribute collection to determine if
@@ -28,6 +30,7 @@ public class RedisAcceptableUsagePolicyRepository extends BaseAcceptableUsagePol
      */
     public static final String CAS_AUP_PREFIX = RedisAcceptableUsagePolicyRepository.class.getSimpleName() + ':';
 
+    @Serial
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final CasRedisTemplate redisTemplate;

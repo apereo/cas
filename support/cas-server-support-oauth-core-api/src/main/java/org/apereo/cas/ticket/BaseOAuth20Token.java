@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import java.util.Set;
 @Getter
 public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20Token {
 
+    @Serial
     private static final long serialVersionUID = -8072724186202305800L;
 
     private Set<String> scopes = new HashSet<>(0);

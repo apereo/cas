@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.HashMap;
 
 /**
@@ -24,6 +25,7 @@ import java.util.HashMap;
 @Getter
 public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
+    @Serial
     private static final long serialVersionUID = -4584738964007702003L;
 
     public SamlServiceResponseBuilder(final ServicesManager servicesManager,

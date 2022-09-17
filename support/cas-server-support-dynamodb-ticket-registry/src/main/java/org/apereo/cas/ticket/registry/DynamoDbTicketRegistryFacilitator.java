@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -44,15 +43,7 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class DynamoDbTicketRegistryFacilitator {
-    private final TicketCatalog ticketCatalog;
-
-    private final DynamoDbTicketRegistryProperties dynamoDbProperties;
-
-    private final DynamoDbClient amazonDynamoDBClient;
-
+public record DynamoDbTicketRegistryFacilitator(TicketCatalog ticketCatalog, DynamoDbTicketRegistryProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
     private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
         val encoded = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
         LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
@@ -115,7 +106,7 @@ public class DynamoDbTicketRegistryFacilitator {
             val result = this.amazonDynamoDBClient.scan(scan);
             LOGGER.debug("Scanned table with result [{}]", scan);
             tickets.addAll(result.items().stream()
-                .map(DynamoDbTicketRegistryFacilitator::deserializeTicket).collect(Collectors.toList()));
+                .map(DynamoDbTicketRegistryFacilitator::deserializeTicket).toList());
         });
         return tickets;
     }

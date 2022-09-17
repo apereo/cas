@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 @RequiresModule(name = "cas-server-support-ws-sts")
 public class WsFederationSecurityTokenServiceProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1155140161252595793L;
 
     /**

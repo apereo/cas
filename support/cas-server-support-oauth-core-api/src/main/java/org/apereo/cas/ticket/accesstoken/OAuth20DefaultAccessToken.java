@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth20AccessToken {
 
+    @Serial
     private static final long serialVersionUID = 2339545346159721563L;
 
     @Setter

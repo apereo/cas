@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,6 +27,7 @@ import java.io.Serializable;
 @JsonFilter("SmsProperties")
 public class SmsProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3713886839517507306L;
 
     /**

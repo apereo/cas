@@ -2,6 +2,8 @@ package org.apereo.cas.util.crypto;
 
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+
 /**
  * This is {@link DecryptionException}.
  *
@@ -10,6 +12,7 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor
 public class DecryptionException extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = 7000029397148959897L;
 
     public DecryptionException(final Throwable cause) {

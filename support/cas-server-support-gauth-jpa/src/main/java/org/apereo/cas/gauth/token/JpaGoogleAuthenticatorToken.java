@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link JpaGoogleAuthenticatorToken}.
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "GoogleAuthenticatorToken")
 public class JpaGoogleAuthenticatorToken extends GoogleAuthenticatorToken {
+    @Serial
     private static final long serialVersionUID = 9047539820264192234L;
 
     @Id

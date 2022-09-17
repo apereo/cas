@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URL;
 
@@ -23,6 +24,7 @@ import java.net.URL;
 @Setter
 public class HttpMessage implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2015460875654586133L;
 
     /**

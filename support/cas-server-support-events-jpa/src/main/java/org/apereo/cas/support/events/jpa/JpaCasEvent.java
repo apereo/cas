@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link JpaCasEvent}.
@@ -23,6 +24,7 @@ import javax.persistence.Table;
 @Setter
 @Table(name = "CasEvent")
 public class JpaCasEvent extends CasEvent {
+    @Serial
     private static final long serialVersionUID = -1176976165442671412L;
 
     @Id

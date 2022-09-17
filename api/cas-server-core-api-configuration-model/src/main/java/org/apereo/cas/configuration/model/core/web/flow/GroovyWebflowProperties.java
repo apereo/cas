@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 @JsonFilter("GroovyWebflowProperties")
 public class GroovyWebflowProperties extends SpringResourceProperties {
 
+    @Serial
     private static final long serialVersionUID = 8079027843747126083L;
 
     /**

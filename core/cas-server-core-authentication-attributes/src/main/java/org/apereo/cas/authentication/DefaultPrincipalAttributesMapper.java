@@ -27,12 +27,12 @@ public class DefaultPrincipalAttributesMapper implements PrincipalAttributesMapp
     @Override
     public Map<String, List<Object>> map(final AttributeMappingRequest request) {
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(request.getMappedAttributeName());
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(request.getMappedAttributeName());
-
         if (matcherInline.find()) {
             val inlineGroovy = matcherInline.group(1);
             return fetchAttributeValueAsInlineGroovyScript(request.getAttributeName(), request.getResolvedAttributes(), inlineGroovy);
         }
+        
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(request.getMappedAttributeName());
         if (matcherFile.find()) {
             val file = matcherFile.group();
             return fetchAttributeValueFromExternalGroovyScript(request.getAttributeName(), request.getResolvedAttributes(), file);

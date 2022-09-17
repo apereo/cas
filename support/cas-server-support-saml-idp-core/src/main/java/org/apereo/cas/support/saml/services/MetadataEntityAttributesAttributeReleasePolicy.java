@@ -15,6 +15,7 @@ import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -3483733307124962357L;
 
     private String entityAttribute;

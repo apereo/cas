@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -31,6 +32,7 @@ import java.time.ZoneId;
 @EqualsAndHashCode
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
 
+    @Serial
     private static final long serialVersionUID = -1329938047176583075L;
 
     @Id

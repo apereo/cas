@@ -12,6 +12,8 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbGoogleAuthenticatorAccount}.
  *
@@ -26,6 +28,7 @@ import lombok.val;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class CouchDbGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
 
+    @Serial
     private static final long serialVersionUID = -4286976777933886751L;
 
     @JsonProperty("_id")

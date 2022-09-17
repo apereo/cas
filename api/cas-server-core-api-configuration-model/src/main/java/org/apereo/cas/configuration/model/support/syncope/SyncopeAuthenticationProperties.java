@@ -12,6 +12,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link SyncopeAuthenticationProperties}.
  *
@@ -25,6 +27,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("SyncopeAuthenticationProperties")
 public class SyncopeAuthenticationProperties extends AbstractSyncopeProperties implements CasFeatureModule {
 
+    @Serial
     private static final long serialVersionUID = -2446926316502297496L;
 
     /**

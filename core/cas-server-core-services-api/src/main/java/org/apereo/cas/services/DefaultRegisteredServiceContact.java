@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Table;
+import java.io.Serial;
 
 /**
  * Contact assigned to a service definition.
@@ -31,6 +32,7 @@ import javax.persistence.Table;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceContact implements RegisteredServiceContact {
 
+    @Serial
     private static final long serialVersionUID = 1324660891900737066L;
 
     @Column(nullable = false)

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,17 +22,13 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class ScimProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7943229230342691009L;
 
     /**
      * Decide whether scim should be enabled.
      */
     private boolean enabled = true;
-
-    /**
-     * Indicate what version of the scim protocol is and should be used.
-     */
-    private long version = 2;
 
     /**
      * The SCIM provisioning target URI.

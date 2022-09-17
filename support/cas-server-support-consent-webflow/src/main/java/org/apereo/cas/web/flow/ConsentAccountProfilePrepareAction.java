@@ -15,6 +15,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -63,6 +64,7 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
     @SuperBuilder
     @Getter
     private static class AccountProfileConsentDecision implements Serializable {
+        @Serial
         private static final long serialVersionUID = -5211708226232415390L;
 
         private final long id;

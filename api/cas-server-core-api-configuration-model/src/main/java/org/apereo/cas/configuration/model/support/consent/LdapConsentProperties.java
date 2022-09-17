@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapConsentProperties}.
  *
@@ -22,6 +24,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("LdapConsentProperties")
 public class LdapConsentProperties extends AbstractLdapSearchProperties {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

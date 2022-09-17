@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -28,6 +29,7 @@ import java.util.Collection;
 @ToString
 public class JpaConsentRepository implements ConsentRepository {
 
+    @Serial
     private static final long serialVersionUID = 6599902742493270206L;
 
     private static final String ENTITY_NAME = "JpaConsentDecision";

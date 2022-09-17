@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.TreeMap;
 @Setter
 public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -1723928645221579489L;
 
     private String namespace = WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS;

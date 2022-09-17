@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 
 /**
@@ -32,6 +33,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 public class DefaultEncodedTicket implements EncodedTicket {
 
+    @Serial
     private static final long serialVersionUID = -7078771807487764116L;
 
     private String id;

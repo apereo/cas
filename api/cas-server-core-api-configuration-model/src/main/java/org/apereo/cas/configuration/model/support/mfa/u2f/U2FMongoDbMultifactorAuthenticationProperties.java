@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link U2FMongoDbMultifactorAuthenticationProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("U2FMongoDbMultifactorAuthenticationProperties")
 public class U2FMongoDbMultifactorAuthenticationProperties extends SingleCollectionMongoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = -7963843335569634144L;
 
     public U2FMongoDbMultifactorAuthenticationProperties() {

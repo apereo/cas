@@ -1,0 +1,13 @@
+{
+  "@class": "java.util.TreeMap",
+  "mail": {
+    "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
+    "key": "mail",
+    "singleValue": false
+  },
+  "cn": {
+    "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
+    "key": "cn",
+    "singleValue": true
+  }
+}

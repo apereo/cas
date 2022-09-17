@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
 
+    @Serial
     private static final long serialVersionUID = -4535358847021241725L;
 
     @Override

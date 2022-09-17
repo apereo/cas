@@ -28,7 +28,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     private final AuthenticationResultBuilderFactory authenticationResultBuilderFactory;
 
     private final AuthenticationTransactionFactory authenticationTransactionFactory;
-    
+
     @Override
     public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
                                                                               final Credential... credential) throws AuthenticationException {

@@ -29,6 +29,7 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
@@ -47,6 +48,7 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
+    @Serial
     private static final long serialVersionUID = -7688729533538097898L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

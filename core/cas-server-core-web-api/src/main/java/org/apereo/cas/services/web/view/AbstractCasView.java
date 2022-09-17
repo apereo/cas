@@ -117,7 +117,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @since 4.1.0
      */
     protected Authentication getPrimaryAuthenticationFrom(final Map<String, Object> model) {
-        return getAssertionFrom(model).getPrimaryAuthentication();
+        return getAssertionFrom(model).primaryAuthentication();
     }
 
     /**
@@ -180,7 +180,7 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected Collection<Authentication> getChainedAuthentications(final Map<String, Object> model) {
         val assertion = getAssertionFrom(model);
-        val chainedAuthentications = assertion.getChainedAuthentications();
+        val chainedAuthentications = assertion.chainedAuthentications();
         return chainedAuthentications.stream().limit(chainedAuthentications.size() - 1).collect(Collectors.toList());
     }
 

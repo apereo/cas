@@ -139,7 +139,13 @@ public class RegisteredServiceAccessStrategyUtils {
         LOGGER.trace("Checking access strategy for service [{}], requested by [{}] with attributes [{}].",
             service != null ? service.getId() : "unknown", principalId, attributes);
 
-        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalId, (Map) attributes)) {
+        val accessRequest = RegisteredServiceAccessStrategyRequest.builder()
+            .service(service)
+            .principalId(principalId)
+            .attributes(attributes)
+            .registeredService(registeredService)
+            .build();
+        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(accessRequest)) {
             LOGGER.warn("Cannot grant access to service [{}]; it is not authorized for use by [{}].",
                 service != null ? service.getId() : "unknown", principalId);
             val handlerErrors = new HashMap<String, Throwable>();

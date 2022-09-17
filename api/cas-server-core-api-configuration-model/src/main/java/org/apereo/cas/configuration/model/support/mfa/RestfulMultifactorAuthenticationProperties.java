@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestfulMultifactorAuthenticationProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("RestfulMultifactorAuthenticationProperties")
 public class RestfulMultifactorAuthenticationProperties extends RestEndpointProperties {
+    @Serial
     private static final long serialVersionUID = 3659099897056632608L;
 }

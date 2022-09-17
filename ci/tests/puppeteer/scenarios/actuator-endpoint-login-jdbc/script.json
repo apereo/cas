@@ -1,5 +1,5 @@
 {
-  "dependencies": "jdbc-drivers,jpa-util,reports",
+  "dependencies": "jdbc-drivers,jpa-util,reports,monitor",
   "conditions": {
     "docker": "true"
   },
@@ -8,7 +8,7 @@
     
     "--cas.jdbc.show-sql=false",
     
-    "--cas.monitor.endpoints.endpoint.status.access=AUTHENTICATED",
+    "--cas.monitor.endpoints.endpoint.health.access=AUTHENTICATED",
     
     "--logging.level.org.springframework.security=debug",
     "--logging.level.org.apereo.cas=info",
@@ -23,8 +23,13 @@
     "--cas.monitor.endpoints.jdbc.password=password",
     "--cas.monitor.endpoints.jdbc.url=jdbc:postgresql://localhost:5432/webapp",
     
+    "--management.endpoint.health.show-details=always",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.enabled-by-default=true",
+
+    "management.health.systemHealthIndicator.enabled=true",
+    "management.health.memoryHealthIndicator.enabled=true",
+    "management.health.sessionHealthIndicator.enabled=true"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "SPRING_APPLICATION_JSON": {

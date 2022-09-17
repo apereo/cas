@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestAuthenticationPolicyProperties}.
  *
@@ -18,5 +20,6 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class RestAuthenticationPolicyProperties extends BaseRestEndpointProperties {
+    @Serial
     private static final long serialVersionUID = -8979188862774758908L;
 }

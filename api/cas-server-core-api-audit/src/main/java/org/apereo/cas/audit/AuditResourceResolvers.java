@@ -8,6 +8,11 @@ package org.apereo.cas.audit;
  */
 public interface AuditResourceResolvers {
     /**
+     * Resource resolver id {@code SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER}.
+     */
+    String SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER = "SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER";
+    
+    /**
      * Resource resolver id {@code REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER}.
      */
     String REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER = "REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER";

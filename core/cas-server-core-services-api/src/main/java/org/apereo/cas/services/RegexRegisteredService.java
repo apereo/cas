@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
+
 /**
  * Mutable registered service that uses Java regular expressions for service matching.
  * Matching is case insensitive, and is successful, if, and only if, the entire region
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Deprecated(since = "6.6.0")
 @Slf4j
 public class RegexRegisteredService extends BaseWebBasedRegisteredService {
+    @Serial
     private static final long serialVersionUID = -8258660210826975771L;
 
     public RegexRegisteredService() {

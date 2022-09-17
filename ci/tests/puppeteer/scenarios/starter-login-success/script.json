@@ -1,4 +1,4 @@
 {
   "dependencies": "core",
-  "project": "starter-tomcat"
+  "server": "starter-tomcat"
 }

@@ -12,6 +12,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link U2FMultifactorAuthenticationProperties}.
  *
@@ -30,6 +32,7 @@ public class U2FMultifactorAuthenticationProperties extends BaseMultifactorAuthe
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-u2f";
 
+    @Serial
     private static final long serialVersionUID = 6151350313777066398L;
 
     /**

@@ -3,6 +3,8 @@ package org.apereo.cas.web.support.gen;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
 
+import java.io.Serial;
+
 /**
  * Generates the tgc cookie.
  *
@@ -11,6 +13,7 @@ import org.apereo.cas.web.cookie.CookieValueManager;
  */
 public class TicketGrantingCookieRetrievingCookieGenerator extends CookieRetrievingCookieGenerator {
 
+    @Serial
     private static final long serialVersionUID = -1239028220717183717L;
 
     public TicketGrantingCookieRetrievingCookieGenerator(final CookieGenerationContext context,

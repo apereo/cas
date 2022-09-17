@@ -11,10 +11,10 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 @JsonFilter("ConsentCoreProperties")
 public class ConsentCoreProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5211308051524438384L;
 
     /**
@@ -61,7 +62,7 @@ public class ConsentCoreProperties implements Serializable {
      * are always ignored during consent rule calculations
      * and users will not be prmopted to consent to their release..
      */
-    private List<String> excludedAttributes = Stream.of("eduPersonTargetedID").collect(Collectors.toList());
+    private List<String> excludedAttributes = Stream.of("eduPersonTargetedID").toList();
 
     /**
      * Signing/encryption settings.

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
 public class BaseRestEndpointProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 2687020856160473089L;
 
     /**

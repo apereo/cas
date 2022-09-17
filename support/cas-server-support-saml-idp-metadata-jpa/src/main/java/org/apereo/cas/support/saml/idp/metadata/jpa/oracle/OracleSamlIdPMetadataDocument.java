@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link OracleSamlIdPMetadataDocument}.
@@ -34,6 +35,7 @@ import javax.persistence.Table;
 @Entity(name = "SamlIdPMetadataDocument")
 @Table(name = "SamlIdPMetadataDocument")
 public class OracleSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
+    @Serial
     private static final long serialVersionUID = 7087889980353544793L;
 
     @Id

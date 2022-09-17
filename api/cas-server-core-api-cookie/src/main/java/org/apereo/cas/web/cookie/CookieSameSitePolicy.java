@@ -31,18 +31,13 @@ public interface CookieSameSitePolicy {
                 return (CookieSameSitePolicy) clazz.getDeclaredConstructor().newInstance();
             }).get();
         }
-        
-        switch (option.toLowerCase().trim()) {
-            case "strict":
-                return strict();
-            case "lax":
-                return lax();
-            case "off":
-                return off();
-            case "none":
-            default:
-                return none();
-        }
+
+        return switch (option.toLowerCase().trim()) {
+            case "strict" -> strict();
+            case "lax" -> lax();
+            case "off" -> off();
+            default -> none();
+        };
     }
 
     /**

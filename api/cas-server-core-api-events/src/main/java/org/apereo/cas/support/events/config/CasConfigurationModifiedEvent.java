@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @Getter
 public class CasConfigurationModifiedEvent extends AbstractCasEvent {
 
+    @Serial
     private static final long serialVersionUID = -5738763037210896455L;
 
     private static final Pattern CONFIG_FILE_PATTERN = Pattern.compile("\\.(properties|yml)", Pattern.CASE_INSENSITIVE);

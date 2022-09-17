@@ -12,6 +12,7 @@ import lombok.val;
 import net.jradius.exception.TimeoutException;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.net.SocketTimeoutException;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
+    @Serial
     private static final long serialVersionUID = 4789727148634156909L;
 
     private List<RadiusServer> servers;

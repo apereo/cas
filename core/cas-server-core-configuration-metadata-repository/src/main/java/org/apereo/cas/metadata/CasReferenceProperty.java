@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @ToString
 @Setter
 public class CasReferenceProperty implements Serializable, Comparable<CasReferenceProperty> {
+    @Serial
     private static final long serialVersionUID = 6084780445748297104L;
 
     private final boolean expressionLanguage;

@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -29,6 +30,7 @@ import java.util.function.Function;
 @Setter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractWebApplicationServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
+    @Serial
     private static final long serialVersionUID = -4584738964007702423L;
 
     /**

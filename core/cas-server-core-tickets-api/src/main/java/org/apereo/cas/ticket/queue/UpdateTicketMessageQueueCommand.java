@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * This is {@link UpdateTicketMessageQueueCommand}.
  *
@@ -20,6 +22,7 @@ import lombok.val;
 @Slf4j
 @Getter
 public class UpdateTicketMessageQueueCommand extends BaseMessageQueueCommand {
+    @Serial
     private static final long serialVersionUID = -4179190682337040669L;
 
     @JsonProperty

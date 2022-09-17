@@ -429,7 +429,7 @@ public class CollectionUtils {
                 if (source.getClass().isAssignableFrom(byte[].class)) {
                     list.add(source);
                 } else {
-                    val elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
+                    val elements = Arrays.stream((Object[]) source).toList();
                     list.addAll((List) elements);
                 }
             } else {

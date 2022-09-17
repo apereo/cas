@@ -13,6 +13,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.Map;
 @SuperBuilder
 public class DefaultSingleLogoutRequestContext implements SingleLogoutRequestContext {
 
+    @Serial
     private static final long serialVersionUID = -6411421298859045022L;
 
     /**

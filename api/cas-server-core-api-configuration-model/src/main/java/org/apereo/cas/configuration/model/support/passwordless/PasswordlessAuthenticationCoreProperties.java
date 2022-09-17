@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("PasswordlessAuthenticationCoreProperties")
 public class PasswordlessAuthenticationCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6726382874579042117L;
 
     /**

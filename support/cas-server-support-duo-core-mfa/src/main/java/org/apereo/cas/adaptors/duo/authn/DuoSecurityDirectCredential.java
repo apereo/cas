@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 
 /**
  * This is {@link DuoSecurityDirectCredential}.
@@ -23,6 +25,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class DuoSecurityDirectCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
+    @Serial
     private static final long serialVersionUID = -7570699733132111037L;
 
     private final Principal principal;

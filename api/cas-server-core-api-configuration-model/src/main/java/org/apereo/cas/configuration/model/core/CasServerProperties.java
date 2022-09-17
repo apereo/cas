@@ -14,6 +14,7 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -29,6 +30,7 @@ import java.io.Serializable;
 @JsonFilter("CasServerProperties")
 public class CasServerProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7876382696803430817L;
 
     /**

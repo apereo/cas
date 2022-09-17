@@ -258,7 +258,7 @@ while (( "$#" )); do
             mfa)
                 task+="testMFA "
                 ;;
-            mfaprovider|gauth|webauthn|authy|fido|u2f|swivel|acceptto)
+            mfaprovider|gauth|webauthn|authy|fido|u2f|acceptto)
                 task+="testMFAProvider "
                 ;;
             mfatrigger)
@@ -324,9 +324,6 @@ while (( "$#" )); do
             ignite)
                 task+="testIgnite "
                 ;;
-            infinispan)
-                task+="testInfinispan "
-                ;;
             spnego)
                 task+="testSpnego "
                 ;;
@@ -348,10 +345,6 @@ while (( "$#" )); do
             memcached|memcache|kryo)
                 isDockerOnLinux && ./ci/tests/memcached/run-memcached-server.sh
                 task+="testMemcached "
-                ;;
-            ehcache)
-                isDockerOnLinux && ./ci/tests/ehcache/run-terracotta-server.sh
-                task+="testEhcache "
                 ;;
             ldap|ad|activedirectory)
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh

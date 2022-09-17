@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link BaseRegisteredServiceAccessStrategy}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class BaseRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
+    @Serial
     private static final long serialVersionUID = 2068108924325533291L;
 }

@@ -111,7 +111,7 @@ public class SamlSPUtils {
             val criteriaSet = new CriteriaSet();
             criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
             criteriaSet.add(new SatisfyAnyCriterion());
-            val metadataResolver = resolver.resolve(service, criteriaSet);
+            val metadataResolver = resolver.resolve(service, criteriaSet).getMetadataResolver();
 
             val resolvers = new ArrayList<MetadataResolver>();
             if (metadataResolver instanceof ChainingMetadataResolver) {

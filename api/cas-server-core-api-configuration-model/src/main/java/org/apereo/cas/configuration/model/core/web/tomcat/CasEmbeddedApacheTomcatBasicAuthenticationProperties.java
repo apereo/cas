@@ -8,9 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 @JsonFilter("CasEmbeddedApacheTomcatBasicAuthenticationProperties")
 public class CasEmbeddedApacheTomcatBasicAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1164446071136700282L;
 
     /**
@@ -37,16 +38,16 @@ public class CasEmbeddedApacheTomcatBasicAuthenticationProperties implements Ser
     /**
      * Security roles for the CAS application.
      */
-    private List<String> securityRoles = Stream.of("admin").collect(Collectors.toList());
+    private List<String> securityRoles = Stream.of("admin").toList();
 
     /**
      * Add an authorization role, which is a role name that will be
      * permitted access to the resources protected by this security constraint.
      */
-    private List<String> authRoles = Stream.of("admin").collect(Collectors.toList());
+    private List<String> authRoles = Stream.of("admin").toList();
 
     /**
      * Add a URL pattern to be part of this web resource collection.
      */
-    private List<String> patterns = Stream.of("/*").collect(Collectors.toList());
+    private List<String> patterns = Stream.of("/*").toList();
 }

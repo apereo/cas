@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Deprecated(since = "6.2.0")
 public class GoogleAppsProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5133482766495375325L;
 
     /**

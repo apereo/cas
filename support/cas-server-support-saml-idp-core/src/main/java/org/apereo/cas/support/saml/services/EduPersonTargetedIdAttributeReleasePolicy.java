@@ -20,6 +20,7 @@ import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
      */
     public static final String ATTRIBUTE_URN_EDU_PERSON_TARGETED_ID = "urn:oid:1.3.6.1.4.1.5923.1.1.1.10";
 
+    @Serial
     private static final long serialVersionUID = -1283755507124862357L;
 
     @JsonProperty

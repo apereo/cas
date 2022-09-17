@@ -21,6 +21,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
@@ -41,6 +42,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
+    @Serial
     private static final long serialVersionUID = 6948477763790549040L;
 
     private String script;

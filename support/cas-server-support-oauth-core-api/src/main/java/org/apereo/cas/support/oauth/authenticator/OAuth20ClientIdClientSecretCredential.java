@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
+import java.io.Serial;
+
 /**
  * This is {@link OAuth20ClientIdClientSecretCredential}.
  * This class allows the underlying attribute repositories to make a distinction
@@ -14,6 +16,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
  * @since 6.5.0
  */
 public class OAuth20ClientIdClientSecretCredential extends UsernamePasswordCredential {
+    @Serial
     private static final long serialVersionUID = 6426680333044335542L;
 
     public OAuth20ClientIdClientSecretCredential(final String username, final String password) {

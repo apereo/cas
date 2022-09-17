@@ -14,6 +14,7 @@ import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class AttributeQueryAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -2283755507124862357L;
 
     public AttributeQueryAttributeReleasePolicy() {

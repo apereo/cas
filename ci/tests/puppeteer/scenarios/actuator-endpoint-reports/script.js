@@ -41,8 +41,7 @@ const cas = require('../../cas.js');
         "springWebflow",
         "statistics",
         "resolveAttributes/casuser",
-        "releaseAttributes?username=casuser&password=Mellon&service=https://example.com",
-        "status"];
+        "releaseAttributes?username=casuser&password=Mellon&service=https://example.com"];
 
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {

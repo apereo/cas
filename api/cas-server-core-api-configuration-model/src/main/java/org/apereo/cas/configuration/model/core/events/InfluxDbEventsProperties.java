@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link InfluxDbEventsProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("InfluxDbEventsProperties")
 public class InfluxDbEventsProperties extends InfluxDbProperties {
 
+    @Serial
     private static final long serialVersionUID = -3918436901491275547L;
 
     public InfluxDbEventsProperties() {

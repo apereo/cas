@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class AuthenticationTransactionTests {
     @Test
     public void verifyOperation() {
         val transaction = new AuthenticationTransaction() {
+            @Serial
             private static final long serialVersionUID = -8503574003503719399L;
 
             @Override
@@ -65,10 +67,12 @@ public class AuthenticationTransactionTests {
     }
 
     public abstract static class BaseTestCredential implements Credential {
+        @Serial
         private static final long serialVersionUID = -6933725969701066361L;
     }
 
     public static class TestCredentialType1 extends BaseTestCredential {
+        @Serial
         private static final long serialVersionUID = -2785558255024055757L;
 
         @Override
@@ -78,6 +82,7 @@ public class AuthenticationTransactionTests {
     }
 
     public static class TestCredentialType2 implements Credential {
+        @Serial
         private static final long serialVersionUID = -4137096818705980020L;
 
         @Override

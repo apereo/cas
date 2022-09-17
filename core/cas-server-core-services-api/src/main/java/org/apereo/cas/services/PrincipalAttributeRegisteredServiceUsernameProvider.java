@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,6 +39,7 @@ import java.util.TreeMap;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
+    @Serial
     private static final long serialVersionUID = -3546719400741715137L;
 
     private String usernameAttribute;

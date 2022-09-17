@@ -51,7 +51,9 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.service-registry.cassandra.local-dc=datacenter1",
-        "cas.service-registry.cassandra.keyspace=cas"
+        "cas.service-registry.cassandra.keyspace=cas",
+        "cas.service-registry.cassandra.ssl-protocols=TLSv1.2",
+        "cas.http-client.host-name-verifier=none"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling

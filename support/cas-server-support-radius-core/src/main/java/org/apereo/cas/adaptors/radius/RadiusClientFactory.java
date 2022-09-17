@@ -11,6 +11,7 @@ import lombok.val;
 import net.jradius.client.RadiusClient;
 import net.jradius.radsec.RadSecClientTransport;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.InetAddress;
 
@@ -26,6 +27,7 @@ public class RadiusClientFactory implements Serializable {
 
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;
 
+    @Serial
     private static final long serialVersionUID = 8226097527127614276L;
 
     @Builder.Default

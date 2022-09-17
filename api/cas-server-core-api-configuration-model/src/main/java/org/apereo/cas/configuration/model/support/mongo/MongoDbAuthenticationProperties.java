@@ -10,6 +10,8 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link MongoDbAuthenticationProperties}.
  *
@@ -22,6 +24,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class MongoDbAuthenticationProperties extends SingleCollectionMongoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = -7304734732383722585L;
 
     /**

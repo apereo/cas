@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow.executor;
 
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
+import java.io.Serial;
+
 /**
  * Describes exceptions unique to {@link ClientFlowExecutionRepository}.
  *
@@ -10,6 +12,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
  */
 public class ClientFlowExecutionRepositoryException extends FlowExecutionRepositoryException {
 
+    @Serial
     private static final long serialVersionUID = 2164175424974041060L;
 
     public ClientFlowExecutionRepositoryException(final String message) {

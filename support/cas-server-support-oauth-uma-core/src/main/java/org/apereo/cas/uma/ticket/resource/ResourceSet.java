@@ -15,6 +15,7 @@ import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 
@@ -30,6 +31,7 @@ import java.util.HashSet;
 @NoArgsConstructor
 @MappedSuperclass
 public class ResourceSet implements Serializable {
+    @Serial
     private static final long serialVersionUID = -5529923878827427102L;
 
     @Id

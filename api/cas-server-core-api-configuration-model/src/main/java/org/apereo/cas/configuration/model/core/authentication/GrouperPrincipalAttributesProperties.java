@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
 @JsonFilter("GrouperPrincipalAttributesProperties")
 public class GrouperPrincipalAttributesProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7139471665871712818L;
 
     /**

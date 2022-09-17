@@ -7,7 +7,6 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -49,16 +48,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class SamlRegisteredServiceServiceProviderMetadataFacade {
-
-    private final SPSSODescriptor ssoDescriptor;
-
-    private final EntityDescriptor entityDescriptor;
-
-    @Getter
-    private final MetadataResolver metadataResolver;
+public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor ssoDescriptor, EntityDescriptor entityDescriptor, @Getter MetadataResolver metadataResolver) {
 
     /**
      * Adapt saml metadata and parse. Acts as a facade.
@@ -101,11 +91,11 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
             LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
             criterions.add(new EntityIdCriterion(entityID), true);
             LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-            val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
+            val cachedMetadataResolver = resolver.resolve(registeredService, criterions).getMetadataResolver();
             LOGGER.debug("Resolved metadata chain from [{}] using [{}]. Filtering the chain by entity ID [{}]",
-                registeredService.getMetadataLocation(), chainingMetadataResolver.getId(), entityID);
+                registeredService.getMetadataLocation(), cachedMetadataResolver.getId(), entityID);
 
-            val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
+            val entityDescriptor = cachedMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 LOGGER.warn("Cannot find entity [{}] in metadata provider for criteria [{}]", entityID, criterions);
                 return Optional.empty();
@@ -120,7 +110,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
                     return Optional.empty();
                 }
             }
-            return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
+            return getServiceProviderSsoDescriptor(entityID, cachedMetadataResolver, entityDescriptor);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -219,7 +209,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         val children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
             nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
-                .map(child -> ((NameIDFormat) child).getURI()).collect(Collectors.toList()));
+                .map(child -> ((NameIDFormat) child).getURI()).toList());
         }
         return nameIdFormats;
     }

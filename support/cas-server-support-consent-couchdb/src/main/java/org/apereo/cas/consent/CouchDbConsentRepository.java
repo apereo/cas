@@ -7,12 +7,10 @@ import org.apereo.cas.couchdb.consent.CouchDbConsentDecision;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -22,15 +20,11 @@ import java.util.stream.Collectors;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Getter
-@Setter
-@RequiredArgsConstructor
 @Slf4j
-public class CouchDbConsentRepository implements ConsentRepository {
+public record CouchDbConsentRepository(ConsentDecisionCouchDbRepository couchDb) implements ConsentRepository {
 
+    @Serial
     private static final long serialVersionUID = 5058836218210655958L;
-
-    private final ConsentDecisionCouchDbRepository couchDb;
 
     @Override
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,

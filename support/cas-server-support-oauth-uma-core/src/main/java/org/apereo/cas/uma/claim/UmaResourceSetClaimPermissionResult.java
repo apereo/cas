@@ -3,6 +3,7 @@ package org.apereo.cas.uma.claim;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +18,7 @@ import java.util.Map;
  */
 @Data
 public class UmaResourceSetClaimPermissionResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4793142197818018354L;
 
     private Map<Long, Details> details = new LinkedHashMap<>();
@@ -31,6 +33,7 @@ public class UmaResourceSetClaimPermissionResult implements Serializable {
      */
     @Data
     public static class Details implements Serializable {
+        @Serial
         private static final long serialVersionUID = -4294568893393275983L;
 
         private Collection<String> unmatchedScopes = new ArrayList<>();

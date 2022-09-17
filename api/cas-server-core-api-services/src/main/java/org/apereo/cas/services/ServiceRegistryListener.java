@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -43,6 +44,7 @@ public interface ServiceRegistryListener extends Serializable, Ordered {
      */
     static ServiceRegistryListener noOp() {
         return new ServiceRegistryListener() {
+            @Serial
             private static final long serialVersionUID = -8064239596498367543L;
         };
     }

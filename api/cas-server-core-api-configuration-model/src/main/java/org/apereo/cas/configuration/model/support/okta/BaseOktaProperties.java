@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 public abstract class BaseOktaProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -23245764438426360L;
 
     /**

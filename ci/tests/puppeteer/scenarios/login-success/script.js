@@ -31,5 +31,9 @@ const assert = require("assert");
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+
+    await page.waitForTimeout(1000);
+    assert (await cas.pageVariable(page, "googleAnalyticsTrackingId") !== null);
+
     await browser.close();
 })();

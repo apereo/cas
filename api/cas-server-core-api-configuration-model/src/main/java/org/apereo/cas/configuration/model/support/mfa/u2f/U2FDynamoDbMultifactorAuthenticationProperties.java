@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link U2FDynamoDbMultifactorAuthenticationProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("U2FDynamoDbMultifactorAuthenticationProperties")
 public class U2FDynamoDbMultifactorAuthenticationProperties extends AbstractDynamoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 612447148774854955L;
 
     /**

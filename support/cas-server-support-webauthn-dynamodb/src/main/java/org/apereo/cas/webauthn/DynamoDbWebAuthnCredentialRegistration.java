@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class DynamoDbWebAuthnCredentialRegistration implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4557023022194574325L;
 
     @JsonProperty

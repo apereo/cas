@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.Closeable;
+import java.io.Serial;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,7 +27,7 @@ public class DefaultCloseableDataSourceTests {
             .setUrl("jdbc:hsqldb:mem:cas");
 
         val ds = JpaBeans.newDataSource(props);
-        assertTrue(ds.getTargetDataSource() instanceof Closeable);
+        assertTrue(ds.targetDataSource() instanceof Closeable);
         assertDoesNotThrow(() -> {
             ds.close();
             ds.destroy();
@@ -34,6 +35,7 @@ public class DefaultCloseableDataSourceTests {
     }
 
     public static class Jpa extends AbstractJpaProperties {
+        @Serial
         private static final long serialVersionUID = 1210163210567513705L;
     }
 }

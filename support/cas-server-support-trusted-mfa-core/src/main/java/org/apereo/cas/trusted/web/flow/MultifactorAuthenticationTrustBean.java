@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
 
@@ -19,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 @EqualsAndHashCode
 @Accessors(chain = true)
 public class MultifactorAuthenticationTrustBean implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4004117228828573006L;
 
     private String deviceName;

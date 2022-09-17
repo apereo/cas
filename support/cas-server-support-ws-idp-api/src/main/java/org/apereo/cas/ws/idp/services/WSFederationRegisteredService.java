@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link WSFederationRegisteredService}.
  *
@@ -23,6 +25,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class WSFederationRegisteredService extends BaseWebBasedRegisteredService {
 
+    @Serial
     private static final long serialVersionUID = -3700571300568534062L;
 
     private String realm = WSFederationConstants.REALM_DEFAULT_URI;

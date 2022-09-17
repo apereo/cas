@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import java.util.Map;
 @JsonFilter("SyncopePrincipalAttributesProperties")
 public class SyncopePrincipalAttributesProperties extends AbstractSyncopeProperties {
 
+    @Serial
     private static final long serialVersionUID = 98257222402164L;
 
     /**

@@ -210,11 +210,11 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
      * @return the optional
      */
     protected Optional<AuditableExecutionResult> byExternalGroovyScript(final AuditableContext context) {
-        if (accessStrategyScriptResource != null) {
-            val args = new Object[]{context, LOGGER};
-            return Optional.ofNullable(accessStrategyScriptResource.execute(args,
-                AuditableExecutionResult.class, true));
-        }
-        return Optional.empty();
+        return Optional.ofNullable(accessStrategyScriptResource)
+            .map(res -> {
+                val args = new Object[]{context, LOGGER};
+                return Optional.ofNullable(res.execute(args, AuditableExecutionResult.class, true));
+            })
+            .orElseGet(Optional::empty);
     }
 }

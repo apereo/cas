@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * Properties for the Cross-Site Request Forgery (CSRF) cookie used in some Oauth flows.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("OAuthCsrfCookieProperties")
 public class OAuthCsrfCookieProperties extends CookieProperties {
 
+    @Serial
     private static final long serialVersionUID = 5298598088218873282L;
 
     /**

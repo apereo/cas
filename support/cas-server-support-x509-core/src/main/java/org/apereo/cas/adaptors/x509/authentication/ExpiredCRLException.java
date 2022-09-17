@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.authentication;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serial;
 import java.security.GeneralSecurityException;
 import java.time.ZonedDateTime;
 
@@ -16,6 +17,7 @@ import java.time.ZonedDateTime;
 @RequiredArgsConstructor
 public class ExpiredCRLException extends GeneralSecurityException {
 
+    @Serial
     private static final long serialVersionUID = 5157864033250359972L;
 
     /**

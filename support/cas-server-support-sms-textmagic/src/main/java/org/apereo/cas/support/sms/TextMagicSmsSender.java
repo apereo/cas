@@ -57,7 +57,7 @@ public class TextMagicSmsSender implements SmsSender {
 
         httpClient.ifPresent(c -> {
             val okHttpClient = new OkHttpClient();
-            val httpClientFactory = c.getHttpClientFactory();
+            val httpClientFactory = c.httpClientFactory();
             okHttpClient.setSslSocketFactory(httpClientFactory.getSslContext().getSocketFactory());
             okHttpClient.setHostnameVerifier(httpClientFactory.getHostnameVerifier());
             okHttpClient.setConnectTimeout(httpClientFactory.getConnectionTimeout(), TimeUnit.SECONDS);

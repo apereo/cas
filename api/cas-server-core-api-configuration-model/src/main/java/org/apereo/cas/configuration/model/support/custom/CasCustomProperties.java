@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-core-web", automated = true)
 @JsonFilter("CasCustomProperties")
 public class CasCustomProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 5354004353286722083L;
 
     /**

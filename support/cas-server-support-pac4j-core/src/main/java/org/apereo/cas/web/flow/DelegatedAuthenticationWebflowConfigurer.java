@@ -21,7 +21,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The {@link DelegatedAuthenticationWebflowConfigurer} is responsible for
@@ -196,8 +195,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
             .values()
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .sorted(AnnotationAwareOrderComparator.INSTANCE)
-            .collect(Collectors.toList());
+            .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
 
         val attrMapping = new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE),
             createExpression(CasWebflowConstants.ATTRIBUTE_SERVICE));

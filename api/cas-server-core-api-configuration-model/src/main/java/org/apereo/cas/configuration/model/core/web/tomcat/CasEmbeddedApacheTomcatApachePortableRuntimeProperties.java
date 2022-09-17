@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.File;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @JsonFilter("CasEmbeddedApacheTomcatApachePortableRuntimeProperties")
 public class CasEmbeddedApacheTomcatApachePortableRuntimeProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 8229851352067677264L;
 
     /**

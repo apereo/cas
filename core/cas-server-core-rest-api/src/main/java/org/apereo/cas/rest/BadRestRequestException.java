@@ -1,6 +1,8 @@
 package org.apereo.cas.rest;
 
 
+import java.io.Serial;
+
 /**
  * This is {@link BadRestRequestException}.
  *
@@ -8,6 +10,7 @@ package org.apereo.cas.rest;
  * @since 5.0.0
  */
 public class BadRestRequestException extends IllegalArgumentException {
+    @Serial
     private static final long serialVersionUID = 6852720596988243487L;
 
     /**

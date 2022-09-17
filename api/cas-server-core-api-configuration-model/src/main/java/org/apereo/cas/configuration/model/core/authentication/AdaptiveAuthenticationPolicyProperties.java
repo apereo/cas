@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.Map;
 @JsonFilter("AdaptiveAuthenticationPolicyProperties")
 public class AdaptiveAuthenticationPolicyProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1840174229142982880L;
 
     /**

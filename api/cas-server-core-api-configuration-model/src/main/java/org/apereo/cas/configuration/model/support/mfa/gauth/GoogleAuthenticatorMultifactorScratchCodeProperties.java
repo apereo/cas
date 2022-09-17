@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("GoogleAuthenticatorMultifactorScratchCodeProperties")
 public class GoogleAuthenticatorMultifactorScratchCodeProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8740203143088539401L;
 
     /**

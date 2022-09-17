@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link AuthyMultifactorAuthenticationProperties}.
  *
@@ -29,6 +31,7 @@ public class AuthyMultifactorAuthenticationProperties
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-authy";
 
+    @Serial
     private static final long serialVersionUID = -3746749663459157641L;
 
     /**

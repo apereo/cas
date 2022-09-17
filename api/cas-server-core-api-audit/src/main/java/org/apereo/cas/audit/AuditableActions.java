@@ -112,6 +112,10 @@ public interface AuditableActions {
     String SAML2_REQUEST = "SAML2_REQUEST";
 
     /**
+     * Auditable action {@code SAML2_METADATA_RESOLUTION}.
+     */
+    String SAML2_METADATA_RESOLUTION = "SAML2_METADATA_RESOLUTION";
+    /**
      * Auditable action {@code OAUTH2_ACCESS_TOKEN_RESPONSE}.
      */
     String OAUTH2_ACCESS_TOKEN_RESPONSE = "OAUTH2_ACCESS_TOKEN_RESPONSE";

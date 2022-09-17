@@ -93,9 +93,9 @@ public class InjectResponseHeadersActionTests {
         attributes.put(Response.ResponseType.REDIRECT.name().toLowerCase(), "true");
 
         val casResponse = mock(Response.class);
-        when(casResponse.getUrl()).thenReturn("https://google.com");
-        when(casResponse.getResponseType()).thenReturn(Response.ResponseType.REDIRECT);
-        when(casResponse.getAttributes()).thenReturn(attributes);
+        when(casResponse.url()).thenReturn("https://google.com");
+        when(casResponse.responseType()).thenReturn(Response.ResponseType.REDIRECT);
+        when(casResponse.attributes()).thenReturn(attributes);
         val responseBuilder = mock(ResponseBuilder.class);
         when(responseBuilder.build(any(), any(), any())).thenReturn(casResponse);
         val locator = mock(ResponseBuilderLocator.class);

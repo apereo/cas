@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class TicketProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5586947805593202037L;
 
     /**

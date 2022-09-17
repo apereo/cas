@@ -23,6 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -41,6 +42,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Getter
 public class CookieRetrievingCookieGenerator extends CookieGenerator implements Serializable, CasCookieBuilder {
+    @Serial
     private static final long serialVersionUID = -4926982428809856313L;
 
     /**

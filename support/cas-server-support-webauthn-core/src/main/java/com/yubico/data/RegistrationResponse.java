@@ -30,18 +30,12 @@ import com.yubico.webauthn.data.AuthenticatorAttestationResponse;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.ClientRegistrationExtensionOutputs;
 import com.yubico.webauthn.data.PublicKeyCredential;
-import lombok.Value;
 
 import java.util.Optional;
 
-@Value
-public class RegistrationResponse {
-
-    private final ByteArray requestId;
-
-    private final PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs> credential;
-
-    private final Optional<ByteArray> sessionToken;
+public record RegistrationResponse(ByteArray requestId,
+                                   PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs> credential,
+                                   Optional<ByteArray> sessionToken) {
 
     @JsonCreator
     public RegistrationResponse(
@@ -50,8 +44,7 @@ public class RegistrationResponse {
         @JsonProperty("credential")
         final PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs> credential,
         @JsonProperty("sessionToken")
-        final Optional<ByteArray> sessionToken
-    ) {
+        final Optional<ByteArray> sessionToken) {
         this.requestId = requestId;
         this.credential = credential;
         this.sessionToken = sessionToken;

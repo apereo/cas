@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link CassandraAuthenticationProperties}.
  *
@@ -24,6 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("CassandraAuthenticationProperties")
 public class CassandraAuthenticationProperties extends BaseCassandraProperties {
 
+    @Serial
     private static final long serialVersionUID = 1369405266376125234L;
 
     /**

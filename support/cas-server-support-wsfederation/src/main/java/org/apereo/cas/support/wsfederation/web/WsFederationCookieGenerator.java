@@ -6,6 +6,8 @@ import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
+import java.io.Serial;
+
 /**
  * This is {@link WsFederationCookieGenerator}.
  *
@@ -13,6 +15,7 @@ import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
  * @since 5.3.0
  */
 public class WsFederationCookieGenerator extends CookieRetrievingCookieGenerator {
+    @Serial
     private static final long serialVersionUID = -6908852892097058675L;
 
     public WsFederationCookieGenerator(final CookieGenerationContext context,

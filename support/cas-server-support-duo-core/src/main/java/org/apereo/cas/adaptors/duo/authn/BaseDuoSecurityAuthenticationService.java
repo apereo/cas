@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.Serial;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -45,6 +46,7 @@ import java.util.Optional;
 @EqualsAndHashCode(of = "properties")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
+    @Serial
     private static final long serialVersionUID = -8044100706027708789L;
 
     private static final int AUTH_API_VERSION = 2;
@@ -113,7 +115,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 throw new DuoWebException("Invalid response format received from Duo");
             }
 
-            if (result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+            if ("OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
                 val response = result.get(RESULT_KEY_RESPONSE);
                 val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
 
@@ -219,7 +221,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @param request the request
      */
     protected void configureHttpRequest(final Http request) {
-        val factory = this.httpClient.getHttpClientFactory();
+        val factory = this.httpClient.httpClientFactory();
         if (factory.getProxy() != null) {
             request.setProxy(factory.getProxy().getHostName(), factory.getProxy().getPort());
         }

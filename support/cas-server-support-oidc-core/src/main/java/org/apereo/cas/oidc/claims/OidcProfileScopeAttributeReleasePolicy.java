@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.OidcConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ public class OidcProfileScopeAttributeReleasePolicy extends BaseOidcScopeAttribu
         "middle_name", "nickname", "preferred_username", "profile", "picture", "website",
         "gender", "birthdate", "zoneinfo", "locale", "updated_at");
 
+    @Serial
     private static final long serialVersionUID = 1532960981124784595L;
 
     public OidcProfileScopeAttributeReleasePolicy() {

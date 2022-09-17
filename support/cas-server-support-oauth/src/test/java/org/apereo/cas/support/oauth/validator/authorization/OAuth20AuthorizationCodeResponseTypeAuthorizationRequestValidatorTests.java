@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.validator.authorization;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
@@ -165,7 +166,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
 
-        service.getAccessStrategy().setServiceAccessAllowed(false);
+        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());

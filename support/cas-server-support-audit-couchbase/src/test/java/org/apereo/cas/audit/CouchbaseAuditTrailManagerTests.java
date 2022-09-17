@@ -40,7 +40,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Getter
 @EnabledIfListeningOnPort(port = 8091)
 public class CouchbaseAuditTrailManagerTests extends BaseAuditConfigurationTests {
-
     @Autowired
     @Qualifier("couchbaseAuditTrailManager")
     private AuditTrailManager auditTrailManager;

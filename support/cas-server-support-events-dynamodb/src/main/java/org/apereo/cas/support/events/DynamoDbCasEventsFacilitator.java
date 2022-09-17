@@ -35,15 +35,9 @@ import java.util.stream.Stream;
  * @since 6.3.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class DynamoDbCasEventsFacilitator {
+public record DynamoDbCasEventsFacilitator(DynamoDbEventsProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
-
-    private final DynamoDbEventsProperties dynamoDbProperties;
-
-    private final DynamoDbClient amazonDynamoDBClient;
 
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final CasEvent record) throws Exception {
         val values = new HashMap<String, AttributeValue>();

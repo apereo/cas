@@ -17,6 +17,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.springframework.context.ApplicationContext;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -3483733307124962357L;
 
     private boolean useFriendlyName;

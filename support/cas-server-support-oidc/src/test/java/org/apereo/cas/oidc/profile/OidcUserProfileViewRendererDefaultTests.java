@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,7 +50,7 @@ public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         assertTrue(result.containsKey(CasProtocolConstants.PARAMETER_SERVICE));
         val attrs = (Map) result.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES);
         assertTrue(attrs.containsKey("email"));
-        assertEquals("casuser@example.org", attrs.get("email"));
+        assertEquals("casuser@example.org", CollectionUtils.firstElement(attrs.get("email")).get());
     }
 
     @Test

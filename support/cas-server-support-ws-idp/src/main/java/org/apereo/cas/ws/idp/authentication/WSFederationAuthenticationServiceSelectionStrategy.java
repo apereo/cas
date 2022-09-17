@@ -16,6 +16,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.jooq.lambda.Unchecked;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -28,6 +29,7 @@ import java.util.Optional;
 @Getter
 @Setter
 public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
+    @Serial
     private static final long serialVersionUID = 8035218407906419228L;
 
     public WSFederationAuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,

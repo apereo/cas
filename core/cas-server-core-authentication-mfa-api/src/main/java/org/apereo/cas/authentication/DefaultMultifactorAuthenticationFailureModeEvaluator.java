@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * Default implementation of {@link MultifactorAuthenticationFailureModeEvaluator}.
  *
@@ -19,6 +21,7 @@ import lombok.val;
 @RequiredArgsConstructor
 public class DefaultMultifactorAuthenticationFailureModeEvaluator implements MultifactorAuthenticationFailureModeEvaluator {
 
+    @Serial
     private static final long serialVersionUID = 3837589092620951038L;
 
     private final CasConfigurationProperties casProperties;

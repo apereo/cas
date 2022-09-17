@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -27,6 +28,7 @@ import java.io.Serializable;
 @JsonFilter("TrustedDevicesMultifactorProperties")
 public class TrustedDevicesMultifactorProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1505013239016790473L;
 
     /**

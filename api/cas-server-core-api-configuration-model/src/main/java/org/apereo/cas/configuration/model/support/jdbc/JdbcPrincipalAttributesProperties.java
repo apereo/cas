@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.Map;
 @JsonFilter("JdbcPrincipalAttributesProperties")
 public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = 6915428382578138387L;
 
     /**

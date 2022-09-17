@@ -11,6 +11,8 @@ import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.awscore.client.builder.AwsSyncClientBuilder;
 import software.amazon.awssdk.core.client.builder.SdkSyncClientBuilder;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -26,6 +28,7 @@ public class AmazonClientConfigurationBuilderTests {
     @Test
     public void verifyOperation() {
         val properties = new AbstractDynamoDbProperties() {
+            @Serial
             private static final long serialVersionUID = -3599433486448467450L;
         };
         properties.setLocalAddress("github.com");

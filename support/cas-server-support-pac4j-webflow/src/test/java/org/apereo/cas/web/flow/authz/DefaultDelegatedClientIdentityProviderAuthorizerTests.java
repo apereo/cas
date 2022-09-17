@@ -47,8 +47,7 @@ public class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
-
-
+    
     @BeforeEach
     public void setup() {
         servicesManager.deleteAll();
@@ -72,7 +71,7 @@ public class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     }
 
     @Test
-    public void verifyAuthzByService() throws Exception {
+    public void verifyAuthzByService() {
         verifyAuthzForService(new MockHttpServletRequest(), new MockRequestContext());
     }
 
@@ -85,13 +84,13 @@ public class DefaultDelegatedClientIdentityProviderAuthorizerTests {
         assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
-        registeredService.getAccessStrategy().setServiceAccessAllowed(false);
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
         servicesManager.save(registeredService);
         assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
         assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
 
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        accessStrategy.setServiceAccessAllowed(true);
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(true));
         val delegationStrategy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
             .setAllowedProviders(List.of("AnotherClient"));
         accessStrategy.setDelegatedAuthenticationPolicy(delegationStrategy);

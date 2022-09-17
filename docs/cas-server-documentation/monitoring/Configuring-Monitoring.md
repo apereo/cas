@@ -40,7 +40,6 @@ Monitors can also be managed using any one of the following strategies.
 | Storage        | Description                                         
 |----------------------------------------------------------------------------
 | Memcached      | [this guide](Configuring-Monitoring-Memcached.html)  
-| Ehcache        | [this guide](Configuring-Monitoring-Ehcache.html)  
 | MongoDb        | [this guide](Configuring-Monitoring-MongoDb.html)  
 | JDBC           | [this guide](Configuring-Monitoring-JDBC.html)  
 | LDAP           | [this guide](Configuring-Monitoring-LDAP.html)

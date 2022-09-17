@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -31,6 +32,7 @@ import java.util.Optional;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy implements RegisteredServiceTicketGrantingTicketExpirationPolicy {
+    @Serial
     private static final long serialVersionUID = 1122553887352573119L;
 
     private long maxTimeToLiveInSeconds;

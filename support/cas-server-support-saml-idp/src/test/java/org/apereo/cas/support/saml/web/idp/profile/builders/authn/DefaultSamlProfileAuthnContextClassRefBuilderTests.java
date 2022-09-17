@@ -138,4 +138,54 @@ public class DefaultSamlProfileAuthnContextClassRefBuilderTests extends BaseSaml
         val result = builder.build(buildContext);
         assertEquals("https://refeds.org/profile/mfa", result);
     }
+
+    @Test
+    public void verifyRefedsContextWithPrincipalAttribute() throws Exception {
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings()
+            .add("https://refeds.org/profile/mfa->mfa");
+        props.getAuthn().getMfa().getCore().setAuthenticationContextAttribute("amr");
+
+        val builder = new DefaultSamlProfileAuthnContextClassRefBuilder(props);
+        val service = getSamlRegisteredServiceForTestShib();
+        val authnRequest = getAuthnRequestFor(service);
+
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
+        val assertion = getAssertion(
+            Map.of(props.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), List.of("pwd", "mfa")));
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .authenticatedAssertion(assertion)
+            .registeredService(service)
+            .adaptor(adaptor.get())
+            .build();
+        val result = builder.build(buildContext);
+        assertEquals("https://refeds.org/profile/mfa", result);
+    }
+
+    @Test
+    public void verifyRefedsContextWithoutPrincipalAttribute() throws Exception {
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings()
+            .add("https://refeds.org/profile/mfa->mfa");
+        props.getAuthn().getMfa().getCore().setAuthenticationContextAttribute("amr");
+
+        val builder = new DefaultSamlProfileAuthnContextClassRefBuilder(props);
+        val service = getSamlRegisteredServiceForTestShib();
+        val authnRequest = getAuthnRequestFor(service);
+
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
+        val assertion = getAssertion(Map.of());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .authenticatedAssertion(assertion)
+            .registeredService(service)
+            .adaptor(adaptor.get())
+            .build();
+        val result = builder.build(buildContext);
+        assertEquals(AuthnContext.PPT_AUTHN_CTX, result);
+    }
 }

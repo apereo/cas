@@ -45,11 +45,6 @@ public class SpnegoNegotiateCredentialsAction extends BaseCasWebflowAction {
     private final List<String> supportedBrowser;
 
     /**
-     * Whether this is using the NTLM protocol or not.
-     */
-    private final boolean ntlm;
-
-    /**
      * Sets whether mixed mode authentication should be enabled. If it is
      * enabled then control is allowed to pass back to the Spring Webflow
      * instead of immediately terminating the page after issuing the
@@ -82,15 +77,13 @@ public class SpnegoNegotiateCredentialsAction extends BaseCasWebflowAction {
             return error();
         }
 
-        val prefix = constructMessagePrefix();
         if (!StringUtils.hasText(authorizationHeader)
-            || !authorizationHeader.startsWith(prefix)
-            || authorizationHeader.length() <= prefix.length()) {
+            || !authorizationHeader.startsWith(SpnegoConstants.NEGOTIATE)
+            || authorizationHeader.length() <= SpnegoConstants.NEGOTIATE.length()) {
 
-            val wwwHeader = this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE;
             LOGGER.debug("Authorization header not found or does not match the message prefix [{}]. Sending [{}] header [{}]",
-                prefix, SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
-            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
+                SpnegoConstants.NEGOTIATE, SpnegoConstants.HEADER_AUTHENTICATE, SpnegoConstants.NEGOTIATE);
+            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, SpnegoConstants.NEGOTIATE);
 
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             /*
@@ -98,24 +91,14 @@ public class SpnegoNegotiateCredentialsAction extends BaseCasWebflowAction {
              because another object has taken care of it. If mixed mode authentication is allowed
              then responseComplete should not be called so that webflow will display the login page.
               */
-            if (!this.mixedModeAuthentication) {
+            if (this.mixedModeAuthentication) {
+                LOGGER.debug("Mixed-mode authentication is enabled");
+            } else {
                 LOGGER.debug("Mixed-mode authentication is disabled. Executing completion of response");
                 context.getExternalContext().recordResponseComplete();
-            } else {
-                LOGGER.debug("Mixed-mode authentication is enabled");
             }
         }
         return success();
-    }
-
-    /**
-     * Construct message prefix.
-     *
-     * @return if {@link #ntlm} is enabled, {@link SpnegoConstants#NTLM}, otherwise
-     * {@link SpnegoConstants#NEGOTIATE}. An extra space is appended to the end.
-     */
-    protected String constructMessagePrefix() {
-        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE) + ' ';
     }
 
     /**

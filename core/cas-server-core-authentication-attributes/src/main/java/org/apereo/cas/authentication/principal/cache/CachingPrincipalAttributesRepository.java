@@ -15,6 +15,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import java.util.Map;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true, of = {"timeUnit", "expiration"})
 public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
+    @Serial
     private static final long serialVersionUID = 6350244643948535906L;
 
     /**

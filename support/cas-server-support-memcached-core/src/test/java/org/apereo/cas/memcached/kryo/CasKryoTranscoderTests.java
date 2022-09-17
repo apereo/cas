@@ -49,6 +49,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.io.Serial;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -348,6 +349,7 @@ public class CasKryoTranscoderTests {
      */
     @ToString(callSuper = true)
     private static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+        @Serial
         private static final long serialVersionUID = -1704993954986738308L;
 
         /**

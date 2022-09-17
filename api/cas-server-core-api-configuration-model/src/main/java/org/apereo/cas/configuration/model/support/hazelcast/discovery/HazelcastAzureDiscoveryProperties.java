@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -53,6 +54,7 @@ public class HazelcastAzureDiscoveryProperties implements Serializable {
      */
     public static final String AZURE_DISCOVERY_GROUP_NAME = "group-name";
 
+    @Serial
     private static final long serialVersionUID = 3861923784551442190L;
 
     /**

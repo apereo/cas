@@ -12,6 +12,8 @@ import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 
+import java.io.Serial;
+
 /**
  * This is {@link DefaultSecurityTokenTicket}.
  *
@@ -22,6 +24,7 @@ import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class DefaultSecurityTokenTicket extends AbstractTicket implements SecurityTokenTicket {
 
+    @Serial
     private static final long serialVersionUID = 3940671352560102114L;
 
     @Getter

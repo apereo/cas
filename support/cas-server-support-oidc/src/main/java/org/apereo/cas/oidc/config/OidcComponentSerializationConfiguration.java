@@ -24,6 +24,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import java.io.Serial;
+
 /**
  * This is {@link OidcComponentSerializationConfiguration}.
  *
@@ -66,6 +68,7 @@ public class OidcComponentSerializationConfiguration {
 
     private static class OidcPushedAuthorizationRequestSerializer extends
         AbstractJacksonBackedStringSerializer<OidcDefaultPushedAuthorizationRequest> {
+        @Serial
         private static final long serialVersionUID = -6298623586274810263L;
 
         @Override

@@ -22,6 +22,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -102,6 +103,7 @@ public final class CasCoreConfigurationUtils {
     }
 
     private static class ResourceSerializer extends StdSerializer<Resource> {
+        @Serial
         private static final long serialVersionUID = 7971411664567411958L;
 
         ResourceSerializer() {

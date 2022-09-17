@@ -18,6 +18,7 @@ import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
@@ -35,6 +36,7 @@ import java.util.Set;
  */
 @Slf4j
 public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository implements DisposableBean {
+    @Serial
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final Map<String, ConnectionFactory> connectionFactoryList;
@@ -90,7 +92,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             LOGGER.debug("LDAP query located an entry for [{}] and responded with [{}]", id, response);
-            return Optional.of(Triple.of(connectionFactory.getConnectionFactory(), response, ldap));
+            return Optional.of(Triple.of(connectionFactory.connectionFactory(), response, ldap));
         }
         LOGGER.debug("LDAP query could not locate an entry for [{}]", id);
         return Optional.empty();

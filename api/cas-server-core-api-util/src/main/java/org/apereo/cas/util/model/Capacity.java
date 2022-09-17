@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
 @Getter
 @SuperBuilder
 public class Capacity implements Serializable {
+    @Serial
     private static final long serialVersionUID = -331719796564884951L;
 
     private static final Pattern SIZE_PATTERN = Pattern.compile("(\\d+(\\.\\d+)*)\\s*(\\S+)");

@@ -112,7 +112,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     /**
      * List of HTTP status codes considered valid by the caller.
      */
-    private List<Integer> acceptableCodes = IntStream.of(DEFAULT_ACCEPTABLE_CODES).boxed().collect(Collectors.toList());
+    private List<Integer> acceptableCodes = IntStream.of(DEFAULT_ACCEPTABLE_CODES).boxed().toList();
 
     private long connectionTimeout = DEFAULT_TIMEOUT;
 

@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * Encapsulates hazelcast properties exposed by CAS via properties file property source in a type-safe manner.
  *
@@ -22,6 +24,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("HazelcastTicketRegistryProperties")
 public class HazelcastTicketRegistryProperties extends BaseHazelcastProperties {
 
+    @Serial
     private static final long serialVersionUID = -1095208036374406772L;
 
     /**

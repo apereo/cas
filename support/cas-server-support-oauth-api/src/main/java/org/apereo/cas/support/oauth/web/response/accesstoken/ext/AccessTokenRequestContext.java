@@ -21,6 +21,7 @@ import net.minidev.json.annotate.JsonIgnore;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -39,6 +40,7 @@ import java.util.Set;
 @Jacksonized
 public class AccessTokenRequestContext implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1428887534614525042L;
 
     private final Service service;

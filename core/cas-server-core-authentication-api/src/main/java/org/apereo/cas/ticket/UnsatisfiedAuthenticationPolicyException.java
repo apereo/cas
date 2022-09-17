@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.io.Serial;
+
 /**
  * Error condition arising at ticket creation or validation time when a ticketing operation relying on authentication
  * cannot proceed due to unsatisfied authentication security policy.
@@ -15,6 +17,7 @@ import lombok.NonNull;
 @Getter
 public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketException {
 
+    @Serial
     private static final long serialVersionUID = -827432780367197133L;
 
     /**

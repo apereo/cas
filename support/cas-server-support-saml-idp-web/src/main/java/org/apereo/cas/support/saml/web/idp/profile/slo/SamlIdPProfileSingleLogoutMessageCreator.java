@@ -32,6 +32,7 @@ import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -45,6 +46,7 @@ import java.util.Optional;
 @Slf4j
 public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements SingleLogoutMessageCreator {
 
+    @Serial
     private static final long serialVersionUID = -5895467960534493675L;
 
     /**

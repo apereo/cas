@@ -25,8 +25,6 @@ You may determine the multifactor authentication policy for a registered service
 
 The script may also be embedded directly in the service definition, as such:
 
-you may determine the multifactor authentication policy for a registered service using a Groovy script:
-
 ```json
 {
   "@class" : "org.apereo.cas.services.CasRegisteredService",

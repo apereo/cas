@@ -3,6 +3,7 @@ package org.apereo.cas.discovery;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Set;
 @Setter
 public class CasServerProfile implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1804693559797898008L;
 
     /**

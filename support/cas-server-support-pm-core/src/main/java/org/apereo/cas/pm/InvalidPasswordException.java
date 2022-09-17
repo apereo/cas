@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serial;
+
 /**
  * Raised by {@link PasswordManagementService} if it is also responsible for validating
  * passwords and a new password fails validation.
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InvalidPasswordException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = 458954862481279L;
 
     private final String code;

@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapMonitorProperties}.
  *
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 @JsonFilter("LdapMonitorProperties")
 public class LdapMonitorProperties extends AbstractLdapProperties {
+    @Serial
     private static final long serialVersionUID = 4722929378440179113L;
 
     /**

@@ -35,7 +35,7 @@ public class InternalTicketValidator implements TicketValidator {
     public ValidationResult validate(final String ticketId, final String serviceId) {
         val service = webApplicationServiceFactory.createService(serviceId);
         val assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
-        val authentication = assertion.getPrimaryAuthentication();
+        val authentication = assertion.primaryAuthentication();
         val principal = authentication.getPrincipal();
         val registeredService = servicesManager.findServiceBy(service);
         val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(

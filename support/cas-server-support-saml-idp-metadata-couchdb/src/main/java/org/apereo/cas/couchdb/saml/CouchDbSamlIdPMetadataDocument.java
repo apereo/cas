@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbSamlIdPMetadataDocument}.
  *
@@ -19,6 +21,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 public class CouchDbSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
+    @Serial
     private static final long serialVersionUID = 915217132219326234L;
 
     @JsonProperty("_id")

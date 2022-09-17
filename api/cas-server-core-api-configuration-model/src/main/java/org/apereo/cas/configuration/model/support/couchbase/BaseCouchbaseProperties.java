@@ -8,9 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -25,13 +25,14 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-couchbase-core")
 public abstract class BaseCouchbaseProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6550895842866988551L;
 
     /**
      * Node addresses.
      */
     @RequiredProperty
-    private List<String> addresses = Stream.of("localhost").collect(Collectors.toList());
+    private List<String> addresses = Stream.of("localhost").toList();
 
     /**
      * String representation of connection timeout.

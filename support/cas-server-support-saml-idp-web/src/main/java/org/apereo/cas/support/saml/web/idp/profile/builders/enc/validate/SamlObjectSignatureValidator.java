@@ -116,7 +116,7 @@ public class SamlObjectSignatureValidator {
                                                  final HttpServletRequest request,
                                                  final MessageContext context) throws Exception {
 
-        verifySamlProfileRequestIfNeeded(profileRequest, adaptor.getMetadataResolver(), request, context);
+        verifySamlProfileRequestIfNeeded(profileRequest, adaptor.metadataResolver(), request, context);
     }
 
     /**

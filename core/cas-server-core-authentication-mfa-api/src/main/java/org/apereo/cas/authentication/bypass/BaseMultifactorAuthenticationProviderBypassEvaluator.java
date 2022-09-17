@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator implements MultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = 2372899636154131393L;
 
     private final String providerId;
@@ -105,20 +107,6 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
                                                                                       MultifactorAuthenticationProvider provider,
                                                                                       HttpServletRequest request);
 
-
-    /**
-     * Locate matching attribute value boolean.
-     *
-     * @param attrName   the attr name
-     * @param attrValue  the attr value
-     * @param attributes the attributes
-     * @return true/false
-     */
-    protected static boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
-                                                          final Map<String, List<Object>> attributes) {
-        return locateMatchingAttributeValue(attrName, attrValue, attributes, true);
-    }
-
     /**
      * Evaluate attribute rules for bypass.
      *
@@ -137,16 +125,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
             return false;
         }
 
-        val names = attributes.entrySet()
-            .stream()
-            .filter(e -> {
-                LOGGER.debug("Attempting to match [{}] against [{}]", attrName, e.getKey());
-                return RegexUtils.find(attrName, e.getKey());
-            })
-            .collect(Collectors.toSet());
-
-        LOGGER.debug("Found [{}] attributes relevant for multifactor authentication bypass", names.size());
-
+        val names = locateMatchingAttributeName(attributes, attrName);
         if (names.isEmpty()) {
             return false;
         }
@@ -157,6 +136,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
         }
 
         val values = names
+            .entrySet()
             .stream()
             .filter(e -> {
                 val valuesCol = CollectionUtils.toCollection(e.getValue());
@@ -168,6 +148,19 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
 
         LOGGER.debug("Matching attribute values remaining are [{}]", values);
         return !values.isEmpty();
+    }
+
+    protected static Map<String, List<Object>> locateMatchingAttributeName(final Map<String, List<Object>> attributes,
+                                                                           final String attrName) {
+        val names = attributes.entrySet()
+            .stream()
+            .filter(e -> {
+                LOGGER.debug("Attempting to match [{}] against [{}]", attrName, e.getKey());
+                return RegexUtils.find(attrName, e.getKey());
+            })
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        LOGGER.debug("Found [{}] attributes relevant for multifactor authentication bypass", names.size());
+        return names;
     }
 
     /**

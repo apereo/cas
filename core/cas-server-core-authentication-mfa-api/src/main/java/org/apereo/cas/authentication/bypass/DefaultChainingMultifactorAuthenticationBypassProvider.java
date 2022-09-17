@@ -13,6 +13,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
                                                                                                
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 public class DefaultChainingMultifactorAuthenticationBypassProvider implements ChainingMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = 2397239625822397286L;
 
     private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators

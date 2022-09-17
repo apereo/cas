@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,6 +27,7 @@ public class LdapAuthorizationProperties implements Serializable {
      */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
 
+    @Serial
     private static final long serialVersionUID = -2680169790567609780L;
 
     /**

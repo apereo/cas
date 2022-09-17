@@ -22,14 +22,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.criterion.SatisfyAnyCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
+import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
+import org.opensaml.saml.saml2.common.TimeBoundSAMLObject;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -70,15 +75,19 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      */
     @DeleteOperation
     @Operation(summary = "Invalidate SAML2 metadata cache using an entity id.", parameters = @Parameter(name = "serviceId"))
-    public void invalidate(@Nullable final String serviceId) {
+    public void invalidate(
+        @Nullable
+        final String serviceId) {
         if (StringUtils.isBlank(serviceId)) {
             cachingMetadataResolver.invalidate();
+            LOGGER.info("Cleared SAML2 registered service metadata cache");
         } else {
             val registeredService = findRegisteredService(serviceId);
             val criteriaSet = new CriteriaSet();
             criteriaSet.add(new EntityIdCriterion(serviceId));
             criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
             cachingMetadataResolver.invalidate(registeredService, criteriaSet);
+            LOGGER.info("Invalidated SAML2 registered service metadata cache entry for [{}]", registeredService);
         }
     }
 
@@ -89,22 +98,34 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      * @param entityId  the entity id
      * @return the cached metadata object
      */
-    @ReadOperation
-    @Operation(summary = "Get SAML2 cached metadata", parameters = {
+    @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get SAML2 cached metadata for a SAML2 registered service", parameters = {
         @Parameter(name = "serviceId", required = true),
         @Parameter(name = "entityId")
     })
-    public Map<String, Object> getCachedMetadataObject(final String serviceId, @Nullable final String entityId) {
+    public Map<String, Object> getCachedMetadataObject(final String serviceId,
+                                                       @Nullable
+                                                       final String entityId) {
         try {
             val registeredService = findRegisteredService(serviceId);
-            val issuer = StringUtils.defaultIfBlank(entityId, registeredService.getServiceId());
             val criteriaSet = new CriteriaSet();
-            criteriaSet.add(new EntityIdCriterion(issuer));
-            criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-            val metadataResolver = cachingMetadataResolver.resolve(registeredService, criteriaSet);
-            val iteration = metadataResolver.resolve(criteriaSet).spliterator();
+            if (StringUtils.isNotBlank(entityId)) {
+                criteriaSet.add(new EntityIdCriterion(entityId));
+                criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            } else {
+                criteriaSet.add(new EvaluableEntityRoleEntityDescriptorCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+                criteriaSet.add(new SatisfyAnyCriterion(true));
+            }
+            val metadataResolverResult = cachingMetadataResolver.resolve(registeredService, criteriaSet);
+            val iteration = metadataResolverResult.getMetadataResolver().resolve(criteriaSet).spliterator();
             return StreamSupport.stream(iteration, false)
-                .map(entity -> Pair.of(entity.getEntityID(), SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString()))
+                .filter(TimeBoundSAMLObject::isValid)
+                .map(entity -> {
+                    val details = CollectionUtils.wrap(
+                        "cachedInstant", metadataResolverResult.getCachedInstant(),
+                        "metadata", SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString());
+                    return Pair.of(entity.getEntityID(), details);
+                })
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -116,15 +137,14 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
         var matchedServices = (Collection<RegisteredService>) null;
         if (NumberUtils.isCreatable(serviceId)) {
             val id = Long.parseLong(serviceId);
-            matchedServices = servicesManager.findServiceBy(svc -> svc instanceof SamlRegisteredService && svc.getId() == id);
+            matchedServices = List.of(servicesManager.findServiceBy(id, SamlRegisteredService.class));
         } else {
             matchedServices = servicesManager.findServiceBy(svc -> svc instanceof SamlRegisteredService
-                && (svc.getName().equalsIgnoreCase(serviceId) || svc.getServiceId().equalsIgnoreCase(serviceId)));
+                                                                   && (svc.getName().equalsIgnoreCase(serviceId) || svc.getServiceId().equalsIgnoreCase(serviceId)));
         }
         if (matchedServices.isEmpty()) {
             throw new IllegalArgumentException("Unable to locate service " + serviceId);
         }
-
         val registeredService = (SamlRegisteredService) matchedServices.iterator().next();
         val ctx = AuditableContext.builder()
             .registeredService(registeredService)

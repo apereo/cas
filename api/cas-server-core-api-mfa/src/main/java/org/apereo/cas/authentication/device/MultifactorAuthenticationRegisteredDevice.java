@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor(force = true)
 public class MultifactorAuthenticationRegisteredDevice implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1040948239519297651L;
 
     /**

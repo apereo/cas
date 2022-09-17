@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Getter
 @ToString
 public class AuthenticationContextValidationResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = 5276264106164141194L;
 
     private final boolean success;

@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
 
+import java.io.Serial;
+
 /**
  * Exception thrown when a service attempts to use SSO when it should not be
  * allowed to.
@@ -10,6 +12,7 @@ package org.apereo.cas.services;
  */
 public class UnauthorizedSsoServiceException extends UnauthorizedServiceException {
 
+    @Serial
     private static final long serialVersionUID = 8909291297815558561L;
 
     /**

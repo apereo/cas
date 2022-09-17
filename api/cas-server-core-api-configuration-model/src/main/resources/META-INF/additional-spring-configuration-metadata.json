@@ -28,25 +28,6 @@
       }
     },
     {
-      "name": "cas.ticket.registry.ehcache3.terracotta-cluster-uri",
-      "type": "java.lang.String",
-      "deprecation": {
-        "replacement": "cas.ticket.registry.ehcache3.terracotta.terracotta-cluster-uri",
-        "reason": "This setting should is now moved into a terracotta sub namespace.",
-        "level": "error"
-      }
-    },
-
-    {
-      "name": "cas.ticket.registry.ehcache3.terracotta-cluster-uri",
-      "type": "java.lang.String",
-      "deprecation": {
-        "replacement": "cas.ticket.registry.ehcache3.terracotta.terracotta-cluster-uri",
-        "reason": "This setting should is now moved into a terracotta sub namespace.",
-        "level": "error"
-      }
-    },
-    {
       "name": "cas.authn.oidc.jwks.jwks-file",
       "type": "java.lang.String",
       "deprecation": {
@@ -769,15 +750,6 @@
       "type": "java.lang.String",
       "deprecation": {
         "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*",
-        "level": "error"
-      }
-    },
-    {
-      "name": "cas.authn.x509.cache-time-to-idle-seconds",
-      "type": "java.lang.Integer",
-      "deprecation": {
-        "replacement": "cas.authn.x509.cache-time-to-live-seconds",
-        "reason": "This setting no longer applies to the ehcache 3 cache used for x509 CRL caching.",
         "level": "error"
       }
     },

@@ -14,6 +14,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.oidc.profile.OidcProfile;
 
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * This is {@link DelegatedClientJacksonModule}.
@@ -22,6 +23,7 @@ import java.io.IOException;
  * @since 6.3.0
  */
 public class DelegatedClientJacksonModule extends SimpleModule {
+    @Serial
     private static final long serialVersionUID = 4380897174293794761L;
 
     public DelegatedClientJacksonModule() {

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RedisAcceptableUsagePolicyProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("RedisAcceptableUsagePolicyProperties")
 public class RedisAcceptableUsagePolicyProperties extends BaseRedisProperties {
+    @Serial
     private static final long serialVersionUID = -2147683393318585262L;
 }

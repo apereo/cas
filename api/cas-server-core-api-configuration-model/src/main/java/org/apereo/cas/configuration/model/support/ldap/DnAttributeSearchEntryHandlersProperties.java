@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @JsonFilter("DnAttributeSearchEntryHandlersProperties")
 public class DnAttributeSearchEntryHandlersProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1174594647679213858L;
 
     /**

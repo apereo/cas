@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -16,6 +17,7 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 public class DynamoDbConsentRepository implements ConsentRepository {
+    @Serial
     private static final long serialVersionUID = 7894919721657056300L;
 
     private final DynamoDbConsentFacilitator facilitator;

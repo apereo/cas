@@ -20,8 +20,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import com.google.common.base.Supplier;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -77,8 +75,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     private static ModelAndView handleAccessTokenException(final Exception exception, final HttpServletResponse response) {
         val data = ACCESS_TOKEN_RESPONSE_EXCEPTIONS.getOrDefault(exception.getClass().getName(),
             new AccessTokenExceptionResponses(OAuth20Constants.INVALID_GRANT, "Invalid or unauthorized grant"));
-        LoggingUtils.error(LOGGER, data.getMessage(), exception);
-        return OAuth20Utils.writeError(response, data.getCode());
+        LoggingUtils.error(LOGGER, data.message(), exception);
+        return OAuth20Utils.writeError(response, data.code());
     }
 
     /**
@@ -160,12 +158,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
     }
 
-    @RequiredArgsConstructor
-    @Getter
-    private static class AccessTokenExceptionResponses {
-        private final String code;
-
-        private final String message;
+    @SuppressWarnings("UnusedVariable")
+    private record AccessTokenExceptionResponses(String code, String message) {
     }
 
     private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,

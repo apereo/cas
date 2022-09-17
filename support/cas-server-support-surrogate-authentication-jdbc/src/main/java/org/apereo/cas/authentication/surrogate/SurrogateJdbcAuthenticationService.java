@@ -14,6 +14,7 @@ import lombok.val;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
@@ -67,6 +68,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     @EqualsAndHashCode
     @NoArgsConstructor
     public static class SurrogateAccount implements Serializable {
+        @Serial
         private static final long serialVersionUID = 7734857552147825153L;
 
         private String surrogateAccount;

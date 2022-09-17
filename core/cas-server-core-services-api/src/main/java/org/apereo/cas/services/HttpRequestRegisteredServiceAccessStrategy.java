@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -34,6 +35,7 @@ import java.util.Optional;
 @Slf4j
 public class HttpRequestRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = -1108201604115278440L;
 
     private String ipAddress;

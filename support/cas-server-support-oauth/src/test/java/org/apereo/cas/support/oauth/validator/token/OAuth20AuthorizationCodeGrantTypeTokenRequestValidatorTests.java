@@ -36,6 +36,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
@@ -265,6 +266,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
                 casProperties);
             val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
             val expirationPolicy = new ExpirationPolicyBuilder() {
+                @Serial
                 private static final long serialVersionUID = 3911344031977989503L;
 
                 @Override

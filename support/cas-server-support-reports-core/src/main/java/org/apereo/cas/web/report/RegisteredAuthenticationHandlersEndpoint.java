@@ -14,6 +14,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
@@ -76,6 +77,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
     @Getter
     @SuppressWarnings("UnusedMethod")
     private static class AuthenticationHandlerDetails implements Serializable {
+        @Serial
         private static final long serialVersionUID = 6755362844006190415L;
 
         private final String name;

@@ -34,6 +34,7 @@ REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
 branchVersion="master"
 propFilter=".+"
 generateData=true
+audit=true
 proofRead=true
 actuators=true
 thirdParty=true
@@ -95,6 +96,10 @@ while (("$#")); do
     shellCommands=$2
     shift 2
     ;;
+  --audit)
+    audit=$2
+    shift 2
+    ;;
   --features)
     buildFeatures=$2
     shift 2
@@ -125,7 +130,8 @@ printgreen "Filter: \t${propFilter}"
 printgreen "Actuators: \t${actuators}"
 printgreen "Third Party: \t${thirdParty}"
 printgreen "Features: \t${buildFeatures}"
-printgreen "Shell Commands: \t${shellCommands}"
+printgreen "Shell: \t${shellCommands}"
+printgreen "Audit: \t${audit}"
 printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
 
@@ -205,7 +211,7 @@ if [[ $generateData == "true" ]]; then
   printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter...\n"
   ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
     -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
-    -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands"
+    -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands" -aud "$audit"
   if [ $? -eq 1 ]; then
     printred "Unable to generate documentation data. Aborting..."
     exit 1

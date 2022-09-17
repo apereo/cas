@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -13,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -39,6 +43,9 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         super(samlIdPProperties, configBean);
     }
 
+    @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
+        actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         return FunctionUtils.doAndHandle(() -> {

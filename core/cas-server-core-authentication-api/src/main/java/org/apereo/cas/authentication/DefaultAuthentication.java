@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -32,6 +33,7 @@ import java.util.Map;
 @EqualsAndHashCode
 @AllArgsConstructor
 public class DefaultAuthentication implements Authentication {
+    @Serial
     private static final long serialVersionUID = 3206127526058061391L;
 
     /**

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serial;
 
 /**
  * Multifactor Bypass based on Principal Attributes.
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Getter
 public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = -7553435418344342672L;
 
     private final String attributeName;

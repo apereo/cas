@@ -16,6 +16,7 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -37,6 +38,7 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends BaseAuthenticationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -3871692225877293627L;
 
     /**

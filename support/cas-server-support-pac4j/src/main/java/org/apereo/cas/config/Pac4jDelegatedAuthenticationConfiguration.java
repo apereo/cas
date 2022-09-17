@@ -31,6 +31,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jDelegatedAuthenticationConfiguration}.
  *
@@ -115,6 +117,7 @@ public class Pac4jDelegatedAuthenticationConfiguration {
      * The type Oauth1 request token mixin.
      */
     private abstract static class AbstractOAuth1RequestTokenMixin extends OAuth1RequestToken {
+        @Serial
         private static final long serialVersionUID = -7839084408338396531L;
 
         @JsonCreator

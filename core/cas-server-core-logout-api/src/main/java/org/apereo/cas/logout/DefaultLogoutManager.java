@@ -6,8 +6,6 @@ import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -30,13 +28,7 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class DefaultLogoutManager implements LogoutManager {
-    private final boolean singleLogoutCallbacksDisabled;
-
-    private final LogoutExecutionPlan logoutExecutionPlan;
-
+public record DefaultLogoutManager(boolean singleLogoutCallbacksDisabled, LogoutExecutionPlan logoutExecutionPlan) implements LogoutManager {
     @Override
     public List<SingleLogoutRequestContext> performLogout(final SingleLogoutExecutionRequest context) {
         val ticket = context.getTicketGrantingTicket();
@@ -67,8 +59,7 @@ public class DefaultLogoutManager implements LogoutManager {
             .stream()
             .filter(entry -> entry.getValue() instanceof WebApplicationService)
             .filter(Objects::nonNull)
-            .map(entry -> Pair.of(entry.getKey(), (WebApplicationService) entry.getValue()))
-            .collect(Collectors.toList());
+            .map(entry -> Pair.of(entry.getKey(), (WebApplicationService) entry.getValue())).toList();
 
         val sloHandlers = logoutExecutionPlan.getSingleLogoutServiceMessageHandlers();
         return logoutServices

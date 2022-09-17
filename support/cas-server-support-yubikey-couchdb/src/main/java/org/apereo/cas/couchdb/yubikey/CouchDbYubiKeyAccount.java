@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -24,6 +25,7 @@ import java.util.List;
 @SuperBuilder
 @Accessors(chain = true)
 public class CouchDbYubiKeyAccount extends YubiKeyAccount {
+    @Serial
     private static final long serialVersionUID = 2323614397554244567L;
 
     @JsonProperty("_id")

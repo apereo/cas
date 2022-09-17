@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.TreeMap;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -5771481877391140569L;
 
     private List<String> allowedAttributes = new ArrayList<>(0);

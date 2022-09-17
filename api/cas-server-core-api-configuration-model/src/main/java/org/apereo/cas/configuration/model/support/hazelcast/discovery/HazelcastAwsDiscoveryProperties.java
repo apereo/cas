@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -68,6 +69,7 @@ public class HazelcastAwsDiscoveryProperties implements Serializable {
      */
     public static final String AWS_DISCOVERY_PORT = "hz-port";
 
+    @Serial
     private static final long serialVersionUID = -8281247687171101766L;
 
     /**

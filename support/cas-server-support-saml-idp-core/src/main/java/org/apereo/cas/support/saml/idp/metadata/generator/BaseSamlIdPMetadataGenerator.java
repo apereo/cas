@@ -17,6 +17,7 @@ import org.apache.velocity.VelocityContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -140,6 +141,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     @SuperBuilder
     @Getter
     public static class IdPMetadataTemplateContext implements Serializable {
+        @Serial
         private static final long serialVersionUID = -8084689071916142718L;
 
         private final String entityId;

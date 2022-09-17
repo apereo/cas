@@ -3,8 +3,6 @@ package org.apereo.cas.aws;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -32,11 +30,7 @@ import java.util.function.Function;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class ChainingAWSCredentialsProvider {
-    private final List<AwsCredentialsProvider> chain;
-
+public record ChainingAWSCredentialsProvider(List<AwsCredentialsProvider> chain) {
     /**
      * Gets instance.
      *

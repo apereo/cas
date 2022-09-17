@@ -7,7 +7,7 @@ const assert = require('assert');
     let authzHeader = `Basic ${buff.toString('base64')}`;
     console.log(`Authorization header: ${authzHeader}`);
 
-    const url = "https://localhost:8443/cas/actuator/status";
+    const url = "https://localhost:8443/cas/actuator/health";
     let body = await cas.doRequest(url, "GET",
         {
             'Authorization': authzHeader,
@@ -18,9 +18,8 @@ const assert = require('assert');
     console.log(body);
     let json = JSON.parse(body);
     assert(json.status !== undefined);
-    assert(json.health !== undefined);
-    assert(json.host !== undefined);
-    assert(json.server !== undefined);
-    assert(json.version !== undefined)
+    assert(json.components.memory.details.freeMemory !== undefined);
+    assert(json.components.memory.details.totalMemory !== undefined);
+
 })();
 

@@ -133,6 +133,6 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
                                                  final String service) {
         val map = releasePrincipalAttributes(username, password, service);
         val assertion = (ImmutableAssertion) map.get("assertion");
-        return Map.of("uid", username, "attributes", assertion.getPrimaryAuthentication().getPrincipal().getAttributes());
+        return Map.of("uid", username, "attributes", assertion.primaryAuthentication().getPrincipal().getAttributes());
     }
 }

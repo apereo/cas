@@ -116,7 +116,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
         if (givenService.isPresent()) {
             val registeredService = givenService.get();
             if (RegisteredServiceProperties.SCIM_OAUTH_TOKEN.isAssignedTo(registeredService)) {
-                token = RegisteredServiceProperties.SCIM_OAUTH_TOKEN.getPropertyValue(registeredService).getValue();
+                token = RegisteredServiceProperties.SCIM_OAUTH_TOKEN.getPropertyValue(registeredService).value();
             }
         }
 
@@ -131,10 +131,10 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
         if (givenService.isPresent()) {
             val registeredService = givenService.get();
             if (RegisteredServiceProperties.SCIM_USERNAME.isAssignedTo(registeredService)) {
-                username = RegisteredServiceProperties.SCIM_USERNAME.getPropertyValue(registeredService).getValue();
+                username = RegisteredServiceProperties.SCIM_USERNAME.getPropertyValue(registeredService).value();
             }
             if (RegisteredServiceProperties.SCIM_PASSWORD.isAssignedTo(registeredService)) {
-                password = RegisteredServiceProperties.SCIM_PASSWORD.getPropertyValue(registeredService).getValue();
+                password = RegisteredServiceProperties.SCIM_PASSWORD.getPropertyValue(registeredService).value();
             }
         }
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
@@ -144,7 +144,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
         if (givenService.isPresent()) {
             val registeredService = givenService.get();
             if (RegisteredServiceProperties.SCIM_TARGET.isAssignedTo(registeredService)) {
-                target = RegisteredServiceProperties.SCIM_TARGET.getPropertyValue(registeredService).getValue();
+                target = RegisteredServiceProperties.SCIM_TARGET.getPropertyValue(registeredService).value();
             }
         }
         LOGGER.debug("Using SCIM provisioning target [{}]", target);

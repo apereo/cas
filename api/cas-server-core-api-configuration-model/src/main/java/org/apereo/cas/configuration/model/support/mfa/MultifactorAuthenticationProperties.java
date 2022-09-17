@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.List;
 @JsonFilter("MultifactorAuthenticationProperties")
 public class MultifactorAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7416521468929733907L;
 
     /**
@@ -105,12 +107,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuthyMultifactorAuthenticationProperties authy = new AuthyMultifactorAuthenticationProperties();
-
-    /**
-     * Activate and configure a multifactor authentication provider via Swivel.
-     */
-    @NestedConfigurationProperty
-    private SwivelMultifactorAuthenticationProperties swivel = new SwivelMultifactorAuthenticationProperties();
 
     /**
      * Activate and configure a multifactor authentication provider via Acceptto.

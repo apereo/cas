@@ -6,8 +6,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,11 +20,7 @@ import java.util.Optional;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@RequiredArgsConstructor
-@Getter
-public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
-
-    private final TicketRegistry ticketRegistry;
+public record DefaultTicketRegistrySupport(TicketRegistry ticketRegistry) implements TicketRegistrySupport {
 
     @Override
     public Ticket getTicket(final String ticketId) {

@@ -12,7 +12,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Performs two important error handling functions on an
@@ -60,8 +59,7 @@ public class AuthenticationExceptionHandlerAction extends BaseCasWebflowAction {
     public String handle(final Exception e, final RequestContext requestContext) {
         val handlers = webflowExceptionHandlers
             .stream()
-            .filter(handler -> handler.supports(e, requestContext))
-            .collect(Collectors.toList());
+            .filter(handler -> handler.supports(e, requestContext)).toList();
 
         return handlers
             .stream()

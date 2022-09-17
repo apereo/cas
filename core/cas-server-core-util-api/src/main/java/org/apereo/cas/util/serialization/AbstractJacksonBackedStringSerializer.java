@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.Serial;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +49,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      */
     protected static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
 
+    @Serial
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final PrettyPrinter prettyPrinter;

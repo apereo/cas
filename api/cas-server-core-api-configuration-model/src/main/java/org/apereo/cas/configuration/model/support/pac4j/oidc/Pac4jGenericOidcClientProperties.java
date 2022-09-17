@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jGenericOidcClientProperties}.
  *
@@ -19,6 +21,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("Pac4jGenericOidcClientProperties")
 public class Pac4jGenericOidcClientProperties extends BasePac4jOidcClientProperties {
+    @Serial
     private static final long serialVersionUID = 3359382317533639638L;
 
     public Pac4jGenericOidcClientProperties() {
