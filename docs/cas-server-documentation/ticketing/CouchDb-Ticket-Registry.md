@@ -25,7 +25,7 @@ The only truly mandatory setting is the URL. However, CouchDB should not be used
 
 ## Caveat
 
-The trade off for multi-master replication across multiple datacenters if CouchDB does not fully delete
+The trade off for multi-master replication across multiple datacenters is CouchDB does not fully delete
 records. Depending on deployment scale, usage, and available storage, the database may need regular cleaning
 through normal CouchDB techniques.
 
