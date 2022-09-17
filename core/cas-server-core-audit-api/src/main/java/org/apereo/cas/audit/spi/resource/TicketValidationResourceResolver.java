@@ -35,7 +35,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
 
         if (object instanceof Assertion) {
             val assertion = Assertion.class.cast(object);
-            val authn = assertion.getPrimaryAuthentication();
+            val authn = assertion.primaryAuthentication();
             results.put("principal", authn.getPrincipal().getId());
             val attributes = new HashMap<String, Object>(authn.getAttributes());
             attributes.putAll(authn.getPrincipal().getAttributes());

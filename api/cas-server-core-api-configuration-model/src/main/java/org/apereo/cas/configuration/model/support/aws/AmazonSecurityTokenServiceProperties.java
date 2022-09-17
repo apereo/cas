@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link AmazonSecurityTokenServiceProperties}.
  *
@@ -19,6 +21,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("AmazonSecurityTokenServiceProperties")
 public class AmazonSecurityTokenServiceProperties extends BaseAmazonWebServicesProperties {
+    @Serial
     private static final long serialVersionUID = 5426637051495147084L;
 
     /**

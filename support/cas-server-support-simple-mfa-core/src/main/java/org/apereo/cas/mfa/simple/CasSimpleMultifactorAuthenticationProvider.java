@@ -7,6 +7,8 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
+
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationProvider}.
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 public class CasSimpleMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
+    @Serial
     private static final long serialVersionUID = 4789727148634156909L;
 
     @Override

@@ -78,7 +78,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for
@@ -237,7 +236,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public ActionState createActionState(final Flow flow, final String name, final String... action) {
-        val actionList = Arrays.stream(action).map(this::createEvaluateAction).collect(Collectors.toList());
+        val actionList = Arrays.stream(action).map(this::createEvaluateAction).toList();
         return createActionState(flow, name, actionList.toArray(EMPTY_ACTIONS_ARRAY));
     }
 

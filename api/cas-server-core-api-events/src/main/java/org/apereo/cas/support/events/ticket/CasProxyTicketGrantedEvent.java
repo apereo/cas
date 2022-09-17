@@ -7,6 +7,8 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing granting of a
  * proxy ticket by a CAS server.
@@ -18,6 +20,7 @@ import lombok.ToString;
 @Getter
 public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 
+    @Serial
     private static final long serialVersionUID = 128616377249711105L;
 
     private final ProxyGrantingTicket proxyGrantingTicket;

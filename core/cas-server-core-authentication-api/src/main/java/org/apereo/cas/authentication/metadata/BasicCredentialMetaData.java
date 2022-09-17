@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
 @EqualsAndHashCode
 public class BasicCredentialMetaData implements DetailedCredentialMetaData {
 
+    @Serial
     private static final long serialVersionUID = 4929579849241505377L;
 
     /**

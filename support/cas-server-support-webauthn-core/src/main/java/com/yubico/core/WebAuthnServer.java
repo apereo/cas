@@ -154,7 +154,7 @@ public class WebAuthnServer {
                 ),
                 Optional.of(sessions.createSession(registrationUserId.getId()))
             );
-            registerRequestStorage.put(request.getRequestId(), request);
+            registerRequestStorage.put(request.requestId(), request);
             return Either.right(request);
         } else {
             return Either.left("The username \"" + username + "\" is already registered.");
@@ -171,8 +171,8 @@ public class WebAuthnServer {
             return Either.left(Arrays.asList("Registration failed!", "Failed to decode response object.", e.getMessage()));
         }
 
-        val request = registerRequestStorage.getIfPresent(response.getRequestId());
-        registerRequestStorage.invalidate(response.getRequestId());
+        val request = registerRequestStorage.getIfPresent(response.requestId());
+        registerRequestStorage.invalidate(response.requestId());
 
         if (request == null) {
             LOGGER.debug("fail finishRegistration responseJson: {}", responseJson);
@@ -181,24 +181,24 @@ public class WebAuthnServer {
             try {
                 val registration = rp.finishRegistration(
                     FinishRegistrationOptions.builder()
-                        .request(request.getPublicKeyCredentialCreationOptions())
-                        .response(response.getCredential())
+                        .request(request.publicKeyCredentialCreationOptions())
+                        .response(response.credential())
                         .build()
                 );
 
-                if (userStorage.userExists(request.getUsername())) {
+                if (userStorage.userExists(request.username())) {
                     var permissionGranted = false;
 
-                    val isValidSession = request.getSessionToken().map(token ->
-                        sessions.isSessionForUser(request.getPublicKeyCredentialCreationOptions().getUser().getId(), token)
+                    val isValidSession = request.sessionToken().map(token ->
+                        sessions.isSessionForUser(request.publicKeyCredentialCreationOptions().getUser().getId(), token)
                     ).orElse(false);
 
-                    LOGGER.debug("Session token: {}", request.getSessionToken());
+                    LOGGER.debug("Session token: {}", request.sessionToken());
                     LOGGER.debug("Valid session: {}", isValidSession);
 
                     if (isValidSession) {
                         permissionGranted = true;
-                        LOGGER.info("Session token accepted for user {}", request.getPublicKeyCredentialCreationOptions().getUser().getId());
+                        LOGGER.info("Session token accepted for user {}", request.publicKeyCredentialCreationOptions().getUser().getId());
                     }
 
                     LOGGER.debug("permissionGranted: {}", permissionGranted);
@@ -206,7 +206,7 @@ public class WebAuthnServer {
                     if (!permissionGranted) {
                         throw new RegistrationFailedException(new IllegalArgumentException(String.format(
                             "User %s already exists",
-                            request.getUsername()
+                            request.username()
                         )));
                     }
                 }
@@ -216,12 +216,12 @@ public class WebAuthnServer {
                         request,
                         response,
                         addRegistration(
-                            request.getPublicKeyCredentialCreationOptions().getUser(),
-                            request.getCredentialNickname(),
+                            request.publicKeyCredentialCreationOptions().getUser(),
+                            request.credentialNickname(),
                             registration
                         ),
                         registration.isAttestationTrusted(),
-                        sessions.createSession(request.getPublicKeyCredentialCreationOptions().getUser().getId())
+                        sessions.createSession(request.publicKeyCredentialCreationOptions().getUser().getId())
                     )
                 );
             } catch (final RegistrationFailedException e) {
@@ -264,8 +264,8 @@ public class WebAuthnServer {
             return Either.left(Arrays.asList("Assertion failed!", "Failed to decode response object.", e.getMessage()));
         }
 
-        val request = assertRequestStorage.getIfPresent(response.getRequestId());
-        assertRequestStorage.invalidate(response.getRequestId());
+        val request = assertRequestStorage.getIfPresent(response.requestId());
+        assertRequestStorage.invalidate(response.requestId());
 
         if (request == null) {
             return Either.left(Arrays.asList("Assertion failed!", "No such assertion in progress."));
@@ -274,7 +274,7 @@ public class WebAuthnServer {
                 val result = rp.finishAssertion(
                     FinishAssertionOptions.builder()
                         .request(request.getRequest())
-                        .response(response.getCredential())
+                        .response(response.credential())
                         .build()
                 );
 
@@ -285,7 +285,7 @@ public class WebAuthnServer {
                         LOGGER.error(
                             "Failed to update signature count for user \"{}\", credential \"{}\"",
                             result.getUsername(),
-                            response.getCredential().getId(),
+                            response.credential().getId(),
                             e
                         );
                     }
@@ -341,7 +341,7 @@ public class WebAuthnServer {
             this.registration = registration;
             this.attestationTrusted = attestationTrusted;
             attestationCert = Optional.ofNullable(
-                    response.getCredential().getResponse().getAttestation().getAttestationStatement().get("x5c")
+                    response.credential().getResponse().getAttestation().getAttestationStatement().get("x5c")
                 ).map(certs -> certs.get(0))
                 .flatMap((JsonNode certDer) -> {
                     try {
@@ -352,8 +352,8 @@ public class WebAuthnServer {
                     }
                 })
                 .map(AttestationCertInfo::new);
-            this.authData = response.getCredential().getResponse().getParsedAuthenticatorData();
-            this.username = request.getUsername();
+            this.authData = response.credential().getResponse().getParsedAuthenticatorData();
+            this.username = request.username();
             this.sessionToken = sessionToken;
         }
 
@@ -406,7 +406,7 @@ public class WebAuthnServer {
                 request,
                 response,
                 registrations,
-                response.getCredential().getResponse().getParsedAuthenticatorData(),
+                response.credential().getResponse().getParsedAuthenticatorData(),
                 username,
                 sessionToken
             );

@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
      */
     public static final String FRIENDLY_NAME = "SAML2 Service Provider";
 
+    @Serial
     private static final long serialVersionUID = 1218757374062931021L;
 
     @ExpressionLanguageCapable
@@ -109,6 +111,10 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     private boolean skipGeneratingTransientNameId;
 
     private boolean skipValidatingAuthnRequest;
+
+    private boolean skipGeneratingServiceProviderNameIdQualifier;
+
+    private boolean skipGeneratingNameIdQualifier;
 
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
     @JacksonInject("signResponses")

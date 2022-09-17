@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 public class PublisherIdentifier implements Serializable {
+    @Serial
     private static final long serialVersionUID = -2216572507148074902L;
 
     private String id = UUID.randomUUID().toString();

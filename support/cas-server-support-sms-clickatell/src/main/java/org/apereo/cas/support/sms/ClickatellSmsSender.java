@@ -21,7 +21,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ClickatellSmsSender}.
@@ -77,8 +76,7 @@ public class ClickatellSmsSender implements SmsSender {
                 val messages = (List<Map>) body.get("messages");
                 val errors = messages.stream()
                     .filter(m -> m.containsKey("accepted") && !Boolean.parseBoolean(m.get("accepted").toString()) && m.containsKey("error"))
-                    .map(m -> (String) m.get("error"))
-                    .collect(Collectors.toList());
+                    .map(m -> (String) m.get("error")).toList();
                 if (errors.isEmpty()) {
                     return true;
                 }

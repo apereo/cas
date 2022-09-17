@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link AuditDynamoDbProperties}.
  *
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class AuditDynamoDbProperties extends AbstractDynamoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 102540148774854955L;
 
     /**

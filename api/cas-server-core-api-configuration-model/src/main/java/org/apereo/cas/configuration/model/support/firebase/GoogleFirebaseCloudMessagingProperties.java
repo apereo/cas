@@ -8,9 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-notifications-fcm")
 @Accessors(chain = true)
 public class GoogleFirebaseCloudMessagingProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -5679682641899738092L;
 
     /**
@@ -51,5 +52,5 @@ public class GoogleFirebaseCloudMessagingProperties implements Serializable {
     /**
      * Required scopes to properly communicate with the firebase cloud.
      */
-    private List<String> scopes = Stream.of("https://www.googleapis.com/auth/firebase.messaging").collect(Collectors.toList());
+    private List<String> scopes = Stream.of("https://www.googleapis.com/auth/firebase.messaging").toList();
 }

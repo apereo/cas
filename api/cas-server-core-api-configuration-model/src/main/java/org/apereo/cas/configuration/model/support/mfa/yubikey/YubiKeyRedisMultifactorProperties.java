@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link YubiKeyRedisMultifactorProperties}.
  *
@@ -18,5 +20,6 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class YubiKeyRedisMultifactorProperties extends BaseRedisProperties {
+    @Serial
     private static final long serialVersionUID = -1261683393319585262L;
 }

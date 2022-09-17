@@ -2,6 +2,8 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import java.io.Serial;
+
 
 /**
  * Exception thrown when a ST has already granted a PGT and is asked to do so again.
@@ -10,6 +12,7 @@ import org.apereo.cas.authentication.principal.Service;
  * @since 5.0.0
  */
 public class InvalidProxyGrantingTicketForServiceTicketException extends AbstractTicketValidationException {
+    @Serial
     private static final long serialVersionUID = 2120177571513373134L;
 
     private static final String CODE = "INVALID_PROXY_GRANTING_TICKET";

@@ -13,6 +13,7 @@ import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 @Getter
 public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrategy {
 
+    @Serial
     private static final long serialVersionUID = 6704726217030836315L;
 
     private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();

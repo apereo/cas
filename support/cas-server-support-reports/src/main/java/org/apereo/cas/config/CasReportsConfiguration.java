@@ -35,16 +35,12 @@ import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
 import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
-import org.apereo.cas.web.report.StatusEndpoint;
 import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.trace.http.HttpTraceEndpoint;
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
@@ -54,7 +50,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.List;
@@ -240,35 +235,5 @@ public class CasReportsConfiguration {
         return new CasReleaseAttributesReportEndpoint(casProperties,
             servicesManager, authenticationSystemSupport,
             webApplicationServiceFactory, principalFactory);
-    }
-
-    /**
-     * This this {@link StatusEndpointConfiguration}.
-     *
-     * @author Misagh Moayyed
-     * @since 6.0.0
-     * @deprecated since 6.2.0
-     */
-    @Configuration(value = "StatusEndpointConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @Slf4j
-    @Deprecated(since = "6.2.0")
-    public static class StatusEndpointConfiguration {
-        @Bean
-        @ConditionalOnAvailableEndpoint
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public StatusEndpoint statusEndpoint(
-            final ObjectProvider<HealthEndpoint> healthEndpoint,
-            final CasConfigurationProperties casProperties) {
-            return new StatusEndpoint(casProperties, healthEndpoint);
-        }
-
-        @Bean
-        @ConditionalOnAvailableEndpoint(endpoint = StatusEndpoint.class)
-        public InitializingBean statusEndpointInitializer() {
-            return () ->
-                LOGGER.warn("The status actuator endpoint is deprecated and is scheduled to be removed from CAS in the future. "
-                            + "To obtain status and health information, please configure and use the health endpoint instead.");
-        }
     }
 }

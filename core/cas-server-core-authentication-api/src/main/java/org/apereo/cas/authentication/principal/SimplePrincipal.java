@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -33,6 +34,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 public class SimplePrincipal implements Principal {
 
+    @Serial
     private static final long serialVersionUID = -1255260750151385796L;
 
     /**

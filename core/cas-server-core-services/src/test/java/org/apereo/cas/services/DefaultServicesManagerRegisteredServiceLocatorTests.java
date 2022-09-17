@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,6 +79,7 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
     @Test
     public void verifyUnmatchedExtendedServices() {
         val service = new ExtendedRegisteredService() {
+            @Serial
             private static final long serialVersionUID = 3435937253967470900L;
 
             @Override
@@ -94,6 +96,7 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
 
 
     private static class ExtendedRegisteredService extends CasRegisteredService {
+        @Serial
         private static final long serialVersionUID = 1820837947166559349L;
     }
 }

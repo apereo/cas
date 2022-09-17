@@ -16,6 +16,7 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.io.Serial;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
 
     private static class JdbcCloudConnection extends AbstractJpaProperties {
         private static final String SQL = "SELECT id, name, value FROM CAS_SETTINGS_TABLE";
+        @Serial
         private static final long serialVersionUID = 3141915452108685020L;
 
         private final transient Environment environment;

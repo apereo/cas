@@ -1,12 +1,5 @@
 package org.apereo.cas.cassandra;
 
-/**
- * This is {@link org.apereo.cas.cassandra.DefaultCassandraSessionFactoryTests}.
- *
- * @author Misagh Moayyed
- * @since 6.3.0
- */
-
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -23,6 +16,12 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This is {@link org.apereo.cas.cassandra.DefaultCassandraSessionFactoryTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 6.3.0
+ */
 @Tag("Cassandra")
 @EnabledIfListeningOnPort(port = 9042)
 @SpringBootTest(classes = {
@@ -33,7 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.cassandra.local-dc=datacenter1",
     "cas.authn.cassandra.username-attribute=user_attr",
     "cas.authn.cassandra.password-attribute=pwd_attr",
-    "cas.authn.cassandra.keyspace=cas"
+    "cas.authn.cassandra.keyspace=cas",
+    "cas.authn.cassandra.ssl-protocols=TLSv1.2",
+    "cas.http-client.host-name-verifier=none"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DefaultCassandraSessionFactoryTests {

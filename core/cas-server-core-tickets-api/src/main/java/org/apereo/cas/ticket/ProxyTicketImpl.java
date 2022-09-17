@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+
 /**
  * The {@link ProxyTicketImpl} is a concrete implementation of the {@link ProxyTicket}.
  *
@@ -18,6 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
 
+    @Serial
     private static final long serialVersionUID = -4469960563289285371L;
 
     /**

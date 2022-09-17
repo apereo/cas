@@ -13,6 +13,7 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -32,6 +33,7 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
      */
     static final String KEY_SEPARATOR = "|";
 
+    @Serial
     private static final long serialVersionUID = -7238573226470492601L;
     
     private final String id;

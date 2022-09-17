@@ -21,6 +21,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class LdapConsentRepository implements ConsentRepository, DisposableBean {
+    @Serial
     private static final long serialVersionUID = 8561763114482490L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

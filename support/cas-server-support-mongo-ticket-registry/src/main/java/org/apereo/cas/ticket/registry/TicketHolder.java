@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -50,6 +51,7 @@ public class TicketHolder implements Serializable {
      */
     public static final String FIELD_NAME_PRINCIPAL = "principal";
 
+    @Serial
     private static final long serialVersionUID = -4843440028617071224L;
 
     @JsonProperty

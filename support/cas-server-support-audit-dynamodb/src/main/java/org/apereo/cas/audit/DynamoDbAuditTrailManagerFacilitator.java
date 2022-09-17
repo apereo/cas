@@ -38,14 +38,8 @@ import java.util.stream.Collectors;
  * @since 6.1.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
 @SuppressWarnings("JavaUtilDate")
-public class DynamoDbAuditTrailManagerFacilitator {
-    private final AuditDynamoDbProperties dynamoDbProperties;
-
-    private final DynamoDbClient amazonDynamoDBClient;
-
+public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
     /**
      * Build table attribute values map.
      *

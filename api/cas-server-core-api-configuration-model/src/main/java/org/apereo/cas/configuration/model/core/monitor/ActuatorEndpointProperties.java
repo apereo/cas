@@ -8,10 +8,10 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 @Accessors(chain = true)
 @JsonFilter("ActuatorEndpointProperties")
 public class ActuatorEndpointProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -2463521198550485506L;
     /**
      * Required user roles.
@@ -46,7 +47,7 @@ public class ActuatorEndpointProperties implements Serializable {
     /**
      * Define the security access level of the endpoint.
      */
-    private List<EndpointAccessLevel> access = Stream.of(EndpointAccessLevel.DENY).collect(Collectors.toList());
+    private List<EndpointAccessLevel> access = Stream.of(EndpointAccessLevel.DENY).toList();
 
     /**
      * Define the security access level for the endpoint.

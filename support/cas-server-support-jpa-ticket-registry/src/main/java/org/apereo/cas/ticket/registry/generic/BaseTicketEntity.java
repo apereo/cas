@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
@@ -27,6 +28,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class BaseTicketEntity implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6534421912995436609L;
 
     @Column(nullable = false, length = 32_000)

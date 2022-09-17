@@ -7,10 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 @JsonFilter("AuditEngineProperties")
 public class AuditEngineProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3946106584608417663L;
 
     /**
@@ -92,7 +93,7 @@ public class AuditEngineProperties implements Serializable {
      * can be treated as a regular expression to match against built-in
      * CAS actions.
      */
-    private List<String> supportedActions = Stream.of("*").collect(Collectors.toList());
+    private List<String> supportedActions = Stream.of("*").toList();
 
     /**
      * Indicate a list of supported audit actions that should be excluded,

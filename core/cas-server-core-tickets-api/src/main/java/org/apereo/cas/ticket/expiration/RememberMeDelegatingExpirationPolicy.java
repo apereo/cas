@@ -9,6 +9,8 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * Delegates to different expiration policies depending on whether remember me
  * is true or not.
@@ -25,6 +27,7 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
      */
     public static final String POLICY_NAME_REMEMBER_ME = "REMEMBER_ME";
 
+    @Serial
     private static final long serialVersionUID = -2735975347698196127L;
 
 

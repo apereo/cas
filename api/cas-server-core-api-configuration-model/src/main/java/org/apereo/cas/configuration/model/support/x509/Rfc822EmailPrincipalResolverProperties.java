@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Rfc822EmailPrincipalResolverProperties}.
  * @since 6.1.0
@@ -15,5 +17,6 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class Rfc822EmailPrincipalResolverProperties extends BaseAlternativePrincipalResolverProperties {
+    @Serial
     private static final long serialVersionUID = -8696449609399074305L;
 }

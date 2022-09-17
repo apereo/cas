@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import javax.persistence.LockModeType;
+import java.io.Serial;
 
 /**
  * Common properties for jpa ticket reg.
@@ -32,6 +33,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
      */
     public static final String DEFAULT_LOCK_TIMEOUT = "PT1H";
 
+    @Serial
     private static final long serialVersionUID = -8053839523783801072L;
 
     /**

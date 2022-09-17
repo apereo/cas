@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbConsentProperties}.
  *
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class CouchDbConsentProperties extends BaseCouchDbProperties {
+    @Serial
     private static final long serialVersionUID = 8184753250455916462L;
 
     public CouchDbConsentProperties() {

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @JsonFilter("InMemoryTicketRegistryProperties")
 public class InMemoryTicketRegistryProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2600525447128979994L;
 
     /**

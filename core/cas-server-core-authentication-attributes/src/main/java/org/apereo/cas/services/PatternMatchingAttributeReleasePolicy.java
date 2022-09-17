@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -2168544657991721919L;
 
     private static final Pattern PATTERN_TRANSFORM_GROUPS = RegexUtils.createPattern("\\$\\{(\\d+)\\}");
@@ -95,6 +97,7 @@ public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredSer
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     @EqualsAndHashCode
     public static class Rule implements Serializable {
+        @Serial
         private static final long serialVersionUID = 3111910879481087570L;
 
         private String pattern;

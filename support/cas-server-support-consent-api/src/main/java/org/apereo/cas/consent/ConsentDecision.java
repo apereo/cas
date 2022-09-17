@@ -12,6 +12,7 @@ import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -28,6 +29,7 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @Setter
 public class ConsentDecision implements Serializable {
+    @Serial
     private static final long serialVersionUID = -3240292729509593433L;
     @Id
     @Transient

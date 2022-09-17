@@ -16,9 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcServiceRegistryListener}.
@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcServiceRegistryListener implements ServiceRegistryListener {
+    @Serial
     private static final long serialVersionUID = -2492163812728091841L;
 
     private final OidcAttributeReleasePolicyFactory attributeReleasePolicyFactory;
@@ -50,8 +51,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 .stream()
                 .filter(p -> p instanceof OidcRegisteredServiceAttributeReleasePolicy)
                 .map(OidcRegisteredServiceAttributeReleasePolicy.class::cast)
-                .filter(p -> p.getScopeType().equalsIgnoreCase(givenScope))
-                .collect(Collectors.toList()));
+                .filter(p -> p.getScopeType().equalsIgnoreCase(givenScope)).toList());
         } else if (policy instanceof OidcRegisteredServiceAttributeReleasePolicy) {
             val oidcPolicy = (OidcRegisteredServiceAttributeReleasePolicy) policy;
             if (oidcPolicy.getScopeType().equalsIgnoreCase(givenScope)) {
@@ -109,20 +109,15 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             } else {
                 val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
                 switch (scope) {
-                    case EMAIL:
-                    case ADDRESS:
-                    case PROFILE:
-                    case PHONE:
+                    case EMAIL, ADDRESS, PROFILE, PHONE -> {
                         val policyToAdd = attributeReleasePolicyFactory.get(scope);
                         addAttributeReleasePolicy(policyChain, policyToAdd, givenScope, oidcService);
-                        break;
-                    case OPENID:
-                        LOGGER.debug("Scope [{}] is found for service [{}]", givenScope, oidcService.getId());
-                        break;
-                    case OFFLINE_ACCESS:
+                    }
+                    case OPENID -> LOGGER.debug("Scope [{}] is found for service [{}]", givenScope, oidcService.getId());
+                    case OFFLINE_ACCESS -> {
                         LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", givenScope, oidcService.getId());
                         oidcService.setGenerateRefreshToken(true);
-                        break;
+                    }
                 }
             }
         });

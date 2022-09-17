@@ -21,16 +21,11 @@ public class X509AuthenticationUtils {
      * @return the subject dn format
      */
     public static String getSubjectDnFormat(final SubjectDnPrincipalResolverProperties.SubjectDnFormat format) {
-        switch (format) {
-            case RFC1779:
-                return X500Principal.RFC1779;
-            case RFC2253:
-                return X500Principal.RFC2253;
-            case CANONICAL:
-                return X500Principal.CANONICAL;
-            case DEFAULT:
-            default:
-                return null;
-        }
+        return switch (format) {
+            case RFC1779 -> X500Principal.RFC1779;
+            case RFC2253 -> X500Principal.RFC2253;
+            case CANONICAL -> X500Principal.CANONICAL;
+            case DEFAULT -> null;
+        };
     }
 }

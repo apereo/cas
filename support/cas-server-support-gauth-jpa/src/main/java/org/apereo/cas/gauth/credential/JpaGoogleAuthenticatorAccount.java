@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.io.Serial;
 import java.math.BigInteger;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 @SuperBuilder
 @NoArgsConstructor
 public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
+    @Serial
     private static final long serialVersionUID = -4546447152725241946L;
 
     @Id

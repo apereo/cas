@@ -11,13 +11,14 @@
     <script th:inline="javascript">
 
         /*<![CDATA[*/
-        var data = {
+        let data = {
             attributes: /*[[${attributes}]]*/
         };
         function jqueryReady() {
-            var consentjs = /*[[@{/js/consent.js}]]*/
-                $.getScript(consentjs, function (data, textStatus, jqxhr) {
-                });
+            let consentjs = /*[[@{/js/consent.js}]]*/
+
+            $.getScript(consentjs, (data, textStatus, jqxhr) => {
+            });
         }
 
         /*]]>*/

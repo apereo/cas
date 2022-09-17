@@ -16,6 +16,8 @@ import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -30,7 +32,7 @@ import java.util.Objects;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> {
+public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
 
     /**
      * The Config bean.
@@ -46,14 +48,12 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
 
     @Override
     @Synchronized
-    public ChainingMetadataResolver load(final SamlRegisteredServiceCacheKey cacheKey) {
+    public CachedMetadataResolverResult load(final SamlRegisteredServiceCacheKey cacheKey) {
         val metadataResolver = new ChainingMetadataResolver();
-
         val service = cacheKey.getRegisteredService();
         val availableResolvers = metadataResolutionPlan.getRegisteredMetadataResolvers();
-        val size = availableResolvers.size();
-        val metadataResolvers = new ArrayList<MetadataResolver>(size);
-        LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", size);
+        val metadataResolvers = new ArrayList<MetadataResolver>();
+        LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
         availableResolvers
             .stream()
             .filter(Objects::nonNull)
@@ -80,8 +80,10 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
         });
 
         LOGGER.debug("Metadata resolvers active for this request are [{}]", metadataResolvers);
-        return metadataResolver;
-
+        return CachedMetadataResolverResult.builder()
+            .cachedInstant(Instant.now(Clock.systemUTC()))
+            .metadataResolver(metadataResolver)
+            .build();
     }
 }
 

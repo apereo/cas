@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @JsonFilter("OAuthGrantsProperties")
 public class OAuthGrantsProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2246860215082703251L;
 
     /**
@@ -35,6 +37,7 @@ public class OAuthGrantsProperties implements Serializable {
     @Accessors(chain = true)
     public static class ResourceOwner implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 3171206304518294330L;
 
         /**

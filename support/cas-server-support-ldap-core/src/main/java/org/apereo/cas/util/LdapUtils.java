@@ -27,7 +27,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.google.common.collect.Multimap;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -454,18 +453,22 @@ public class LdapUtils {
      */
     public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties l) {
         switch (l.getType()) {
-            case AD:
+            case AD -> {
                 LOGGER.debug("Creating active directory authenticator for [{}]", l.getLdapUrl());
                 return getActiveDirectoryAuthenticator(l);
-            case DIRECT:
+            }
+            case DIRECT -> {
                 LOGGER.debug("Creating direct-bind authenticator for [{}]", l.getLdapUrl());
                 return getDirectBindAuthenticator(l);
-            case AUTHENTICATED:
+            }
+            case AUTHENTICATED -> {
                 LOGGER.debug("Creating authenticated authenticator for [{}]", l.getLdapUrl());
                 return getAuthenticatedOrAnonSearchAuthenticator(l);
-            default:
+            }
+            default -> {
                 LOGGER.debug("Creating anonymous authenticator for [{}]", l.getLdapUrl());
                 return getAuthenticatedOrAnonSearchAuthenticator(l);
+            }
         }
     }
 
@@ -494,7 +497,7 @@ public class LdapUtils {
 
         val validator = l.getValidator();
         switch (validator.getType().trim().toLowerCase()) {
-            case "compare":
+            case "compare" -> {
                 val compareRequest = new CompareRequest(
                     validator.getDn(),
                     validator.getAttributeName(),
@@ -503,12 +506,9 @@ public class LdapUtils {
                 compareValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
                 compareValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
                 pooledCf.setValidator(compareValidator);
-                break;
-            case "none":
-                LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
-                break;
-            case "search":
-            default:
+            }
+            case "none" -> LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
+            case "search" -> {
                 val searchRequest = new SearchRequest();
                 searchRequest.setBaseDn(validator.getBaseDn());
                 searchRequest.setFilter(validator.getSearchFilter());
@@ -519,7 +519,7 @@ public class LdapUtils {
                 searchValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
                 searchValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
                 pooledCf.setValidator(searchValidator);
-                break;
+            }
         }
 
         pooledCf.setFailFastInitialize(l.isFailFast());
@@ -580,19 +580,10 @@ public class LdapUtils {
         if (StringUtils.isNotBlank(properties.getConnectionStrategy())) {
             val strategy = AbstractLdapProperties.LdapConnectionStrategy.valueOf(properties.getConnectionStrategy());
             switch (strategy) {
-                case RANDOM:
-                    cc.setConnectionStrategy(new RandomConnectionStrategy());
-                    break;
-                case DNS_SRV:
-                    cc.setConnectionStrategy(new DnsSrvConnectionStrategy());
-                    break;
-                case ROUND_ROBIN:
-                    cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
-                    break;
-                case ACTIVE_PASSIVE:
-                default:
-                    cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
-                    break;
+                case RANDOM -> cc.setConnectionStrategy(new RandomConnectionStrategy());
+                case DNS_SRV -> cc.setConnectionStrategy(new DnsSrvConnectionStrategy());
+                case ROUND_ROBIN -> cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
+                case ACTIVE_PASSIVE -> cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
             }
         }
 
@@ -628,23 +619,14 @@ public class LdapUtils {
         val sslConfig = cc.getSslConfig();
         if (sslConfig != null) {
             switch (properties.getHostnameVerifier()) {
-                case ANY:
-                    sslConfig.setHostnameVerifier(new AllowAnyHostnameVerifier());
-                    break;
-                case DEFAULT:
-                default:
-                    sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
+                case ANY -> sslConfig.setHostnameVerifier(new AllowAnyHostnameVerifier());
+                case DEFAULT -> sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
             }
 
             if (StringUtils.isNotBlank(properties.getTrustManager())) {
                 switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(properties.getTrustManager().trim().toUpperCase())) {
-                    case ANY:
-                        sslConfig.setTrustManagers(new AllowAnyTrustManager());
-                        break;
-                    case DEFAULT:
-                    default:
-                        sslConfig.setTrustManagers(new DefaultTrustManager());
-                        break;
+                    case ANY -> sslConfig.setTrustManagers(new AllowAnyTrustManager());
+                    default -> sslConfig.setTrustManagers(new DefaultTrustManager());
                 }
             }
         }
@@ -741,10 +723,8 @@ public class LdapUtils {
         val entryHandlers = new ArrayList<LdapEntryHandler>();
         properties.forEach(h -> {
             switch (h.getType()) {
-                case ACTIVE_DIRECTORY:
-                    entryHandlers.add(new ActiveDirectoryLdapEntryHandler());
-                    break;
-                case CASE_CHANGE:
+                case ACTIVE_DIRECTORY -> entryHandlers.add(new ActiveDirectoryLdapEntryHandler());
+                case CASE_CHANGE -> {
                     val eh = new CaseChangeEntryHandler();
                     val caseChange = h.getCaseChange();
                     eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getAttributeNameCaseChange()));
@@ -752,29 +732,25 @@ public class LdapUtils {
                     eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getAttributeValueCaseChange()));
                     eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getDnCaseChange()));
                     entryHandlers.add(eh);
-                    break;
-                case DN_ATTRIBUTE_ENTRY:
+                }
+                case DN_ATTRIBUTE_ENTRY -> {
                     val ehd = new DnAttributeEntryHandler();
                     val dnAttribute = h.getDnAttribute();
                     ehd.setAddIfExists(dnAttribute.isAddIfExists());
                     ehd.setDnAttributeName(dnAttribute.getDnAttributeName());
                     entryHandlers.add(ehd);
-                    break;
-                case MERGE:
+                }
+                case MERGE -> {
                     val ehm = new MergeAttributeEntryHandler();
                     val mergeAttribute = h.getMergeAttribute();
                     ehm.setAttributeNames(mergeAttribute.getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
                     ehm.setMergeAttributeName(mergeAttribute.getMergeAttributeName());
                     entryHandlers.add(ehm);
-                    break;
-                case OBJECT_GUID:
-                    entryHandlers.add(new ObjectGuidHandler());
-                    break;
-                case OBJECT_SID:
-                    entryHandlers.add(new ObjectSidHandler());
-                    break;
-                default:
-                    break;
+                }
+                case OBJECT_GUID -> entryHandlers.add(new ObjectGuidHandler());
+                case OBJECT_SID -> entryHandlers.add(new ObjectSidHandler());
+                default -> {
+                }
             }
         });
         return entryHandlers;
@@ -790,32 +766,23 @@ public class LdapUtils {
         val searchResultHandlers = new ArrayList<SearchResultHandler>();
         properties.forEach(h -> {
             switch (h.getType()) {
-                case FOLLOW_SEARCH_REFERRAL:
-                    searchResultHandlers.add(new FollowSearchReferralHandler(h.getSearchReferral().getLimit()));
-                    break;
-                case FOLLOW_SEARCH_RESULT_REFERENCE:
-                    searchResultHandlers.add(new FollowSearchResultReferenceHandler(h.getSearchResult().getLimit()));
-                    break;
-                case PRIMARY_GROUP:
+                case FOLLOW_SEARCH_REFERRAL -> searchResultHandlers.add(new FollowSearchReferralHandler(h.getSearchReferral().getLimit()));
+                case FOLLOW_SEARCH_RESULT_REFERENCE -> searchResultHandlers.add(new FollowSearchResultReferenceHandler(h.getSearchResult().getLimit()));
+                case PRIMARY_GROUP -> {
                     val ehp = new PrimaryGroupIdHandler();
                     val primaryGroupId = h.getPrimaryGroupId();
                     ehp.setBaseDn(primaryGroupId.getBaseDn());
                     ehp.setGroupFilter(primaryGroupId.getGroupFilter());
                     searchResultHandlers.add(ehp);
-                    break;
-                case RANGE_ENTRY:
-                    searchResultHandlers.add(new RangeEntryHandler());
-                    break;
-                case RECURSIVE_ENTRY:
+                }
+                case RANGE_ENTRY -> searchResultHandlers.add(new RangeEntryHandler());
+                case RECURSIVE_ENTRY -> {
                     val recursive = h.getRecursive();
                     searchResultHandlers.add(
                         new RecursiveResultHandler(recursive.getSearchAttribute(),
                             recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
-                    break;
-                case MERGE_ENTRIES:
-                default:
-                    searchResultHandlers.add(new MergeResultHandler());
-                    break;
+                }
+                default -> searchResultHandlers.add(new MergeResultHandler());
             }
         });
         return searchResultHandlers;
@@ -1020,33 +987,33 @@ public class LdapUtils {
         }
         LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", passwordPolicy.getType());
         switch (passwordPolicy.getType()) {
-            case AD:
+            case AD -> {
                 responseHandlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
                 Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
                     LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
                     attributes.put(a, a);
                 });
-                break;
-            case FreeIPA:
+            }
+            case FreeIPA -> {
                 Arrays.stream(FreeIPAAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
                     LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
                     attributes.put(a, a);
                 });
                 responseHandlers.add(new FreeIPAAuthenticationResponseHandler(
                     Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
-                break;
-            case EDirectory:
+            }
+            case EDirectory -> {
                 Arrays.stream(EDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
                     LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
                     attributes.put(a, a);
                 });
                 responseHandlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-                break;
-            default:
+            }
+            default -> {
                 requestHandlers.add(new PasswordPolicyAuthenticationRequestHandler());
                 responseHandlers.add(new PasswordPolicyAuthenticationResponseHandler());
                 responseHandlers.add(new PasswordExpirationAuthenticationResponseHandler());
-                break;
+            }
         }
         if (!requestHandlers.isEmpty()) {
             authenticator.setRequestHandlers(requestHandlers.toArray(AuthenticationRequestHandler[]::new));
@@ -1147,14 +1114,12 @@ public class LdapUtils {
         return handler;
     }
 
-    @RequiredArgsConstructor
-    private static class ChainingLdapDnResolver implements DnResolver {
-        private final List<? extends DnResolver> resolvers;
-
+    @SuppressWarnings("UnusedVariable")
+    private record ChainingLdapDnResolver(List<? extends DnResolver> resolvers) implements DnResolver {
         @Override
         @SneakyThrows
         public String resolve(final User user) {
-            return resolvers.stream()
+            return resolvers().stream()
                 .map(resolver -> FunctionUtils.doAndHandle(
                         () -> resolver.resolve(user),
                         throwable -> {
@@ -1168,10 +1133,8 @@ public class LdapUtils {
         }
     }
 
-    @RequiredArgsConstructor
-    private static class ChainingLdapEntryResolver implements EntryResolver {
-        private final List<? extends EntryResolver> resolvers;
-
+    @SuppressWarnings("UnusedVariable")
+    private record ChainingLdapEntryResolver(List<? extends EntryResolver> resolvers) implements EntryResolver {
         @Override
         public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response) {
             return resolvers.stream()

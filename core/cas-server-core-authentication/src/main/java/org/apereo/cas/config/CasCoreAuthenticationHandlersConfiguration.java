@@ -16,6 +16,8 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
@@ -255,7 +257,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
                         h.setLoginConfigType(jaas.getLoginConfigType());
                     }
                     if (StringUtils.isNotBlank(jaas.getLoginConfigurationFile())) {
-                        h.setLoginConfigurationFile(new File(jaas.getLoginConfigurationFile()));
+                        val file = FunctionUtils.doAndHandle(() -> ResourceUtils.getResourceFrom(jaas.getLoginConfigurationFile()).getFile());
+                        LOGGER.debug("Using JAAS login configuration file [{}] for realm [{}]", file, jaas.getRealm());
+                        h.setLoginConfigurationFile(file);
                     }
                     val passwordPolicy = jaas.getPasswordPolicy();
                     h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy, applicationContext));

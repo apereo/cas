@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 @Getter
 public class ConsentQueryResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = 742133551083867719L;
 
     private final boolean required;

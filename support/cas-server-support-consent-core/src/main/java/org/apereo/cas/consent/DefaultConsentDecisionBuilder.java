@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -37,6 +38,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    @Serial
     private static final long serialVersionUID = 8220243983483982326L;
 
     private final transient CipherExecutor<Serializable, String> consentCipherExecutor;

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @Getter
 public class RootCasException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = -2384466176716541689L;
 
     private final String code;

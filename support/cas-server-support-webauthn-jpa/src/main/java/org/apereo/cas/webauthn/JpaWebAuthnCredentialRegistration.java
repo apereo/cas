@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -32,6 +33,7 @@ public class JpaWebAuthnCredentialRegistration implements Serializable {
      */
     static final String ENTITY_NAME = "JpaWebAuthnCredentialRegistration";
 
+    @Serial
     private static final long serialVersionUID = 1505204109111619367L;
 
     @Id

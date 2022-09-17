@@ -15,8 +15,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.stream.Collectors;
-
 /**
  * This is {@link DefaultCasWebflowAuthenticationExceptionHandler}.
  *
@@ -70,7 +68,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandler implements CasWebfl
                 return CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK;
             }
         }
-        val values = e.getHandlerErrors().values().stream().map(Throwable::getClass).collect(Collectors.toList());
+        val values = e.getHandlerErrors().values().stream().map(Throwable::getClass).toList();
         val handlerErrorName = errors.getRegisteredExceptions()
             .stream()
             .filter(values::contains)

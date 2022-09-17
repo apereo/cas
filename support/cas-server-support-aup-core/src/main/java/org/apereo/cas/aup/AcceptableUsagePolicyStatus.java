@@ -10,6 +10,7 @@ import lombok.Data;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @Data
 public class AcceptableUsagePolicyStatus implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5552830592634074877L;
 
     private final TriStateBoolean status;

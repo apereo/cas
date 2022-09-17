@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jDelegatedAuthenticationFacebookProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("Pac4jDelegatedAuthenticationFacebookProperties")
 public class Pac4jDelegatedAuthenticationFacebookProperties extends Pac4jIdentifiableClientProperties {
 
+    @Serial
     private static final long serialVersionUID = -2737594266552466076L;
 
     /**

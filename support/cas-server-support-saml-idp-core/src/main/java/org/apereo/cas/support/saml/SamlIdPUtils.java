@@ -244,7 +244,7 @@ public class SamlIdPUtils {
             .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
+            .map(SamlRegisteredServiceServiceProviderMetadataFacade::metadataResolver)
             .collect(Collectors.toList());
 
         LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
@@ -286,7 +286,7 @@ public class SamlIdPUtils {
      */
     public static RoleDescriptorResolver getRoleDescriptorResolver(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                    final boolean requireValidMetadata) throws Exception {
-        return getRoleDescriptorResolver(adaptor.getMetadataResolver(), requireValidMetadata);
+        return getRoleDescriptorResolver(adaptor.metadataResolver(), requireValidMetadata);
     }
 
     /**

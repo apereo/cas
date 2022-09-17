@@ -5,9 +5,8 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+
+import java.io.Serial;
 
 /**
  * This is {@link SamlArtifactTicketExpirationPolicyBuilder}.
@@ -15,16 +14,10 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class SamlArtifactTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<SamlArtifactTicket> {
+public record SamlArtifactTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<SamlArtifactTicket> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {

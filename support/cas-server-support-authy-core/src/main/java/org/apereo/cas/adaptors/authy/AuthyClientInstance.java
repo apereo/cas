@@ -20,7 +20,7 @@ public interface AuthyClientInstance {
      *
      * @return the authy client
      */
-    AuthyApiClient getAuthyClient();
+    AuthyApiClient authyClient();
 
     /**
      * Gets authy error message.

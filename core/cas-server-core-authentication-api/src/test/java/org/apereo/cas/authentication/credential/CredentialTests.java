@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
 
+import java.io.Serial;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,6 +42,7 @@ public class CredentialTests {
     @Test
     public void verifyValid() {
         val c = new AbstractCredential() {
+            @Serial
             private static final long serialVersionUID = -1746359565306558329L;
 
             @Override
@@ -55,6 +57,7 @@ public class CredentialTests {
 
     private static AbstractCredential getCredential() {
         return new AbstractCredential() {
+            @Serial
             private static final long serialVersionUID = -1746359565306558329L;
 
             @Override

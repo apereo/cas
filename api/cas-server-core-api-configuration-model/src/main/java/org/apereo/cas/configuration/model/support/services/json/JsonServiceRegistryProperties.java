@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.Serial;
+
 /**
  * This is {@link JsonServiceRegistryProperties}.
  *
@@ -22,6 +24,7 @@ import org.springframework.core.io.ClassPathResource;
 @JsonFilter("JsonServiceRegistryProperties")
 public class JsonServiceRegistryProperties extends SpringResourceProperties {
 
+    @Serial
     private static final long serialVersionUID = -3022199446494732533L;
 
     /**

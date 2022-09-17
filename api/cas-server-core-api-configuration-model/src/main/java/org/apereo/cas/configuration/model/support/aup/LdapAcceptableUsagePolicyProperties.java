@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapAcceptableUsagePolicyProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("LdapAcceptableUsagePolicyProperties")
 public class LdapAcceptableUsagePolicyProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -7991011278378393382L;
 
     /**

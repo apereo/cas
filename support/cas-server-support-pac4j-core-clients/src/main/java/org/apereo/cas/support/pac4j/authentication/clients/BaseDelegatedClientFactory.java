@@ -146,17 +146,11 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         val callbackUrl = StringUtils.defaultString(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
         client.setCallbackUrl(callbackUrl);
         LOGGER.trace("Client [{}] will use the callback URL [{}]", client.getName(), callbackUrl);
-        
+
         switch (clientProperties.getCallbackUrlType()) {
-            case PATH_PARAMETER:
-                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
-                break;
-            case NONE:
-                client.setCallbackUrlResolver(new NoParameterCallbackUrlResolver());
-                break;
-            case QUERY_PARAMETER:
-            default:
-                client.setCallbackUrlResolver(new QueryParameterCallbackUrlResolver());
+            case PATH_PARAMETER -> client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
+            case NONE -> client.setCallbackUrlResolver(new NoParameterCallbackUrlResolver());
+            case QUERY_PARAMETER -> client.setCallbackUrlResolver(new QueryParameterCallbackUrlResolver());
         }
         customizers.forEach(customizer -> customizer.customize(client));
         if (!givenProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
@@ -524,9 +518,9 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
                 Optional.ofNullable(samlMessageStoreFactory.getIfAvailable())
                     .ifPresentOrElse(cfg::setSamlMessageStoreFactory, () -> {
-                        FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("EMPTY"),
+                        FunctionUtils.doIf("EMPTY".equalsIgnoreCase(saml.getMessageStoreFactory()),
                             ig -> cfg.setSamlMessageStoreFactory(new EmptyStoreFactory())).accept(saml);
-                        FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("SESSION"),
+                        FunctionUtils.doIf("SESSION".equalsIgnoreCase(saml.getMessageStoreFactory()),
                             ig -> cfg.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
                         if (saml.getMessageStoreFactory().contains(".")) {
                             FunctionUtils.doAndHandle(unused -> {

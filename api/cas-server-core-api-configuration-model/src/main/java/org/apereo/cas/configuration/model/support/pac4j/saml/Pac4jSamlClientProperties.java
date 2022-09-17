@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
 @JsonFilter("Pac4jSamlClientProperties")
 public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties implements CasFeatureModule {
 
+    @Serial
     private static final long serialVersionUID = -862819796533384951L;
 
     /**
@@ -302,6 +304,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     @Setter
     @Accessors(chain = true)
     public static class ServiceProviderRequestedAttribute implements Serializable {
+        @Serial
         private static final long serialVersionUID = -862819796533384951L;
 
         /**

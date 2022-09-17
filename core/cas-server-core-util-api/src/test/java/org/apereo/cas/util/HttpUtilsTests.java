@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+
 import lombok.val;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Tag;
@@ -20,6 +22,22 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Utility")
 public class HttpUtilsTests {
+
+    @Test
+    public void verifyExecWithExistingClient() {
+        try (val webServer = new MockWebServer(8081, HttpStatus.OK)) {
+            webServer.start();
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword("password")
+                .basicAuthUsername("user")
+                .method(HttpMethod.GET)
+                .entity("entity")
+                .url("http://localhost:8081")
+                .httpClient(new SimpleHttpClientFactoryBean().getObject())
+                .build();
+            assertNotNull(HttpUtils.execute(exec));
+        }
+    }
 
     @Test
     public void verifyExec() {

@@ -2,8 +2,6 @@ package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,13 +17,7 @@ import java.util.stream.Collectors;
  * @author Daniel Frett
  * @since 5.3.0
  */
-@RequiredArgsConstructor
-@Getter
-public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrategy {
-    private final List<DeviceFingerprintComponentManager> deviceFingerprintComponentManagers;
-
-    private final String componentSeparator;
-
+public record DefaultDeviceFingerprintStrategy(List<DeviceFingerprintComponentManager> deviceFingerprintComponentManagers, String componentSeparator) implements DeviceFingerprintStrategy {
     @Override
     public String determineFingerprintComponent(final String principal,
                                                 final HttpServletRequest request,

@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * Credential that bear the fully resolved and authenticated Principal, or an
  * indication that there is no such Principal. These Credential are a mechanism
@@ -31,6 +33,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class PrincipalBearingCredential extends AbstractCredential {
     
+    @Serial
     private static final long serialVersionUID = 8866786438439775669L;
 
     /**

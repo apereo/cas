@@ -1,5 +1,5 @@
 {
-  "dependencies": "core",
+  "dependencies": "core,google-analytics",
   "properties": [
     "--cas.server.tomcat.http[0].enabled=true",
     "--cas.server.tomcat.http[0].port=8080",
@@ -7,6 +7,7 @@
     "--cas.server.name=http://localhost:8080",
     "--cas.server.prefix=http://localhost:8080/cas",
 
+    "--cas.google-analytics.google-analytics-tracking-id=G-XF7F4RCQ0J",
     "--logging.level.org.apereo.cas=debug",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",

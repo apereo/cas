@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("ForgotUsernamePasswordManagementProperties")
 public class ForgotUsernamePasswordManagementProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 4850199066765183587L;
 
     /**

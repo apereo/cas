@@ -7,6 +7,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ public class CookieGenerationContext implements Serializable {
      */
     public static final CookieGenerationContext EMPTY = CookieGenerationContext.builder().build();
 
+    @Serial
     private static final long serialVersionUID = -3058351444389458036L;
 
     private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;

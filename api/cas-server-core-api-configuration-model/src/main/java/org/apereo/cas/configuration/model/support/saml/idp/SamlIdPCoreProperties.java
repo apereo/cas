@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 @Accessors(chain = true)
 @JsonFilter("SamlIdPCoreProperties")
 public class SamlIdPCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1848175783676789852L;
 
     /**

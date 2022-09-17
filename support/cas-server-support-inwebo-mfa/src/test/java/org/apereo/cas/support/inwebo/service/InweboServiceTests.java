@@ -58,9 +58,9 @@ public class InweboServiceTests {
 
         val sslContext = SSLUtils.buildSSLContext(clientCertificate);
         service = new InweboService(casProperties, mock(InweboConsoleAdmin.class), sslContext);
-        assertNotNull(service.getCasProperties());
-        assertNotNull(service.getConsoleAdmin());
-        assertNotNull(service.getContext());
+        assertNotNull(service.casProperties());
+        assertNotNull(service.consoleAdmin());
+        assertNotNull(service.context());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class InweboServiceTests {
         result.getActivationStatus().add(1L);
         result.getStatus().add(1L);
 
-        when(service.getConsoleAdmin().loginSearch(anyString())).thenReturn(result);
+        when(service.consoleAdmin().loginSearch(anyString())).thenReturn(result);
         assertNotNull(service.loginSearch("login"));
     }
 

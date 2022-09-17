@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class ChainingPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository {
+    @Serial
     private static final long serialVersionUID = 3132218595095989750L;
 
     private final List<RegisteredServicePrincipalAttributesRepository> repositories;

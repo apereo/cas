@@ -239,28 +239,13 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
                                            final ActuatorEndpointProperties properties,
                                            final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         switch (access) {
-            case AUTHORITY:
-                configureEndpointAccessByAuthority(httpSecurity, requests, properties, endpoint);
-                break;
-            case ROLE:
-                configureEndpointAccessByRole(httpSecurity, requests, properties, endpoint);
-                break;
-            case AUTHENTICATED:
-                configureEndpointAccessAuthenticated(httpSecurity, requests, endpoint);
-                break;
-            case IP_ADDRESS:
-                configureEndpointAccessByIpAddress(requests, properties, endpoint);
-                break;
-            case PERMIT:
-                configureEndpointAccessPermitAll(requests, endpoint);
-                break;
-            case ANONYMOUS:
-                configureEndpointAccessAnonymously(requests, endpoint);
-                break;
-            case DENY:
-            default:
-                configureEndpointAccessToDenyAll(requests, endpoint);
-                break;
+            case AUTHORITY -> configureEndpointAccessByAuthority(httpSecurity, requests, properties, endpoint);
+            case ROLE -> configureEndpointAccessByRole(httpSecurity, requests, properties, endpoint);
+            case AUTHENTICATED -> configureEndpointAccessAuthenticated(httpSecurity, requests, endpoint);
+            case IP_ADDRESS -> configureEndpointAccessByIpAddress(requests, properties, endpoint);
+            case PERMIT -> configureEndpointAccessPermitAll(requests, endpoint);
+            case ANONYMOUS -> configureEndpointAccessAnonymously(requests, endpoint);
+            default -> configureEndpointAccessToDenyAll(requests, endpoint);
         }
     }
 

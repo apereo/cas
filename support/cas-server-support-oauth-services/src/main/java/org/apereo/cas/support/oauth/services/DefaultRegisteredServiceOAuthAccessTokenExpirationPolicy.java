@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy}.
  *
@@ -24,6 +26,7 @@ import lombok.ToString;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy implements RegisteredServiceOAuthAccessTokenExpirationPolicy {
+    @Serial
     private static final long serialVersionUID = 5415436756392637728L;
 
     private String maxTimeToLive;

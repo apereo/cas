@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link BasicIdentifiableCredential}, a simple credential implementation
  * that is only recognized by its id. The id generally represents an authentication token
@@ -25,6 +27,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class BasicIdentifiableCredential extends AbstractCredential {
+    @Serial
     private static final long serialVersionUID = -700605020472810939L;
 
     @JsonProperty("id")

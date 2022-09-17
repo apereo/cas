@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
+import java.io.Serial;
 
 /**
  * Configuration properties class for git metadata management.
@@ -27,6 +28,7 @@ import java.io.File;
 @Accessors(chain = true)
 @JsonFilter("GitSamlMetadataProperties")
 public class GitSamlMetadataProperties extends BaseGitProperties {
+    @Serial
     private static final long serialVersionUID = 4194689836396653458L;
 
     /**

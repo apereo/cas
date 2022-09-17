@@ -8,9 +8,53 @@ category: Services
 
 # SAML2 Service Provider Metadata
 
+This document describes how SAML2 service providers registered with CAS can control their certain aspects of their metadata management.
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache" %}
+
+## Metadata Aggregates
+
+CAS services are fundamentally recognized and loaded by service identifiers taught to CAS typically via
+regular expressions. This allows for common groupings of applications and services by url patterns (i.e. "Everything that belongs to `example.org` is registered with CAS).
+With aggregated metadata, CAS essentially does double authorization checks because it will first attempt to find the entity id
+in its collection of resolved metadata components and then it looks to see if that entity id is authorized via the pattern that is assigned to
+that service definition. This means you can do one of several things:
+
+1. Open up the pattern to allow everything that is authorized in the metadata.
+2. Restrict the pattern to only a select few entity ids found in the
+   metadata. This is essentially the same thing as defining metadata criteria
+   to filter down the list of resolved relying parties and entity ids except that its done
+   after the fact once the metadata is fully loaded and parsed.
+3. You can also instruct CAS to filter metadata
+   entities by a defined criteria at resolution time when it reads the
+   metadata itself. This is essentially the same thing as forcing the pattern
+   to match entity ids, except that it's done while CAS is reading the
+   metadata and thus load times are improved.
+
+## Metadata Caching & Resolution
+
+Service provider metadata is fetched and loaded on demand for every service and then cached in a global cache for a
+configurable duration. Subsequent requests for service metadata will always consult the cache first and if missed,
+will resort to actually resolving the metadata by loading or contacting the configured resource.
+
+Each service provider definition that is registered with CAS may optionally also specifically an expiration period of
+metadata resolution to override the default global value.
+
+The expiration policy of the service metadata is controlled using the following order:
+
+1. `CacheDuration` setting found inside the SAML2 service provider metadata, if any.
+2. Metadata expiration policy and duration defined for the SAML2 registered service defined with CAS.
+3. Global metadata expiration policy controlled via CAS settings.
+   
+## Metadata Storage
+
 SAML2 service providers that are registered with CAS can be configured to present their metadata using the following options.
 
-## Default
+### Default
         
 If the SAML2 service provider is able to produce valid metadata, you may register the metadata with CAS as either a URL 
 or a path to the metadata XML file or a classpath resource noted by the appropriate prefix. Using this model, CAS will 
@@ -30,6 +74,12 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
   "metadataLocation" : "https://url/to/metadata.xml"
 }
 ```
+
+CAS may attempt to reuse the metadata from a previously-downloaded backup file on disk if the metadata file is still seen as valid. 
+This capability will require the forceful fetching of the metadata over HTTP to be disabled.
+
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.http" %}
+
 {% endtab %}
 
 {% tab metadata File %}
@@ -68,7 +118,7 @@ with the entity id `sp1:example` should be stored in as `3494744350abe1fd8efa68c
 
 {% endtabs %}
 
-## Dynamic Metadata
+### Dynamic Metadata
 
 If the SP you wish to integrate with does not produce SAML metadata, you may be able to
 use [this service](https://www.samltool.com/sp_metadata.php) to create the metadata,

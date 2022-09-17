@@ -8,6 +8,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class ChainingPrincipalElectionStrategyTests {
         strategy1.setOrder(100);
 
         val strategy2 = new DefaultPrincipalElectionStrategy() {
+            @Serial
             private static final long serialVersionUID = 332375002782221999L;
 
             @Override

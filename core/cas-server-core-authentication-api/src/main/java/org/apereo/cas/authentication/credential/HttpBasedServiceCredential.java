@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.net.URL;
 
 /**
@@ -30,6 +31,7 @@ import java.net.URL;
 @EqualsAndHashCode(callSuper = true)
 public class HttpBasedServiceCredential extends AbstractCredential {
 
+    @Serial
     private static final long serialVersionUID = 1492607216336354503L;
 
     /**

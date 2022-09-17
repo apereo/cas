@@ -10,8 +10,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 @Accessors(chain = true)
 @JsonFilter("OktaPrincipalAttributesProperties")
 public class OktaPrincipalAttributesProperties extends BaseOktaProperties {
+    @Serial
     private static final long serialVersionUID = -6573755681498251678L;
 
     /**
@@ -46,7 +47,7 @@ public class OktaPrincipalAttributesProperties extends BaseOktaProperties {
      * when using client id and private-key.
      */
     @RequiredProperty
-    private List<String> scopes = Stream.of("okta.users.read", "okta.apps.read").collect(Collectors.toList());
+    private List<String> scopes = Stream.of("okta.users.read", "okta.apps.read").toList();
 
     /**
      * Okta client id used in combination with the private key.

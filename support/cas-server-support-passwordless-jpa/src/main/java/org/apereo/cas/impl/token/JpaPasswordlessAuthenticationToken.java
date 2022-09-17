@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link JpaPasswordlessAuthenticationToken}.
@@ -19,6 +20,7 @@ import javax.persistence.Table;
 @Table(name = "PasswordlessAuthenticationToken")
 @Getter
 public class JpaPasswordlessAuthenticationToken extends PasswordlessAuthenticationToken {
+    @Serial
     private static final long serialVersionUID = -6830552508331229032L;
 
     @Id

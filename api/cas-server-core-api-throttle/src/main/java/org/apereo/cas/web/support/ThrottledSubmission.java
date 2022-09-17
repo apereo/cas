@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -17,6 +18,7 @@ import java.time.ZonedDateTime;
 @Data
 @SuperBuilder
 public class ThrottledSubmission implements Serializable {
+    @Serial
     private static final long serialVersionUID = -853401483455717926L;
 
     private final String key;

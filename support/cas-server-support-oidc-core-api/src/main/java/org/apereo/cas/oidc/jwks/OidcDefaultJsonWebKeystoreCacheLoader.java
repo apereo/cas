@@ -5,8 +5,6 @@ import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,11 +24,8 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> {
-    private final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
-
+public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService)
+    implements CacheLoader<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> {
     /**
      * Gets json web key from jwks.
      *
@@ -77,7 +72,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<OidcJs
      * @return the json web key set
      * @throws Exception the exception
      */
-    protected JsonWebKeySet buildJsonWebKeySet(final Resource resource, final OidcJsonWebKeyCacheKey cacheKey) throws Exception {
+    JsonWebKeySet buildJsonWebKeySet(final Resource resource, final OidcJsonWebKeyCacheKey cacheKey) throws Exception {
         val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource);
         return getJsonWebKeysFromJwks(jsonWebKeySet, cacheKey);
     }
@@ -88,7 +83,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<OidcJs
      * @param cacheKey the cache key
      * @return the json web key set
      */
-    protected Optional<JsonWebKeySet> buildJsonWebKeySet(final OidcJsonWebKeyCacheKey cacheKey) {
+    Optional<JsonWebKeySet> buildJsonWebKeySet(final OidcJsonWebKeyCacheKey cacheKey) {
         try {
             val resource = generateJwksResource();
             if (resource == null) {
@@ -127,8 +122,8 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<OidcJs
      * @return the resource
      * @throws Exception the exception
      */
-    protected Resource generateJwksResource() throws Exception {
-        val resource = getOidcJsonWebKeystoreGeneratorService().generate();
+    Resource generateJwksResource() throws Exception {
+        val resource = oidcJsonWebKeystoreGeneratorService().generate();
         LOGGER.debug("Loading default JSON web key from [{}]", resource);
         return resource;
     }

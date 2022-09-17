@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jDelegatedAuthenticationRestfulProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("Pac4jDelegatedAuthenticationRestfulProperties")
 public class Pac4jDelegatedAuthenticationRestfulProperties extends RestEndpointProperties {
+    @Serial
     private static final long serialVersionUID = 3659099897056632608L;
 
     /**

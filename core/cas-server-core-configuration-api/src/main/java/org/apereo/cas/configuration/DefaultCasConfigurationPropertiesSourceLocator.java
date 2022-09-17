@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 /**
  * This is {@link DefaultCasConfigurationPropertiesSourceLocator}.
  * <p>
- * Note: The order of the elements in {@link #EXTENSIONS} is important, last one overrides previous ones.
+ * Note: The order of the elements in {@link #EXTENSIONS} is important, first one overrides previous ones.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
-    private static final List<String> EXTENSIONS = Arrays.asList("properties", "yml", "yaml");
+    private static final List<String> EXTENSIONS = Arrays.asList("yml", "yaml", "properties");
 
     private static final List<String> PROFILE_PATTERNS = Arrays.asList("application-%s.%s", "%s.%s");
 
@@ -115,8 +115,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 .stream()
                 .flatMap(ext -> PROFILE_PATTERNS
                     .stream().map(pattern -> new File(configDirectory, String.format(pattern, profile, ext)))))
-            .filter(File::exists)
-            .collect(Collectors.toList()));
+            .filter(File::exists).toList());
 
         fileNames.addAll(profiles
             .stream()
@@ -129,8 +128,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                     .collect(Collectors.toList()))
                 .flatMap(List::stream)
                 .collect(Collectors.toList()))
-            .flatMap(List::stream)
-            .collect(Collectors.toList()));
+            .flatMap(List::stream).toList());
 
         val groovyFile = new File(configDirectory, appNameLowerCase.concat(".groovy"));
         FunctionUtils.doIf(groovyFile.exists(), o -> fileNames.add(groovyFile)).accept(groovyFile);
@@ -199,15 +197,12 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 .map(ext -> String.format("classpath:/application-%s.%s", profile, ext))
                 .collect(Collectors.toList()))
             .flatMap(List::stream)
-            .sorted()
             .map(resourceLoader::getResource)
             .collect(Collectors.toList());
 
         configFiles.addAll(EXTENSIONS.stream()
             .map(ext -> String.format("classpath:/application.%s", ext))
-            .sorted()
-            .map(resourceLoader::getResource)
-            .collect(Collectors.toList()));
+            .map(resourceLoader::getResource).toList());
 
         LOGGER.debug("Loading embedded configuration files [{}]", configFiles);
 

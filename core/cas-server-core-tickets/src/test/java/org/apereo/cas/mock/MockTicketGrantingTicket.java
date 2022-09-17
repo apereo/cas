@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
+    @Serial
     private static final long serialVersionUID = 6546995681334670659L;
 
     private final String id;

@@ -24,6 +24,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.jee.context.JEEContext;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -35,6 +36,7 @@ import java.util.Optional;
 @Slf4j
 @Getter
 public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
+    @Serial
     private static final long serialVersionUID = 8517547235465666978L;
 
     private final String callbackUrl;

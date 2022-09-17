@@ -13,6 +13,7 @@ import org.pac4j.core.credentials.AnonymousCredentials;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
 
+import java.io.Serial;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,6 +41,7 @@ public class ClientCredential implements Credential {
      */
     public static final String AUTHENTICATION_ATTRIBUTE_CLIENT_NAME = "clientName";
 
+    @Serial
     private static final long serialVersionUID = -7883301304291894763L;
 
     /**

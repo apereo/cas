@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JdbcThrottleProperties}.
  *
@@ -34,6 +36,7 @@ public class JdbcThrottleProperties extends AbstractJpaProperties {
         + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? "
         + "ORDER BY AUD_DATE DESC";
 
+    @Serial
     private static final long serialVersionUID = -9199878384425691919L;
 
     /**

@@ -55,21 +55,21 @@ public abstract class BaseWSFederationRequestController {
                                          final WSFederationRequest wsfedRequest) throws Exception {
         val builder = new URIBuilder(configContext.getCallbackService().getId());
 
-        builder.addParameter(WSFederationConstants.WA, wsfedRequest.getWa());
-        builder.addParameter(WSFederationConstants.WREPLY, wsfedRequest.getWreply());
-        builder.addParameter(WSFederationConstants.WTREALM, wsfedRequest.getWtrealm());
+        builder.addParameter(WSFederationConstants.WA, wsfedRequest.wa());
+        builder.addParameter(WSFederationConstants.WREPLY, wsfedRequest.wreply());
+        builder.addParameter(WSFederationConstants.WTREALM, wsfedRequest.wtrealm());
 
-        if (StringUtils.isNotBlank(wsfedRequest.getWctx())) {
-            builder.addParameter(WSFederationConstants.WCTX, wsfedRequest.getWctx());
+        if (StringUtils.isNotBlank(wsfedRequest.wctx())) {
+            builder.addParameter(WSFederationConstants.WCTX, wsfedRequest.wctx());
         }
-        if (StringUtils.isNotBlank(wsfedRequest.getWfresh())) {
-            builder.addParameter(WSFederationConstants.WREFRESH, wsfedRequest.getWfresh());
+        if (StringUtils.isNotBlank(wsfedRequest.wfresh())) {
+            builder.addParameter(WSFederationConstants.WREFRESH, wsfedRequest.wfresh());
         }
-        if (StringUtils.isNotBlank(wsfedRequest.getWhr())) {
-            builder.addParameter(WSFederationConstants.WHR, wsfedRequest.getWhr());
+        if (StringUtils.isNotBlank(wsfedRequest.whr())) {
+            builder.addParameter(WSFederationConstants.WHR, wsfedRequest.whr());
         }
-        if (StringUtils.isNotBlank(wsfedRequest.getWreq())) {
-            builder.addParameter(WSFederationConstants.WREQ, wsfedRequest.getWreq());
+        if (StringUtils.isNotBlank(wsfedRequest.wreq())) {
+            builder.addParameter(WSFederationConstants.WREQ, wsfedRequest.wreq());
         }
         val url = builder.build().toASCIIString();
         LOGGER.trace("Built service callback url [{}]", url);
@@ -119,10 +119,10 @@ public abstract class BaseWSFederationRequestController {
      */
     protected boolean shouldRenewAuthentication(final WSFederationRequest fedRequest,
                                                 final HttpServletRequest request) {
-        if (StringUtils.isBlank(fedRequest.getWfresh()) || !NumberUtils.isCreatable(fedRequest.getWfresh())) {
+        if (StringUtils.isBlank(fedRequest.wfresh()) || !NumberUtils.isCreatable(fedRequest.wfresh())) {
             return false;
         }
-        val ttl = Long.parseLong(fedRequest.getWfresh().trim());
+        val ttl = Long.parseLong(fedRequest.wfresh().trim());
         if (ttl == 0) {
             return false;
         }
@@ -153,13 +153,13 @@ public abstract class BaseWSFederationRequestController {
     protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final Service targetService,
                                                                                                  final WSFederationRequest fedRequest) {
         val svc = getWsFederationRegisteredService(targetService);
-        if (StringUtils.isBlank(fedRequest.getWtrealm()) || !StringUtils.equals(fedRequest.getWtrealm(), svc.getRealm())) {
-            LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.getWtrealm(), svc);
+        if (StringUtils.isBlank(fedRequest.wtrealm()) || !StringUtils.equals(fedRequest.wtrealm(), svc.getRealm())) {
+            LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.wtrealm(), svc);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         val idp = configContext.getCasProperties().getAuthn().getWsfedIdp().getIdp();
         if (!StringUtils.equals(idp.getRealm(), svc.getRealm())) {
-            LOGGER.warn("Realm [{}] is not authorized for the identity provider realm [{}]", fedRequest.getWtrealm(), idp.getRealm());
+            LOGGER.warn("Realm [{}] is not authorized for the identity provider realm [{}]", fedRequest.wtrealm(), idp.getRealm());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
 

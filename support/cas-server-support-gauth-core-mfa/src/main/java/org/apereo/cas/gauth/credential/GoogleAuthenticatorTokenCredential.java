@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link GoogleAuthenticatorTokenCredential}.
  *
@@ -19,6 +21,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class GoogleAuthenticatorTokenCredential extends OneTimeTokenCredential {
 
+    @Serial
     private static final long serialVersionUID = -7570600701132111037L;
 
     private Long accountId;

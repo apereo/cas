@@ -127,7 +127,7 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
         at 
 ```
 
-You may encounter this error, when in all likelihood, a cache-based ticket registry such as EhCache is used whose eviction policy 
+You may encounter this error, when in all likelihood, a cache-based ticket registry such as Hazelcast is used whose eviction policy 
 is not correctly configured. Objects and tickets are cached inside the registry storage back-end tend to linger around longer than 
 they should or the eviction policy is not doing a good enough job to clean unused tickets that may be marked as expired by CAS. 
 

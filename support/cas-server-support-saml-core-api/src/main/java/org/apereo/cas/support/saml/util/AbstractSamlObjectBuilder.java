@@ -53,6 +53,7 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -91,6 +92,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
+    @Serial
     private static final long serialVersionUID = -6833230731146922780L;
 
     private static final String LOG_MESSAGE_ATTR_CREATED = "Created attribute value XMLObject: [{}]";

@@ -32,20 +32,16 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.model.Capacity;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.ehcache.config.builders.ExpiryPolicyBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.config.builders.UserManagedCacheBuilder;
-import org.ehcache.config.units.EntryUnit;
-import org.ehcache.config.units.MemoryUnit;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,7 +52,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.stream.Collectors;
 
 /**
@@ -118,15 +113,11 @@ public class X509AuthenticationConfiguration {
                                                         final RevocationPolicy allowRevocationPolicy,
                                                         final RevocationPolicy thresholdExpiredCRLRevocationPolicy,
                                                         final RevocationPolicy denyRevocationPolicy) {
-        switch (policy.trim().toLowerCase()) {
-            case "allow":
-                return allowRevocationPolicy;
-            case "threshold":
-                return thresholdExpiredCRLRevocationPolicy;
-            case "deny":
-            default:
-                return denyRevocationPolicy;
-        }
+        return switch (policy.trim().toLowerCase()) {
+            case "allow" -> allowRevocationPolicy;
+            case "threshold" -> thresholdExpiredCRLRevocationPolicy;
+            default -> denyRevocationPolicy;
+        };
     }
 
     private static PrincipalResolver getPrincipalResolver(final CasConfigurationProperties casProperties,
@@ -183,29 +174,23 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "crlDistributionPointRevocationChecker")
-    public RevocationChecker crlDistributionPointRevocationChecker(final CasConfigurationProperties casProperties,
-                                                                   @Qualifier("crlFetcher")
-                                                                   final CRLFetcher crlFetcher,
-                                                                   @Qualifier("allowRevocationPolicy")
-                                                                   final RevocationPolicy allowRevocationPolicy,
-                                                                   @Qualifier("thresholdExpiredCRLRevocationPolicy")
-                                                                   final RevocationPolicy thresholdExpiredCRLRevocationPolicy,
-                                                                   @Qualifier("denyRevocationPolicy")
-                                                                   final RevocationPolicy denyRevocationPolicy) {
+    public RevocationChecker crlDistributionPointRevocationChecker(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("crlFetcher")
+        final CRLFetcher crlFetcher,
+        @Qualifier("allowRevocationPolicy")
+        final RevocationPolicy allowRevocationPolicy,
+        @Qualifier("thresholdExpiredCRLRevocationPolicy")
+        final RevocationPolicy thresholdExpiredCRLRevocationPolicy,
+        @Qualifier("denyRevocationPolicy")
+        final RevocationPolicy denyRevocationPolicy) {
         val x509 = casProperties.getAuthn().getX509();
-        var builder = UserManagedCacheBuilder.newUserManagedCacheBuilder(URI.class, byte[].class);
-        if (x509.isCacheDiskOverflow()) {
-            val capacity = Capacity.parse(x509.getCacheDiskSize());
-            builder = builder.withResourcePools(ResourcePoolsBuilder.newResourcePoolsBuilder()
-                .disk(capacity.getSize().longValue(), MemoryUnit.valueOf(capacity.getUnitOfMeasure().name()), false));
-        }
-        builder = builder.withResourcePools(ResourcePoolsBuilder.newResourcePoolsBuilder().heap(x509.getCacheMaxElementsInMemory(), EntryUnit.ENTRIES));
-        if (x509.isCacheEternal()) {
-            builder = builder.withExpiry(ExpiryPolicyBuilder.noExpiration());
-        } else {
-            builder = builder.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(x509.getCacheTimeToLiveSeconds())));
-        }
-        var cache = builder.build(true);
+
+        val cache = Caffeine.newBuilder()
+            .maximumSize(x509.getCacheMaxElementsInMemory())
+            .expireAfterWrite(Beans.newDuration(x509.getCacheTimeToLiveSeconds()))
+            .<URI, byte[]>build();
+
         return new CRLDistributionPointRevocationChecker(x509.isCheckAll(),
             getRevocationPolicy(x509.getCrlUnavailablePolicy(), allowRevocationPolicy, thresholdExpiredCRLRevocationPolicy, denyRevocationPolicy),
             getRevocationPolicy(x509.getCrlExpiredPolicy(), allowRevocationPolicy, thresholdExpiredCRLRevocationPolicy, denyRevocationPolicy),
@@ -245,15 +230,12 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "crlFetcher")
     public CRLFetcher crlFetcher(final CasConfigurationProperties casProperties) {
         val x509 = casProperties.getAuthn().getX509();
-        switch (x509.getCrlFetcher().toLowerCase()) {
-            case "ldap":
-                return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
-                    LdapUtils.newLdaptiveSearchOperation(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
-                    x509.getLdap().getCertificateAttribute());
-            case "resource":
-            default:
-                return new ResourceCRLFetcher();
-        }
+        return switch (x509.getCrlFetcher().toLowerCase()) {
+            case "ldap" -> new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
+                LdapUtils.newLdaptiveSearchOperation(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
+                x509.getLdap().getCertificateAttribute());
+            default -> new ResourceCRLFetcher();
+        };
     }
 
     @Bean

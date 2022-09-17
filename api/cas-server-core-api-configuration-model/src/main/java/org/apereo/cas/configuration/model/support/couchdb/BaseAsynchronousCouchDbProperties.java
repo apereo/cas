@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link BaseAsynchronousCouchDbProperties}.
  *
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 @RequiresModule(name = "cas-server-support-couchdb-core")
 public abstract class BaseAsynchronousCouchDbProperties extends BaseCouchDbProperties {
 
+    @Serial
     private static final long serialVersionUID = -7920471433876478891L;
     /**
      * Make DB updates asynchronously.

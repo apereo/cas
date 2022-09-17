@@ -13,6 +13,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Transient;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -31,6 +32,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class OidcRegisteredService extends OAuthRegisteredService {
 
+    @Serial
     private static final long serialVersionUID = 1310899699465091444L;
 
     @ExpressionLanguageCapable

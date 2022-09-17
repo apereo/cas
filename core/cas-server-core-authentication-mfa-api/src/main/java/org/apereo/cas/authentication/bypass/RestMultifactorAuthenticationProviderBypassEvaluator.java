@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serial;
 
 /**
  * This is {@link RestMultifactorAuthenticationProviderBypassEvaluator}.
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
 
+    @Serial
     private static final long serialVersionUID = -7553888418344342672L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;

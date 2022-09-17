@@ -153,8 +153,7 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
             val expInstant = expirationDate.atStartOfDay(ZoneOffset.UTC).toInstant();
             val removingDevices = stream()
                 .filter(Objects::nonNull)
-                .filter(d -> d.getRegistrationTime() != null && d.getRegistrationTime().isBefore(expInstant))
-                .collect(Collectors.toList());
+                .filter(d -> d.getRegistrationTime() != null && d.getRegistrationTime().isBefore(expInstant)).toList();
             if (!removingDevices.isEmpty()) {
                 LOGGER.debug("There are [{}] expired device(s) remaining in repository. Cleaning...", removingDevices.size());
                 removingDevices.forEach(device -> removeRegistrationByUsername(device.getUsername(), device));

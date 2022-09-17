@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * Configuration properties for Redis.
  *
@@ -19,6 +21,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("AuditRedisProperties")
 public class AuditRedisProperties extends BaseRedisProperties {
+    @Serial
     private static final long serialVersionUID = -8112996050439638782L;
 
     /**

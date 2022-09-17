@@ -35,10 +35,6 @@ import java.util.Collections;
 @Slf4j
 public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
-    private final boolean ntlm;
-
-    private final String messageBeginPrefix;
-
     /**
      * Behavior in case of SPNEGO authentication failure :
      * <ul><li>True : if SPNEGO is the last authentication method with no fallback.</li>
@@ -50,11 +46,8 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
     public SpnegoCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                    final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                    final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-                                   final boolean ntlm,
                                    final boolean send401OnAuthenticationFailure) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
-        this.ntlm = ntlm;
-        this.messageBeginPrefix = (ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE) + ' ';
         this.send401OnAuthenticationFailure = send401OnAuthenticationFailure;
     }
 
@@ -73,8 +66,8 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         }
 
         val authzHeaderLength = authorizationHeader.length();
-        val prefixLength = this.messageBeginPrefix.length();
-        if (authzHeaderLength > prefixLength && authorizationHeader.startsWith(this.messageBeginPrefix)) {
+        val prefixLength = SpnegoConstants.NEGOTIATE.length();
+        if (authzHeaderLength > prefixLength && authorizationHeader.startsWith(SpnegoConstants.NEGOTIATE)) {
             LOGGER.debug("SPNEGO Authorization header found with [{}] bytes", authzHeaderLength - prefixLength);
             val base64 = authorizationHeader.substring(prefixLength);
             val token = EncodingUtils.decodeBase64(base64);
@@ -82,8 +75,8 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
             LOGGER.debug("Obtained token: [{}]. Creating credential...", tokenString);
             return new SpnegoCredential(token);
         }
-
-        LOGGER.warn("SPNEGO Authorization header [{}] does not begin with the prefix [{}]", authorizationHeader, messageBeginPrefix);
+        LOGGER.warn("SPNEGO Authorization header [{}] does not begin with the prefix [{}]",
+            authorizationHeader, SpnegoConstants.NEGOTIATE);
         return null;
     }
 
@@ -102,15 +95,14 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
      *
      * @param context the context
      */
-    private void setResponseHeader(final RequestContext context) {
+    protected void setResponseHeader(final RequestContext context) {
         val credential = WebUtils.getCredential(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val spnegoCredentials = (SpnegoCredential) credential;
         val nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {
             LOGGER.debug("Obtained output token: [{}]", new String(nextToken, Charset.defaultCharset()));
-            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
-                ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
+            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, SpnegoConstants.NEGOTIATE
                 + ' ' + EncodingUtils.encodeBase64(nextToken));
         } else {
             LOGGER.debug("Unable to obtain the output token required.");

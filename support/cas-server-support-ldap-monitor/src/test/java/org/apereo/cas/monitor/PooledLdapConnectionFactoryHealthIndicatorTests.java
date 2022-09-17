@@ -16,8 +16,6 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -50,8 +48,7 @@ public class PooledLdapConnectionFactoryHealthIndicatorTests {
     public void verifyObserve() throws Exception {
         val results = monitor.stream()
             .map(it -> HealthIndicator.class.cast(it.getContributor()))
-            .map(it -> it.health().getStatus())
-            .collect(Collectors.toList());
+            .map(it -> it.health().getStatus()).toList();
         assertFalse(results.isEmpty());
         assertEquals(Status.UP, results.get(0));
         pooledLdapConnectionFactoryHealthIndicatorListFactoryBean.destroy();

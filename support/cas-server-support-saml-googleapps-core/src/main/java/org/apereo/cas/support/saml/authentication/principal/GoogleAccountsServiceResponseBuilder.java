@@ -30,6 +30,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
 
+import java.io.Serial;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.ZoneOffset;
@@ -52,6 +53,7 @@ import java.util.stream.Stream;
     of = {"publicKeyLocation", "privateKeyLocation", "keyAlgorithm", "samlObjectBuilder", "skewAllowance"})
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
+    @Serial
     private static final long serialVersionUID = -4584732364007702423L;
 
     private final String publicKeyLocation;

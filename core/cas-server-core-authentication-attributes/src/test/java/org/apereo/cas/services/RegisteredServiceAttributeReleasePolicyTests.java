@@ -26,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -224,6 +225,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getUsernameAttributeProvider()).thenReturn(new RegisteredServiceUsernameAttributeProvider() {
+            @Serial
             private static final long serialVersionUID = 771643288929352964L;
 
             @Override
@@ -324,6 +326,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyDefaults() {
         val policy = new RegisteredServiceAttributeReleasePolicy() {
+            @Serial
             private static final long serialVersionUID = 6118477243447737445L;
 
             @Override

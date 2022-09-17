@@ -55,7 +55,8 @@ public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         assertTrue(result.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID));
         assertTrue(result.containsKey(CasProtocolConstants.PARAMETER_SERVICE));
         assertTrue(result.containsKey("email"));
-        assertEquals("casuser@example.org", result.get("email"));
+        val values = result.get("email").toString();
+        assertEquals("casuser@example.org", values);
     }
 
     @Test

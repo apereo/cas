@@ -89,7 +89,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public void registerAuthenticationPolicies(final Collection<AuthenticationPolicy> authenticationPolicy) {
-        this.authenticationPolicies.addAll(authenticationPolicy.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList()));
+        this.authenticationPolicies.addAll(authenticationPolicy.stream().filter(BeanSupplier::isNotProxy).toList());
     }
 
     @Override
@@ -119,11 +119,10 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
                 handler.getName(), Optional.ofNullable(principalResolver).map(PrincipalResolver::getName).orElse("no"));
 
             if (authenticationHandlerPrincipalResolverMap.containsKey(handler)) {
-                val result = authenticationHandlerPrincipalResolverMap.get(handler);
                 LOGGER.error("Authentication execution plan has found an existing handler [{}]. "
-                             + "Attempts to register a new authentication handler [{}] may lead to unpredictable results. "
-                             + "Please make sure all authentication handlers are uniquely defined in the CAS configuration.",
-                    result, handler);
+                             + "Attempts to register a new authentication handler with the same name may lead to unpredictable results. "
+                             + "Please make sure all authentication handlers are uniquely defined/named in the CAS configuration.",
+                    handler.getName());
                 return false;
             }
             authenticationHandlerPrincipalResolverMap.put(handler, principalResolver);

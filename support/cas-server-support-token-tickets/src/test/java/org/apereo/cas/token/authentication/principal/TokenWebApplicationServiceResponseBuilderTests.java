@@ -138,8 +138,8 @@ public class TokenWebApplicationServiceResponseBuilderTests {
 
         val result = responseBuilder.build(service, st.getId(), authentication);
         assertNotNull(result);
-        assertTrue(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
-        val ticket = result.getAttributes().get(CasProtocolConstants.PARAMETER_TICKET);
+        assertTrue(result.attributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
+        val ticket = result.attributes().get(CasProtocolConstants.PARAMETER_TICKET);
         assertNotNull(JWTParser.parse(ticket));
     }
 
@@ -149,6 +149,6 @@ public class TokenWebApplicationServiceResponseBuilderTests {
             StringUtils.EMPTY,
             CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(result);
-        assertFalse(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
+        assertFalse(result.attributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }
 }

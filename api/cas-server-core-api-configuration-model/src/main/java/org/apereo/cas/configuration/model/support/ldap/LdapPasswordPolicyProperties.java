@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapPasswordPolicyProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("LdapPasswordPolicyProperties")
 public class LdapPasswordPolicyProperties extends PasswordPolicyProperties {
+    @Serial
     private static final long serialVersionUID = -1878237508646993100L;
 
     /**

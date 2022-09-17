@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,6 +27,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("AzureActiveDirectoryAuthenticationProperties")
 public class AzureActiveDirectoryAuthenticationProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -21355975558426360L;
 
     /**

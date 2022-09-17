@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ public class InterruptResponse implements Serializable {
      */
     public static final String DEFAULT_MESSAGE = "Authentication flow is interrupted";
 
+    @Serial
     private static final long serialVersionUID = 2558836528840508196L;
 
     private String message;

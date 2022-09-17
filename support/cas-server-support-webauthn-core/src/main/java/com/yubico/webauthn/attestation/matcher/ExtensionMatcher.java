@@ -72,16 +72,13 @@ public class ExtensionMatcher implements DeviceMatcher {
 
     private boolean matchTypedValue(String matchKey, JsonNode matchValue, ASN1Primitive value) {
         final String extensionValueType = matchValue.get(EXTENSION_VALUE_TYPE).textValue();
-        switch (extensionValueType) {
-            case EXTENSION_VALUE_TYPE_HEX:
-                return matchHex(matchKey, matchValue, value);
-
-            default:
-                throw new IllegalArgumentException(
-                    String.format(
-                        "Unknown extension value type \"%s\" for extension \"%s\"",
-                        extensionValueType, matchKey));
-        }
+        return switch (extensionValueType) {
+            case EXTENSION_VALUE_TYPE_HEX -> matchHex(matchKey, matchValue, value);
+            default -> throw new IllegalArgumentException(
+                String.format(
+                    "Unknown extension value type \"%s\" for extension \"%s\"",
+                    extensionValueType, matchKey));
+        };
     }
 
     private boolean matchHex(String matchKey, JsonNode matchValue, ASN1Primitive value) {

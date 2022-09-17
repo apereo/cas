@@ -12,6 +12,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.net.URL;
 
 /**
@@ -31,6 +32,7 @@ import java.net.URL;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
+    @Serial
     private static final long serialVersionUID = -211069319543047324L;
 
     private String pattern;

@@ -18,6 +18,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -39,6 +40,7 @@ import java.util.Set;
 @Getter
 @RequiredArgsConstructor
 public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolicy {
+    @Serial
     private static final long serialVersionUID = 3974114391376732470L;
 
     private final TicketRegistry ticketRegistry;

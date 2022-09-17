@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.List;
 @JsonFilter("SpnegoProperties")
 public class SpnegoProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 8084143496524446970L;
 
     /**
@@ -100,11 +102,6 @@ public class SpnegoProperties implements Serializable {
      * In case LDAP is used to validate clients, this is the attribute that indicates the host.
      */
     private String spnegoAttributeName = "distinguishedName";
-
-    /**
-     * Determines the header to set and the message prefix when negotiating spnego.
-     */
-    private boolean ntlm;
 
     /**
      * If true, does not terminate authentication and allows CAS to resume

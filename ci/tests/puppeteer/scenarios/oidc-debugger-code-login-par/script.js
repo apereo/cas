@@ -18,7 +18,7 @@ const assert = require("assert");
     let response = await cas.goto(page, url);
     await page.waitForTimeout(1000);
     console.log(`Status: ${response.status()} ${response.statusText()}`);
-    assert(403 === response.status());
+    assert(response.status() === 403);
 
     let value = `client:secret`;
     let buff = Buffer.alloc(value.length, value);

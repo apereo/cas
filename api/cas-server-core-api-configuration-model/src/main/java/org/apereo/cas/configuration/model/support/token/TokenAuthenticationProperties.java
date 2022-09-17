@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,7 @@ import java.io.Serializable;
 @JsonFilter("TokenAuthenticationProperties")
 public class TokenAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6016124091895278265L;
 
     /**

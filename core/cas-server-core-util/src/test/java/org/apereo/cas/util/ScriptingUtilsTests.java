@@ -108,46 +108,6 @@ public class ScriptingUtilsTests {
     }
 
     @Test
-    public void verifyGroovyResourceEngineExecution() {
-        val result = ScriptingUtils.executeGroovyScriptEngine("return name", CollectionUtils.wrap("name", "casuser"), String.class);
-        assertEquals("casuser", result);
-
-        val result2 = ScriptingUtils.executeGroovyScriptEngine("throw new RuntimeException()", Map.of(), String.class);
-        assertNull(result2);
-    }
-    
-    @Test
-    public void verifyResourceScriptEngineExecution() throws IOException {
-        val file = File.createTempFile("test", ".groovy");
-        FileUtils.write(file, "def run(String name) { return name }", StandardCharsets.UTF_8);
-
-        val result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);
-        assertEquals("casuser", result);
-    }
-
-    @Test
-    public void verifyBadScriptEngine() throws IOException {
-        val file = File.createTempFile("test1", ".groovy");
-        FileUtils.write(file, "---", StandardCharsets.UTF_8);
-        val result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);
-        assertNull(result);
-    }
-
-    @Test
-    public void verifyEmptyScript() throws IOException {
-        val result = ScriptingUtils.executeScriptEngine(new File("bad.groovy").getCanonicalPath(), new Object[]{"casuser"}, String.class);
-        assertNull(result);
-    }
-
-    @Test
-    public void verifyNoEngine() throws IOException {
-        val file = File.createTempFile("test", ".txt");
-        FileUtils.write(file, "-", StandardCharsets.UTF_8);
-        val result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);
-        assertNull(result);
-    }
-
-    @Test
     public void verifyGetObject() {
         var result = ScriptingUtils.getObjectInstanceFromGroovyResource(null, null, null, null);
         assertNull(result);

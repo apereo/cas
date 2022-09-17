@@ -18,7 +18,10 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -40,7 +43,7 @@ import java.util.function.Supplier;
  * @since 3.4.6
  */
 @Slf4j
-public class MockWebServer implements AutoCloseable {
+public class MockWebServer implements Closeable {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -148,7 +151,9 @@ public class MockWebServer implements AutoCloseable {
             val addr = new InetSocketAddress("0.0.0.0", port);
             return sslContext.getServerSocketFactory().createServerSocket(port, 0, addr.getAddress());
         }
-        return new ServerSocket(port);
+        val ss = new ServerSocket(port);
+        ss.setSoTimeout(30000);
+        return ss;
     }
 
     public void responseBody(final String data) {
@@ -156,8 +161,9 @@ public class MockWebServer implements AutoCloseable {
     }
 
     public void responseBodySupplier(final Supplier<Resource> sup) {
-         this.worker.setResourceSupplier(sup);
+        this.worker.setResourceSupplier(sup);
     }
+
     /**
      * Starts the Web server so it can accept requests on the listening port.
      */
@@ -170,11 +176,8 @@ public class MockWebServer implements AutoCloseable {
      * Stops the Web server after processing any pending requests.
      */
     public void stop() {
-        if (!isRunning()) {
-            return;
-        }
-        this.worker.stop();
         try {
+            this.worker.stop();
             this.workerThread.join();
         } catch (final InterruptedException e) {
             LoggingUtils.error(LOGGER, e);
@@ -270,8 +273,18 @@ public class MockWebServer implements AutoCloseable {
         @Override
         public synchronized void run() {
             while (this.running) {
-                try {
-                    val socket = this.serverSocket.accept();
+                try (val socket = serverSocket.accept()) {
+                    val givenHeaders = new HashMap<String, String>();
+                    val in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+                    var line = StringUtils.EMPTY;
+                    while ((line = in.readLine()) != null && !line.isEmpty()) {
+                        if (line.contains(":")) {
+                            val name = line.substring(0, line.indexOf(':')).trim();
+                            val value = line.substring(line.indexOf(':') + 1).trim();
+                            givenHeaders.put(name, value);
+                        }
+                    }
+                    LOGGER.debug("Headers are [{}]", givenHeaders);
                     if (this.functionToExecute != null) {
                         LOGGER.trace("Executed function with result [{}]", functionToExecute.apply(socket));
                     } else {
@@ -290,7 +303,7 @@ public class MockWebServer implements AutoCloseable {
 
         public void stop() {
             try {
-                this.serverSocket.close();
+                serverSocket.close();
             } catch (final IOException e) {
                 LOGGER.trace("Exception when closing the server socket: [{}]", e.getMessage());
             }
@@ -298,9 +311,9 @@ public class MockWebServer implements AutoCloseable {
 
         private void writeResponse(final Socket socket) throws IOException {
             if (resource == null) {
-                this.resource = this.resourceSupplier.get();
+                this.resource = resourceSupplier.get();
             }
-            
+
             if (resource != null) {
                 LOGGER.debug("Socket response for resource [{}]", resource.getDescription());
                 val out = socket.getOutputStream();
@@ -314,7 +327,7 @@ public class MockWebServer implements AutoCloseable {
 
                 val buffer = new byte[BUFFER_SIZE];
                 try {
-                    try (val in = this.resource.getInputStream()) {
+                    try (val in = resource.getInputStream()) {
                         var count = 0;
                         while ((count = in.read(buffer)) > -1) {
                             out.write(buffer, 0, count);

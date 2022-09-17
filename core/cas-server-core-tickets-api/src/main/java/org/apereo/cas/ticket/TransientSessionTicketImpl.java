@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ import java.util.Map;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class TransientSessionTicketImpl extends AbstractTicket implements TransientSessionTicket {
+    @Serial
     private static final long serialVersionUID = 7839186396717950243L;
 
     /**

@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.stream.Stream;
 
@@ -33,6 +34,7 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
 
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
+    @Serial
     private static final long serialVersionUID = -2696352696382374584L;
 
     private final PinnableCookieProperties cookieProperties;

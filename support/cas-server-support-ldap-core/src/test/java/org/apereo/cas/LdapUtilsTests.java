@@ -25,6 +25,7 @@ import org.ldaptive.sasl.SecurityStrength;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
+import java.io.Serial;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
@@ -228,7 +229,7 @@ public class LdapUtilsTests {
                 props.getCaseChange().setDnCaseChange(CaseChangeEntryHandler.CaseChange.UPPER.name());
                 props.getCaseChange().setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.UPPER.name());
                 ldap.getSearchEntryHandlers().add(props);
-                val resolver = LdapUtils.newLdaptiveSearchEntryResolver(ldap, factory.getConnectionFactory());
+                val resolver = LdapUtils.newLdaptiveSearchEntryResolver(ldap, factory.connectionFactory());
                 assertNotNull(resolver);
             });
         factory.close();
@@ -270,6 +271,7 @@ public class LdapUtilsTests {
     }
 
     private static class Ldap extends AbstractLdapAuthenticationProperties {
+        @Serial
         private static final long serialVersionUID = 7979417317490698363L;
     }
 }

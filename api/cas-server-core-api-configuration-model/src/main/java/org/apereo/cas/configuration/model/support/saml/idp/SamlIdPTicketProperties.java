@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("SamlIdPTicketProperties")
 public class SamlIdPTicketProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6837089259390742073L;
 
     /**

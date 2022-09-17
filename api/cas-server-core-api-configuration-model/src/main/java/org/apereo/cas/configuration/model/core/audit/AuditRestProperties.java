@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link AuditRestProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("AuditRestProperties")
 public class AuditRestProperties extends RestEndpointProperties {
 
+    @Serial
     private static final long serialVersionUID = 3893437775090452831L;
 
     /**

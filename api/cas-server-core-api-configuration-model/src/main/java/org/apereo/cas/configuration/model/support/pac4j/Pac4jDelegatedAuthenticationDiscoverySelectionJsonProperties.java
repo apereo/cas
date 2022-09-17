@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jDelegatedAuthenticationDiscoverySelectionJsonProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("Pac4jDelegatedAuthenticationDiscoverySelectionJsonProperties")
 public class Pac4jDelegatedAuthenticationDiscoverySelectionJsonProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = -2261947621312270068L;
 
 }

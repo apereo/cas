@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @Setter
 @SuperBuilder
 public class HazelcastTicketHolder implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4741536838543052903L;
 
     private String id;

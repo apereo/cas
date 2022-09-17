@@ -10,6 +10,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServiceMappedRegexAttributeFilter {
 
+    @Serial
     private static final long serialVersionUID = 543145306984660628L;
 
     @Override

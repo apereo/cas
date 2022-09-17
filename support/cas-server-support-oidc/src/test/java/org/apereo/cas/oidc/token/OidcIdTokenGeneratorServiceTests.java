@@ -32,6 +32,7 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -60,6 +61,7 @@ public class OidcIdTokenGeneratorServiceTests {
     private static final String OIDC_CLAIM_PREFERRED_USERNAME = "preferred_username";
 
     private static class MockOAuthRegisteredService extends OAuthRegisteredService {
+        @Serial
         private static final long serialVersionUID = 8152953800891665827L;
     }
 

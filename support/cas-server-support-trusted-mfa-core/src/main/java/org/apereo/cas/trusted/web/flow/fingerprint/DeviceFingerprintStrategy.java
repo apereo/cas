@@ -33,5 +33,5 @@ public interface DeviceFingerprintStrategy {
      *
      * @return the device fingerprint component extractors
      */
-    List<DeviceFingerprintComponentManager> getDeviceFingerprintComponentManagers();
+    List<DeviceFingerprintComponentManager> deviceFingerprintComponentManagers();
 }

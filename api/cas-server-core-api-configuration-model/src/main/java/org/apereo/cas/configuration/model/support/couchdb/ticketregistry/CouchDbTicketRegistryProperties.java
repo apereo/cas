@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbTicketRegistryProperties}.
  *
@@ -20,6 +22,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @Accessors(chain = true)
 public class CouchDbTicketRegistryProperties extends BaseCouchDbProperties {
+    @Serial
     private static final long serialVersionUID = 6895485069081125319L;
 
     /**

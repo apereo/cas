@@ -42,7 +42,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
+import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.config.OidcEndpointsConfiguration;

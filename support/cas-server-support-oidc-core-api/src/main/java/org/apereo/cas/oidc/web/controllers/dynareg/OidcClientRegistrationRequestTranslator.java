@@ -35,7 +35,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcClientRegistrationRequestTranslator}.
@@ -224,8 +223,7 @@ public class OidcClientRegistrationRequestTranslator {
             && (StringUtils.isNotBlank(registrationRequest.getPolicyUri()) || StringUtils.isNotBlank(registrationRequest.getLogo()))) {
             val hosts = registrationRequest.getRedirectUris()
                 .stream()
-                .map(uri -> FunctionUtils.doUnchecked(() -> new URI(uri).getHost()))
-                .collect(Collectors.toList());
+                .map(uri -> FunctionUtils.doUnchecked(() -> new URI(uri).getHost())).toList();
             if (StringUtils.isNotBlank(registrationRequest.getLogo())) {
                 val logo = new URI(registrationRequest.getLogo()).getHost();
                 if (!hosts.contains(logo)) {

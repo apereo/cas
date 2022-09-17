@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Accessors(chain = true)
 @JsonFilter("WebAuthnMultifactorAuthenticationCoreProperties")
 public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -919073482703977440L;
 
     /**

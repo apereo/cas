@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.sts.claims.ClaimsParameters;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class NonWSFederationClaimsClaimsHandler extends WrappingSecurityTokenSer
     }
 
     private static class NonWSFederationClaimsList extends ArrayList<String> {
+        @Serial
         private static final long serialVersionUID = -50278523307446738L;
 
         @Override

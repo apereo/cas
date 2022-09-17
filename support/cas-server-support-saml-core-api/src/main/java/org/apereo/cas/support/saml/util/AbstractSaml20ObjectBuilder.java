@@ -40,6 +40,7 @@ import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
 import javax.xml.namespace.QName;
+import java.io.Serial;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -57,6 +58,7 @@ import java.util.Map;
  */
 @Slf4j
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
+    @Serial
     private static final long serialVersionUID = -4325127376598205277L;
 
     protected AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
@@ -71,21 +73,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         val compareFormat = nameFormat.trim().toLowerCase();
         switch (compareFormat) {
-            case "basic":
-            case Attribute.BASIC:
-                attribute.setNameFormat(Attribute.BASIC);
-                break;
-            case "uri":
-            case Attribute.URI_REFERENCE:
-                attribute.setNameFormat(Attribute.URI_REFERENCE);
-                break;
-            case "unspecified":
-            case Attribute.UNSPECIFIED:
-                attribute.setNameFormat(Attribute.UNSPECIFIED);
-                break;
-            default:
-                attribute.setNameFormat(nameFormat);
-                break;
+            case "basic", Attribute.BASIC -> attribute.setNameFormat(Attribute.BASIC);
+            case "uri", Attribute.URI_REFERENCE -> attribute.setNameFormat(Attribute.URI_REFERENCE);
+            case "unspecified", Attribute.UNSPECIFIED -> attribute.setNameFormat(Attribute.UNSPECIFIED);
+            default -> attribute.setNameFormat(nameFormat);
         }
     }
 

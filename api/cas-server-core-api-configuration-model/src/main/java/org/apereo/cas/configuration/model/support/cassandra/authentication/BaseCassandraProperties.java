@@ -9,9 +9,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 @JsonFilter("BaseCassandraProperties")
 public abstract class BaseCassandraProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3708645268337674572L;
 
     /**
@@ -49,9 +50,22 @@ public abstract class BaseCassandraProperties implements Serializable {
 
     /**
      * The list of contact points to use for the new cluster.
+     * Each contact point should be defined using the syntax {@code address:port}.
      */
     @RequiredProperty
-    private List<String> contactPoints = Stream.of("localhost:9042").collect(Collectors.toList());
+    private List<String> contactPoints = Stream.of("localhost:9042").toList();
+
+    /**
+     * Set the protocol versions enabled for use on this engine. Once the setting is set,
+     * only protocols listed in the protocols parameter are enabled for use.
+     */
+    private String[] sslProtocols;
+
+    /**
+     * The cipher suites to use, or empty/null to use the default ones.
+     * Note that host name validation will always be done using HTTPS algorithm.
+     */
+    private String[] sslCipherSuites;
 
     /**
      * Used by a DC-ware round-robin load balancing policy.

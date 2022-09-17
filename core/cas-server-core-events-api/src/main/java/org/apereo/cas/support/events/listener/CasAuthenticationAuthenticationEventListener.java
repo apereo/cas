@@ -12,8 +12,6 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.text.MessageSanitizer;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -28,14 +26,8 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredArgsConstructor
-@Getter
 @Slf4j
-public class CasAuthenticationAuthenticationEventListener implements CasAuthenticationEventListener {
-
-    private final CasEventRepository casEventRepository;
-
-    private final MessageSanitizer messageSanitizer;
+public record CasAuthenticationAuthenticationEventListener(CasEventRepository casEventRepository, MessageSanitizer messageSanitizer) implements CasAuthenticationEventListener {
 
     private static CasEvent prepareCasEvent(final AbstractCasEvent event) {
         val dto = new CasEvent();

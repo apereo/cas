@@ -2,8 +2,6 @@ package org.apereo.cas.configuration;
 
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
@@ -23,9 +21,7 @@ import java.util.Objects;
  */
 
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class CasConfigurationPropertiesEnvironmentManager {
+public record CasConfigurationPropertiesEnvironmentManager(ConfigurationPropertiesBindingPostProcessor binder) {
 
     /**
      * Property name passed to the environment that indicates the path to the standalone configuration file.
@@ -45,8 +41,6 @@ public class CasConfigurationPropertiesEnvironmentManager {
         new File("/opt/cas/config"),
         new File("/var/cas/config")
     };
-
-    private final ConfigurationPropertiesBindingPostProcessor binder;
 
     /**
      * Rebind cas configuration properties.

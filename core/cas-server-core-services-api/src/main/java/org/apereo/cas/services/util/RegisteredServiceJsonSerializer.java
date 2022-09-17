@@ -9,6 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 
 import java.io.File;
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
  */
 public class RegisteredServiceJsonSerializer extends BaseRegisteredServiceSerializer {
 
+    @Serial
     private static final long serialVersionUID = 7645698151115635245L;
 
     public RegisteredServiceJsonSerializer(final ConfigurableApplicationContext applicationContext) {

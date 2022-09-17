@@ -19,6 +19,7 @@ import javax.persistence.Column;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -35,6 +36,7 @@ import java.io.Serializable;
 @SuperBuilder
 public class SamlIdPMetadataDocument implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -705737727407407083L;
     /**
      * The Id.

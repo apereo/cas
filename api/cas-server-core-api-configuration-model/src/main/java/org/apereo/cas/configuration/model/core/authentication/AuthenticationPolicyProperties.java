@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class AuthenticationPolicyProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2039700004862120066L;
 
     /**
@@ -92,6 +94,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     @Getter
     @Setter
     public abstract static class BaseAuthenticationPolicy implements Serializable {
+        @Serial
         private static final long serialVersionUID = -1830217018850738715L;
 
         /**
@@ -109,6 +112,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     @Getter
     @Setter
     public static class NotPrevented extends BaseAuthenticationPolicy {
+        @Serial
         private static final long serialVersionUID = 8184166804664983317L;
     }
 
@@ -116,6 +120,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     @Getter
     @Setter
     public static class UniquePrincipal extends BaseAuthenticationPolicy {
+        @Serial
         private static final long serialVersionUID = -4930217087310738715L;
     }
 
@@ -124,6 +129,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     @Setter
     public static class AnyCredential extends BaseAuthenticationPolicy {
 
+        @Serial
         private static final long serialVersionUID = 4600357071276768175L;
 
         /**
@@ -141,6 +147,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     @Getter
     @Setter
     public static class AllCredentials extends BaseAuthenticationPolicy {
+        @Serial
         private static final long serialVersionUID = 928409456096460793L;
     }
 
@@ -148,6 +155,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     @Getter
     @Setter
     public static class AllHandlers extends BaseAuthenticationPolicy {
+        @Serial
         private static final long serialVersionUID = 928409456096460793L;
     }
 
@@ -156,6 +164,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     @Setter
     public static class RequiredAuthenticationHandler extends BaseAuthenticationPolicy {
 
+        @Serial
         private static final long serialVersionUID = -4206244023952305821L;
 
         /**

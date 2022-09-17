@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JdbcAcceptableUsagePolicyProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("JdbcAcceptableUsagePolicyProperties")
 public class JdbcAcceptableUsagePolicyProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = -1325011278378393385L;
 
     /**

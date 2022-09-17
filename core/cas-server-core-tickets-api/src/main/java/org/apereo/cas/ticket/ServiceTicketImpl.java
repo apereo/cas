@@ -14,6 +14,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
  * access to a particular service. It will only work for a particular service.
@@ -31,6 +33,7 @@ import lombok.val;
 public class ServiceTicketImpl extends AbstractTicket
     implements ServiceTicket, RenewableServiceTicket, ProxyGrantingTicketIssuerTicket {
 
+    @Serial
     private static final long serialVersionUID = -4223319704861765405L;
 
     /**

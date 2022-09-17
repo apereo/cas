@@ -27,20 +27,14 @@ public class DefaultOidcAttributeReleasePolicyFactory implements OidcAttributeRe
 
     @Override
     public BaseOidcScopeAttributeReleasePolicy get(final OidcConstants.StandardScopes scope) {
-        switch (scope) {
-            case EMAIL:
-                return new OidcEmailScopeAttributeReleasePolicy();
-            case ADDRESS:
-                return new OidcAddressScopeAttributeReleasePolicy();
-            case OPENID:
-                return new OidcOpenIdScopeAttributeReleasePolicy();
-            case PHONE:
-                return new OidcPhoneScopeAttributeReleasePolicy();
-            case PROFILE:
-                return new OidcProfileScopeAttributeReleasePolicy();
-            default:
-                return null;
-        }
+        return switch (scope) {
+            case EMAIL -> new OidcEmailScopeAttributeReleasePolicy();
+            case ADDRESS -> new OidcAddressScopeAttributeReleasePolicy();
+            case OPENID -> new OidcOpenIdScopeAttributeReleasePolicy();
+            case PHONE -> new OidcPhoneScopeAttributeReleasePolicy();
+            case PROFILE -> new OidcProfileScopeAttributeReleasePolicy();
+            default -> null;
+        };
     }
 
     @Override

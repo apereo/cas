@@ -9,6 +9,8 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link QRAuthenticationTokenCredential}.
  *
@@ -21,6 +23,7 @@ import lombok.ToString;
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode(callSuper = true)
 public class QRAuthenticationTokenCredential extends BasicIdentifiableCredential {
+    @Serial
     private static final long serialVersionUID = -8234522701132144037L;
 
     private String deviceId;

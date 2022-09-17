@@ -15,7 +15,6 @@ import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.coyote.AbstractProtocol;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
 import org.apache.coyote.ajp.AjpNio2Protocol;
 import org.apache.coyote.ajp.AjpNioProtocol;
@@ -64,30 +63,17 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             if ("HTTP/2".equalsIgnoreCase(proxy.getProtocol())) {
                 connector.addUpgradeProtocol(new Http2Protocol());
             } else {
-                var protocolHandlerInstance = (AbstractProtocol) null;
-                switch (proxy.getProtocol()) {
-                    case "AJP/2":
-                        protocolHandlerInstance = new AjpNio2Protocol();
-                        val ajp1 = AbstractAjpProtocol.class.cast(protocolHandlerInstance);
-                        ajp1.setSecretRequired(proxy.isSecure());
-                        ajp1.setSecret(proxy.getSecret());
-                        break;
-                    case "AJP/1.3":
-                        protocolHandlerInstance = new AjpNioProtocol();
-                        val ajp2 = AbstractAjpProtocol.class.cast(protocolHandlerInstance);
-                        ajp2.setSecretRequired(proxy.isSecure());
-                        ajp2.setSecret(proxy.getSecret());
-                        break;
-                    case "APR":
-                        protocolHandlerInstance = new Http11AprProtocol();
-                        break;
-                    case "HTTP/1.2":
-                        protocolHandlerInstance = new Http11Nio2Protocol();
-                        break;
-                    case "HTTP/1.1":
-                    default:
-                        protocolHandlerInstance = new Http11NioProtocol();
-                        break;
+                val protocolHandlerInstance = switch (proxy.getProtocol()) {
+                    case "AJP/2" -> new AjpNio2Protocol();
+                    case "APR" -> new Http11AprProtocol();
+                    case "HTTP/1.2" -> new Http11Nio2Protocol();
+                    case "HTTP/1.1" -> new Http11NioProtocol();
+                    default -> new AjpNioProtocol();
+                };
+                if (protocolHandlerInstance instanceof AbstractAjpProtocol) {
+                    val ajp = AbstractAjpProtocol.class.cast(protocolHandlerInstance);
+                    ajp.setSecretRequired(proxy.isSecure());
+                    ajp.setSecret(proxy.getSecret());
                 }
                 protocolHandlerInstance.setPort(connector.getPort());
                 ReflectionUtils.setField(handler, connector, protocolHandlerInstance);

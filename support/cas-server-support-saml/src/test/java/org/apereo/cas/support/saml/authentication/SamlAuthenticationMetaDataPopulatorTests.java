@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,6 +69,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
     private static class CustomCredential implements Credential {
 
+        @Serial
         private static final long serialVersionUID = 8040541789035593268L;
 
         @Override

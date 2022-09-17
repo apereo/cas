@@ -41,19 +41,16 @@ import java.util.Optional;
 @Slf4j
 public class SamlRegisteredServiceDefaultCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
 
-    private final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> chainingMetadataResolverCacheLoader;
-
-    private final LoadingCache<SamlRegisteredServiceCacheKey, MetadataResolver> cache;
+    private final LoadingCache<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> cache;
 
     @Getter
     private final OpenSamlConfigBean openSamlConfigBean;
 
     public SamlRegisteredServiceDefaultCachingMetadataResolver(
         final CasConfigurationProperties casProperties,
-        final CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> loader,
+        final CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> loader,
         final OpenSamlConfigBean openSamlConfigBean) {
         this.openSamlConfigBean = openSamlConfigBean;
-        this.chainingMetadataResolverCacheLoader = loader;
 
         val core = casProperties.getAuthn().getSamlIdp().getMetadata().getCore();
         val metadataCacheExpiration = Beans.newDuration(core.getCacheExpiration());
@@ -61,19 +58,19 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
             .maximumSize(core.getCacheMaximumSize())
             .recordStats()
             .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpiration))
-            .build(this.chainingMetadataResolverCacheLoader);
+            .build(loader);
     }
 
     private static long countResolvableEntityDescriptors(final MetadataResolutionResult result) {
         return FunctionUtils.doUnchecked(() -> {
             val criteria = new EvaluableEntityRoleEntityDescriptorCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-            return Iterables.size(result.getMetadataResolver().resolve(new CriteriaSet(criteria)));
+            return Iterables.size(result.getResult().getMetadataResolver().resolve(new CriteriaSet(criteria)));
         });
     }
 
     @Override
     @Synchronized
-    public MetadataResolver resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+    public CachedMetadataResolverResult resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         LOGGER.debug("Resolving metadata for [{}] at [{}]", service.getName(), metadataLocation);
         val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
@@ -90,11 +87,12 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                 LOGGER.warn("SAML metadata resolver [{}] obtained from the cache is "
                             + "unable to produce/resolve valid metadata from [{}]. Metadata resolver cache entry with key [{}] "
                             + "has been invalidated. Retry attempt: [{}]",
-                    result.getMetadataResolver().getId(), metadataLocation, cacheKey.getId(), retryContext.getRetryCount());
+                    result.getResult().getMetadataResolver().getId(), metadataLocation,
+                    cacheKey.getId(), retryContext.getRetryCount());
                 throw new SamlException("Unable to locate a valid SAML metadata resolver for "
                                         + metadataLocation + " to locate " + criteriaSet);
             }
-            return queryResult.getMetadataResolver();
+            return queryResult.getResult();
         });
     }
 
@@ -121,12 +119,12 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                 .build();
         }
         val md = queryResult.getEntityDescriptor()
-            .orElseGet(Unchecked.supplier(() -> queryResult.getMetadataResolver().resolveSingle(criteriaSet)));
+            .orElseGet(Unchecked.supplier(() -> queryResult.getResult().getMetadataResolver().resolveSingle(criteriaSet)));
 
         return MetadataResolutionResult.builder()
             .valid(md != null && md.isValid())
             .entityDescriptor(Optional.ofNullable(md))
-            .metadataResolver(queryResult.getMetadataResolver())
+            .result(queryResult.getResult())
             .build();
     }
 
@@ -139,11 +137,11 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
             .asMap()
             .values()
             .stream()
-            .map(Unchecked.function(r -> {
-                val entity = r.resolveSingle(criteriaSet);
+            .map(Unchecked.function(res -> {
+                val entity = res.getMetadataResolver().resolveSingle(criteriaSet);
                 return Optional.ofNullable(entity)
                     .map(e -> MetadataResolverCacheQueryResult.builder()
-                        .metadataResolver(r)
+                        .result(res)
                         .entityDescriptor(Optional.of(e))
                         .build());
             }))
@@ -155,12 +153,12 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
             return result.get();
         }
         LOGGER.debug("Loading metadata resolver from the cache using [{}]", cacheKey.getCacheKey());
-        val resolver = Objects.requireNonNull(cache.get(cacheKey));
+        val cacheResult = Objects.requireNonNull(cache.get(cacheKey));
         LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
-            resolver.getId(), service.getMetadataLocation());
+            cacheResult.getMetadataResolver().getId(), service.getMetadataLocation());
         return MetadataResolverCacheQueryResult.builder()
             .entityDescriptor(Optional.empty())
-            .metadataResolver(resolver)
+            .result(cacheResult)
             .build();
     }
 
@@ -172,7 +170,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
         private final Optional<EntityDescriptor> entityDescriptor;
 
-        private final MetadataResolver metadataResolver;
+        private final CachedMetadataResolverResult result;
     }
 
     /**
@@ -185,7 +183,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     Optional<MetadataResolver> resolveIfPresent(final SamlRegisteredService service,
                                                 final CriteriaSet criteriaSet) {
         val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
-        return Optional.ofNullable(this.cache.getIfPresent(cacheKey));
+        return Optional.ofNullable(cache.getIfPresent(cacheKey)).map(CachedMetadataResolverResult::getMetadataResolver);
     }
 
     /**
@@ -194,13 +192,13 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
      * @return the statistics
      */
     CacheStats getCacheStatistics() {
-        return this.cache.stats();
+        return cache.stats();
     }
 
     @SuperBuilder
     @Getter
     private static class MetadataResolverCacheQueryResult {
-        private final MetadataResolver metadataResolver;
+        private final CachedMetadataResolverResult result;
 
         @Builder.Default
         private final Optional<EntityDescriptor> entityDescriptor = Optional.empty();

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 public class TicketRegistryCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -6927362599655259000L;
 
     /**

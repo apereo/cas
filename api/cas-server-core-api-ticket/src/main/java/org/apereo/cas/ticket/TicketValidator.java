@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ public interface TicketValidator {
     @SuperBuilder
     @Getter
     class ValidationResult implements Serializable {
+        @Serial
         private static final long serialVersionUID = 8115764183802826474L;
 
         private final Principal principal;

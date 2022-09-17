@@ -8,10 +8,9 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
+
+import java.io.Serial;
 
 /**
  * This is {@link OidcIdTokenExpirationPolicyBuilder}.
@@ -19,17 +18,10 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class OidcIdTokenExpirationPolicyBuilder implements ExpirationPolicyBuilder<OAuth20AccessToken> {
+public record OidcIdTokenExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<OAuth20AccessToken> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
-
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {

@@ -12,6 +12,7 @@ import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrategy {
+    @Serial
     private static final long serialVersionUID = 3686895489996430873L;
 
     private final List<PrincipalElectionStrategy> chain;

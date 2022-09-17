@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class RiskBasedAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3826749727400569308L;
 
     /**
@@ -69,6 +71,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class IpAddress implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 577801361041617794L;
 
         /**
@@ -84,6 +87,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class Agent implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 7766080681971729400L;
 
         /**
@@ -99,6 +103,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class GeoLocation implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 4115333388680538358L;
 
         /**
@@ -114,6 +119,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class DateTime implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = -3776875583039922050L;
 
         /**
@@ -135,6 +141,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class Response implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 8254082561120701582L;
 
         /**

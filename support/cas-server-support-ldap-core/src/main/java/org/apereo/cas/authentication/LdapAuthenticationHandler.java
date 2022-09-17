@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * LDAP authentication handler that uses the ldaptive {@code Authenticator} component underneath.
@@ -189,8 +188,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             if (attributeNames.size() == 1 && attributeNames.stream().allMatch(s -> s.toString().endsWith(";"))) {
                 val attrs = ldapEntry.getAttributes()
                     .stream()
-                    .filter(attr -> attr.getName().startsWith(key.concat(";")))
-                    .collect(Collectors.toList());
+                    .filter(attr -> attr.getName().startsWith(key.concat(";"))).toList();
                 attrs.forEach(attr -> attributeMap.putAll(collectAttributeValueForEntry(ldapEntry, attr.getName(), List.of())));
             } else {
                 attributeMap.putAll(collectAttributeValueForEntry(ldapEntry, key, attributeNames));

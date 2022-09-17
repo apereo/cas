@@ -25,6 +25,7 @@ import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {
+    @Serial
     private static final long serialVersionUID = -3945938960014421135L;
 
     private final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;

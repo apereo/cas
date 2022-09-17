@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingCasProtocolValidationSpecification}.
@@ -65,7 +64,7 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
      * @param policies the policies
      */
     public void addSpecifications(final CasProtocolValidationSpecification... policies) {
-        this.specifications.addAll(Arrays.stream(policies).collect(Collectors.toList()));
+        this.specifications.addAll(Arrays.stream(policies).toList());
     }
 
     /**

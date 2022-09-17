@@ -1,6 +1,7 @@
 package org.apereo.cas.documentation;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.metadata.CasConfigurationMetadataCatalog;
 import org.apereo.cas.metadata.CasReferenceProperty;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
@@ -52,6 +53,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,6 +115,10 @@ public class CasDocumentationApplication {
         var csh = new Option("csh", "shell", true, "Generate data for CAS command-line shell commands and groups");
         csh.setRequired(false);
         options.addOption(csh);
+
+        var aud = new Option("aud", "audit", true, "Generate data for CAS auditable events");
+        aud.setRequired(false);
+        options.addOption(aud);
 
         new HelpFormatter().printHelp("CAS Documentation", options);
         var cmd = new DefaultParser().parse(options, args);
@@ -184,6 +190,34 @@ public class CasDocumentationApplication {
         if (StringUtils.equalsIgnoreCase("true", shell)) {
             exportCommandlineShell(dataPath);
         }
+
+        var audit = cmd.getOptionValue("audit", "true");
+        if (StringUtils.equalsIgnoreCase("true", audit)) {
+            exportAuditableEvents(dataPath);
+        }
+    }
+
+    private static void exportAuditableEvents(final File dataPath) {
+        var parentPath = new File(dataPath, "audits");
+        var properties = new ArrayList<Map<?, ?>>();
+        if (parentPath.exists()) {
+            FileUtils.deleteQuietly(parentPath);
+        }
+        if (!parentPath.mkdirs()) {
+            LOGGER.debug("Unable to create directory");
+        }
+        Arrays.stream(AuditableActions.class.getDeclaredFields())
+            .filter(it -> Modifier.isStatic(it.getModifiers()) && Modifier.isFinal(it.getModifiers()))
+            .forEach(it -> {
+                var event = new LinkedHashMap();
+                event.put("name", it.getName());
+                LOGGER.info("Adding audit [{}]", event);
+                properties.add(event);
+            });
+        if (!properties.isEmpty()) {
+            var configFile = new File(parentPath, "config.yml");
+            CasConfigurationMetadataCatalog.export(configFile, properties);
+        }
     }
 
     private static void exportCommandlineShell(final File dataPath) {
@@ -201,7 +235,7 @@ public class CasDocumentationApplication {
             LOGGER.info("Locating shell command group for [{}]", clazz.getSimpleName());
             var group = clazz.getAnnotation(ShellCommandGroup.class);
             if (group == null) {
-                LOGGER.warn("Shell command group is missing for " + clazz.getName());        
+                LOGGER.warn("Shell command group is missing for {}", clazz.getName());
             }
 
             var methods = new LinkedHashMap();

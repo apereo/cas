@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JpaTrustedDevicesMultifactorProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @RequiresModule(name = "cas-server-support-trusted-mfa-jdbc")
 @JsonFilter("JpaTrustedDevicesMultifactorProperties")
 public class JpaTrustedDevicesMultifactorProperties extends AbstractJpaProperties {
+    @Serial
     private static final long serialVersionUID = -8329950619696176349L;
 }

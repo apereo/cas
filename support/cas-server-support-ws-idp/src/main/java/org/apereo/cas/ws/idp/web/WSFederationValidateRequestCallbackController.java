@@ -41,15 +41,15 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
     private static ModelAndView postResponseBackToRelyingParty(final String rpToken,
                                                                final WSFederationRequest fedRequest) {
-        val postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
+        val postUrl = StringUtils.isNotBlank(fedRequest.wreply()) ? fedRequest.wreply() : fedRequest.wtrealm();
 
         val parameters = new HashMap<String, Object>();
         parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
         parameters.put(WSFederationConstants.WRESULT, StringEscapeUtils.unescapeHtml4(rpToken));
-        parameters.put(WSFederationConstants.WTREALM, fedRequest.getWtrealm());
+        parameters.put(WSFederationConstants.WTREALM, fedRequest.wtrealm());
 
-        if (StringUtils.isNotBlank(fedRequest.getWctx())) {
-            parameters.put(WSFederationConstants.WCTX, fedRequest.getWctx());
+        if (StringUtils.isNotBlank(fedRequest.wctx())) {
+            parameters.put(WSFederationConstants.WCTX, fedRequest.wctx());
         }
 
         LOGGER.trace("Posting relying party token to [{}]", postUrl);
@@ -74,9 +74,9 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         val targetService = getConfigContext().getServiceSelectionStrategy()
             .resolveServiceFrom(getConfigContext().getWebApplicationServiceFactory().createService(serviceUrl));
-        targetService.getAttributes().put(WSFederationConstants.WREPLY, CollectionUtils.wrapList(fedRequest.getWreply()));
-        targetService.getAttributes().put(WSFederationConstants.WTREALM, CollectionUtils.wrapList(fedRequest.getWtrealm()));
-        targetService.getAttributes().put(WSFederationConstants.WCTX, CollectionUtils.wrapList(fedRequest.getWctx()));
+        targetService.getAttributes().put(WSFederationConstants.WREPLY, CollectionUtils.wrapList(fedRequest.wreply()));
+        targetService.getAttributes().put(WSFederationConstants.WTREALM, CollectionUtils.wrapList(fedRequest.wtrealm()));
+        targetService.getAttributes().put(WSFederationConstants.WCTX, CollectionUtils.wrapList(fedRequest.wctx()));
         val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Located matching service [{}]", service);
 

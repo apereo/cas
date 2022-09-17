@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
 import javax.persistence.PostLoad;
+import java.io.Serial;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -34,6 +35,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseRegisteredServiceUsernameAttributeProvider implements RegisteredServiceUsernameAttributeProvider {
 
+    @Serial
     private static final long serialVersionUID = -8381275200333399951L;
 
     private String canonicalizationMode = CaseCanonicalizationMode.NONE.name();

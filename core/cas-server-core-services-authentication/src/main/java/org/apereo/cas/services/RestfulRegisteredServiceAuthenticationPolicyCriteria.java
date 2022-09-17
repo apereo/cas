@@ -13,6 +13,8 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestfulRegisteredServiceAuthenticationPolicyCriteria}.
  *
@@ -27,6 +29,7 @@ import lombok.val;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RestfulRegisteredServiceAuthenticationPolicyCriteria implements RegisteredServiceAuthenticationPolicyCriteria {
+    @Serial
     private static final long serialVersionUID = -2915826778096374574L;
 
     private String url;

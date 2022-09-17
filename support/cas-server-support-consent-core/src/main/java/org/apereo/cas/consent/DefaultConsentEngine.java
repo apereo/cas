@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -33,6 +34,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Getter
 public class DefaultConsentEngine implements ConsentEngine {
+    @Serial
     private static final long serialVersionUID = -617809298856160625L;
 
     private final ConsentRepository consentRepository;
@@ -42,7 +44,7 @@ public class DefaultConsentEngine implements ConsentEngine {
     private final CasConfigurationProperties casProperties;
 
     private final List<ConsentableAttributeBuilder> consentableAttributeBuilders;
-    
+
     @Audit(action = AuditableActions.SAVE_CONSENT,
         actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER)

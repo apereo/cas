@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Map;
 @JsonFilter("StubPrincipalAttributesProperties")
 public class StubPrincipalAttributesProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7017508256487553063L;
 
     /**

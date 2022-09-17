@@ -3,8 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -27,15 +25,8 @@ import java.util.stream.Collectors;
  * @since 4.3
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class DefaultMultifactorAuthenticationContextValidator implements MultifactorAuthenticationContextValidator {
-
-    private final String authenticationContextAttribute;
-
-    private final String mfaTrustedAuthnAttributeName;
-
-    private final ConfigurableApplicationContext applicationContext;
+public record DefaultMultifactorAuthenticationContextValidator(String authenticationContextAttribute, String mfaTrustedAuthnAttributeName, ConfigurableApplicationContext applicationContext)
+    implements MultifactorAuthenticationContextValidator {
 
     private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
         final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {

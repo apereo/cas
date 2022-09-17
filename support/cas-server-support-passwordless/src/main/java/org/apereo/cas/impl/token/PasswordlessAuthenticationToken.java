@@ -17,6 +17,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -37,6 +38,7 @@ import java.time.ZonedDateTime;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
 public class PasswordlessAuthenticationToken implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3810773120720229099L;
 
     @Id

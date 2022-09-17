@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import java.util.List;
 @Accessors(chain = true)
 @JsonFilter("AbstractLdapSearchProperties")
 public abstract class AbstractLdapSearchProperties extends AbstractLdapProperties {
+    @Serial
     private static final long serialVersionUID = 3009946735155362639L;
 
     /**

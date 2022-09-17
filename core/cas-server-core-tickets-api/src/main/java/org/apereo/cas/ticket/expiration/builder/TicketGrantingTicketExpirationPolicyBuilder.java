@@ -15,12 +15,11 @@ import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serial;
 
 /**
  * This is {@link TicketGrantingTicketExpirationPolicyBuilder}.
@@ -28,18 +27,11 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
 @Slf4j
-@Getter
-public class TicketGrantingTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<TicketGrantingTicket> {
+public record TicketGrantingTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<TicketGrantingTicket> {
+    @Serial
     private static final long serialVersionUID = -4197980180617072826L;
-
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
@@ -59,7 +51,7 @@ public class TicketGrantingTicketExpirationPolicyBuilder implements ExpirationPo
      *
      * @return the expiration policy
      */
-    protected ExpirationPolicy toTicketGrantingTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketGrantingTicketExpirationPolicy() {
         val tgt = casProperties.getTicket().getTgt();
 
         if (Beans.isInfinitelyDurable(tgt.getPrimary().getMaxTimeToLiveInSeconds())

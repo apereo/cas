@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link CouchDbAcceptableUsagePolicyProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("CouchDbAcceptableUsagePolicyProperties")
 public class CouchDbAcceptableUsagePolicyProperties extends BaseAsynchronousCouchDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 1323894615409106853L;
 
     public CouchDbAcceptableUsagePolicyProperties() {

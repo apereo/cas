@@ -16,6 +16,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
 public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy extends DefaultRegisteredServiceSingleSignOnParticipationPolicy {
+    @Serial
     private static final long serialVersionUID = -5923946898337761319L;
 
     private TimeUnit timeUnit = TimeUnit.SECONDS;

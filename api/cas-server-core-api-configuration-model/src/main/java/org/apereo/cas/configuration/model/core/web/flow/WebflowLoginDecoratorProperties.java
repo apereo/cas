@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("WebflowLoginDecoratorProperties")
 public class WebflowLoginDecoratorProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2949978905279568311L;
 
     /**

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -37,6 +38,7 @@ import java.util.Set;
 @Slf4j
 public abstract class BaseRegisteredService implements RegisteredService {
 
+    @Serial
     private static final long serialVersionUID = 7645279151115635245L;
 
     /**

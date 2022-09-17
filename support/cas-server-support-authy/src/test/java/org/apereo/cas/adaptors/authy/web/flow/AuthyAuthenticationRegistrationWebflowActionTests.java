@@ -38,7 +38,7 @@ public class AuthyAuthenticationRegistrationWebflowActionTests {
     public void verifyOperation() throws Exception {
         val authyInstance = mock(AuthyClientInstance.class);
         val apiClient = mock(AuthyApiClient.class);
-        when(authyInstance.getAuthyClient()).thenReturn(apiClient);
+        when(authyInstance.authyClient()).thenReturn(apiClient);
         
         val tokens = mock(Tokens.class);
         val token = new Token(200, "OK", "Token is valid.");

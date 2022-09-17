@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link GroovyPrincipalAttributesProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("GroovyPrincipalAttributesProperties")
 public class GroovyPrincipalAttributesProperties extends SpringResourceProperties {
 
+    @Serial
     private static final long serialVersionUID = 7901595963842506684L;
 
     /**

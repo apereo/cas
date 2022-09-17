@@ -10,9 +10,11 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 
 import javax.persistence.PostLoad;
+import java.io.Serial;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +44,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = 1245279151345635245L;
 
     /**
@@ -94,6 +97,8 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
      * should be done in a case-insensitive manner.
      */
     protected boolean caseInsensitive;
+
+    protected RegisteredServiceAccessStrategyActivationCriteria activationCriteria;
 
     public DefaultRegisteredServiceAccessStrategy() {
         this(true, true);
@@ -157,20 +162,18 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
         return true;
     }
 
-    @JsonIgnore
     @Override
-    public void setServiceAccessAllowed(final boolean value) {
-        this.enabled = value;
-    }
-
-    @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
-        return RegisteredServiceAccessStrategyEvaluator.builder()
-            .caseInsensitive(this.caseInsensitive)
-            .requireAllAttributes(this.requireAllAttributes)
-            .requiredAttributes(this.requiredAttributes)
-            .rejectedAttributes(this.rejectedAttributes)
-            .build()
-            .evaluate(principal, principalAttributes);
+    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+        val proceed = activationCriteria == null || activationCriteria.shouldActivate(request);
+        if (proceed) {
+            return RegisteredServiceAccessStrategyEvaluator.builder()
+                .caseInsensitive(this.caseInsensitive)
+                .requireAllAttributes(this.requireAllAttributes)
+                .requiredAttributes(this.requiredAttributes)
+                .rejectedAttributes(this.rejectedAttributes)
+                .build()
+                .apply(request);
+        }
+        return activationCriteria.isAllowIfInactive();
     }
 }

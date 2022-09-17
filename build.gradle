@@ -19,12 +19,11 @@ buildscript {
         classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
         classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
+        classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
 
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
-        classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "com.github.jengelman.gradle.plugins:shadow:$gradleShadowVersion"
         classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
@@ -63,7 +62,6 @@ ext {
         '**/com/yubico/**',
         '**/saml/sts/SamlToken**',
         '**/**ConfigurationMetadata**',
-        '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDb**',
         '**/**NimbusOAuthJacksonModule**',
         '**/**Application**',
@@ -119,44 +117,6 @@ if (!providers.systemProperty("skipSonarqube").present) {
             property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
         }
-    }
-}
-
-apply plugin: "org.owasp.dependencycheck"
-dependencyCheck {
-    /*
-     * Specifies if the build should be failed if a CVSS score equal
-     * to or above a specified level is identified.
-     */
-    failBuildOnCVSS = 8
-    skipTestGroups = true
-    skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
-                          'signatures', 'checkstyle', 'errorprone', 'errorproneJavac',
-                          'annotationProcessor', 'archives', 'compileOnlyApi ',
-                          'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
-                          'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor',
-                          'bootArchives', 'bootRunAnnotationProcessor']
-    cveValidForHours = 24
-    suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
-    analyzers {
-        assemblyEnabled = false
-        swiftEnabled = false
-        cocoapodsEnabled = false
-        nodeEnabled = false
-        nodeAuditEnabled = false
-        autoconfEnabled = false
-        cmakeEnabled = false
-        pathToDotnet = false
-        nuspecEnabled = false
-        rubygemsEnabled = false
-        pyPackageEnabled = false
-        pyDistributionEnabled = false
-        nexusEnabled = false
-        centralEnabled = false
-        bundleAuditEnabled = false
-        composerEnabled = false
-        opensslEnabled = false
-        archiveEnabled = false
     }
 }
 
@@ -229,6 +189,7 @@ allprojects {
 
     tasks.named('javadoc') {
         options.addBooleanOption('html5', true)
+        options.addStringOption('Xdoclint:html,reference,syntax', '-quiet')
         failOnError = providers.systemProperty("ignoreJavadocFailures").present
         excludes = ['**/generated/**', '**/com/duosecurity/**']
     }
@@ -236,13 +197,6 @@ allprojects {
 }
 
 subprojects {
-    /**
-     task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze) {Disable analyze in cas-server-core-api and cas-server-core because
-     support and webapp sub-projects will include their dependencies transitively.
-     enabled = !"${project.name}".contains("cas-server-core")}task allDependenciesInsight(type: DependencyInsightReportTask,
-     description: "Produce insight information for all dependencies") {}task allDependencies(type: DependencyReportTask,
-     description: "Display a graph of all project dependencies") {}**/
-
     if (projectShouldBePublished(project)) {
         apply plugin: "maven-publish"
         apply plugin: "signing"

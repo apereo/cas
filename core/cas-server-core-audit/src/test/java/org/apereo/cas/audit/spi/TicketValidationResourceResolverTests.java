@@ -35,7 +35,7 @@ public class TicketValidationResourceResolverTests {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);
         val assertion = mock(Assertion.class);
-        when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(assertion.primaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         resolver.setAuditFormat(AuditTrailManager.AuditFormats.JSON);
         assertTrue(resolver.resolveFrom(jp, assertion).length > 0);
@@ -46,7 +46,7 @@ public class TicketValidationResourceResolverTests {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);
         val assertion = mock(Assertion.class);
-        when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(assertion.primaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         assertTrue(resolver.resolveFrom(jp, assertion).length > 0);
     }
 
@@ -55,7 +55,7 @@ public class TicketValidationResourceResolverTests {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ticket-id"});
         val assertion = mock(Assertion.class);
-        when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(assertion.primaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         assertTrue(resolver.resolveFrom(jp, assertion).length > 0);
     }
 
@@ -64,7 +64,7 @@ public class TicketValidationResourceResolverTests {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ticket-id"});
         val assertion = mock(Assertion.class);
-        when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(assertion.primaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         resolver.setAuditFormat(AuditTrailManager.AuditFormats.JSON);
         assertTrue(resolver.resolveFrom(jp, assertion).length > 0);
     }

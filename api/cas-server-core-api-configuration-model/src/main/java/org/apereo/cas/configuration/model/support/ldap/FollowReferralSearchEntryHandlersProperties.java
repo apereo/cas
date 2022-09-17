@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @JsonFilter("FollowReferralSearchEntryHandlersProperties")
 public class FollowReferralSearchEntryHandlersProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7138108925310792763L;
 
     /**

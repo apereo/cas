@@ -1992,11 +1992,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_ACCEPTTO_DETERMINE_USER_ACCOUNT_STATUS = "mfaAccepttoMultifactorDetermineUserAccountStatusAction";
 
     /**
-     * Action id 'swivelAuthenticationWebflowAction'.
-     */
-    String ACTION_ID_SWIVEL_AUTHENTICATION = "swivelAuthenticationWebflowAction";
-
-    /**
      * Action id 'wsFederationMetadataUIAction'.
      */
     String ACTION_ID_WSFEDERATION_METADATA_UI = "wsFederationMetadataUIAction";

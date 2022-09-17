@@ -160,7 +160,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         val view = new DynamicHtmlView(seeOtherAction.getContent());
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        LOGGER.debug("Rendering dynamic content [{}] for client [{}]", view.getHtml(), client.getName());
+        LOGGER.debug("Rendering dynamic content [{}] for client [{}]", view.html(), client.getName());
         view.render(Map.of(), request, response);
     }
 

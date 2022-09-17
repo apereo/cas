@@ -100,8 +100,7 @@ public class LdapTestUtils {
         for (val entry : entries) {
             val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
             attrs.addAll(entry.getAttributes().stream()
-                .map(a -> new Attribute(a.getName(), a.getStringValues()))
-                .collect(Collectors.toList()));
+                .map(a -> new Attribute(a.getName(), a.getStringValues())).toList());
 
             val ad = new AddRequest(entry.getDn(), attrs);
             LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);

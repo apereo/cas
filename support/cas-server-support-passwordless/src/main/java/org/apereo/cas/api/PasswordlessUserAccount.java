@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.Map;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Builder
 public class PasswordlessUserAccount extends BasicIdentifiableCredential {
+    @Serial
     private static final long serialVersionUID = 5783908770607793373L;
 
     @JsonProperty("username")

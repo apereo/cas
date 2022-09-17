@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link OktaAuthenticationProperties}.
  *
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 @JsonFilter("OktaAuthenticationProperties")
 public class OktaAuthenticationProperties extends BaseOktaProperties {
+    @Serial
     private static final long serialVersionUID = -13245764438426360L;
 
     /**

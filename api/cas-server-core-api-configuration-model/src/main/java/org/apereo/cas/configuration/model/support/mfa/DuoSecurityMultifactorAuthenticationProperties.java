@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link DuoSecurityMultifactorAuthenticationProperties}.
  *
@@ -29,6 +31,7 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-duo";
 
+    @Serial
     private static final long serialVersionUID = -4655375354167880807L;
 
     /**

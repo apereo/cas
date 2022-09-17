@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link SingleCollectionMongoDbProperties}.
  *
@@ -19,6 +21,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class SingleCollectionMongoDbProperties extends BaseMongoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 4869686250345657447L;
 
     /**

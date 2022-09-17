@@ -6,8 +6,6 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -22,11 +20,7 @@ import java.util.Optional;
  * @since 6.6.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class DelegatedAuthenticationSingleSignOnEvaluator {
-    private final DelegatedClientAuthenticationConfigurationContext configurationContext;
-
+public record DelegatedAuthenticationSingleSignOnEvaluator(DelegatedClientAuthenticationConfigurationContext configurationContext) {
     /**
      * Single sign on session authorized for service boolean.
      *

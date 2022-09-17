@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,5 +23,6 @@ import java.io.Serializable;
 @JsonFilter("BaseStreamServicesProperties")
 public class BaseStreamServicesProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7025417314334269017L;
 }

@@ -10,6 +10,7 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link MySQLJpaTicketEntity}.
@@ -23,5 +24,6 @@ import javax.persistence.Table;
 @Entity(name = "MySQLJpaTicketEntity")
 @Table(name = "CasTickets")
 public class MySQLJpaTicketEntity extends BaseTicketEntity {
+    @Serial
     private static final long serialVersionUID = 6546716187959834795L;
 }

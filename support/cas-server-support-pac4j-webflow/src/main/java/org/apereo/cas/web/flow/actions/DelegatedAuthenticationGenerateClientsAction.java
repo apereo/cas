@@ -41,12 +41,12 @@ public class DelegatedAuthenticationGenerateClientsAction extends BaseCasWebflow
      */
     protected void produceDelegatedAuthenticationClientsForContext(final RequestContext context) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        val providers = singleSignOnEvaluator.getConfigurationContext()
+        val providers = singleSignOnEvaluator.configurationContext()
             .getDelegatedClientIdentityProvidersProducer().produce(context);
         LOGGER.trace("Delegated authentication providers are finalized as [{}]", providers);
         WebUtils.createCredential(context);
         if (HttpStatus.resolve(response.getStatus()).is2xxSuccessful()) {
-            singleSignOnEvaluator.getConfigurationContext()
+            singleSignOnEvaluator.configurationContext()
                 .getDelegatedClientIdentityProviderConfigurationPostProcessor()
                 .process(context, providers);
             if (!singleSignOnEvaluator.singleSignOnSessionExists(context)) {

@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.util.Map;
 
 /**
@@ -24,6 +25,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class CouchDbCasEvent extends CasEvent {
 
+    @Serial
     private static final long serialVersionUID = 7707486620134127284L;
 
     /**

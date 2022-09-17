@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Accessors(chain = true)
 @JsonFilter("PrincipalAttributesCoreProperties")
 public class PrincipalAttributesCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4525569588579072890L;
 
     /**

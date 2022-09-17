@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 public class KafkaSingleTopicProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1844529231331941592L;
 
     /**

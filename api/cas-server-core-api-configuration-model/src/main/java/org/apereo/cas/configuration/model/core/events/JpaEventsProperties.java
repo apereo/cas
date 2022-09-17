@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JpaEventsProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("JpaEventsProperties")
 public class JpaEventsProperties extends AbstractJpaProperties {
+    @Serial
     private static final long serialVersionUID = 7647381223153797806L;
 
     /**

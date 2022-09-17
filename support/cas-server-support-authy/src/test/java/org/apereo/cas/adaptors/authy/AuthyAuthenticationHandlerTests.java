@@ -40,7 +40,7 @@ public class AuthyAuthenticationHandlerTests {
                                                                     final int tokenStatus, final String message) throws Exception {
         val authyInstance = mock(AuthyClientInstance.class);
         val apiClient = mock(AuthyApiClient.class);
-        when(authyInstance.getAuthyClient()).thenReturn(apiClient);
+        when(authyInstance.authyClient()).thenReturn(apiClient);
 
         val tokens = mock(Tokens.class);
         val token = new Token(tokenStatus, "OK", message);

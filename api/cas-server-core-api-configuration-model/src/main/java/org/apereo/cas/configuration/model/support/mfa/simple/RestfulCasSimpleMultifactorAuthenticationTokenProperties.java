@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestfulCasSimpleMultifactorAuthenticationTokenProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("CasSimpleMultifactorAuthenticationTokenDefaultProperties")
 public class RestfulCasSimpleMultifactorAuthenticationTokenProperties extends RestEndpointProperties {
+    @Serial
     private static final long serialVersionUID = -6333748853833491119L;
 }

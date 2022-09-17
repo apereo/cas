@@ -37,7 +37,7 @@ public class DelegatedAuthenticationServiceTicketValidationAuthorizer implements
         LOGGER.debug("Evaluating service [{}] for delegated authentication policy", service);
         Optional.ofNullable(registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy())
             .ifPresent(policy -> {
-                val attributes = assertion.getPrimaryAuthentication().getAttributes();
+                val attributes = assertion.primaryAuthentication().getAttributes();
 
                 if (attributes.containsKey(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME)) {
                     val clientNameAttr = attributes.get(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME);

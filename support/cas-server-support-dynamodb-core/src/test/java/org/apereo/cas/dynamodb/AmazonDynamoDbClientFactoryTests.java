@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.regions.Region;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,6 +24,7 @@ public class AmazonDynamoDbClientFactoryTests {
     public void verifyAction() {
         val factory = new AmazonDynamoDbClientFactory();
         val properties = new AbstractDynamoDbProperties() {
+            @Serial
             private static final long serialVersionUID = -3599433486448467450L;
         };
         properties.setRegion(Region.US_EAST_1.id());

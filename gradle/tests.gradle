@@ -22,7 +22,6 @@ enum TestCategories {
     Delegation,
     DuoSecurity,
     DynamoDb,
-    Ehcache,
     ExpirationPolicy,
     Events,
     FileSystem,
@@ -33,7 +32,6 @@ enum TestCategories {
     Hazelcast,
     Ignite,
     Impersonation,
-    Infinispan,
     InfluxDb,
     JDBC,
     JDBCAuthentication,
@@ -186,8 +184,16 @@ tasks.withType(Test).configureEach {
     list.add("java.se")
     list.add("--add-exports")
     list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.xml.crypto/org.jcp.xml.dsig.internal.dom=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.lang=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.util=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.time=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.net=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.nio=ALL-UNNAMED")
     list.add("--add-opens")

@@ -1003,8 +1003,8 @@ public class WebUtils {
      * @param response       the response
      */
     public static void putServiceResponseIntoRequestScope(final RequestContext requestContext, final Response response) {
-        requestContext.getRequestScope().put("parameters", response.getAttributes());
-        putServiceRedirectUrl(requestContext, response.getUrl());
+        requestContext.getRequestScope().put("parameters", response.attributes());
+        putServiceRedirectUrl(requestContext, response.url());
     }
 
     /**
@@ -1487,33 +1487,6 @@ public class WebUtils {
             return scope.get("delegatedAuthenticationProviderConfigurations", Set.class);
         }
         return new HashSet<>(0);
-    }
-
-    /**
-     * Put open id local user id.
-     *
-     * @param context the context
-     * @param user    the user
-     */
-    public static void putOpenIdLocalUserId(final RequestContext context, final String user) {
-        if (StringUtils.isBlank(user)) {
-            context.getFlowScope().remove("openIdLocalId");
-        } else {
-            context.getFlowScope().put("openIdLocalId", user);
-        }
-    }
-
-    /**
-     * Gets open id local user id.
-     *
-     * @param context the context
-     * @return the open id local user id
-     * @deprecated Since 6.2.0
-     */
-    @Deprecated(since = "6.2.0")
-    @SuppressWarnings("InlineMeSuggester")
-    public static String getOpenIdLocalUserId(final RequestContext context) {
-        return context.getFlowScope().get("openIdLocalId", String.class);
     }
 
     /**

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 @JsonFilter("RecursiveSearchEntryHandlersProperties")
 public class RecursiveSearchEntryHandlersProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7138108925310792763L;
 
     /**

@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 import lombok.val;
 
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,7 @@ import java.util.Set;
 @EqualsAndHashCode(of = {"order", "groovyScript"}, callSuper = true)
 public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = -2407494148882123062L;
 
     /**
@@ -53,14 +55,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
         buildGroovyAccessStrategyInstanceIfNeeded();
         return this.groovyStrategyInstance.isServiceAccessAllowed();
     }
-
-    @Override
-    @JsonIgnore
-    public void setServiceAccessAllowed(final boolean enabled) {
-        buildGroovyAccessStrategyInstanceIfNeeded();
-        this.groovyStrategyInstance.setServiceAccessAllowed(enabled);
-    }
-
+    
     @Override
     @JsonIgnore
     public boolean isServiceAccessAllowedForSso() {
@@ -70,9 +65,9 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
 
     @Override
     @JsonIgnore
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
+    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         buildGroovyAccessStrategyInstanceIfNeeded();
-        return this.groovyStrategyInstance.doPrincipalAttributesAllowServiceAccess(principal, attributes);
+        return this.groovyStrategyInstance.doPrincipalAttributesAllowServiceAccess(request);
     }
 
     @JsonIgnore

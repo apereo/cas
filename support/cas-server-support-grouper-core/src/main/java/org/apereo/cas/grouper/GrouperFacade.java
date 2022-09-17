@@ -25,17 +25,12 @@ public interface GrouperFacade {
      * @return the final attribute name
      */
     static String getGrouperGroupAttribute(final GrouperGroupField groupField, final WsGroup group) {
-        switch (groupField) {
-            case DISPLAY_EXTENSION:
-                return group.getDisplayExtension();
-            case DISPLAY_NAME:
-                return group.getDisplayName();
-            case EXTENSION:
-                return group.getExtension();
-            case NAME:
-            default:
-                return group.getName();
-        }
+        return switch (groupField) {
+            case DISPLAY_EXTENSION -> group.getDisplayExtension();
+            case DISPLAY_NAME -> group.getDisplayName();
+            case EXTENSION -> group.getExtension();
+            case NAME -> group.getName();
+        };
     }
 
     /**

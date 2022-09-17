@@ -8,6 +8,8 @@ import net.jradius.client.RadiusClient;
 import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusResponse;
 
+import java.io.Serial;
+
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
  * at <a href="http://jradius.sf.net">http://jradius.sf.net</a>.
@@ -19,6 +21,7 @@ import net.jradius.packet.RadiusResponse;
  */
 @Setter
 public class BlockingRadiusServer extends AbstractRadiusServer {
+    @Serial
     private static final long serialVersionUID = -2567137135937670129L;
 
     public BlockingRadiusServer(final RadiusProtocol protocol, final RadiusClientFactory radiusClientFactory) {

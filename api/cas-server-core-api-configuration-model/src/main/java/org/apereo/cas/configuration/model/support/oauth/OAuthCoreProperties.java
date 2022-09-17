@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @JsonFilter("OAuthCoreProperties")
 public class OAuthCoreProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1687928082301669359L;
 
     /**

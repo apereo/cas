@@ -7,6 +7,8 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasRiskBasedAuthenticationMitigationStartedEvent}.
  *
@@ -17,6 +19,7 @@ import lombok.ToString;
 @Getter
 public class CasRiskBasedAuthenticationMitigationStartedEvent extends AbstractCasEvent {
 
+    @Serial
     private static final long serialVersionUID = 123568299766263298L;
 
     private final Authentication authentication;

@@ -41,7 +41,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
         LOGGER.debug("Evaluating service [{}] to ensure required authentication handlers can satisfy assertion", service);
-        val primaryAuthentication = assertion.getPrimaryAuthentication();
+        val primaryAuthentication = assertion.primaryAuthentication();
         val attributes = primaryAuthentication.getAttributes();
         if (!attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);

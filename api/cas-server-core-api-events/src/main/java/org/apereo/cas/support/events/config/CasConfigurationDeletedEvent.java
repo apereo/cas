@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.nio.file.Path;
 
 /**
@@ -17,6 +18,7 @@ import java.nio.file.Path;
 @Getter
 public class CasConfigurationDeletedEvent extends AbstractCasEvent {
 
+    @Serial
     private static final long serialVersionUID = -5738769364210896455L;
 
     private final transient Path file;

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link CookieSessionReplicationProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @RequiresModule(name = "cas-server-support-pac4j-api")
 @JsonFilter("CookieSessionReplicationProperties")
 public class CookieSessionReplicationProperties extends CookieProperties {
+    @Serial
     private static final long serialVersionUID = 6165162204295764362L;
 
     /**

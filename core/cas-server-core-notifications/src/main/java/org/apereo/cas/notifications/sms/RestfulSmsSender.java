@@ -4,8 +4,6 @@ import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -21,11 +19,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Getter
-@RequiredArgsConstructor
-public class RestfulSmsSender implements SmsSender {
-    private final RestfulSmsProperties restProperties;
-
+public record RestfulSmsSender(RestfulSmsProperties restProperties) implements SmsSender {
     @Override
     public boolean send(final String from, final String to, final String message) {
         HttpResponse response = null;
@@ -50,7 +44,7 @@ public class RestfulSmsSender implements SmsSender {
                 .entity(message)
                 .headers(headers)
                 .build();
-            
+
             response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());

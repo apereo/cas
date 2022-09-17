@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
 public class SmsProvidersProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -3713886839517507306L;
 
     /**

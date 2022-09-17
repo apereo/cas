@@ -264,7 +264,6 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      * <p>
      * This method is an implementation detail and is not exposed API.
      * This method is only non-private to allow JUnit testing.
-     * <p>
      *
      * @param parametersToCheck non-null potentially empty Set of String names of parameters
      * @param parameterMap      non-null Map from String name of parameter to String[] values
