@@ -7,8 +7,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import javax.validation.MessageInterpolator;
-import javax.validation.metadata.ConstraintDescriptor;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import java.util.Locale;
 import java.util.Map;
 

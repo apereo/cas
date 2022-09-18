@@ -97,10 +97,6 @@ configurations.all {
                 if (requested.group == "ch.qos.logback")  {
                     details.useVersion("${logbackVersion}")
                 }
-                if (requested.group == "org.glassfish.jaxb")  {
-                    details.useVersion("${jaxbRuntimeVersion}")
-                }
-
                 if (requested.group == "org.apache.httpcomponents")  {
                     if (details.requested.name == "httpcore") {
                         details.useVersion("${httpCoreVersion}")
@@ -111,14 +107,8 @@ configurations.all {
                 if (requested.group.startsWith("com.fasterxml.jackson"))  {
                     details.useVersion("${jacksonVersion}")
                 }
-                if (requested.group == "io.micrometer")  {
+                if (requested.group == "io.micrometer" && requested.name.startsWith("micrometer-"))  {
                     details.useVersion("${micrometerVersion}")
-                }
-                if (requested.group == "com.timgroup")  {
-                    details.useVersion("${statsdVersion}")
-                }
-                if (requested.group == "com.signalfx.public")  {
-                    details.useVersion("${signalFxVersion}")
                 }
                 if (requested.group == "org.apache.wss4j")  {
                     details.useVersion("${wss4jVersion}")

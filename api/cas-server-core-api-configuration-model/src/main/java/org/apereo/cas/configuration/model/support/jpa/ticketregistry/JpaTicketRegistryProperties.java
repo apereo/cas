@@ -12,7 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 import java.io.Serial;
 
 /**

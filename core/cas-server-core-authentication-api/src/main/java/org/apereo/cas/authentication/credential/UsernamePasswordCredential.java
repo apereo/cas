@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;

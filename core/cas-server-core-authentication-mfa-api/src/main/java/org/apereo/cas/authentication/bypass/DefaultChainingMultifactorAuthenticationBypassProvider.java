@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
                                                                                                
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;

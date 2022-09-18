@@ -23,7 +23,6 @@ import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.Oracle12cDialect;
 import org.hibernate.dialect.Oracle8iDialect;
 import org.hibernate.dialect.Oracle9iDialect;
-import org.hibernate.dialect.PostgreSQL10Dialect;
 import org.hibernate.dialect.PostgreSQL91Dialect;
 import org.hibernate.dialect.PostgreSQL92Dialect;
 import org.hibernate.dialect.PostgreSQL93Dialect;
@@ -41,8 +40,8 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Entity;
+import jakarta.persistence.MappedSuperclass;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +67,6 @@ public class GenerateDdlCommand {
         DIALECTS_MAP.put("MYSQL5", MySQL5Dialect.class.getName());
         DIALECTS_MAP.put("MYSQL8", MySQL8Dialect.class.getName());
 
-        DIALECTS_MAP.put("PG10", PostgreSQL10Dialect.class.getName());
         DIALECTS_MAP.put("PG95", PostgreSQL95Dialect.class.getName());
         DIALECTS_MAP.put("PG94", PostgreSQL94Dialect.class.getName());
         DIALECTS_MAP.put("PG93", PostgreSQL93Dialect.class.getName());
@@ -160,7 +158,7 @@ public class GenerateDdlCommand {
 
         val svcRegistry = new StandardServiceRegistryBuilder();
 
-        val settings = new HashMap<String, String>();
+        val settings = new HashMap<String, Object>();
         settings.put(AvailableSettings.DIALECT, dialectName);
         settings.put(AvailableSettings.URL, jdbcUrl);
         settings.put(AvailableSettings.HBM2DDL_AUTO, "none");

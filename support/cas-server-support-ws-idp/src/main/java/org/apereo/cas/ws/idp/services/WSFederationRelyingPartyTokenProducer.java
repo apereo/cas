@@ -5,7 +5,7 @@ import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link WSFederationRelyingPartyTokenProducer}.

@@ -20,8 +20,8 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;

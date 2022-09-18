@@ -1,7 +1,7 @@
 // CHECKSTYLE:OFF
 package org.apereo.cas.support.inwebo.service.soap.generated;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 /**
  * The generated SOAP class.

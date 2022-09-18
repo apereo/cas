@@ -3,7 +3,7 @@ description = "Apereo CAS JMS Ticket Registry"
 dependencies {
     api project(":api:cas-server-core-api-util")
     
-    implementation libraries.activemq
+    implementation libraries.amqp
     
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-configuration-api")

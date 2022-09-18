@@ -12,7 +12,7 @@ import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link GroovyConsentActivationStrategy}.

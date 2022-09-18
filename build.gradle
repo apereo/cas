@@ -468,7 +468,8 @@ subprojects {
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.bvalidator
+//        api libraries.bvalidator
+        api libraries.hibernatevalidator
         api libraries.groovy
         api libraries.caffein
         api libraries.springcloud

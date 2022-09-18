@@ -16,7 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
-import javax.persistence.PostLoad;
+import jakarta.persistence.PostLoad;
 import java.io.Serial;
 import java.util.Locale;
 import java.util.Optional;

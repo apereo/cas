@@ -5,6 +5,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class RestResponseEntityAuditResourceResolver extends ReturnValueAsString
     private String[] getAuditResourceFromResponseEntity(final ResponseEntity entity) {
         val headers = entity.getHeaders();
         val values = new HashMap<>();
-        values.put("status", entity.getStatusCodeValue() + "-" + entity.getStatusCode().name());
+        values.put("status", entity.getStatusCode().value() + "-" + HttpStatus.valueOf(entity.getStatusCode().value()));
         val location = headers.getLocation();
         if (location != null) {
             values.put("location", location);

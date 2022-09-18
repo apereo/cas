@@ -28,8 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.helpers.DefaultValidationEventHandler;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.helpers.DefaultValidationEventHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 

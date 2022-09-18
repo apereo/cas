@@ -7,8 +7,8 @@ import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration;
-import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.test.context.TestPropertySource;
@@ -20,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 5.2.0
  */
 @Import({
-    ActiveMQAutoConfiguration.class,
+    RabbitAutoConfiguration.class,
     JmsAutoConfiguration.class,
     JmsTicketRegistryConfiguration.class
 })

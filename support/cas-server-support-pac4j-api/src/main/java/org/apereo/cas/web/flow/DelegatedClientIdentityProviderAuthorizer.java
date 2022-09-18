@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Client;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 /**
