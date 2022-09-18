@@ -14,9 +14,9 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.spi.PersistenceProvider;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Query;
+import jakarta.persistence.spi.PersistenceProvider;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.stream.Stream;

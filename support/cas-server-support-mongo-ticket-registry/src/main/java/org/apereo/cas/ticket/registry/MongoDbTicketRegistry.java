@@ -173,8 +173,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public Stream<Ticket> stream() {
         return ticketCatalog.findAll().stream()
             .map(this::getTicketCollectionInstanceByMetadata)
-            .map(map -> mongoTemplate.stream(new Query(), TicketHolder.class, map))
-            .flatMap(StreamUtils::createStreamFromIterator)
+            .flatMap(map -> mongoTemplate.stream(new Query(), TicketHolder.class, map))
             .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
     }
 
@@ -194,13 +193,12 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return ticketDefinitions
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
-            .map(map -> {
+            .flatMap(map -> {
                 val query = isCipherExecutorEnabled()
                     ? new Query(Criteria.where(TicketHolder.FIELD_NAME_PRINCIPAL).is(encodeTicketId(principalId)))
                     : TextQuery.queryText(TextCriteria.forDefaultLanguage().matchingAny(principalId)).sortByScore().with(PageRequest.of(0, 10));
                 return mongoTemplate.stream(query, TicketHolder.class, map);
             })
-            .flatMap(StreamUtils::createStreamFromIterator)
             .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
     }
 

@@ -21,7 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;

@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.util.LoggingUtils;
 
+import com.unboundid.scim2.client.ScimInterface;
 import com.unboundid.scim2.client.ScimService;
 import com.unboundid.scim2.common.filters.Filter;
 import com.unboundid.scim2.common.types.UserResource;
@@ -20,7 +21,9 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.client.oauth2.OAuth2ClientSupport;
 
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.ClientBuilder;
+import org.springframework.util.Assert;
+
 import java.util.Optional;
 
 /**
@@ -108,7 +111,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
      * @param givenService the given service
      * @return the scim service
      */
-    protected ScimService getScimService(final Optional<RegisteredService> givenService) {
+    protected ScimInterface getScimService(final Optional<RegisteredService> givenService) {
         val config = new ClientConfig();
         val client = ClientBuilder.newClient(config);
         var token = scimProperties.getOauthToken();
@@ -149,6 +152,8 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
         }
         LOGGER.debug("Using SCIM provisioning target [{}]", target);
         val webTarget = client.target(target);
-        return new ScimService(webTarget);
+        Assert.notNull(webTarget, "Web target must not be null");
+        //return new ScimService(webTarget);
+        return null;
     }
 }

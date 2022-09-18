@@ -56,7 +56,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     private final CasConfigurationProperties casProperties;
 
     public CasTomcatServletWebServerFactory(final CasConfigurationProperties casProperties,
-        final ServerProperties serverProperties) {
+                                            final ServerProperties serverProperties) {
         super(serverProperties.getPort());
         if (StringUtils.isNotBlank(serverProperties.getServlet().getContextPath())) {
             setContextPath(serverProperties.getServlet().getContextPath());
@@ -106,40 +106,50 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
                         configureConnectorForSslHostConfig(c, apr.getSslHostConfig());
                     }
 
-                    val handler = (Http11AprProtocol) c.getProtocolHandler();
-                    handler.setSSLEnabled(true);
+                    val protocol = (Http11AprProtocol) c.getProtocolHandler();
+                    protocol.setSSLEnabled(true);
+                    val sslHostConfig = new SSLHostConfig();
+                    sslHostConfig.setHostName(protocol.getDefaultSSLHostConfigName());
+
                     if (StringUtils.isNotBlank(apr.getSslProtocol())) {
-                        handler.setSSLProtocol(apr.getSslProtocol());
+                        sslHostConfig.setProtocols(apr.getSslProtocol());
                     }
                     if (apr.getSslVerifyDepth() > 0) {
-                        handler.setSSLVerifyDepth(apr.getSslVerifyDepth());
+                        sslHostConfig.setCertificateVerificationDepth(apr.getSslVerifyDepth());
                     }
                     if (StringUtils.isNotBlank(apr.getSslVerifyClient())) {
-                        handler.setSSLVerifyClient(apr.getSslVerifyClient());
+                        sslHostConfig.setCertificateVerification(apr.getSslVerifyClient());
                     }
                     if (StringUtils.isNotBlank(apr.getSslCipherSuite())) {
-                        handler.setSSLCipherSuite(apr.getSslCipherSuite());
+                        sslHostConfig.setCiphers(apr.getSslCipherSuite());
                     }
                     if (StringUtils.isNotBlank(apr.getSslPassword())) {
-                        handler.setSSLPassword(apr.getSslPassword());
+                        sslHostConfig.setTruststorePassword(apr.getSslPassword());
                     }
-                    handler.setSSLDisableCompression(apr.isSslDisableCompression());
-                    handler.setSSLHonorCipherOrder(apr.isSslHonorCipherOrder());
+                    sslHostConfig.setDisableCompression(apr.isSslDisableCompression());
+                    sslHostConfig.setHonorCipherOrder(apr.isSslHonorCipherOrder());
 
                     FunctionUtils.doIfNotNull(apr.getSslCaCertificateFile(),
-                        f -> handler.setSSLCACertificateFile(apr.getSslCaCertificateFile().getCanonicalPath()));
+                        file -> sslHostConfig.setCaCertificateFile(apr.getSslCaCertificateFile().getCanonicalPath()));
 
+                    val certificate = new SSLHostConfigCertificate(sslHostConfig, SSLHostConfigCertificate.Type.UNDEFINED);
                     FunctionUtils.doIfNotNull(apr.getSslCertificateFile(),
-                        f -> handler.setSSLCertificateFile(apr.getSslCertificateFile().getCanonicalPath()));
+                        file -> certificate.setCertificateFile(apr.getSslCertificateFile().getCanonicalPath()));
 
                     FunctionUtils.doIfNotNull(apr.getSslCertificateKeyFile(),
-                        f -> handler.setSSLCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath()));
+                        file -> certificate.setCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath()));
 
                     FunctionUtils.doIfNotNull(apr.getSslCertificateChainFile(),
-                        f -> handler.setSSLCertificateChainFile(apr.getSslCertificateChainFile().getCanonicalPath()));
+                        file -> certificate.setCertificateChainFile(apr.getSslCertificateChainFile().getCanonicalPath()));
+                    sslHostConfig.getCertificates().add(certificate);
 
                     FunctionUtils.doIfNotNull(apr.getSslCaRevocationFile(),
-                        f -> handler.setSSLCARevocationFile(apr.getSslCaRevocationFile().getCanonicalPath()));
+                        file -> {
+                            sslHostConfig.setRevocationEnabled(true);
+                            sslHostConfig.setCertificateRevocationListFile(apr.getSslCaRevocationFile().getCanonicalPath());
+                        });
+
+                    protocol.addSslHostConfig(sslHostConfig);
                 }
             });
         }
@@ -245,7 +255,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     }
 
     private static void configureConnectorForSslHostConfig(final Connector c,
-        final CasEmbeddedApacheSslHostConfigProperties properties) {
+                                                           final CasEmbeddedApacheSslHostConfigProperties properties) {
 
         val hostConfig = new SSLHostConfig();
         hostConfig.setCertificateVerification(properties.getCertificateVerification());

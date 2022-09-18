@@ -8,7 +8,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

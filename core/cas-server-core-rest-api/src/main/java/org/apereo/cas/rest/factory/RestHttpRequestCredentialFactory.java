@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.springframework.core.Ordered;
 import org.springframework.util.MultiValueMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 

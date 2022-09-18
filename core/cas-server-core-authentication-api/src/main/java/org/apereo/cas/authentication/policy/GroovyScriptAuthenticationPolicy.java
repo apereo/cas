@@ -20,7 +20,7 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 import java.io.Serial;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;

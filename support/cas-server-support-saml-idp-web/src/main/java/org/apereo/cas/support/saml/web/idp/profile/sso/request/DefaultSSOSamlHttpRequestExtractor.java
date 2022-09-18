@@ -16,7 +16,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
@@ -43,7 +43,7 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
                                                                                 final Class<? extends SignableSAMLObject> clazz) {
         FunctionUtils.doUnchecked(u -> {
             LOGGER.trace("Received SAML profile request [{}]", request.getRequestURI());
-            decoder.setHttpServletRequest(request);
+            decoder.setHttpServletRequestSupplier(() -> request);
             decoder.setParserPool(this.parserPool);
             decoder.initialize();
             decoder.decode();

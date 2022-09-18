@@ -7,8 +7,8 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import javax.validation.MessageInterpolator;
-import javax.validation.Validation;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.Validation;
 import java.util.Locale;
 
 /**

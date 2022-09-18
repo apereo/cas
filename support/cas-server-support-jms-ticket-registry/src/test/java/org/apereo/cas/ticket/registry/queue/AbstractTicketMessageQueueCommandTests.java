@@ -27,9 +27,9 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration;
-import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -40,7 +40,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
-    ActiveMQAutoConfiguration.class,
+    RabbitAutoConfiguration.class,
     JmsAutoConfiguration.class,
     JmsTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,

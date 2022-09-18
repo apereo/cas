@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 
-import javax.persistence.PostLoad;
+import jakarta.persistence.PostLoad;
 import java.io.Serial;
 import java.net.URI;
 import java.util.HashMap;

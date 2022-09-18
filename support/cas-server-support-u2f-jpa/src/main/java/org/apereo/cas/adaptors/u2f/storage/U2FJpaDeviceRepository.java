@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.transaction.support.TransactionOperations;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;

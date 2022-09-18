@@ -3,7 +3,7 @@ package org.apereo.cas.util.spring;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * This is {@link DirectObjectProvider}.

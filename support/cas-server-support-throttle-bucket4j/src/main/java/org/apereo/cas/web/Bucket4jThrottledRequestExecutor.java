@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link Bucket4jThrottledRequestExecutor}.

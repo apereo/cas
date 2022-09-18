@@ -411,7 +411,7 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/redis/run-redis-server.sh
                 task+="testRedis "
                 ;;
-            activemq|amq|jms)
+            activemq|amq|jms|amqp)
                 isDockerOnLinux && ./ci/tests/activemq/run-activemq-server.sh
                 task+="testJMS "
                 ;;

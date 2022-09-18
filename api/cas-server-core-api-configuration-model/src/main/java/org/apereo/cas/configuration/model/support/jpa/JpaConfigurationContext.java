@@ -6,7 +6,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
-import javax.persistence.spi.PersistenceProvider;
+import jakarta.persistence.spi.PersistenceProvider;
+
 import javax.sql.DataSource;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

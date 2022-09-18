@@ -43,7 +43,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.Assert;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 
-import javax.validation.MessageInterpolator;
+import jakarta.validation.MessageInterpolator;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;

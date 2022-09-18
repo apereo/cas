@@ -11,8 +11,8 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.transaction.support.TransactionOperations;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Collection;

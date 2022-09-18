@@ -38,10 +38,6 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
         "cas.server.tomcat.socket.performance-latency=10",
 
         "cas.server.tomcat.apr.enabled=true",
-        "cas.server.tomcat.apr.ssl-protocol=true",
-        "cas.server.tomcat.apr.ssl-password=changeit",
-        "cas.server.tomcat.apr.ssl-cipher-suite=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
-
         "cas.server.tomcat.ssl-valve.enabled=true",
 
         "cas.server.tomcat.http-proxy.enabled=true",

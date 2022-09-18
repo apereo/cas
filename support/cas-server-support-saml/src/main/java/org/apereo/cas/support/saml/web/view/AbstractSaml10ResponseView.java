@@ -17,8 +17,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml1.core.Response;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

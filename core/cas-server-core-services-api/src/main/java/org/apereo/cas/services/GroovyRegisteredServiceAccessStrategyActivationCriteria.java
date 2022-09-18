@@ -20,8 +20,8 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.persistence.PostLoad;
-import javax.persistence.Transient;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.Transient;
 import java.io.Serial;
 
 /**

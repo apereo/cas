@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -30,7 +31,6 @@ import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactor
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.SocketUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -183,8 +183,8 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                 val connector = new Connector(http.getProtocol());
                 var port = http.getPort();
                 if (port <= 0) {
-                    LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
-                    port = SocketUtils.findAvailableTcpPort();
+                    port = RandomUtils.nextInt(4000, 9000);
+                    LOGGER.warn("No explicit port configuration is provided to CAS. Using random port [{}]", port);
                 }
                 LOGGER.info("Activated embedded tomcat container HTTP port on [{}]", port);
                 connector.setPort(port);

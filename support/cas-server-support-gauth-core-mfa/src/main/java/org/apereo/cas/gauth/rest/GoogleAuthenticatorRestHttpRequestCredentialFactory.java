@@ -10,7 +10,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
