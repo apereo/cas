@@ -17,7 +17,7 @@
     "node-static-auth": "^1.0.6",
     "perf_hooks": "^0.0.1",
     "ps-node": "^0.1.6",
-    "puppeteer": "^17.1.1",
+    "puppeteer": "^18.0.1",
     "puppeteer-loadtest": "^2.2.1",
     "puppeteer-screen-recorder": "^2.0.2",
     "qrcode-reader": "^1.0.4",
