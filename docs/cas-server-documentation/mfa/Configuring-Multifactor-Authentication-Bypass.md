@@ -174,7 +174,7 @@ boolean run(final Object... args) {
 
 Multifactor authentication bypass may be determined using a REST API of your 
 own design. Endpoints must be designed to accept/process `application/json` via 
-`GET` requests. A returned status code `202` meaning `ACCEPTED` indicates that multifactor 
+`GET` requests. A returned status code for `2xx` indicates that multifactor 
 authentication for the requested provider should proceed. Otherwise multifactor 
 authentication for this provider should be skipped and bypassed.
 
