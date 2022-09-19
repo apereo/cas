@@ -18,7 +18,7 @@ you may want to take a look at <a href="Delegate-Authentication-SAML.html">this 
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.core.discovery-selection" %}
 
-{% tabs deldiscoverysel %
+{% tabs deldiscoverysel %}
 
 {% tab deldiscoverysel Menu %}
 

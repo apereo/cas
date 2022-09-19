@@ -38,7 +38,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
