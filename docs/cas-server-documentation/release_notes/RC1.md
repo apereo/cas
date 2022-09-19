@@ -48,6 +48,11 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases 
 and scenarios. At the moment, total number of jobs stands at approximately `330` distinct scenarios. The overall 
 test coverage of the CAS codebase is approximately `94%`.
+ 
+### OpenID Connect Claim Definitions
+
+Attribute definitions that specifically apply to the release of attributes as part of 
+OpenID Connect responses can be decorated using the [attribute definition store](../authentication/OIDC-Attribute-Definitions.html).
 
 ### Removed Modules
 
@@ -78,6 +83,12 @@ now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activa
 In the event that a SAML2 service provider is configured to download metadata from a URL, CAS may now attempt to reuse the previously-downloaded
 backup file on disk for the service provider, if the metadata file is still seen as valid. This capability will require the forceful fetching
 of the metadata over HTTP to be disabled.
+
+### Delegated Authentication Dynamic Discovery
+
+[Dynamic Discovery](../integration/Delegate-Authentication-DiscoverySelection.html) configured for delegated authentication is able to
+start the delegation flow based on a principal attribute that would then be matched against the configuration rules to locate the 
+approprivate external identity provider.
  
 ### Docker Images
 
