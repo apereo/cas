@@ -1,10 +1,11 @@
-description = "Apereo CAS JMS Ticket Registry"
+description = "Apereo CAS AMQP Ticket Registry"
 
 dependencies {
     api project(":api:cas-server-core-api-util")
     
-    implementation libraries.activemq
+    implementation libraries.springamqp
     
+    implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")

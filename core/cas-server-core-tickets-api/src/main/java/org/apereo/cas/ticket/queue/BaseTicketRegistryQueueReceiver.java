@@ -28,12 +28,12 @@ public abstract class BaseTicketRegistryQueueReceiver {
      * @throws Exception the exception
      */
     public void receive(final BaseMessageQueueCommand command) throws Exception {
-        if (!command.getId().equals(getTicketRegistryId())) {
+        if (command.getId().equals(getTicketRegistryId())) {
+            LOGGER.trace("Ignoring inbound command on ticket registry with id [{}]", getTicketRegistryId());
+        } else {
             LOGGER.debug("Received message from ticket registry id [{}]. Executing command [{}]",
                 command.getId(), command.getClass().getSimpleName());
             command.execute(getTicketRegistry());
-        } else {
-            LOGGER.trace("Ignoring inbound command on ticket registry with id [{}]", getTicketRegistryId());
         }
     }
 }

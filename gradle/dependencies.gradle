@@ -935,31 +935,15 @@ ext.libraries = [
                 dependencies.create("javax.servlet:jstl:$javaxJstlVersion"),
                 dependencies.create("javax.transaction:jta:$jtaVersion")
         ],
-        activemq                : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion") {
+        springamqp                : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-amqp:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.apache.activemq", module: "activemq-client")
-                    exclude(group: "org.fusesource.hawtbuf", module: "hawtbuf")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-
                 },
-                dependencies.create("org.apache.activemq:activemq-pool:$activemqPoolVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-
-                },
-                dependencies.create("org.apache.activemq:activemq-broker:$activemqPoolVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-
-                },
-                dependencies.create("org.messaginghub:pooled-jms:2.0.5") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
-                    exclude(group: "org.apache.commons", module: "commons-pool2")
-
-                }
+                dependencies.create("org.springframework.amqp:spring-rabbit:$springRabbitVersion")
         ],
         thymeleaf               : [
                 dependencies.create("org.thymeleaf:thymeleaf-spring5:$thymeleafVersion") {
