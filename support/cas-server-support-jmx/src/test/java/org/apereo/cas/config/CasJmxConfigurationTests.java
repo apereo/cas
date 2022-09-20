@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.jmx.BaseCasJmsTests;
+import org.apereo.cas.jmx.BaseCasJmxTests;
 import org.apereo.cas.jmx.services.ServicesManagerManagedResource;
 import org.apereo.cas.jmx.ticket.TicketRegistryManagedResource;
 
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = BaseCasJmsTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseCasJmxTests.SharedTestConfiguration.class)
 @Tag("JMX")
 public class CasJmxConfigurationTests {
 
