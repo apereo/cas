@@ -413,7 +413,7 @@ while (( "$#" )); do
                 ;;
             activemq|amq|jms|rabbitmq|artemis|amqp)
                 isDockerOnLinux && ./ci/tests/activemq/run-rabbitmq-server.sh
-                task+="testJMS "
+                task+="testAMQP "
                 ;;
             *)
                 printf "${RED}Unable to recognize test category: ${item}${ENDCOLOR}\n"
