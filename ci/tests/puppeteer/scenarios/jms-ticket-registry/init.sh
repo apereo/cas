@@ -1,5 +1,5 @@
 #!/bin/bash
-"${PWD}/ci/tests/activemq/run-activemq-server.sh"
+"${PWD}/ci/tests/activemq/run-rabbitmq-server.sh"
 
 echo -e "Removing previous SAML metadata directory, if any"
 rm -Rf "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md"

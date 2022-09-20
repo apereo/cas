@@ -15,23 +15,27 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.support.converter.Jackson2JavaTypeMapper;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.jms.annotation.EnableJms;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
-import org.springframework.jms.config.JmsListenerContainerFactory;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
-import org.springframework.jms.support.converter.MessageConverter;
-import org.springframework.jms.support.converter.MessageType;
 
-import javax.jms.ConnectionFactory;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link JmsTicketRegistryConfiguration}.
@@ -40,7 +44,6 @@ import javax.jms.ConnectionFactory;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableJms
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "jms")
 @AutoConfiguration
@@ -72,53 +75,92 @@ public class JmsTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MessageConverter jacksonJmsMessageTicketRegistryConverter() {
-        val converter = new MappingJackson2MessageConverter();
         val mapper = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(true)
             .defaultViewInclusion(false)
             .writeDatesAsTimestamps(true)
             .build()
             .toObjectMapper();
-        converter.setObjectMapper(mapper);
-        converter.setTargetType(MessageType.TEXT);
-        converter.setTypeIdPropertyName("@class");
+
+        val converter = new Jackson2JsonMessageConverter(mapper);
+        converter.setTypePrecedence(Jackson2JavaTypeMapper.TypePrecedence.TYPE_ID);
+        converter.setDefaultCharset(StandardCharsets.UTF_8.name());
         return converter;
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
+        final RabbitTemplate rabbitTemplate,
+        @Qualifier("jacksonJmsMessageTicketRegistryConverter")
+        final MessageConverter jacksonJmsMessageConverter,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
         final TicketSerializationManager ticketSerializationManager,
         @Qualifier("messageQueueTicketRegistryIdentifier")
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
-        final CasConfigurationProperties casProperties,
-        final JmsTemplate jmsTemplate,
-        @Qualifier("jacksonJmsMessageTicketRegistryConverter")
-        final MessageConverter jacksonJmsMessageConverter) {
-        jmsTemplate.setMessageConverter(jacksonJmsMessageConverter);
+        final CasConfigurationProperties casProperties) {
+
+        rabbitTemplate.setMessageConverter(jacksonJmsMessageConverter);
         val jms = casProperties.getTicket().getRegistry().getJms();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
         LOGGER.debug("Configuring JMS ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
-        val registry = new JmsTicketRegistry(new JmsTicketRegistryQueuePublisher(jmsTemplate),
+        val registry = new JmsTicketRegistry(new JmsTicketRegistryQueuePublisher(rabbitTemplate),
             messageQueueTicketRegistryIdentifier, ticketSerializationManager);
         registry.setCipherExecutor(cipher);
         return registry;
     }
 
-    @ConditionalOnMissingBean(name = "messageQueueTicketRegistryFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public JmsListenerContainerFactory<?> messageQueueTicketRegistryFactory(
-        @Qualifier("jacksonJmsMessageTicketRegistryConverter")
-        final MessageConverter jacksonJmsMessageConverter,
-        @Qualifier("jmsListenerContainerFactoryConfigurer")
-        final DefaultJmsListenerContainerFactoryConfigurer jmsListenerContainerFactoryConfigurer,
-        @Qualifier("jmsConnectionFactory")
-        final ConnectionFactory jmsConnectionFactory) {
-        val factory = new DefaultJmsListenerContainerFactory();
-        factory.setMessageConverter(jacksonJmsMessageConverter);
-        jmsListenerContainerFactoryConfigurer.configure(factory, jmsConnectionFactory);
-        return factory;
+    @ConditionalOnMissingBean(name = "jmsTicketRegistryQueue")
+    public Queue jmsTicketRegistryQueue() {
+        return new Queue(JmsTicketRegistry.class.getSimpleName(), false);
     }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "jmsTicketRegistryExchange")
+    public TopicExchange jmsTicketRegistryExchange() {
+        return new TopicExchange(JmsTicketRegistryQueuePublisher.QUEUE_DESTINATION);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "jmsTicketRegistryBinding")
+    public Binding jmsTicketRegistryBinding(
+        @Qualifier("jmsTicketRegistryQueue")
+        final Queue jmsTicketRegistryQueue,
+        @Qualifier("jmsTicketRegistryExchange")
+        final TopicExchange jmsTicketRegistryExchange) {
+        return BindingBuilder.bind(jmsTicketRegistryQueue).to(jmsTicketRegistryExchange).with("cas.#");
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "jmsTicketRegistryMessageListenerContainer")
+    public MessageListenerContainer jmsTicketRegistryMessageListenerContainer(
+        @Qualifier("rabbitConnectionFactory")
+        final ConnectionFactory connectionFactory,
+        @Qualifier("jmsTicketRegistryListenerAdapter")
+        final MessageListenerAdapter listenerAdapter) {
+        val container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.setQueueNames(JmsTicketRegistry.class.getSimpleName());
+        container.setMessageListener(listenerAdapter);
+        return container;
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "jmsTicketRegistryListenerAdapter")
+    public MessageListenerAdapter jmsTicketRegistryListenerAdapter(
+        @Qualifier("messageQueueTicketRegistryReceiver")
+        final JmsTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver,
+        @Qualifier("jacksonJmsMessageTicketRegistryConverter")
+        final MessageConverter jacksonJmsMessageTicketRegistryConverter) {
+        val adapter = new MessageListenerAdapter(messageQueueTicketRegistryReceiver, "receive");
+        adapter.setMessageConverter(jacksonJmsMessageTicketRegistryConverter);
+        return adapter;
+    }
+
 }
