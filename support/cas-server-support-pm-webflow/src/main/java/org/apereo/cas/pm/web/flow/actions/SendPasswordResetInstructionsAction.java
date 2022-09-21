@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditPrincipalResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
@@ -105,7 +106,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     }
 
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
-        principalResolverName = "REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER",
+        principalResolverName = AuditPrincipalResolvers.REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER,
         actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
