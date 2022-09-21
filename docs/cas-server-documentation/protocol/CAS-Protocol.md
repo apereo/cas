@@ -19,7 +19,6 @@ The key concepts are:
 - The `TGT` (Ticket Granting Ticket), stored in the `TGC` cookie, represents a SSO session for a user.
 - The `ST` (Service Ticket), transmitted as a `GET` parameter in urls, stands for the access granted by the CAS server to the *CASified* application for a specific user.
 
-
 ## Specification Versions
 
 The following specification versions are recognized and implemented by Apereo CAS.
@@ -31,6 +30,19 @@ The current CAS protocol specification is `3.0.3`. The actual protocol specifica
 ### 2.0
 
 The version `2.0` protocol specification is available at [CAS-Protocol-Specification](CAS-Protocol-V2-Specification.html). 
+
+### Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+...
+```
 
 ## Web flow diagram
 

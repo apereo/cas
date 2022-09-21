@@ -10,17 +10,17 @@ import org.thymeleaf.spring5.view.ThymeleafView;
 import java.util.Locale;
 
 /**
- * This is {@link CasProtocolView}.
+ * This is {@link CasThymeleafView}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class CasProtocolView extends ThymeleafView {
+public class CasThymeleafView extends ThymeleafView {
 
-    public CasProtocolView(final String templateName,
-                           final ApplicationContext applicationContext,
-                           final SpringTemplateEngine templateEngine,
-                           final ThymeleafProperties properties, final String contentType) {
+    public CasThymeleafView(final String templateName,
+                            final ApplicationContext applicationContext,
+                            final SpringTemplateEngine templateEngine,
+                            final ThymeleafProperties properties, final String contentType) {
         super(templateName);
         setApplicationContext(applicationContext);
         setTemplateEngine(templateEngine);

@@ -26,7 +26,7 @@ public class CasProtocolThymeleafViewFactory implements CasProtocolViewFactory {
     public View create(final ConfigurableApplicationContext applicationContext,
                        final String viewName, final String contentType) {
         LOGGER.trace("Creating CAS protocol view [{}] with content type of [{}]", viewName, contentType);
-        return new CasProtocolView(viewName, applicationContext,
+        return new CasThymeleafView(viewName, applicationContext,
             springTemplateEngine, thymeleafProperties, contentType);
     }
 }
