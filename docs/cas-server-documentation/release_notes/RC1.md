@@ -53,6 +53,17 @@ test coverage of the CAS codebase is approximately `94%`.
 
 Attribute definitions that specifically apply to the release of attributes as part of 
 OpenID Connect responses can be decorated using the [attribute definition store](../authentication/OIDC-Attribute-Definitions.html).
+       
+### CAS Protocol Views
+
+CAS Protocol views and responses, previously managed and rendered via Thymeleaf, are now switch to use Mustache as the templating engine.
+This allow CAS to render and log the final output for better visibility and troubleshooting. Protocol responses are sent to the `PROTOCOL_MESSAGE` logger.
+                                                                                                                                                          
+### OpenID Connect Logging
+
+Authentication requests and responses for OpenID Connect and OAuth are logger via a dedicated 
+logger. Similar to CAS and SAML2 protocols, protocol responses such a profile requests, access token generation, etc 
+are sent to the `PROTOCOL_MESSAGE` logger.
 
 ### Removed Modules
 
@@ -89,7 +100,12 @@ of the metadata over HTTP to be disabled.
 [Dynamic Discovery](../integration/Delegate-Authentication-DiscoverySelection.html) configured for delegated authentication is able to
 start the delegation flow based on a principal attribute that would then be matched against the configuration rules to locate the 
 approprivate external identity provider.
- 
+     
+### AMQP Ticket Registry
+
+The JMS ticket registry has now been removed and replaced with a ticket registry implementation that is backed by the AMQP protocol
+and RabbitMQ. [See this](../ticketing/Messaging-AMQP-Ticket-Registry.html) for more info. 
+
 ### Docker Images
 
 A number of Docker images used for integration testing are now upgraded to their latest available versions:
