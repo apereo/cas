@@ -1,8 +1,10 @@
 package org.apereo.cas.audit.spi.principal;
 
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
+import org.apereo.cas.audit.AuditableExecutionResult;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.authentication.principal.Principal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,11 +45,16 @@ public class ThreadLocalAuditPrincipalResolver implements PrincipalResolver {
     private String getCurrentPrincipal(final JoinPoint auditTarget, final Object returnValue, final Exception exception) {
         val authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         val principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authn, returnValue, exception);
-        val id = FunctionUtils.doIfNull(principal,
+        var id = FunctionUtils.doIfNull(principal,
             AuthenticationCredentialsThreadLocalBinder::getCurrentCredentialIdsAsString,
             () -> principal)
             .get();
 
+        if (id == null && returnValue instanceof AuditableExecutionResult) {
+            val auditResult = (AuditableExecutionResult) returnValue;
+            id = auditResult.getAuthentication().map(Authentication::getPrincipal).map(Principal::getId).orElse(null);
+        }
+        
         return StringUtils.defaultIfBlank(id, UNKNOWN_USER);
     }
 }
