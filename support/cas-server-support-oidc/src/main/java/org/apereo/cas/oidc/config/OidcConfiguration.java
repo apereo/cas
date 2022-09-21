@@ -228,7 +228,7 @@ public class OidcConfiguration {
             final OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
                 servicesManager, oidcUserProfileSigningAndEncryptionService);
         }

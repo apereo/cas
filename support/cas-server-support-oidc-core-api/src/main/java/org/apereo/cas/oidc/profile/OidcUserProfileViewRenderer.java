@@ -39,15 +39,11 @@ import java.util.UUID;
 public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRenderer {
     private final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService;
 
-    private final AttributeDefinitionStore attributeDefinitionStore;
-
     public OidcUserProfileViewRenderer(final OAuthProperties oauthProperties,
                                        final ServicesManager servicesManager,
-                                       final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
-                                       final AttributeDefinitionStore attributeDefinitionStore) {
+                                       final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService) {
         super(servicesManager, oauthProperties);
         this.signingAndEncryptionService = signingAndEncryptionService;
-        this.attributeDefinitionStore = attributeDefinitionStore;
     }
 
     @Override
