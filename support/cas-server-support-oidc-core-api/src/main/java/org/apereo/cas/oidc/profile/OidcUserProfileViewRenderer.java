@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,6 @@ import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -66,15 +66,16 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
                 || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
                 return signAndEncryptUserProfileClaims(userProfile, response, registeredService);
             }
-            return buildPlainUserProfileClaims(userProfile, response);
+            return buildPlainUserProfileClaims(userProfile, response, registeredService);
         }, e -> ResponseEntity.badRequest().body("Unable to produce user profile claims")).get();
     }
 
     protected ResponseEntity<String> buildPlainUserProfileClaims(final Map<String, Object> userProfile,
-                                                                 final HttpServletResponse response) throws Exception {
+                                                                 final HttpServletResponse response,
+                                                                 final OidcRegisteredService registeredService) {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         val claims = convertUserProfileIntoClaims(userProfile);
-        return ResponseEntity.ok(claims.toJson());
+        return buildResponseEntity(claims.toJson(), response, registeredService);
     }
 
     private JwtClaims convertUserProfileIntoClaims(final Map<String, Object> userProfile) {
@@ -106,9 +107,19 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
         LOGGER.debug("Finalized user profile is [{}]", result);
 
         response.setContentType(OidcConstants.CONTENT_TYPE_JWT);
+        return buildResponseEntity(result, response, registeredService);
+    }
+
+    private static ResponseEntity<String> buildResponseEntity(final String result, final HttpServletResponse response,
+                                                              final OidcRegisteredService registeredService) {
+        val context = Map.<String, Object>of(
+            "Client ID", registeredService.getClientId(),
+            "Service", registeredService.getName(),
+            "Content Type", response.getContentType());
+        LoggingUtils.protocolMessage("OpenID Connect User Profile Response", context, result);
         val headers = new HttpHeaders();
-        headers.put("Content-Type", CollectionUtils.wrapList(OidcConstants.CONTENT_TYPE_JWT));
-        return new ResponseEntity<>(result, headers, HttpStatus.OK);
+        headers.put("Content-Type", CollectionUtils.wrapList(response.getContentType()));
+        return ResponseEntity.ok().headers(headers).body(result);
     }
 
     protected Object determineAttributeValue(final String name, final Object attrValue) {

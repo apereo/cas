@@ -6,7 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo.cas" level="info"  />
+        <Logger name="org.apereo.cas" level="error"  />
+        <Logger name="PROTOCOL_MESSAGE" level="info"  />
         <Logger name="org.pac4j" level="error" />
         <Root level="off">
             <AppenderRef ref="console"/>
