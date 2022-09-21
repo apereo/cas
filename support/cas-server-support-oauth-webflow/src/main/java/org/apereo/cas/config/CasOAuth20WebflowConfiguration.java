@@ -70,7 +70,7 @@ public class CasOAuth20WebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthConfirmView(
-            @Qualifier("casProtocolViewFactory")
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oauth/confirm");
@@ -79,7 +79,7 @@ public class CasOAuth20WebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthDeviceCodeApprovalView(
-            @Qualifier("casProtocolViewFactory")
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oauth/deviceCodeApproval");
@@ -88,7 +88,7 @@ public class CasOAuth20WebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthDeviceCodeApprovedView(
-            @Qualifier("casProtocolViewFactory")
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oauth/deviceCodeApproved");
@@ -97,7 +97,7 @@ public class CasOAuth20WebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthSessionStaleMismatchErrorView(
-            @Qualifier("casProtocolViewFactory")
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oauth/sessionStaleMismatchError");

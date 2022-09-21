@@ -260,7 +260,7 @@ public class OidcEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcConfirmView")
         public View oidcConfirmView(final ConfigurableApplicationContext applicationContext,
-                                    @Qualifier("casProtocolViewFactory")
+                                    @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
                                     final CasProtocolViewFactory casProtocolViewFactory) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oidc/confirm");
         }
