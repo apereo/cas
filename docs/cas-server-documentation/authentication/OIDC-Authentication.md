@@ -75,3 +75,20 @@ Support for authentication context class references is implemented in form of `a
 authorization request, which is mostly taken into account by 
 the [multifactor authentication features](../mfa/Configuring-Multifactor-Authentication.html) of CAS. 
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<Logger name="org.apereo.cas.oidc" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+<Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+...
+```
