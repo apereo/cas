@@ -42,6 +42,10 @@ public class AccessTokenGrantAuditableRequestExtractor extends BaseAuditableExec
             .orElseThrow(() -> new UnsupportedOperationException("Access token request is not supported"))
             .extract(context);
 
-        return AuditableExecutionResult.builder().executionResult(result).build();
+        return AuditableExecutionResult.builder()
+            .authentication(result.getAuthentication())
+            .service(result.getService())
+            .registeredService(result.getRegisteredService())
+            .executionResult(result).build();
     }
 }
