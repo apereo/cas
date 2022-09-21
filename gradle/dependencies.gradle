@@ -1153,14 +1153,17 @@ ext.libraries = [
         oktasdk                 : [
                 dependencies.create("com.okta.authn.sdk:okta-authn-sdk-api:$oktaSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.yaml", module: "snakeyaml")
                 },
                 dependencies.create("com.okta.authn.sdk:okta-authn-sdk-impl:$oktaSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.yaml", module: "snakeyaml")
                 },
                 dependencies.create("com.okta.sdk:okta-sdk-httpclient:$oktaHttpClientVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.yaml", module: "snakeyaml")
                 }
         ],
         cosmosdb                : [

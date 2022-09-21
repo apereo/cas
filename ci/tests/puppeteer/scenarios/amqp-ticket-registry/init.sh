@@ -1,4 +1,5 @@
 #!/bin/bash
+chmod +x "${PWD}/ci/tests/rabbitmq/run-rabbitmq-server.sh"
 "${PWD}/ci/tests/rabbitmq/run-rabbitmq-server.sh"
 
 echo -e "Removing previous SAML metadata directory, if any"
