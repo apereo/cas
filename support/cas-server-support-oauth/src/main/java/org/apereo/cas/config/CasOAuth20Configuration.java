@@ -566,13 +566,13 @@ public class CasOAuth20Configuration {
             final BeanContainer<Client> oauthSecConfigClients,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
             val config = new Config(callbackUrl, oauthSecConfigClients.toList());
-            config.setSessionStore(oauthDistributedSessionStore);
+            config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
             config.setMatcher(oauthSecCsrfTokenMatcher);
-            Config.setProfileManagerFactory("CASOAuthSecurityProfileManager", (webContext, sessionStore) ->
-                new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(),
+            config.setProfileManagerFactory((webContext, sessionStore) ->
+                new OAuth20ClientIdAwareProfileManager(webContext, oauthDistributedSessionStore,
                     servicesManager, oauthRequestParameterResolver));
             return config;
         }

@@ -48,7 +48,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuthWeb")
 public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
-
     @Autowired
     @Qualifier("oauth20ProtocolEndpointConfigurer")
     private ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer;
@@ -56,7 +55,6 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
     private OAuth20AccessTokenFactory accessTokenFactory;
-
     @Autowired
     @Qualifier("oauthProfileController")
     private OAuth20UserProfileEndpointController oAuth20ProfileController;
