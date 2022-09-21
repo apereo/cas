@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * This controller returns a profile for the authenticated user
@@ -78,6 +79,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             LOGGER.error("Missing required parameter [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
         }
+
         val accessTokenTicket = FunctionUtils.doAndHandle(() -> {
             val state = getConfigurationContext().getTicketRegistry().getTicket(decodedAccessTokenId, OAuth20AccessToken.class);
             return state == null || state.isExpired() ? null : state;
@@ -86,6 +88,9 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             LOGGER.error("Access token [{}] cannot be found in the ticket registry or has expired.", decodedAccessTokenId);
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
+        LoggingUtils.protocolMessage("OAuth/OpenID Connect User Profile Request",
+            Map.of("Access Token", decodedAccessTokenId, "Client ID", accessTokenTicket.getClientId()));
+        
         try {
             validateAccessToken(accessTokenResult.getKey(), accessTokenTicket, request, response);
         } catch (final Exception e) {

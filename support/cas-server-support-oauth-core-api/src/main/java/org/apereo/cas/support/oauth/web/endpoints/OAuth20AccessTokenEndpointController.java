@@ -14,6 +14,7 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
@@ -24,6 +25,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
@@ -34,7 +36,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This controller returns an access token according to the given
@@ -107,6 +111,15 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
 
         try {
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
+            LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Request",
+                Map.of("Token", Optional.ofNullable(requestHolder.getToken()).map(OAuth20Token::getId).orElse("none"),
+                    "Device Code", StringUtils.defaultString(requestHolder.getDeviceCode()),
+                    "Scopes", String.join(",", requestHolder.getScopes()),
+                    "Registered Service", requestHolder.getRegisteredService().getName(),
+                    "Service", requestHolder.getService().getId(),
+                    "Principal", requestHolder.getAuthentication().getPrincipal().getId(),
+                    "Grant Type", requestHolder.getGrantType().getType(),
+                    "Response Type", requestHolder.getResponseType().getType()));
             LOGGER.debug("Creating access token for [{}]", requestHolder);
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(requestHolder.getAuthentication());
             val tokenResult = getConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
@@ -157,7 +170,14 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .grantType(result.getGrantType().orElse(OAuth20GrantTypes.NONE))
             .userProfile(requestHolder.getUserProfile())
             .build();
-        return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
+        val generatedTokenResult = getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
+
+        val context = new LinkedHashMap<>(generatedTokenResult.getModel());
+        if (generatedTokenResult.getStatus() != null) {
+            context.put("status", generatedTokenResult.getStatus());
+        }
+        LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Response", context);
+        return generatedTokenResult;
     }
 
     @RequiredArgsConstructor
