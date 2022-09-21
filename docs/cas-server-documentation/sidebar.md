@@ -442,6 +442,8 @@ layout: null
         *   [Identity Provider](#oauthprovider)
             *   [Overview](/cas/{{ version }}/authentication/OAuth-Authentication.html)
             *   [Clients](/cas/{{ version }}/authentication/OAuth-Authentication-Clients.html)
+            *   [CSRF](/cas/{{ version }}/authentication/OAuth-Authentication-CSRF.html)
+            *   [JWT Access Tokens](/cas/{{ version }}/authentication/OAuth-Authentication-JWT-AccessTokens.html)
             *   [User Profiles](/cas/{{ version }}/authentication/OAuth-Authentication-UserProfiles.html)
             *   [Expiration Policies](/cas/{{ version }}/authentication/OAuth-Authentication-TokenExpirationPolicy.html)
             *   [User-Managed Access](/cas/{{ version }}/protocol/OAuth-UMA-Protocol.html)

@@ -132,62 +132,6 @@ depends on the type of client the end user will be using, and the experience you
 
 To learn more about profiles and grant types, please [review this guide](https://alexbilbie.com/guide-to-oauth-2-grants/).
 
-## Client Registration
-
-Please [see this guide](OAuth-Authentication-Clients.html).
-
-## OAuth Token Expiration Policy
-
-Please [see this guide](OAuth-Authentication-TokenExpirationPolicy.html).
-
-## JWT Access Tokens
-
-By default, OAuth access tokens are created as opaque identifiers. There is 
-also the option to generate JWTs as access tokens on a per-service basis:
-
-```json
-{
-    "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
-    "clientId": "clientid",
-    "clientSecret": "clientSecret",
-    "serviceId" : "^(https|imaps)://<redirect-uri>.*",
-    "name" : "OAuthService",
-    "id" : 100,
-    "jwtAccessToken": true,
-    "properties" : {
-      "@class" : "java.util.HashMap",
-      "accessTokenAsJwtSigningKey" : {
-         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-         "values" : [ "java.util.HashSet", [ "..." ] ]
-      },
-      "accessTokenAsJwtEncryptionKey" : {
-           "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-           "values" : [ "java.util.HashSet", [ "..." ] ]
-      },
-      "accessTokenAsJwtSigningEnabled" : {
-         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-         "values" : [ "java.util.HashSet", [ "true" ] ]
-      },
-      "accessTokenAsJwtEncryptionEnabled" : {
-         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-         "values" : [ "java.util.HashSet", [ "true" ] ]
-      },
-      "accessTokenAsJwtCipherStrategyType" : {
-         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-         "values" : [ "java.util.HashSet", [ "ENCRYPT_AND_SIGN" ] ]
-      }
-    }
-}
-```
-
-Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
-
-{% include_cached registeredserviceproperties.html groups="JWT_ACCESS_TOKENS" %}
-
-## OAuth User Profile Structure
-
-Please [see this guide](OAuth-Authentication-UserProfiles.html).
-
 ## Throttling
 
 Authentication throttling may be enabled for the `/oauth2.0/accessToken` provided support 
@@ -197,10 +141,23 @@ mechanism that handles the usual CAS server endpoints for authentication
 and ticket validation, etc is then activated for the OAuth 
 endpoints that are supported for throttling.
 
-## CSRF Cookie Configuration
-
-{% include_cached casproperties.html properties="cas.authn.oauth.csrf-cookie" %}
-
 ## Sample Client Applications
 
 - [OAuth2 Sample Webapp](https://github.com/apereo/oauth2-sample-java-webapp)
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<Logger name="org.apereo.cas.oauth" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+<Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+...
+```
