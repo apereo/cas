@@ -152,7 +152,8 @@ or override log42.component.properties to turn off async
         <Logger name="org.pac4j" level="${sys:pac4j.log.level}"/>
 
         <Logger name="org.opensaml" level="${sys:opensaml.log.level}"/>
-        <Logger name="PROTOCOL_MESSAGE" level="${sys:opensaml.log.level}" />
+        
+        <Logger name="PROTOCOL_MESSAGE" level="info" />
 
         <Logger name="net.jradius" level="warn"/>
         <Logger name="org.ldaptive" level="${sys:ldap.log.level}"/>
