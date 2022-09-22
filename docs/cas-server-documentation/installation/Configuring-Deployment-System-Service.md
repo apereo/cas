@@ -96,7 +96,8 @@ Refer to `man systemctl` for more details.
 
 ## Upstart
 
-[Upstart](http://upstart.ubuntu.com/) is an event-based service manager, a potential replacement for the System V init that offers more control on the behavior of the different daemons. When using Ubuntu you probably have it installed and configured already (check if there are any jobs with a name starting with `cas` in `/etc/init`).
+[Upstart](https://upstart.ubuntu.com/) is an event-based service manager, a potential replacement for the System V init that offers more control on the behavior of the 
+different daemons. When using Ubuntu you probably have it installed and configured already (check if there are any jobs with a name starting with `cas` in `/etc/init`).
 
 We create a job `cas.conf` to start the CAS web application:
 
@@ -108,7 +109,8 @@ respawn
 exec java -jar /path/to/cas.war
 ```
 
-Now run `start cas` and your service will start. Upstart offers many job configuration options and you can find [most of them here](http://upstart.ubuntu.com/cookbook/).
+Now run `start cas` and your service will start. Upstart offers many job configuration options 
+and you can find [most of them here](https://upstart.ubuntu.com/cookbook/).
 
 ## Windows Service
 

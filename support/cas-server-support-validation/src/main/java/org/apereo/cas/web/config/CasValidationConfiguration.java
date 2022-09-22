@@ -331,7 +331,7 @@ public class CasValidationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View casPostResponseView(
-            @Qualifier(CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext,

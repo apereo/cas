@@ -98,7 +98,7 @@ and samples, and attempt to automate much of the configuration.
 
 Support is enabled by including the following module in the WAR overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-themes-collections" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-themes-collection" %}
       
 
 The following themes are provided by this module and can be assigned to service definitions:
