@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
 
+import javax.annotation.Nonnull;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
@@ -43,7 +44,9 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
     private void saveSamlIdPMetadataDocument(final SamlIdPMetadataDocument doc) {
         this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(final TransactionStatus status) {
+            protected void doInTransactionWithoutResult(
+                @Nonnull
+                final TransactionStatus status) {
                 entityManager.merge(doc);
             }
         });

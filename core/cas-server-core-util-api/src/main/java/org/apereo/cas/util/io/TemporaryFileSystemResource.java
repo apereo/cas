@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.FileSystemResource;
 
+import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FilterInputStream;
@@ -26,6 +27,7 @@ public class TemporaryFileSystemResource extends FileSystemResource {
         super(file);
     }
 
+    @Nonnull
     @Override
     public ReadableByteChannel readableChannel() throws IOException {
         val readableChannel = super.readableChannel();
@@ -48,6 +50,7 @@ public class TemporaryFileSystemResource extends FileSystemResource {
         };
     }
 
+    @Nonnull
     @Override
     public InputStream getInputStream() throws IOException {
         return new FilterInputStream(super.getInputStream()) {

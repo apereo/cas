@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
  */
 @Slf4j
 public class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {
+    @Nonnull
     @Override
     protected ResourceBundle doGetBundle(
         @Nonnull

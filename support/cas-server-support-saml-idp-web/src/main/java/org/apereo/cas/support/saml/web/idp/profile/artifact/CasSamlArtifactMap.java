@@ -18,6 +18,7 @@ import org.opensaml.saml.common.binding.artifact.impl.BasicSAMLArtifactMap;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -39,8 +40,13 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
     private final SessionStore samlIdPDistributedSessionStore;
 
     @Override
-    public void put(final String artifact, final String relyingPartyId,
-                    final String issuerId, final SAMLObject samlMessage) throws IOException {
+    public void put(
+        @Nonnull
+        final String artifact, @Nonnull
+        final String relyingPartyId,
+        @Nonnull
+        final String issuerId, @Nonnull
+        final SAMLObject samlMessage) throws IOException {
         super.put(artifact, relyingPartyId, issuerId, samlMessage);
 
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();

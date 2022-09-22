@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -39,7 +40,10 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public View resolveViewName(final String viewName, final Locale locale) {
+    public View resolveViewName(
+        @Nonnull
+        final String viewName, @Nonnull
+        final Locale locale) {
         try {
             val theme = Optional.of(RequestContextHolder.currentRequestAttributes())
                 .filter(ServletRequestAttributes.class::isInstance)

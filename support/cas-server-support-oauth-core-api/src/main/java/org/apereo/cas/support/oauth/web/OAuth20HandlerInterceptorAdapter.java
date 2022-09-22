@@ -55,9 +55,10 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     private final ObjectProvider<OAuth20RequestParameterResolver> requestParameterResolver;
 
     @Override
-    public boolean preHandle(final HttpServletRequest request,
-                             final HttpServletResponse response,
-                             final Object handler) throws Exception {
+    public boolean preHandle(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final Object handler) throws Exception {
         if (requestRequiresAuthentication(request, response)) {
             return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);
         }

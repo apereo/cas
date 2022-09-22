@@ -14,6 +14,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -48,7 +49,10 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
 
     @Override
     @SneakyThrows
-    protected void renderMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
+    protected void renderMergedOutputModel(final Map<String, Object> model,
+                                           @Nonnull
+                                           final HttpServletRequest request,
+                                           @Nonnull
                                            final HttpServletResponse response) {
 
         val requestWrapper = new ContentCachingRequestWrapper(request);

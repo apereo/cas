@@ -51,6 +51,8 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is {@link QRAuthenticationConfiguration}.
  *
@@ -192,7 +194,9 @@ public class QRAuthenticationConfiguration {
             final CasConfigurationProperties casProperties) {
             return new WebSocketMessageBrokerConfigurer() {
                 @Override
-                public void registerStompEndpoints(final StompEndpointRegistry registry) {
+                public void registerStompEndpoints(
+                    @Nonnull
+                    final StompEndpointRegistry registry) {
                     registry.addEndpoint("/qr-websocket")
                         .setAllowedOrigins(casProperties.getAuthn().getQr().getAllowedOrigins().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
                         .addInterceptors(new HttpSessionHandshakeInterceptor())
@@ -200,7 +204,9 @@ public class QRAuthenticationConfiguration {
                 }
 
                 @Override
-                public void configureMessageBroker(final MessageBrokerRegistry config) {
+                public void configureMessageBroker(
+                    @Nonnull
+                    final MessageBrokerRegistry config) {
                     config.enableSimpleBroker(QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
                     config.setApplicationDestinationPrefixes("/qr");
                 }
