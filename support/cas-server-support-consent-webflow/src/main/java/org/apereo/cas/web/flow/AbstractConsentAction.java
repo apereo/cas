@@ -127,6 +127,7 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
         AnnotationAwareOrderComparator.sortIfNecessary(builders);
 
         val consentableAttributes = new ArrayList<CasConsentableAttribute>();
+        LOGGER.debug("Preparing consentable attributes [{}]", attributes);
         attributes.forEach((key, value) -> {
             var attr = CasConsentableAttribute.builder()
                 .name(key)
