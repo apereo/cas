@@ -258,7 +258,7 @@ while (( "$#" )); do
             mfa)
                 task+="testMFA "
                 ;;
-            mfaprovider|gauth|webauthn|authy|fido|u2f|acceptto)
+            mfaprovider|gauth|webauthn|authy|fido|u2f)
                 task+="testMFAProvider "
                 ;;
             mfatrigger)
