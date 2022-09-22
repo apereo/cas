@@ -85,7 +85,7 @@ public class JsonWebTokenSigner {
         jws.setHeader("typ", "JWT");
         jws.setKey(key);
         jws.setKeyIdHeaderValue(this.keyId);
-        headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
+        headers.forEach((header, value) -> jws.setHeader(header, value.toString()));
         LOGGER.trace("Signing id token with key id header value [{}] and algorithm header value [{}]",
             jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());
         return jws.getCompactSerialization();
