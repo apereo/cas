@@ -60,9 +60,12 @@ public class LoggingUtils {
                     builder.append(String.format("%s: %s\n", key, toLog));
                 }
             });
-            builder.append(StringUtils.repeat('=', CHAR_REPEAT_ACCOUNT));
+            if (!context.isEmpty()) {
+                builder.append(StringUtils.repeat('=', CHAR_REPEAT_ACCOUNT));
+                builder.append('\n');
+            }
             if (message != null && StringUtils.isNotBlank(message.toString())) {
-                builder.append(String.format("\n%s\n", message));
+                builder.append(String.format("%s\n", message));
                 builder.append(StringUtils.repeat('=', CHAR_REPEAT_ACCOUNT));
             }
             LoggerFactory.getLogger(LOGGER_NAME_PROTOCOL_MESSAGE).info(builder.toString());
