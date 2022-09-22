@@ -29,6 +29,7 @@ import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.CookieGenerator;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ public class CasWebAppConfiguration {
         val localeCookie = localeProps.getCookie();
 
         val resolver = new CookieLocaleResolver() {
+            @Nonnull
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 val locale = request.getLocale();
@@ -104,7 +106,9 @@ public class CasWebAppConfiguration {
         final ObjectProvider<LocaleChangeInterceptor> localeChangeInterceptor) {
         return new WebMvcConfigurer() {
             @Override
-            public void addInterceptors(final InterceptorRegistry registry) {
+            public void addInterceptors(
+                @Nonnull
+                final InterceptorRegistry registry) {
                 registry.addInterceptor(new RefreshableHandlerInterceptor(localeChangeInterceptor)).addPathPatterns("/**");
             }
         };
@@ -115,8 +119,11 @@ public class CasWebAppConfiguration {
     public Controller rootController() {
         return new ParameterizableViewController() {
             @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                         final HttpServletResponse response) {
+            protected ModelAndView handleRequestInternal(
+                @Nonnull
+                final HttpServletRequest request,
+                @Nonnull
+                final HttpServletResponse response) {
                 val queryString = request.getQueryString();
                 val url = request.getContextPath() + "/login"
                           + Optional.ofNullable(queryString).map(string -> '?' + string).orElse(StringUtils.EMPTY);

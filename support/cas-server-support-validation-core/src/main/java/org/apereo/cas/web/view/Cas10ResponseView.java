@@ -12,6 +12,7 @@ import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import lombok.val;
 import org.springframework.http.MediaType;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.StringWriter;
@@ -39,8 +40,12 @@ public class Cas10ResponseView extends AbstractCasView {
     }
 
     @Override
-    protected void renderMergedOutputModel(final Map model, final HttpServletRequest request,
-                                           final HttpServletResponse response) throws Exception {
+    protected void renderMergedOutputModel(
+        @Nonnull
+        final Map model, @Nonnull
+        final HttpServletRequest request,
+        @Nonnull
+        final HttpServletResponse response) throws Exception {
         try (val writer = new StringWriter()) {
             if (this.successResponse) {
                 prepareViewModelWithAuthenticationPrincipal(model);

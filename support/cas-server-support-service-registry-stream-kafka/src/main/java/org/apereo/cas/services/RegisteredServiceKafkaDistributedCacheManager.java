@@ -13,6 +13,7 @@ import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -83,7 +84,9 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
             }
 
             @Override
-            public void onFailure(final Throwable e) {
+            public void onFailure(
+                @Nonnull
+                final Throwable e) {
                 LoggingUtils.error(LOGGER, e);
             }
         });

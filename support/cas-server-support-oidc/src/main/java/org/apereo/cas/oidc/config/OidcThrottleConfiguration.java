@@ -27,6 +27,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -52,7 +53,9 @@ public class OidcThrottleConfiguration {
             final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(final InterceptorRegistry registry) {
+                public void addInterceptors(
+                    @Nonnull
+                    final InterceptorRegistry registry) {
                     val handler = new RefreshableHandlerInterceptor(
                         () -> authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors());
                     registry.addInterceptor(handler)

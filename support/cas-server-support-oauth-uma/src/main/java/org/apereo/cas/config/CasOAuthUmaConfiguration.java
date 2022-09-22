@@ -69,6 +69,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Nonnull;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -250,7 +251,9 @@ public class CasOAuthUmaConfiguration {
             final ObjectProvider<SecurityInterceptor> umaRequestingPartyTokenSecurityInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(final InterceptorRegistry registry) {
+                public void addInterceptors(
+                    @Nonnull
+                    final InterceptorRegistry registry) {
                     registry.addInterceptor(new RefreshableHandlerInterceptor(umaRequestingPartyTokenSecurityInterceptor)).order(100)
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))

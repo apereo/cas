@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -180,6 +181,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                 })));
     }
 
+    @Nonnull
     @Override
     protected Cookie createCookie(@NonNull final String cookieValue) {
         val c = super.createCookie(cookieValue);

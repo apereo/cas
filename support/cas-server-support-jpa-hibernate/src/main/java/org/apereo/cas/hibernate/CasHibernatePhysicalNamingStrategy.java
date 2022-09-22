@@ -12,6 +12,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is {@link CasHibernatePhysicalNamingStrategy}.
  *
@@ -54,7 +56,9 @@ public class CasHibernatePhysicalNamingStrategy extends CamelCaseToUnderscoresNa
     }
 
     @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(
+        @Nonnull
+        final ApplicationContext applicationContext) throws BeansException {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 

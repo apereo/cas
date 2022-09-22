@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.thymeleaf.spring5.view.AbstractThymeleafView;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,13 +41,20 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     private final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers;
 
+    @Nonnull
     @Override
-    protected Object getCacheKey(final String viewName, final Locale locale) {
+    protected Object getCacheKey(
+        @Nonnull
+        final String viewName, @Nonnull
+        final Locale locale) {
         return String.format("%s#%s", theme, super.getCacheKey(viewName, locale));
     }
 
     @Override
-    protected View loadView(final String viewName, final Locale locale) throws Exception {
+    protected View loadView(
+        @Nonnull
+        final String viewName, @Nonnull
+        final Locale locale) throws Exception {
         LOGGER.trace("Attempting to resolve view [{}] via locale [{}]", viewName, locale);
         val applicationContext = obtainApplicationContext();
         val view = applicationContext.containsBean(viewName)

@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
@@ -28,7 +29,9 @@ public class OidcLocaleChangeInterceptor extends CasLocaleChangeInterceptor {
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
+                             @Nonnull
                              final HttpServletResponse response,
+                             @Nonnull
                              final Object handler) {
         resolveUiLocale(request, response);
         return true;

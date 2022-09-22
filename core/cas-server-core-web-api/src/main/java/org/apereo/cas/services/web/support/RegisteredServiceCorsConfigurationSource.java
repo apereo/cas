@@ -11,6 +11,7 @@ import lombok.val;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Set;
@@ -29,7 +30,9 @@ public class RegisteredServiceCorsConfigurationSource implements CorsConfigurati
     private final ArgumentExtractor argumentExtractor;
 
     @Override
-    public CorsConfiguration getCorsConfiguration(final HttpServletRequest request) {
+    public CorsConfiguration getCorsConfiguration(
+        @Nonnull
+        final HttpServletRequest request) {
         val cors = casProperties.getHttpWebRequest().getCors();
         val config = new CorsConfiguration();
 

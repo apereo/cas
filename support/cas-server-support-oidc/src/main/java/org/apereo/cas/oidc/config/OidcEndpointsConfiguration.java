@@ -83,6 +83,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
@@ -213,7 +214,9 @@ public class OidcEndpointsConfiguration {
             final CasConfigurationProperties casProperties) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(final InterceptorRegistry registry) {
+                public void addInterceptors(
+                    @Nonnull
+                    final InterceptorRegistry registry) {
                     val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
                     LOGGER.info("Registering CAS OpenID Connect endpoints under [{}]. Verify to make sure this value "
                         + "is correctly defined based on your issuer and server settings, defined in CAS configuration. "

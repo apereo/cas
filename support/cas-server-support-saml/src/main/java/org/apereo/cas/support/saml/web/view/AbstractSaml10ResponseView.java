@@ -17,6 +17,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml1.core.Response;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URL;
@@ -54,8 +55,12 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     }
 
     @Override
-    protected void renderMergedOutputModel(final Map<String, Object> model,
+    protected void renderMergedOutputModel(
+        @Nonnull
+        final Map<String, Object> model,
+        @Nonnull
                                            final HttpServletRequest request,
+        @Nonnull
                                            final HttpServletResponse response) throws Exception {
         try {
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());

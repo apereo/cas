@@ -28,6 +28,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 
+import javax.annotation.Nonnull;
 import java.lang.ref.ReferenceQueue;
 import java.security.cert.CertPath;
 import java.time.ZoneId;
@@ -55,7 +56,9 @@ public abstract class BaseConverters {
     public static class NullConverter<I, O> implements Converter<I, O> {
 
         @Override
-        public O convert(final I i) {
+        public O convert(
+            @Nonnull
+            final I i) {
             return null;
         }
     }
@@ -164,7 +167,9 @@ public abstract class BaseConverters {
     @SuppressWarnings("JavaUtilDate")
     public static class DateToZonedDateTimeConverter implements Converter<Date, ZonedDateTime> {
         @Override
-        public ZonedDateTime convert(final Date source) {
+        public ZonedDateTime convert(
+            @Nonnull
+            final Date source) {
             return Optional.ofNullable(source)
                 .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()))
                 .orElse(null);
@@ -177,7 +182,9 @@ public abstract class BaseConverters {
     @ReadingConverter
     static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
         @Override
-        public ZonedDateTime convert(final String source) {
+        public ZonedDateTime convert(
+            @Nonnull
+            final String source) {
             if (StringUtils.isBlank(source)) {
                 return null;
             }
@@ -199,7 +206,9 @@ public abstract class BaseConverters {
     public static class ZonedDateTimeToDateConverter implements Converter<ZonedDateTime, Date> {
         @Override
         @SuppressWarnings("JavaUtilDate")
-        public Date convert(final ZonedDateTime source) {
+        public Date convert(
+            @Nonnull
+            final ZonedDateTime source) {
             return Optional.ofNullable(source).map(zonedDateTime -> Date.from(zonedDateTime.toInstant())).orElse(null);
         }
     }
@@ -210,7 +219,9 @@ public abstract class BaseConverters {
     @WritingConverter
     public static class ZonedDateTimeToStringConverter implements Converter<ZonedDateTime, String> {
         @Override
-        public String convert(final ZonedDateTime source) {
+        public String convert(
+            @Nonnull
+            final ZonedDateTime source) {
             return Optional.ofNullable(source).map(ZonedDateTime::toString).orElse(null);
         }
     }
@@ -229,7 +240,9 @@ public abstract class BaseConverters {
     @ReadingConverter
     static class StringToPatternConverter implements Converter<String, Pattern> {
         @Override
-        public Pattern convert(final String source) {
+        public Pattern convert(
+            @Nonnull
+            final String source) {
             if (StringUtils.isBlank(source)) {
                 return null;
             }

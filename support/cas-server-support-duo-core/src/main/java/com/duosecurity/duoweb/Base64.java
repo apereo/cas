@@ -1,5 +1,7 @@
 package com.duosecurity.duoweb;
 
+import javax.annotation.Nonnull;
+
 public class Base64 {
 
 	/*  ******** P U B L I C F I E L D S ******** */
@@ -1419,7 +1421,9 @@ public class Base64 {
 		 * @since 1.3
 		 */
 		@Override
-		public void write(byte[] theBytes, int off, int len)
+		public void write(
+			@Nonnull
+			byte[] theBytes, int off, int len)
 				throws java.io.IOException {
 			// Encoding suspended?
 			if (suspendEncoding) {
