@@ -263,7 +263,6 @@ layout: null
             *   [Redis](/cas/{{ version }}/mfa/YubiKey-Authentication-Registration-Redis.html)
             *   [REST](/cas/{{ version }}/mfa/YubiKey-Authentication-Registration-Rest.html)
         *   [RSA/Radius](/cas/{{ version }}/mfa/RADIUS-Authentication.html)
-        *   [Acceptto](/cas/{{ version }}/mfa/Acceptto-Authentication.html)
         *   [Google Authenticator](#mfagoogleauthn)
             *   [Overview](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication.html)
             *   [CouchDb](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-CouchDb.html)

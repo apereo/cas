@@ -76,6 +76,7 @@ be supported, maintained or released:
 - Apache Fortress Authentication
 - Ehcache Ticket Registry
 - SwivelSecure Multifactor Authentication
+- Acceptto Multifactor Authentication
 - Infinispan Ticket Registry
 - Couchbase Ticket Registry
 - Scripted Attribute Repository

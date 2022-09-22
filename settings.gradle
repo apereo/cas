@@ -132,7 +132,6 @@ include "core:cas-server-core-webflow-mfa-api"
 include "docs:cas-server-documentation-processor"
 include "docs:cas-server-documentation"
 
-include "support:cas-server-support-acceptto-mfa"
 include "support:cas-server-support-account-mgmt-api"
 include "support:cas-server-support-account-mgmt-core"
 include "support:cas-server-support-account-mgmt"

@@ -1962,36 +1962,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_INWEBO_SUCCESS = "inweboSuccessAction";
 
     /**
-     * Action id 'mfaAccepttoMultifactorValidateUserDeviceRegistrationAction'.
-     */
-    String ACTION_ID_ACCEPTTO_VALIDATE_USER_DEVICE_REGISTRATION = "mfaAccepttoMultifactorValidateUserDeviceRegistrationAction";
-
-    /**
-     * Action id 'mfaAccepttoMultifactorFetchChannelAction'.
-     */
-    String ACTION_ID_ACCEPTTO_FETCH_CHANNEL = "mfaAccepttoMultifactorFetchChannelAction";
-
-    /**
-     * Action id 'mfaAccepttoMultifactorValidateChannelAction'.
-     */
-    String ACTION_ID_ACCEPTTO_VALIDATE_CHANNEL = "mfaAccepttoMultifactorValidateChannelAction";
-
-    /**
-     * Action id 'mfaAccepttoQRCodeValidateWebSocketChannelAction'.
-     */
-    String ACTION_ID_ACCEPTTO_QR_CODE_VALIDATE_CHANNEL = "mfaAccepttoQRCodeValidateWebSocketChannelAction";
-
-    /**
-     * Action id 'mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction'.
-     */
-    String ACTION_ID_ACCEPTTO_FINALIZE_AUTHENTICATION = "mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction";
-
-    /**
-     * Action id 'mfaAccepttoMultifactorDetermineUserAccountStatusAction'.
-     */
-    String ACTION_ID_ACCEPTTO_DETERMINE_USER_ACCOUNT_STATUS = "mfaAccepttoMultifactorDetermineUserAccountStatusAction";
-
-    /**
      * Action id 'wsFederationMetadataUIAction'.
      */
     String ACTION_ID_WSFEDERATION_METADATA_UI = "wsFederationMetadataUIAction";
