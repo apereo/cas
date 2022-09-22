@@ -38,9 +38,9 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         super(context, authorizationModelAndViewBuilder);
     }
 
-    @Audit(action = AuditableActions.OAUTH2_CODE_RESPONSE,
-        actionResolverName = AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
-        resourceResolverName = AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER)
+    @Audit(action = AuditableActions.OAUTH2_AUTHORIZATION_RESPONSE,
+        actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
         val authentication = holder.getAuthentication();

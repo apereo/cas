@@ -154,6 +154,8 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = AbstractOAuth20Tests.SharedTestConfiguration.class,
     properties = {
+        "cas.audit.engine.audit-format=JSON",
+        "cas.audit.slf4j.use-single-line=true",
         "cas.authn.attribute-repository.stub.attributes.uid=cas",
         "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
         "spring.main.allow-bean-definition-overriding=true"
@@ -677,7 +679,7 @@ public abstract class AbstractOAuth20Tests {
         final HttpServletRequest mockRequest) {
 
         val mockResponse = new MockHttpServletResponse();
-        
+
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
         val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())

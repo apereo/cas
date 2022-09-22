@@ -10,12 +10,12 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 
 /**
- * The {@link OAuth20CodeResponseAuditResourceResolver} for audit advice.
+ * The {@link OAuth20AuthorizationResponseAuditResourceResolver} for audit advice.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class OAuth20CodeResponseAuditResourceResolver extends ReturnValueAsStringResourceResolver {
+public class OAuth20AuthorizationResponseAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         val model = (ModelAndView) retval;

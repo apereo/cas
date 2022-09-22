@@ -14,16 +14,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link OAuth20CodeResponseAuditResourceResolverTests}.
+ * This is {@link OAuth20AuthorizationResponseAuditResourceResolverTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20CodeResponseAuditResourceResolverTests {
+public class OAuth20AuthorizationResponseAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        val r = new OAuth20CodeResponseAuditResourceResolver();
+        val r = new OAuth20AuthorizationResponseAuditResourceResolver();
         val modelAndView = new ModelAndView("dummyView",
             Map.of("k1", "v1", "longkey", RandomUtils.randomAlphabetic(60)));
         val result = r.resolveFrom(mock(JoinPoint.class), modelAndView);
