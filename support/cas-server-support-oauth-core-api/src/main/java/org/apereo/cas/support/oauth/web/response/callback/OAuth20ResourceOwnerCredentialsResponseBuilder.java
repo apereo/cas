@@ -1,5 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -9,6 +12,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -27,6 +31,9 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder<T extends OAuth20Con
     }
 
     @Override
+    @Audit(action = AuditableActions.OAUTH2_AUTHORIZATION_RESPONSE,
+        actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
         val accessTokenResult = configurationContext.getAccessTokenGenerator().generate(holder);
         val result = OAuth20AccessTokenResponseResult.builder()

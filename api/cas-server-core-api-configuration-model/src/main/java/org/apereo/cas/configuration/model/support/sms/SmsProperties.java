@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -55,6 +56,7 @@ public class SmsProperties implements Serializable {
      *
      * @return true/false
      */
+    @JsonIgnore
     public boolean isDefined() {
         return StringUtils.isNotBlank(getText()) && StringUtils.isNotBlank(getFrom());
     }

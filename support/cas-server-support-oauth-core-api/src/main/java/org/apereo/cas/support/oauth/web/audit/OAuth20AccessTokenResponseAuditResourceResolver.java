@@ -6,5 +6,5 @@ package org.apereo.cas.support.oauth.web.audit;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class OAuth20AccessTokenResponseAuditResourceResolver extends OAuth20CodeResponseAuditResourceResolver {
+public class OAuth20AccessTokenResponseAuditResourceResolver extends OAuth20AuthorizationResponseAuditResourceResolver {
 }
