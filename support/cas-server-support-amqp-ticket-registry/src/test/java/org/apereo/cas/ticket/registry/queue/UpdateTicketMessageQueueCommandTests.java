@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.registry.queue;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.queue.UpdateTicketMessageQueueCommand;
+import org.apereo.cas.ticket.registry.queue.commands.UpdateTicketMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -27,8 +27,7 @@ public class UpdateTicketMessageQueueCommandTests extends AbstractTicketMessageQ
     public void verifyUpdateTicket() throws Exception {
         var ticket = new TicketGrantingTicketImpl("TGT",
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-        val body = ticketSerializationManager.serializeTicket(ticket);
-        val cmd = new UpdateTicketMessageQueueCommand(new PublisherIdentifier(), body, ticket.getClass().getName());
+        val cmd = new UpdateTicketMessageQueueCommand(new PublisherIdentifier(), ticket).withId(new PublisherIdentifier());
         cmd.execute(ticketRegistry);
         ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());
         assertNotNull(ticket);

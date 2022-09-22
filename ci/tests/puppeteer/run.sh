@@ -368,6 +368,20 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
+  bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
+  bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
+  bootstrapScript="${bootstrapScript//\$\{SCENARIO\}/${scenarioName}}"
+
+  if [[ -n "${bootstrapScript}" ]]; then
+    printgreen "Running bootstrap script: ${bootstrapScript}"
+    chmod +x "${bootstrapScript}"
+    eval "${bootstrapScript}"
+    if [[ $? -ne 0 ]]; then
+      printred "Bootstrap script [${bootstrapScript}] failed."
+      exit 1
+    fi
+  fi
+
   serverPort=8443
   processIds=()
   instances=$(jq -j '.instances // 1' "${config}")

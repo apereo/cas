@@ -3,13 +3,15 @@ package org.apereo.cas.ticket.registry.queue;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.queue.AddTicketMessageQueueCommand;
+import org.apereo.cas.ticket.registry.queue.commands.AddTicketMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,8 +29,8 @@ public class AddTicketMessageQueueCommandTests extends AbstractTicketMessageQueu
     public void verifyAddTicket() throws Exception {
         var ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
-        val body = ticketSerializationManager.serializeTicket(ticket);
-        val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(), body, ticket.getClass().getName());
+        val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(UUID.randomUUID().toString()), ticket)
+            .withId(new PublisherIdentifier());
         cmd.execute(ticketRegistry);
         ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());
         assertNotNull(ticket);

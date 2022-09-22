@@ -31,8 +31,14 @@ const path = require("path");
         await cas.click(page, "li #SAML2Client");
         await page.waitForNavigation();
         await cas.loginWith(page, "user1", "password");
-        await page.waitForTimeout(4000);
+        await page.waitForTimeout(3000);
         await cas.assertCookie(page);
+
+        await page.waitForTimeout(1000);
+        await cas.goto(page, "https://localhost:8444/cas/login");
+        await page.waitForTimeout(1000);
+        await cas.assertCookie(page);
+
     } finally {
         await cas.removeDirectory(path.join(__dirname, '/saml-md'));
         await browser.close();

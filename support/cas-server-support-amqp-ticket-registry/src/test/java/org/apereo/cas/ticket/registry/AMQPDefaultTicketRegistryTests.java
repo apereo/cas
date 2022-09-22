@@ -18,13 +18,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * This is {@link AMQPTicketRegistryTests}.
+ * This is {@link AMQPDefaultTicketRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Import({
-    AMQPTicketRegistryTests.AMQPTicketRegistryTestConfiguration.class,
+    AMQPDefaultTicketRegistryTests.AMQPTicketRegistryTestConfiguration.class,
     CompositeMeterRegistryAutoConfiguration.class,
     RabbitAutoConfiguration.class,
     AMQPTicketRegistryTicketCatalogConfiguration.class,
@@ -39,7 +39,7 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfListeningOnPort(port = 5672)
 @Tag("AMQP")
 @Getter
-public class AMQPTicketRegistryTests extends BaseTicketRegistryTests {
+public class AMQPDefaultTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
