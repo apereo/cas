@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -114,6 +115,7 @@ public class EmailProperties implements Serializable {
      *
      * @return true if undefined, false otherwise.
      */
+    @JsonIgnore
     public boolean isUndefined() {
         return StringUtils.isBlank(text) || StringUtils.isBlank(from) || StringUtils.isBlank(subject);
     }
@@ -123,6 +125,7 @@ public class EmailProperties implements Serializable {
      *
      * @return true/false
      */
+    @JsonIgnore
     public boolean isDefined() {
         return !isUndefined();
     }
