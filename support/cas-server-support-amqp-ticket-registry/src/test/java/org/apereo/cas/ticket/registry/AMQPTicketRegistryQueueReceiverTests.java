@@ -1,0 +1,38 @@
+package org.apereo.cas.ticket.registry;
+
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.registry.queue.AbstractTicketMessageQueueCommandTests;
+import org.apereo.cas.ticket.registry.queue.commands.AddTicketMessageQueueCommand;
+import org.apereo.cas.util.PublisherIdentifier;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+
+import lombok.val;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * This is {@link AMQPTicketRegistryQueueReceiverTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.0.0
+ */
+@EnabledIfListeningOnPort(port = 5672)
+@Tag("AMQP")
+public class AMQPTicketRegistryQueueReceiverTests extends AbstractTicketMessageQueueCommandTests {
+    @Test
+    public void verifyOperation() {
+        val receiver = new AMQPTicketRegistryQueueReceiver(ticketRegistry,
+            new PublisherIdentifier(UUID.randomUUID().toString()));
+        var ticket = new TicketGrantingTicketImpl("TGT-334455", CoreAuthenticationTestUtils.getAuthentication(),
+            NeverExpiresExpirationPolicy.INSTANCE);
+        val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(), ticket);
+        assertDoesNotThrow(() -> receiver.receive(cmd));
+        assertNotNull(ticketRegistry.getTicket("TGT-334455"));
+    }
+}

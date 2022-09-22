@@ -1,4 +1,6 @@
-package org.apereo.cas.ticket.queue;
+package org.apereo.cas.ticket.registry.queue;
+
+import org.apereo.cas.ticket.registry.queue.commands.BaseMessageQueueCommand;
 
 /**
  * This is {@link TicketRegistryQueuePublisher}.
@@ -8,16 +10,6 @@ package org.apereo.cas.ticket.queue;
  */
 @FunctionalInterface
 public interface TicketRegistryQueuePublisher {
-    /**
-     * No Op ticket registry publisher.
-     *
-     * @return the ticket registry publisher
-     */
-    static TicketRegistryQueuePublisher noOp() {
-        return cmd -> {
-        };
-    }
-
     /**
      * Publish message to queue.
      *

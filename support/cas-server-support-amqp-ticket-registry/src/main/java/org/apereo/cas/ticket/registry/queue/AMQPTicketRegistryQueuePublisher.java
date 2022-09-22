@@ -1,9 +1,9 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.queue;
 
-import org.apereo.cas.ticket.queue.BaseMessageQueueCommand;
-import org.apereo.cas.ticket.queue.TicketRegistryQueuePublisher;
+import org.apereo.cas.ticket.registry.queue.commands.BaseMessageQueueCommand;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitOperations;
 
 /**
@@ -21,9 +21,10 @@ public record AMQPTicketRegistryQueuePublisher(RabbitOperations rabbitTemplate) 
 
     @Override
     public void publishMessageToQueue(final BaseMessageQueueCommand cmd) {
-        rabbitTemplate.convertAndSend(QUEUE_DESTINATION, "cas." + cmd.getId().getId(), cmd,
+        LOGGER.debug("[{}] is publishing message [{}]", cmd.getId().getId(), cmd);
+        rabbitTemplate.convertAndSend(QUEUE_DESTINATION, StringUtils.EMPTY, cmd,
             message -> {
-                LOGGER.trace("Sending message [{}] from ticket registry id [{}]", message, cmd.getId());
+                LOGGER.trace("Sent message [{}] from ticket registry id [{}]", message, cmd.getId());
                 return message;
             });
     }

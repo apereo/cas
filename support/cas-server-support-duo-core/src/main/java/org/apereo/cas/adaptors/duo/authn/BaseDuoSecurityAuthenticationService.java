@@ -106,7 +106,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             signHttpUserPreAuthRequest(userRequest);
             LOGGER.debug("Contacting Duo to inquire about username [{}]", username);
             val userResponse = getHttpResponse(userRequest);
-            val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
+            val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8);
             LOGGER.debug("Received Duo response [{}]", jsonResponse);
 
             val result = MAPPER.readTree(jsonResponse);

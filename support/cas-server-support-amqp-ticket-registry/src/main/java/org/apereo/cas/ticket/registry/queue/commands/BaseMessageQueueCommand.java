@@ -1,18 +1,14 @@
-package org.apereo.cas.ticket.queue;
+package org.apereo.cas.ticket.registry.queue.commands;
 
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.ticket.registry.AMQPTicketRegistry;
 import org.apereo.cas.util.PublisherIdentifier;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.val;
+import lombok.With;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -26,8 +22,9 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @Getter
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
+@With
+@RequiredArgsConstructor
 public abstract class BaseMessageQueueCommand implements Serializable {
 
     @Serial
@@ -41,11 +38,5 @@ public abstract class BaseMessageQueueCommand implements Serializable {
      * @param registry the registry
      * @throws Exception the exception
      */
-    public void execute(final TicketRegistry registry) throws Exception {
-    }
-
-    protected static Ticket deserializeTicket(final String ticket, final String ticketType) {
-        val manager = ApplicationContextProvider.getApplicationContext().getBean(TicketSerializationManager.class);
-        return manager.deserializeTicket(ticket, ticketType);
-    }
+    public abstract void execute(AMQPTicketRegistry registry) throws Exception;
 }
