@@ -14,12 +14,6 @@ CAS will attempt to capture the provided password and update destinations that a
 in CAS settings. Failing to synchronize an account password generally produces errors in the logs
 and the event is not considered a catastrophic failure.
 
-## Configuration
-
-Allow the user to synchronize account password to a variety of destinations in-place.
-
-{% include_cached {{ version }}/ldap-configuration.md configKey="cas.authn.password-sync.ldap[0]" %}
-
 ## LDAP
 
 Synchronize account passwords with one or more LDAP servers. Support is enabled by including the 
