@@ -28,6 +28,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -193,6 +194,7 @@ public class CasThymeleafConfiguration {
 
     @Configuration(value = "MustacheViewResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnBean(MustacheViewResolver.class)
     public static class MustacheViewResolverConfiguration {
 
         @ConditionalOnMissingBean(name = CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
