@@ -209,7 +209,8 @@ public class OidcClientRegistrationRequestTranslator {
                 sectorResponse = HttpUtils.execute(exec);
                 if (sectorResponse != null && sectorResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     val result = IOUtils.toString(sectorResponse.getEntity().getContent(), StandardCharsets.UTF_8);
-                    val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
+                    val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
+                    val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
                     if (!urls.equals(registrationRequest.getRedirectUris())) {
                         throw new IllegalArgumentException("Invalid sector identifier uri");
                     }

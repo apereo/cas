@@ -62,7 +62,8 @@ public class RestfulConsentRepository implements ConsentRepository {
                 response = HttpUtils.execute(exec);
                 if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                     val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
+                    val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, ConsentDecision.class);
+                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
                 }
             } finally {
                 HttpUtils.close(response);
@@ -91,7 +92,8 @@ public class RestfulConsentRepository implements ConsentRepository {
                 response = HttpUtils.execute(exec);
                 if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                     val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    return MAPPER.readValue(result, List.class);
+                    val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, ConsentDecision.class);
+                    return MAPPER.readValue(result, expectedType);
                 }
             } finally {
                 HttpUtils.close(response);

@@ -48,6 +48,7 @@ import java.util.List;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
 @AutoConfiguration
 public class SurrogateAuthenticationWebflowConfiguration {
 
