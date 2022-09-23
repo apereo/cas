@@ -7,7 +7,7 @@ env:
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   JDK_CURRENT: 17
-  JDK_LATEST: 20-ea
+  JDK_LATEST: 19
 
 ##########################################################################
 
