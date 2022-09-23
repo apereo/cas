@@ -43,6 +43,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @AutoConfiguration
 public class GoogleAuthenticatorConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
+
     @Configuration(value = "GoogleAuthenticatorMultifactorWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorMultifactorWebflowConfiguration {
