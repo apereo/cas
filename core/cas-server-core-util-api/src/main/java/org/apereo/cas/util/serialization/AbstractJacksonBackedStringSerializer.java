@@ -5,7 +5,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,8 +35,8 @@ import java.util.List;
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
  *
- * @author Misagh Moayyed
  * @param <T> the type parameter
+ * @author Misagh Moayyed
  * @since 4.1
  */
 @Slf4j
@@ -79,20 +78,20 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     @Override
     public T from(final File json) {
         return FunctionUtils.doAndHandle(() -> {
-            val string = isJsonFormat()
+            val data = isJsonFormat()
                 ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
                 : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
-            return readObjectFromString(string);
+            return readObjectFromString(data);
         }, throwable -> null).get();
     }
 
     @Override
     public T from(final Reader json) {
         return FunctionUtils.doAndHandle(() -> {
-            val string = isJsonFormat()
+            val data = isJsonFormat()
                 ? JsonValue.readHjson(json).toString()
                 : String.join("\n", IOUtils.readLines(json));
-            return readObjectFromString(string);
+            return readObjectFromString(data);
         }, throwable -> null).get();
     }
 
@@ -225,8 +224,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     protected List<T> readObjectsFromString(final String jsonString) {
         try {
             LOGGER.trace("Attempting to consume [{}]", jsonString);
-            return getObjectMapper().readValue(jsonString, new TypeReference<>() {
-            });
+            val expectedType = getObjectMapper().getTypeFactory().constructParametricType(List.class, getTypeToSerialize());
+            return getObjectMapper().readValue(jsonString, expectedType);
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into List of type [{}]."
                          + "Internal parsing error is [{}]",

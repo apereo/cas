@@ -58,7 +58,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -347,6 +346,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnClass(SurrogateAuthenticationService.class)
     public static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -365,12 +365,10 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-
         
         @Bean
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnClass(SurrogateAuthenticationService.class)
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
         public CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
