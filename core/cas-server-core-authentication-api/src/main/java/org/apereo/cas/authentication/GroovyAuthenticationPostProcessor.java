@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
 /**
@@ -18,7 +17,7 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @Setter
 @Getter
-public class GroovyAuthenticationPostProcessor implements AuthenticationPostProcessor, DisposableBean {
+public class GroovyAuthenticationPostProcessor implements AuthenticationPostProcessor {
     private final WatchableGroovyScriptResource watchableScript;
     private int order;
 
