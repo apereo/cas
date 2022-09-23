@@ -40,6 +40,7 @@ public interface DelegatedClientNameExtractor {
      * @return the delegated client name extractor
      */
     static DelegatedClientNameExtractor fromHttpRequest() {
+
         return context -> Optional.ofNullable(context.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER));
     }
 }

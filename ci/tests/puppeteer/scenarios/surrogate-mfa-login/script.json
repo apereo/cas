@@ -1,5 +1,5 @@
 {
-  "dependencies": "simple-mfa,surrogate-webflow",
+  "dependencies": "simple-mfa,surrogate-webflow,reports",
   "conditions": {
     "docker": "true"
   },
@@ -15,11 +15,16 @@
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
     "--logging.level.org.apereo=debug",
+    "--logging.level.org.springframework.webflow=debug",
 
     "--cas.authn.mfa.simple.mail.from=cas@example.com",
     "--cas.authn.mfa.simple.mail.subject=CAS Token",
-    "--cas.authn.mfa.simple.mail.text=CAS token is ${token}",
+    "--cas.authn.mfa.simple.mail.text=${token}",
     "--cas.authn.mfa.simple.mail.attribute-name=email",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
 
     "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json"
   ],

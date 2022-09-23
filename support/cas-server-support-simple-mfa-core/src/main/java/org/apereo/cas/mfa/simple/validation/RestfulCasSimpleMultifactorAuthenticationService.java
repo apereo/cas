@@ -1,6 +1,5 @@
 package org.apereo.cas.mfa.simple.validation;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.simple.RestfulCasSimpleMultifactorAuthenticationTokenProperties;
@@ -108,11 +107,11 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
     }
 
     @Override
-    public Principal validate(final Authentication authentication,
+    public Principal validate(final Principal resolvedPrincipal,
                               final CasSimpleMultifactorTokenCredential credential) throws Exception {
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
-            MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, authentication);
+            MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, resolvedPrincipal);
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .headers(properties.getHeaders())

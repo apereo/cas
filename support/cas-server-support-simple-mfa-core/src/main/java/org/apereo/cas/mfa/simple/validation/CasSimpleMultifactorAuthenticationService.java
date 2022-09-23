@@ -1,6 +1,5 @@
 package org.apereo.cas.mfa.simple.validation;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
@@ -40,10 +39,10 @@ public interface CasSimpleMultifactorAuthenticationService {
     /**
      * Validate MFA the credential.
      *
-     * @param authentication the authentication
-     * @param credential     the credential
+     * @param resolvedPrincipal the resolved principal
+     * @param credential        the credential
      * @return principal object representing the mfa session.
      * @throws Exception the exception
      */
-    Principal validate(Authentication authentication, CasSimpleMultifactorTokenCredential credential) throws Exception;
+    Principal validate(Principal resolvedPrincipal, CasSimpleMultifactorTokenCredential credential) throws Exception;
 }

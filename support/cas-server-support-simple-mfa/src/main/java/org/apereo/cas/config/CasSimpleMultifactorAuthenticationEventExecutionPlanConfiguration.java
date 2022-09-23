@@ -70,6 +70,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("casSimpleMultifactorAuthenticationProvider")
         final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         @Qualifier("casSimpleMultifactorPrincipalFactory")
@@ -81,7 +82,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getMfa().getSimple();
         return new CasSimpleMultifactorAuthenticationHandler(props,
-            servicesManager, casSimpleMultifactorPrincipalFactory,
+            applicationContext, servicesManager, casSimpleMultifactorPrincipalFactory,
             casSimpleMultifactorAuthenticationService, multifactorAuthenticationProvider);
     }
 

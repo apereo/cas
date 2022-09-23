@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -51,9 +52,13 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     @Autowired
     @Qualifier("casSimpleMultifactorAuthenticationHandler")
     private AuthenticationHandler casSimpleMultifactorAuthenticationHandler;
+
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier(TicketFactory.BEAN_NAME)
@@ -61,6 +66,7 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -123,7 +129,7 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
 
         val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, defaultTicketFactory);
         val handler = new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple(),
-            servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
+            applicationContext, servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }

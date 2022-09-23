@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
@@ -11,6 +11,9 @@ import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.support.WebUtils;
@@ -33,13 +36,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link SurrogateWebflowConfigurerTests}.
+ * This is {@link DuoSecuritySurrogateWebflowConfigurerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("DuoSecurity")
-public class SurrogateWebflowConfigurerTests {
+public class DuoSecuritySurrogateWebflowConfigurerTests {
 
     @Import({
         CasCoreMultifactorAuthenticationConfiguration.class,
@@ -69,7 +72,7 @@ public class SurrogateWebflowConfigurerTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    @Import(SurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
+    @Import(DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
     public class DefaultTests extends BaseWebflowConfigurerTests {
 
         @Test
@@ -93,7 +96,7 @@ public class SurrogateWebflowConfigurerTests {
         DuoSecurityConfiguration.class,
         DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
         DuoSecurityMultifactorProviderBypassConfiguration.class,
-        SurrogateWebflowConfigurerTests.SharedTestConfiguration.class
+        DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class
     })
     @TestPropertySource(properties = {
         "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
@@ -133,7 +136,7 @@ public class SurrogateWebflowConfigurerTests {
         DuoSecurityConfiguration.class,
         DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
         DuoSecurityMultifactorProviderBypassConfiguration.class,
-        SurrogateWebflowConfigurerTests.SharedTestConfiguration.class
+        DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class
     })
     @TestPropertySource(properties = {
         "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
