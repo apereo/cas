@@ -28,8 +28,8 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=AUTHENTICATED",
     "cas.authn.ldap[0].ldap-url=ldap://localhost:10389",
-    "cas.authn.ldap[0].base-dn=dc=ub,dc=edu,dc=sa",
-    "cas.authn.ldap[0].search-filter=samaccountname={user}",
+    "cas.authn.ldap[0].base-dn=dc=something,dc=example,dc=org|dc=example,dc=org",
+    "cas.authn.ldap[0].search-filter=cn={user}",
     "cas.authn.ldap[0].bind-dn=cn=Directory Manager",
     "cas.authn.ldap[0].bind-credential=password",
     "cas.authn.ldap[0].collect-dn-attribute=true",
