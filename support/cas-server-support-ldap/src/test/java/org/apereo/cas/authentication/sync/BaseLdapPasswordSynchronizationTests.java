@@ -33,7 +33,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.authn.password-sync.ldap[0].bind-dn=cn=Directory Manager",
         "cas.authn.password-sync.ldap[0].bind-credential=password",
         "cas.authn.password-sync.ldap[0].password-synchronization-failure-fatal=true",
-        "cas.authn.password-sync.ldap[0].password-attribute=userPassword",
+        "cas.authn.password-sync.ldap[0].password-attribute=userPassword"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseLdapPasswordSynchronizationTests {
