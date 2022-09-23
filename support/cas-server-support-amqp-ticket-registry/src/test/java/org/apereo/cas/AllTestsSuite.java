@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.ticket.registry.AMQPDefaultTicketRegistryTests;
+import org.apereo.cas.ticket.registry.AMQPTicketRegistryQueueReceiverTests;
 import org.apereo.cas.ticket.registry.queue.AddTicketMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommandTests;
@@ -20,6 +21,7 @@ import org.junit.platform.suite.api.Suite;
     DeleteTicketsMessageQueueCommandTests.class,
     DeleteTicketMessageQueueCommandTests.class,
     UpdateTicketMessageQueueCommandTests.class,
+    AMQPTicketRegistryQueueReceiverTests.class,
     AMQPDefaultTicketRegistryTests.class
 })
 @Suite

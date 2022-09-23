@@ -118,6 +118,13 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
+  --hbod)
+    export HEADLESS="true"
+    REBUILD="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DEBUG="true"
+    shift 1;
+    ;;
   --hbo)
     export HEADLESS="true"
     REBUILD="true"
@@ -368,6 +375,17 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
+  environmentVariables=$(jq -j '.environmentVariables | join(";")' "$config");
+  IFS=';' read -r -a variables <<< "$environmentVariables"
+  for env in "${variables[@]}"
+  do
+      cmd="export \"$env\""
+      if [[ "${CI}" != "true" ]]; then
+        echo "$cmd"
+      fi
+      eval "$cmd"
+  done
+  
   bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
   bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
   bootstrapScript="${bootstrapScript//\$\{SCENARIO\}/${scenarioName}}"

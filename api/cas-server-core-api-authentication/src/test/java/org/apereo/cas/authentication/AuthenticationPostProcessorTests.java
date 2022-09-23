@@ -27,5 +27,6 @@ public class AuthenticationPostProcessorTests {
         };
         assertEquals(Ordered.HIGHEST_PRECEDENCE, p.getOrder());
         assertTrue(p.supports(mock(Credential.class)));
+        assertDoesNotThrow(p::destroy);
     }
 }
