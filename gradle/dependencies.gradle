@@ -605,18 +605,7 @@ ext.libraries = [
             exclude(group: "org.slf4j", module: "slf4j-api")
 
         },
-//        bvalidator      : [
-//                dependencies.create("org.apache.bval:bval-jsr:$apacheBValVersion") {
-//                    exclude(group: "org.slf4j", module: "slf4j-api")
-//                },
-//        dependencies.create("jakarta.persistence:jakarta.persistence-api:$jpaPersistenceApiVersion") {
-//            exclude(group: "xml-apis", module: "xml-apis")
-//        },
-//        ],
         hikaricp                : [
-                dependencies.create("jakarta.persistence:jakarta.persistence-api:$jpaPersistenceApiVersion") {
-                    exclude(group: "xml-apis", module: "xml-apis")
-                },
                 dependencies.create("com.zaxxer:HikariCP:$hikariVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -634,9 +623,6 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.hibernate", module: "hibernate-ant")
                     force = true
-                },
-                dependencies.create("jakarta.persistence:jakarta.persistence-api:$jpaPersistenceApiVersion") {
-                    exclude(group: "xml-apis", module: "xml-apis")
                 }
         ],
         hibernate               : [
@@ -930,6 +916,9 @@ ext.libraries = [
                 dependencies.create("jakarta.activation:jakarta.activation-api:$jakartaActivationVersion") {
                 },
                 dependencies.create("com.sun.activation:jakarta.activation:$jakartaActivationVersion") {
+                },
+                dependencies.create("jakarta.persistence:jakarta.persistence-api:$jpaPersistenceApiVersion") {
+                    exclude(group: "xml-apis", module: "xml-apis")
                 }
         ],
         javaximpl               : [
