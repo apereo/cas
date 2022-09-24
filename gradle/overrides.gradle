@@ -19,6 +19,9 @@ configurations.all {
                 if (requested.group == "org.opensaml")  {
                     details.useVersion("${opensamlVersion}")
                 }
+                if (requested.group == "jakarta.activation")  {
+                    details.useVersion("${jakartaActivationVersion}")
+                }
                 if (requested.group == "com.h2database")  {
                     details.useVersion("${h2Version}")
                 }
@@ -30,6 +33,9 @@ configurations.all {
                 }
                 if (requested.group == "com.hazelcast" && requested.name == "hazelcast")  {
                     details.useVersion("${hazelcastVersion}")
+                }
+                if (requested.group == "org.pac4j" && requested.name.startsWith("pac4j-"))  {
+                    details.useVersion("${pac4jVersion}")
                 }
                 if (requested.group == "org.springframework")  {
                     details.useVersion("${springVersion}")
@@ -97,6 +103,12 @@ configurations.all {
                 if (requested.group == "ch.qos.logback")  {
                     details.useVersion("${logbackVersion}")
                 }
+                if (requested.group.startsWith("jakarta.xml.bind"))  {
+                    details.useVersion("${jaxbApiVersion}")
+                }
+                if (requested.group.startsWith("jakarta.servlet"))  {
+                    details.useVersion("${javaxServletVersion}")
+                }
                 if (requested.group == "org.apache.httpcomponents")  {
                     if (details.requested.name == "httpcore") {
                         details.useVersion("${httpCoreVersion}")
@@ -113,6 +125,9 @@ configurations.all {
                 if (requested.group == "org.apache.wss4j")  {
                     details.useVersion("${wss4jVersion}")
                 }
+                if (requested.group == "org.slf4j")  {
+                    details.useVersion("${slf4jVersion}")
+                }
             }
         }
     }
@@ -125,6 +140,7 @@ configurations.all {
     exclude(group: "pull-parser", module: "pull-parser")
     exclude(group: "javax.servlet", module: "servlet-api")
     exclude(group: "javax.annotation", module: "javax.annotation-api")
+    exclude(group: "javax.activation", module: "activation")
     exclude(group: "commons-logging", module: "commons-logging")
 }
 

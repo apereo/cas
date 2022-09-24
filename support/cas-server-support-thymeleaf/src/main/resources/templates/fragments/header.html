@@ -92,7 +92,7 @@
                         </p>
                     </div>
                     <div class="cas-notification-message mdc-typography--body1"
-                         th:if="${not #httpServletRequest.secure}">
+                         th:if="${httpRequestSecure}">
                         <h6 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
                             th:utext="#{screen.nonsecure.title}"/>
                         <script>countMessages++;</script>

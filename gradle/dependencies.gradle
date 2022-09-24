@@ -926,6 +926,10 @@ ext.libraries = [
                 dependencies.create("jakarta.servlet:jakarta.servlet-api:$javaxServletVersion") {
                 },
                 dependencies.create("jakarta.annotation:jakarta.annotation-api:$javaxAnnotationApiVersion") {
+                },
+                dependencies.create("jakarta.activation:jakarta.activation-api:$jakartaActivationVersion") {
+                },
+                dependencies.create("com.sun.activation:jakarta.activation:$jakartaActivationVersion") {
                 }
         ],
         javaximpl               : [
@@ -1066,11 +1070,12 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 },
-                dependencies.create("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion") {
+                dependencies.create("com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                    exclude(group: "jakarta.activation", module: "jakarta.activation-api")
                 },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
@@ -2305,7 +2310,6 @@ ext.libraries = [
             },
             dependencies.create("com.sun.mail:jakarta.mail:$jakartaMailVersion")
         ],
-
         springboot              : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-aop:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
