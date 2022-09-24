@@ -56,7 +56,7 @@ OpenID Connect responses can be decorated using the [attribute definition store]
        
 ### CAS Protocol Views
 
-CAS Protocol views and responses, previously managed and rendered via Thymeleaf, are now switch to use Mustache as the templating engine.
+CAS Protocol views and responses, previously managed and rendered via Thymeleaf, are now switched to use Mustache as the templating engine.
 This allow CAS to render and log the final output for better visibility and troubleshooting. Protocol responses are sent to the `PROTOCOL_MESSAGE` logger.
                                                                                                                                                           
 ### OpenID Connect Logging
