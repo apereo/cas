@@ -39,7 +39,7 @@ public class OAuth20UserProfileDataAuditResourceResolver extends ReturnValueAsSt
         values.put("id", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         values.put("client_id", clientId);
         values.put("service", service);
-        values.put("scopes", accessToken.getScopes());
+        values.put(OAuth20Constants.SCOPE, accessToken.getScopes());
         values.put("attributes", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));
         return new String[]{auditFormat.serialize(values)};
     }

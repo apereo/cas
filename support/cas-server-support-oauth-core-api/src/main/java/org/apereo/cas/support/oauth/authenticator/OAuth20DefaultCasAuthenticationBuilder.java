@@ -96,6 +96,8 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>(0));
 
         val scopes = requestParameterResolver.resolveRequestedScopes(context);
+        scopes.retainAll(registeredService.getScopes());
+        
         val state = context.getRequestParameter(OAuth20Constants.STATE)
             .map(String::valueOf)
             .or(() -> requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.STATE))
@@ -115,7 +117,7 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         builder
             .addAttribute("permissions", new LinkedHashSet<>(profile.getPermissions()))
             .addAttribute("roles", new LinkedHashSet<>(profile.getRoles()))
-            .addAttribute("scopes", scopes)
+            .addAttribute(OAuth20Constants.SCOPE, scopes)
             .addAttribute(OAuth20Constants.STATE, state)
             .addAttribute(OAuth20Constants.NONCE, nonce)
             .addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
