@@ -8,10 +8,18 @@ category: Planning
 
 # Getting Started
 
+We want to start by saying thank you for using CAS.
+
 This document provides a high-level guide on how to get started with a CAS server deployment. 
 The sole focus of the guide is describe the process
 that must be followed and adopted by CAS deployers in order to arrive at a successful 
 and sustainable architecture and deployment.
+       
+## Before You Begin
+
+It is very important that you start with [this document](/cas/developer/Contributor-Guidelines.html) first. This will help you understand how
+the CAS project runs and operates. You will learn how to get involved with the project, how to ask for help, 
+how changes are managed and released, what the project expects from you and what you can expect from CAS itself. 
 
 ## Collect Use Cases
 

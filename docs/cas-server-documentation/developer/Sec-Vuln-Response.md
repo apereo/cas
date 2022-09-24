@@ -46,7 +46,9 @@ report contains enough diagnostics data to expedite reviews and feedback:
 - Include an overlay project that can duplicate the issue in practice.
 - If possible, prepare and share unit/integration tests to recreate the issue.
 
-Before posting a possible security issue, please make sure the affected CAS release line is still [under maintenance(/cas/developer/Maintenance-Policy.html). Releases that are considered EOL will not receive further updates and/or attention from designated project members.
+Before posting a possible security issue, please make sure the affected CAS release line 
+is still [under maintenance](/cas/developer/Maintenance-Policy.html). Releases that are 
+considered EOL will not receive further updates and/or attention from designated project members.
 
 ### Time to Fix
 
