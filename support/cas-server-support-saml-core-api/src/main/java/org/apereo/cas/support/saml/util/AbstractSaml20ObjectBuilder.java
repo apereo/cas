@@ -40,8 +40,6 @@ import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
 import javax.xml.namespace.QName;
-
-import javax.xml.namespace.QName;
 import java.io.Serial;
 import java.time.Clock;
 import java.time.Instant;

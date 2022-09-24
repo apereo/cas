@@ -16,6 +16,7 @@ You can implement the conditions using the following strategies.
 {% tabs abacconditions %}
 
 {% tab abacconditions Attributes %}
+
 The activation strategy can be conditionally activated based on available principal attributes.
 
 ```json
@@ -43,16 +44,15 @@ The activation strategy can be conditionally activated based on available princi
 }
 ```
 
-In the above example, the access strategy is only activated if the current principal
-
-- has a `lastName` attribute with values `Jon` or `John`
-- **...AND...**  (This is controlled by the `operator` field, which you can also alter to use `OR`)
-- has a `firstName` attribute with values `Holdoor` or `Hodor`
+In the above example, the access strategy is only activated if the current principal has a `lastName` attribute with values `Jon` or `John`, 
+**AND** has a `firstName` attribute with values `Holdoor` or `Hodor`. The `operator` field can also be modified to use `OR`. 
 
 Note that if the access strategy fails to activate and must remain inactive, then access is denied via `allowIfInactive`.
+
 {% endtab %}
 
 {% tab abacconditions Groovy %}
+
 You can decide whether the access strategy should be activated using a Groovy script, that may be defined either inline
 or outsourced to an external Groovy script.
 
@@ -121,9 +121,11 @@ def run(Object[] args) {
     return true
 }
 ```
+
 {% endtab %}
 
 {% tab abacconditions Chaining %}
+
 You can also combine multiple activation criteria using a chaining setup:
 
 ```json

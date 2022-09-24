@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,7 +30,9 @@ public class RegisteredServiceCorsConfigurationSource implements CorsConfigurati
     private final ArgumentExtractor argumentExtractor;
 
     @Override
-    public CorsConfiguration getCorsConfiguration(final HttpServletRequest request) {
+    public CorsConfiguration getCorsConfiguration(
+        @Nonnull
+        final HttpServletRequest request) {
         val cors = casProperties.getHttpWebRequest().getCors();
         val config = new CorsConfiguration();
 

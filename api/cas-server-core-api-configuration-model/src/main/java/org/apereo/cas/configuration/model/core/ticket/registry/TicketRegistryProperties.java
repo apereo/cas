@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
+import org.apereo.cas.configuration.model.support.amqp.AMQPTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchdb.ticketregistry.CouchDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
-import org.apereo.cas.configuration.model.support.jms.JmsTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoDbTicketRegistryProperties;
@@ -37,10 +37,10 @@ public class TicketRegistryProperties implements Serializable {
     private static final long serialVersionUID = -4735458476452635679L;
 
     /**
-     * JMS registry settings.
+     * AMQP registry settings.
      */
     @NestedConfigurationProperty
-    private JmsTicketRegistryProperties jms = new JmsTicketRegistryProperties();
+    private AMQPTicketRegistryProperties amqp = new AMQPTicketRegistryProperties();
 
     /**
      * DynamoDb registry settings.

@@ -214,10 +214,8 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
 
         val executionPlan = applicationContext.getBean(CasWebflowExecutionPlan.BEAN_NAME, CasWebflowExecutionPlan.class);
         executionPlan.execute();
-        
         val map = applicationContext.getBeansOfType(FlowDefinitionRegistry.class);
-
-        map.forEach((k, value) -> Arrays.stream(value.getFlowDefinitionIds())
+        map.forEach((key, value) -> Arrays.stream(value.getFlowDefinitionIds())
             .filter(currentId -> StringUtils.isBlank(flowId) || flowId.equalsIgnoreCase(currentId))
             .forEach(id -> {
                 val flowDefinition = (Flow) value.getFlowDefinition(id);

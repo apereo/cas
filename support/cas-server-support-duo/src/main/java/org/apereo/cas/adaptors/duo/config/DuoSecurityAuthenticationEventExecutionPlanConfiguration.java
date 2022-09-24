@@ -25,6 +25,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
@@ -38,7 +39,10 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,6 +50,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.condition.Conditi
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -75,6 +80,8 @@ import java.util.stream.Collectors;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
 @AutoConfiguration
 public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
+
+    private static final int WEBFLOW_CONFIGURER_ORDER = 0;
 
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -242,9 +249,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices,
-                    loginFlowDefinitionRegistry, applicationContext, casProperties,
-                    MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext)))
+                .supply(() -> {
+                    val cfg = new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices,
+                        loginFlowDefinitionRegistry, applicationContext, casProperties,
+                        MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                    cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+                    return cfg;
+                })
                 .otherwiseProxy()
                 .get();
         }
@@ -332,4 +343,88 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             return new DuoSecurityAdminApiEndpoint(casProperties, applicationContext);
         }
     }
+
+    @Configuration(value = "SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnClass(SurrogateAuthenticationService.class)
+    public static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnClass(DuoSecurityAuthenticationService.class)
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
+        public CasMultifactorWebflowCustomizer surrogateCasMultifactorWebflowCustomizer(
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(CasMultifactorWebflowCustomizer.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new CasMultifactorWebflowCustomizer() {
+                    @Override
+                    public List<String> getWebflowAttributeMappings() {
+                        return List.of(WebUtils.REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE);
+                    }
+                })
+                .otherwiseProxy()
+                .get();
+        }
+        
+        @Bean
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
+        public CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer(
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new SurrogateWebflowConfigurer(
+                    flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties))
+                .otherwiseProxy()
+                .get();
+        }
+        
+        @Bean
+        @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowExecutionPlanConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
+            final CasWebflowConfigurer surrogateWebflowConfigurer) {
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
+        }
+        
+        private static class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
+            SurrogateWebflowConfigurer(
+                final FlowBuilderServices flowBuilderServices,
+                final FlowDefinitionRegistry mainFlowDefinitionRegistry,
+                final ConfigurableApplicationContext applicationContext,
+                final CasConfigurationProperties casProperties) {
+                super(flowBuilderServices, mainFlowDefinitionRegistry, applicationContext, casProperties);
+                setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+            }
+
+            @Override
+            protected void doInitialize() {
+                val validateAction = getState(getLoginFlow(), CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
+                createTransitionForState(validateAction, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                    CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
+                val duoConfig = casProperties.getAuthn().getMfa().getDuo();
+                duoConfig.forEach(duoCfg -> {
+                    val duoSuccess = getState(getLoginFlow(), duoCfg.getId());
+                    if (duoSuccess != null) {
+                        createTransitionForState(duoSuccess, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                            CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
+                    }
+                });
+            }
+        }
+    }
+
+
 }

@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -35,14 +36,19 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
 
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
-    public CasSimpleMultifactorAuthenticationHandler(final CasSimpleMultifactorAuthenticationProperties properties,
-                                                     final ServicesManager servicesManager,
-                                                     final PrincipalFactory principalFactory,
-                                                     final CasSimpleMultifactorAuthenticationService mfaService,
-                                                     final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+    private final ConfigurableApplicationContext applicationContext;
+
+    public CasSimpleMultifactorAuthenticationHandler(
+        final CasSimpleMultifactorAuthenticationProperties properties,
+        final ConfigurableApplicationContext applicationContext,
+        final ServicesManager servicesManager,
+        final PrincipalFactory principalFactory,
+        final CasSimpleMultifactorAuthenticationService mfaService,
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
         this.multifactorAuthenticationService = mfaService;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -56,11 +62,13 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential,
+                                                                    final Service service) throws GeneralSecurityException {
         try {
             val tokenCredential = (CasSimpleMultifactorTokenCredential) credential;
             val authentication = WebUtils.getInProgressAuthentication();
-            val principal = multifactorAuthenticationService.validate(authentication, tokenCredential);
+            val resolvedPrincipal = resolvePrincipal(applicationContext, authentication.getPrincipal());
+            val principal = multifactorAuthenticationService.validate(resolvedPrincipal, tokenCredential);
             return createHandlerResult(tokenCredential, principal);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

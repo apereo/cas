@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +37,7 @@ public interface BeanContainer<T> {
      * @param entries the entries
      * @return the bean container
      */
-    static <T> BeanContainer<T> of(final List<T> entries) {
+    static <T> BeanContainer<T> of(final List<? extends T> entries) {
         return new ListBeanContainer<>(new ArrayList<>(entries));
     }
 
@@ -47,7 +48,7 @@ public interface BeanContainer<T> {
      * @param entries the entries
      * @return the bean container
      */
-    static <T> BeanContainer<T> of(final Set<T> entries) {
+    static <T> BeanContainer<T> of(final Set<? extends T> entries) {
         return new ListBeanContainer<>(new ArrayList<>(entries));
     }
 
@@ -106,6 +107,14 @@ public interface BeanContainer<T> {
         return size() == 0;
     }
 
+    /**
+     * For each iterator.
+     *
+     * @param o the o
+     * @return the bean container
+     */
+    BeanContainer<T> forEach(Consumer<T> o);
+
     @RequiredArgsConstructor
     class ListBeanContainer<T> implements BeanContainer<T> {
         private final List<T> items;
@@ -113,6 +122,12 @@ public interface BeanContainer<T> {
         @Override
         public T first() {
             return items.get(0);
+        }
+
+        @Override
+        public BeanContainer<T> forEach(final Consumer<T> o) {
+            items.forEach(o);
+            return null;
         }
 
         @Override

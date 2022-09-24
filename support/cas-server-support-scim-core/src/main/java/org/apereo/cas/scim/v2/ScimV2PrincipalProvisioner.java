@@ -10,7 +10,6 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.util.LoggingUtils;
 
 import com.unboundid.scim2.client.ScimInterface;
-import com.unboundid.scim2.client.ScimService;
 import com.unboundid.scim2.common.filters.Filter;
 import com.unboundid.scim2.common.types.UserResource;
 import lombok.RequiredArgsConstructor;

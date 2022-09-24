@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import jakarta.annotation.Nonnull;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -74,29 +75,36 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     }
 
     @Override
-    default boolean preHandle(final HttpServletRequest request,
+    default boolean preHandle(
+        final HttpServletRequest request,
         final HttpServletResponse response,
         final Object handler) throws Exception {
         return true;
     }
 
     @Override
-    default void postHandle(final HttpServletRequest request,
+    default void postHandle(
+        final HttpServletRequest request,
         final HttpServletResponse response,
         final Object handler,
         final ModelAndView modelAndView) {
     }
 
     @Override
-    default void afterCompletion(final HttpServletRequest request,
+    default void afterCompletion(
+        final HttpServletRequest request,
         final HttpServletResponse response,
         final Object handler,
         final Exception e) throws Exception {
     }
 
     @Override
-    default void afterConcurrentHandlingStarted(final HttpServletRequest request,
+    default void afterConcurrentHandlingStarted(
+        @Nonnull
+        final HttpServletRequest request,
+        @Nonnull
         final HttpServletResponse response,
+        @Nonnull
         final Object handler) throws Exception {
     }
 }

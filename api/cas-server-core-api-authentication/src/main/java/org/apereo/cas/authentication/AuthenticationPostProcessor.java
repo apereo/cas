@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
 
 /**
@@ -12,7 +13,7 @@ import org.springframework.core.Ordered;
  * @since 5.2.0
  */
 @FunctionalInterface
-public interface AuthenticationPostProcessor extends Ordered {
+public interface AuthenticationPostProcessor extends Ordered, DisposableBean {
 
     @Override
     default int getOrder() {
@@ -36,5 +37,9 @@ public interface AuthenticationPostProcessor extends Ordered {
      */
     default boolean supports(final Credential credential) {
         return true;
+    }
+
+    @Override
+    default void destroy() throws Exception {
     }
 }

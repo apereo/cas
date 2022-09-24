@@ -23,10 +23,14 @@ dependencies {
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
     compileOnly project(":core:cas-server-core-rest-api")
+    compileOnly project(":support:cas-server-support-surrogate-api")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-themes")
+    
+    testImplementation project(":support:cas-server-support-surrogate-webflow")
+    testImplementation project(":support:cas-server-support-surrogate-authentication")
 
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-rest")

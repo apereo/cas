@@ -1,5 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -16,6 +19,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -38,6 +42,9 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     }
 
     @Override
+    @Audit(action = AuditableActions.OAUTH2_AUTHORIZATION_RESPONSE,
+        actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
         val result = configurationContext.getAccessTokenGenerator().generate(holder);

@@ -103,7 +103,7 @@ public class RestfulCasSimpleMultifactorAuthenticationServiceTests {
                 .getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.INTERNAL_SERVER_ERROR)) {
             webServer.start();
             val credential = new CasSimpleMultifactorTokenCredential(UUID.randomUUID().toString());
-            assertThrows(FailedLoginException.class, () -> multifactorAuthenticationService.validate(authentication, credential));
+            assertThrows(FailedLoginException.class, () -> multifactorAuthenticationService.validate(authentication.getPrincipal(), credential));
         }
     }
 
@@ -115,7 +115,7 @@ public class RestfulCasSimpleMultifactorAuthenticationServiceTests {
                 .getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
             val credential = new CasSimpleMultifactorTokenCredential(UUID.randomUUID().toString());
-            assertNotNull(multifactorAuthenticationService.validate(authentication, credential));
+            assertNotNull(multifactorAuthenticationService.validate(authentication.getPrincipal(), credential));
         }
     }
 }

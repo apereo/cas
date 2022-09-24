@@ -6,6 +6,7 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 
+import javax.annotation.Nonnull;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -19,16 +20,21 @@ public class PseudoPlatformTransactionManager implements PlatformTransactionMana
     @Serial
     private static final long serialVersionUID = -3501861804821200893L;
 
+    @Nonnull
     @Override
     public TransactionStatus getTransaction(final TransactionDefinition transactionDefinition) throws TransactionException {
         return new DefaultTransactionStatus(new Object(), true, true, false, false, new Object());
     }
 
     @Override
-    public void commit(final TransactionStatus transactionStatus) throws TransactionException {
+    public void commit(
+        @Nonnull
+        final TransactionStatus transactionStatus) throws TransactionException {
     }
 
     @Override
-    public void rollback(final TransactionStatus transactionStatus) throws TransactionException {
+    public void rollback(
+        @Nonnull
+        final TransactionStatus transactionStatus) throws TransactionException {
     }
 }

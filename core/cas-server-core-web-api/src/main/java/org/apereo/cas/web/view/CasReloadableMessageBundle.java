@@ -5,6 +5,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.stream.IntStream;
 
@@ -31,7 +32,9 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
     private String[] basenames;
 
     @Override
-    protected String getDefaultMessage(final String code) {
+    protected String getDefaultMessage(
+        @Nonnull
+        final String code) {
         val messageToReturn = super.getDefaultMessage(code);
         if (StringUtils.isNotBlank(messageToReturn) && messageToReturn.equals(code)) {
             LOGGER.trace("The code [{}] cannot be found in the default language bundle and will be used as the message itself.", code);
@@ -59,7 +62,9 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
     }
 
     @Override
-    public void setBasenames(final String... basenames) {
+    public void setBasenames(
+        @Nonnull
+        final String... basenames) {
         this.basenames = basenames;
         super.setBasenames(basenames);
     }

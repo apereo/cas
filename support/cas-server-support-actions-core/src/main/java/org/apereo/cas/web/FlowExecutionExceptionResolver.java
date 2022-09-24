@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -42,9 +43,13 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
      * redirect loop (i.e. when invalid "execution" parameter exists as part of the query string
      */
     @Override
-    public ModelAndView resolveException(final HttpServletRequest request,
-                                         final HttpServletResponse response, final Object handler,
-                                         final Exception exception) {
+    public ModelAndView resolveException(
+        @Nonnull
+        final HttpServletRequest request,
+        @Nonnull
+        final HttpServletResponse response, final Object handler,
+        @Nonnull
+        final Exception exception) {
 
         if (!(exception instanceof FlowExecutionRepositoryException) || exception instanceof BadlyFormattedFlowExecutionKeyException) {
             LOGGER.debug("Ignoring the received exception [{}] due to a type mismatch with handler [{}]", exception, handler);

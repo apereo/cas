@@ -29,7 +29,6 @@ The following multifactor providers are supported by CAS.
 |----------------------|----------------|------------------------------------------------------------|
 | Duo Security         | `mfa-duo`      | [See this guide](DuoSecurity-Authentication.html).         |
 | Authy Authenticator  | `mfa-authy`    | [See this guide](AuthyAuthenticator-Authentication.html).  |
-| Acceptto             | `mfa-acceptto` | [See this guide](Acceptto-Authentication.html).            |
 | YubiKey              | `mfa-yubikey`  | [See this guide](YubiKey-Authentication.html).             |
 | RSA/RADIUS           | `mfa-radius`   | [See this guide](RADIUS-Authentication.html).              |
 | WiKID                | `mfa-radius`   | [See this guide](RADIUS-Authentication.html).              |

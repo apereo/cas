@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.web.servlet.ThemeResolver;
@@ -35,8 +36,11 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
         return this;
     }
 
+    @Nonnull
     @Override
-    public String resolveThemeName(final HttpServletRequest httpServletRequest) {
+    public String resolveThemeName(
+        @Nonnull
+        final HttpServletRequest httpServletRequest) {
         val it = chain.iterator();
         while (it.hasNext()) {
             val r = it.next();
@@ -52,8 +56,10 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
     }
 
     @Override
-    public void setThemeName(final HttpServletRequest httpServletRequest,
-                             final HttpServletResponse httpServletResponse,
-                             final String s) {
+    public void setThemeName(
+        @Nonnull
+        final HttpServletRequest httpServletRequest,
+        final HttpServletResponse httpServletResponse,
+        final String s) {
     }
 }

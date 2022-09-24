@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
+import org.apereo.cas.web.view.attributes.AttributeValuesPerLineProtocolAttributesRenderer;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
@@ -56,9 +57,9 @@ public class Cas10ResponseViewTests {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(true, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class), new DefaultAuthenticationServiceSelectionPlan(),
-            NoOpProtocolAttributesRenderer.INSTANCE);
+            new AttributeValuesPerLineProtocolAttributesRenderer());
         view.render(model, new MockHttpServletRequest(), response);
-        assertEquals("yes\ntest\n", response.getContentAsString());
+        assertTrue(response.getContentAsString().startsWith("yes\ntest\n"));
     }
 
     @Test

@@ -13,6 +13,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.view.CasProtocolMustacheViewFactory;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
@@ -29,9 +30,11 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.mustache.MustacheAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.view.MustacheViewResolver;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -69,7 +72,10 @@ import java.util.Set;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(SpringTemplateEngine.class)
-@ImportAutoConfiguration(ThymeleafAutoConfiguration.class)
+@ImportAutoConfiguration({
+    MustacheAutoConfiguration.class,
+    ThymeleafAutoConfiguration.class
+})
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Thymeleaf)
 @AutoConfiguration
@@ -189,14 +195,27 @@ public class CasThymeleafConfiguration {
         }
     }
 
+    @Configuration(value = "MustacheViewResolverConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MustacheViewResolverConfiguration {
+
+        @ConditionalOnMissingBean(name = CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasProtocolViewFactory casProtocolMustacheViewFactory(final MustacheViewResolver mustacheViewResolver) {
+            return new CasProtocolMustacheViewFactory(mustacheViewResolver);
+        }
+    }
+
     @Configuration(value = "ThymeleafViewResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ThymeleafViewResolverConfiguration {
 
-        @ConditionalOnMissingBean(name = "casProtocolViewFactory")
+        @ConditionalOnMissingBean(name = CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasProtocolViewFactory casProtocolViewFactory(final SpringTemplateEngine springTemplateEngine, final ThymeleafProperties thymeleafProperties) {
+        public CasProtocolViewFactory casProtocolThymeleafViewFactory(final SpringTemplateEngine springTemplateEngine,
+                                                                      final ThymeleafProperties thymeleafProperties) {
             return new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
         }
 

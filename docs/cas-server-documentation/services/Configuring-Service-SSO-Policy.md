@@ -11,6 +11,24 @@ category: Services
 Single Sign-on participation policies designed on a per-service basis should override the global SSO behavior. Such policies generally are applicable
 to participation in single sign-on sessions, creating SSO cookies, etc. 
 
+## Disable Service SSO Access
+
+Participation in existing single signon sessions can be disabled on a per-application basis. For example,
+the following service will be challenged to present credentials every time, thereby not using SSO:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "ssoEnabled" : false
+  }
+}
+```
+
 ## Single Sign-on Cookie
 
 CAS adopters may want to allow for a behavior where logging in to a non-SSO-participating application

@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
+import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -180,12 +181,13 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                 })));
     }
 
+    @Nonnull
     @Override
     protected Cookie createCookie(@NonNull final String cookieValue) {
-        val c = super.createCookie(cookieValue);
-        c.setComment(cookieGenerationContext.getComment());
-        c.setPath(cleanCookiePath(c.getPath()));
-        return c;
+        val cookie = super.createCookie(cookieValue);
+        cookie.setComment(cookieGenerationContext.getComment());
+        cookie.setPath(cleanCookiePath(cookie.getPath()));
+        return cookie;
     }
 
     /**

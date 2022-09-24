@@ -46,8 +46,24 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases 
-and scenarios. At the moment, total number of jobs stands at approximately `330` distinct scenarios. The overall 
+and scenarios. At the moment, total number of jobs stands at approximately `336` distinct scenarios. The overall 
 test coverage of the CAS codebase is approximately `94%`.
+ 
+### OpenID Connect Claim Definitions
+
+Attribute definitions that specifically apply to the release of attributes as part of 
+OpenID Connect responses can be decorated using the [attribute definition store](../authentication/OIDC-Attribute-Definitions.html).
+       
+### CAS Protocol Views
+
+CAS Protocol views and responses, previously managed and rendered via Thymeleaf, are now switched to use Mustache as the templating engine.
+This allow CAS to render and log the final output for better visibility and troubleshooting. Protocol responses are sent to the `PROTOCOL_MESSAGE` logger.
+                                                                                                                                                          
+### OpenID Connect Logging
+
+Authentication requests and responses for OpenID Connect and OAuth are logger via a dedicated 
+logger. Similar to CAS and SAML2 protocols, protocol responses such a profile requests, access token generation, etc 
+are sent to the `PROTOCOL_MESSAGE` logger.
 
 ### Removed Modules
 
@@ -60,6 +76,7 @@ be supported, maintained or released:
 - Apache Fortress Authentication
 - Ehcache Ticket Registry
 - SwivelSecure Multifactor Authentication
+- Acceptto Multifactor Authentication
 - Infinispan Ticket Registry
 - Couchbase Ticket Registry
 - Scripted Attribute Repository
@@ -78,7 +95,18 @@ now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activa
 In the event that a SAML2 service provider is configured to download metadata from a URL, CAS may now attempt to reuse the previously-downloaded
 backup file on disk for the service provider, if the metadata file is still seen as valid. This capability will require the forceful fetching
 of the metadata over HTTP to be disabled.
- 
+
+### Delegated Authentication Dynamic Discovery
+
+[Dynamic Discovery](../integration/Delegate-Authentication-DiscoverySelection.html) configured for delegated authentication is able to
+start the delegation flow based on a principal attribute that would then be matched against the configuration rules to locate the 
+approprivate external identity provider.
+     
+### AMQP Ticket Registry
+
+The JMS ticket registry has now been removed and replaced with a ticket registry implementation that is backed by the AMQP protocol
+and RabbitMQ. [See this](../ticketing/Messaging-AMQP-Ticket-Registry.html) for more info. 
+
 ### Docker Images
 
 A number of Docker images used for integration testing are now upgraded to their latest available versions:

@@ -27,6 +27,16 @@ public class JsonUtils {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
 
     /**
+     * Render.
+     *
+     * @param model the model
+     * @return the string
+     */
+    public String render(final Object model) {
+        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(model));
+    }
+
+    /**
      * Render model and view.
      *
      * @param model    the model

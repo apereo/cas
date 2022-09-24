@@ -3,6 +3,7 @@ import java.util.regex.*
 enum TestCategories {
     ActuatorEndpoint,
     AmazonWebServices,
+    AMQP,
     Attributes,
     Audits,
     Authentication,
@@ -35,7 +36,6 @@ enum TestCategories {
     InfluxDb,
     JDBC,
     JDBCAuthentication,
-    JMS,
     JMX,
     Kafka,
     Ldap,

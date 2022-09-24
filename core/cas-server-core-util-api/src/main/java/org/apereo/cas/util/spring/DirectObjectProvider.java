@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import jakarta.annotation.Nonnull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 
@@ -31,7 +32,9 @@ public record DirectObjectProvider<T>(T object) implements ObjectProvider<T> {
 
     @Override
     @NotNull
-    public T getObject(final Object... objects) throws BeansException {
+    public T getObject(
+        @Nonnull
+        final Object... objects) throws BeansException {
         return object;
     }
 }

@@ -3,7 +3,7 @@
 ${PWD}/ci/tests/ldap/run-ldap-server.sh
 ${PWD}/ci/tests/mail/run-mail-server.sh
 
-ldif=$(cat ${PWD}/ci/tests/puppeteer/scenarios/passwordless-mfa-login-duo-with-ldap/ldap-passwordless.ldif)
+ldif=$(cat ${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ldap-passwordless.ldif)
 echo -e "Importing LDIF:\n${ldif}"
 
 docker exec ldap-server bash -c "echo '${ldif}' > ./users.ldif"

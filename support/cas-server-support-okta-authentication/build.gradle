@@ -1,7 +1,4 @@
 description = 'Apereo CAS Okta Authentication'
-configurations.all {
-    exclude(group: "org.yaml", module: "snakeyaml")
-}
 
 dependencies {
     api project(":api:cas-server-core-api")
@@ -9,6 +6,7 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.jose4j
     implementation libraries.oktasdk
+    implementation libraries.snakeyaml
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow-api")

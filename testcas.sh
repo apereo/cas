@@ -258,7 +258,7 @@ while (( "$#" )); do
             mfa)
                 task+="testMFA "
                 ;;
-            mfaprovider|gauth|webauthn|authy|fido|u2f|acceptto)
+            mfaprovider|gauth|webauthn|authy|fido|u2f)
                 task+="testMFAProvider "
                 ;;
             mfatrigger)
@@ -411,9 +411,9 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/redis/run-redis-server.sh
                 task+="testRedis "
                 ;;
-            activemq|amq|jms|amqp)
-                isDockerOnLinux && ./ci/tests/activemq/run-activemq-server.sh
-                task+="testJMS "
+            activemq|amq|jms|rabbitmq|artemis|amqp)
+                isDockerOnLinux && ./ci/tests/activemq/run-rabbitmq-server.sh
+                task+="testAMQP "
                 ;;
             *)
                 printf "${RED}Unable to recognize test category: ${item}${ENDCOLOR}\n"
