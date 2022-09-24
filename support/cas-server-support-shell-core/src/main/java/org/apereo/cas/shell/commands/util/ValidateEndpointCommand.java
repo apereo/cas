@@ -162,11 +162,11 @@ public class ValidateEndpointCommand {
             sslContext.init(null, new TrustManager[]{new X509TrustManager() {
 
                 @Override
-                public void checkClientTrusted(final X509Certificate[] xcs, final String string) {
+                public void checkClientTrusted(final X509Certificate[] xcs, final String value) {
                 }
 
                 @Override
-                public void checkServerTrusted(final X509Certificate[] xcs, final String string) {
+                public void checkServerTrusted(final X509Certificate[] xcs, final String value) {
                 }
 
                 @Override

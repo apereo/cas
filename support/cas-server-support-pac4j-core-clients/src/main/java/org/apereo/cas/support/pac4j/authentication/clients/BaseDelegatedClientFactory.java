@@ -583,10 +583,10 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     protected Collection<IndirectClient> buildBitBucketIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
-        val bb = pac4jProperties.getBitbucket();
-        if (bb.isEnabled() && StringUtils.isNotBlank(bb.getId()) && StringUtils.isNotBlank(bb.getSecret())) {
-            val client = new BitbucketClient(bb.getId(), bb.getSecret());
-            configureClient(client, bb, casProperties);
+        val bitbucket = pac4jProperties.getBitbucket();
+        if (bitbucket.isEnabled() && StringUtils.isNotBlank(bitbucket.getId()) && StringUtils.isNotBlank(bitbucket.getSecret())) {
+            val client = new BitbucketClient(bitbucket.getId(), bitbucket.getSecret());
+            configureClient(client, bitbucket, casProperties);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(client);

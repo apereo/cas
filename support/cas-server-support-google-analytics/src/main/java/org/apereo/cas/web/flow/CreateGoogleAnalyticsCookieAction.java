@@ -50,7 +50,7 @@ public class CreateGoogleAnalyticsCookieAction extends BaseCasWebflowAction {
             val cookieValue = values
                 .stream()
                 .map(Object::toString)
-                .filter(string -> RegexUtils.find(attributeValuePattern, string))
+                .filter(value -> RegexUtils.find(attributeValuePattern, value))
                 .collect(Collectors.joining(","));
             LOGGER.trace("Google analytics final cookie value is [{}]", cookieValue);
 

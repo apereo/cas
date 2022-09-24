@@ -479,10 +479,10 @@ public class LdapUtils {
      * @return the pooled connection factory
      */
     public static PooledConnectionFactory newLdaptivePooledConnectionFactory(final AbstractLdapProperties l) {
-        val cc = newLdaptiveConnectionConfig(l);
+        val connectionConfig = newLdaptiveConnectionConfig(l);
 
         LOGGER.debug("Creating LDAP connection pool configuration for [{}]", l.getLdapUrl());
-        val pooledCf = new PooledConnectionFactory(cc);
+        val pooledCf = new PooledConnectionFactory(connectionConfig);
         pooledCf.setMinPoolSize(l.getMinPoolSize());
         pooledCf.setMaxPoolSize(l.getMaxPoolSize());
         pooledCf.setValidateOnCheckOut(l.isValidateOnCheckout());
@@ -565,25 +565,25 @@ public class LdapUtils {
         }
 
         LOGGER.debug("Creating LDAP connection configuration for [{}]", properties.getLdapUrl());
-        val cc = new ConnectionConfig();
+        val connectionConfig = new ConnectionConfig();
 
         val urls = properties.getLdapUrl().contains(" ")
             ? properties.getLdapUrl()
             : String.join(" ", properties.getLdapUrl().split(","));
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", properties.getLdapUrl(), urls);
-        cc.setLdapUrl(urls);
+        connectionConfig.setLdapUrl(urls);
 
-        cc.setUseStartTLS(properties.isUseStartTls());
-        cc.setConnectTimeout(Beans.newDuration(properties.getConnectTimeout()));
-        cc.setResponseTimeout(Beans.newDuration(properties.getResponseTimeout()));
+        connectionConfig.setUseStartTLS(properties.isUseStartTls());
+        connectionConfig.setConnectTimeout(Beans.newDuration(properties.getConnectTimeout()));
+        connectionConfig.setResponseTimeout(Beans.newDuration(properties.getResponseTimeout()));
 
         if (StringUtils.isNotBlank(properties.getConnectionStrategy())) {
             val strategy = AbstractLdapProperties.LdapConnectionStrategy.valueOf(properties.getConnectionStrategy());
             switch (strategy) {
-                case RANDOM -> cc.setConnectionStrategy(new RandomConnectionStrategy());
-                case DNS_SRV -> cc.setConnectionStrategy(new DnsSrvConnectionStrategy());
-                case ROUND_ROBIN -> cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
-                case ACTIVE_PASSIVE -> cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
+                case RANDOM -> connectionConfig.setConnectionStrategy(new RandomConnectionStrategy());
+                case DNS_SRV -> connectionConfig.setConnectionStrategy(new DnsSrvConnectionStrategy());
+                case ROUND_ROBIN -> connectionConfig.setConnectionStrategy(new RoundRobinConnectionStrategy());
+                case ACTIVE_PASSIVE -> connectionConfig.setConnectionStrategy(new ActivePassiveConnectionStrategy());
             }
         }
 
@@ -591,7 +591,7 @@ public class LdapUtils {
             LOGGER.debug("Creating LDAP SSL configuration via trust certificates [{}]", properties.getTrustCertificates());
             val cfg = new X509CredentialConfig();
             cfg.setTrustCertificates(properties.getTrustCertificates());
-            cc.setSslConfig(new SslConfig(cfg));
+            connectionConfig.setSslConfig(new SslConfig(cfg));
         } else if (properties.getTrustStore() != null || properties.getKeystore() != null) {
             val cfg = new KeyStoreCredentialConfig();
             FunctionUtils.doIfNotNull(properties.getTrustStore(), store -> {
@@ -610,13 +610,13 @@ public class LdapUtils {
                 val password = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getKeystorePassword());
                 cfg.setKeyStorePassword(password);
             });
-            cc.setSslConfig(new SslConfig(cfg));
+            connectionConfig.setSslConfig(new SslConfig(cfg));
         } else {
             LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore");
-            cc.setSslConfig(new SslConfig());
+            connectionConfig.setSslConfig(new SslConfig());
         }
 
-        val sslConfig = cc.getSslConfig();
+        val sslConfig = connectionConfig.getSslConfig();
         if (sslConfig != null) {
             switch (properties.getHostnameVerifier()) {
                 case ANY -> sslConfig.setHostnameVerifier(new AllowAnyHostnameVerifier());
@@ -648,15 +648,15 @@ public class LdapUtils {
                 sc.setSecurityStrength(SecurityStrength.valueOf(properties.getSaslSecurityStrength()));
             }
             bc.setBindSaslConfig(sc);
-            cc.setConnectionInitializers(bc);
+            connectionConfig.setConnectionInitializers(bc);
         } else if (StringUtils.equals(properties.getBindCredential(), "*") && StringUtils.equals(properties.getBindDn(), "*")) {
             LOGGER.debug("Creating LDAP fast-bind connection initializer");
-            cc.setConnectionInitializers(new FastBindConnectionInitializer());
+            connectionConfig.setConnectionInitializers(new FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(properties.getBindDn()) && StringUtils.isNotBlank(properties.getBindCredential())) {
             LOGGER.debug("Creating LDAP bind connection initializer via [{}]", properties.getBindDn());
-            cc.setConnectionInitializers(new BindConnectionInitializer(properties.getBindDn(), new Credential(properties.getBindCredential())));
+            connectionConfig.setConnectionInitializers(new BindConnectionInitializer(properties.getBindDn(), new Credential(properties.getBindCredential())));
         }
-        return cc;
+        return connectionConfig;
     }
 
     /**
@@ -881,8 +881,8 @@ public class LdapUtils {
      */
     public static ConnectionFactory newLdaptiveDefaultConnectionFactory(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
-        val cc = newLdaptiveConnectionConfig(l);
-        return new DefaultConnectionFactory(cc);
+        val connectionConfig = newLdaptiveConnectionConfig(l);
+        return new DefaultConnectionFactory(connectionConfig);
     }
 
     /**

@@ -54,12 +54,12 @@ public class RedisObjectFactory {
      */
     public static <K, V> CasRedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory) {
         val template = new DefaultCasRedisTemplate<K, V>();
-        val string = new StringRedisSerializer();
+        val serializer = new StringRedisSerializer();
         val jdk = new JdkSerializationRedisSerializer();
-        template.setKeySerializer(string);
+        template.setKeySerializer(serializer);
         template.setValueSerializer(jdk);
         template.setHashValueSerializer(jdk);
-        template.setHashKeySerializer(string);
+        template.setHashKeySerializer(serializer);
         template.setConnectionFactory(connectionFactory);
         return template;
     }
