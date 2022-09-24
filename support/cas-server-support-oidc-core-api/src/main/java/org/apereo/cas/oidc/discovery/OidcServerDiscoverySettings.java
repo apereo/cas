@@ -125,6 +125,11 @@ public class OidcServerDiscoverySettings {
         return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.ACCESS_TOKEN_URL);
     }
 
+    @JsonProperty("device_authorization_endpoint")
+    public String getDeviceAuthorizationEndpoint() {
+        return getTokenEndpoint();
+    }
+
     @JsonProperty("userinfo_endpoint")
     public String getUserinfoEndpoint() {
         return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.PROFILE_URL);
