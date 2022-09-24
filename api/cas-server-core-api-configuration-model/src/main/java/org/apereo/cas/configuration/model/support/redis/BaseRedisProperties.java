@@ -96,6 +96,11 @@ public class BaseRedisProperties implements Serializable {
     private boolean useSsl;
 
     /**
+     * Redis protocol version.
+     */
+    private String protocolVersion = "RESP3";
+
+    /**
      * Connection timeout.
      */
     @DurationCapable
