@@ -16,7 +16,13 @@ SOURCE_DIRECTORY="#{CURRENT_DIR}/gh-pages/_site"
  
 
 options = {
-  :typhoeus => { followlocation: true },
+  :typhoeus => {
+    :followlocation => true,
+    :connecttimeout => 20,
+    :timeout => 60,
+    :ssl_verifypeer => false,
+    :ssl_verifyhost => 0
+  },
   :disable_external => false,
   :allow_hash_href => true,
   :allow_missing_href => true,
