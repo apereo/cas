@@ -47,7 +47,7 @@ configurations.all {
                         details.useVersion("${springSessionVersion}")
                     }
                 }
-                if (requested.group == "org.apache.tomcat")  {
+                if (requested.group.startsWith( "org.apache.tomcat")) {
                     details.useVersion("${tomcatVersion}")
                 }
                 if (requested.group == "org.hsqldb")  {
