@@ -468,8 +468,6 @@ subprojects {
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-//        api libraries.bvalidator
-        api libraries.hibernatevalidator
         api libraries.groovy
         api libraries.caffein
         api libraries.springcloud
@@ -486,8 +484,10 @@ subprojects {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
             errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
+        
         testImplementation libraries.tests
         testImplementation libraries.log4j
+        testImplementation libraries.hibernatevalidator
 
         if (!ci) {
             testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
