@@ -126,7 +126,7 @@ public class CasWebAppConfiguration {
                 final HttpServletResponse response) {
                 val queryString = request.getQueryString();
                 val url = request.getContextPath() + "/login"
-                          + Optional.ofNullable(queryString).map(string -> '?' + string).orElse(StringUtils.EMPTY);
+                          + Optional.ofNullable(queryString).map(value -> '?' + value).orElse(StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
 

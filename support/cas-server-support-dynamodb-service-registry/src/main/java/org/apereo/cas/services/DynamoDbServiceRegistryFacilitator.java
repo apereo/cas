@@ -190,10 +190,10 @@ public class DynamoDbServiceRegistryFacilitator {
     }
 
     private RegisteredService deserializeServiceFromBinaryBlob(final Map<String, AttributeValue> returnItem) {
-        val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
+        val blob = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
         LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);
 
-        try (val is = bb.asInputStream()) {
+        try (val is = blob.asInputStream()) {
             return this.jsonSerializer.from(is);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

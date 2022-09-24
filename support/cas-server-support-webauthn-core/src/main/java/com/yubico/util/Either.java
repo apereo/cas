@@ -42,7 +42,7 @@ public final class Either<L, R> {
         this.rightValue = rightValue;
     }
     
-    private Either(@SuppressWarnings("UnusedVariable") final boolean dummy, final L leftValue) {
+    private Either(@SuppressWarnings("UnusedVariable") final boolean unused, final L leftValue) {
         this.isRight = false;
         this.leftValue = leftValue;
         this.rightValue = null;
