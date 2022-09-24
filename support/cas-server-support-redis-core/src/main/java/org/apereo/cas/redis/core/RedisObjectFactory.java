@@ -11,6 +11,7 @@ import io.lettuce.core.SslOptions;
 import io.lettuce.core.TimeoutOptions;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
+import io.lettuce.core.protocol.ProtocolVersion;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -205,6 +206,7 @@ public class RedisObjectFactory {
         return clientOptionsBuilder
             .timeoutOptions(TimeoutOptions.enabled())
             .sslOptions(sslOptions)
+            .protocolVersion(ProtocolVersion.valueOf(redis.getProtocolVersion()))
             .build();
     }
 
