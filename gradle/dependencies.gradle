@@ -1016,23 +1016,6 @@ ext.libraries = [
                     exclude(group: "org.apache.geronimo.specs", module: "geronimo-jaxrs_1.1_spec")
 
                 },
-                dependencies.create("com.unboundid.product.scim:scim-sdk:$unboundidScim1Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.glassfish.jersey.core", module: "oauth2-client")
-                    exclude(group: "org.glassfish.jersey.core", module: "jersey-common")
-                    exclude(group: "org.glassfish.jersey.core", module: "jersey-client")
-                    exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
-                    exclude(group: "javax.xml.bind", module: "jaxb-api")
-                    exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "org.apache.wink", module: "wink-client")
-                    exclude(group: "org.apache.wink", module: "wink-common")
-                    exclude(group: "org.apache.geronimo.specs", module: "geronimo-jaxrs_1.1_spec")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.unboundid.components", module: "json")
-
-                },
                 dependencies.create("org.glassfish.jersey.security:oauth2-client:$jerseyVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
