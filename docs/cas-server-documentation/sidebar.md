@@ -7,6 +7,7 @@ layout: null
 * [Planning](#planning)
     *   [Architecture](/cas/{{ version }}/planning/Architecture.html)
     *   [Getting Started](/cas/{{ version }}/planning/Getting-Started.html)
+    *   [Getting Involved](/cas/developer/Contributor-Guidelines.html)
     *   [Security Guide](/cas/{{ version }}/planning/Security-Guide.html)
     *   [Upgrade Guide](/cas/{{ version }}/planning/Upgrade-Guide.html)
     *   [Release Notes](/cas/{{ version }}/release_notes/Overview.html)
@@ -663,4 +664,3 @@ layout: null
 * [Project](#projectpolicy)
     *   [PMC](/cas/developer/Project-Commitee.html)
     *   [Security Vulnerability Response](/cas/developer/Sec-Vuln-Response.html)
-    *   [Contributor Guidelines](/cas/developer/Contributor-Guidelines.html)

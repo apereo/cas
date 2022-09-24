@@ -37,7 +37,7 @@ on:
     branches:
       - 'pr-*'
   schedule:
-    - cron: '30 5 * * 5'
+    - cron: '0 3 1 * *'
 #  pull_request:
 #    types: [ labeled ]
 #    branches:
