@@ -38,6 +38,8 @@ import org.springframework.web.servlet.theme.CookieThemeResolver;
 import org.springframework.web.servlet.theme.FixedThemeResolver;
 import org.springframework.web.servlet.theme.SessionThemeResolver;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is {@link CasThemesConfiguration}.
  *
@@ -103,7 +105,9 @@ public class CasThemesConfiguration {
         final ThymeleafProperties thymeleafProperties) {
         return new WebMvcConfigurer() {
             @Override
-            public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+            public void addResourceHandlers(
+                @Nonnull
+                final ResourceHandlerRegistry registry) {
                 val templatePrefixes = casProperties.getView().getTemplatePrefixes();
                 if (!templatePrefixes.isEmpty()) {
                     val registration = registry.addResourceHandler("/**");

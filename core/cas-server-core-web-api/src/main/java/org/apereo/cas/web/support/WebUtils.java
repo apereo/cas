@@ -1437,9 +1437,9 @@ public class WebUtils {
     public static void createCredential(final RequestContext requestContext) {
         removeCredential(requestContext);
         val flow = (Flow) requestContext.getActiveFlow();
-        val var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
-        if (var != null) {
-            var.create(requestContext);
+        val flowVariable = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
+        if (flowVariable != null) {
+            flowVariable.create(requestContext);
         }
     }
 

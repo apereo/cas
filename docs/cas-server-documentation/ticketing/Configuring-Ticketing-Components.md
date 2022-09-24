@@ -43,7 +43,7 @@ deployments. Components for the following caching technologies are provided:
 
 ### Message-based Ticket Registries
 
-* [JMS](Messaging-JMS-Ticket-Registry.html)
+* [AMQP](Messaging-AMQP-Ticket-Registry.html)
 
 ### RDBMS Ticket Registries
 

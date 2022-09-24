@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pac4j.discovery.DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator;
@@ -38,6 +39,8 @@ public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "delegatedAuthenticationDynamicDiscoveryProviderLocator")
     public DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator(
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+        final PrincipalResolver defaultPrincipalResolver,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
         final DelegatedClientAuthenticationConfigurationContext configContext,
@@ -45,7 +48,8 @@ public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
         return BeanSupplier.of(DelegatedAuthenticationDynamicDiscoveryProviderLocator.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(
-                configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(), casProperties))
+                configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(),
+                defaultPrincipalResolver, casProperties))
             .otherwiseProxy()
             .get();
     }

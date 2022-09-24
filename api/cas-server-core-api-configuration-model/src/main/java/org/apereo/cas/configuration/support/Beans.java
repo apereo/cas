@@ -62,9 +62,9 @@ public class Beans {
             val vals = StringUtils.commaDelimitedListToStringArray(value);
             backingMap.put(key, Arrays.stream(vals)
                 .map(v -> {
-                    val bool = BooleanUtils.toBooleanObject(v);
-                    if (bool != null) {
-                        return bool;
+                    val result = BooleanUtils.toBooleanObject(v);
+                    if (result != null) {
+                        return result;
                     }
                     return v;
                 })

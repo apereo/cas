@@ -124,9 +124,9 @@ public interface AuditableActions {
      */
     String OAUTH2_USER_PROFILE = "OAUTH2_USER_PROFILE";
     /**
-     * Auditable action {@code OAUTH2_CODE_RESPONSE}.
+     * Auditable action {@code OAUTH2_AUTHORIZATION_RESPONSE}.
      */
-    String OAUTH2_CODE_RESPONSE = "OAUTH2_CODE_RESPONSE";
+    String OAUTH2_AUTHORIZATION_RESPONSE = "OAUTH2_AUTHORIZATION_RESPONSE";
     /**
      * Auditable action {@code OAUTH2_ACCESS_TOKEN_REQUEST}.
      */

@@ -27,6 +27,7 @@ import java.util.Properties;
 public class DefaultCasThemeSource extends ResourceBundleThemeSource {
     private final CasConfigurationProperties casProperties;
 
+    @Nonnull
     @Override
     protected MessageSource createMessageSource(
         @Nonnull

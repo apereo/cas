@@ -9,8 +9,8 @@ import org.apereo.cas.authentication.DirectLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.DisabledPoolingLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.EDirectoryPasswordPolicyLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.FreeIPAPasswordPolicyLdapAuthenticationHandlerTests;
-import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessorTests;
 import org.apereo.cas.authentication.OpenLdapAuthenticationHandlerTests;
+import org.apereo.cas.authentication.sync.LdapPasswordSynchronizationAuthenticationPostProcessorTests;
 import org.apereo.cas.config.LdapPasswordSynchronizationConfigurationTests;
 
 import org.junit.platform.suite.api.SelectClasses;

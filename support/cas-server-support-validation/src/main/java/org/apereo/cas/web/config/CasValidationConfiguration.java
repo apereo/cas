@@ -257,38 +257,36 @@ public class CasValidationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2SuccessView(
-            @Qualifier("casProtocolViewFactory")
-            final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
+            final CasProtocolViewFactory casProtocolMustacheViewFactory,
             final CasConfigurationProperties casProperties) {
-            return casProtocolViewFactory.create(applicationContext,
-                casProperties.getView().getCas2().getSuccess(),
-                APPLICATION_XML_VALUE);
+            return casProtocolMustacheViewFactory.create(applicationContext,
+                casProperties.getView().getCas2().getSuccess(), APPLICATION_XML_VALUE);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2ServiceFailureView(
-            @Qualifier("casProtocolViewFactory")
-            final CasProtocolViewFactory casProtocolViewFactory,
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
-            return casProtocolViewFactory.create(applicationContext,
-                casProperties.getView().getCas2().getFailure());
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
+            final CasProtocolViewFactory casProtocolMustacheViewFactory,
+            final CasConfigurationProperties casProperties) throws Exception {
+            return casProtocolMustacheViewFactory.create(applicationContext,
+                casProperties.getView().getCas2().getFailure(), APPLICATION_XML_VALUE);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2ProxyFailureView(
-            @Qualifier("casProtocolViewFactory")
-            final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
+            final CasProtocolViewFactory casProtocolMustacheViewFactory,
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(View.class)
                 .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
-                .supply(() -> casProtocolViewFactory.create(applicationContext,
-                    casProperties.getView().getCas2().getProxy().getFailure(),
-                    APPLICATION_XML_VALUE))
+                .supply(() -> casProtocolMustacheViewFactory.create(applicationContext,
+                    casProperties.getView().getCas2().getProxy().getFailure(), APPLICATION_XML_VALUE))
                 .otherwiseProxy()
                 .get();
         }
@@ -296,15 +294,14 @@ public class CasValidationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2ProxySuccessView(
-            @Qualifier("casProtocolViewFactory")
-            final CasProtocolViewFactory casProtocolViewFactory,
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
+            final CasProtocolViewFactory casProtocolMustacheViewFactory,
             final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+            final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(View.class)
                 .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
-                .supply(() -> casProtocolViewFactory.create(applicationContext,
-                    casProperties.getView().getCas2().getProxy().getSuccess(),
-                    APPLICATION_XML_VALUE))
+                .supply(() -> casProtocolMustacheViewFactory.create(applicationContext,
+                    casProperties.getView().getCas2().getProxy().getSuccess(), APPLICATION_XML_VALUE))
                 .otherwiseProxy()
                 .get();
         }
@@ -312,30 +309,29 @@ public class CasValidationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas3SuccessView(
-            @Qualifier("casProtocolViewFactory")
-            final CasProtocolViewFactory casProtocolViewFactory,
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
-            return casProtocolViewFactory.create(applicationContext,
-                casProperties.getView().getCas3().getSuccess());
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
+            final CasProtocolViewFactory casProtocolMustacheViewFactory,
+            final CasConfigurationProperties casProperties) {
+            return casProtocolMustacheViewFactory.create(applicationContext,
+                casProperties.getView().getCas3().getSuccess(), APPLICATION_XML_VALUE);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas3ServiceFailureView(
-            @Qualifier("casProtocolViewFactory")
-            final CasProtocolViewFactory casProtocolViewFactory,
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
-            return casProtocolViewFactory.create(applicationContext,
-                casProperties.getView().getCas3().getFailure(),
-                APPLICATION_XML_VALUE);
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
+            final CasProtocolViewFactory casProtocolMustacheViewFactory,
+            final CasConfigurationProperties casProperties) throws Exception {
+            return casProtocolMustacheViewFactory.create(applicationContext,
+                casProperties.getView().getCas3().getFailure(), APPLICATION_XML_VALUE);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View casPostResponseView(
-            @Qualifier("casProtocolViewFactory")
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext,

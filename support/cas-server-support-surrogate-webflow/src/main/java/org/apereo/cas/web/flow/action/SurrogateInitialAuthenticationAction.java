@@ -33,8 +33,8 @@ public class SurrogateInitialAuthenticationAction extends BaseCasWebflowAction {
                 SurrogateUsernamePasswordCredential.class.getName());
             return null;
         }
-        if (up.getUsername().contains(this.separator)) {
-            LOGGER.debug("Credential username includes the separator [{}]. Converting to surrogate...", this.separator);
+        if (up.getUsername().contains(separator)) {
+            LOGGER.debug("Credential username includes the separator [{}]. Converting to surrogate...", separator);
             convertToSurrogateCredential(context, up);
         } else {
             convertToUsernamePasswordCredential(context, up);
@@ -43,31 +43,28 @@ public class SurrogateInitialAuthenticationAction extends BaseCasWebflowAction {
     }
 
     private void convertToSurrogateCredential(final RequestContext context, final UsernamePasswordCredential up) {
-
-        val tUsername = up.getUsername();
-        val surrogateUsername = tUsername.substring(0, tUsername.indexOf(this.separator));
-        val realUsername = tUsername.substring(tUsername.indexOf(this.separator) + this.separator.length());
-        LOGGER.debug("Converting to surrogate credential for username [{}], surrogate username [{}]", realUsername, surrogateUsername);
+        val givenUserName = up.getUsername();
+        val surrogateUsername = givenUserName.substring(0, givenUserName.indexOf(separator));
+        val primaryUserName = givenUserName.substring(givenUserName.indexOf(separator) + separator.length());
+        LOGGER.debug("Converting to surrogate credential for username [{}], surrogate username [{}]", primaryUserName, surrogateUsername);
 
         if (StringUtils.isBlank(surrogateUsername)) {
-            up.setUsername(realUsername);
+            up.setUsername(primaryUserName);
             WebUtils.putSurrogateAuthenticationRequest(context, Boolean.TRUE);
             WebUtils.putCredential(context, up);
-
             LOGGER.debug("No surrogate username is defined; Signal webflow to request for surrogate credentials");
-            return;
+        } else {
+            val sc = new SurrogateUsernamePasswordCredential();
+            sc.setUsername(primaryUserName);
+            sc.setSurrogateUsername(surrogateUsername);
+            sc.assignPassword(up.toPassword());
+            if (up instanceof RememberMeCredential) {
+                sc.setRememberMe(((RememberMeCredential) up).isRememberMe());
+            }
+            WebUtils.putSurrogateAuthenticationRequest(context, Boolean.FALSE);
+            LOGGER.debug("Converted credential to surrogate for username [{}] and assigned it to webflow", primaryUserName);
+            WebUtils.putCredential(context, sc);
         }
-
-        val sc = new SurrogateUsernamePasswordCredential();
-        sc.setUsername(realUsername);
-        sc.setSurrogateUsername(surrogateUsername);
-        sc.assignPassword(up.toPassword());
-        if (up instanceof RememberMeCredential) {
-            sc.setRememberMe(((RememberMeCredential) up).isRememberMe());
-        }
-        WebUtils.putSurrogateAuthenticationRequest(context, Boolean.FALSE);
-        LOGGER.debug("Converted credential to surrogate for username [{}] and assigned it to webflow", realUsername);
-        WebUtils.putCredential(context, sc);
     }
 
     private static void convertToUsernamePasswordCredential(final RequestContext context,

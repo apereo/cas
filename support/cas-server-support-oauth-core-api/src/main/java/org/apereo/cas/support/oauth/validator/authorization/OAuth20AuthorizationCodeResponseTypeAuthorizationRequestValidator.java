@@ -42,7 +42,8 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
     public boolean validate(final WebContext context) {
         val clientIdResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID);
         return clientIdResult.map(clientId -> {
-            if (!requestParameterResolver.isAuthorizedResponseTypeForService(context, getRegisteredServiceByClientId(clientId))) {
+            val registeredService = getRegisteredServiceByClientId(clientId);
+            if (!requestParameterResolver.isAuthorizedResponseTypeForService(context, registeredService)) {
                 val responseTypeResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
                 val msg = String.format("Client is not allowed to use the [%s] response type", responseTypeResult.orElse("unknown"));
                 LOGGER.warn(msg);

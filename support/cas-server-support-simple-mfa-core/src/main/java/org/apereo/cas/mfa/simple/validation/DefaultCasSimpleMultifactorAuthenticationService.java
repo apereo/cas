@@ -1,6 +1,5 @@
 package org.apereo.cas.mfa.simple.validation;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
@@ -57,11 +56,10 @@ public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimp
     }
 
     @Override
-    public Principal validate(final Authentication authentication,
+    public Principal validate(final Principal resolvedPrincipal,
                               final CasSimpleMultifactorTokenCredential credential) throws Exception {
-        val uid = authentication.getPrincipal().getId();
         val tokenId = normalize(credential.getId());
-        LOGGER.debug("Received token [{}] and pricipal id [{}]", tokenId, uid);
+        LOGGER.debug("Received token [{}] and pricipal id [{}]", tokenId, resolvedPrincipal.getId());
         val acct = ticketRegistry.getTicket(tokenId, CasSimpleMultifactorAuthenticationTicket.class);
         val properties = acct.getProperties();
         if (!properties.containsKey(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL)) {
@@ -70,13 +68,13 @@ public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimp
             throw new FailedLoginException("Failed to authenticate code " + tokenId);
         }
         val principal = (Principal) properties.get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL);
-        if (!principal.equals(authentication.getPrincipal())) {
+        if (!principal.equals(resolvedPrincipal)) {
             LOGGER.warn("Principal assigned to token [{}] is unauthorized for token [{}]", principal.getId(), tokenId);
             deleteToken(acct);
             throw new FailedLoginException("Failed to authenticate code " + tokenId);
         }
         deleteToken(acct);
-        LOGGER.debug("Validated token [{}] successfully for [{}].", tokenId, uid);
+        LOGGER.debug("Validated token [{}] successfully for [{}].", tokenId, resolvedPrincipal.getId());
         return principal;
     }
 

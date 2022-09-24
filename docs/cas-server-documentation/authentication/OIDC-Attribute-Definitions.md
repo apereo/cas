@@ -22,7 +22,7 @@ prevent it from being released by other protocols.
 }
 ```
 
-The following additional settings can be specified for a Saml IdP attribute definition:
+The following additional settings can be specified for a OpenID Connect attribute definitions:
 
 | Name          | Description                                                                                                               |
 |---------------|---------------------------------------------------------------------------------------------------------------------------|

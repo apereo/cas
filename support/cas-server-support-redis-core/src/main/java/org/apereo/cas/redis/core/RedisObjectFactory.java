@@ -11,6 +11,7 @@ import io.lettuce.core.SslOptions;
 import io.lettuce.core.TimeoutOptions;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
+import io.lettuce.core.protocol.ProtocolVersion;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -54,12 +55,12 @@ public class RedisObjectFactory {
      */
     public static <K, V> CasRedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory) {
         val template = new DefaultCasRedisTemplate<K, V>();
-        val string = new StringRedisSerializer();
+        val serializer = new StringRedisSerializer();
         val jdk = new JdkSerializationRedisSerializer();
-        template.setKeySerializer(string);
+        template.setKeySerializer(serializer);
         template.setValueSerializer(jdk);
         template.setHashValueSerializer(jdk);
-        template.setHashKeySerializer(string);
+        template.setHashKeySerializer(serializer);
         template.setConnectionFactory(connectionFactory);
         return template;
     }
@@ -205,6 +206,7 @@ public class RedisObjectFactory {
         return clientOptionsBuilder
             .timeoutOptions(TimeoutOptions.enabled())
             .sslOptions(sslOptions)
+            .protocolVersion(ProtocolVersion.valueOf(redis.getProtocolVersion()))
             .build();
     }
 

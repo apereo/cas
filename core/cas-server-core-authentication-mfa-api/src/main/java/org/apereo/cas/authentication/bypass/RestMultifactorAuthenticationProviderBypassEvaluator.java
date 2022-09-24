@@ -62,7 +62,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
                 .build();
 
             val response = HttpUtils.execute(exec);
-            return response != null && response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
+            return response != null && HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return true;

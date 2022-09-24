@@ -7,8 +7,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -19,6 +21,61 @@ import java.util.Objects;
  */
 @UtilityClass
 public class LoggingUtils {
+
+    private static final int CHAR_REPEAT_ACCOUNT = 60;
+
+    private static final String LOGGER_NAME_PROTOCOL_MESSAGE = "PROTOCOL_MESSAGE";
+
+    /**
+     * Protocol message.
+     *
+     * @param title   the title
+     * @param context the context
+     */
+    public static void protocolMessage(final String title,
+                                       final Map<String, Object> context) {
+        protocolMessage(title, context, StringUtils.EMPTY);
+    }
+
+    /**
+     * Protocol message.
+     *
+     * @param title   the title
+     * @param context the context
+     * @param message the message
+     */
+    public static void protocolMessage(final String title,
+                                       final Map<String, Object> context,
+                                       final Object message) {
+        if (isProtocolMessageLoggerEnabled()) {
+            val builder = new StringBuilder();
+            builder.append('\n');
+            builder.append(StringUtils.repeat('=', CHAR_REPEAT_ACCOUNT));
+            builder.append(String.format("\n%s\n", title));
+            builder.append(StringUtils.repeat('=', CHAR_REPEAT_ACCOUNT));
+            builder.append('\n');
+            context.forEach((key, value) -> {
+                val toLog = value.toString();
+                if (StringUtils.isNotBlank(toLog)) {
+                    builder.append(String.format("%s: %s\n", key, toLog));
+                }
+            });
+            if (!context.isEmpty()) {
+                builder.append(StringUtils.repeat('=', CHAR_REPEAT_ACCOUNT));
+                builder.append('\n');
+            }
+            if (message != null && StringUtils.isNotBlank(message.toString())) {
+                builder.append(String.format("%s\n", message));
+                builder.append(StringUtils.repeat('=', CHAR_REPEAT_ACCOUNT));
+            }
+            LoggerFactory.getLogger(LOGGER_NAME_PROTOCOL_MESSAGE).info(builder.toString());
+        }
+    }
+
+    public static boolean isProtocolMessageLoggerEnabled() {
+        return LoggerFactory.getLogger(LOGGER_NAME_PROTOCOL_MESSAGE).isInfoEnabled();
+    }
+
     /**
      * Error.
      *
@@ -50,7 +107,9 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void error(final Logger logger, final Throwable throwable) {
-        error(logger, getMessage(throwable), throwable);
+        if (throwable != null) {
+            error(logger, getMessage(throwable), throwable);
+        }
     }
 
     /**

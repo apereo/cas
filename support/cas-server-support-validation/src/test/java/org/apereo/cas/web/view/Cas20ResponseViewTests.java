@@ -181,7 +181,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             public String getContentType() {
                 return MediaType.TEXT_HTML_VALUE;
             }
-
+            
             @Override
             public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) {
                 map.forEach(request::setAttribute);
@@ -192,7 +192,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             new DefaultAuthenticationServiceSelectionPlan(), NoOpProtocolAttributesRenderer.INSTANCE);
         view.render(modelAndView.getModel(), req, resp);
 
-        assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
+        assertNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION));
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL));
         assertNotNull(req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU));

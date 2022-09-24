@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import jakarta.annotation.Nonnull;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -61,6 +62,7 @@ public class CasWebAppConfiguration {
         val localeCookie = localeProps.getCookie();
 
         val resolver = new CookieLocaleResolver() {
+            @Nonnull
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 val locale = request.getLocale();
@@ -104,7 +106,9 @@ public class CasWebAppConfiguration {
         final ObjectProvider<LocaleChangeInterceptor> localeChangeInterceptor) {
         return new WebMvcConfigurer() {
             @Override
-            public void addInterceptors(final InterceptorRegistry registry) {
+            public void addInterceptors(
+                @Nonnull
+                final InterceptorRegistry registry) {
                 registry.addInterceptor(new RefreshableHandlerInterceptor(localeChangeInterceptor)).addPathPatterns("/**");
             }
         };
@@ -115,11 +119,14 @@ public class CasWebAppConfiguration {
     public Controller rootController() {
         return new ParameterizableViewController() {
             @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                         final HttpServletResponse response) {
+            protected ModelAndView handleRequestInternal(
+                @Nonnull
+                final HttpServletRequest request,
+                @Nonnull
+                final HttpServletResponse response) {
                 val queryString = request.getQueryString();
                 val url = request.getContextPath() + "/login"
-                          + Optional.ofNullable(queryString).map(string -> '?' + string).orElse(StringUtils.EMPTY);
+                          + Optional.ofNullable(queryString).map(value -> '?' + value).orElse(StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
 

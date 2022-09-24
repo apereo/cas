@@ -94,7 +94,7 @@ while (( "$#" )); do
     RERUN="true"
     shift 1;
     ;;
-  --hd)
+  --hd|--hdo)
     export HEADLESS="true"
     DEBUG="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
@@ -116,6 +116,13 @@ while (( "$#" )); do
     REBUILD="true"
     DEBUG="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
+    shift 1;
+    ;;
+  --hbod)
+    export HEADLESS="true"
+    REBUILD="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DEBUG="true"
     shift 1;
     ;;
   --hbo)
@@ -368,6 +375,31 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
+  environmentVariables=$(jq -j '.environmentVariables | join(";")' "$config");
+  IFS=';' read -r -a variables <<< "$environmentVariables"
+  for env in "${variables[@]}"
+  do
+      cmd="export \"$env\""
+      if [[ "${CI}" != "true" ]]; then
+        echo "$cmd"
+      fi
+      eval "$cmd"
+  done
+  
+  bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
+  bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
+  bootstrapScript="${bootstrapScript//\$\{SCENARIO\}/${scenarioName}}"
+
+  if [[ -n "${bootstrapScript}" ]]; then
+    printgreen "Running bootstrap script: ${bootstrapScript}"
+    chmod +x "${bootstrapScript}"
+    eval "${bootstrapScript}"
+    if [[ $? -ne 0 ]]; then
+      printred "Bootstrap script [${bootstrapScript}] failed."
+      exit 1
+    fi
+  fi
+
   serverPort=8443
   processIds=()
   instances=$(jq -j '.instances // 1' "${config}")

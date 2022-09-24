@@ -24,7 +24,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.util.StreamUtils;
 
 import java.time.Instant;
 import java.util.Collection;

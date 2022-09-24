@@ -39,6 +39,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,9 @@ public class CasOAuth20ThrottleConfiguration {
             final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(final InterceptorRegistry registry) {
+                public void addInterceptors(
+                    @Nonnull
+                    final InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
                         val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
                         registry.addInterceptor(handler)
@@ -115,7 +118,9 @@ public class CasOAuth20ThrottleConfiguration {
             final ObjectProvider<HandlerInterceptor> oauthHandlerInterceptorAdapter) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(final InterceptorRegistry registry) {
+                public void addInterceptors(
+                    @Nonnull
+                    final InterceptorRegistry registry) {
                     val handler = new RefreshableHandlerInterceptor(oauthHandlerInterceptorAdapter);
                     registry
                         .addInterceptor(handler)
