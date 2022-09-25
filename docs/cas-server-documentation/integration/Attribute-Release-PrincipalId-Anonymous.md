@@ -43,7 +43,7 @@ attribute. If left unspecified or attribute not found, the authenticated princip
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
     "persistentIdGenerator" : {
-      "@class" : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
+      "@class" : "org.apereo.cas.authentication.attribute.ShibbolethCompatiblePersistentIdGenerator",
       "salt" : "aGVsbG93b3JsZA==",
       "attribute": ""
     }

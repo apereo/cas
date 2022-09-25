@@ -38,7 +38,7 @@ To learn more about attribute definitions, please [see this guide](../integratio
     
 ## Defaults
 
-By default, the following *known* attribute definitions are included and ship with CAS:
+By default, the following *known* attribute definitions are included and ship with CAS automatically:
 
 | Friendly Name                 | Key                                  |
 |-------------------------------|--------------------------------------|

@@ -92,21 +92,23 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyMappedToMultipleNames() {
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("cn")
-            .name("commonName,common-name,cname")
-            .build();
-        store.registerAttributeDefinition(defn);
-        val attributes = CoreAuthenticationTestUtils.getAttributes();
-        val attrs = store.resolveAttributeValues(attributes.keySet(), attributes,
-            CoreAuthenticationTestUtils.getRegisteredService());
-        assertFalse(attrs.isEmpty());
-        assertFalse(attrs.containsKey("cn"));
-        assertTrue(attrs.containsKey("commonName"));
-        assertTrue(attrs.containsKey("common-name"));
-        assertTrue(attrs.containsKey("cname"));
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("cn")
+                .name("commonName,common-name,cname")
+                .build();
+            store.registerAttributeDefinition(defn);
+            val attributes = CoreAuthenticationTestUtils.getAttributes();
+            val attrs = store.resolveAttributeValues(attributes.keySet(), attributes,
+                CoreAuthenticationTestUtils.getPrincipal(),
+                CoreAuthenticationTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService());
+            assertFalse(attrs.isEmpty());
+            assertFalse(attrs.containsKey("cn"));
+            assertTrue(attrs.containsKey("commonName"));
+            assertTrue(attrs.containsKey("common-name"));
+            assertTrue(attrs.containsKey("cname"));
+        }
     }
 
     @Test
@@ -115,35 +117,39 @@ public class DefaultAttributeDefinitionStoreTests {
         val servicePublicKey = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");
         when(service.getPublicKey()).thenReturn(servicePublicKey);
 
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("cn")
-            .scoped(true)
-            .encrypted(true)
-            .build();
-        store.registerAttributeDefinition(defn);
-        assertTrue(store.locateAttributeDefinition("cn", DefaultAttributeDefinition.class).isPresent());
-        assertFalse(store.locateAttributeDefinition("unknown", DefaultAttributeDefinition.class).isPresent());
-        val attributes = CoreAuthenticationTestUtils.getAttributes();
-        val attrs = store.resolveAttributeValues(attributes.keySet(), attributes, service);
-        assertFalse(attrs.isEmpty());
-        assertTrue(attrs.containsKey("cn"));
-        val values = CollectionUtils.toCollection(attrs.get("cn"));
-        assertFalse(values.stream()
-            .anyMatch(value -> value.toString().equalsIgnoreCase(CoreAuthenticationTestUtils.CONST_USERNAME)));
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("cn")
+                .scoped(true)
+                .encrypted(true)
+                .build();
+            store.registerAttributeDefinition(defn);
+            assertTrue(store.locateAttributeDefinition("cn", DefaultAttributeDefinition.class).isPresent());
+            assertFalse(store.locateAttributeDefinition("unknown", DefaultAttributeDefinition.class).isPresent());
+            val attributes = CoreAuthenticationTestUtils.getAttributes();
+            val attrs = store.resolveAttributeValues(attributes.keySet(), attributes,
+                CoreAuthenticationTestUtils.getPrincipal(),
+                service, CoreAuthenticationTestUtils.getService());
+            assertFalse(attrs.isEmpty());
+            assertTrue(attrs.containsKey("cn"));
+            val values = CollectionUtils.toCollection(attrs.get("cn"));
+            assertFalse(values.stream()
+                .anyMatch(value -> value.toString().equalsIgnoreCase(CoreAuthenticationTestUtils.CONST_USERNAME)));
+        }
     }
 
     @Test
     public void verifyPredicateAttributeDefinitions() {
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("cn")
-            .scoped(true)
-            .build();
-        store.registerAttributeDefinition(defn);
-        assertTrue(store.locateAttributeDefinition(attributeDefinition -> attributeDefinition.equals(defn)).isPresent());
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("cn")
+                .scoped(true)
+                .build();
+            store.registerAttributeDefinition(defn);
+            assertTrue(store.locateAttributeDefinition(attributeDefinition -> attributeDefinition.equals(defn)).isPresent());
+        }
     }
 
     @Test
@@ -168,125 +174,141 @@ public class DefaultAttributeDefinitionStoreTests {
     @Test
     public void verifyAttrDefnNotFound() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("eduPersonPrincipalName")
-            .attribute("invalid")
-            .scoped(true)
-            .build();
-        store.registerAttributeDefinition(defn);
-        var values = (Optional<Pair<AttributeDefinition, List<Object>>>) store.resolveAttributeValues("whatever",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
-        assertTrue(values.isEmpty());
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .attribute("invalid")
+                .scoped(true)
+                .build();
+            store.registerAttributeDefinition(defn);
+            var values = (Optional<Pair<AttributeDefinition, List<Object>>>) store.resolveAttributeValues("whatever",
+                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME),
+                CoreAuthenticationTestUtils.getPrincipal(),
+                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            assertTrue(values.isEmpty());
+        }
     }
 
     @Test
     public void verifyAttributeDefinitionsAsMap() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("cn")
-            .scoped(true)
-            .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
-            .build();
-        store.registerAttributeDefinition(defn);
-        assertFalse(store.isEmpty());
-        val attributes = CoreAuthenticationTestUtils.getAttributes();
-        val attrs = store.resolveAttributeValues(attributes.keySet(), attributes, service);
-        assertFalse(attrs.isEmpty());
-        assertTrue(attrs.containsKey("mail"));
-        assertTrue(attrs.containsKey(defn.getName()));
-        val values = (List<Object>) attrs.get(defn.getName());
-        assertTrue(values.contains("TEST@example.org"));
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("cn")
+                .scoped(true)
+                .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+                .build();
+            store.registerAttributeDefinition(defn);
+            assertFalse(store.isEmpty());
+            val attributes = CoreAuthenticationTestUtils.getAttributes();
+            val attrs = store.resolveAttributeValues(attributes.keySet(), attributes,
+                CoreAuthenticationTestUtils.getPrincipal(),
+                service, CoreAuthenticationTestUtils.getService());
+            assertFalse(attrs.isEmpty());
+            assertTrue(attrs.containsKey("mail"));
+            assertTrue(attrs.containsKey(defn.getName()));
+            val values = (List<Object>) attrs.get(defn.getName());
+            assertTrue(values.contains("TEST@example.org"));
+        }
     }
 
     @Test
     public void verifyScopedAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("eduPersonPrincipalName")
-            .attribute("uid")
-            .scoped(true)
-            .build();
-        store.registerAttributeDefinition(defn);
-        var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
-        assertTrue(values.isPresent());
-        assertTrue(values.get().getValue().contains("test@example.org"));
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .attribute("uid")
+                .scoped(true)
+                .build();
+            store.registerAttributeDefinition(defn);
+            var values = store.resolveAttributeValues("eduPersonPrincipalName",
+                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME),
+                CoreAuthenticationTestUtils.getPrincipal(),
+                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            assertTrue(values.isPresent());
+            assertTrue(values.get().getValue().contains("test@example.org"));
+        }
     }
 
     @Test
     public void verifyScriptedEmbeddedAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("eduPersonPrincipalName")
-            .attribute("uid")
-            .scoped(true)
-            .script("groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['hello', 'world'] } ")
-            .build();
-        store.registerAttributeDefinition(defn);
-        var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
-        assertTrue(values.isPresent());
-        assertTrue(values.get().getValue().contains("hello@example.org"));
-        assertTrue(values.get().getValue().contains("world@example.org"));
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .attribute("uid")
+                .scoped(true)
+                .script("groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['hello', 'world'] } ")
+                .build();
+            store.registerAttributeDefinition(defn);
+            var values = store.resolveAttributeValues("eduPersonPrincipalName",
+                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), CoreAuthenticationTestUtils.getPrincipal(),
+                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            assertTrue(values.isPresent());
+            assertTrue(values.get().getValue().contains("hello@example.org"));
+            assertTrue(values.get().getValue().contains("world@example.org"));
+        }
     }
 
     @Test
     public void verifyScriptedExternalAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("system.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("eduPersonPrincipalName")
-            .attribute("uid")
-            .scoped(true)
-            .script("classpath:/attribute-definition.groovy")
-            .build();
-        store.registerAttributeDefinition(defn);
-        var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
-        assertTrue(values.isPresent());
-        assertTrue(values.get().getValue().contains("casuser@system.org"));
-        assertTrue(values.get().getValue().contains("groovy@system.org"));
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("system.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .attribute("uid")
+                .scoped(true)
+                .script("classpath:/attribute-definition.groovy")
+                .build();
+            store.registerAttributeDefinition(defn);
+            var values = store.resolveAttributeValues("eduPersonPrincipalName",
+                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), CoreAuthenticationTestUtils.getPrincipal(),
+                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            assertTrue(values.isPresent());
+            assertTrue(values.get().getValue().contains("casuser@system.org"));
+            assertTrue(values.get().getValue().contains("groovy@system.org"));
+        }
     }
 
     @Test
     public void verifyFormattedAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("eduPersonPrincipalName")
-            .attribute("givenName")
-            .scoped(true)
-            .patternFormat("hello,{0}")
-            .build();
-        store.registerAttributeDefinition(defn);
-        var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
-        assertTrue(values.isPresent());
-        assertTrue(values.get().getValue().contains("hello,test@example.org"));
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .attribute("givenName")
+                .scoped(true)
+                .patternFormat("hello,{0}")
+                .build();
+            store.registerAttributeDefinition(defn);
+            var values = store.resolveAttributeValues("eduPersonPrincipalName",
+                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), CoreAuthenticationTestUtils.getPrincipal(),
+                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            assertTrue(values.isPresent());
+            assertTrue(values.get().getValue().contains("hello,test@example.org"));
+        }
     }
 
     @Test
     public void verifyOperation() {
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("eduPersonPrincipalName")
-            .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
-            .build();
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+                .build();
 
-        store.registerAttributeDefinition(defn);
-        assertNotNull(store.locateAttributeDefinition("eduPersonPrincipalName"));
-        assertFalse(store.getAttributeDefinitions().isEmpty());
+            store.registerAttributeDefinition(defn);
+            assertNotNull(store.locateAttributeDefinition("eduPersonPrincipalName"));
+            assertFalse(store.getAttributeDefinitions().isEmpty());
+        }
     }
 
     @Test
@@ -317,9 +339,10 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyExternalImport() throws Exception {
-        val store = new DefaultAttributeDefinitionStore(new ClassPathResource("AttributeDefns.json"));
-        assertFalse(store.getAttributeDefinitions().isEmpty());
-        assertNotNull(store.locateAttributeDefinition("eduPersonPrincipalName"));
+        try (val store = new DefaultAttributeDefinitionStore(new ClassPathResource("AttributeDefns.json"))) {
+            assertFalse(store.getAttributeDefinitions().isEmpty());
+            assertNotNull(store.locateAttributeDefinition("eduPersonPrincipalName"));
+        }
     }
 
     @Test
@@ -333,28 +356,34 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         assertEquals(0, defn1.compareTo(defn2));
 
-        val store = new DefaultAttributeDefinitionStore(defn1);
-        store.setScope("example.org");
+        try (val store = new DefaultAttributeDefinitionStore(defn1)) {
+            store.setScope("example.org");
 
-        val service = CoreAuthenticationTestUtils.getRegisteredService();
-        var results = store.resolveAttributeValues("cn", List.of("common-name"), service, Map.of());
-        assertFalse(results.isEmpty());
-        assertTrue(results.get().getValue().isEmpty());
+            val service = CoreAuthenticationTestUtils.getRegisteredService();
+            var results = store.resolveAttributeValues("cn", List.of("common-name"),
+                CoreAuthenticationTestUtils.getPrincipal(),
+                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            assertFalse(results.isEmpty());
+            assertTrue(results.get().getValue().isEmpty());
 
-        when(service.getPublicKey()).thenReturn(mock(RegisteredServicePublicKey.class));
-        results = store.resolveAttributeValues("cn", List.of("common-name"), service, Map.of());
-        assertTrue(results.get().getValue().isEmpty());
+            when(service.getPublicKey()).thenReturn(mock(RegisteredServicePublicKey.class));
+            results = store.resolveAttributeValues("cn", List.of("common-name"),
+                CoreAuthenticationTestUtils.getPrincipal(),
+                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            assertTrue(results.get().getValue().isEmpty());
+        }
     }
 
     @Test
     public void verifyDefinitionsReload() {
         val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
         assertDoesNotThrow(() -> {
-            val store = new DefaultAttributeDefinitionStore(resource);
-            store.setScope("example.org");
-            Files.setLastModifiedTime(resource.getFile().toPath(), FileTime.from(Instant.now()));
-            Thread.sleep(5_000);
-            store.destroy();
+            try (val store = new DefaultAttributeDefinitionStore(resource)) {
+                store.setScope("example.org");
+                Files.setLastModifiedTime(resource.getFile().toPath(), FileTime.from(Instant.now()));
+                Thread.sleep(5_000);
+                store.destroy();
+            }
         });
     }
 
@@ -362,25 +391,27 @@ public class DefaultAttributeDefinitionStoreTests {
     public void verifyBadDefinitionsResource() throws Exception {
         val file = File.createTempFile("badfile", ".json");
         FileUtils.write(file, "data", StandardCharsets.UTF_8);
-        val store = new DefaultAttributeDefinitionStore(new FileSystemResource(file));
-        store.setScope("example.org");
-        assertTrue(store.isEmpty());
+        try (val store = new DefaultAttributeDefinitionStore(new FileSystemResource(file))) {
+            store.setScope("example.org");
+            assertTrue(store.isEmpty());
+        }
     }
 
     @Test
     public void verifyRemoveDefinition() {
-        val store = new DefaultAttributeDefinitionStore();
-        store.setScope("example.org");
-        val defn = DefaultAttributeDefinition.builder()
-            .key("eduPersonPrincipalName")
-            .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
-            .build();
+        try (val store = new DefaultAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+                .build();
 
-        store.registerAttributeDefinition(defn);
-        assertNotNull(store.locateAttributeDefinition(defn.getKey()));
-        assertFalse(store.getAttributeDefinitions().isEmpty());
-        store.removeAttributeDefinition(defn.getKey());
-        assertTrue(store.locateAttributeDefinition(defn.getKey()).isEmpty());
+            store.registerAttributeDefinition(defn);
+            assertNotNull(store.locateAttributeDefinition(defn.getKey()));
+            assertFalse(store.getAttributeDefinitions().isEmpty());
+            store.removeAttributeDefinition(defn.getKey());
+            assertTrue(store.locateAttributeDefinition(defn.getKey()).isEmpty());
+        }
     }
 
 }

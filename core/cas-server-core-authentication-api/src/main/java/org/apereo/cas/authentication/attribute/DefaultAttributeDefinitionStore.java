@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -82,16 +84,19 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     @CanIgnoreReturnValue
     public AttributeDefinitionStore registerAttributeDefinition(final String key, final AttributeDefinition defn) {
         LOGGER.trace("Registering attribute definition [{}] by key [{}]", defn, key);
+        val keyToUse = getAttributeDefinitionKey(key, defn);
+        attributeDefinitions.putIfAbsent(keyToUse, defn);
+        return this;
+    }
 
+    private static String getAttributeDefinitionKey(final String key, final AttributeDefinition defn) {
         if (StringUtils.isNotBlank(defn.getKey()) && !StringUtils.equalsIgnoreCase(defn.getKey(), key)) {
             LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
                         + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
                         + "to register the attribute definition in the attribute store", defn.getKey(), key, defn.getKey());
-            attributeDefinitions.put(defn.getKey(), defn);
-        } else {
-            attributeDefinitions.put(key, defn);
+            return defn.getKey();
         }
-        return this;
+        return key;
     }
 
     @Override
@@ -142,16 +147,22 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(
         final String key,
         final List<Object> attributeValues,
+        final Principal principal,
         final RegisteredService registeredService,
+        final Service service,
         final Map<String, List<Object>> attributes) {
         val result = locateAttributeDefinition(key);
-        if (result.isEmpty()) {
-            return Optional.empty();
-        }
-        val definition = result.get();
-        val currentValues = definition.resolveAttributeValues(attributeValues, this.scope,
-            registeredService, attributes);
-        return Optional.of(Pair.of(definition, currentValues));
+        return result.map(definition -> {
+            val context = AttributeDefinitionResolutionContext.builder()
+                .attributeValues(attributeValues)
+                .scope(scope)
+                .principal(principal)
+                .registeredService(registeredService)
+                .service(service)
+                .build();
+            val currentValues = definition.resolveAttributeValues(context);
+            return Optional.of(Pair.of(definition, currentValues));
+        }).orElseGet(Optional::empty);
     }
 
     @Override

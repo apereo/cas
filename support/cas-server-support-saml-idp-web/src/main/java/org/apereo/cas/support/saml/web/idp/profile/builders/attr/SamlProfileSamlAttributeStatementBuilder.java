@@ -118,14 +118,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             });
 
         friendlyNames.putAll(context.getRegisteredService().getAttributeFriendlyNames());
-
-        SamlIdPAttributeDefinitionCatalog.load()
-            .filter(defn -> !friendlyNames.containsKey(defn.getKey()))
-            .forEach(defn -> {
-                friendlyNames.put(defn.getKey(), defn.getFriendlyName());
-                urns.put(defn.getKey(), defn.getUrn());
-            });
-
+        
         LOGGER.debug("Attributes to process for SAML2 attribute statement are [{}]", attributes);
         for (val entry : attributes.entrySet()) {
             var attributeValue = entry.getValue();
@@ -166,7 +159,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                     CollectionUtils.firstElement(attributeValue).ifPresent(value -> nameID.setValue(value.toString()));
                     attributeValue = nameID;
                 }
-
+                
                 LOGGER.debug("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, attributeValue, friendlyName);
                 val attribute = newAttribute(friendlyName, name, attributeValue,
                     nameFormats,

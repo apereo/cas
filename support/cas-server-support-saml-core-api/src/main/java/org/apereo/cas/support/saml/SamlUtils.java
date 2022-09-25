@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml;
 import org.apereo.cas.support.saml.util.credential.BasicResourceCredentialFactoryBean;
 import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -48,6 +49,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -323,12 +325,14 @@ public class SamlUtils {
      * @throws SamlException the saml exception
      */
     public static void logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled() || LoggingUtils.isProtocolMessageLoggerEnabled()) {
             val repeat = "*".repeat(SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
             LOGGER.debug(repeat);
             try (val writer = transformSamlObject(configBean, samlObject, true)) {
                 LOGGER.debug("Logging [{}]\n\n[{}]\n\n", samlObject.getClass().getName(), writer);
                 LOGGER.debug(repeat);
+                LoggingUtils.protocolMessage("SAML2 " + samlObject.getClass().getName(),
+                    Map.of(), writer.toString());
             } catch (final Exception e) {
                 throw new SamlException(e.getMessage(), e);
             }

@@ -25,7 +25,7 @@ OpenID Connect clients can be *statically* registered with CAS as such:
 ```
 
 Note that OpenID connect clients as service definitions are an 
-extension of [OAuth services](OAuth-Authentication.html) in CAS. All settings 
+extension of [OAuth services](OAuth-Authentication-Clients.html) in CAS. All settings 
 that apply to an OAuth service definition should equally apply here as well. 
 
 <div class="alert alert-info"><strong>Redirect URIs</strong><p>Client applicatin redirect URIs are specified

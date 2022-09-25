@@ -200,23 +200,21 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         final Map<String, List<Object>> principalAttributes) {
         LOGGER.trace("Retrieving attribute definition store and attribute definitions...");
         return ApplicationContextProvider.getAttributeDefinitionStore()
-            .map(attributeDefinitionStore -> {
+            .map(definitionStore -> {
                 val availableAttributes = new LinkedHashMap<>(principalAttributes);
                 availableAttributes.putAll(context.getReleasingAttributes());
-                if (attributeDefinitionStore.isEmpty()) {
+                if (definitionStore.isEmpty()) {
                     LOGGER.trace("No attribute definitions are defined in the attribute definition "
                                  + "store, or no attribute definitions are requested.");
                     return availableAttributes;
                 }
                 val requestedDefinitions = new ArrayList<>(determineRequestedAttributeDefinitions(context));
                 requestedDefinitions.addAll(principalAttributes.keySet());
-
-
-
+                
                 LOGGER.debug("Finding requested attribute definitions [{}] based on available attributes [{}]",
                     requestedDefinitions, availableAttributes);
-                return attributeDefinitionStore.resolveAttributeValues(requestedDefinitions,
-                    availableAttributes, context.getRegisteredService());
+                return definitionStore.resolveAttributeValues(requestedDefinitions, availableAttributes,
+                    context.getPrincipal(), context.getRegisteredService(), context.getService());
             })
             .orElseGet(() -> {
                 LOGGER.trace("No attribute definition store is available in application context");

@@ -1,13 +1,10 @@
 package org.apereo.cas.authentication.attribute;
 
-import org.apereo.cas.services.RegisteredService;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link AttributeDefinition}.
@@ -92,13 +89,8 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     /**
      * Resolve attribute values as list.
      *
-     * @param attributeValues   the attribute values
-     * @param scope             the scope
-     * @param registeredService the registered service
-     * @param attributes        the attributes
+     * @param context the context
      * @return the list
      */
-    List<Object> resolveAttributeValues(List<Object> attributeValues, String scope,
-                                        RegisteredService registeredService,
-                                        Map<String, List<Object>> attributes);
+    List<Object> resolveAttributeValues(AttributeDefinitionResolutionContext context);
 }

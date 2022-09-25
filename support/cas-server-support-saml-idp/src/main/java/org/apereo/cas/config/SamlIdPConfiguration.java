@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStoreConfigurer;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -24,6 +25,7 @@ import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditResourceResolv
 import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMap;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.assertion.SamlProfileSamlAssertionBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinitionCatalog;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlAttributeStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultSamlProfileAuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileAuthnContextClassRefBuilder;
@@ -722,6 +724,17 @@ public class SamlIdPConfiguration {
                     new SamlMetadataResolverAuditResourceResolver());
                 plan.registerAuditActionResolver(AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER, new DefaultAuditActionResolver());
             };
+        }
+    }
+
+    @Configuration(value = "SamlIdPAttributeDefinitionsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPAttributeDefinitionsConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPAttributeDefinitionStoreConfigurer")
+        public AttributeDefinitionStoreConfigurer samlIdPAttributeDefinitionStoreConfigurer() {
+            return store -> SamlIdPAttributeDefinitionCatalog.load().forEach(store::registerAttributeDefinition);
         }
     }
 }
