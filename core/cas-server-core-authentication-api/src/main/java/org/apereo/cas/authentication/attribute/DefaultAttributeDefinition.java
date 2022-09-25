@@ -28,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -77,25 +76,22 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     @JsonIgnore
     @Override
-    public List<Object> resolveAttributeValues(final List<Object> attributeValues,
-                                               final String scope,
-                                               final RegisteredService registeredService,
-                                               final Map<String, List<Object>> attributes) {
-        List<Object> currentValues = new ArrayList<>(attributeValues);
+    public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) {
+        List<Object> currentValues = new ArrayList<>(context.getAttributeValues());
         if (StringUtils.isNotBlank(getScript())) {
-            currentValues = getScriptedAttributeValue(key, currentValues, registeredService, attributes);
+            currentValues = getScriptedAttributeValue(key, currentValues, context);
         }
         if (isScoped()) {
-            currentValues = formatValuesWithScope(scope, currentValues);
+            currentValues = formatValuesWithScope(context.getScope(), currentValues);
         }
         if (StringUtils.isNotBlank(getPatternFormat())) {
             currentValues = formatValuesWithPattern(currentValues);
         }
         if (isEncrypted()) {
-            currentValues = encryptValues(currentValues, registeredService);
+            currentValues = encryptValues(currentValues, context.getRegisteredService());
         }
         if (StringUtils.isNotBlank(this.canonicalizationMode)) {
-            val mode = CaseCanonicalizationMode.valueOf(this.canonicalizationMode.toUpperCase());
+            val mode = CaseCanonicalizationMode.valueOf(canonicalizationMode.toUpperCase());
             currentValues = currentValues
                 .stream()
                 .map(value -> mode.canonicalize(value.toString()))
@@ -145,20 +141,17 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     @JsonIgnore
     private List<Object> getScriptedAttributeValue(final String attributeKey,
                                                    final List<Object> currentValues,
-                                                   final RegisteredService registeredService,
-                                                   final Map<String, List<Object>> attributes) {
+                                                   final AttributeDefinitionResolutionContext context) {
         LOGGER.trace("Locating attribute value via script for definition [{}]", this);
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
 
         if (matcherInline.find()) {
-            return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues,
-                matcherInline.group(1), registeredService, attributes);
+            return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, matcherInline.group(1), context);
         }
 
         val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(getScript());
         if (matcherFile.find()) {
-            return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues,
-                matcherFile.group(), registeredService, attributes);
+            return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, matcherFile.group(), context);
         }
 
         return new ArrayList<>(0);
@@ -167,14 +160,13 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private static List<Object> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
                                                                             final List<Object> currentValues,
                                                                             final String file,
-                                                                            final RegisteredService registeredService,
-                                                                            final Map<String, List<Object>> attributes) {
+                                                                            final AttributeDefinitionResolutionContext context) {
         val result = ApplicationContextProvider.getScriptResourceCacheManager();
         if (result.isPresent()) {
             val cacheMgr = result.get();
             val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
             if (script != null) {
-                return fetchAttributeValueFromScript(script, attributeName, currentValues, registeredService, attributes);
+                return fetchAttributeValueFromScript(script, attributeName, currentValues, context);
             }
         }
         LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
@@ -184,13 +176,12 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private static List<Object> fetchAttributeValueAsInlineGroovyScript(final String attributeName,
                                                                         final List<Object> currentValues,
                                                                         final String inlineGroovy,
-                                                                        final RegisteredService registeredService,
-                                                                        final Map<String, List<Object>> attributes) {
+                                                                        final AttributeDefinitionResolutionContext context) {
         val result = ApplicationContextProvider.getScriptResourceCacheManager();
         if (result.isPresent()) {
             val cacheMgr = result.get();
             val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
-            return fetchAttributeValueFromScript(script, attributeName, currentValues, registeredService, attributes);
+            return fetchAttributeValueFromScript(script, attributeName, currentValues, context);
         }
         LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
         return new ArrayList<>(0);
@@ -199,11 +190,10 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private static List<Object> fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript scriptToExec,
                                                               final String attributeKey,
                                                               final List<Object> currentValues,
-                                                              final RegisteredService registeredService,
-                                                              final Map<String, List<Object>> attributes) {
+                                                              final AttributeDefinitionResolutionContext context) {
         val args = CollectionUtils.<String, Object>wrap("attributeName", Objects.requireNonNull(attributeKey),
             "attributeValues", currentValues, "logger", LOGGER,
-            "registeredService", registeredService, "attributes", attributes);
+            "registeredService", context.getRegisteredService(), "attributes", context.getAttributes());
         scriptToExec.setBinding(args);
         return scriptToExec.execute(args.values().toArray(), List.class);
     }

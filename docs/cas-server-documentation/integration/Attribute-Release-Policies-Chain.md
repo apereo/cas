@@ -19,7 +19,7 @@ The order of policy invocation is the same as the definition order defined for t
   "id" : 300,
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
-    "mergingPolicy": "replace",
+    "mergingPolicy": "REPLACE",
     "policies": [ "java.util.ArrayList",
       [
           {"@class": "..."},

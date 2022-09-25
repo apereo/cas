@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,8 +36,10 @@ public class DefaultAttributeDefinitionTests {
             .canonicalizationMode(CaseCanonicalizationMode.UPPER.name())
             .script("groovy { return ['value1', 'value2'] }")
             .build();
-        val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+
+        val context = getAttributeDefinitionResolutionContext();
+
+        val values = defn.resolveAttributeValues(context);
         assertTrue(values.contains("VALUE1"));
         assertTrue(values.contains("VALUE2"));
     }
@@ -53,8 +54,8 @@ public class DefaultAttributeDefinitionTests {
             .key("computedAttribute")
             .script("groovy { return ['hello world'] }")
             .build();
-        val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+        val context = getAttributeDefinitionResolutionContext();
+        val values = defn.resolveAttributeValues(context);
         assertTrue(values.isEmpty());
     }
 
@@ -68,8 +69,8 @@ public class DefaultAttributeDefinitionTests {
             .key("computedAttribute")
             .script("badformat ()")
             .build();
-        val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+        val context = getAttributeDefinitionResolutionContext();
+        val values = defn.resolveAttributeValues(context);
         assertTrue(values.isEmpty());
     }
 
@@ -84,11 +85,10 @@ public class DefaultAttributeDefinitionTests {
             .key("computedAttribute")
             .script("groovy { return ['hello world'] }")
             .build();
-        var values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+        val context = getAttributeDefinitionResolutionContext();
+        var values = defn.resolveAttributeValues(context);
         assertFalse(values.isEmpty());
-        values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+        values = defn.resolveAttributeValues(context);
         assertFalse(values.isEmpty());
     }
 
@@ -102,8 +102,8 @@ public class DefaultAttributeDefinitionTests {
             .key("computedAttribute")
             .script("classpath:ComputedAttributeDefinition.groovy")
             .build();
-        val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+        val context = getAttributeDefinitionResolutionContext();
+        val values = defn.resolveAttributeValues(context);
         assertTrue(values.isEmpty());
     }
 
@@ -118,11 +118,10 @@ public class DefaultAttributeDefinitionTests {
             .key("computedAttribute")
             .script("classpath:ComputedAttributeDefinition.groovy")
             .build();
-        var values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+        val context = getAttributeDefinitionResolutionContext();
+        var values = defn.resolveAttributeValues(context);
         assertFalse(values.isEmpty());
-        values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+        values = defn.resolveAttributeValues(context);
         assertFalse(values.isEmpty());
     }
 
@@ -137,8 +136,8 @@ public class DefaultAttributeDefinitionTests {
             .key("computedAttribute")
             .script("classpath:BadScript.groovy")
             .build();
-        val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+        val context = getAttributeDefinitionResolutionContext();
+        val values = defn.resolveAttributeValues(context);
         assertTrue(values.isEmpty());
     }
 
@@ -153,10 +152,18 @@ public class DefaultAttributeDefinitionTests {
             .key("computedAttribute")
             .script("groovy {xyz}")
             .build();
-        val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
+        val context = getAttributeDefinitionResolutionContext();
+        val values = defn.resolveAttributeValues(context);
         assertNull(values);
     }
 
-
+    private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() {
+        return AttributeDefinitionResolutionContext.builder()
+            .attributeValues(List.of("v1", "v2"))
+            .scope("example.org")
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .build();
+    }
 }

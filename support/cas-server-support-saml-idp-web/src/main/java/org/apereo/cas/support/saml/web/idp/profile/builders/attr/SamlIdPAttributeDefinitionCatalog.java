@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * @since 6.5.0
  */
 @UtilityClass
-class SamlIdPAttributeDefinitionCatalog {
+public class SamlIdPAttributeDefinitionCatalog {
 
     /**
      * Load stream of known attribute definitions for saml2.
@@ -21,47 +21,47 @@ class SamlIdPAttributeDefinitionCatalog {
     public static Stream<SamlIdPAttributeDefinition> load() {
         return Stream.of(
             SamlIdPAttributeDefinition.builder().urn("urn:oid:0.9.2342.19200300.100.1.1")
-                .friendlyName("uid").key("urn:oid:0.9.2342.19200300.100.1.1").build(),
+                .friendlyName("uid").key("uid").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.12")
-                .friendlyName("title").key("urn:oid:2.5.4.12").build(),
+                .friendlyName("title").key("title").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.4")
-                .friendlyName("sn").key("urn:oid:2.5.4.4").build(),
+                .friendlyName("sn").key("sn").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.4")
-                .friendlyName("surname").key("urn:oid:2.5.4.4").build(),
+                .friendlyName("surname").key("surname").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.42")
-                .friendlyName("givenName").key("urn:oid:2.5.4.42").build(),
+                .friendlyName("givenName").key("givenName").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.20")
-                .friendlyName("telephoneNumber").key("urn:oid:2.5.4.20").build(),
+                .friendlyName("telephoneNumber").key("telephoneNumber").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:0.9.2342.19200300.100.1.3")
-                .friendlyName("email").key("urn:oid:0.9.2342.19200300.100.1.3").build(),
+                .friendlyName("email").key("email").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:0.9.2342.19200300.100.1.3")
-                .friendlyName("mail").key("urn:oid:0.9.2342.19200300.100.1.3").build(),
+                .friendlyName("mail").key("mail").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.3")
-                .friendlyName("commonName").key("urn:oid:2.5.4.3").build(),
+                .friendlyName("commonName").key("commonName").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.16.840.1.113730.3.1.241")
-                .friendlyName("displayName").key("urn:oid:2.16.840.1.113730.3.1.241").build(),
+                .friendlyName("displayName").key("displayName").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.10")
-                .friendlyName("organizationName").key("urn:oid:2.5.4.10").build(),
+                .friendlyName("organizationName").key("organizationName").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.5")
-                .friendlyName("eduPersonPrimaryAffiliation").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.5").build(),
+                .friendlyName("eduPersonPrimaryAffiliation").key("eduPersonPrimaryAffiliation").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.1")
-                .friendlyName("eduPersonAffiliation").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.1").build(),
+                .friendlyName("eduPersonAffiliation").key("eduPersonAffiliation").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.10")
-                .friendlyName("eduPersonTargetedID").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.10").build(),
+                .friendlyName("eduPersonTargetedID").key("eduPersonTargetedID").persistent(true).build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.7")
-                .friendlyName("eduPersonEntitlement").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.7").build(),
+                .friendlyName("eduPersonEntitlement").key("eduPersonEntitlement").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
-                .friendlyName("eduPersonPrincipalName").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.6").build(),
+                .friendlyName("eduPersonPrincipalName").key("eduPersonPrincipalName").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.9")
-                .friendlyName("eduPersonScopedAffiliation").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.9").build(),
+                .friendlyName("eduPersonScopedAffiliation").key("eduPersonScopedAffiliation").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.13")
-                .friendlyName("eduPersonUniqueId").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.13").build(),
+                .friendlyName("eduPersonUniqueId").key("eduPersonUniqueId").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.11")
-                .friendlyName("eduPersonAssurance").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.11").build(),
+                .friendlyName("eduPersonAssurance").key("eduPersonAssurance").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.2")
-                .friendlyName("eduPersonNickname").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.2").build(),
+                .friendlyName("eduPersonNickname").key("eduPersonNickname").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:1.3.6.1.4.1.5923.1.1.1.14")
-                .friendlyName("eduPersonOrcid").key("urn:oid:1.3.6.1.4.1.5923.1.1.1.14").build()
+                .friendlyName("eduPersonOrcid").key("eduPersonOrcid").build()
         );
     }
 }

@@ -89,7 +89,8 @@ you can let CAS calculate the `eduPersonTargetedID` attribute dynamically at rel
 ```
 
 The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found, 
-the authenticated principal id is used.
+the authenticated principal id is used. You can also control whether the final generated attribute should be named 
+`urn:oid:1.3.6.1.4.1.5923.1.1.1.10` or `eduPersonTargetedID` via the `useUniformResourceName` setting.
 
 ## Groovy Script
 
