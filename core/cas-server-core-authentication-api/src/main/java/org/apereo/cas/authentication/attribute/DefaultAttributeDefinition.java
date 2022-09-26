@@ -193,7 +193,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                                                               final AttributeDefinitionResolutionContext context) {
         val args = CollectionUtils.<String, Object>wrap("attributeName", Objects.requireNonNull(attributeKey),
             "attributeValues", currentValues, "logger", LOGGER,
-            "registeredService", context.getRegisteredService(), "attributes", context.getAttributes());
+            "registeredService", context.getRegisteredService(),
+            "attributes", context.getAttributes());
         scriptToExec.setBinding(args);
         return scriptToExec.execute(args.values().toArray(), List.class);
     }
