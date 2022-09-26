@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,10 +28,21 @@ public class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTes
     private AttributeDefinitionStore attributeDefinitionStore;
 
     @Test
-    public void verifyOperation() throws Exception {
-        assertTrue(SamlIdPAttributeDefinitionCatalog.load()
-            .allMatch(defn -> attributeDefinitionStore.locateAttributeDefinition(defn.getKey(), SamlIdPAttributeDefinition.class).isPresent()));
-        val defn = attributeDefinitionStore.locateAttributeDefinition("eduPersonTargetedID").get();
+    public void verifyStoreIsLoaded() throws Exception {
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("eduPersonUniqueId").isPresent());
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("organizationName").isPresent());
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("displayName").isPresent());
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("eduPersonEntitlement").isPresent());
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("eduPersonPrincipalName").isPresent());
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("eduPersonScopedAffiliation").isPresent());
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("mail").isPresent());
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("givenName").isPresent());
+    }
+
+    @Test
+    public void verifyEduPersonTargetedID() throws Exception {
+        val defn = attributeDefinitionStore.locateAttributeDefinition("eduPersonTargetedID", SamlIdPAttributeDefinition.class)
+            .get().withSalt(UUID.randomUUID().toString());
         val values = defn.resolveAttributeValues(getAttributeDefinitionResolutionContext());
         assertEquals(1, values.size());
     }

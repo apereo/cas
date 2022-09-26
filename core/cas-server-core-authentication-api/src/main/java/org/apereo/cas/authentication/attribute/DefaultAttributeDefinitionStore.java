@@ -171,7 +171,13 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         return attributeDefinitions.isEmpty();
     }
 
-
+    @Override
+    @CanIgnoreReturnValue
+    public AttributeDefinitionStore importStore(final AttributeDefinitionStore samlStore) {
+        samlStore.getAttributeDefinitions().forEach(this::registerAttributeDefinition);
+        return this;
+    }
+    
     @Override
     @CanIgnoreReturnValue
     public AttributeDefinitionStore store(final Resource resource) {

@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,6 +37,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
+@With
 public class SamlIdPAttributeDefinition extends DefaultAttributeDefinition {
     @Serial
     private static final long serialVersionUID = -144152003366303322L;
