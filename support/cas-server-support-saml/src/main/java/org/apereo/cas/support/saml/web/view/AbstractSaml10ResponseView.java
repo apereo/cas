@@ -59,9 +59,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         @Nonnull
         final Map<String, Object> model,
         @Nonnull
-                                           final HttpServletRequest request,
+        final HttpServletRequest request,
         @Nonnull
-                                           final HttpServletResponse response) throws Exception {
+        final HttpServletResponse response) throws Exception {
         try {
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             val service = this.samlArgumentExtractor.extractService(request);

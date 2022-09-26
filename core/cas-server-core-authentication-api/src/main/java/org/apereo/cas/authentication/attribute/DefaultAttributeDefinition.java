@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -47,6 +48,7 @@ import java.util.stream.Collectors;
 @SuperBuilder
 @NoArgsConstructor
 @Slf4j
+@With
 public class DefaultAttributeDefinition implements AttributeDefinition {
     @Serial
     private static final long serialVersionUID = 6898745248727445565L;

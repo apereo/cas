@@ -331,7 +331,7 @@ public class SamlUtils {
             try (val writer = transformSamlObject(configBean, samlObject, true)) {
                 LOGGER.debug("Logging [{}]\n\n[{}]\n\n", samlObject.getClass().getName(), writer);
                 LOGGER.debug(repeat);
-                LoggingUtils.protocolMessage("SAML2 " + samlObject.getClass().getName(),
+                LoggingUtils.protocolMessage("SAML " + samlObject.getClass().getName(),
                     Map.of(), writer.toString());
             } catch (final Exception e) {
                 throw new SamlException(e.getMessage(), e);
