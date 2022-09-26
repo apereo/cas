@@ -16,6 +16,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.util.List;
@@ -49,11 +50,11 @@ public class SamlIdPAttributeDefinition extends DefaultAttributeDefinition {
 
     @Override
     public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) {
-        if (isPersistent()) {
+        if (isPersistent() && StringUtils.isNotBlank(this.salt)) {
             val givenSalt = SpringExpressionLanguageValueResolver.getInstance().resolve(this.salt);
             val generator = new ShibbolethCompatiblePersistentIdGenerator(givenSalt);
             val finalValue = generator.generate(context.getPrincipal(), context.getService());
-            LOGGER.debug("Generated persistent attribute definition value [{}] for [{}/{}]", finalValue, getKey(), getUrn());
+            LOGGER.debug("Generated persistent attribute definition value [{}] for [{}]", finalValue, getKey());
             return CollectionUtils.wrapList(finalValue);
         }
         return super.resolveAttributeValues(context);

@@ -159,6 +159,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
                 .principal(principal)
                 .registeredService(registeredService)
                 .service(service)
+                .attributes(attributes)
                 .build();
             val currentValues = definition.resolveAttributeValues(context);
             return Optional.of(Pair.of(definition, currentValues));
