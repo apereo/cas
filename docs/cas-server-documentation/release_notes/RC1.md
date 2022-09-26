@@ -46,7 +46,7 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases 
-and scenarios. At the moment, total number of jobs stands at approximately `336` distinct scenarios. The overall 
+and scenarios. At the moment, total number of jobs stands at approximately `340` distinct scenarios. The overall 
 test coverage of the CAS codebase is approximately `94%`.
  
 ### OpenID Connect Claim Definitions
@@ -90,6 +90,16 @@ be supported, maintained or released:
 The ABAC authorization policy assigned to a registered service can 
 now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activation.html).
 
+### Attribute Definitions
+
+[Attribute definitions](../integration/Attribute-Definitions.html) can now be dynamically and programmatically registered with CAS via a dedicated API.
+
+### OAuth2/UMA Scopes
+
+Certain OAuth2 and/or UMA authorization requests are now able to enforce scope access by comparing requested scopes in the authorization
+requeds with what must be explicitly allowed in the registered service definition. In other words, scopes can only be allowed and requested
+if they are already authorized for the application definition in CAS.
+
 ### SAML2 Metadata Resolution
 
 In the event that a SAML2 service provider is configured to download metadata from a URL, CAS may now attempt to reuse the previously-downloaded
@@ -106,6 +116,10 @@ approprivate external identity provider.
 
 The JMS ticket registry has now been removed and replaced with a ticket registry implementation that is backed by the AMQP protocol
 and RabbitMQ. [See this](../ticketing/Messaging-AMQP-Ticket-Registry.html) for more info. 
+ 
+### SAML2 Attribute Definitions
+
+[SAML2 attribute definitions](../installation/Configuring-SAML2-Attribute-Definitions.html) can now register persistent attribute definitions.
 
 ### Docker Images
 

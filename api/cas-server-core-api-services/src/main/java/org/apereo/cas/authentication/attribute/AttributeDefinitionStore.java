@@ -49,6 +49,7 @@ public interface AttributeDefinitionStore {
 
     /**
      * Register attribute definition attribute.
+     * The definition will only be added if one does not already exist in the store.
      *
      * @param defn the defn
      * @return the attribute definition store
@@ -57,7 +58,7 @@ public interface AttributeDefinitionStore {
 
     /**
      * Register attribute definition attribute.
-     *
+     * The definition will only be added if one does not already exist in the store.
      * @param key  the key
      * @param defn the defn
      * @return the attribute definition store

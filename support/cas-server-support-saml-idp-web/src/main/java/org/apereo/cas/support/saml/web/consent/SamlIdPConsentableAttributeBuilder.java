@@ -30,7 +30,7 @@ public class SamlIdPConsentableAttributeBuilder implements ConsentableAttributeB
         val result = attributeDefinitionStore.locateAttributeDefinition(defn -> {
             if (defn instanceof SamlIdPAttributeDefinition) {
                 val samlAttr = (SamlIdPAttributeDefinition) defn;
-                return samlAttr.getName().equalsIgnoreCase(attribute.getName())
+                return samlAttr.getKey().equalsIgnoreCase(attribute.getName())
                        && StringUtils.isNotBlank(samlAttr.getFriendlyName());
             }
             return false;

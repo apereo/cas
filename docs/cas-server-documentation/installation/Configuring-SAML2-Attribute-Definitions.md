@@ -22,25 +22,50 @@ prevent it from being released by other protocols.
     "scoped": true,
     "encrypted": false,
     "attribute": "uid",
-    "friendlyName": "eduPersonPrincipalName"
+    "friendlyName": "eduPersonPrincipalName",
+    "persistent": false,
+    "salt": "6jGzT@!nf0i3"
   }
 }
 ```
 
 The following additional settings can be specified for a Saml IdP attribute definition:
 
-| Name           | Description                                                                                            |
-|----------------|--------------------------------------------------------------------------------------------------------|
-| `friendlyName` | (Optional) Friendly name of the attribute shared with the target application during attribute release. |
-| `urn`          | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`). |
+| Name           | Description                                                                                                                                                                                            |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `friendlyName` | (Optional) Friendly name of the attribute shared with the target application during attribute release.                                                                                                 |
+| `urn`          | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`).                                                                                                 |
+| `persistent`   | (Optional) Bollean flag to indicate whether the attribute value should be generated as a persistent value.                                                                                             |
+| `salt`         | (Optional) Salt value to use when creating persistent attribute definition values. This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax |
 
 To learn more about attribute definitions, please [see this guide](../integration/Attribute-Definitions.html).
-    
+ 
+## Persistent Definitions
+
+Attributes such as `eduPersonTargetedID` can be registered as a *persistent* attribute definition, allowing CAS to provide an opaque identifier 
+for the username. This value is a tuple consisting of an opaque identifier for the principal, a name 
+for the source of the identifier, and a name for the intended audience of the identifier.
+
+```json
+{
+  "@class": "java.util.TreeMap",
+  "eduPersonTargetedID": {
+    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
+    "key": "eduPersonTargetedID",
+    "name": "eduPersonTargetedID",
+    "urn": "urn:oid:1.3.6.1.4.1.5923.1.1.1.10",
+    "persistent": true,
+    "salt": "OqmG80fEKBQt",
+    "friendlyName": "eduPersonTargetedID"
+  }
+}
+```
+
 ## Defaults
 
 By default, the following *known* attribute definitions are included and ship with CAS automatically:
 
-| Friendly Name                 | Key                                  |
+| Name                          | URN                                  |
 |-------------------------------|--------------------------------------|
 | `uid`                         | `urn:oid:0.9.2342.19200300.100.1.1`  |            
 | `title`                       | `urn:oid:2.5.4.12`                   |
@@ -63,4 +88,3 @@ By default, the following *known* attribute definitions are included and ship wi
 | `eduPersonAssurance`          | `urn:oid:1.3.6.1.4.1.5923.1.1.1.11`  |
 | `eduPersonNickname`           | `urn:oid:1.3.6.1.4.1.5923.1.1.1.2`   |
 | `eduPersonOrcid`              | `urn:oid:1.3.6.1.4.1.5923.1.1.1.14`  |
-        
