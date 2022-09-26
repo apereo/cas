@@ -33,6 +33,9 @@ Provides an opaque identifier for the username. The opaque identifier by default
 of the `eduPersonTargetedID` attribute. The generated id may be based off of an existing principal
 attribute. If left unspecified or attribute not found, the authenticated principal id is used.
 
+The value is a tuple consisting of an opaque identifier for the principal, a name for the source of the 
+identifier, and a name for the intended audience of the identifier.
+
 ```json
 {
   "@class" : "org.apereo.cas.services.CasRegisteredService",

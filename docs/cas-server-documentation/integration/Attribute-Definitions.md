@@ -69,8 +69,7 @@ The following operations in the order given should take place, if an attribute d
 - Produce attribute values based on the `patternFormat` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `encrypted` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `canonicalizationMode` setting specified in the attribute definition, if any.
-
-
+- 
 {% tabs attrdefinitions %}
 
 {% tab attrdefinitions Basic %}
@@ -226,3 +225,21 @@ released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPerso
 {% endtab %}
 
 {% endtabs %}
+    
+## Custom Attribute Definitions
+
+You may design and inject your own attribute definitions dynamically with CAS. First, you will need to design
+a `@AutoConfiguration` class to contain your own `AttributeDefinitionStoreConfigurer` implementation:
+
+```java
+@AutoConfiguration
+public class MyConfiguration {
+
+    @Bean
+    public AttributeDefinitionStoreConfigurer myAttributeDefinitionStore() {
+        ...
+    }
+}
+```
+
+Your configuration class needs to be registered with CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.
