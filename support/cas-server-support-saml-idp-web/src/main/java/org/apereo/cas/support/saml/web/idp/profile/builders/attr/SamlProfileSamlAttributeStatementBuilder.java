@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link SamlProfileSamlAttributeStatementBuilder}.
@@ -82,6 +83,25 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         return newAttributeStatement(context, encodedAttrs, attrBuilder);
     }
 
+    private String getAttributeFriendlyName(final SamlProfileBuilderContext context, final String name) {
+        if (context.getRegisteredService().getAttributeFriendlyNames().containsKey(name)) {
+            return context.getRegisteredService().getAttributeFriendlyNames().get(name);
+        }
+        return attributeDefinitionStore.getAttributeDefinitionsBy(SamlIdPAttributeDefinition.class)
+            .filter(defn -> StringUtils.equalsIgnoreCase(name, defn.getKey()) || StringUtils.equalsIgnoreCase(name, defn.getUrn()))
+            .findFirst()
+            .map(SamlIdPAttributeDefinition::getFriendlyName)
+            .filter(StringUtils::isNotBlank)
+            .stream()
+            .findFirst()
+            .or(() -> {
+                val globalFriendlyNames = samlIdPProperties.getCore().getAttributeFriendlyNames();
+                val friendlyNames = new HashMap<>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
+                return Optional.ofNullable(friendlyNames.get(name));
+            })
+            .orElse(name);
+    }
+
     /**
      * New attribute statement.
      *
@@ -100,25 +120,17 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
         nameFormats.putAll(context.getRegisteredService().getAttributeNameFormats());
 
-        val globalFriendlyNames = samlIdPProperties.getCore().getAttributeFriendlyNames();
-        val friendlyNames = new HashMap<>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
         val urns = new HashMap<String, String>();
-
         attributeDefinitionStore.getAttributeDefinitions()
             .stream()
             .filter(defn -> defn instanceof SamlIdPAttributeDefinition)
             .map(SamlIdPAttributeDefinition.class::cast)
             .forEach(defn -> {
-                if (StringUtils.isNotBlank(defn.getFriendlyName())) {
-                    friendlyNames.put(defn.getKey(), defn.getFriendlyName());
-                }
                 if (StringUtils.isNotBlank(defn.getUrn())) {
                     urns.put(defn.getKey(), defn.getUrn());
                 }
             });
 
-        friendlyNames.putAll(context.getRegisteredService().getAttributeFriendlyNames());
-        
         LOGGER.debug("Attributes to process for SAML2 attribute statement are [{}]", attributes);
         for (val entry : attributes.entrySet()) {
             var attributeValue = entry.getValue();
@@ -126,8 +138,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                 LOGGER.info("Skipping attribute [{}] because it does not have any values.", entry.getKey());
                 continue;
             }
-            val friendlyName = friendlyNames.getOrDefault(entry.getKey(), null);
-
+            val friendlyName = getAttributeFriendlyName(context, entry.getKey());
             val attributeNames = urns.containsKey(entry.getKey())
                 ? List.of(urns.get(entry.getKey()))
                 : getMappedAttributeNamesFromAttributeDefinitionStore(entry);
@@ -159,7 +170,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                     CollectionUtils.firstElement(attributeValue).ifPresent(value -> nameID.setValue(value.toString()));
                     attributeValue = nameID;
                 }
-                
+
                 LOGGER.debug("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, attributeValue, friendlyName);
                 val attribute = newAttribute(friendlyName, name, attributeValue,
                     nameFormats,

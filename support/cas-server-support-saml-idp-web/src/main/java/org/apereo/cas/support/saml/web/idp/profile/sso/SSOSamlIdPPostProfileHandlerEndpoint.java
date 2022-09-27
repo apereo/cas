@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -106,7 +108,6 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
         @Parameter(name = "encrypt")
     })
     public ResponseEntity<Object> produceGet(final HttpServletRequest request, final HttpServletResponse response) {
-
         val username = request.getParameter("username");
         val password = request.getParameter("password");
         val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
@@ -147,10 +148,9 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
                                            final String password,
                                            final String entityId,
                                            final boolean encrypt) {
-
         try {
-            val selectedService = this.serviceFactory.createService(entityId);
-            val registeredService = this.servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
+            val selectedService = serviceFactory.createService(entityId);
+            val registeredService = servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
             val loadedService = (SamlRegisteredService) BeanUtils.cloneBean(registeredService);
@@ -160,34 +160,33 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
             val authnRequest = new AuthnRequestBuilder().buildObject();
             authnRequest.setIssuer(saml20ObjectBuilder.newIssuer(entityId));
 
-            val adaptorResult = SamlRegisteredServiceServiceProviderMetadataFacade.get(
-                defaultSamlRegisteredServiceCachingMetadataResolver, loadedService, entityId);
-            if (adaptorResult.isPresent()) {
-                val adaptor = adaptorResult.get();
-                val messageContext = new MessageContext();
-                val scratch = messageContext.getSubcontext(ScratchContext.class, true);
-                val map = (Map) Objects.requireNonNull(scratch).getMap();
-                map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
-                val assertion = getAssertion(username, password, entityId);
-                val buildContext = SamlProfileBuilderContext.builder()
-                    .samlRequest(authnRequest)
-                    .httpRequest(request)
-                    .httpResponse(response)
-                    .authenticatedAssertion(assertion)
-                    .registeredService(loadedService)
-                    .adaptor(adaptor)
-                    .binding(SAMLConstants.SAML2_POST_BINDING_URI)
-                    .messageContext(messageContext)
-                    .build();
-                val object = responseBuilder.build(buildContext);
-                val encoded = SamlUtils.transformSamlObject(saml20ObjectBuilder.getOpenSamlConfigBean(), object, true).toString();
-                return new ResponseEntity<>(encoded, HttpStatus.OK);
-            }
+            return SamlRegisteredServiceServiceProviderMetadataFacade.get(
+                    defaultSamlRegisteredServiceCachingMetadataResolver, loadedService, entityId)
+                .map(Unchecked.function(adaptor -> {
+                    val messageContext = new MessageContext();
+                    val scratch = messageContext.getSubcontext(ScratchContext.class, true);
+                    val map = (Map) Objects.requireNonNull(scratch).getMap();
+                    map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
+                    val assertion = getAssertion(username, password, entityId);
+                    val buildContext = SamlProfileBuilderContext.builder()
+                        .samlRequest(authnRequest)
+                        .httpRequest(request)
+                        .httpResponse(response)
+                        .authenticatedAssertion(assertion)
+                        .registeredService(loadedService)
+                        .adaptor(adaptor)
+                        .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+                        .messageContext(messageContext)
+                        .build();
+                    val object = responseBuilder.build(buildContext);
+                    val encoded = SamlUtils.transformSamlObject(saml20ObjectBuilder.getOpenSamlConfigBean(), object, true).toString();
+                    return new ResponseEntity<Object>(encoded, HttpStatus.OK);
+                }))
+                .orElseThrow(() -> new SamlException("Unable to locate " + entityId));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private AuthenticatedAssertionContext getAssertion(final String username,
