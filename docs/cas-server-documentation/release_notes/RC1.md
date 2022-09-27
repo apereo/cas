@@ -162,3 +162,4 @@ A number of Docker images used for integration testing are now upgraded to their
 - Pac4j
 - Couchbase Client
 - Micrometer
+- Apache Tomcat
