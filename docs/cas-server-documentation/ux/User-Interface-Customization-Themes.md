@@ -47,6 +47,7 @@ Contents of this file may contain the following settings:
 | `cas.js.core.enabled`                     | Whether core/default Javascript libraries should be included.         | `/themes/example/images/hero.png`    |
 | `cas.successful-login.display-attributes` | Whether attributes/applications should be displayed on login.         | `/themes/example/images/hero.png`    |
 | `cas.public-workstation.enabled`          | Whether user can indicate a public workstation option on login.       | `false`                              |
+| `cas.warn-on-redirect`                    | Whether user should be warned prior to redirects to applications.     | `false`                              |
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the 
   theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
