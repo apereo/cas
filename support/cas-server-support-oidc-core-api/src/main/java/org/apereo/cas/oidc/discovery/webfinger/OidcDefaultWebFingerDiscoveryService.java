@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -79,9 +80,9 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
                 return buildNotFoundResponseEntity("Unable to recognize/accept resource scheme " + resourceUri.getScheme());
             }
 
-            var user = userInfoRepository.findByEmailAddress(resourceUri.getUserInfo() + '@' + resourceUri.getHost());
+            var user = Optional.ofNullable(userInfoRepository.findByEmailAddress(resourceUri.getUserInfo() + '@' + resourceUri.getHost()));
             if (user.isEmpty()) {
-                user = userInfoRepository.findByUsername(resourceUri.getUserInfo());
+                user = Optional.ofNullable(userInfoRepository.findByUsername(resourceUri.getUserInfo()));
             }
             if (user.isEmpty()) {
                 LOGGER.info("User/Resource not found: [{}]", resource);
