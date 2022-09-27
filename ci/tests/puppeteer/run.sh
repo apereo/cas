@@ -375,7 +375,7 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
-  environmentVariables=$(jq -j '.environmentVariables | join(";")' "$config");
+  environmentVariables=$(jq -j '.environmentVariables // empty | join(";")' "$config");
   IFS=';' read -r -a variables <<< "$environmentVariables"
   for env in "${variables[@]}"
   do
