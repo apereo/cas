@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AttributeDefinitionStore}.
@@ -106,6 +107,15 @@ public interface AttributeDefinitionStore {
      * @return the attribute definitions
      */
     Collection<AttributeDefinition> getAttributeDefinitions();
+
+    /**
+     * Gets attribute definitions by type.
+     *
+     * @param <T>  the type parameter
+     * @param type the type
+     * @return the attribute definitions by
+     */
+    <T extends AttributeDefinition> Stream<T> getAttributeDefinitionsBy(Class<T> type);
 
     /**
      * Gets attribute values.

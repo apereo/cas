@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * This is {@link DefaultAttributeDefinitionStore}.
@@ -141,6 +142,15 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     @Override
     public Collection<AttributeDefinition> getAttributeDefinitions() {
         return attributeDefinitions.values();
+    }
+
+    @Override
+    public <T extends AttributeDefinition> Stream<T> getAttributeDefinitionsBy(final Class<T> type) {
+        return attributeDefinitions
+            .values()
+            .stream()
+            .filter(defn -> type.isAssignableFrom(defn.getClass()))
+            .map(type::cast);
     }
 
     @Override
