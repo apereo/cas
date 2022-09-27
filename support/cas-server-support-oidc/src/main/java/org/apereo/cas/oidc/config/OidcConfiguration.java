@@ -23,6 +23,7 @@ import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
 import org.apereo.cas.oidc.claims.OidcSimpleIdTokenClaimCollector;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
+import org.apereo.cas.oidc.discovery.webfinger.OidcDefaultWebFingerDiscoveryService;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
 import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcEchoingWebFingerUserInfoRepository;
@@ -93,6 +94,8 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -102,6 +105,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
@@ -201,16 +205,49 @@ public class OidcConfiguration {
     @Configuration(value = "OidcWebFingerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcWebFingerConfiguration {
+        private static final BeanCondition CONDITION_WEBFINGER = BeanCondition.on("cas.authn.oidc.web-finger.enabled").isTrue().evenIfMissing();
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = OidcWebFingerUserInfoRepository.BEAN_NAME)
+        public OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(OidcWebFingerUserInfoRepository.class)
+                .when(CONDITION_WEBFINGER.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val userInfo = casProperties.getAuthn().getOidc().getWebfinger().getUserInfo();
+                    if (userInfo.getGroovy().getLocation() != null) {
+                        return new OidcGroovyWebFingerUserInfoRepository(userInfo.getGroovy().getLocation());
+                    }
+                    if (StringUtils.isNotBlank(userInfo.getRest().getUrl())) {
+                        return new OidcRestfulWebFingerUserInfoRepository(userInfo.getRest());
+                    }
+                    LOGGER.info("Using [{}] to locate webfinger resources, which is NOT appropriate for production purposes, "
+                                + "as it will always echo back the given username/email address and is only useful for testing/demo purposes. "
+                                + "Consider choosing and configuring a different repository implementation for locating and fetching user information "
+                                + "for webfinger resources, etc.", OidcEchoingWebFingerUserInfoRepository.class.getSimpleName());
+                    return new OidcEchoingWebFingerUserInfoRepository();
+                })
+                .otherwiseProxy()
+                .get();
+        }
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "oidcWebFingerDiscoveryService")
         public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService(
-            @Qualifier("oidcWebFingerUserInfoRepository")
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(OidcWebFingerUserInfoRepository.BEAN_NAME)
             final OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory) throws Exception {
-            return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository,
-                oidcServerDiscoverySettingsFactory.getObject());
+            return BeanSupplier.of(OidcWebFingerDiscoveryService.class)
+                .when(CONDITION_WEBFINGER.given(applicationContext.getEnvironment()))
+                .supply(Unchecked.supplier(() -> new OidcDefaultWebFingerDiscoveryService(oidcWebFingerUserInfoRepository,
+                    oidcServerDiscoverySettingsFactory.getObject())))
+                .otherwiseProxy()
+                .get();
         }
 
     }
@@ -708,28 +745,6 @@ public class OidcConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public static class OidcCoreConfiguration {
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "oidcWebFingerUserInfoRepository")
-        public OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository(
-            final CasConfigurationProperties casProperties) {
-            val userInfo = casProperties.getAuthn().getOidc().getWebfinger().getUserInfo();
-
-            if (userInfo.getGroovy().getLocation() != null) {
-                return new OidcGroovyWebFingerUserInfoRepository(userInfo.getGroovy().getLocation());
-            }
-
-            if (StringUtils.isNotBlank(userInfo.getRest().getUrl())) {
-                return new OidcRestfulWebFingerUserInfoRepository(userInfo.getRest());
-            }
-
-            LOGGER.info("Using [{}] to locate webfinger resources, which is NOT appropriate for production purposes, "
-                        + "as it will always echo back the given username/email address and is only useful for testing/demo purposes. "
-                        + "Consider choosing and configuring a different repository implementation for locating and fetching user information "
-                        + "for webfinger resources, etc.", OidcEchoingWebFingerUserInfoRepository.class.getSimpleName());
-            return new OidcEchoingWebFingerUserInfoRepository();
-        }
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcCasCallbackUrlResolver")
