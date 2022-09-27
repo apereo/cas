@@ -62,9 +62,12 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredService registeredService,
         final String entityID) {
-        val criteria = new CriteriaSet(new EntityIdCriterion(entityID),
-            new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        return get(resolver, registeredService, entityID, criteria);
+        return Optional.ofNullable(entityID)
+            .map(id -> {
+                val criteria = new CriteriaSet(new EntityIdCriterion(id),
+                    new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+                return get(resolver, registeredService, entityID, criteria);
+            }).orElseGet(Optional::empty);
     }
 
     /**

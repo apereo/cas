@@ -16,30 +16,30 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link OidcWebFingerDiscoveryServiceTests}.
+ * This is {@link OidcDefaultWebFingerDiscoveryServiceTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcWebFingerDiscoveryServiceTests extends AbstractOidcTests {
+public class OidcDefaultWebFingerDiscoveryServiceTests extends AbstractOidcTests {
 
     @Test
     public void verifyNotFound() {
-        val entity = oidcWebFingerDiscoveryService.handleWebFingerDiscoveryRequest("resource", OidcConstants.WEBFINGER_REL);
+        val entity = oidcWebFingerDiscoveryService.handleRequest("resource", OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCodeValue());
     }
 
     @Test
     public void verifyAccountMismatch() {
-        val entity = oidcWebFingerDiscoveryService.handleWebFingerDiscoveryRequest(
+        val entity = oidcWebFingerDiscoveryService.handleRequest(
             "okta:acct:joe.stormtrooper@example.com", "whatever");
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCodeValue());
     }
 
     @Test
     public void verifyAccount() {
-        val entity = oidcWebFingerDiscoveryService.handleWebFingerDiscoveryRequest(
+        val entity = oidcWebFingerDiscoveryService.handleRequest(
             "okta:acct:joe.stormtrooper@sso.example.org", OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_OK, entity.getStatusCodeValue());
     }
@@ -49,16 +49,16 @@ public class OidcWebFingerDiscoveryServiceTests extends AbstractOidcTests {
         val repository = mock(OidcWebFingerUserInfoRepository.class);
         when(repository.findByEmailAddress(anyString())).thenReturn(Map.of());
         when(repository.findByUsername(anyString())).thenReturn(Map.of());
-        val service = new OidcWebFingerDiscoveryService(repository,
+        val service = new OidcDefaultWebFingerDiscoveryService(repository,
             new OidcServerDiscoverySettings("https://apereo.org/cas"));
-        val entity = service.handleWebFingerDiscoveryRequest(
+        val entity = service.handleRequest(
             "okta:acct:joe.stormtrooper@sso.example.org", OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCodeValue());
     }
 
     @Test
     public void verifyMismatchResource() {
-        val entity = oidcWebFingerDiscoveryService.handleWebFingerDiscoveryRequest(
+        val entity = oidcWebFingerDiscoveryService.handleRequest(
             StringUtils.EMPTY, OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCodeValue());
     }

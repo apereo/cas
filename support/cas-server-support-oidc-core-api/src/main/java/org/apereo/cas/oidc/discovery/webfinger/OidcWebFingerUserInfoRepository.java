@@ -10,6 +10,10 @@ import java.util.Map;
  * @since 6.1.0
  */
 public interface OidcWebFingerUserInfoRepository {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "oidcWebFingerUserInfoRepository";
 
     /**
      * Find by email address.
