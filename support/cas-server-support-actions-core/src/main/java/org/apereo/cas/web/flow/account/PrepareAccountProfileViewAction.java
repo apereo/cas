@@ -123,7 +123,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
         AccountAuditActionContext(final AuditActionContext context) {
             super(context.getPrincipal(), context.getResourceOperatedUpon(), context.getActionPerformed(),
                 context.getApplicationCode(), context.getWhenActionWasPerformed(), context.getClientIpAddress(),
-                context.getServerIpAddress(), context.getServerIpAddress());
+                context.getServerIpAddress(), context.getUserAgent());
             this.json = FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
         }
     }
