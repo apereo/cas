@@ -45,7 +45,7 @@ public class CosmosDbObjectFactory {
         val builder = new CosmosClientBuilder()
             .endpoint(uri)
             .key(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getKey()))
-            .preferredRegions(this.properties.getPreferredRegions())
+            .preferredRegions(properties.getPreferredRegions())
             .consistencyLevel(ConsistencyLevel.valueOf(properties.getConsistencyLevel()))
             .contentResponseOnWriteEnabled(false)
             .clientTelemetryEnabled(properties.isAllowTelemetry())
