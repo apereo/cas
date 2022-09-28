@@ -16,7 +16,7 @@ if [[ "${CI}" == "true" ]]; then
   echo "Azure CosmosDb emulator for Linux is not quite ready yet."
   echo "There are intermittent out-of-service errors while running with CI."
   echo "The emulator and test suite will be re-enabled once it exits public preview."
-  exit 0
+#  exit 0
 fi
 
 ipaddr="$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}' | head -n 1)"
