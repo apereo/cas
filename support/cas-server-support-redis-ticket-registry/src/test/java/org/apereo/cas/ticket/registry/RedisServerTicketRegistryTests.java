@@ -34,6 +34,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Redis")
 public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
 
+    @RepeatedTest(2)
+    public void verifyHealthOperation() throws Exception {
+        val health = redisHealthIndicator.health();
+        assertTrue(health.getDetails().containsKey("server"));
+        assertTrue(health.getDetails().containsKey("memory"));
+        assertTrue(health.getDetails().containsKey("cpu"));
+        assertTrue(health.getDetails().containsKey("keyspace"));
+        assertTrue(health.getDetails().containsKey("stats"));
+    }
+
     @RepeatedTest(1)
     @Tag("TicketRegistryTestWithEncryption")
     public void verifyBadTicketDecoding() throws Exception {
