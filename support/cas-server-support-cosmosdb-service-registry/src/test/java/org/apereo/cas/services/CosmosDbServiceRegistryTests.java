@@ -12,7 +12,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,8 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @ResourceLock("cosmosdb-service")
 @Getter
-@EnabledIfEnvironmentVariable(named = "COSMOS_DB_URL", matches = ".+")
-@EnabledIfEnvironmentVariable(named = "COSMOS_DB_KEY", matches = ".+")
 public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cosmosDbServiceRegistry")
