@@ -70,6 +70,14 @@ curl -u casuser:Mellon https://config.server.url:8888/casconfigserver/actuator/e
 Remember that actuator endpoints typically are prefixed with <code>/actuator</code>.
 </p></div>
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="health" healthIndicators="refresh,configServerHealthIndicator" %}
+
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config.server.health" %}
+
 ## Spring Cloud Configuration Server Clients
 
 To let the CAS server web application (or any other client for that matter) talk to the configuration server, the following settings need to be applied to CAS'
