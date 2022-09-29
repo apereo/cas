@@ -33,7 +33,8 @@ and latencies must be considered and carefully tuned. This might have become spe
 in clustered deployments as depending on the ticket registry of choice, CAS may need 
 to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage.</p></div>
 
-{% include_cached actuators.html endpoints="health" healthIndicators="memoryHealthIndicator,systemHealthIndicator,sessionHealthIndicator" %}
+{% include_cached actuators.html endpoints="health" 
+healthIndicators="ping,diskSpaceHealthIndicator,memoryHealthIndicator,systemHealthIndicator,sessionHealthIndicator" %}
 
 ### Advanced
 
