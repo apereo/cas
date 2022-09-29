@@ -201,14 +201,14 @@ ext.libraries = [
                 }
         ],
         bouncycastle            : [
-                dependencies.create("org.bouncycastle:bcpkix-jdk15on:$bouncyCastleVersion") {
+                dependencies.create("org.bouncycastle:bcpkix-jdk18on:$bouncyCastleVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
                 dependencies.create("org.cryptacular:cryptacular:$cryptacularVersion") {
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
-                dependencies.create("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion") {
+                dependencies.create("org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 }
         ],
