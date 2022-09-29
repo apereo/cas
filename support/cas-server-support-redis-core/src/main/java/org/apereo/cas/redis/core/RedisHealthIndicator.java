@@ -9,6 +9,9 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisConnectionUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -25,31 +28,36 @@ public class RedisHealthIndicator extends AbstractHealthIndicator {
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
+        builder.up();
         applicationContext.getBeansOfType(RedisConnectionFactory.class)
             .forEach((key, factory) -> {
                 val connection = RedisConnectionUtils.getConnection(factory);
                 try {
-                    addDetailsFor(connection, "server", builder);
-                    addDetailsFor(connection, "clients", builder);
-                    addDetailsFor(connection, "memory", builder);
-                    addDetailsFor(connection, "persistence", builder);
-                    addDetailsFor(connection, "stats", builder);
-                    addDetailsFor(connection, "replication", builder);
-                    addDetailsFor(connection, "cpu", builder);
-                    addDetailsFor(connection, "latencystats", builder);
-                    addDetailsFor(connection, "cluster", builder);
-                    addDetailsFor(connection, "keyspace", builder);
-                    builder.up();
+                    val section = new HashMap<String, Map>();
+
+                    val entries = new HashMap<>();
+                    entries.put("server", Objects.requireNonNull(connection.info("server")));
+                    entries.put("clients", Objects.requireNonNull(connection.info("clients")));
+                    entries.put("memory", Objects.requireNonNull(connection.info("memory")));
+                    entries.put("persistence", Objects.requireNonNull(connection.info("persistence")));
+                    entries.put("stats", Objects.requireNonNull(connection.info("stats")));
+                    entries.put("replication", Objects.requireNonNull(connection.info("replication")));
+                    entries.put("cpu", Objects.requireNonNull(connection.info("cpu")));
+                    entries.put("latencystats", Objects.requireNonNull(connection.info("latencystats")));
+                    entries.put("cluster", Objects.requireNonNull(connection.info("cluster")));
+                    entries.put("keyspace", Objects.requireNonNull(connection.info("keyspace")));
+                    
+                    section.put(key, entries);
+                    builder.withDetails(section);
                 } finally {
                     RedisConnectionUtils.releaseConnection(connection, factory);
                 }
             });
     }
 
-    protected void addDetailsFor(final RedisConnection connection,
-                                 final String section,
-                                 final Health.Builder builder) {
-        val serverInfo = new TreeMap(Objects.requireNonNull(connection.info(section)));
-        builder.withDetails(Map.of(section, serverInfo));
+    protected Map addDetailsFor(final RedisConnection connection, final String section) {
+        val entries = new TreeMap();
+        entries.put(section, Objects.requireNonNull(connection.info(section)));
+        return entries;
     }
 }
