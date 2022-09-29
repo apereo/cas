@@ -10,10 +10,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.kafka.core.KafkaOperations;
-import org.springframework.kafka.support.SendResult;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import javax.annotation.Nonnull;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -69,26 +66,13 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
         return super.remove(key, item, publish);
     }
 
-    @Override
-    public void clear() {
-        getAll().forEach(item -> remove(item.getValue(), item, true));
-        super.clear();
-    }
-
+    @SuppressWarnings("FutureReturnValueIgnored")
     private void sendObject(final RegisteredService key, final DistributedCacheObject<RegisteredService> item) {
-        val future = kafkaTemplate.send(topic, buildKey(key), item);
-        future.addCallback(new ListenableFutureCallback<SendResult>() {
-            @Override
-            public void onSuccess(final SendResult result) {
-                LOGGER.trace("Published [{}] successfully", result);
-            }
-
-            @Override
-            public void onFailure(
-                @Nonnull
-                final Throwable e) {
-                LoggingUtils.error(LOGGER, e);
-            }
+        val itemKey = buildKey(key);
+        val future = kafkaTemplate.usingCompletableFuture().send(topic, itemKey, item);
+        future.whenComplete((result, ex) -> {
+            LOGGER.info("Published [{}]", result);
+            LoggingUtils.error(LOGGER, ex);
         });
     }
 }
