@@ -43,4 +43,16 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-events-configuration" %}
 
-Spring application context will fail to refresh beans that are excluded (or conditionally activated/created) at initialization/startup time, because there is nothing to refresh to begin with. Refresh requests and beans marked with `@RefreshScope` only work in scenarios where there is an existing reference to a bean in the application context hierarchy that can be refreshed; beans or configuration classes that are skipped during the startup and application context initialization will never be refreshable, because they are not re-created upon refresh requests. In other words, refresh requests only work best when there is a setting or property whose existing value changes from A to B; if there was no A to begin with, or if A is being removed, refresh requests and the reload strategy may fall short.
+Spring application context will fail to refresh beans that are excluded (or conditionally activated/created) at 
+initialization/startup time, because there is nothing to refresh to begin with. Refresh requests and beans 
+marked with `@RefreshScope` only work in scenarios where there is an existing reference to a bean in the application 
+context hierarchy that can be refreshed; beans or configuration classes that are skipped during the startup and 
+application context initialization will never be refreshable, because they are not re-created upon refresh 
+requests. In other words, refresh requests only work best when there is a setting or property whose existing 
+value changes from A to B; if there was no A to begin with, or if A is being removed, refresh requests and the reload strategy may fall short.
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="health" healthIndicators="refresh" %}

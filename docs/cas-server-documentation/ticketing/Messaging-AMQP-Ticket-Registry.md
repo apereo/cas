@@ -28,11 +28,14 @@ Support is enabled by including the following dependency in the overlay:
 
 ## CAS Configuration
 
-{% include_cached casproperties.html properties="cas.ticket.registry.amqp" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.amqp"
+thirdPartyStartsWith="spring.rabbitmq" %}
 
-## RabbitMQ Configuration
+## Actuator Endpoints
 
-{% include_cached casproperties.html properties="spring.rabbitmq" %}
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="health" healthIndicators="rabbitHealthIndicator" %}
 
 ## Troubleshooting
 
