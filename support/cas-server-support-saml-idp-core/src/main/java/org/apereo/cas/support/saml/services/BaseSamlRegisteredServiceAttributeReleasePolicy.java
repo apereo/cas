@@ -144,8 +144,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
                                                            final Map<String, List<Object>> attributes) {
-        if (context.getRegisteredService() instanceof SamlRegisteredService) {
-            val samlRegisteredService = (SamlRegisteredService) context.getRegisteredService();
+        if (context.getRegisteredService() instanceof SamlRegisteredService samlRegisteredService) {
 
             val applicationContext = ApplicationContextProvider.getApplicationContext();
             val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,

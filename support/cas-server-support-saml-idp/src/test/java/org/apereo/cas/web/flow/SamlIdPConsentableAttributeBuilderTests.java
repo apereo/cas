@@ -96,7 +96,7 @@ public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowT
                 .name("eduPersonPrincipalName")
                 .values(CollectionUtils.wrapList("1", "2"))
                 .build());
-        assertNull(attribute.getFriendlyName());
+        assertEquals("eduPersonPrincipalName-FriendlyName", attribute.getFriendlyName());
     }
 
     @Test

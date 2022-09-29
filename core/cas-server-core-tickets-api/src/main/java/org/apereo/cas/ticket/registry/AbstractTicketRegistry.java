@@ -133,9 +133,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public int deleteTicket(final Ticket ticket) throws Exception {
         val count = new AtomicLong(0);
-        if (ticket instanceof TicketGrantingTicket) {
+        if (ticket instanceof TicketGrantingTicket tgt) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
-            val tgt = (TicketGrantingTicket) ticket;
             count.getAndAdd(deleteChildren(tgt));
             if (ticket instanceof ProxyGrantingTicket) {
                 deleteProxyGrantingTicketFromParent((ProxyGrantingTicket) ticket);
@@ -272,13 +271,12 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             LOGGER.warn("Ticket passed is null and cannot be decoded");
             return null;
         }
-        if (!(ticketToProcess instanceof EncodedTicket)) {
+        if (!(ticketToProcess instanceof EncodedTicket encodedTicket)) {
             LOGGER.warn("Ticket passed is not an encoded ticket: [{}], no decoding is necessary.",
                 ticketToProcess.getClass().getSimpleName());
             return ticketToProcess;
         }
         LOGGER.debug("Attempting to decode [{}]", ticketToProcess);
-        val encodedTicket = (EncodedTicket) ticketToProcess;
         val ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncodedTicket(), this.cipherExecutor, Ticket.class);
         LOGGER.debug("Decoded ticket to [{}]", ticket);
         return ticket;

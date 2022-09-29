@@ -78,10 +78,9 @@ public class SimplePrincipal implements Principal {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof SimplePrincipal)) {
+        if (!(obj instanceof SimplePrincipal rhs)) {
             return false;
         }
-        val rhs = (SimplePrincipal) obj;
         return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
     }
 }
