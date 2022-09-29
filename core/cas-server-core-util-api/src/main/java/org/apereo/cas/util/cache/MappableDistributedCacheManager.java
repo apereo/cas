@@ -38,7 +38,7 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
 
     @Override
     public Collection<V> getAll() {
-        return this.mapInstance.values();
+        return mapInstance.values();
     }
 
     @Override
