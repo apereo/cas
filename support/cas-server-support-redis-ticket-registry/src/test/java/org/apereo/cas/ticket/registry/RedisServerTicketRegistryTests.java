@@ -13,6 +13,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,11 +39,12 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
     @RepeatedTest(2)
     public void verifyHealthOperation() throws Exception {
         val health = redisHealthIndicator.health();
-        assertTrue(health.getDetails().containsKey("server"));
-        assertTrue(health.getDetails().containsKey("memory"));
-        assertTrue(health.getDetails().containsKey("cpu"));
-        assertTrue(health.getDetails().containsKey("keyspace"));
-        assertTrue(health.getDetails().containsKey("stats"));
+        val section = (Map) health.getDetails().get("redisTicketConnectionFactory");
+        assertTrue(section.containsKey("server"));
+        assertTrue(section.containsKey("memory"));
+        assertTrue(section.containsKey("cpu"));
+        assertTrue(section.containsKey("keyspace"));
+        assertTrue(section.containsKey("stats"));
     }
 
     @RepeatedTest(1)
