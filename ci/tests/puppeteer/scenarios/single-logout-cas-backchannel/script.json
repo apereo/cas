@@ -13,5 +13,5 @@
     "--cas.http-client.allow-local-urls=true",
     "--cas.http-client.host-name-verifier=none"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/cas/run-cas-client.sh"
 }
