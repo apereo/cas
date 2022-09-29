@@ -43,3 +43,4 @@ Monitors can also be managed using any one of the following strategies.
 | MongoDb        | [this guide](Configuring-Monitoring-MongoDb.html)  
 | JDBC           | [this guide](Configuring-Monitoring-JDBC.html)  
 | LDAP           | [this guide](Configuring-Monitoring-LDAP.html)
+| Redis          | [this guide](Configuring-Monitoring-Redis.html)

@@ -24,8 +24,7 @@ public class CasProtocolVersionValidationSpecification implements CasProtocolVal
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
         val registeredService = assertion.registeredService();
-        if (registeredService instanceof CasModelRegisteredService) {
-            val casService = (CasModelRegisteredService) registeredService;
+        if (registeredService instanceof CasModelRegisteredService casService) {
             return casService.getSupportedProtocols().isEmpty()
                    || casService.getSupportedProtocols().containsAll(supportedVersions);
         }

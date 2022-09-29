@@ -52,8 +52,7 @@ public class AddResponseHeadersFilter extends AbstractSecurityFilter implements 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                          final FilterChain filterChain) throws IOException, ServletException {
-        if (servletResponse instanceof HttpServletResponse) {
-            val httpServletResponse = (HttpServletResponse) servletResponse;
+        if (servletResponse instanceof HttpServletResponse httpServletResponse) {
             for (val entry : this.headersMap.entrySet()) {
                 LOGGER.debug("Adding parameter [{}] with value [{}]", entry.getKey(), entry.getValue());
                 httpServletResponse.addHeader(entry.getKey(), entry.getValue());

@@ -94,6 +94,14 @@ public class CosmosDbObjectFactory {
     }
 
     /**
+     * Drop database.
+     */
+    public void dropDatabase() {
+        client.getDatabase(properties.getDatabase()).delete();
+        LOGGER.debug("Removed database [{}]", properties.getDatabase());
+    }
+
+    /**
      * Create container.
      *
      * @param name         the name

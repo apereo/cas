@@ -8,8 +8,12 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
+import lombok.val;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -54,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_KEY", matches = ".+")
 public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
-    @Qualifier("cosmosDbServiceRegistry")
+    @Qualifier(ServiceRegistry.BEAN_NAME)
     private ServiceRegistry newServiceRegistry;
 
     @BeforeEach
@@ -62,5 +66,11 @@ public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
         Thread.sleep(3000);
         newServiceRegistry.deleteAll();
         assertTrue(newServiceRegistry.load().isEmpty());
+    }
+
+    @AfterAll
+    public static void shutdown() {
+        val factory = ApplicationContextProvider.getApplicationContext().getBean(CosmosDbObjectFactory.class);
+        factory.dropDatabase();
     }
 }

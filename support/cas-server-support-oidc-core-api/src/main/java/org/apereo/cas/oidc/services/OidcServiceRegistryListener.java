@@ -45,15 +45,13 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         val policy = registeredService.getAttributeReleasePolicy();
         val matchingPolicies = new ArrayList<RegisteredServiceAttributeReleasePolicy>();
 
-        if (policy instanceof RegisteredServiceChainingAttributeReleasePolicy) {
-            val chainedPolicy = (RegisteredServiceChainingAttributeReleasePolicy) policy;
+        if (policy instanceof RegisteredServiceChainingAttributeReleasePolicy chainedPolicy) {
             matchingPolicies.addAll(chainedPolicy.getPolicies()
                 .stream()
                 .filter(p -> p instanceof OidcRegisteredServiceAttributeReleasePolicy)
                 .map(OidcRegisteredServiceAttributeReleasePolicy.class::cast)
                 .filter(p -> p.getScopeType().equalsIgnoreCase(givenScope)).toList());
-        } else if (policy instanceof OidcRegisteredServiceAttributeReleasePolicy) {
-            val oidcPolicy = (OidcRegisteredServiceAttributeReleasePolicy) policy;
+        } else if (policy instanceof OidcRegisteredServiceAttributeReleasePolicy oidcPolicy) {
             if (oidcPolicy.getScopeType().equalsIgnoreCase(givenScope)) {
                 matchingPolicies.add(oidcPolicy);
             }
@@ -131,8 +129,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         if (scopeFree) {
             LOGGER.trace("Service definition [{}] will use the assigned attribute release policy without scopes", oidcService.getName());
 
-            if (oidcService.getAttributeReleasePolicy() instanceof RegisteredServiceChainingAttributeReleasePolicy) {
-                val chain = (RegisteredServiceChainingAttributeReleasePolicy) oidcService.getAttributeReleasePolicy();
+            if (oidcService.getAttributeReleasePolicy() instanceof RegisteredServiceChainingAttributeReleasePolicy chain) {
                 policyChain.addPolicies(chain.getPolicies().toArray(new RegisteredServiceAttributeReleasePolicy[0]));
             } else {
                 policyChain.addPolicies(oidcService.getAttributeReleasePolicy());
