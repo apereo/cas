@@ -30,7 +30,7 @@ described in this document to avoid surprises in future upgrades.</p>
       
 The following endpoints are provided by CAS:
 
-{% include_cached actuators.html endpoints="duoPing,duoAccountStatus"  %}
+{% include_cached actuators.html endpoints="duoPing,duoAccountStatus,health" healthIndicators="duoSecurityHealthIndicator" %}
 
 ## Multiple Instances
 

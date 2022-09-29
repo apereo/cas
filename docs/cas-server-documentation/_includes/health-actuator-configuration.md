@@ -1,5 +1,7 @@
 <!-- fragment:keep -->
 
+{% assign healthIndicators = include.healthIndicators | split: "," %}
+
 The `health` endpoint may also be configured to show details via the following conditions:
 
 | URL               | Description                                                                                                              |
@@ -13,20 +15,5 @@ health indicator components that may monitor different systems, such as LDAP con
 pools, database connections, etc.
 
 ```properties
-# management.health.[indicator].enabled=false|true
-```
-
-The following health indicator names are available, given the presence of the appropriate CAS feature:
-
-| Health Indicator                             | Description                                                                               |
-|----------------------------------------------|-------------------------------------------------------------------------------------------|
-| `memoryHealthIndicator`                      | Reports back on the health status of CAS JVM memory usage, etc.                           |
-| `systemHealthIndicator`                      | Reports back on the health of the system of the CAS server.(Load, Uptime, Heap, CPU etc.) |
-| `sessionHealthIndicator`                     | Reports back on the health status of CAS tickets and SSO session usage.                   |
-| `duoSecurityHealthIndicator`                 | Reports back on the health status of Duo Security APIs.                                   |
-| `hazelcastHealthIndicator`                   | Reports back on the health status of Hazelcast caches.                                    |
-| `dataSourceHealthIndicator`                  | Reports back on the health status of JDBC connections.                                    |
-| `pooledLdapConnectionFactoryHealthIndicator` | Reports back on the health status of LDAP connection pools.                               |
-| `memcachedHealthIndicator`                   | Reports back on the health status of Memcached connections.                               |
-| `mongoHealthIndicator`                       | Reports back on the health status of MongoDb connections.                                 |
-| `redisHealthIndicator`                       | Reports back on the health status of Redis connections.                                   |
+{% for indic in healthIndicators %}management.health.{{ indic }}.enabled=true
+{% endfor %}```

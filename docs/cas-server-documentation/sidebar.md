@@ -575,6 +575,7 @@ layout: null
         *   [Hazelcast](/cas/{{ version }}/monitoring/Configuring-Monitoring-Hazelcast.html)
         *   [JDBC](/cas/{{ version }}/monitoring/Configuring-Monitoring-JDBC.html)
         *   [LDAP](/cas/{{ version }}/monitoring/Configuring-Monitoring-LDAP.html)
+        *   [Redis](/cas/{{ version }}/monitoring/Configuring-Monitoring-Redis.html)
 
 * [User Interface](#user_interface)
     *   [Overview](/cas/{{ version }}/ux/User-Interface-Customization.html)

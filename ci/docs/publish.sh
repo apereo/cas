@@ -96,7 +96,7 @@ while (("$#")); do
     shellCommands=$2
     shift 2
     ;;
-  --audit)
+  --audit|--aud)
     audit=$2
     shift 2
     ;;

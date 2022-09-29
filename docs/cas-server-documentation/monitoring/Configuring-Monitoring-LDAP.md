@@ -14,3 +14,4 @@ Monitor the status and availability of an LDAP server.
 
 {% include_cached casproperties.html properties="cas.monitor.ldap" %}
 
+{% include_cached actuators.html endpoints="health" healthIndicators="pooledLdapConnectionFactoryHealthIndicator" %}
