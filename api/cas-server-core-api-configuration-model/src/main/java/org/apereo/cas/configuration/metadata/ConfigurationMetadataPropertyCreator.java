@@ -165,10 +165,9 @@ public class ConfigurationMetadataPropertyCreator {
             if (obj == this) {
                 return true;
             }
-            if (!(obj instanceof ConfigurationMetadataProperty)) {
+            if (!(obj instanceof ConfigurationMetadataProperty rhs)) {
                 return false;
             }
-            var rhs = (ConfigurationMetadataProperty) obj;
             return new EqualsBuilder().append(getId(), rhs.getId()).isEquals();
         }
     }

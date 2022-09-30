@@ -119,9 +119,9 @@ public class GitRepositoryBuilder {
     public GitRepository build() {
         try {
             val transportCallback = buildTransportConfigCallback();
-            val providers = this.credentialsProviders.toArray(CredentialsProvider[]::new);
-            if (this.repositoryDirectory.exists()) {
-                LOGGER.debug("Using existing repository at [{}]", this.repositoryDirectory);
+            val providers = credentialsProviders.toArray(CredentialsProvider[]::new);
+            if (repositoryDirectory.exists()) {
+                LOGGER.debug("Using existing repository at [{}]", repositoryDirectory);
                 return getExistingGitRepository(transportCallback);
             }
             return cloneGitRepository(transportCallback, providers);
@@ -138,7 +138,7 @@ public class GitRepositoryBuilder {
      */
     protected TransportConfigCallback buildTransportConfigCallback() {
         return transport -> {
-            if (transport instanceof SshTransport) {
+            if (transport instanceof SshTransport sshTransport) {
                 val sshSessionFactory = new JschConfigSessionFactory() {
                     @Override
                     protected void configure(final OpenSshConfig.Host host, final Session session) {
@@ -163,7 +163,6 @@ public class GitRepositoryBuilder {
                         return defaultJSch;
                     }
                 };
-                val sshTransport = (SshTransport) transport;
                 sshTransport.setSshSessionFactory(sshSessionFactory);
             }
             if (transport instanceof HttpTransport) {
@@ -180,34 +179,34 @@ public class GitRepositoryBuilder {
                                              final CredentialsProvider[] providers) throws Exception {
         val cloneCommand = Git.cloneRepository()
             .setProgressMonitor(new LoggingGitProgressMonitor())
-            .setURI(this.repositoryUri)
-            .setDirectory(this.repositoryDirectory.getFile())
-            .setBranch(this.activeBranch)
-            .setTimeout((int) this.timeoutInSeconds)
+            .setURI(repositoryUri)
+            .setDirectory(repositoryDirectory.getFile())
+            .setBranch(activeBranch)
+            .setTimeout((int) timeoutInSeconds)
             .setTransportConfigCallback(transportCallback)
             .setCredentialsProvider(new ChainingCredentialsProvider(providers));
 
-        if (!StringUtils.hasText(this.branchesToClone) || "*".equals(branchesToClone)) {
+        if (!StringUtils.hasText(branchesToClone) || "*".equals(branchesToClone)) {
             cloneCommand.setCloneAllBranches(true);
         } else {
-            cloneCommand.setBranchesToClone(StringUtils.commaDelimitedListToSet(this.branchesToClone)
+            cloneCommand.setBranchesToClone(StringUtils.commaDelimitedListToSet(branchesToClone)
                 .stream()
                 .map(GitRepositoryBuilder::getBranchPath)
                 .collect(Collectors.toList()));
         }
-        LOGGER.debug("Cloning repository to [{}] with branch [{}]", this.repositoryDirectory, this.activeBranch);
+        LOGGER.debug("Cloning repository to [{}] with branch [{}]", repositoryDirectory, activeBranch);
         return new DefaultGitRepository(cloneCommand.call(), credentialsProviders,
-            transportCallback, this.timeoutInSeconds, this.signCommits);
+            transportCallback, timeoutInSeconds, signCommits);
     }
 
 
     private GitRepository getExistingGitRepository(final TransportConfigCallback transportCallback) throws Exception {
-        val git = Git.open(this.repositoryDirectory.getFile());
-        LOGGER.debug("Checking out the branch [{}] at [{}]", this.activeBranch, this.repositoryDirectory);
+        val git = Git.open(repositoryDirectory.getFile());
+        LOGGER.debug("Checking out the branch [{}] at [{}]", activeBranch, repositoryDirectory);
         git.checkout()
-            .setName(this.activeBranch)
+            .setName(activeBranch)
             .call();
-        return new DefaultGitRepository(git, this.credentialsProviders, transportCallback,
-            this.timeoutInSeconds, this.signCommits);
+        return new DefaultGitRepository(git, credentialsProviders, transportCallback,
+            timeoutInSeconds, signCommits);
     }
 }

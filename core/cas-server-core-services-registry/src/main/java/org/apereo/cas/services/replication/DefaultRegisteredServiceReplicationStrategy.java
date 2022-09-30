@@ -15,7 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -106,13 +109,23 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         return service;
     }
 
+
+    private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
+        val seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
+
     @Override
     public List<RegisteredService> updateLoadedRegisteredServicesFromCache(final List<RegisteredService> services,
                                                                            final ServiceRegistry serviceRegistry) {
-        val cachedServices = distributedCacheManager.getAll();
-
+        val cachedServices = distributedCacheManager.getAll()
+            .stream()
+            .sorted(Comparator.<DistributedCacheObject>comparingLong(DistributedCacheObject::getTimestamp).reversed())
+            .filter(distinctByKey(service -> service.getValue().getId()))
+            .toList();
         for (val entry : cachedServices) {
-            val cachedService = entry.getValue();
+            val cachedService = (RegisteredService) entry.getValue();
             LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]",
                 cachedService, distributedCacheManager.getName());
 
@@ -125,7 +138,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             }
 
             val matchingService = services.stream()
-                .filter(s -> s.getId() == cachedService.getId())
+                .filter(svc -> svc.getId() == cachedService.getId())
                 .findFirst()
                 .orElse(null);
 
@@ -135,6 +148,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                 updateServiceRegistryWithNoMatchingService(services, cachedService, serviceRegistry);
             }
         }
+        distributedCacheManager.clear();
         return services;
     }
 

@@ -28,10 +28,10 @@ public class SamlIdPConsentableAttributeBuilder implements ConsentableAttributeB
     @Override
     public CasConsentableAttribute build(final CasConsentableAttribute attribute) {
         val result = attributeDefinitionStore.locateAttributeDefinition(defn -> {
-            if (defn instanceof SamlIdPAttributeDefinition) {
-                val samlAttr = (SamlIdPAttributeDefinition) defn;
-                return samlAttr.getKey().equalsIgnoreCase(attribute.getName())
-                       && StringUtils.isNotBlank(samlAttr.getFriendlyName());
+            if (defn instanceof SamlIdPAttributeDefinition samlAttr) {
+                return (StringUtils.equalsIgnoreCase(samlAttr.getKey(), attribute.getName())
+                       || StringUtils.equalsIgnoreCase(samlAttr.getUrn(), attribute.getName()))
+                          && StringUtils.isNotBlank(samlAttr.getFriendlyName());
             }
             return false;
         });

@@ -9,7 +9,8 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
     "--management.health.redis.enabled=true",
-    
+    "--management.health.redisHealthIndicator.enabled=true",
+
     "--management.endpoints.web.exposure.include=health",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",

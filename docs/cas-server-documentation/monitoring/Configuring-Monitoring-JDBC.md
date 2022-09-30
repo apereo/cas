@@ -14,3 +14,4 @@ Monitor the status and availability of a relational SQL database.
 
 {% include_cached casproperties.html properties="cas.monitor.jdbc" %}
 
+{% include_cached actuators.html endpoints="health" healthIndicators="dataSourceHealthIndicator" %}

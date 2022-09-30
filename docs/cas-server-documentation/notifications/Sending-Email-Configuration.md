@@ -21,6 +21,12 @@ enabled/included by the relevant modules using the following module:
 You need not explicitly include this module in WAR Overlay configurations, except 
 when there is a need to access components and APIs at compile-time. 
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="health" healthIndicators="mailHealthIndicator" %}
+
 ## Email Server Settings
 
 {% include_cached {{ version }}/email-notifications-configuration.md %}

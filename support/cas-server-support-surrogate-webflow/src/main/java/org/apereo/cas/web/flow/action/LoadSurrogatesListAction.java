@@ -76,9 +76,8 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
             }
 
             val currentCredential = WebUtils.getCredential(requestContext);
-            if (currentCredential instanceof SurrogateUsernamePasswordCredential) {
+            if (currentCredential instanceof SurrogateUsernamePasswordCredential credential) {
                 val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-                val credential = (SurrogateUsernamePasswordCredential) currentCredential;
                 val registeredService = WebUtils.getRegisteredService(requestContext);
                 val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
                     authenticationResultBuilder, currentCredential,

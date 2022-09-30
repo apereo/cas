@@ -13,6 +13,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,6 +35,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")
 public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
+
+    @RepeatedTest(2)
+    public void verifyHealthOperation() throws Exception {
+        val health = redisHealthIndicator.health();
+        val section = (Map) health.getDetails().get("redisTicketConnectionFactory");
+        assertTrue(section.containsKey("server"));
+        assertTrue(section.containsKey("memory"));
+        assertTrue(section.containsKey("cpu"));
+        assertTrue(section.containsKey("keyspace"));
+        assertTrue(section.containsKey("stats"));
+    }
 
     @RepeatedTest(1)
     @Tag("TicketRegistryTestWithEncryption")

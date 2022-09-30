@@ -210,6 +210,7 @@ layout: null
     *   [Attribute Release](#attrrelease)
         *   [Overview](/cas/{{ version }}/integration/Attribute-Release.html)
         *   [Principal Id](#principalidattr)
+            *   [Overview](/cas/{{ version }}/integration/Attribute-Release-PrincipalId.html)
             *   [Default](/cas/{{ version }}/integration/Attribute-Release-PrincipalId-Default.html)
             *   [Attribute](/cas/{{ version }}/integration/Attribute-Release-PrincipalId-Attribute.html)
             *   [Groovy](/cas/{{ version }}/integration/Attribute-Release-PrincipalId-Groovy.html)
@@ -403,6 +404,7 @@ layout: null
         *   [Unauthorized URL](/cas/{{ version }}/services/Service-Access-Strategy-URL.html)
     *   [Attribute Release](/cas/{{ version }}/integration/Attribute-Release-Policies.html)
     *   [Proxy Policy](/cas/{{ version }}/services/Configuring-Service-Proxy-Policy.html)
+    *   [Principal Id](/cas/{{ version }}/integration/Attribute-Release-PrincipalId.html)
     *   [Supported Protocols](/cas/{{ version }}/services/Configuring-Service-Supported-Protocols.html)
     *   [Custom Properties](/cas/{{ version }}/services/Configuring-Service-Custom-Properties.html)
     *   [Response Type](/cas/{{ version }}/services/Configuring-Service-Response-Type.html)
@@ -573,6 +575,7 @@ layout: null
         *   [Hazelcast](/cas/{{ version }}/monitoring/Configuring-Monitoring-Hazelcast.html)
         *   [JDBC](/cas/{{ version }}/monitoring/Configuring-Monitoring-JDBC.html)
         *   [LDAP](/cas/{{ version }}/monitoring/Configuring-Monitoring-LDAP.html)
+        *   [Redis](/cas/{{ version }}/monitoring/Configuring-Monitoring-Redis.html)
 
 * [User Interface](#user_interface)
     *   [Overview](/cas/{{ version }}/ux/User-Interface-Customization.html)

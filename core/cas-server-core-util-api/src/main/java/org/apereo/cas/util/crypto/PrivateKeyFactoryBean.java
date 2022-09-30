@@ -55,8 +55,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
             if (object instanceof PrivateKeyInfo) {
                 return new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) object);
             }
-            if (object instanceof PEMKeyPair) {
-                val pemKeyPair = (PEMKeyPair) object;
+            if (object instanceof PEMKeyPair pemKeyPair) {
                 val kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
                 return kp.getPrivate();
             }
