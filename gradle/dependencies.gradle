@@ -832,7 +832,7 @@ ext.libraries = [
                 }
         ],
         shibutiljavasupport     : [
-                dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupportVersion") {
+                dependencies.create("net.shibboleth:shib-support:$shibbolethUtilJavaSupportVersion") {
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -858,7 +858,6 @@ ext.libraries = [
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-json")
                     exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
-
                 }
         ],
         ignite                  : [
