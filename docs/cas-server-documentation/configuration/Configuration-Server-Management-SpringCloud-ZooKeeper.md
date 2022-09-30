@@ -44,3 +44,8 @@ Finally in your CAS properties, the new `settingName` setting can be used as a r
 
 {% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.zookeeper" %}
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="health" healthIndicators="refresh,zookeeperHealthIndicator" %}

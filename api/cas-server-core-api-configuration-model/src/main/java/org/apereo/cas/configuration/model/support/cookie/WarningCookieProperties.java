@@ -32,6 +32,6 @@ public class WarningCookieProperties extends CookieProperties {
     private boolean autoConfigureCookiePath = true;
 
     public WarningCookieProperties() {
-        super.setName("CASPRIVACY");
+        setName("CASPRIVACY");
     }
 }

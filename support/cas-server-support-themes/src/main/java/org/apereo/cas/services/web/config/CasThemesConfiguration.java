@@ -64,18 +64,19 @@ public class CasThemesConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThemeResolver themeResolver(
-        @Qualifier("themeSource")
-        final ObjectProvider<ThemeSource> themeSource,
         final ObjectProvider<CasConfigurationProperties> casProperties,
         @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
         final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ObjectProvider<ServicesManager> servicesManager) {
+
         val defaultThemeName = casProperties.getObject().getTheme().getDefaultThemeName();
         val fixedResolver = new FixedThemeResolver();
         fixedResolver.setDefaultThemeName(defaultThemeName);
+
         val sessionThemeResolver = new SessionThemeResolver();
         sessionThemeResolver.setDefaultThemeName(defaultThemeName);
+
         val tgc = casProperties.getObject().getTgc();
         val cookieThemeResolver = new CookieThemeResolver();
         cookieThemeResolver.setDefaultThemeName(defaultThemeName);
@@ -84,15 +85,21 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookieMaxAge(tgc.getMaxAge());
         cookieThemeResolver.setCookiePath(tgc.getPath());
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
+
         val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
             authenticationRequestServiceSelectionStrategies, casProperties);
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
+
         val header = new RequestHeaderThemeResolver(casProperties.getObject().getTheme().getParamName());
         header.setDefaultThemeName(defaultThemeName);
+
         val chainingThemeResolver = new ChainingThemeResolver();
-        chainingThemeResolver.addResolver(cookieThemeResolver)
-            .addResolver(sessionThemeResolver).addResolver(header)
-            .addResolver(serviceThemeResolver).addResolver(fixedResolver);
+        chainingThemeResolver
+            .addResolver(cookieThemeResolver)
+            .addResolver(sessionThemeResolver)
+            .addResolver(header)
+            .addResolver(serviceThemeResolver)
+            .addResolver(fixedResolver);
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
     }
@@ -118,7 +125,7 @@ public class CasThemesConfiguration {
                         .toArray(String[]::new);
                     registration.addResourceLocations(locations);
                     registration.addResourceLocations(webProperties.getResources().getStaticLocations());
-                    
+
                     FunctionUtils.doIfNotNull(webProperties.getResources().getCache().getPeriod(), period -> registration.setCachePeriod((int) period.getSeconds()));
                     registration.setCacheControl(webProperties.getResources().getCache().getCachecontrol().toHttpCacheControl());
                     registration.setUseLastModified(true);
@@ -133,7 +140,7 @@ public class CasThemesConfiguration {
                         .toArray(Resource[]::new);
                     LOGGER.debug("Adding resource handler for resources [{}]", (Object[]) resources);
                     resolver.setAllowedLocations(resources);
-                    
+
                     chainRegistration.addResolver(resolver);
                 }
             }

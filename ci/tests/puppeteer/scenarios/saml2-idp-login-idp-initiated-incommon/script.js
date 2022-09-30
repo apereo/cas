@@ -11,7 +11,6 @@ const path = require("path");
         "https://studypages.com/saml-sp",
         "https://aca.ucop.edu",
         "https://www.peoplegrove.com/saml",
-        "https://login.at.internet2.edu/Saml2/proxy_saml2_backend.xml",
         "https://uchicago.infoready4.com/shibboleth",
         "https://cole.uconline.edu/shibboleth-sp",
         "https://apps.universityrelations.cornell.edu/Shibboleth",
@@ -21,18 +20,13 @@ const path = require("path");
         "https://analytics.uchealth.edu/sp",
         "https://appstream.ucop.edu",
         "https://osprey.dartmouth.edu/shibboleth",
-        "https://fourier.dartmouth.edu/shibboleth",
         "https://auth.uconline.edu/shibboleth",
         "https://dartmouth.bioraft.com/shibboleth",
-        "https://princeton.bioraft.com/shibboleth",
-        "http://princeton.imodules.com/sp",
         "https://princeton.nupark.com/sp",
-        "https://harvard.starrezhousing.com/StarRezPortal/",
         "https://harvardhipaa.zoom.us",
         "https://harvard.zoom.us",
         "https://dataverse.harvard.edu/sp",
-        "https://yale.peopleadmin.com/shibboleth",
-        "https://yale.campus.auth.edublogs.org/shibboleth"
+        "https://yale.peopleadmin.com/shibboleth"
     ];
 
     await sendRequest(page, entityIds);
@@ -66,7 +60,7 @@ async function sendRequest(page, entityIds) {
         await cas.assertVisibility(page, '#username');
         await cas.assertVisibility(page, '#password');
         await cas.loginWith(page, "casuser", "Mellon");
-        await page.waitForTimeout(5000);
+        await page.waitForTimeout(1000);
         count++;
     }
 }

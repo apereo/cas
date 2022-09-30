@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -76,16 +77,21 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_URL + "/webfinger",
         produces = "application/jrd+json")
-    public ResponseEntity<Map> getWebFingerResponse(@RequestParam("resource") final String resource,
-                                                    @RequestParam(value = "rel", required = false) final String rel) {
-        return webFingerDiscoveryService.handleWebFingerDiscoveryRequest(resource, rel);
+    public ResponseEntity<Map> getWebFingerResponse(
+        @RequestParam("resource")
+        final String resource,
+        @RequestParam(value = "rel", required = false)
+        final String rel) {
+        return BeanSupplier.isNotProxy(webFingerDiscoveryService)
+            ? webFingerDiscoveryService.handleRequest(resource, rel)
+            : ResponseEntity.notFound().build();
     }
 
     private ResponseEntity<OidcServerDiscoverySettings> getOidcServerDiscoveryResponse(final HttpServletRequest request,
                                                                                        final HttpServletResponse response,
                                                                                        final String endpoint) {
-        if (isIssuerValidForEndpoint(request, response, endpoint)) {
-            val discovery = this.webFingerDiscoveryService.discovery();
+        if (isIssuerValidForEndpoint(request, response, endpoint) && BeanSupplier.isNotProxy(webFingerDiscoveryService)) {
+            val discovery = webFingerDiscoveryService.getDiscovery();
             return new ResponseEntity<>(discovery, HttpStatus.OK);
         }
         LOGGER.warn("Unable to accept request; issuer for endpoint [{}] is invalid", endpoint);

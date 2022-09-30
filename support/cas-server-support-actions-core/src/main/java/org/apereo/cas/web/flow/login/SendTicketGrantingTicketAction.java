@@ -51,12 +51,12 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
             LOGGER.info("Authentication is at a public workstation. SSO cookie will not be generated");
         } else if (this.singleSignOnParticipationStrategy.supports(ssoRequest)) {
             val createCookie = singleSignOnParticipationStrategy.isCreateCookieOnRenewedAuthentication(ssoRequest) == TriStateBoolean.TRUE
-                               || this.singleSignOnParticipationStrategy.isParticipating(ssoRequest);
+                               || singleSignOnParticipationStrategy.isParticipating(ssoRequest);
             if (createCookie) {
                 LOGGER.debug("Setting ticket-granting cookie for current session linked to [{}].", ticketGrantingTicketId);
                 val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-                this.ticketGrantingTicketCookieGenerator.addCookie(request, response,
+                ticketGrantingTicketCookieGenerator.addCookie(request, response,
                     CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), ticketGrantingTicketId);
             } else {
                 LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "

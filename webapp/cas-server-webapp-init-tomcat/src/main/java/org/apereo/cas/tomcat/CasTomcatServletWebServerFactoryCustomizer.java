@@ -88,8 +88,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
 
     @Override
     public void customize(final ConfigurableServletWebServerFactory factory) {
-        if (factory instanceof TomcatServletWebServerFactory) {
-            val tomcat = (TomcatServletWebServerFactory) factory;
+        if (factory instanceof TomcatServletWebServerFactory tomcat) {
             configureAjp(tomcat);
             configureHttp(tomcat);
             configureHttpProxy(tomcat);

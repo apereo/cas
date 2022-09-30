@@ -12,6 +12,7 @@ import java.util.Map;
  * @since 6.1.0
  */
 public class OidcEchoingWebFingerUserInfoRepository implements OidcWebFingerUserInfoRepository {
+    
     @Override
     public Map<String, Object> findByEmailAddress(final String email) {
         return CollectionUtils.wrap("email", email);

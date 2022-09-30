@@ -102,8 +102,7 @@ public class CollectionUtils {
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
             LOGGER.trace("Converting multi-valued element [{}]", obj);
-        } else if (obj instanceof Map) {
-            val map = (Map) obj;
+        } else if (obj instanceof Map map) {
             val set = (Set<Map.Entry>) map.entrySet();
             c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
@@ -113,13 +112,11 @@ public class CollectionUtils {
                 c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             }
             LOGGER.trace("Converting array element [{}]", obj);
-        } else if (obj instanceof Iterator) {
-            val it = (Iterator) obj;
+        } else if (obj instanceof Iterator it) {
             while (it.hasNext()) {
                 c.add(it.next());
             }
-        } else if (obj instanceof Enumeration) {
-            val it = (Enumeration) obj;
+        } else if (obj instanceof Enumeration it) {
             while (it.hasMoreElements()) {
                 c.add(it.nextElement());
             }

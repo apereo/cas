@@ -62,8 +62,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         if (action instanceof EvaluateAction) {
             return convertEvaluateActionToString(action);
         }
-        if (action instanceof AnnotatedAction) {
-            val eval = (AnnotatedAction) action;
+        if (action instanceof AnnotatedAction eval) {
             if (eval.getTargetAction() instanceof EvaluateAction) {
                 return convertEvaluateActionToString(eval.getTargetAction());
             }
@@ -157,10 +156,8 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                 val exp = (Expression) ReflectionUtils.getField(field, viewState.getViewFactory());
                 stateMap.put("viewId",
                     StringUtils.defaultIfBlank(Objects.requireNonNull(exp).getExpressionString(), exp.getValue(null).toString()));
-            } else if (viewState.getViewFactory() instanceof ActionExecutingViewFactory) {
-                val factory = (ActionExecutingViewFactory) viewState.getViewFactory();
-                if (factory.getAction() instanceof ExternalRedirectAction) {
-                    val redirect = (ExternalRedirectAction) factory.getAction();
+            } else if (viewState.getViewFactory() instanceof ActionExecutingViewFactory factory) {
+                if (factory.getAction() instanceof ExternalRedirectAction redirect) {
                     val uri = ReflectionUtils.findField(redirect.getClass(), "resourceUri");
                     ReflectionUtils.makeAccessible(Objects.requireNonNull(uri));
                     val exp = (Expression) ReflectionUtils.getField(uri, redirect);
@@ -174,8 +171,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             }
         }
 
-        if (state instanceof TransitionableState) {
-            val stDef = (TransitionableState) state;
+        if (state instanceof TransitionableState stDef) {
 
             acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
                 .map(Object::toString)

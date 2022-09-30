@@ -73,8 +73,7 @@ public class HazelcastSessionConfiguration {
         val hazelcastInstance = HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);
         val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz,
             hazelcastSessionProperties.getMapName(), duration.toSeconds());
-        if (mapConfig instanceof MapConfig) {
-            val finalConfig = (MapConfig) mapConfig;
+        if (mapConfig instanceof MapConfig finalConfig) {
             val attributeConfig = new AttributeConfig();
             attributeConfig.setName(HazelcastIndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);
             attributeConfig.setExtractorClassName(HazelcastSessionPrincipalNameExtractor.class.getName());

@@ -138,13 +138,18 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
         val statement = samlProfileSamlAttributeStatementBuilder.build(buildContext);
         val attributes = statement.getAttributes();
         assertFalse(attributes.isEmpty());
+
         assertTrue(attributes.stream()
-            .anyMatch(a -> "urn:oid:0.9.2342.19200300.100.1.1".equals(a.getName()) && "uid".equalsIgnoreCase(a.getFriendlyName())));
+            .anyMatch(a -> "urn:oid:0.9.2342.19200300.100.1.1".equals(a.getName())
+                           && "uid".equalsIgnoreCase(a.getFriendlyName())));
         assertTrue(attributes.stream()
-            .anyMatch(a -> "urn:oid:2.5.4.20".equals(a.getName()) && "telephoneNumber".equalsIgnoreCase(a.getFriendlyName())));
+            .anyMatch(a -> "urn:oid:2.5.4.20".equals(a.getName())
+                           && "telephoneNumber".equalsIgnoreCase(a.getFriendlyName())));
         assertTrue(attributes.stream()
-            .anyMatch(a -> "urn:oid:1.3.6.1.4.1.5923.1.1.1.6".equals(a.getName()) && "eduPersonPrincipalName".equalsIgnoreCase(a.getFriendlyName())));
+            .anyMatch(a -> "urn:oid:1.3.6.1.4.1.5923.1.1.1.6".equals(a.getName())
+                           && "eduPersonPrincipalName-FriendlyName".equalsIgnoreCase(a.getFriendlyName())));
         assertTrue(attributes.stream()
-            .anyMatch(a -> "urn:oid:0.9.2342.19200300.100.1.3".equals(a.getName()) && "email".equalsIgnoreCase(a.getFriendlyName())));
+            .anyMatch(a -> "urn:oid:0.9.2342.19200300.100.1.3".equals(a.getName())
+                           && "email".equalsIgnoreCase(a.getFriendlyName())));
     }
 }

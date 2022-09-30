@@ -14,6 +14,8 @@ category: Monitoring & Statistics
 
 The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
 
+{% include_cached actuators.html endpoints="health" healthIndicators="memcachedHealthIndicator" %}
+
 ## Spymemcached
 
 Enable support via the [spymemcached library](https://github.com/couchbase/spymemcached). 

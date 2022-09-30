@@ -82,8 +82,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
     }
 
     protected void processNestedClassOrInterfaceTypeIfNeeded(final FieldDeclaration n, final ConfigurationMetadataProperty prop) {
-        if (n.getElementType() instanceof ClassOrInterfaceType) {
-            val type = (ClassOrInterfaceType) n.getElementType();
+        if (n.getElementType() instanceof ClassOrInterfaceType type) {
             if (!shouldTypeBeExcluded(type)) {
                 val instance = ConfigurationMetadataClassSourceLocator.getInstance();
                 val clz = instance.locatePropertiesClassForType(type);

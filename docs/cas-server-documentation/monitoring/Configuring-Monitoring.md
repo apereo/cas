@@ -33,13 +33,18 @@ and latencies must be considered and carefully tuned. This might have become spe
 in clustered deployments as depending on the ticket registry of choice, CAS may need 
 to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage.</p></div>
 
+{% include_cached actuators.html endpoints="health" 
+healthIndicators="ping,diskSpaceHealthIndicator,memoryHealthIndicator,systemHealthIndicator,sessionHealthIndicator" %}
+
 ### Advanced
 
 Monitors can also be managed using any one of the following strategies.
 
 | Storage        | Description                                         
 |----------------------------------------------------------------------------
-| Memcached      | [this guide](Configuring-Monitoring-Memcached.html)  
-| MongoDb        | [this guide](Configuring-Monitoring-MongoDb.html)  
-| JDBC           | [this guide](Configuring-Monitoring-JDBC.html)  
-| LDAP           | [this guide](Configuring-Monitoring-LDAP.html)
+| Memcached      | [See this guide](Configuring-Monitoring-Memcached.html).
+| MongoDb        | [See this guide](Configuring-Monitoring-MongoDb.html).  
+| JDBC           | [See this guide](Configuring-Monitoring-JDBC.html).  
+| LDAP           | [See this guide](Configuring-Monitoring-LDAP.html).
+| Redis          | [See this guide](Configuring-Monitoring-Redis.html).
+| Hazelcast      | [See this guide](Configuring-Monitoring-Hazelcast.html).

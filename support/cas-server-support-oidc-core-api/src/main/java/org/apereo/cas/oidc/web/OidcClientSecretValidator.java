@@ -33,8 +33,7 @@ public class OidcClientSecretValidator extends DefaultOAuth20ClientSecretValidat
 
     @Override
     public boolean isClientSecretExpired(final OAuthRegisteredService registeredService) {
-        if (registeredService instanceof OidcRegisteredService) {
-            val oidcService = (OidcRegisteredService) registeredService;
+        if (registeredService instanceof OidcRegisteredService oidcService) {
             if (oidcService.getClientSecretExpiration() > 0) {
                 val expirationTime = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochSecond(oidcService.getClientSecretExpiration()));
                 val currentTime = ZonedDateTime.now(ZoneOffset.UTC);

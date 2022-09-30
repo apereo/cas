@@ -70,8 +70,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
                                             final WebContext webContext,
                                             final OAuthRegisteredService svc) throws Exception {
         super.prepareApprovalViewModel(model, webContext, svc);
-        if (svc instanceof OidcRegisteredService) {
-            val oidcRegisteredService = (OidcRegisteredService) svc;
+        if (svc instanceof OidcRegisteredService oidcRegisteredService) {
             model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
             model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
             val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());

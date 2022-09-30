@@ -113,7 +113,7 @@ and will not generate the TGC that is designed to do so.
 ...
 <input id="publicWorkstation"
        name="publicWorkstation"
-       value="false" tabindex="4"
+       value="false"
        type="checkbox" />
 <label for="publicWorkstation" th:utext="#{screen.welcome.label.publicstation}"/>
 ...

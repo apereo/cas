@@ -47,8 +47,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
 
     @Override
     public boolean shouldSignToken(final OAuthRegisteredService svc) {
-        if (svc instanceof OidcRegisteredService) {
-            val service = (OidcRegisteredService) svc;
+        if (svc instanceof OidcRegisteredService service) {
             if (!service.isSignIdToken()) {
                 LOGGER.trace("Service [{}] does not require ID token to be signed", svc.getServiceId());
                 return false;
@@ -71,8 +70,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
 
     @Override
     public boolean shouldEncryptToken(final OAuthRegisteredService svc) {
-        if (svc instanceof OidcRegisteredService) {
-            val service = (OidcRegisteredService) svc;
+        if (svc instanceof OidcRegisteredService service) {
 
             if (service.isEncryptIdToken() && AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenEncryptionAlg())) {
                 if (!discoverySettings.getIdTokenSigningAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {

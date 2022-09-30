@@ -93,8 +93,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
                 .map(Event.class::cast)
                 .map(event -> {
                     val provider = CollectionUtils.firstElement(providers, MultifactorAuthenticationProvider.class).orElseThrow();
-                    if (provider instanceof ChainingMultifactorAuthenticationProvider && provider.getId().equals(event.getId())) {
-                        val chain = (ChainingMultifactorAuthenticationProvider) provider;
+                    if (provider instanceof ChainingMultifactorAuthenticationProvider chain && provider.getId().equals(event.getId())) {
                         val matched = chain.getMultifactorAuthenticationProviders()
                             .stream()
                             .map(p -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(p.getId(), applicationContext))

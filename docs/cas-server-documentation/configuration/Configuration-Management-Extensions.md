@@ -67,7 +67,7 @@ per guidelines [laid out by Spring Boot](https://docs.spring.io/spring-boot/docs
 - Create a `src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` file
 - Add the following into the file:
 
-```properties
+```
 org.apereo.cas.custom.config.SomethingConfiguration
 ```
 

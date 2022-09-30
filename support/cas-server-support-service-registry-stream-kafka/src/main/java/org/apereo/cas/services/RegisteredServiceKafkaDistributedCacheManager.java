@@ -66,14 +66,9 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
         return super.remove(key, item, publish);
     }
 
-    @Override
-    public void clear() {
-        getAll().forEach(item -> remove(item.getValue(), item, true));
-        super.clear();
-    }
-
+    @SuppressWarnings("FutureReturnValueIgnored")
     private void sendObject(final RegisteredService key, final DistributedCacheObject<RegisteredService> item) {
-        val future = kafkaTemplate.send(topic, buildKey(key), item);
+        val itemKey = buildKey(key);
         future.whenComplete((result, ex) -> {
             LOGGER.trace("Published [{}]", result);
             LoggingUtils.error(LOGGER, ex);

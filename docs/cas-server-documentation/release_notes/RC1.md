@@ -33,6 +33,10 @@ operates. If you consider your CAS deployment to be a critical part of the ident
 
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
+ 
+## Version
+
+The functionality and release notes described in this document address and ship with Apereo CAS `7.0.0-RC1`.
 
 ## New & Noteworthy
 
@@ -46,7 +50,7 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases 
-and scenarios. At the moment, total number of jobs stands at approximately `336` distinct scenarios. The overall 
+and scenarios. At the moment, total number of jobs stands at approximately `340` distinct scenarios. The overall 
 test coverage of the CAS codebase is approximately `94%`.
  
 ### OpenID Connect Claim Definitions
@@ -90,6 +94,16 @@ be supported, maintained or released:
 The ABAC authorization policy assigned to a registered service can 
 now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activation.html).
 
+### Attribute Definitions
+
+[Attribute definitions](../integration/Attribute-Definitions.html) can now be dynamically and programmatically registered with CAS via a dedicated API.
+
+### OAuth2/UMA Scopes
+
+Certain OAuth2 and/or UMA authorization requests are now able to enforce scope access by comparing requested scopes in the authorization
+requeds with what must be explicitly allowed in the registered service definition. In other words, scopes can only be allowed and requested
+if they are already authorized for the application definition in CAS.
+
 ### SAML2 Metadata Resolution
 
 In the event that a SAML2 service provider is configured to download metadata from a URL, CAS may now attempt to reuse the previously-downloaded
@@ -106,6 +120,10 @@ approprivate external identity provider.
 
 The JMS ticket registry has now been removed and replaced with a ticket registry implementation that is backed by the AMQP protocol
 and RabbitMQ. [See this](../ticketing/Messaging-AMQP-Ticket-Registry.html) for more info. 
+ 
+### SAML2 Attribute Definitions
+
+[SAML2 attribute definitions](../installation/Configuring-SAML2-Attribute-Definitions.html) can now register persistent attribute definitions.
 
 ### Docker Images
 
@@ -124,15 +142,19 @@ A number of Docker images used for integration testing are now upgraded to their
 - Redis
 
 ## Other Stuff
-            
+   
+- A [Redis-based health indicator](../monitoring/Configuring-Monitoring-Redis.html) is available to report back on the health status of 
+  Redis connections. 
 - [Registered Service ABAC policy](../services/Service-Access-Strategy-ABAC.html) can now support inline Groovy conditions for attributes.
 - [CAS configuration security](../configuration/Configuration-Properties-Security-CAS.html) via Jasypt is able to respect the IV 
   generation flag based on algorithms.
 - Embedded YAML application configuration files are able to override default application properties that ship with CAS.
 - Authentication context classes in the SAML2 response can be determined from context mapping settings when no specific context class is present in the 
   SAML2 authentication context.
+- Integration tests for [CosmosDb Service Registry]() are now turned on using a Azure Cosmos DB account on Azure free services.
 - SAML2 metadata resolution for service providers are now sent to the CAS audit log and recorded under `SAML2_METADATA_RESOLUTION`.
 - Support for [Google Analytics 4](../integration/Configuring-Google-Analytics.html) is now included.
+- Small improvements to how [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) can count ticket types.
 - [Auditable CAS events](../audits/Audits.html) are now automatically collected and displayed in the documentation.
 
 ## Library Upgrades
@@ -148,3 +170,4 @@ A number of Docker images used for integration testing are now upgraded to their
 - Pac4j
 - Couchbase Client
 - Micrometer
+- Apache Tomcat

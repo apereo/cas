@@ -89,8 +89,8 @@
 
                         <script type="text/javascript" th:inline="javascript">
                             /*<![CDATA[*/
-                            var username = /*[[${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}]]*/;
-                            var disabled = /*[[${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
+                            let username = /*[[${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}]]*/;
+                            let disabled = /*[[${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
 
                             if (username != null && username !== '') {
                                 $('#username').val(username);
@@ -231,6 +231,56 @@
                         </p>
                     </section>
 
+                    <section class="cas-field form-check"
+                             th:if="${'true' == #strings.defaultString(#themes.code('cas.warn-on-redirect.enabled'), 'true')}">
+                        <div class="mdc-form-field ">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox"
+                                       class="mdc-checkbox__native-control form-check-input"
+                                       name="warn"
+                                       id="warn"/>
+                                <div class="mdc-checkbox__background">
+                                    <svg class="mdc-checkbox__checkmark"
+                                         viewBox="0 0 24 24">
+                                        <path class="mdc-checkbox__checkmark-path"
+                                              fill="none"
+                                              d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                    </svg>
+                                    <div class="mdc-checkbox__mixedmark"></div>
+                                </div>
+                                <div class="mdc-checkbox__ripple"></div>
+                            </div>
+                            <label class="form-check-label" for="warn"
+                                   th:utext="#{screen.welcome.label.warn}">Warn Me</label>
+                        </div>
+                        <p/>
+                    </section>
+                    
+                    <section class="cas-field form-check"
+                             th:if="${'true' == #strings.defaultString(#themes.code('cas.public-workstation.enabled'), 'true')}">
+                        <div class="mdc-form-field ">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox"
+                                       class="mdc-checkbox__native-control form-check-input"
+                                       name="publicWorkstation"
+                                       id="publicWorkstation"/>
+                                <div class="mdc-checkbox__background">
+                                    <svg class="mdc-checkbox__checkmark"
+                                         viewBox="0 0 24 24">
+                                        <path class="mdc-checkbox__checkmark-path"
+                                              fill="none"
+                                              d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                    </svg>
+                                    <div class="mdc-checkbox__mixedmark"></div>
+                                </div>
+                                <div class="mdc-checkbox__ripple"></div>
+                            </div>
+                            <label class="form-check-label" for="publicWorkstation"
+                                   th:text="#{screen.welcome.label.publicstation}">Public Workstation</label>
+                        </div>
+                        <p/>
+                    </section>
+                    
                     <section class="cas-field form-check" th:if="${rememberMeAuthenticationEnabled}">
                         <div class="mdc-form-field ">
                             <div class="mdc-checkbox">
@@ -249,8 +299,8 @@
                                 </div>
                                 <div class="mdc-checkbox__ripple"></div>
                             </div>
-                            <label class="form-check-label" for="rememberMe" th:text="#{screen.rememberme.checkbox.title}">Remember
-                                Me</label>
+                            <label class="form-check-label" for="rememberMe"
+                                   th:text="#{screen.rememberme.checkbox.title}">Remember Me</label>
                         </div>
                         <p/>
                     </section>

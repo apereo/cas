@@ -64,12 +64,10 @@ public class HazelcastConfigurationFactory {
      * @param config      the config
      */
     public static void setConfigMap(final NamedConfig namedConfig, final Config config) {
-        if (namedConfig instanceof MapConfig) {
-            val mappedConfig = (MapConfig) namedConfig;
+        if (namedConfig instanceof MapConfig mappedConfig) {
             FunctionUtils.doIf(!config.getMapConfigs().containsKey(namedConfig.getName()),
                 u -> config.addMapConfig(mappedConfig)).accept(mappedConfig);
-        } else if (namedConfig instanceof ReplicatedMapConfig) {
-            val replicatedConfig = (ReplicatedMapConfig) namedConfig;
+        } else if (namedConfig instanceof ReplicatedMapConfig replicatedConfig) {
             FunctionUtils.doIf(!config.getReliableTopicConfigs().containsKey(namedConfig.getName()),
                 u -> config.addReplicatedMapConfig(replicatedConfig)).accept(replicatedConfig);
         }

@@ -186,8 +186,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                          final FilterChain filterChain) throws IOException, ServletException {
         try {
-            if (servletResponse instanceof HttpServletResponse) {
-                val httpServletResponse = (HttpServletResponse) servletResponse;
+            if (servletResponse instanceof HttpServletResponse httpServletResponse) {
                 val httpServletRequest = (HttpServletRequest) servletRequest;
 
                 val result = prepareFilterBeforeExecution(httpServletResponse, httpServletRequest);

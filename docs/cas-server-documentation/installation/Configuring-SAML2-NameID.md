@@ -88,7 +88,7 @@ The following service definition instructs CAS to use the `cn` attribute value t
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
     "persistentIdGenerator" : {
-      "@class" : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
+      "@class" : "org.apereo.cas.authentication.attribute.ShibbolethCompatiblePersistentIdGenerator",
       "salt" : "aGVsbG93b3JsZA==",
       "attribute": "cn"
     }

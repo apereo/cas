@@ -29,6 +29,11 @@ public class OidcWebFingerProperties implements Serializable {
     private static final long serialVersionUID = 231228615694269276L;
 
     /**
+     * Indicate if webfinger discovery protocol should be enabled.
+     */
+    private boolean enabled = true;
+
+    /**
      * Manage settings related to user-info repositories
      * locating resources and accounts.
      */

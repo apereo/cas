@@ -17,6 +17,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.Event;
@@ -70,9 +71,9 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
         grantServiceTicket(authenticationResult, service, requestContext);
 
         if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)) {
-            if (Boolean.parseBoolean(request.getParameter(PARAMETER_NAME_IGNORE_WARNING))) {
+            if (BooleanUtils.toBoolean(request.getParameter(PARAMETER_NAME_IGNORE_WARNING))) {
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-                this.warnCookieGenerator.removeCookie(response);
+                warnCookieGenerator.removeCookie(response);
             }
         }
         return new Event(this, CasWebflowConstants.STATE_ID_REDIRECT);

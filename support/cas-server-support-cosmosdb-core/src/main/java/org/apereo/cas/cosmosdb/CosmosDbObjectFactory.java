@@ -45,7 +45,7 @@ public class CosmosDbObjectFactory {
         val builder = new CosmosClientBuilder()
             .endpoint(uri)
             .key(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getKey()))
-            .preferredRegions(this.properties.getPreferredRegions())
+            .preferredRegions(properties.getPreferredRegions())
             .consistencyLevel(ConsistencyLevel.valueOf(properties.getConsistencyLevel()))
             .contentResponseOnWriteEnabled(false)
             .clientTelemetryEnabled(properties.isAllowTelemetry())
@@ -91,6 +91,14 @@ public class CosmosDbObjectFactory {
         val response = client.createDatabaseIfNotExists(properties.getDatabase(),
             ThroughputProperties.createAutoscaledThroughput(properties.getDatabaseThroughput()));
         LOGGER.debug("Created/Located database [{}]", response.getProperties().getId());
+    }
+
+    /**
+     * Drop database.
+     */
+    public void dropDatabase() {
+        client.getDatabase(properties.getDatabase()).delete();
+        LOGGER.debug("Removed database [{}]", properties.getDatabase());
     }
 
     /**

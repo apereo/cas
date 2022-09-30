@@ -14,7 +14,8 @@ This document describes how SAML2 service providers registered with CAS can cont
 
 The following endpoints are provided by CAS:
 
-{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache" %}
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache,health" 
+healthIndicators="samlRegisteredServiceMetadataHealthIndicator" %}
 
 ## Metadata Aggregates
 
