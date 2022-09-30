@@ -17,19 +17,41 @@ You **DO NOT** need to, but can if you want to, configure and deploy to an exter
 {% include_cached casproperties.html 
 thirdPartyStartsWith="server.port,server.ssl,server.servlet,server.max-http-header-size,server.use-forward-headers,server.connection-timeout" %}
 
-## Execution
+## Compilation and execution with the embedded container
 
-The CAS web application, once built, may be deployed in place with the embedded container via the following command:
+Modify `settings.gradle` and set `executable=false`.
+
+Then build with:
 
 ```bash
-java -jar /path/to/cas.war
+./gradlew clean build
 ```
 
-Additionally, it is also possible to run CAS as a fully executable web application:
+The CAS web application will be built as a Java JAR packaged 
+application in `build/libs/cas.war`, and may be executed like so:
 
 ```bash
-# chmod +x /path/to/cas.war
-/path/to/cas.war
+java -jar build/libs/cas.war
+```
+
+## Compilation and execution with the embedded container as a standalone executable
+
+Additionally, it is also possible to build and run CAS with the embedded 
+container as a fully standalone executable web application.
+
+Modify `settings.gradle` and set `executable=true`.
+
+Then build with:
+
+```bash
+./gradlew clean executable
+```
+
+You can then run CAS as a fully executable standalone application, 
+that will start the embedded web container too, like so:
+
+```bash
+./build/libs/cas.war
 ```
 
 This is achieved via the build process of the deployment overlay where a 
