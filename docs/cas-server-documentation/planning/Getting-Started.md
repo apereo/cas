@@ -120,4 +120,4 @@ don’t test too late. Many CAS deployment projects proceed such that by the tim
 the CAS software itself has become EOL. Try not to go to production with a version that is declared dead for maintenance. 
 Remember that the CAS project puts out release candidates in the hopes of getting early feedback, allowing you to test early. 
 
-If you wait too long, then you will have waited too long. So, don' wait long.
+If you wait too long, then you will have waited too long. So, don't wait long.
