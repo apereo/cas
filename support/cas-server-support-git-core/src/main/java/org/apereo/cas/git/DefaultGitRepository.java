@@ -131,7 +131,7 @@ public class DefaultGitRepository implements GitRepository {
 
         return this.gitInstance.pull()
             .setTimeout((int) timeoutInSeconds)
-            .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
+            .setFastForward(MergeCommand.FastForwardMode.FF)
             .setRebase(false)
             .setTransportConfigCallback(this.transportConfigCallback)
             .setProgressMonitor(new LoggingGitProgressMonitor())
