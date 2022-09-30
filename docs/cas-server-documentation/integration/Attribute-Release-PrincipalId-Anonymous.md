@@ -10,9 +10,11 @@ category: Attributes
    
 The following options are available to produce anonymous usernames. 
 
-## Transient
+{% tabs anonprincipalid %}
 
-Provides an opaque identifier for the username. 
+{% tab anonprincipalid Transient %}
+
+Provides an opaque identifier for the username.
 
 ```json
 {
@@ -27,13 +29,15 @@ Provides an opaque identifier for the username.
 }
 ```
 
-## Persistent
+{% endtab %}
+
+{% tab anonprincipalid Persistent %}
 
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
 of the `eduPersonTargetedID` attribute. The generated id may be based off of an existing principal
 attribute. If left unspecified or attribute not found, the authenticated principal id is used.
 
-The value is a tuple consisting of an opaque identifier for the principal, a name for the source of the 
+The value is a tuple consisting of an opaque identifier for the principal, a name for the source of the
 identifier, and a name for the intended audience of the identifier.
 
 ```json
@@ -63,3 +67,7 @@ perl -e 'use Digest::SHA qw(sha1_base64); \
 ```
 
 Replace `$SERVICE` (the url of the application under test), `$USER` and `$SALT` with the appropriate values for the test.
+
+{% endtab %}
+
+{% endtabs %}
