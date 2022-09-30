@@ -119,8 +119,8 @@ public class CasCoreAuthenticationPrincipalConfiguration {
             @Qualifier("principalFactory")
             final PrincipalFactory principalFactory) {
             return chain -> {
-                val strategy = new DefaultPrincipalElectionStrategy(principalFactory,
-                    CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory()));
+                val conflictResolver = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory());
+                val strategy = new DefaultPrincipalElectionStrategy(principalFactory, conflictResolver);
                 strategy.setAttributeMerger(attributeMerger);
                 chain.registerElectionStrategy(strategy);
             };

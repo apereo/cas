@@ -127,7 +127,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             try (val writer = new StringWriter()) {
                 getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
                 val hjsonString = isJsonFormat()
-                    ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
+                    ? JsonValue.readHjson(writer.toString()).toString(getJsonFormattingOptions())
                     : writer.toString();
                 IOUtils.write(hjsonString, out, StandardCharsets.UTF_8);
             }
@@ -139,10 +139,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         FunctionUtils.doUnchecked(unused -> {
             try (val writer = new StringWriter()) {
                 getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
-
                 if (isJsonFormat()) {
-                    val opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
-                    JsonValue.readHjson(writer.toString()).writeTo(out, opt);
+                    JsonValue.readHjson(writer.toString()).writeTo(out, getJsonFormattingOptions());
                 } else {
                     IOUtils.write(writer.toString(), out);
                 }
@@ -158,8 +156,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
                 if (isJsonFormat()) {
                     try (val fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
-                        val opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
-                        JsonValue.readHjson(writer.toString()).writeTo(fileWriter, opt);
+                        JsonValue.readHjson(writer.toString()).writeTo(fileWriter, getJsonFormattingOptions());
                         fileWriter.flush();
                     }
                 } else {
@@ -252,5 +249,9 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             configureObjectMapper(objectMapper);
         }
         return this.objectMapper;
+    }
+
+    private Stringify getJsonFormattingOptions() {
+        return prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
     }
 }

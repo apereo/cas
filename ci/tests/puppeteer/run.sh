@@ -333,8 +333,8 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     counter=0
     until [[ -f ${targetArtifact} ]]; do
        let counter++
-       if [[ $counter -gt 60 ]]; then
-          printred "\nBuild taking longer then 15 minutes, aborting."
+       if [[ $counter -gt 8 ]]; then
+          printred "\nBuild is taking too long; aborting."
           printred "Build log"
           cat build.log
           printred "Build thread dump"

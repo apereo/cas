@@ -71,8 +71,7 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
             }
         }
 
-        if (signingKey instanceof RSAPrivateCrtKey) {
-            val rsaSigningKey = (RSAPrivateCrtKey) signingKey;
+        if (signingKey instanceof RSAPrivateCrtKey rsaSigningKey) {
             val factory = KeyFactory.getInstance("RSA");
             val publicKey = factory.generatePublic(new RSAPublicKeySpec(rsaSigningKey.getModulus(), rsaSigningKey.getPublicExponent()));
             return EncodingUtils.encodeBase64(publicKey.getEncoded());

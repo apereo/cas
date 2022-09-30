@@ -65,8 +65,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @param samlResponse the saml 1 response
      */
     private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
-        if (service instanceof SamlService) {
-            val samlService = (SamlService) service;
+        if (service instanceof SamlService samlService) {
             val requestId = samlService.getRequestId();
             if (StringUtils.isNotBlank(requestId)) {
                 samlResponse.setInResponseTo(requestId);

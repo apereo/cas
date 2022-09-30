@@ -13,3 +13,8 @@ Stores authentication events inside an InfluxDb instance.
 
 {% include_cached casproperties.html properties="cas.events.influx-db" %}
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="health" healthIndicators="influxDbHealthIndicator" %}

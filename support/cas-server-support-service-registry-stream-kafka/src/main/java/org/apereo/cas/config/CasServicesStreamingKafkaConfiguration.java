@@ -59,11 +59,13 @@ public class CasServicesStreamingKafkaConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "registeredServiceKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, DistributedCacheObject> registeredServiceKafkaListenerContainerFactory(
+        @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
+        final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val kafka = casProperties.getServiceRegistry().getStream().getKafka();
         val factory = new KafkaObjectFactory<String, DistributedCacheObject>(kafka.getBootstrapAddress());
-        factory.setConsumerGroupId("registeredServices");
+        factory.setConsumerGroupId(casRegisteredServiceStreamPublisherIdentifier.getId());
         val mapper = new RegisteredServiceJsonSerializer(applicationContext).getObjectMapper();
         return factory.getKafkaListenerContainerFactory(new StringDeserializer(), new JsonDeserializer<>(DistributedCacheObject.class, mapper));
     }
@@ -75,7 +77,7 @@ public class CasServicesStreamingKafkaConfiguration {
         @Qualifier("registeredServiceDistributedCacheManager")
         final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager,
         @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
-        final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) throws Exception {
+        final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) {
         return new RegisteredServiceKafkaDistributedCacheListener(
             casRegisteredServiceStreamPublisherIdentifier, registeredServiceDistributedCacheManager);
     }
@@ -152,6 +154,7 @@ public class CasServicesStreamingKafkaConfiguration {
             .partitions(topic.getPartitions())
             .replicas(topic.getReplicas())
             .config(TopicConfig.COMPRESSION_TYPE_CONFIG, topic.getCompressionType())
-            .compact().build();
+            .compact()
+            .build();
     }
 }

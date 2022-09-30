@@ -79,8 +79,7 @@ public class HazelcastTicketRegistryConfiguration {
                 LOGGER.debug("Creating Hazelcast map configuration for [{}]", defn.getProperties());
                 val props = defn.getProperties();
                 val cfg = HazelcastConfigurationFactory.buildMapConfig(hz, props.getStorageName(), props.getStorageTimeout());
-                if (cfg instanceof MapConfig) {
-                    val mapConfig = (MapConfig) cfg;
+                if (cfg instanceof MapConfig mapConfig) {
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "id"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "type"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));

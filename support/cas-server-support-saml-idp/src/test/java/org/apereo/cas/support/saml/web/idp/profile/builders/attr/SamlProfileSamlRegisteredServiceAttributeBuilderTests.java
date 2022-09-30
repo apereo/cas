@@ -27,11 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 public class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPConfigurationTests {
-
     @Autowired
     @Qualifier("samlProfileSamlAttributeStatementBuilder")
     private SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
-
     @Test
     public void verifyNoEncryption() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
