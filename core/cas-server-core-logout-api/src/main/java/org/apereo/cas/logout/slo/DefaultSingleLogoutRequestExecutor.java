@@ -44,8 +44,7 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
             LOGGER.debug("Ticket [{}] found. Processing logout requests and then deleting the ticket...", ticket.getId());
 
             val logoutRequests = new ArrayList<SingleLogoutRequestContext>();
-            if (ticket instanceof TicketGrantingTicket) {
-                val tgt = (TicketGrantingTicket) ticket;
+            if (ticket instanceof TicketGrantingTicket tgt) {
                 AuthenticationCredentialsThreadLocalBinder.bindCurrent(tgt.getAuthentication());
                 logoutRequests.addAll(logoutManager.performLogout(
                     SingleLogoutExecutionRequest.builder()

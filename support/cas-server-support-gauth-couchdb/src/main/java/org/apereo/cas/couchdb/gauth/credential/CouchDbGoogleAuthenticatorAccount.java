@@ -54,8 +54,7 @@ public class CouchDbGoogleAuthenticatorAccount extends GoogleAuthenticatorAccoun
             .registrationDate(acct.getRegistrationDate())
             .build();
 
-        if (acct instanceof CouchDbGoogleAuthenticatorAccount) {
-            val gAcct = (CouchDbGoogleAuthenticatorAccount) acct;
+        if (acct instanceof CouchDbGoogleAuthenticatorAccount gAcct) {
             return account.setCid(gAcct.getCid()).setRev(gAcct.getRev());
         }
         return account;

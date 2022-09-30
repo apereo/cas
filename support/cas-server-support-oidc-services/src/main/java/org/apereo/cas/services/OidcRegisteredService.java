@@ -9,15 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Transient;
 
 import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This is {@link OidcRegisteredService}.
@@ -81,7 +78,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private ZonedDateTime dynamicRegistrationDateTime;
 
-    private Set<String> scopes = new HashSet<>(0);
 
     /**
      * Gets subject type.
@@ -106,34 +102,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
             setDynamicRegistrationDateTime(ZonedDateTime.now(ZoneOffset.UTC));
         }
         this.dynamicallyRegistered = dynamicallyRegistered;
-    }
-
-    /**
-     * Gets scopes.
-     *
-     * @return the scopes
-     */
-    public Set<String> getScopes() {
-        if (this.scopes == null) {
-            this.scopes = new HashSet<>(0);
-        }
-        return scopes;
-    }
-
-    /**
-     * Sets scopes.
-     *
-     * @param scopes the scopes
-     */
-    public void setScopes(final Set<String> scopes) {
-        getScopes().clear();
-        getScopes().addAll(scopes);
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-        this.scopes = ObjectUtils.defaultIfNull(this.scopes, new HashSet<>(0));
     }
 
     @JsonIgnore

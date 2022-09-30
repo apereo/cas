@@ -13,6 +13,9 @@ configurations.all {
         if (!dependencyUpdates) {
             eachDependency { DependencyResolveDetails details ->
                 def requested = details.requested
+                if (requested.group == "org.bouncycastle" && requested.name.endsWith("-jdk15on")) {
+                    details.useTarget group: "org.bouncycastle", name: requested.name.replaceAll("-jdk15on","-jdk18on"), version: "${bouncyCastleVersion}"
+                }
                 if (requested.group == "gnu-getopt")  {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
                 }

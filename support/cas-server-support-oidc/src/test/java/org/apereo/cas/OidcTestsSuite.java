@@ -15,10 +15,10 @@ import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcSimpleIdTokenClaimCollectorTests;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactoryTests;
+import org.apereo.cas.oidc.discovery.webfinger.OidcDefaultWebFingerDiscoveryServiceTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcEchoingWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcGroovyWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcRestfulWebFingerUserInfoRepositoryTests;
-import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryServiceTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerServiceTests;
@@ -157,7 +157,7 @@ import org.junit.platform.suite.api.Suite;
     OidcUserProfileEndpointControllerTests.class,
     OidcJsonWebKeyStoreJacksonDeserializerTests.class,
     OidcMultifactorAuthenticationTriggerTests.class,
-    OidcWebFingerDiscoveryServiceTests.class,
+    OidcDefaultWebFingerDiscoveryServiceTests.class,
     OidcCasClientRedirectActionBuilderTests.class,
     OidcConsentApprovalViewResolverTests.class,
     OidcWebFingerUserInfoRepositoryTests.class,

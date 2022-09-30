@@ -62,8 +62,7 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
                                                           final WebApplicationService singleLogoutService,
                                                           final Optional<HttpServletRequest> httpRequest) {
         val originalUrl = singleLogoutService.getOriginalUrl();
-        if (registeredService instanceof WebBasedRegisteredService) {
-            val webRegisteredService = (WebBasedRegisteredService) registeredService;
+        if (registeredService instanceof WebBasedRegisteredService webRegisteredService) {
             val serviceLogoutUrl = webRegisteredService.getLogoutUrl();
             if (StringUtils.hasText(serviceLogoutUrl)) {
                 LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);

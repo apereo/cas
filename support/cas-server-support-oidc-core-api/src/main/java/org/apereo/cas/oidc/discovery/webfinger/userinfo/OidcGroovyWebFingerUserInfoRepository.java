@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OidcGroovyWebFingerUserInfoRepository implements OidcWebFingerUserInfoRepository, DisposableBean {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public OidcGroovyWebFingerUserInfoRepository(final Resource resource) {
         this.watchableScript = new WatchableGroovyScriptResource(resource);

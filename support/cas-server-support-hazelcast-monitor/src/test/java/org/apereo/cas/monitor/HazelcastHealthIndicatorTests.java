@@ -93,8 +93,7 @@ public class HazelcastHealthIndicatorTests {
         assertTrue(details.containsKey("name"));
 
         details.values().forEach(value -> {
-            if (value instanceof Map) {
-                val map = (Map) value;
+            if (value instanceof Map map) {
                 assertTrue(map.containsKey("size"));
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));

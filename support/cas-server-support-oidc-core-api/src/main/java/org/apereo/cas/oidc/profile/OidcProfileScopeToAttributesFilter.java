@@ -59,7 +59,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                             final RegisteredService registeredService,
                             final OAuth20AccessToken accessToken) {
         val principal = super.filter(service, profile, registeredService, accessToken);
-        if (registeredService instanceof OidcRegisteredService) {
+        if (registeredService instanceof OidcRegisteredService oidcService) {
             val scopes = new LinkedHashSet<>(accessToken.getScopes());
             if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
                 LOGGER.warn("Request does not indicate a scope [{}] that can identify an OpenID Connect request. "
@@ -71,7 +71,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             scopes.retainAll(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
             LOGGER.debug("Collection of scopes filtered based on discovery settings are [{}]", scopes);
 
-            val oidcService = (OidcRegisteredService) registeredService;
             val attributes = getAttributesAllowedForService(scopes, principal, service, oidcService, accessToken);
             LOGGER.debug("Collection of attributes filtered by scopes [{}] are [{}]", scopes, attributes);
 

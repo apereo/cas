@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.audit;
 
 import org.apereo.cas.audit.AuditableExecutionResult;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
 import lombok.val;
@@ -33,7 +34,7 @@ public class OAuth20AccessTokenGrantRequestAuditResourceResolver extends ReturnV
             values.put("service", accessTokenRequest.getService().getId());
             values.put("grant_type", accessTokenRequest.getGrantType().getType());
             values.put("response_type", accessTokenRequest.getResponseType().getType());
-            values.put("scopes", accessTokenRequest.getScopes());
+            values.put(OAuth20Constants.SCOPE, accessTokenRequest.getScopes());
             return new String[]{auditFormat.serialize(values)};
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;

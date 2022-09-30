@@ -7,7 +7,6 @@ import org.apereo.cas.services.WebBasedRegisteredService;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.io.Serial;
@@ -54,8 +53,7 @@ public class SingleLogoutUrl implements Serializable {
      * @return the list
      */
     public static List<SingleLogoutUrl> from(final RegisteredService service) {
-        if (service instanceof WebBasedRegisteredService) {
-            val registeredService = (WebBasedRegisteredService) service;
+        if (service instanceof WebBasedRegisteredService registeredService) {
             if (StringUtils.hasText(registeredService.getLogoutUrl())) {
                 return Arrays.stream(StringUtils.commaDelimitedListToStringArray(registeredService.getLogoutUrl()))
                     .map(url -> new SingleLogoutUrl(url, registeredService.getLogoutType()))

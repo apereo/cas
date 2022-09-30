@@ -15,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 
+import java.util.Objects;
+
 /**
  * This is {@link AccessTokenPasswordGrantRequestExtractor}.
  *
@@ -31,9 +33,8 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
     public AccessTokenRequestContext extractRequest(final WebContext context) {
         val clientId = getConfigurationContext().getRequestParameterResolver()
             .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getKey();
-        val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
-        LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
+        LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
@@ -62,6 +63,9 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         val ticketGrantingTicket = getConfigurationContext().getCentralAuthenticationService().createTicketGrantingTicket(result);
 
+        val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
+        scopes.retainAll(Objects.requireNonNull(registeredService).getScopes());
+
         return AccessTokenRequestContext.builder()
             .scopes(scopes)
             .service(service)
@@ -69,7 +73,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
             .registeredService(registeredService)
             .grantType(getGrantType())
             .ticketGrantingTicket(ticketGrantingTicket)
-            .generateRefreshToken(registeredService != null && registeredService.isGenerateRefreshToken())
+            .generateRefreshToken(registeredService.isGenerateRefreshToken())
             .build();
     }
 

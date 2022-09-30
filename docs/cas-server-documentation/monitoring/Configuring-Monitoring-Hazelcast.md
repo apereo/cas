@@ -14,3 +14,4 @@ Monitor the status and state of a cache backed by Hazelcast.
 
 {% include_cached casproperties.html properties="cas.monitor.warn." %}
 
+{% include_cached actuators.html endpoints="health" healthIndicators="hazelcastHealthIndicator" %}

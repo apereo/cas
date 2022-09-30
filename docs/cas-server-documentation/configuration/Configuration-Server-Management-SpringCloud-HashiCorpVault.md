@@ -15,6 +15,12 @@ To learn more about configuration security, [please review this guide](Configura
 
 <div class="alert alert-info mt-3"><strong>Usage</strong><p>The configuration modules provide here may also be used verbatim inside a CAS server overlay and do not exclusively belong to a Spring Cloud Configuration server. While this module is primarily useful when inside the Spring Cloud Configuration server, it nonetheless may also be used inside a CAS server overlay directly to fetch settings from a source.</p></div>
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="health" healthIndicators="refresh,vaultHealthIndicator" %}
+
 ## Token Authentication
 
 Tokens are the core method for authentication within Vault. Token
