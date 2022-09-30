@@ -9,7 +9,7 @@ or override log42.component.properties to turn off async
     <Properties>
         <Property name="baseDir">/tmp/logs</Property>
         
-        <Property name="cas.log.level">${main:\--logging.level.org.apereo.cas:-warn}</Property>
+        <Property name="cas.log.level">${main:\--logging.level.org.apereo.cas:-info}</Property>
         <Property name="spring.webflow.log.level">${main:\--logging.level.org.springframework.webflow:-warn}</Property>
         <Property name="spring.security.log.level">info</Property>
         <Property name="spring.cloud.log.level">warn</Property>
