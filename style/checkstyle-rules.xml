@@ -32,7 +32,9 @@
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
-        <module name="LambdaParameterName"/>
+        <module name="LambdaParameterName">
+            <property name="format" value="__|(^[a-z]([a-zA-Z]+)*$)"/>
+        </module>
         <module name="HiddenField">
             <property name="tokens" value="VARIABLE_DEF"/>
             <property name="ignoreSetter" value="true"/>
