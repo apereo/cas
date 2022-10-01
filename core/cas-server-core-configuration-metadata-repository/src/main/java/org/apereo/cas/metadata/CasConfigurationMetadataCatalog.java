@@ -46,7 +46,7 @@ public class CasConfigurationMetadataCatalog {
      * @param data        the data
      */
     public static void export(final File destination, final Object data) {
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             val mapper = new ObjectMapper(new YAMLFactory())
                 .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)

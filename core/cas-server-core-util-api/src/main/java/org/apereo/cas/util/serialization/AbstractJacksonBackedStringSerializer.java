@@ -123,7 +123,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public void to(final OutputStream out, final T object) {
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
                 getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
                 val hjsonString = isJsonFormat()
@@ -136,7 +136,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public void to(final Writer out, final T object) {
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
                 getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
                 if (isJsonFormat()) {
@@ -150,7 +150,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public void to(final File out, final T object) {
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
                 getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
 

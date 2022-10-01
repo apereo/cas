@@ -95,8 +95,8 @@ public class LoggingUtils {
      */
     public static void error(final Logger logger, final String msg, final Throwable throwable) {
         FunctionUtils.doIf(logger.isDebugEnabled(),
-                unused -> logger.error(msg, throwable),
-                unused -> logger.error(summarizeStackTrace(msg, throwable)))
+                __ -> logger.error(msg, throwable),
+                __ -> logger.error(summarizeStackTrace(msg, throwable)))
             .accept(throwable);
     }
 
@@ -129,8 +129,8 @@ public class LoggingUtils {
      */
     public static void warn(final Logger logger, final String message, final Throwable throwable) {
         FunctionUtils.doIf(logger.isDebugEnabled(),
-                unused -> logger.warn(message, throwable),
-                unused -> logger.warn(summarizeStackTrace(message, throwable)))
+                __ -> logger.warn(message, throwable),
+                __ -> logger.warn(summarizeStackTrace(message, throwable)))
             .accept(throwable);
     }
 

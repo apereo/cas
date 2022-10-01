@@ -60,7 +60,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
         LOGGER.trace("Created watcher for events of type [{}]", Arrays.stream(KINDS)
             .map(WatchEvent.Kind::name)
             .collect(Collectors.joining(",")));
-        FunctionUtils.doUnchecked(unused -> watchablePath.register(this.watcher, KINDS, SensitivityWatchEventModifier.HIGH));
+        FunctionUtils.doUnchecked(__ -> watchablePath.register(this.watcher, KINDS, SensitivityWatchEventModifier.HIGH));
     }
 
     @Override
