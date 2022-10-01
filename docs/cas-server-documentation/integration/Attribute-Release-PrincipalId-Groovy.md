@@ -16,7 +16,10 @@ Groovy scripts whether inlined or external will receive and have access to the f
 - `service`: The service object that is matched by the registered service definition.
 - `logger`: A logger object, able to provide `logger.info(...)` operations, etc.
 
-## Inline
+
+{% tabs groovyprincipalid %}
+
+{% tab groovyprincipalid Inline %}
 
 Embed the groovy script directly inside the service configuration.
 
@@ -35,10 +38,12 @@ Embed the groovy script directly inside the service configuration.
 }
 ```
 
-Note that the `uid` attribute in the above example is resolved internally as a multivalued attribute, as should all attributes when fetched by CAS. So 
+Note that the `uid` attribute in the above example is resolved internally as a multivalued attribute, as should all attributes when fetched by CAS. So
 the above example uses the `[0]` syntax to fetch the first value of the attribute.
 
-## External
+{% endtab %}
+
+{% tab groovyprincipalid External %}
 
 Reference the groovy script as an external resource outside the service configuration.
 The script must return a single `String` value.
@@ -66,3 +71,7 @@ return "newPrincipalId"
 ```
 
 The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
+{% endtab %} 
+
+{% endtabs %}

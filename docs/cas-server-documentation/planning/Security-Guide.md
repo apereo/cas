@@ -279,7 +279,7 @@ configured for forced authentication, authentication would be required for servi
 long-term session.
 
 Long term authentication support must be explicitly enabled through
-[configuration and UI customization](../authentication/Configuring-Authentication-Components.html#long-term-authentication)
+[configuration and UI customization](../authentication/Configuring-LongTerm-Authentication.html)
 during the installation process. Thus deployers choose to offer long-term authentication support, and when available
 users may elect to use it via selection on the CAS login form.
 

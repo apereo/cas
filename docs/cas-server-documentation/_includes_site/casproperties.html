@@ -362,6 +362,9 @@
                                     {% if signingEncryptionCollected == true %}
                                     {% assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties %}
                                     {% endif %}
+                                    {% if passwordPolicySettingsFound == true %}
+                                    {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
+                                    {% endif %}
                             {% endunless %}
 
                         {% endif %}
@@ -421,7 +424,7 @@
         
                         {% unless foundExcluded == true %}
                             {% assign signingEncryptionCollected = false %}
-                            {% if config.name contains ".crypto" %}
+                            {% if config.name contains ".crypto." %}
                                 {% assign signingEncryptionEnabled = true %}
                                 {% assign signingEncryptionCollected = true %}
                             {% endif %}
@@ -437,13 +440,13 @@
                             {% if config.name contains ".credential-criteria" %}
                                 {% assign authnPredicateSettingsFound = true %}
                             {% endif %}
-                            {% if config.name contains ".password-encoder" %}
+                            {% if config.name contains ".password-encoder." %}
                                 {% assign passwordEncoderSettingsFound = true %}
                             {% endif %}
-                            {% if config.name contains ".principal-transformation" %}
+                            {% if config.name contains ".principal-transformation." %}
                                 {% assign principalTransformationSettingsFound = true %}
                             {% endif %}
-                            {% if config.name contains ".password-policy" %}
+                            {% if config.name contains ".password-policy." %}
                                 {% assign passwordPolicySettingsFound = true %}
                             {% endif %}
 
@@ -470,6 +473,9 @@
                             {{ renderedProperties | markdownify }}
                             {% if signingEncryptionCollected == true %}
                             {% assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties %}
+                            {% endif %}
+                            {% if passwordPolicySettingsFound == true %}
+                            {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
                             {% endif %}
                         {% endunless %}
 
@@ -560,6 +566,9 @@
                                     {% if signingEncryptionCollected == true %}
                                     {% assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties %}
                                     {% endif %}
+                                    {% if passwordPolicySettingsFound == true %}
+                                    {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
+                                    {% endif %}
                                 {% endunless %}
                             {% endunless %}
                         {% endif %}
@@ -598,6 +607,7 @@
 
 {% if signingEncryptionEnabled == true %}
 <div class='tab-pane properties-tab fade in' id='signingEncryptionProperties{{ casPropertiesRandomNumber }}'>
+    <p>
 
     <table class="cas-datatable properties" 
             id='tableSigningEncryptionProperties{{ casPropertiesRandomNumber }}'>
@@ -641,6 +651,13 @@
 
 {% if passwordPolicySettingsFound == true %}
 <div class='tab-pane properties-tab fade in' id='passwordPolicyProperties{{ casPropertiesRandomNumber }}'>
+    <p>
+    <table class="cas-datatable properties"
+           id='tablePasswordPolicyProperties{{ casPropertiesRandomNumber }}'>
+        <thead><tr><th></th></tr></thead>
+        <tbody>{{ textAreaPasswordPolicyProperties }} </tbody>
+    </table>
+    
     {% capture passwordPolicyConfig %}{% include {{ version }}/password-policy-configuration.md %}{% endcapture %}
     {{ passwordPolicyConfig | markdownify }}
 </div>
