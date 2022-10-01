@@ -13,10 +13,11 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+import net.shibboleth.shared.xml.SerializeSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
@@ -29,7 +30,6 @@ import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.springframework.webflow.execution.RequestContext;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;

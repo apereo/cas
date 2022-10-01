@@ -5,8 +5,9 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.web.support.WebUtils;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.val;
-import net.shibboleth.utilities.java.support.net.URLBuilder;
+import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +27,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.UUID;
 

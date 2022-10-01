@@ -10,7 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;

@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.hjson.JsonValue;
