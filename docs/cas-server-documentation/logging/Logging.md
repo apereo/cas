@@ -29,9 +29,9 @@ The following endpoints are provided:
 
 {% include_cached actuators.html endpoints="loggingConfig,loggers,logfile" %}
 
-## CAS Custom Log4j2 plugins
+## CAS Plugins
 
-The log4j2.xml file use by CAS includes custom Log4j2 plugins:
+The `log4j2.xml` file use by CAS includes custom Log4j2 plugins:
 
 - `CasAppender`: The CasAppender wraps another regular appender and removes sensitive values from the log entries
 such as Ticket Granting Tickets or Proxy Granting Tickets.

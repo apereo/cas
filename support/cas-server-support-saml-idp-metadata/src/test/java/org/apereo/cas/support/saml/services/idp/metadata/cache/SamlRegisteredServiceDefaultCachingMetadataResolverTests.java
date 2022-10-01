@@ -10,7 +10,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegiste
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
