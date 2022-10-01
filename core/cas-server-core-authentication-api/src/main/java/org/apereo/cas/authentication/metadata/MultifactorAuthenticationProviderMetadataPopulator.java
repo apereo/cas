@@ -36,7 +36,7 @@ public class MultifactorAuthenticationProviderMetadataPopulator extends BaseAuth
         val bypass = failureEval != null
                      && failureEval.evaluate(registeredService, provider.getObject()) == MultifactorAuthenticationProviderFailureModes.PHANTOM
                      && !provider.getObject().isAvailable(registeredService);
-        FunctionUtils.doIf(bypass, unused -> builder.mergeAttribute(authenticationContextAttribute,
+        FunctionUtils.doIf(bypass, __ -> builder.mergeAttribute(authenticationContextAttribute,
             provider.getObject().getId())).accept(provider);
     }
 

@@ -61,7 +61,7 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     }
 
     private void initializeBeansEagerly() {
-        FunctionUtils.doAndHandle(unused -> {
+        FunctionUtils.doAndHandle(__ -> {
             for (val beanName : applicationContext.getBeanDefinitionNames()) {
                 Objects.requireNonNull(applicationContext.getBean(beanName).getClass());
             }

@@ -170,9 +170,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         requestedClaims.forEach(authnBuilder::addAttribute);
 
         FunctionUtils.doIfNotNull(holder.getDpop(),
-            unused -> authnBuilder.addAttribute(OAuth20Constants.DPOP, holder.getDpop()));
+            __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP, holder.getDpop()));
         FunctionUtils.doIfNotNull(holder.getDpopConfirmation(),
-            unused -> authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, holder.getDpopConfirmation()));
+            __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, holder.getDpopConfirmation()));
         
         val authentication = authnBuilder.build();
         LOGGER.debug("Creating access token for [{}]", holder);

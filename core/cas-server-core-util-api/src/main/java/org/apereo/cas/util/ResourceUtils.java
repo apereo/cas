@@ -163,7 +163,7 @@ public class ResourceUtils {
             LOGGER.warn("Unable to create folder [{}]", parentDirectory);
         }
         val destination = new File(parentDirectory, Objects.requireNonNull(resource.getFilename()));
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             if (destination.exists()) {
                 LOGGER.trace("Deleting resource directory [{}]", destination);
                 FileUtils.forceDelete(destination);

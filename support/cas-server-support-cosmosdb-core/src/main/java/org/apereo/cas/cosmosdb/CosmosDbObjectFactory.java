@@ -54,7 +54,7 @@ public class CosmosDbObjectFactory {
             .endpointDiscoveryEnabled(properties.isEndpointDiscoveryEnabled())
             .directMode();
         LOGGER.debug("Building CosmosDb client for [{}]", uri);
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             val sslContext = SslContextBuilder
                 .forClient()
                 .sslProvider(SslProvider.JDK)
