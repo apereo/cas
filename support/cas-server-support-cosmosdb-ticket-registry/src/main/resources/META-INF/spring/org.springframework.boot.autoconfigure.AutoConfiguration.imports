@@ -1,0 +1,2 @@
+org.apereo.cas.config.CosmosDbTicketRegistryConfiguration
+org.apereo.cas.config.CosmosDbTicketRegistryTicketCatalogConfiguration
