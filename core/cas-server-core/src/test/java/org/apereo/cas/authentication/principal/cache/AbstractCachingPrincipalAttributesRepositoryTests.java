@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,13 +67,14 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
         email = new ArrayList<>();
         email.add("final@school.com");
-        this.principal = this.principalFactory.createPrincipal("uid", Collections.singletonMap(MAIL, email));
+        this.principal = this.principalFactory.createPrincipal(UUID.randomUUID().toString(),
+            Collections.singletonMap(MAIL, email));
     }
 
     @Test
     public void checkExpiredCachedAttributes() throws Exception {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
-        assertEquals(1, this.principal.getAttributes().size());
+        assertEquals(1, principal.getAttributes().size());
         try (val repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
             var repoAttrs = repository.getAttributes(this.principal, svc);
             assertEquals(1, repoAttrs.size());

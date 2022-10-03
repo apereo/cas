@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,6 +50,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("Attributes")
+@Execution(ExecutionMode.SAME_THREAD)
 public class ReturnAllowedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllowedAttributeReleasePolicy.json");
 
@@ -103,7 +106,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
 
             val chain = new ChainingAttributeReleasePolicy();
             chain.addPolicies(policy, policy2);
-            
+
             val results = chain.getAttributes(context);
             assertEquals(2, results.size());
             assertTrue(results.containsKey("displayName"));
