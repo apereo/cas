@@ -59,6 +59,7 @@ ext {
         '**/docs/**',
         '**/soap/generated/**',
         '**/com/duosecurity/**',
+        '**/net/jradius/**',
         '**/com/yubico/**',
         '**/saml/sts/SamlToken**',
         '**/**ConfigurationMetadata**',

@@ -9,6 +9,8 @@ import lombok.val;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.List;
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
+@Execution(ExecutionMode.SAME_THREAD)
 public class DefaultAttributeDefinitionTests {
 
     @Test

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BlockingRadiusServerTests}.
- * Runs test cases against a radius server running on "https://console.ironwifi.com/".
+ * Runs test cases against a radius server running on "<a href="https://console.ironwifi.com/">here</a>".
  *
  * @author Misagh Moayyed
  * @since 5.2.0

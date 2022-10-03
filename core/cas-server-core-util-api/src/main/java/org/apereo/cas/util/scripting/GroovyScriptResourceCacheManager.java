@@ -41,7 +41,9 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
 
     @Override
     public ExecutableCompiledGroovyScript get(final String key) {
-        return this.cache.getIfPresent(key);
+        synchronized (cache) {
+            return this.cache.getIfPresent(key);
+        }
     }
 
     @Override
@@ -51,27 +53,35 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
 
     @Override
     @CanIgnoreReturnValue
-    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> put(final String key,
-                                                                                  final ExecutableCompiledGroovyScript value) {
-        this.cache.put(key, value);
-        return this;
+    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> put(
+        final String key, final ExecutableCompiledGroovyScript value) {
+        synchronized (cache) {
+            this.cache.put(key, value);
+            return this;
+        }
     }
 
     @Override
     @CanIgnoreReturnValue
     public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> remove(final String key) {
-        this.cache.invalidate(key);
-        return this;
+        synchronized (cache) {
+            this.cache.invalidate(key);
+            return this;
+        }
     }
 
     @Override
     public void close() {
-        cache.invalidateAll();
+        synchronized (cache) {
+            cache.invalidateAll();
+        }
     }
 
     @Override
     public boolean isEmpty() {
-        return cache.asMap().isEmpty();
+        synchronized (cache) {
+            return cache.asMap().isEmpty();
+        }
     }
 
     @Override
@@ -113,6 +123,8 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
 
     @Override
     public Set<String> getKeys() {
-        return this.cache.asMap().keySet();
+        synchronized (cache) {
+            return this.cache.asMap().keySet();
+        }
     }
 }
