@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.config.AMQPTicketRegistryConfiguration;
 import org.apereo.cas.config.AMQPTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import io.micrometer.core.instrument.Clock;
@@ -33,7 +34,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.ticket.registry.amqp.crypto.signing.key=25wvKYowLdeLcZEgIiwrpK66l6TmyFBvOSYwO8HzPRRLDwreSISi5DFk9Bgilr8Ngi8kx2FFe_9msG7nN0SA4A",
     "cas.ticket.registry.amqp.crypto.encryption.key=PxXCmy1WgKjv3o-iUllZhg",
-    
+
     "spring.rabbitmq.host=localhost",
     "spring.rabbitmq.port=5672",
     "spring.rabbitmq.username=rabbituser",
@@ -46,6 +47,15 @@ public class AMQPDefaultTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
+
+    @Autowired
+    @Qualifier("messageQueueCipherExecutor")
+    private CipherExecutor messageQueueCipherExecutor;
+
+    @Override
+    protected CipherExecutor setupCipherExecutor() {
+        return this.messageQueueCipherExecutor;
+    }
 
     @TestConfiguration(value = "AMQPTicketRegistryTestConfiguration", proxyBeanMethods = false)
     public static class AMQPTicketRegistryTestConfiguration {
