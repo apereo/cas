@@ -185,27 +185,51 @@ public class RadiusClient {
         }
     }
 
-    public void setAcctPort(final int acctPort) {
-        transport.setAcctPort(acctPort);
+    public int getAcctPort() {
+        return this.transport.getAcctPort();
     }
 
-    public void setAuthPort(final int authPort) {
-        transport.setAuthPort(authPort);
+    public void setAcctPort(int acctPort) {
+        this.transport.setAcctPort(acctPort);
+    }
+
+    public int getAuthPort() {
+        return this.transport.getAuthPort();
+    }
+
+    public void setAuthPort(int authPort) {
+        this.transport.setAuthPort(authPort);
+    }
+
+    public int getSocketTimeout() {
+        return this.transport.getSocketTimeout();
     }
 
     public void setSocketTimeout(int socketTimeout) {
-        transport.setSocketTimeout(socketTimeout);
+        this.transport.setSocketTimeout(socketTimeout);
     }
 
     public InetAddress getRemoteInetAddress() {
-        return transport.getRemoteInetAddress();
+        return this.transport.getRemoteInetAddress();
     }
 
     public void setRemoteInetAddress(InetAddress remoteInetAddress) {
-        transport.setRemoteInetAddress(remoteInetAddress);
+        this.transport.setRemoteInetAddress(remoteInetAddress);
     }
-    
+
+    public InetAddress getLocalInetAddress() {
+        return this.transport.getLocalInetAddress();
+    }
+
+    public void setLocalInetAddress(InetAddress localInetAddress) {
+    }
+
+    public String getSharedSecret() {
+        return this.transport.getSharedSecret();
+    }
+
     public void setSharedSecret(String sharedSecret) {
-        transport.setSharedSecret(sharedSecret);
+        this.transport.setSharedSecret(sharedSecret);
     }
+
 }
