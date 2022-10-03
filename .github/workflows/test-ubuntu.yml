@@ -15,7 +15,7 @@ env:
   JDK_CURRENT: 17
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: ".*cosmosdb|amqp|radius.*" # Limit which test categories run
+  CATEGORY_REGEX: ".*cosmosdb|amqp.*" # Limit which test categories run
 
 ##########################################################################
 

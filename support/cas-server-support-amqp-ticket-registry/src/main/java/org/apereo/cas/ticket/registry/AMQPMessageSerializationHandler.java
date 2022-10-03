@@ -36,9 +36,7 @@ public class AMQPMessageSerializationHandler implements Serializer<Object>, Dese
 
     @Nonnull
     @Override
-    public byte[] serializeToByteArray(
-        @Nonnull
-        final Object object) throws IOException {
+    public byte[] serializeToByteArray(@Nonnull final Object object) {
         return SerializationUtils.serializeAndEncodeObject(cipher, (Serializable) object);
     }
 
@@ -50,9 +48,7 @@ public class AMQPMessageSerializationHandler implements Serializer<Object>, Dese
 
     @Nonnull
     @Override
-    public BaseMessageQueueCommand deserializeFromByteArray(
-        @Nonnull
-        final byte[] serialized) throws IOException {
+    public BaseMessageQueueCommand deserializeFromByteArray(@Nonnull final byte[] serialized) {
         return SerializationUtils.decodeAndDeserializeObject(serialized, cipher, BaseMessageQueueCommand.class);
     }
 }
