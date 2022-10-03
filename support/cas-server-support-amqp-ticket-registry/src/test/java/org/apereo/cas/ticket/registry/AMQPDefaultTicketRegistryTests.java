@@ -31,6 +31,9 @@ import org.springframework.test.context.TestPropertySource;
     AMQPTicketRegistryConfiguration.class
 })
 @TestPropertySource(properties = {
+    "cas.ticket.registry.amqp.crypto.signing.key=25wvKYowLdeLcZEgIiwrpK66l6TmyFBvOSYwO8HzPRRLDwreSISi5DFk9Bgilr8Ngi8kx2FFe_9msG7nN0SA4A",
+    "cas.ticket.registry.amqp.crypto.encryption.key=PxXCmy1WgKjv3o-iUllZhg",
+    
     "spring.rabbitmq.host=localhost",
     "spring.rabbitmq.port=5672",
     "spring.rabbitmq.username=rabbituser",

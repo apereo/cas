@@ -33,6 +33,7 @@ import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link AbstractTicketMessageQueueCommandTests}.
@@ -72,7 +73,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "spring.rabbitmq.host=localhost",
         "spring.rabbitmq.port=5672",
         "spring.rabbitmq.username=rabbituser",
-        "spring.rabbitmq.password=bugsbunny"
+        "spring.rabbitmq.password=bugsbunny",
+        "cas.ticket.registry.amqp.crypto.signing.key=HbuPoSycjr0Pyv2u8WSwKcM6Ow0lviUdT7b9VzwxkcANqbDyKOb6KHPus_fCDCXElPhzXpeP-T0bryadZNiwOQ",
+        "cas.ticket.registry.amqp.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw"
     })
 public abstract class AbstractTicketMessageQueueCommandTests {
     @Autowired
