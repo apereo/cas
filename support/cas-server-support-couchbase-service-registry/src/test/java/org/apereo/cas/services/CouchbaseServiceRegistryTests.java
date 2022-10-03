@@ -58,7 +58,6 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Couchbase")
 @EnabledIfListeningOnPort(port = 8091)
-@Execution(ExecutionMode.SAME_THREAD)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ResourceLock("Couchbase")
 @Getter
