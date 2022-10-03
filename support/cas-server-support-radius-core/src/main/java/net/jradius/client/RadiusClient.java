@@ -17,11 +17,11 @@ import net.jradius.packet.RadiusResponse;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link RadiusClient}.
@@ -32,7 +32,7 @@ import java.util.LinkedHashMap;
 public class RadiusClient {
     protected RadiusClientTransport transport;
 
-    protected static final LinkedHashMap<String, Class<?>> authenticators = new LinkedHashMap<>();
+    protected static final Map<String, Class<?>> authenticators = new LinkedHashMap<>();
 
     static {
         registerAuthenticator("pap", PAPAuthenticator.class);
@@ -49,7 +49,8 @@ public class RadiusClient {
         this.transport.setRadiusClient(this);
     }
 
-    public RadiusClient(InetAddress address, String secret, int authPort, int acctPort, int timeout) throws IOException {
+    public RadiusClient(final InetAddress address, final String secret, final int authPort,
+                        final int acctPort, final int timeout) throws IOException {
         this.transport = new UDPClientTransport();
         this.transport.setRadiusClient(this);
         setRemoteInetAddress(address);
@@ -103,40 +104,40 @@ public class RadiusClient {
         }
 
         if (args != null) {
-            HashMap<String, PropertyDescriptor> elements = new HashMap<>();
-            Class<?> clazz = auth.getClass();
+            var elements = new HashMap<String, PropertyDescriptor>();
+            var clazz = auth.getClass();
             PropertyDescriptor[] props = null;
             try {
                 props = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 RadiusLog.error("Could not instanciate authenticator " + protocolName, e);
                 return auth;
             }
             for (int p = 0; p < props.length; p++) {
-                PropertyDescriptor pd = props[p];
-                Method m = pd.getWriteMethod();
+                var pd = props[p];
+                var m = pd.getWriteMethod();
                 if (m != null) {
                     elements.put(pd.getName(), pd);
                 }
             }
             for (int a = 0; a < args.length; a++) {
-                int eq = args[a].indexOf("=");
+                int eq = args[a].indexOf('=');
                 if (eq > 0) {
-                    String name = args[a].substring(0, eq);
-                    String value = args[a].substring(eq + 1);
+                    var name = args[a].substring(0, eq);
+                    var value = args[a].substring(eq + 1);
 
-                    PropertyDescriptor pd = elements.get(name);
-                    Method m = pd.getWriteMethod();
+                    var pd = elements.get(name);
+                    var m = pd.getWriteMethod();
 
                     if (m == null) {
                         RadiusLog.error("Authenticator " + protocolName + " does not have a writable attribute " + name);
                     } else {
                         Object valueObject = value;
-                        Class<?> cType = pd.getPropertyType();
+                        var cType = pd.getPropertyType();
                         if (cType == Boolean.class) {
-                            valueObject = new Boolean(value);
+                            valueObject = Boolean.valueOf(value);
                         } else if (cType == Integer.class) {
-                            valueObject = new Integer(value);
+                            valueObject = Integer.valueOf(value);
                         }
                         try {
                             m.invoke(auth, new Object[]{valueObject});
@@ -150,7 +151,7 @@ public class RadiusClient {
         return auth;
     }
 
-    public RadiusResponse sendReceive(RadiusRequest p, int retries) throws RadiusException {
+    public RadiusResponse sendReceive(final RadiusRequest p, final int retries) throws RadiusException {
         return transport.sendReceive(p, retries);
     }
 
@@ -164,7 +165,7 @@ public class RadiusClient {
      * @param retries Number of times to retry (without response)
      * @return Returns the reply RadiusPacket
      */
-    public RadiusResponse authenticate(AccessRequest p, RadiusAuthenticator auth, int retries)
+    public RadiusResponse authenticate(final AccessRequest p, RadiusAuthenticator auth, final int retries)
         throws RadiusException, NoSuchAlgorithmException {
         if (auth == null) {
             auth = new PAPAuthenticator();
@@ -184,44 +185,26 @@ public class RadiusClient {
         }
     }
 
-    /**
-     * @param acctPort The RADIUS accounting port
-     */
-    public void setAcctPort(int acctPort) {
+    public void setAcctPort(final int acctPort) {
         transport.setAcctPort(acctPort);
     }
 
-    /**
-     * @param authPort The RADIUS authentication port
-     */
-    public void setAuthPort(int authPort) {
+    public void setAuthPort(final int authPort) {
         transport.setAuthPort(authPort);
     }
 
-    /**
-     * @param socketTimeout The socket timeout (in seconds)
-     */
     public void setSocketTimeout(int socketTimeout) {
         transport.setSocketTimeout(socketTimeout);
     }
 
-    /**
-     * @return Returns the remote server IP Address
-     */
     public InetAddress getRemoteInetAddress() {
         return transport.getRemoteInetAddress();
     }
 
-    /**
-     * @param remoteInetAddress The remote server IP Address
-     */
     public void setRemoteInetAddress(InetAddress remoteInetAddress) {
         transport.setRemoteInetAddress(remoteInetAddress);
     }
-
-    /**
-     * @param sharedSecret The shared secret to set
-     */
+    
     public void setSharedSecret(String sharedSecret) {
         transport.setSharedSecret(sharedSecret);
     }
