@@ -35,9 +35,14 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributor
 
     @Override
     public Service restore(final RequestContext requestContext, final WebContext webContext,
-                           final TransientSessionTicket ticket, final Client client) {
-        val account = ticket.getProperty(PasswordlessUserAccount.class.getName(), PasswordlessUserAccount.class);
-        WebUtils.putPasswordlessAuthenticationAccount(requestContext, account);
-        return ticket.getService();
+                           final Optional<TransientSessionTicket> givenTicket, final Client client) {
+        return givenTicket
+            .map(ticket -> {
+                val account = ticket.getProperty(PasswordlessUserAccount.class.getName(), PasswordlessUserAccount.class);
+                WebUtils.putPasswordlessAuthenticationAccount(requestContext, account);
+                return ticket.getService();
+            })
+            .orElse(null);
+
     }
 }

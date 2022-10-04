@@ -57,7 +57,7 @@ public class DefaultDelegatedClientAuthenticationWebflowStateContributor impleme
 
     @Override
     public Map<String, ? extends Serializable> store(final RequestContext requestContext, final WebContext webContext,
-                                           final Client client) throws Exception {
+                                                     final Client client) throws Exception {
         val httpRequest = ((JEEContext) webContext).getNativeRequest();
         val originalService = configContext.getArgumentExtractor().extractService(httpRequest);
         val service = configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(originalService);
@@ -82,29 +82,33 @@ public class DefaultDelegatedClientAuthenticationWebflowStateContributor impleme
     @Override
     public Service restore(final RequestContext requestContext,
                            final WebContext webContext,
-                           final TransientSessionTicket ticket,
-                           final Client client) throws Exception {
-        val service = ticket.getService();
-        LOGGER.trace("Restoring requested service [{}] back in the authentication flow", service);
-        WebUtils.putServiceIntoFlowScope(requestContext, service);
-        webContext.setRequestAttribute(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
+                           final Optional<TransientSessionTicket> givenSessionTicket,
+                           final Client client) {
+        return givenSessionTicket
+            .map(ticket -> {
+                val service = ticket.getService();
+                LOGGER.trace("Restoring requested service [{}] back in the authentication flow", service);
+                WebUtils.putServiceIntoFlowScope(requestContext, service);
+                webContext.setRequestAttribute(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
 
-        val themeParamName = configContext.getCasProperties().getTheme().getParamName();
-        val localParamName = configContext.getCasProperties().getLocale().getParamName();
+                val themeParamName = configContext.getCasProperties().getTheme().getParamName();
+                val localParamName = configContext.getCasProperties().getLocale().getParamName();
 
-        val properties = ticket.getProperties();
-        webContext.setRequestAttribute(themeParamName, properties.get(themeParamName));
+                val properties = ticket.getProperties();
+                webContext.setRequestAttribute(themeParamName, properties.get(themeParamName));
 
-        val localeValue = properties.get(localParamName);
-        Optional.ofNullable(localeValue)
-            .ifPresent(locale -> {
-                webContext.setRequestAttribute(localParamName, locale);
-                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-                val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-                Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
-                    .ifPresent(localeResolver -> localeResolver.setLocale(request, response, Locale.forLanguageTag(locale.toString())));
-            });
-        webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_METHOD, properties.get(CasProtocolConstants.PARAMETER_METHOD));
-        return service;
+                val localeValue = properties.get(localParamName);
+                Optional.ofNullable(localeValue)
+                    .ifPresent(locale -> {
+                        webContext.setRequestAttribute(localParamName, locale);
+                        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+                        Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+                            .ifPresent(localeResolver -> localeResolver.setLocale(request, response, Locale.forLanguageTag(locale.toString())));
+                    });
+                webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_METHOD, properties.get(CasProtocolConstants.PARAMETER_METHOD));
+                return service;
+            })
+            .orElse(null);
     }
 }
