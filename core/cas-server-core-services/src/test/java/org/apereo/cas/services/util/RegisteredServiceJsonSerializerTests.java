@@ -105,9 +105,9 @@ public class RegisteredServiceJsonSerializerTests {
                    + "  }"
                    + "    }";
 
-        val s = zer.from(json);
-        assertNotNull(s);
-        assertNotNull(s.getAuthenticationPolicy());
-        assertNull(s.getAuthenticationPolicy().getCriteria());
+        val serialized = zer.from(json);
+        assertNotNull(serialized);
+        assertNotNull(serialized.getAuthenticationPolicy());
+        assertNull(serialized.getAuthenticationPolicy().getCriteria());
     }
 }
