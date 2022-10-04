@@ -228,6 +228,17 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
+    public void verifyNoTransientSessionTicketStored() throws Exception {
+        val config = new SAML2Configuration();
+        val client = new SAML2Client(config);
+        delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
+
+        httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
+        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
+        assertEquals(service.getId(), RegisteredServiceTestUtils.CONST_TEST_URL);
+    }
+
+    @Test
     public void verifyExpiredTicketOperation() throws Exception {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);

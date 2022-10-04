@@ -9,6 +9,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link DelegatedClientAuthenticationWebflowStateContributor}.
@@ -41,5 +42,5 @@ public interface DelegatedClientAuthenticationWebflowStateContributor {
      * @throws Exception the exception
      */
     Service restore(RequestContext requestContext, WebContext webContext,
-                    TransientSessionTicket ticket, Client client) throws Exception;
+                    Optional<TransientSessionTicket> ticket, Client client) throws Exception;
 }
