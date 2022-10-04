@@ -44,7 +44,7 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases 
-and scenarios. At the moment, total number of jobs stands at approximately `340` distinct scenarios. The overall 
+and scenarios. At the moment, total number of jobs stands at approximately `342` distinct scenarios. The overall 
 test coverage of the CAS codebase is approximately `94%`.
  
 ### OpenID Connect Claim Definitions
@@ -56,7 +56,11 @@ OpenID Connect responses can be decorated using the [attribute definition store]
 
 CAS Protocol views and responses, previously managed and rendered via Thymeleaf, are now switched to use Mustache as the templating engine.
 This allow CAS to render and log the final output for better visibility and troubleshooting. Protocol responses are sent to the `PROTOCOL_MESSAGE` logger.
-                                                                                                                                                          
+
+### CosmosDb Ticket Registry
+
+A new ticket registry implementation backed by [Azure Cosmos DB](../ticketing/CosmosDb-Ticket-Registry.html) is now available.
+
 ### OpenID Connect Logging
 
 Authentication requests and responses for OpenID Connect and OAuth are logger via a dedicated 
