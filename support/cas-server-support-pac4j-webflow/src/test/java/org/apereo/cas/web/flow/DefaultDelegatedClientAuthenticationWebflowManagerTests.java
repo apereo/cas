@@ -235,7 +235,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
-        assertEquals(service.getId(), RegisteredServiceTestUtils.CONST_TEST_URL);
+        assertEquals(RegisteredServiceTestUtils.CONST_TEST_URL, service.getId());
     }
 
     @Test
