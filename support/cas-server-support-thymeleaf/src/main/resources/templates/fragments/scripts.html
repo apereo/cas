@@ -18,6 +18,7 @@
     $(() => {
         typeof cssVars === "function" && cssVars({onlyLegacy: true});
     })
+    let trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
 </script>
 
 <script th:replace="fragments/googleanalytics :: ga"></script>
