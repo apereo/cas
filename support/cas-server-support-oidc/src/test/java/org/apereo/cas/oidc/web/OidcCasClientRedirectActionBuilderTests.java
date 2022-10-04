@@ -44,6 +44,7 @@ public class OidcCasClientRedirectActionBuilderTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val casClient = new CasClient(new CasConfiguration("https://caslogin.com"));
+        casClient.setCallbackUrl("https://caslogin.com");
         val callback = mock(CallbackUrlResolver.class);
         when(callback.compute(any(), any(), anyString(), any())).thenReturn("https://caslogin.com");
         casClient.setCallbackUrlResolver(callback);
