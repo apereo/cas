@@ -75,7 +75,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
                 LOGGER.debug("Asserted authentication handlers are [{}]", assertedHandlers);
                 val criteria = authenticationPolicy.getCriteria();
                 return Optional.ofNullable(criteria)
-                    .map(Unchecked.function(c -> {
+                    .map(Unchecked.function(cri -> {
                         val policy = criteria.toAuthenticationPolicy(registeredService);
                         val result = policy.isSatisfiedBy(authentication, assertedHandlers,
                             applicationContext, Optional.empty());
