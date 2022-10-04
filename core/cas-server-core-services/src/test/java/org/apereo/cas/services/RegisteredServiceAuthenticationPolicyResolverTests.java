@@ -127,15 +127,17 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
     public void checkDefaultPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-
+        val service = RegisteredServiceTestUtils.getService("serviceid2");
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(
-            RegisteredServiceTestUtils.getService("serviceid2"),
-            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+            service, RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
-        assertTrue(resolver.supports(transaction));
+        assertFalse(resolver.supports(transaction));
         val policies = resolver.resolve(transaction);
-        assertFalse(policies.isEmpty());
-        assertTrue(policies.iterator().next() instanceof AtLeastOneCredentialValidatedAuthenticationPolicy);
+        assertTrue(policies.isEmpty());
+
+        val authPolicy = servicesManager.findServiceBy(service).getAuthenticationPolicy();
+        assertNotNull(authPolicy);
+        assertNull(authPolicy.getCriteria());
     }
 
     @Test
