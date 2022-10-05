@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.expiration;
 
 
 
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -55,7 +56,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         if (ticketState == null) {
             return true;
         }
-        val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expiringTime = getMaximumExpirationTime(ticketState);
         val expired = expiringTime.isBefore(ZonedDateTime.now(getClock()));
         return expired || super.isExpired(ticketState);
     }
@@ -71,4 +72,10 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         return 0L;
     }
 
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+        val creationTime = ticketState.getCreationTime();
+        return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+    }
 }

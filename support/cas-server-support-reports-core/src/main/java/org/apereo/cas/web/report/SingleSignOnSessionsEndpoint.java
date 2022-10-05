@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -264,6 +265,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
             .filter(tgt -> StringUtils.isBlank(username) || StringUtils.equalsIgnoreCase(username, tgt.getAuthentication().getPrincipal().getId()))
             .map(tgt -> {
+
                 val authentication = tgt.getAuthentication();
                 val principal = authentication.getPrincipal();
                 val sso = new HashMap<String, Object>(SsoSessionAttributeKeys.values().length);
@@ -276,12 +278,18 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
                 sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.getAttributeKey(), principal.getAttributes());
                 sso.put(SsoSessionAttributeKeys.AUTHENTICATION_ATTRIBUTES.getAttributeKey(), authentication.getAttributes());
 
-                val policy = new LinkedHashMap<String, Object>();
-                policy.put("timeToIdle", tgt.getExpirationPolicy().getTimeToIdle());
-                policy.put("timeToLive", tgt.getExpirationPolicy().getTimeToLive());
-                policy.put("clock", tgt.getExpirationPolicy().getClock().toString());
-                policy.put("name", tgt.getExpirationPolicy().getName());
-                sso.put(SsoSessionAttributeKeys.EXPIRATION_POLICY.getAttributeKey(), policy);
+                val policyData = new LinkedHashMap<String, Object>();
+
+                val expirationPolicy = tgt.getExpirationPolicy();
+                policyData.put("timeToIdle", expirationPolicy.getTimeToIdle());
+                policyData.put("timeToLive", expirationPolicy.getTimeToLive());
+                policyData.put("clock", expirationPolicy.getClock().toString());
+                policyData.put("name", expirationPolicy.getName());
+
+                Optional.ofNullable(expirationPolicy.getMaximumExpirationTime(tgt)).ifPresent(dt -> policyData.put("maxExpirationTime", dt));
+                Optional.ofNullable(expirationPolicy.getIdleExpirationTime(tgt)).ifPresent(dt -> policyData.put("idleExpirationTime", dt));
+                
+                sso.put(SsoSessionAttributeKeys.EXPIRATION_POLICY.getAttributeKey(), policyData);
                 sso.put(SsoSessionAttributeKeys.REMEMBER_ME.getAttributeKey(),
                     CoreAuthenticationUtils.isRememberMeAuthentication(authentication));
                 if (option != SsoSessionReportOptions.DIRECT) {
