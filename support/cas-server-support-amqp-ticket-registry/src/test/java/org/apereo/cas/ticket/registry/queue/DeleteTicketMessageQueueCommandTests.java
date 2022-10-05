@@ -36,6 +36,6 @@ public class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQ
         ticketRegistry.addTicket(ticket);
         val cmd = new DeleteTicketMessageQueueCommand(new PublisherIdentifier(), ticket.getId()).withId(new PublisherIdentifier());
         cmd.execute(ticketRegistry);
-        assertTrue(ticketRegistry.getTickets().isEmpty());
+        assertNull(ticketRegistry.getTicket(ticket.getId()));
     }
 }

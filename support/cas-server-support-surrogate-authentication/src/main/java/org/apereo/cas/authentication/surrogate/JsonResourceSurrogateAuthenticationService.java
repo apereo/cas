@@ -42,7 +42,7 @@ public class JsonResourceSurrogateAuthenticationService extends SimpleSurrogateA
     }
 
     private void loadServices(final File file) {
-        FunctionUtils.doAndHandle(unused -> {
+        FunctionUtils.doAndHandle(__ -> {
             getEligibleAccounts().clear();
             getEligibleAccounts().putAll(readAccountsFromFile(file));
         });

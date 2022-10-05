@@ -72,7 +72,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "spring.rabbitmq.host=localhost",
         "spring.rabbitmq.port=5672",
         "spring.rabbitmq.username=rabbituser",
-        "spring.rabbitmq.password=bugsbunny"
+        "spring.rabbitmq.password=bugsbunny",
+        "cas.ticket.registry.amqp.crypto.signing.key=HbuPoSycjr0Pyv2u8WSwKcM6Ow0lviUdT7b9VzwxkcANqbDyKOb6KHPus_fCDCXElPhzXpeP-T0bryadZNiwOQ",
+        "cas.ticket.registry.amqp.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw"
     })
 public abstract class AbstractTicketMessageQueueCommandTests {
     @Autowired

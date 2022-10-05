@@ -103,7 +103,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
 
             val chain = new ChainingAttributeReleasePolicy();
             chain.addPolicies(policy, policy2);
-            
+
             val results = chain.getAttributes(context);
             assertEquals(2, results.size());
             assertTrue(results.containsKey("displayName"));

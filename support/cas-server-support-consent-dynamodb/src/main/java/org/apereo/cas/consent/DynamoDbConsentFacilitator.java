@@ -84,7 +84,7 @@ public record DynamoDbConsentFacilitator(DynamoDbConsentProperties dynamoDbPrope
             .attributeName(ColumnNames.ID.getColumnName())
             .keyType(KeyType.HASH)
             .build());
-        FunctionUtils.doUnchecked(unused -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+        FunctionUtils.doUnchecked(__ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
             dynamoDbProperties.getTableName(), deleteTables, attributes, schema));
     }
 

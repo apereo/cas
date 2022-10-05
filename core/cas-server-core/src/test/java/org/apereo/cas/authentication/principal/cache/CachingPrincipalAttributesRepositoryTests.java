@@ -63,7 +63,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
 
     @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
-        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, this.dao, PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, this.dao, PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY);
         return new CachingPrincipalAttributesRepository(unit, duration);
     }
 

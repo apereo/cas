@@ -101,7 +101,7 @@ public class CasCoreTicketsSchedulingConfiguration {
             fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
         @Override
         public void clean() {
-            FunctionUtils.doAndHandle(unused -> ticketRegistryCleaner.clean());
+            FunctionUtils.doAndHandle(__ -> ticketRegistryCleaner.clean());
         }
     }
 }

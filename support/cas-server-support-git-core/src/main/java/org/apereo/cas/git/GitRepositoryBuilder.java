@@ -104,7 +104,7 @@ public class GitRepositoryBuilder {
         if (props.getPrivateKey().getLocation() != null) {
             val resource = ResourceUtils.prepareClasspathResourceIfNeeded(props.getPrivateKey().getLocation());
             if (resource != null && resource.exists()) {
-                FunctionUtils.doUnchecked(unused -> builder.privateKeyPath(resource.getFile().getCanonicalPath()));
+                FunctionUtils.doUnchecked(__ -> builder.privateKeyPath(resource.getFile().getCanonicalPath()));
             }
         }
         return builder.build();

@@ -623,11 +623,14 @@ public abstract class BaseTicketRegistryTests {
     private void setUpEncryption() {
         var registry = (AbstractTicketRegistry) AopTestUtils.getTargetObject(ticketRegistry);
         if (this.useEncryption) {
-            val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
-                new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
-            registry.setCipherExecutor(cipher);
+            registry.setCipherExecutor(setupCipherExecutor());
         } else {
             registry.setCipherExecutor(CipherExecutor.noOp());
         }
+    }
+
+    protected CipherExecutor setupCipherExecutor() {
+        return CoreTicketUtils.newTicketRegistryCipherExecutor(
+            new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
     }
 }

@@ -523,7 +523,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                         FunctionUtils.doIf("SESSION".equalsIgnoreCase(saml.getMessageStoreFactory()),
                             ig -> cfg.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
                         if (saml.getMessageStoreFactory().contains(".")) {
-                            FunctionUtils.doAndHandle(unused -> {
+                            FunctionUtils.doAndHandle(__ -> {
                                 val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getMessageStoreFactory());
                                 val factory = (SAMLMessageStoreFactory) clazz.getDeclaredConstructor().newInstance();
                                 cfg.setSamlMessageStoreFactory(factory);

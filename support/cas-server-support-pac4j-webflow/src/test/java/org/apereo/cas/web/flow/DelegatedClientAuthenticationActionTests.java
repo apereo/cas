@@ -330,7 +330,7 @@ public class DelegatedClientAuthenticationActionTests {
             val tgt = new MockTicketGrantingTicket("casuser");
             ticketRegistry.addTicket(tgt);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, delegatedAuthenticationAction.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET, delegatedAuthenticationAction.execute(context).getId());
         }
 
         @Test
