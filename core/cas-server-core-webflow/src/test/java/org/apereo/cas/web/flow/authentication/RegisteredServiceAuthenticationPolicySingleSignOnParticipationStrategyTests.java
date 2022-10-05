@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
+import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
@@ -166,8 +167,8 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
 
         val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1", Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
-        policy.setRequiredAuthenticationHandlers(
-            Set.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()));
+        policy.setRequiredAuthenticationHandlers(Set.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()));
+        policy.setCriteria(new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria());
         svc.setAuthenticationPolicy(policy);
 
         val ticketRegistry = new DefaultTicketRegistry();
