@@ -88,11 +88,6 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         return this.timeToKillInSeconds;
     }
 
-    @Override
-    public Long getTimeToLive(final Ticket ticketState) {
-        return super.getTimeToLive(ticketState);
-    }
-
     @JsonIgnore
     @Override
     public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
