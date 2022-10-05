@@ -169,3 +169,5 @@ A number of Docker images used for integration testing are now upgraded to their
 - Couchbase Client
 - Micrometer
 - Apache Tomcat
+- Puppeteer
+- Spring Shell
