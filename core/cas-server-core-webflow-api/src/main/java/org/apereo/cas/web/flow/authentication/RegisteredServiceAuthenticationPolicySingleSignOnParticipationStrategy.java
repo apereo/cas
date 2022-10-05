@@ -65,27 +65,24 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
                 .map(AuthenticationAwareTicket.class::cast)
                 .map(AuthenticationAwareTicket::getAuthentication).orElseThrow();
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-            if (authentication != null) {
-                val successfulHandlerNames = CollectionUtils.toCollection(authentication.getAttributes()
-                    .get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-                val assertedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
-                    .stream()
-                    .filter(handler -> successfulHandlerNames.contains(handler.getName()))
-                    .collect(Collectors.toSet());
-                LOGGER.debug("Asserted authentication handlers are [{}]", assertedHandlers);
-                val criteria = authenticationPolicy.getCriteria();
-                return Optional.ofNullable(criteria)
-                    .map(Unchecked.function(cri -> {
-                        val policy = criteria.toAuthenticationPolicy(registeredService);
-                        val result = policy.isSatisfiedBy(authentication, assertedHandlers,
-                            applicationContext, Optional.empty());
-                        return result.isSuccess();
-                    })).orElse(true);
-            }
+            val successfulHandlerNames = CollectionUtils.toCollection(authentication.getAttributes()
+                .get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+            val assertedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+                .stream()
+                .filter(handler -> successfulHandlerNames.contains(handler.getName()))
+                .collect(Collectors.toSet());
+            LOGGER.debug("Asserted authentication handlers are [{}]", assertedHandlers);
+            val criteria = authenticationPolicy.getCriteria();
+            return Optional.ofNullable(criteria)
+                .map(Unchecked.function(cri -> {
+                    val policy = criteria.toAuthenticationPolicy(registeredService);
+                    val result = policy.isSatisfiedBy(authentication, assertedHandlers,
+                        applicationContext, Optional.empty());
+                    return result.isSuccess();
+                })).orElse(true);
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
         }
-        return true;
     }
 
     @Override
