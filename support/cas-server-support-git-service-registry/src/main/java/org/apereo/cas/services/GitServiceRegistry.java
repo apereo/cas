@@ -93,7 +93,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         val file = locateExistingRegisteredServiceFile(registeredService);
         if (file.isPresent()) {
             val message = "Deleted registered service " + registeredService.getName();
-            FunctionUtils.doUnchecked(unused -> {
+            FunctionUtils.doUnchecked(__ -> {
                 FileUtils.forceDelete(file.get());
                 commitAndPush(message);
             });
@@ -105,7 +105,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public void deleteAll() {
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             val currentServices = load();
             currentServices.stream()
                 .map(this::locateExistingRegisteredServiceFile)

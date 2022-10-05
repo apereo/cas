@@ -74,7 +74,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
      * @param deleteTables delete existing tables
      */
     public void createTable(final boolean deleteTables) {
-        FunctionUtils.doUnchecked(unused -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+        FunctionUtils.doUnchecked(__ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
             dynamoDbProperties.getTokenTableName(), deleteTables,
             List.of(AttributeDefinition.builder()
                 .attributeName(ColumnNames.ID.getColumnName())

@@ -44,7 +44,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
 
     public JsonResourceInterruptInquirer(final Resource resource) {
         this.resource = resource;
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             if (ResourceUtils.isFile(this.resource)) {
                 keystorePatchWatcherService = new FileWatcherService(resource.getFile(), file -> readResourceForInterrupts());
             }
@@ -72,7 +72,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
     }
 
     private void readResourceForInterrupts() {
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             this.interrupts.clear();
             if (ResourceUtils.doesResourceExist(resource)) {
                 try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {

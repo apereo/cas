@@ -1475,6 +1475,11 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")
                 },
+                dependencies.create("io.micrometer:micrometer-registry-elastic:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
                 dependencies.create("io.micrometer:micrometer-observation:$micrometerVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1506,6 +1511,11 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                 },
                 dependencies.create("io.micrometer:micrometer-registry-statsd:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-datadog:$micrometerVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")

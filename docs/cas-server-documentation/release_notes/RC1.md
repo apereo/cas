@@ -4,7 +4,7 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# RC1 Release Notes
+# 7.0.0-RC1 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note 
@@ -19,9 +19,7 @@ to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership
 and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed
 *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
 sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
-maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will
-ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs and
-operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
+maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. 
 
 ## Get Involved
 
@@ -33,10 +31,6 @@ operates. If you consider your CAS deployment to be a critical part of the ident
 
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
- 
-## Version
-
-The functionality and release notes described in this document address and ship with Apereo CAS `7.0.0-RC1`.
 
 ## New & Noteworthy
 
@@ -50,7 +44,7 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases 
-and scenarios. At the moment, total number of jobs stands at approximately `340` distinct scenarios. The overall 
+and scenarios. At the moment, total number of jobs stands at approximately `342` distinct scenarios. The overall 
 test coverage of the CAS codebase is approximately `94%`.
  
 ### OpenID Connect Claim Definitions
@@ -62,7 +56,11 @@ OpenID Connect responses can be decorated using the [attribute definition store]
 
 CAS Protocol views and responses, previously managed and rendered via Thymeleaf, are now switched to use Mustache as the templating engine.
 This allow CAS to render and log the final output for better visibility and troubleshooting. Protocol responses are sent to the `PROTOCOL_MESSAGE` logger.
-                                                                                                                                                          
+
+### CosmosDb Ticket Registry
+
+A new ticket registry implementation backed by [Azure Cosmos DB](../ticketing/CosmosDb-Ticket-Registry.html) is now available.
+
 ### OpenID Connect Logging
 
 Authentication requests and responses for OpenID Connect and OAuth are logger via a dedicated 
@@ -171,3 +169,5 @@ A number of Docker images used for integration testing are now upgraded to their
 - Couchbase Client
 - Micrometer
 - Apache Tomcat
+- Puppeteer
+- Spring Shell

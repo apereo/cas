@@ -96,7 +96,7 @@ public class ConsentDecisionCouchDbRepository extends CouchDbRepositorySupport<C
      * Remove all.
      */
     public void removeAll() {
-        FunctionUtils.doAndHandle(unused -> {
+        FunctionUtils.doAndHandle(__ -> {
             if (couchDbInstance.checkIfDbExists(db.getDatabaseName())) {
                 couchDbInstance.deleteDatabase(db.getDatabaseName());
             }

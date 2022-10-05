@@ -217,8 +217,7 @@ CAS supports a policy-driven feature to limit successive failed authentication a
 and denial of service attacks. The feature is beneficial in environments where back-end authentication stores lack
 equivalent features. In cases where this support is available in underlying systems, we encourage using it instead
 of CAS features; the justification is that enabling support in underlying systems provides the feature in all dependent
-systems including CAS. See the
-[login throttling configuration](../authentication/Configuring-Authentication-Components.html#login-throttling)
+systems including CAS. See the [login throttling configuration](../authentication/Configuring-Authentication-Throttling.html) 
 section for further information.
 
 ### Credential Encryption

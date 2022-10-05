@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.security.auth.login.AccountNotFoundException;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -36,7 +36,7 @@ public class GroovyScriptAuthenticationPolicyTests {
                      + " return Optional.of(new AuthenticationException())\n"
                      + '}';
 
-        val scriptFile = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
+        val scriptFile = Files.createTempFile("script1", ".groovy").toFile();
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
         val p = new GroovyScriptAuthenticationPolicy("file:" + scriptFile.getCanonicalPath());
         assertThrows(GeneralSecurityException.class,
@@ -51,7 +51,7 @@ public class GroovyScriptAuthenticationPolicyTests {
                      + " return failure != null \n"
                      + '}';
 
-        val scriptFile = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
+        val scriptFile = Files.createTempFile("script2", ".groovy").toFile();
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
         val p = new GroovyScriptAuthenticationPolicy("file:" + scriptFile.getCanonicalPath());
         assertTrue(p.shouldResumeOnFailure(new RuntimeException()));
@@ -65,7 +65,7 @@ public class GroovyScriptAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyBadFile() throws Exception {
+    public void verifyBadFile() {
         val script = "def shouldResumeOnFailure(Object[] args) {"
                      + " def failure = args[0] \n"
                      + " return failure != null \n"

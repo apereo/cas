@@ -20,6 +20,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -43,8 +45,8 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTes
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         WebUtils.putPasswordlessAuthenticationAccount(context, account);
-        val stored = contributor.store(context,
-            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()), client);
+        val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val stored = contributor.store(context, webContext, client);
         assertTrue(stored.containsKey(PasswordlessUserAccount.class.getName()));
     }
 
@@ -60,8 +62,18 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTes
 
         val stored = contributor.restore(context,
             new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()),
-            sessionTicket, client);
+            Optional.of(sessionTicket), client);
         assertEquals(stored, service);
         assertNotNull(WebUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class));
+    }
+
+    @Test
+    public void verifyRestoreWithoutSessionTicket() throws Exception {
+        val client = new CasClient();
+        val context = new MockRequestContext();
+        val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val stored = contributor.restore(context, webContext, Optional.empty(), client);
+        assertNull(stored);
+        assertNull(WebUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class));
     }
 }

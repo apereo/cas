@@ -29,4 +29,9 @@ public class CosmosDbServiceRegistryProperties extends BaseCosmosDbProperties {
      */
     @RequiredProperty
     private String container = "CasCosmosDbServiceRegistry";
+
+    /**
+     * Whether collections should be created on startup.
+     */
+    private boolean createContainer;
 }

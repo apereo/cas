@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.ticket.registry;
 
 import org.apereo.cas.configuration.model.support.amqp.AMQPTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchdb.ticketregistry.CouchDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
@@ -35,6 +36,12 @@ public class TicketRegistryProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -4735458476452635679L;
+
+    /**
+     * CosmosDb registry settings.
+     */
+    @NestedConfigurationProperty
+    private CosmosDbTicketRegistryProperties cosmosDb = new CosmosDbTicketRegistryProperties();
 
     /**
      * AMQP registry settings.

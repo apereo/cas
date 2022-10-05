@@ -412,7 +412,7 @@ while (( "$#" )); do
                 task+="testRedis "
                 ;;
             activemq|amq|jms|rabbitmq|artemis|amqp)
-                isDockerOnLinux && ./ci/tests/activemq/run-rabbitmq-server.sh
+                isDockerOnLinux && ./ci/tests/rabbitmq/run-rabbitmq-server.sh
                 task+="testAMQP "
                 ;;
             *)
