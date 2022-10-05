@@ -45,7 +45,9 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public OAuth20RefreshTokenExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+    public OAuth20RefreshTokenExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
@@ -77,8 +79,15 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
         if (ticketState == null) {
             return true;
         }
-        val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expiringTime = getMaximumExpirationTime(ticketState);
         return expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+    }
+
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+        val creationTime = ticketState.getCreationTime();
+        return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }
 
     /**
@@ -96,7 +105,9 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
         private static final long serialVersionUID = -7768661082888351104L;
 
         @JsonCreator
-        public OAuthRefreshTokenStandaloneExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+        public OAuthRefreshTokenStandaloneExpirationPolicy(
+            @JsonProperty("timeToLive")
+            final long timeToKillInSeconds) {
             super(timeToKillInSeconds);
         }
 

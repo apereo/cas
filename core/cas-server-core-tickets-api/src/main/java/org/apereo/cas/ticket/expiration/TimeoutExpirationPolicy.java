@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
 
-
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -51,17 +51,19 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public TimeoutExpirationPolicy(@JsonProperty("timeToIdle") final long timeToKillInSeconds) {
+    public TimeoutExpirationPolicy(
+        @JsonProperty("timeToIdle")
+        final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
-    
+
     @Override
     public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         if (ticketState == null) {
             return true;
         }
         val now = ZonedDateTime.now(getClock());
-        val expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expirationTime = getIdleExpirationTime(ticketState);
         val expired = now.isAfter(expirationTime);
         return expired || super.isExpired(ticketState);
     }
@@ -75,5 +77,12 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Override
     public Long getTimeToIdle() {
         return this.timeToKillInSeconds;
+    }
+
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
+        val lastTimeUsed = ticketState.getLastTimeUsed();
+        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }
 }
