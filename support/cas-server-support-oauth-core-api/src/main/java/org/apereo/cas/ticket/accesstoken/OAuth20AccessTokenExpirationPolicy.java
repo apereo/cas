@@ -86,17 +86,9 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
         return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }
 
-    /**
-     * Is access token expired ?
-     *
-     * @param ticketState the ticket state
-     * @return true/false
-     */
     @JsonIgnore
     protected boolean isAccessTokenExpired(final Ticket ticketState) {
         val currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
-        val creationTime = ticketState.getCreationTime();
-
         var expirationTime = getMaximumExpirationTime(ticketState);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the current time [{}] is after [{}]", currentSystemTime, expirationTime);
