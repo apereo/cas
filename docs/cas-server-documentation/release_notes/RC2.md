@@ -54,4 +54,5 @@ test coverage of the CAS codebase is approximately `94%`.
 
 ## Library Upgrades
 
-- Spring Boot                     
+- Spring Boot   
+- Apache Tomcat
