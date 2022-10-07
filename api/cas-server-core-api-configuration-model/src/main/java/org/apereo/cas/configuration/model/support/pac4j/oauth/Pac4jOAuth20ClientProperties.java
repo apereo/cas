@@ -47,6 +47,12 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
     private String profileUrl;
 
     /**
+     * Whether a state value should be generated
+     * when sending authentication requests to the provider.
+     */
+    private boolean withState;
+
+    /**
      * The scope requested from the identity provider.
      */
     private String scope;
