@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.redis.core.RedisHealthIndicator;
+import org.apereo.cas.dynamodb.DynamoDbHealthIndicator;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -16,20 +16,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link RedisCoreConfiguration}.
+ * This is {@link DynamoDbCoreConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Core, module = "dynamodb")
 @AutoConfiguration
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Monitoring, module = "redis")
-public class RedisCoreConfiguration {
-    @ConditionalOnMissingBean(name = "casRedisHealthIndicator")
+public class DynamoDbCoreConfiguration {
+    @ConditionalOnMissingBean(name = "dynamoDbHealthIndicator")
     @Bean
-    @ConditionalOnEnabledHealthIndicator("redisHealthIndicator")
+    @ConditionalOnEnabledHealthIndicator("dynamoDbHealthIndicator")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public HealthIndicator redisHealthIndicator(final ConfigurableApplicationContext applicationContext) {
-        return new RedisHealthIndicator(applicationContext);
+    public HealthIndicator dynamoDbHealthIndicator(final ConfigurableApplicationContext applicationContext) {
+        return new DynamoDbHealthIndicator(applicationContext);
     }
 }
