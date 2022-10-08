@@ -48,12 +48,12 @@ dependencyResolutionManagement {
             }
             mavenContent { releasesOnly() }
         }
-        maven {
-            url 'https://maven.pkg.github.com/mmoayyed/cxf'
-            content {
-                includeGroupByRegex "org\\.apache\\.cxf.*"
-            }
-        }
+//        maven {
+//            url 'https://maven.pkg.github.com/mmoayyed/cxf'
+//            content {
+//                includeGroupByRegex "org\\.apache\\.cxf.*"
+//            }
+//        }
         maven {
             url "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
