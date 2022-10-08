@@ -56,3 +56,7 @@ test coverage of the CAS codebase is approximately `94%`.
 
 - Spring Boot   
 - Apache Tomcat
+- Twilio
+- Jose4j
+- Apache Ignite
+- Lettuce
