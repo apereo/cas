@@ -1578,6 +1578,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("net.shibboleth.tool:xmlsectool:$xmlSecToolVersion") {
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "commons-codec", module: "commons-codec")
@@ -2026,7 +2028,6 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xmlsec-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
-                    exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "net.shibboleth.ext", module: "spring-extensions")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.cryptacular", module: "cryptacular")
