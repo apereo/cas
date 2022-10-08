@@ -68,6 +68,14 @@ dependencyResolutionManagement {
             url "https://build.shibboleth.net/nexus/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
+        maven {
+            url "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
+            content {
+                includeGroupByRegex ".*netflix.*"
+            }
+            mavenContent { releasesOnly() }
+        }
+
     }
 }
 
@@ -389,7 +397,6 @@ include "support:cas-server-support-shell"
 include "support:cas-server-support-shibboleth"
 include "support:cas-server-support-simple-mfa-core"
 include "support:cas-server-support-simple-mfa"
-include "support:cas-server-support-sleuth"
 include "support:cas-server-support-sms-aws-sns"
 include "support:cas-server-support-sms-clickatell"
 include "support:cas-server-support-sms-smsmode"
