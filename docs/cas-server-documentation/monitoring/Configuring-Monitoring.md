@@ -40,11 +40,12 @@ healthIndicators="ping,diskSpaceHealthIndicator,memoryHealthIndicator,systemHeal
 
 Monitors can also be managed using any one of the following strategies.
 
-| Storage        | Description                                         
-|----------------------------------------------------------------------------
-| Memcached      | [See this guide](Configuring-Monitoring-Memcached.html).
-| MongoDb        | [See this guide](Configuring-Monitoring-MongoDb.html).  
-| JDBC           | [See this guide](Configuring-Monitoring-JDBC.html).  
-| LDAP           | [See this guide](Configuring-Monitoring-LDAP.html).
-| Redis          | [See this guide](Configuring-Monitoring-Redis.html).
-| Hazelcast      | [See this guide](Configuring-Monitoring-Hazelcast.html).
+| Storage        | Description                                              |
+|----------------|----------------------------------------------------------|
+| Memcached      | [See this guide](Configuring-Monitoring-Memcached.html). |
+| MongoDb        | [See this guide](Configuring-Monitoring-MongoDb.html).   |
+| JDBC           | [See this guide](Configuring-Monitoring-JDBC.html).      |
+| LDAP           | [See this guide](Configuring-Monitoring-LDAP.html).      |
+| Redis          | [See this guide](Configuring-Monitoring-Redis.html).     |
+| Hazelcast      | [See this guide](Configuring-Monitoring-Hazelcast.html). |
+| DynamoDb       | [See this guide](Configuring-Monitoring-DynamoDb.html).  |

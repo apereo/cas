@@ -4,12 +4,12 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# RC2 Release Notes
+# 7.0.0-RC2 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
-you up for unpleasant surprises. A `GA`
-is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS releases are *strictly* time-based
-releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain confidence in a particular
+you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
+that CAS releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks,
+statistics or completion of features. To gain confidence in a particular
 release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
@@ -19,9 +19,7 @@ to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership
 and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed
 *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
 sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
-maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will
-ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs and
-operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
+maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner.
 
 ## Get Involved
 
@@ -34,23 +32,27 @@ operates. If you consider your CAS deployment to be a critical part of the ident
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
 
-## Overlay
-
-In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-Installation.html), adjust the following setting:
-
-```properties
-cas.version=7.0.0-RC2
-```
-
-<div class="alert alert-info">
-<strong>System Requirements</strong><br/>This CAS release is based on and will require JDK 17.
-</div>
-
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
 
+### JDK Requirement
+
+The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
+such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `346` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+
 ## Other Stuff
+
+- A [DynamoDb-based health indicator](../monitoring/Configuring-Monitoring-DynamoDb.html) is available to report back on the health status of
+  DynamoDb tables and connections.
 
 ## Library Upgrades
 
+- Spring Boot   
+- Apache Tomcat

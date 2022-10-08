@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -42,7 +43,8 @@ public class MessageBundleProperties implements Serializable {
     /**
      * Cache size.
      */
-    private int cacheSeconds = 180;
+    @DurationCapable
+    private String cacheSeconds = "PT180S";
 
     /**
      * Flag that controls whether to fallback to the default system locale if no locale is specified explicitly.

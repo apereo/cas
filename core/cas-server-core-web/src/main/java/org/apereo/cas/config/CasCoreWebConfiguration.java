@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasYamlHttpMessageConverter;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
@@ -90,7 +91,7 @@ public class CasCoreWebConfiguration {
             val bean = new CasReloadableMessageBundle();
             val mb = casProperties.getMessageBundle();
             bean.setDefaultEncoding(mb.getEncoding());
-            bean.setCacheSeconds(mb.getCacheSeconds());
+            bean.setCacheSeconds(Long.valueOf(Beans.newDuration(mb.getCacheSeconds()).toSeconds()).intValue());
             bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
             bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
             bean.setBasenames(mb.getBaseNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
