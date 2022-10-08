@@ -42,6 +42,8 @@ public class DefaultGitRepository implements GitRepository {
 
     private final boolean signCommits;
 
+    private final boolean rebase;
+
     @Override
     public File getRepositoryDirectory() {
         return this.gitInstance.getRepository().getDirectory().getParentFile();
@@ -132,7 +134,7 @@ public class DefaultGitRepository implements GitRepository {
         return this.gitInstance.pull()
             .setTimeout((int) timeoutInSeconds)
             .setFastForward(MergeCommand.FastForwardMode.FF)
-            .setRebase(false)
+            .setRebase(this.rebase)
             .setTransportConfigCallback(this.transportConfigCallback)
             .setProgressMonitor(new LoggingGitProgressMonitor())
             .setCredentialsProvider(new ChainingCredentialsProvider(providers))
