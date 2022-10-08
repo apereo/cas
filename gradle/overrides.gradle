@@ -28,6 +28,9 @@ configurations.all {
                 if (requested.group == "com.h2database")  {
                     details.useVersion("${h2Version}")
                 }
+                if (requested.name == "hibernate-validator") {
+                    details.useVersion("${hibernateValidatorVersion}")
+                }
                 if (requested.group == "org.hibernate")  {
                     details.useVersion("${hibernateVersion}")
                 }
@@ -109,7 +112,9 @@ configurations.all {
                 if (requested.group.startsWith("jakarta.xml.bind"))  {
                     details.useVersion("${jaxbApiVersion}")
                 }
-                if (requested.group.startsWith("jakarta.servlet"))  {
+                if (requested.name == "jakarta.servlet.jsp.jstl-api") {
+                    details.useVersion("${javaxJstlVersion}")
+                } else if (requested.group.startsWith("jakarta.servlet"))  {
                     details.useVersion("${javaxServletVersion}")
                 }
                 if (requested.group == "org.apache.httpcomponents")  {

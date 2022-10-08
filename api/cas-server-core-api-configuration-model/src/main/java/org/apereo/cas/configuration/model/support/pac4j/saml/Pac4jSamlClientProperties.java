@@ -289,16 +289,6 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      */
     private String messageStoreFactory = "org.pac4j.saml.store.EmptyStoreFactory";
 
-    /**
-     * Indicate the strategy that should be used to sign the generated metadata.
-     * <ul>
-     *     <li>{@code Default}: Uses a signing strategy using the XMLSecTool tool.</li>
-     *     <li>{@code XMLSec}: Uses a signing strategy using the OpenSAML library.</li>
-     * </ul>
-     * The strategy name can be defined in a case-insensitive way.
-     */
-    private String metadataSignerStrategy = "default";
-
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter

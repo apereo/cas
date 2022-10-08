@@ -2,18 +2,12 @@ package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
-import javax.naming.spi.InitialContextFactory;
-import javax.naming.spi.InitialContextFactoryBuilder;
-import javax.naming.spi.NamingManager;
 import java.util.Hashtable;
 
 import static org.junit.jupiter.api.Assertions.*;
