@@ -1,8 +1,9 @@
+version: '3.3'
+
 services:
   db:
     image: postgres:latest
     restart: always
-    container_name: syncope-db
     environment:
       POSTGRES_DB: syncope
       POSTGRES_USER: syncope
@@ -11,16 +12,21 @@ services:
   syncope:
     depends_on:
       - db
-    image: apache/syncope:2.1.11
-    container_name: syncope-core
+    image: apache/syncope:3.0.0-SNAPSHOT
     ports:
       - "18080:8080"
     restart: always
     environment:
-      DBMS: postgresql
-      DB_URL: jdbc:postgresql://db:5432/syncope
+      SPRING_PROFILES_ACTIVE: docker,postgresql
+      DB_URL: jdbc:postgresql://db:5432/syncope?stringtype=unspecified
       DB_USER: syncope
       DB_PASSWORD: syncope
-      DB_POOL_MAX: 10
-      DB_POOL_MIN: 2
+      DB_POOL_MAX: 5
+      DB_POOL_MIN: 1
       OPENJPA_REMOTE_COMMIT: sjvm
+      KEYMASTER_ADDRESS: http://localhost:8080/syncope/rest/keymaster
+      KEYMASTER_USERNAME: syncope
+      KEYMASTER_PASSWORD: syncope
+      SERVICE_DISCOVERY_ADDRESS: http://syncope:8080/syncope/rest/
+      ANONYMOUS_USER: syncope
+      ANONYMOUS_KEY: syncope
