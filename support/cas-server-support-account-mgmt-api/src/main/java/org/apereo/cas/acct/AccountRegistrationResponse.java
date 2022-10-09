@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -36,6 +37,15 @@ public class AccountRegistrationResponse implements Serializable {
     }
 
     /**
+     * Failure.
+     *
+     * @return the account registration response
+     */
+    public static AccountRegistrationResponse failure() {
+        return new AccountRegistrationResponse(CollectionUtils.wrap("success", Boolean.FALSE));
+    }
+
+    /**
      * Success.
      *
      * @return the account registration response
@@ -52,6 +62,16 @@ public class AccountRegistrationResponse implements Serializable {
     @JsonIgnore
     public boolean isSuccess() {
         return containsProperty("success") && getProperty("success", Boolean.class);
+    }
+
+    /**
+     * Is failure.
+     *
+     * @return true/false
+     */
+    @JsonIgnore
+    public boolean isFailure() {
+        return !isSuccess();
     }
 
     /**
@@ -82,18 +102,24 @@ public class AccountRegistrationResponse implements Serializable {
      *
      * @param name  the name
      * @param value the value
+     * @return the account registration response
      */
-    public void putProperty(final String name, final Object value) {
+    @CanIgnoreReturnValue
+    public AccountRegistrationResponse putProperty(final String name, final Object value) {
         this.properties.put(name, value);
+        return this;
     }
 
     /**
      * Put properties.
      *
      * @param map the as map
+     * @return the account registration response
      */
-    public void putProperties(final Map<String, Object> map) {
+    @CanIgnoreReturnValue
+    public AccountRegistrationResponse putProperties(final Map<String, Object> map) {
         this.properties.putAll(map);
+        return this;
     }
 
     /**

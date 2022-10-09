@@ -5,16 +5,16 @@ COMPOSE_FILE=./ci/tests/syncope/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker-compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker-compose -f $COMPOSE_FILE up -d
-
-echo "Waiting for Syncope server to come online..."
+echo -e "Waiting for Syncope server to come online...\n"
 sleep 20
-until $(curl --output /dev/null --silent --head --fail http://localhost:18080); do
+until $(curl --output /dev/null --silent --head --fail http://localhost:18080/syncope/); do
     printf '.'
     sleep 1
 done
-echo "Syncope Docker image is running."
+echo -e "\mSyncope Docker image is running."
+clear
 
-echo "Creating sample users..."
+echo "Creating sample user: syncopecas..."
 curl -X 'POST' \
   'http://localhost:18080/syncope/rest/users?storePassword=true' \
   -H 'accept: application/json' \
@@ -23,22 +23,23 @@ curl -X 'POST' \
   -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
   -H 'Content-Type: application/json' \
   -d '{
-  "@class": "org.apache.syncope.common.lib.to.UserTO",
-  "realm": "/",
-  "username": "syncopecas",
-  "password": "Mellon",
-  "plainAttrs": [
-      {
-        "schema": "email",
-        "values": [
-          "syncopecas@syncope.org"
-        ]
-      }
-    ]
-}' | jq
+        "_class": "org.apache.syncope.common.lib.request.UserCR",
+        "realm": "/",
+        "username": "syncopecas",
+        "password": "Mellon",
+        "plainAttrs": [
+            {
+              "schema": "email",
+              "values": [
+                "syncopecas@syncope.org"
+              ]
+            }
+          ]
+  }' | jq
 
 echo "-----------------"
 
+echo "Creating sample user: casuser..."
 curl -X 'POST' \
   'http://localhost:18080/syncope/rest/users?storePassword=true' \
   -H 'accept: application/json' \
@@ -47,7 +48,7 @@ curl -X 'POST' \
   -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
   -H 'Content-Type: application/json' \
   -d '{
-  "@class": "org.apache.syncope.common.lib.to.UserTO",
+  "_class": "org.apache.syncope.common.lib.request.UserCR",
   "realm": "/",
   "username": "casuser",
   "password": "Sync0pe",

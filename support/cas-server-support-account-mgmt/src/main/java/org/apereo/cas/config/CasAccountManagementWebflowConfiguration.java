@@ -108,7 +108,7 @@ public class CasAccountManagementWebflowConfiguration {
         final CipherExecutor accountMgmtCipherExecutor,
         @Qualifier("accountRegistrationUsernameBuilder")
         final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder,
-        @Qualifier("accountMgmtRegistrationProvisioner")
+        @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
         final AccountRegistrationProvisioner accountMgmtRegistrationProvisioner) {
         return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader, casProperties, accountMgmtCipherExecutor, accountRegistrationUsernameBuilder,
             accountMgmtRegistrationProvisioner);
@@ -128,7 +128,7 @@ public class CasAccountManagementWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
+        @ConditionalOnMissingBean(name = AccountRegistrationProvisioner.BEAN_NAME)
         public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner(
             final List<AccountRegistrationProvisionerConfigurer> beans) {
             val configurers = beans.stream()
