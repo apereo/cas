@@ -39,8 +39,8 @@ public class SyncopeAccountManagementConfiguration {
             .when(BeanCondition.on("cas.account-registration.provisioning.syncope.url")
                 .isUrl().given(applicationContext.getEnvironment()))
             .supply(() -> () -> {
-                val props = casProperties.getAccountRegistration().getProvisioning().getSyncope();
-                return new SyncopeAccountRegistrationProvisioner(props);
+                val syncope = casProperties.getAccountRegistration().getProvisioning().getSyncope();
+                return new SyncopeAccountRegistrationProvisioner(syncope);
             })
             .otherwiseProxy()
             .get();

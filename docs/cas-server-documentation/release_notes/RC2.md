@@ -47,6 +47,11 @@ The collection of end-to-end browser tests based on Puppeteer continue to grow t
 and scenarios. At the moment, total number of jobs stands at approximately `346` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
+### Account Registration
+
+The [account registration functionality](../registration/Account-Registration-Overview.html) now allows user accounts
+to be provisioned to [Apache Syncope](../registration/Account-Registration-Provisioning-Syncope.html).
+
 ## Other Stuff
 
 - A [DynamoDb-based health indicator](../monitoring/Configuring-Monitoring-DynamoDb.html) is available to report back on the health status of

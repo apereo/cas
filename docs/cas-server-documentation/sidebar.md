@@ -534,6 +534,7 @@ layout: null
         *   [Groovy](/cas/{{ version }}/registration/Account-Registration-Provisioning-Groovy.html)
         *   [REST](/cas/{{ version }}/registration/Account-Registration-Provisioning-REST.html)
         *   [SCIM](/cas/{{ version }}/registration/Account-Registration-Provisioning-SCIM.html)
+        *   [Apache Syncope](/cas/{{ version }}/registration/Account-Registration-Provisioning-Syncope.html)
         *   [Custom](/cas/{{ version }}/registration/Account-Registration-Provisioning-Custom.html)
 
 * [Logs & Audits](#logs_audits)
