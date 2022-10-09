@@ -65,6 +65,8 @@ public class GitRepositoryBuilder {
 
     private final boolean signCommits;
 
+    private final boolean rebase;
+
     private final boolean strictHostKeyChecking;
 
     private final boolean clearExistingIdentities;
@@ -92,6 +94,7 @@ public class GitRepositoryBuilder {
             .sshSessionPassword(props.getSshSessionPassword())
             .timeoutInSeconds(Beans.newDuration(props.getTimeout()).toSeconds())
             .signCommits(props.isSignCommits())
+            .rebase(props.isRebase())
             .clearExistingIdentities(props.isClearExistingIdentities())
             .strictHostKeyChecking(props.isStrictHostKeyChecking())
             .httpClientType(props.getHttpClientType());
@@ -196,7 +199,7 @@ public class GitRepositoryBuilder {
         }
         LOGGER.debug("Cloning repository to [{}] with branch [{}]", repositoryDirectory, activeBranch);
         return new DefaultGitRepository(cloneCommand.call(), credentialsProviders,
-            transportCallback, timeoutInSeconds, signCommits);
+            transportCallback, timeoutInSeconds, signCommits, rebase);
     }
 
 
@@ -207,6 +210,6 @@ public class GitRepositoryBuilder {
             .setName(activeBranch)
             .call();
         return new DefaultGitRepository(git, credentialsProviders, transportCallback,
-            timeoutInSeconds, signCommits);
+            timeoutInSeconds, signCommits, rebase);
     }
 }
