@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
-import org.apereo.cas.configuration.model.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -30,6 +29,9 @@ public class SyncopeAccountManagementRegistrationProvisioningProperties extends 
 
     /**
      * Syncope realm used for user provisioning.
+     * Realms define a hierarchical security domain tree, primarily meant for containing users.
+     * The root realm contains everything, and other realms can be seen as containers that split
+     * up the total number of entities into smaller pools.
      */
     @RequiredProperty
     private String realm = "/";

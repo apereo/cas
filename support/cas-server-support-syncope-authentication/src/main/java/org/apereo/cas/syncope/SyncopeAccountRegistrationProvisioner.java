@@ -10,12 +10,14 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,11 +42,24 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
     private final SyncopeAccountManagementRegistrationProvisioningProperties properties;
 
     @Override
-    public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Exception {
+    public AccountRegistrationResponse provision(final AccountRegistrationRequest request) {
+        val response = new AccountRegistrationResponse();
+        Splitter.on(",").splitToList(properties.getDomain())
+            .stream()
+            .map(Unchecked.function(domain -> submitRequest(request, domain)))
+            .forEach(result -> {
+                response.putProperty(result.getProperty("domain", String.class), result);
+                response.putProperty("success", result.isSuccess());
+            });
+        return response;
+    }
+
+    private AccountRegistrationResponse submitRequest(final AccountRegistrationRequest request,
+                                                      final String domain) throws Exception {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/rest/users");
-            val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", properties.getDomain(),
+            val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", domain,
                 "Accept", MediaType.APPLICATION_JSON_VALUE,
                 "Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
@@ -66,13 +81,14 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
                 val responseJson = MAPPER.readValue(result, new TypeReference<Map<String, Object>>() {
                 });
                 return AccountRegistrationResponse.success()
+                    .putProperty("domain", domain)
                     .putProperty("entity", responseJson.get("entity"))
                     .putProperty("propagationStatuses", responseJson.get("propagationStatuses"));
             }
         } finally {
             HttpUtils.close(response);
         }
-        return AccountRegistrationResponse.failure();
+        return AccountRegistrationResponse.failure().putProperty("domain", domain);
     }
 
     protected Map<String, Object> convertRegistrationRequestToEntity(final AccountRegistrationRequest request) {

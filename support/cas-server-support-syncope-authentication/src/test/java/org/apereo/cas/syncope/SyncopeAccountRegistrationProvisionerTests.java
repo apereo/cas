@@ -50,8 +50,7 @@ public class SyncopeAccountRegistrationProvisionerTests {
                 "email", "example@apereo.org"));
         val results = accountMgmtRegistrationProvisioner.provision(registrationRequest);
         assertTrue(results.isSuccess());
-        assertTrue(results.containsProperty("entity"));
-        assertTrue(results.containsProperty("propagationStatuses"));
+        assertTrue(results.containsProperty("Master"));
     }
 
     @Test
