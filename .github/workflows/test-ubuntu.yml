@@ -161,6 +161,7 @@ jobs:
           command: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v3"
+        if: ${{ env.CODECOV_TOKEN != null }}
         with:
           token: ${{ env.CODECOV_TOKEN }}
           files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
