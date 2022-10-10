@@ -56,6 +56,8 @@ to be provisioned to [Apache Syncope](../registration/Account-Registration-Provi
 
 - A [DynamoDb-based health indicator](../monitoring/Configuring-Monitoring-DynamoDb.html) is available to report back on the health status of
   DynamoDb tables and connections.
+- [Git service registry](../services/Git-Service-Management.html) is now able to support rebase operations.
+- SSO sessions under [account profile](../registration/Account-Management-Overview.html) can now be selectively removed.
 
 ## Library Upgrades
 

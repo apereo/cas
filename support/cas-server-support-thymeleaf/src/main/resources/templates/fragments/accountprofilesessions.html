@@ -87,10 +87,18 @@
                     <td class="mdc-data-table__cell" th:utext="${entry.authenticationDate}"></td>
 
                     <td class="mdc-data-table__cell">
-                        <a name="viewSessionDetails" href="#" th:if="${entry.payload}">
-                            <i class="mdi mdi-account-details fas fa-add"></i>
-                            <span style="display: none" th:utext="${entry.payload}"/>
-                        </a>
+                        <form id="fm1" method="post" th:action="@{/account}">
+                            <a style="cursor: pointer" name="viewSessionDetails" th:if="${entry.payload}">
+                                <i class="mdi mdi-account-details fas fa-add"></i>
+                                <span style="display: none" th:utext="${entry.payload}"/>
+                            </a>
+                            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                            <input type="hidden" name="id" th:value="${entry.id}"/>
+                            <input type="hidden" name="_eventId" value="delete"/>
+                            <a onclick="$('#fm1').submit();">
+                                <i class="mdi mdi-delete fas fa-delete"></i>
+                            </a>
+                        </form>
                     </td>
                 </tr>
                 </tbody>
