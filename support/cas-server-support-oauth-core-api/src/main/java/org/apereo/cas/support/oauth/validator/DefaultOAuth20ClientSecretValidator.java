@@ -10,6 +10,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link DefaultOAuth20ClientSecretValidator}.
@@ -29,9 +30,9 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
             LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
             return true;
         }
-
+        val clientSecretDecoded = java.net.URLDecoder.decode(clientSecret, StandardCharsets.UTF_8);
         val definedSecret = cipherExecutor.decode(registeredService.getClientSecret(), new Object[]{registeredService});
-        if (!StringUtils.equals(definedSecret, clientSecret)) {
+        if (!StringUtils.equals(definedSecret, clientSecretDecoded)) {
             LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
             return false;
         }
