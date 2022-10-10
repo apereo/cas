@@ -9,6 +9,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.account-registration.provisioning.syncope.basic-auth-username=admin",
     "cas.account-registration.provisioning.syncope.basic-auth-password=password"
 })
+@Tag("Syncope")
 public class SyncopeAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)

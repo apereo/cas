@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.syncope.SyncopeAccountRegistrationProvisionerTests;
 import org.apereo.cas.syncope.authentication.SyncopeAuthenticationHandlerTests;
 import org.apereo.cas.syncope.authentication.SyncopePersonAttributeDaoTests;
 
@@ -14,7 +15,8 @@ import org.junit.platform.suite.api.Suite;
  */
 @SelectClasses({
     SyncopeAuthenticationHandlerTests.class,
-    SyncopePersonAttributeDaoTests.class
+    SyncopePersonAttributeDaoTests.class,
+    SyncopeAccountRegistrationProvisionerTests.class
 })
 @Suite
 public class AllTestsSuite {
