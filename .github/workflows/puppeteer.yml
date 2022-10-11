@@ -25,7 +25,7 @@ env:
   NODE_CURRENT: '16'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 15
-  SCENARIO_REGEX: ".*syncope.*" # Use this to limit which tests run
+  SCENARIO_REGEX: ".*" # Use this to limit which tests run
 
 on:
   push:
