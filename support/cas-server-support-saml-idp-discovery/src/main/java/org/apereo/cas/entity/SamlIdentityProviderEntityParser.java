@@ -69,7 +69,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
      * Import resource and provide boolean.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public boolean importResource(final Resource resource) {
         try {

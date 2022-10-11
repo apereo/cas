@@ -47,7 +47,7 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
      * Is client secret defined for boolean.
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isClientSecretUndefined(final OAuthRegisteredService registeredService) {
         return registeredService != null && StringUtils.isBlank(registeredService.getClientSecret());

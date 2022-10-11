@@ -92,7 +92,7 @@ public class JsonUtils {
      * Is valid json?.
      *
      * @param json the json
-     * @return the boolean
+     * @return true/false
      */
     public boolean isValidJson(final String json) {
         return FunctionUtils.doAndHandle(() -> !MAPPER.readTree(json).isEmpty(), t -> false).get();

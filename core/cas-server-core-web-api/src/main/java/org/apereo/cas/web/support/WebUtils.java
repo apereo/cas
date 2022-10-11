@@ -815,7 +815,7 @@ public class WebUtils {
      * Is password management enabled.
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isPasswordManagementEnabled(final RequestContext context) {
         return context.getFlowScope().get("passwordManagementEnabled", Boolean.class);
@@ -1358,7 +1358,7 @@ public class WebUtils {
      * Is existing single sign on session available boolean.
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isExistingSingleSignOnSessionAvailable(final MockRequestContext context) {
         return context.getFlowScope().get("existingSingleSignOnSessionAvailable", Boolean.class);
@@ -1469,7 +1469,7 @@ public class WebUtils {
      * Put delegated authentication dynamic provider selection.
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isDelegatedAuthenticationDynamicProviderSelection(final RequestContext context) {
         return context.getFlowScope().get("delegatedAuthenticationDynamicProviderSelection", Boolean.class, Boolean.FALSE);
@@ -1686,7 +1686,7 @@ public class WebUtils {
      * Is recaptcha forgot username enabled.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isRecaptchaForgotUsernameEnabled(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("recaptchaForgotUsernameEnabled", Boolean.class);
@@ -1706,7 +1706,7 @@ public class WebUtils {
      * Is recaptcha forgot username enabled.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isRecaptchaPasswordManagementEnabled(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("recaptchaPasswordManagementEnabled", Boolean.class);
@@ -1901,7 +1901,7 @@ public class WebUtils {
      * Is interrupt authentication flow finalized.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
         return requestContext.getRequestScope().contains("authenticationFlowInterruptFinalized");

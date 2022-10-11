@@ -101,7 +101,7 @@ public interface BeanContainer<T> {
     /**
      * Is container empty?
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isEmpty() {
         return size() == 0;

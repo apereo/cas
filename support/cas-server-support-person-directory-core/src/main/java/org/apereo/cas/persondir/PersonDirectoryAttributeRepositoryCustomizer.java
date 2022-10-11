@@ -15,7 +15,7 @@ public interface PersonDirectoryAttributeRepositoryCustomizer extends Ordered {
      * Supports.
      *
      * @param repository the repository
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(IPersonAttributeDao repository);
 

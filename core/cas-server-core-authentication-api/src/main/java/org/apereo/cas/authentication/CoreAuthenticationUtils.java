@@ -150,7 +150,7 @@ public class CoreAuthenticationUtils {
      * Is remember me recorded in authentication.
      *
      * @param authentication the authentication
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isRememberMeAuthentication(final Authentication authentication) {
         if (authentication == null) {

@@ -43,7 +43,7 @@ public class QRAuthenticationChannelController {
      * Verify.
      *
      * @param message the message
-     * @return the boolean
+     * @return true/false
      */
     @MessageMapping("/accept")
     public boolean verify(final Message<String> message) {

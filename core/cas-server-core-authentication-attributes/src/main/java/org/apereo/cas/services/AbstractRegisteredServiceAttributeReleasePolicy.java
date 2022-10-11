@@ -182,7 +182,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * Supports this policy request..
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     protected boolean supports(final RegisteredServiceAttributeReleasePolicyContext context) {
         return true;

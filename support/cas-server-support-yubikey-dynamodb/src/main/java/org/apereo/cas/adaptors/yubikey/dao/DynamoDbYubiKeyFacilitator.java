@@ -172,7 +172,7 @@ public class DynamoDbYubiKeyFacilitator {
      * Save.
      *
      * @param registration the registration
-     * @return the boolean
+     * @return true/false
      */
     public boolean save(final YubiKeyAccount registration) {
         val values = buildTableAttributeValuesMap(registration);
@@ -187,7 +187,7 @@ public class DynamoDbYubiKeyFacilitator {
      * Save.
      *
      * @param registration the registration
-     * @return the boolean
+     * @return true/false
      */
     public boolean update(final YubiKeyAccount registration) {
         val updateRequest = UpdateItemRequest.builder()
