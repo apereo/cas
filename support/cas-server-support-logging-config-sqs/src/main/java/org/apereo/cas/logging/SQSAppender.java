@@ -152,7 +152,7 @@ public class SQSAppender extends AbstractAppender implements Serializable {
             .messageBody(message)
             .messageAttributes(context)
             .build();
-        FunctionUtils.doUnchecked(u -> sqsAsyncClient.sendMessage(request).get());
+        FunctionUtils.doUnchecked(__ -> sqsAsyncClient.sendMessage(request).get());
     }
 
     @Override

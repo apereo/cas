@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.api.PrincipalProvisioner;
+import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
@@ -46,10 +46,10 @@ public class Pac4jAuthenticationProvisioningConfiguration {
         public Supplier<DelegatedClientUserProfileProvisioner> pac4jScimDelegatedClientUserProfileProvisioner(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
-            final PrincipalProvisioner scimProvisioner) {
+            final PrincipalProvisioner principalProvisioner) {
             return BeanSupplier.of(Supplier.class)
                 .when(BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue().given(applicationContext.getEnvironment()))
-                .supply(() -> () -> new ScimDelegatedClientUserProfileProvisioner(scimProvisioner))
+                .supply(() -> () -> new ScimDelegatedClientUserProfileProvisioner(principalProvisioner))
                 .otherwiseProxy()
                 .get();
         }

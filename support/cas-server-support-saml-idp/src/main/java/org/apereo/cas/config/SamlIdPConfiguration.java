@@ -736,7 +736,7 @@ public class SamlIdPConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPAttributeDefinitionStoreConfigurer")
         public AttributeDefinitionStoreConfigurer samlIdPAttributeDefinitionStoreConfigurer() {
-            return store -> FunctionUtils.doUnchecked(u -> {
+            return store -> FunctionUtils.doUnchecked(__ -> {
                 try (val samlStore = new DefaultAttributeDefinitionStore(new ClassPathResource("samlidp-attribute-definitions.json"))) {
                     store.importStore(samlStore);
                 }

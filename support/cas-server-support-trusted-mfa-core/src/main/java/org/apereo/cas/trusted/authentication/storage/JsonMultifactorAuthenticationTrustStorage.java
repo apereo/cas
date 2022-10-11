@@ -130,7 +130,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     private void readTrustedRecordsFromResource() {
         this.storage = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(location)) {
-            FunctionUtils.doUnchecked(u -> {
+            FunctionUtils.doUnchecked(__ -> {
                 try (val reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
                     val personList = new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
                     };
@@ -141,7 +141,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     private void writeTrustedRecordsToResource() {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             val file = this.location.getFile();
             val res = file.createNewFile();
             if (res) {

@@ -288,7 +288,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             val valve = new RewriteValve() {
                 @Override
                 public synchronized void startInternal() {
-                    FunctionUtils.doUnchecked(u -> {
+                    FunctionUtils.doUnchecked(__ -> {
                         super.startInternal();
                         try (val is = res.getInputStream();
                              val isr = new InputStreamReader(is, StandardCharsets.UTF_8);

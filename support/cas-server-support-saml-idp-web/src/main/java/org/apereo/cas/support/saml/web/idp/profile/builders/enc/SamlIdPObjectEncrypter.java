@@ -202,7 +202,7 @@ public class SamlIdPObjectEncrypter {
         LOGGER.trace("Calculating encryption security configuration for [{}] based on service [{}]", entityId, service.getName());
         val encryptionConfiguration = configureEncryptionSecurityConfiguration(service);
 
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             LOGGER.trace("Fetching key encryption credential for [{}] based on service [{}]", entityId, service.getName());
             configureKeyEncryptionCredential(entityId, adaptor, service, encryptionConfiguration);
         });

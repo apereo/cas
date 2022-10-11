@@ -75,7 +75,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
 
     @Override
     public void saveToken(final String username, final String token) {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             val entity = PasswordlessAuthenticationToken.builder()
                 .token(token)
                 .username(username)

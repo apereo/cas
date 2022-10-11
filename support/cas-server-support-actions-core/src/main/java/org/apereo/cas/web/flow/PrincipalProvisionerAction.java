@@ -26,13 +26,9 @@ public class PrincipalProvisionerAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val credential = WebUtils.getCredential(requestContext);
-        if (credential == null) {
-            LOGGER.warn("No credential found in the request context to provision");
-            return success();
-        }
         val authentication = WebUtils.getAuthentication(requestContext);
-        if (authentication == null) {
-            LOGGER.warn("No authentication found in the request context to provision");
+        if (credential == null || authentication == null) {
+            LOGGER.warn("No credential or authentication found in the request context to provision");
             return success();
         }
         val principal = authentication.getPrincipal();
