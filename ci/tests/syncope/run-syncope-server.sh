@@ -6,7 +6,7 @@ test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker-compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker-compose -f $COMPOSE_FILE up -d
 echo -e "Waiting for Syncope server to come online...\n"
-sleep 30
+sleep 35
 until $(curl --output /dev/null --silent --head --fail http://localhost:18080/syncope/); do
     printf '.'
     sleep 1
@@ -37,7 +37,7 @@ curl -X 'POST' \
           ]
   }'
 
-echo "-----------------"
+echo -e "\n-----------------\n"
 
 echo "Creating sample user: casuser..."
 curl -X 'POST' \
@@ -63,4 +63,4 @@ curl -X 'POST' \
 }'
 
 clear
-echo -e "Ready!\n"
+echo -e "\nReady!\n"

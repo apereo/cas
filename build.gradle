@@ -483,7 +483,6 @@ subprojects {
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
-            errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
         testImplementation libraries.tests
         testImplementation libraries.log4j
