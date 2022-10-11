@@ -15,6 +15,7 @@ import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,11 +60,15 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
     private static final String DIRNAME_METADATA_BACKUPS = "metadata-backups";
 
+    private final HttpClient httpClient;
+
     private final File metadataBackupDirectory;
 
-    public UrlResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
+    public UrlResourceMetadataResolver(final HttpClient httpClient,
+                                       final SamlIdPProperties samlIdPProperties,
                                        final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
+        this.httpClient = httpClient;
 
         val md = samlIdPProperties.getMetadata();
         val backupLocation = StringUtils.defaultIfBlank(md.getHttp().getMetadataBackupLocation(), md.getFileSystem().getLocation());
@@ -189,6 +194,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             .method(HttpMethod.GET)
             .url(metadataLocation)
             .proxyUrl(service.getMetadataProxyLocation())
+            .httpClient(httpClient)
             .build();
         return HttpUtils.execute(exec);
     }

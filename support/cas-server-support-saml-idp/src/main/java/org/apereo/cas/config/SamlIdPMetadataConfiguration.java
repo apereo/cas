@@ -109,7 +109,7 @@ public class SamlIdPMetadataConfiguration {
             @Qualifier("samlIdPMetadataLocator")
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager) {
             return new SamlIdPMetadataController(samlIdPMetadataGenerator,
                 samlIdPMetadataLocator, servicesManager, webApplicationServiceFactory);
         }
@@ -177,16 +177,18 @@ public class SamlIdPMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers(
+            @Qualifier("httpClient")
+            final HttpClient httpClient,
             final ObjectProvider<List<SamlRegisteredServiceMetadataResolutionPlanConfigurer>> configurersList,
             final CasConfigurationProperties casProperties,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
             val samlIdp = casProperties.getAuthn().getSamlIdp();
-            plan.registerMetadataResolver(new MetadataQueryProtocolMetadataResolver(samlIdp, openSamlConfigBean));
+            plan.registerMetadataResolver(new MetadataQueryProtocolMetadataResolver(httpClient, samlIdp, openSamlConfigBean));
             plan.registerMetadataResolver(new JsonResourceMetadataResolver(samlIdp, openSamlConfigBean));
             plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, openSamlConfigBean));
-            plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, openSamlConfigBean));
+            plan.registerMetadataResolver(new UrlResourceMetadataResolver(httpClient, samlIdp, openSamlConfigBean));
             plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, openSamlConfigBean));
             plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, openSamlConfigBean));
 
