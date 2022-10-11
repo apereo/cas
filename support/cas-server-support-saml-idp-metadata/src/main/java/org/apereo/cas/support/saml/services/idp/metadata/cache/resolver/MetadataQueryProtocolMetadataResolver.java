@@ -18,7 +18,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
-import org.jooq.lambda.Unchecked;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpMethod;
@@ -75,14 +74,18 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
 
             StreamSupport.stream(path.getFileSystem().getFileStores().spliterator(), false)
                 .filter(store -> store.supportsFileAttributeView(UserDefinedFileAttributeView.class))
-                .forEach(Unchecked.consumer(store -> {
-                    val etag = response.getFirstHeader("ETag").getValue();
-                    Files.setAttribute(path, "user:ETag",
-                        ByteBuffer.wrap(etag.getBytes(StandardCharsets.UTF_8)));
-                }));
+                .forEach(store -> setFileAttribute(response, backupFile));
         }
         EntityUtils.consume(entity);
         return new InMemoryResourceMetadataResolver(backupFile, configBean);
+    }
+
+    private static void setFileAttribute(final HttpResponse response, final File backupFile) {
+        FunctionUtils.doAndHandle(t -> {
+            val path = backupFile.toPath();
+            val etag = response.getFirstHeader("ETag").getValue();
+            Files.setAttribute(path, "user:ETag", ByteBuffer.wrap(etag.getBytes(StandardCharsets.UTF_8)));
+        });
     }
 
     @Override
