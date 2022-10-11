@@ -35,7 +35,7 @@ public class X509RestHttpRequestHeaderCredentialFactoryTests {
     @Test
     public void createX509Credential() throws IOException {
         val request = new MockHttpServletRequest();
-        try (val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8.name())) {
+        try (val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8)) {
             val certStr = scan.useDelimiter("\\Z").next();
             request.addHeader(HEADER, certStr);
 
