@@ -62,14 +62,14 @@
 <ul {% if forcePropertyTabsOnClick == "true" %} style="display:none;"  {% endif %}
     class='nav nav-tabs' id="navPillsMenus{{ casPropertiesRandomNumber }}">
 
-    <li class='nav-item'>
+    <li class='nav-item property-tab'>
         <a class='nav-link active'
             id="linkRequiredProperties{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
             {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
             href='#requiredProperties{{ casPropertiesRandomNumber }}'>Required</a>
     </li>
-    <li class='nav-item'>
+    <li class='nav-item property-tab'>
         <a class='nav-link'
             id="linkOptionalProperties{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -77,7 +77,7 @@
             href='#optionalProperties{{ casPropertiesRandomNumber }}'>Optional</a>
     </li>
 
-    <li class='nav-item' id='navSigningEncryptionProperties{{ casPropertiesRandomNumber }}'>
+    <li class='nav-item property-tab' id='navSigningEncryptionProperties{{ casPropertiesRandomNumber }}'>
         <a class='nav-link'
             id="linkSigningEncryption{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -85,7 +85,7 @@
             href='#signingEncryptionProperties{{ casPropertiesRandomNumber }}'>Signing & Encryption</a>
     </li>
 
-    <li class='nav-item' id='navRdbmsProperties{{ casPropertiesRandomNumber }}'>
+    <li class='nav-item property-tab' id='navRdbmsProperties{{ casPropertiesRandomNumber }}'>
         <a class='nav-link'
             id="linkRdbms{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -93,7 +93,7 @@
             href='#rdbmsProperties{{ casPropertiesRandomNumber }}'>Hibernate & JDBC</a>
     </li>
 
-    <li class='nav-item' id='navEmailProperties{{ casPropertiesRandomNumber }}'>
+    <li class='nav-item property-tab' id='navEmailProperties{{ casPropertiesRandomNumber }}'>
         <a class='nav-link'
             id="linkEmail{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -101,7 +101,7 @@
             href='#emailProperties{{ casPropertiesRandomNumber }}'>Email Servers</a>
     </li>
 
-    <li class='nav-item' id='navLdapProperties{{ casPropertiesRandomNumber }}'>
+    <li class='nav-item property-tab' id='navLdapProperties{{ casPropertiesRandomNumber }}'>
         <a class='nav-link'
             id="linkLdap{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -109,7 +109,7 @@
             href='#ldapProperties{{ casPropertiesRandomNumber }}'>LDAP & Active Directory</a>
     </li>
 
-    <li class='nav-item' id='navAuthnPredicateProperties{{ casPropertiesRandomNumber }}'>
+    <li class='nav-item property-tab' id='navAuthnPredicateProperties{{ casPropertiesRandomNumber }}'>
         <a class='nav-link'
             id="linkAuthnPredicate{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -117,7 +117,7 @@
             href='#authnPredicateProperties{{ casPropertiesRandomNumber }}'>Authentication</a>
     </li>
 
-    <li class='nav-item' id='navPasswordEncoderProperties{{ casPropertiesRandomNumber }}'>
+    <li class='nav-item property-tab' id='navPasswordEncoderProperties{{ casPropertiesRandomNumber }}'>
         <a class='nav-link'
             id="linkPasswordEncoder{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -125,7 +125,7 @@
             href='#passwordEncoderProperties{{ casPropertiesRandomNumber }}'>Password Encoding</a>
     </li>
 
-    <li class='nav-item' id='navPrincipalTransformationProperties{{ casPropertiesRandomNumber }}'>
+    <li class='nav-item property-tab' id='navPrincipalTransformationProperties{{ casPropertiesRandomNumber }}'>
         <a class='nav-link'
             id="linkPrincipalTransformation{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -133,7 +133,7 @@
             href='#principalTransformationProperties{{ casPropertiesRandomNumber }}'>Principal Transformation</a>
     </li>
 
-    <li class='nav-item' id='navPasswordPolicyProperties{{ casPropertiesRandomNumber }}'>
+    <li class='nav-item property-tab' id='navPasswordPolicyProperties{{ casPropertiesRandomNumber }}'>
         <a class='nav-link'
             id="linkPasswordPolicy{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -142,7 +142,7 @@
     </li>
 
     {% if thirdParty.size > 0 or thirdPartyExactMatch.size > 0 or thirdPartyStartsWith.size > 0 %}
-    <li class='nav-item'>
+    <li class='nav-item property-tab'>
         <a class='nav-link'
             id="linkThirdPartyProperties{{ casPropertiesRandomNumber }}"
             data-bs-toggle='tab'
@@ -152,7 +152,7 @@
     {% endif %}
 
     {% unless include.disableNotes == "true" %} 
-    <li class='nav-item'>
+    <li class='nav-item property-tab'>
         <a class='nav-link'
             onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);"
             id="linkNotes{{ casPropertiesRandomNumber }}"
