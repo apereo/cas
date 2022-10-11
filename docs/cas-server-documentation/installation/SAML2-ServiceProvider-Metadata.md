@@ -81,6 +81,8 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
 CAS may attempt to reuse the metadata from a previously-downloaded backup file on disk if the metadata file is still seen as valid. 
 This capability will require the forceful fetching of the metadata over HTTP to be disabled.
 
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.http" %}
+
 {% endtab %}
 
 {% tab metadata File %}
@@ -120,8 +122,6 @@ with the entity id `sp1:example` should be stored in as `3494744350abe1fd8efa68c
 {% endtab %}
 
 {% endtabs %}
-
-{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.http" %}
 
 ### Dynamic Metadata
 
