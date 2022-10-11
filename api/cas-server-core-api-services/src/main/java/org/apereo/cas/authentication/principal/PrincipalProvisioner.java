@@ -1,8 +1,7 @@
-package org.apereo.cas.api;
+package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 
 /**
@@ -15,7 +14,7 @@ public interface PrincipalProvisioner {
     /**
      * Default implementation bean name.
      */
-    String BEAN_NAME = "scimProvisioner";
+    String BEAN_NAME = "principalProvisioner";
 
     /**
      * Create principal.
