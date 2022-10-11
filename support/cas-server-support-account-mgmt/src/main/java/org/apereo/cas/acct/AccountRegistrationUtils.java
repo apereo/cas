@@ -98,7 +98,7 @@ public class AccountRegistrationUtils {
      * Is account management registration captcha enabled.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isAccountRegistrationCaptchaEnabled(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("accountRegistrationCaptchaEnabled", Boolean.class);

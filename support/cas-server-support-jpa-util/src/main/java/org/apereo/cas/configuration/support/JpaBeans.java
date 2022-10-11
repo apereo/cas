@@ -148,7 +148,7 @@ public class JpaBeans {
      *
      * @param ds      the ds
      * @param timeout the timeout
-     * @return the boolean
+     * @return true/false
      */
     public boolean isValidDataSourceConnection(final CloseableDataSource ds, final int timeout) {
         try (val con = ds.getConnection()) {

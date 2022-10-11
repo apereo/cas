@@ -154,7 +154,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
     /**
      * Is accepted status.
      *
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     public boolean isAccepted() {
@@ -164,7 +164,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
     /**
      * Is denied status.
      *
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     public boolean isDenied() {

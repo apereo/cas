@@ -91,7 +91,7 @@ public class AccountRegistrationResponse implements Serializable {
      * Contains property.
      *
      * @param name the name
-     * @return the boolean
+     * @return true/false
      */
     public boolean containsProperty(final String name) {
         return properties.containsKey(name);

@@ -137,7 +137,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
      * Is usage policy accepted by.
      *
      * @param attributes the attributes
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isUsagePolicyAcceptedBy(final Map<String, List<Object>> attributes) {
         val core = aupProperties.getCore();

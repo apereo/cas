@@ -159,7 +159,7 @@ public record DynamoDbConsentFacilitator(DynamoDbConsentProperties dynamoDbPrope
      *
      * @param id        the id
      * @param principal the principal
-     * @return the boolean
+     * @return true/false
      */
     public boolean delete(final long id, final String principal) {
         val keys = List.of(
@@ -196,7 +196,7 @@ public record DynamoDbConsentFacilitator(DynamoDbConsentProperties dynamoDbPrope
      * Delete.
      *
      * @param principal the principal
-     * @return the boolean
+     * @return true/false
      */
     public boolean delete(final String principal) {
         val keys = List.of(

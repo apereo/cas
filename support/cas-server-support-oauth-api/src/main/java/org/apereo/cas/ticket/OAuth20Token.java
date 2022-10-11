@@ -57,7 +57,7 @@ public interface OAuth20Token extends ServiceTicket {
     /**
      * Is oauth code?
      *
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     default boolean isCode() {

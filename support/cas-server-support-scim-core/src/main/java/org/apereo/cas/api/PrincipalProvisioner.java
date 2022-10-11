@@ -32,7 +32,7 @@ public interface PrincipalProvisioner {
      *
      * @param principal  the principal
      * @param credential the credential
-     * @return the boolean
+     * @return true/false
      */
     boolean provision(Principal principal, Credential credential);
 }
