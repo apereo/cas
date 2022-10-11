@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -42,9 +43,10 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataResolver {
 
-    public MetadataQueryProtocolMetadataResolver(final SamlIdPProperties samlIdPProperties,
+    public MetadataQueryProtocolMetadataResolver(final HttpClient httpClient,
+                                                 final SamlIdPProperties samlIdPProperties,
                                                  final OpenSamlConfigBean configBean) {
-        super(samlIdPProperties, configBean);
+        super(httpClient, samlIdPProperties, configBean);
     }
 
     @Override
