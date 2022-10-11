@@ -135,7 +135,21 @@ public class CookieRetrievingCookieGeneratorTests {
         val cookie = gen.retrieveCookieValue(request);
         assertNull(cookie);
     }
+    @Test
+    public void verifyRemoveCookie(){
+        val context = getCookieGenerationContext();
+        val response = new MockHttpServletResponse();
+        context.setName(StringUtils.EMPTY);
+        val gen = new CookieRetrievingCookieGenerator(context);
+        gen.removeCookie(response);
+        val cookieList = response.getHeaderValues("Set-Cookie").stream()
+                .map(String.class::cast)
+                .collect(Collectors.toList());
+        cookieList.forEach(value -> {
+            assertTrue(value.contains("Max-Age=0"));
+        });
 
+    }
     @Test
     public void verifyCookieSameSiteLax() {
         val ctx = getCookieGenerationContext();

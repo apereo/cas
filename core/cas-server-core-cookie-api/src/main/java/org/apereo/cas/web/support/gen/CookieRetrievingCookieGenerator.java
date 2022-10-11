@@ -182,6 +182,9 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val cookie = createCookie(StringUtils.EMPTY);
         cookie.setMaxAge(0);
         addCookieHeaderToResponse(cookie, StringUtils.EMPTY, response);
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace("Removed cookie '" + this.getCookieName() + "'");
+        }
     }
 
     @Override
@@ -221,7 +224,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) {
         val sameSiteResult = CookieSameSitePolicy.of(cookieGenerationContext).build(request, response);
-        return addCookieHeaderToResponse(cookie,sameSiteResult.isPresent() ? sameSiteResult.get() : StringUtils.EMPTY, response);
+        return addCookieHeaderToResponse(cookie, sameSiteResult.isPresent() ? sameSiteResult.get() : StringUtils.EMPTY, response);
     }
     /**
      *  Add cookie header to response
@@ -246,7 +249,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val path = cleanCookiePath(cookie.getPath());
         builder.append(String.format(" Path=%s;", path));
         if (StringUtils.isNotEmpty(sameSiteResult)) {
-            builder.append(String.format(" %s", sameSiteResult);
+            builder.append(String.format(" %s", sameSiteResult));
         }
         val sameSitePolicy = cookieGenerationContext.getSameSitePolicy().toLowerCase();
         if (cookie.getSecure() || (StringUtils.isNotEmpty(sameSiteResult) && StringUtils.equalsIgnoreCase(sameSiteResult, "none"))) {
