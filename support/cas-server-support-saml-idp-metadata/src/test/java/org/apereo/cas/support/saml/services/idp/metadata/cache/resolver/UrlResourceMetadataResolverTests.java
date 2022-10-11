@@ -40,7 +40,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
             webServer.start();
             val props = new SamlIdPProperties();
             props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
-            val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+            val resolver = new UrlResourceMetadataResolver(httpClient, props, openSamlConfigBean);
             val service = new SamlRegisteredService();
             service.setMetadataLocation("http://localhost:9155");
             assertTrue(resolver.supports(service));
@@ -63,7 +63,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
             val props = new SamlIdPProperties();
             props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
             props.getMetadata().getHttp().setForceMetadataRefresh(true);
-            val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+            val resolver = new UrlResourceMetadataResolver(httpClient, props, openSamlConfigBean);
             val results = resolver.resolve(service);
             assertFalse(results.isEmpty());
         }
@@ -71,7 +71,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         props.getMetadata().getHttp().setForceMetadataRefresh(false);
-        val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+        val resolver = new UrlResourceMetadataResolver(httpClient, props, openSamlConfigBean);
         val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
 
@@ -98,7 +98,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
             val props = new SamlIdPProperties();
             props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
             val service = new SamlRegisteredService();
-            val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+            val resolver = new UrlResourceMetadataResolver(httpClient, props, openSamlConfigBean);
             service.setName("TestShib");
             service.setId(1000);
             service.setMetadataLocation("http://localhost:9155");
@@ -117,7 +117,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
             props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
             val service = new SamlRegisteredService();
             service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
-            val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+            val resolver = new UrlResourceMetadataResolver(httpClient, props, openSamlConfigBean);
             service.setName("TestShib");
             service.setId(1000);
             service.setMetadataLocation("http://localhost:9155");
@@ -130,7 +130,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val service = new SamlRegisteredService();
-        val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+        val resolver = new UrlResourceMetadataResolver(httpClient, props, openSamlConfigBean);
         service.setName("TestShib");
         service.setId(1000);
         service.setMetadataLocation("https://localhost:9999");
@@ -144,7 +144,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
             val props = new SamlIdPProperties();
             props.getMetadata().getFileSystem().setLocation("file:/" + FileUtils.getTempDirectory());
             val service = new SamlRegisteredService();
-            val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+            val resolver = new UrlResourceMetadataResolver(httpClient, props, openSamlConfigBean);
             service.setName("TestShib");
             service.setId(1000);
             service.setMetadataLocation("http://localhost:9155");
