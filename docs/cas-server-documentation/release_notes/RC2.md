@@ -67,3 +67,6 @@ to be provisioned to [Apache Syncope](../registration/Account-Registration-Provi
 - Jose4j
 - Apache Ignite
 - Lettuce
+- Micrometer
+- Nimbus
+- WSS4j
