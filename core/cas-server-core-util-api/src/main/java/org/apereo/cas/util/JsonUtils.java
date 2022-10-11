@@ -43,7 +43,7 @@ public class JsonUtils {
      * @param response the response
      */
     public void render(final Object model, final HttpServletResponse response) {
-        Unchecked.consumer(o -> {
+        Unchecked.consumer(__ -> {
             val jsonConverter = new MappingJackson2HttpMessageConverter();
             jsonConverter.setPrettyPrint(true);
             val jsonMimeType = MediaType.APPLICATION_JSON;

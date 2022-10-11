@@ -55,7 +55,7 @@ public class SamlAttributeBasedNameIdGenerator extends AbstractSAML2NameIDGenera
         });
         encoder.setIdPNameQualifier(service.getNameIdQualifier());
         encoder.setOmitQualifiers(service.isSkipGeneratingNameIdQualifiers());
-        FunctionUtils.doUnchecked(u -> encoder.initialize());
+        FunctionUtils.doUnchecked(__ -> encoder.initialize());
         return encoder;
     }
 

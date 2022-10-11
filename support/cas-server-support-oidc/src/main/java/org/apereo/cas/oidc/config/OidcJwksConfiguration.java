@@ -103,7 +103,7 @@ public class OidcJwksConfiguration {
                 fixedDelayString = "${cas.authn.oidc.jwks.rotation.schedule.repeat-interval:P90D}")
             @Override
             public void run() {
-                FunctionUtils.doUnchecked(ig -> {
+                FunctionUtils.doUnchecked(__ -> {
                     LOGGER.info("Starting to rotate keys in the OIDC keystore...");
                     rotationService.rotate();
                 });
@@ -119,7 +119,7 @@ public class OidcJwksConfiguration {
                 fixedDelayString = "${cas.authn.oidc.jwks.revocation.schedule.repeat-interval:P14D}")
             @Override
             public void run() {
-                FunctionUtils.doUnchecked(ig -> {
+                FunctionUtils.doUnchecked(__ -> {
                     LOGGER.info("Starting to revoke keys in the OIDC keystore...");
                     rotationService.revoke();
                 });

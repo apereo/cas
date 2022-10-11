@@ -101,7 +101,7 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
                                   final T samlResponse,
                                   final String relayState,
                                   final MessageContext messageContext) {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             encoder.initialize();
             encoder.encode();
         });
