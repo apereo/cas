@@ -31,6 +31,7 @@ provided by Apache Syncope are collected by CAS:
 | `syncopeUserRoles`            |
 | `syncopeUserSecurityQuestion` |
 | `syncopeUserStatus`           |
+| `syncopeUserKey`              |
 | `syncopeUserRealm`            |
 | `syncopeUserCreator`          |
 | `syncopeUserCreationDate`     |

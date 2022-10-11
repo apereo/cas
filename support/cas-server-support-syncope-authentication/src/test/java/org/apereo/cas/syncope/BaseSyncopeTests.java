@@ -48,6 +48,7 @@ import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * This is {@link BaseSyncopeTests}.
@@ -73,6 +74,7 @@ public abstract class BaseSyncopeTests {
     @SuppressWarnings("JavaUtilDate")
     protected static ObjectNode user() {
         val user = MAPPER.createObjectNode();
+        user.put("key", UUID.randomUUID().toString());
         user.put("username", "casuser");
         user.putArray("roles").add("role1");
         user.putArray("dynRoles").add("DynRole1");

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -13,28 +14,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link SyncopeAccountManagementRegistrationProvisioningProperties}.
+ * This is {@link BaseSyncopeSearchProperties}.
  *
- * @author Misagh Moayyed
+ * @author Francesco Chicchiriccò
  * @since 6.5.0
  */
 @RequiresModule(name = "cas-server-support-syncope-authentication")
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SyncopeAccountManagementRegistrationProvisioningProperties")
-public class SyncopeAccountManagementRegistrationProvisioningProperties extends BaseSyncopeProperties {
+@JsonFilter("BaseSyncopeSearchProperties")
+public abstract class BaseSyncopeSearchProperties extends BaseSyncopeProperties {
+
     @Serial
-    private static final long serialVersionUID = 5555936823374022021L;
+    private static final long serialVersionUID = 18257222412164L;
 
     /**
-     * Syncope realm used for user provisioning.
-     * Realms define a hierarchical security domain tree, primarily meant for containing users.
-     * The root realm contains everything, and other realms can be seen as containers that split
-     * up the total number of entities into smaller pools.
+     * User FIQL filter to use for searching.
+     * Syntax is {@code username=={user}} or {@code username=={0}}.
      */
     @RequiredProperty
-    private String realm = "/";
+    protected String searchFilter;
 
     /**
      * Specify the username for REST authentication.
@@ -55,4 +55,5 @@ public class SyncopeAccountManagementRegistrationProvisioningProperties extends 
      * and the value in the map should be the header value.
      */
     private Map<String, String> headers = new HashMap<>();
+
 }
