@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
-import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
