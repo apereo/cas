@@ -33,7 +33,7 @@ public abstract class BaseSyncopeSearchProperties extends BaseSyncopeProperties 
      * Syntax is {@code username=={user}} or {@code username=={0}}.
      */
     @RequiredProperty
-    protected String searchFilter;
+    protected String searchFilter = "username=={user}";
 
     /**
      * Specify the username for REST authentication.

@@ -3,9 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.scim.v2.DefaultScimV2PrincipalAttributeMapper;
-import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
-import org.apereo.cas.scim.v2.ScimV2PrincipalProvisioner;
+import org.apereo.cas.syncope.SyncopePrincipalProvisioner;
+import org.apereo.cas.syncope.web.flow.SyncopeWebflowConfigurer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -13,7 +12,6 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.PrincipalProvisionerAction;
-import org.apereo.cas.web.flow.ScimWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,31 +23,42 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link CasScimConfiguration}.
+ * This is {@link SyncopeWebflowConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableScheduling
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SCIM)
 @AutoConfiguration
-public class CasScimConfiguration {
-    private static final BeanCondition CONDITION = BeanCondition.on("cas.scim.enabled").isTrue().evenIfMissing();
+public class SyncopeWebflowConfiguration {
 
-    @Configuration(value = "CasScimWebflowConfiguration", proxyBeanMethods = false)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "syncope")
+    @Configuration(value = "SyncopeProvisioningWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasScimWebflowConfiguration {
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SCIM_PROVISIONING_PRINCIPAL)
+    public static class SyncopeProvisioningWebflowConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.syncope.provisioning.enabled").isTrue().evenIfMissing();
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action principalScimProvisionerAction(
+        public PrincipalProvisioner principalProvisioner(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(PrincipalProvisioner.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new SyncopePrincipalProvisioner(casProperties.getAuthn().getSyncope().getProvisioning()))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "syncopePrincipalProvisionerAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action syncopePrincipalProvisionerAction(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
             final PrincipalProvisioner principalProvisioner) {
@@ -59,23 +68,25 @@ public class CasScimConfiguration {
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "scimCasWebflowExecutionPlanConfigurer")
-        public CasWebflowExecutionPlanConfigurer scimCasWebflowExecutionPlanConfigurer(
+        @ConditionalOnMissingBean(name = "syncopeCasWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer syncopeCasWebflowExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("scimWebflowConfigurer")
-            final CasWebflowConfigurer scimWebflowConfigurer) {
+            @Qualifier("syncopeWebflowConfigurer")
+            final CasWebflowConfigurer syncopeWebflowConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> plan -> plan.registerWebflowConfigurer(scimWebflowConfigurer))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(syncopeWebflowConfigurer))
                 .otherwiseProxy()
                 .get();
         }
-        @ConditionalOnMissingBean(name = "scimWebflowConfigurer")
+
+        @ConditionalOnMissingBean(name = "syncopeWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowConfigurer scimWebflowConfigurer(
+        public CasWebflowConfigurer syncopeWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -84,30 +95,9 @@ public class CasScimConfiguration {
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new ScimWebflowConfigurer(flowBuilderServices,
-                    loginFlowDefinitionRegistry, applicationContext, casProperties))
+                .supply(() -> new SyncopeWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
-        }
-    }
-    
-    @Configuration(value = "CasScimCoreConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasScimCoreConfiguration {
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Bean
-        @ConditionalOnMissingBean(name = "scim2PrincipalAttributeMapper")
-        public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
-            return new DefaultScimV2PrincipalAttributeMapper();
-        }
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Bean
-        @ConditionalOnMissingBean(name = PrincipalProvisioner.BEAN_NAME)
-        public PrincipalProvisioner principalProvisioner(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("scim2PrincipalAttributeMapper")
-            final ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper) {
-            return new ScimV2PrincipalProvisioner(casProperties.getScim(), scim2PrincipalAttributeMapper);
         }
     }
 }

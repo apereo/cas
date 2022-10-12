@@ -3,6 +3,7 @@ package org.apereo.cas.syncope;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationResponse;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAccountManagementRegistrationProvisioningProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -22,8 +23,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -64,7 +63,9 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
                 "Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
 
-            val entity = MAPPER.writeValueAsString(convertRegistrationRequestToEntity(request));
+            val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserCreateEntity(request.getProperties(),
+                new UsernamePasswordCredential(request.getUsername(), request.getPassword()), getSyncopeRealm(request)));
+
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(syncopeRestUrl)
@@ -89,27 +90,6 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
             HttpUtils.close(response);
         }
         return AccountRegistrationResponse.failure().putProperty("domain", domain);
-    }
-
-    protected Map<String, Object> convertRegistrationRequestToEntity(final AccountRegistrationRequest request) {
-        val entity = new LinkedHashMap<String, Object>();
-        entity.put("_class", getUserClassName());
-        entity.put("realm", getSyncopeRealm(request));
-        entity.put("username", request.getUsername());
-        entity.put("password", request.getPassword());
-
-        val plainAttrs = new ArrayList<Map<String, Object>>();
-        request.getProperties()
-            .entrySet()
-            .stream()
-            .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
-            .forEach(entry -> plainAttrs.add(Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue()))));
-        entity.put("plainAttrs", plainAttrs);
-        return entity;
-    }
-
-    protected String getUserClassName() {
-        return "org.apache.syncope.common.lib.request.UserCR";
     }
 
     protected String getSyncopeRealm(final AccountRegistrationRequest request) {

@@ -38,6 +38,6 @@ public class PrincipalProvisionerAction extends BaseCasWebflowAction {
         val msg = String.format("Provisioning of principal %s is%s done successfully", principal,
             BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
         LOGGER.debug(msg);
-        return success();
+        return res ? success() : error();
     }
 }

@@ -3,7 +3,6 @@ package org.apereo.cas.syncope;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,7 +13,6 @@ import org.apereo.services.persondir.support.NamedPersonImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +42,7 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
         val attributes = new HashMap<String, List<Object>>();
         val results = syncopeSearch(uid);
-        while (results.hasNext()) {
-            val userEntity = SyncopeUtils.convertUserEntity(results.next());
-            attributes.putAll(userEntity);
-        }
+        results.forEach(attributes::putAll);
         return new NamedPersonImpl(uid, attributes);
     }
 
@@ -69,7 +64,7 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
             .orElseGet(() -> new LinkedHashSet<>(0));
     }
 
-    protected Iterator<JsonNode> syncopeSearch(final String username) {
-        return SyncopeUtils.syncopeSearch(properties, username);
+    protected List<Map<String, List<Object>>> syncopeSearch(final String username) {
+        return SyncopeUtils.syncopeUserSearch(properties, username);
     }
 }

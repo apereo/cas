@@ -72,6 +72,11 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
+         * Just-in-time provisioning users to external systems
+         * and identity management solutions.
+         */
+        Provisioning,
+        /**
          * Web flow, actions and event routing core functionality.
          */
         Webflow,

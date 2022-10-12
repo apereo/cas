@@ -1,5 +1,7 @@
 package org.apereo.cas.syncope;
 
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.syncope.BaseSyncopeSearchProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -21,12 +23,15 @@ import org.springframework.http.HttpStatus;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * This is {@link SyncopeUtils}.
@@ -46,7 +51,7 @@ public class SyncopeUtils {
      * @param user the user
      * @return the map
      */
-    public static Map<String, List<Object>> convertUserEntity(final JsonNode user) {
+    public static Map<String, List<Object>> convertFromUserEntity(final JsonNode user) {
         val attributes = new HashMap<String, List<Object>>();
 
         if (user.has("securityQuestion") && !user.get("securityQuestion").isNull()) {
@@ -136,7 +141,7 @@ public class SyncopeUtils {
      * @param user       the user
      * @return the optional
      */
-    public static Iterator<JsonNode> syncopeSearch(final BaseSyncopeSearchProperties properties, final String user) {
+    public static List<Map<String, List<Object>>> syncopeUserSearch(final BaseSyncopeSearchProperties properties, final String user) {
         HttpResponse response = null;
         try {
             val filter = properties.getSearchFilter().replace("{user}", user).replace("{0}", user);
@@ -161,16 +166,97 @@ public class SyncopeUtils {
                 return FunctionUtils.doUnchecked(() -> {
                     val result = EntityUtils.toString(entity);
                     LOGGER.debug("Received user entity as [{}]", result);
-                    return Optional.of(MAPPER.readTree(result))
+                    val it = Optional.of(MAPPER.readTree(result))
                         .filter(sr -> sr.has("result"))
                         .map(sr -> sr.get("result"))
                         .map(JsonNode::iterator)
-                        .orElseGet(Collections::emptyIterator);
+                        .orElse(Collections.emptyIterator());
+                    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
+                        .map(SyncopeUtils::convertFromUserEntity)
+                        .collect(Collectors.toList());
                 });
             }
         } finally {
             HttpUtils.close(response);
         }
-        return Collections.emptyIterator();
+        return new ArrayList<>();
     }
+
+    /**
+     * Convert to user create entity map.
+     *
+     * @param principal the principal
+     * @param realm     the realm
+     * @return the map
+     */
+    public static Map<String, Object> convertToUserCreateEntity(final Principal principal, final String realm) {
+        val entity = new LinkedHashMap<String, Object>();
+        entity.put("_class", "org.apache.syncope.common.lib.request.UserCR");
+        entity.put("realm", StringUtils.prependIfMissing(realm, "/"));
+        entity.put("username", principal.getId());
+
+        val plainAttrs = new ArrayList<Map<String, Object>>();
+        principal.getAttributes()
+            .entrySet()
+            .stream()
+            .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
+            .forEach(entry -> plainAttrs.add(Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue()))));
+        entity.put("plainAttrs", plainAttrs);
+        return entity;
+    }
+
+    /**
+     * Convert to user create entity map.
+     *
+     * @param userProperties the user properties
+     * @param credential     the credential
+     * @param realm          the realm
+     * @return the map
+     */
+    public static Map<String, Object> convertToUserCreateEntity(final Map<String, ?> userProperties,
+                                                                final UsernamePasswordCredential credential,
+                                                                final String realm) {
+        val entity = new LinkedHashMap<String, Object>();
+        entity.put("_class", "org.apache.syncope.common.lib.request.UserCR");
+        entity.put("realm", StringUtils.prependIfMissing(realm, "/"));
+        entity.put("username", credential.getUsername());
+        entity.put("password", credential.getPassword());
+
+        val plainAttrs = new ArrayList<Map<String, Object>>();
+        userProperties
+            .entrySet()
+            .stream()
+            .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
+            .forEach(entry -> plainAttrs.add(Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue()))));
+        entity.put("plainAttrs", plainAttrs);
+        return entity;
+    }
+
+    /**
+     * Convert to user update entity map.
+     *
+     * @param realm          the realm
+     * @return the map
+     */
+    public static Map<String, Object> convertToUserUpdateEntity(final Principal principal,
+                                                                final String realm) {
+        val entity = new LinkedHashMap<String, Object>();
+        entity.put("_class", "org.apache.syncope.common.lib.request.UserUR");
+        entity.put("key", principal.getId());
+        entity.put("realm", Map.of("operation", "ADD_REPLACE", "value", realm));
+
+        val plainAttrs = new ArrayList<Map<String, Object>>();
+        principal.getAttributes()
+            .entrySet()
+            .stream()
+            .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
+            .forEach(entry -> {
+                val attribute = Map.of("operation", "ADD_REPLACE",
+                    "attr", Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue())));
+                plainAttrs.add(attribute);
+            });
+        entity.put("plainAttrs", plainAttrs);
+        return entity;
+    }
+
 }

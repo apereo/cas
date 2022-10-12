@@ -40,14 +40,13 @@ import java.util.stream.Collectors;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "syncope")
 @AutoConfiguration
 public class SyncopeAuthenticationConfiguration {
-
     @ConditionalOnMissingBean(name = "syncopePrincipalFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory syncopePrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
-
+    
     @ConditionalOnMissingBean(name = "syncopeAuthenticationHandlers")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
