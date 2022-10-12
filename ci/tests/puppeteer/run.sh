@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-8}
 
 tmp="${TMPDIR}"
 if [[ -z "${tmp}" ]] ; then
@@ -339,7 +340,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     counter=0
     until [[ -f ${targetArtifact} ]]; do
        let counter++
-       if [[ $counter -gt 30 ]]; then
+       if [[ $counter -gt $PUPPETEER_BUILD_CTR ]]; then
           printred "\nBuild is taking too long; aborting."
           printred "Build log"
           cat build.log

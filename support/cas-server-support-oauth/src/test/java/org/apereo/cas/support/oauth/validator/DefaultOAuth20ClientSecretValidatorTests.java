@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.validator;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
@@ -58,5 +59,28 @@ public class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tes
         registeredService.setClientId("clientid");
         val result = oauth20ClientSecretValidator.validate(registeredService, secret);
         assertTrue(result);
+    }
+
+    @Test
+    public void verifyClientSecretUrlEncoded() {
+        val secret = "!@#$%^&^&*()";
+        val encodedSecret = EncodingUtils.urlEncode(secret);
+        val registeredService = new OAuthRegisteredService();
+        registeredService.setClientId("clientid");
+        registeredService.setClientSecret(secret);
+        val result = oauth20ClientSecretValidator.validate(registeredService, encodedSecret);
+        assertTrue(result);
+    }
+
+    @Test
+    public void verifyNullClientSecretUrlEncoded() {
+        val secret = "!@#$%^&^&*()";
+        val registeredService = new OAuthRegisteredService();
+        registeredService.setClientId("clientid");
+        registeredService.setClientSecret(secret);
+        val result = oauth20ClientSecretValidator.validate(registeredService, null);
+        assertFalse(result);
+        val result2 = oauth20ClientSecretValidator.validate(registeredService, String.EMPTY);
+        assertFalse(result2);
     }
 }
