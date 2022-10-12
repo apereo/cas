@@ -66,6 +66,10 @@ to be provisioned to [Apache Syncope](../registration/Account-Registration-Provi
 - Twilio
 - Jose4j
 - Apache Ignite
+- Apache Shiro
+- Netty
+- Errorprone
+- Hazelcast
 - Lettuce
 - Micrometer
 - Nimbus
