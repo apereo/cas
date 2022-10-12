@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientU
 import org.apereo.cas.authentication.principal.provision.ScimDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -38,8 +39,10 @@ public class Pac4jAuthenticationProvisioningConfiguration {
 
     @Configuration(value = "Pac4jAuthenticationScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnClass(PrincipalProvisioner.class)
+    @ConditionalOnClass(ScimV2PrincipalAttributeMapper.class)
     public static class Pac4jAuthenticationScimProvisioningConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue();
+
         @Bean
         @ConditionalOnMissingBean(name = "pac4jScimDelegatedClientUserProfileProvisioner")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -48,7 +51,7 @@ public class Pac4jAuthenticationProvisioningConfiguration {
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
             final PrincipalProvisioner principalProvisioner) {
             return BeanSupplier.of(Supplier.class)
-                .when(BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> () -> new ScimDelegatedClientUserProfileProvisioner(principalProvisioner))
                 .otherwiseProxy()
                 .get();
