@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.persistence.PostLoad;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,9 +139,14 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         LOGGER.debug("Initial set of consentable attributes are [{}]", attributes);
 
         val results = Optional.ofNullable(this.consentPolicy)
-            .filter(policy -> policy.getExcludedServices() == null
-                              || policy.getExcludedServices().stream().noneMatch(ex -> RegexUtils.find(ex, context.getService().getId())))
+            .filter(policy -> policy.getStatus().isTrue())
             .map(policy -> {
+                if (policy.getExcludedServices() != null && policy.getExcludedServices().stream()
+                    .anyMatch(ex -> RegexUtils.find(ex, context.getService().getId()))) {
+                    LOGGER.debug("Consent policy will exclude service [{}].", context.getService());
+                    return new HashMap<String, List<Object>>();
+                }
+
                 LOGGER.debug("Activating consent policy [{}] for service [{}]", policy, context.getService());
                 val excludedAttributes = policy.getExcludedAttributes();
                 if (excludedAttributes != null && !excludedAttributes.isEmpty()) {
