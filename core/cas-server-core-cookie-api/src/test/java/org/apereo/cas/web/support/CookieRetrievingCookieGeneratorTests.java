@@ -145,10 +145,9 @@ public class CookieRetrievingCookieGeneratorTests {
         val cookieList = response.getHeaderValues("Set-Cookie").stream()
                 .map(String.class::cast)
                 .collect(Collectors.toList());
-        cookieList.forEach(value -> {
-            assertTrue(value.contains("Max-Age=0"));
-        });
-
+        for (val cookieVal : cookieList){
+            assertEquals(true, cookieVal.contains("Max-Age=0"));
+        }
     }
     @Test
     public void verifyCookieSameSiteLax() {
