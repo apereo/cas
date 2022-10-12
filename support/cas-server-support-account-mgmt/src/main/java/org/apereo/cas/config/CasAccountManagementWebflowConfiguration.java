@@ -30,6 +30,7 @@ import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -174,7 +175,7 @@ public class CasAccountManagementWebflowConfiguration {
         }
     }
 
-    @ConditionalOnClass(PrincipalProvisioner.class)
+    @ConditionalOnClass(ScimV2PrincipalAttributeMapper.class)
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "scim")

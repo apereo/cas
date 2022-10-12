@@ -41,7 +41,6 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SCIM)
 @AutoConfiguration
 public class CasScimConfiguration {
-
     private static final BeanCondition CONDITION = BeanCondition.on("cas.scim.enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "CasScimWebflowConfiguration", proxyBeanMethods = false)
@@ -60,7 +59,6 @@ public class CasScimConfiguration {
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "scimCasWebflowExecutionPlanConfigurer")
@@ -74,7 +72,6 @@ public class CasScimConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-
         @ConditionalOnMissingBean(name = "scimWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -93,7 +90,6 @@ public class CasScimConfiguration {
                 .get();
         }
     }
-
     @Configuration(value = "CasScimCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasScimCoreConfiguration {
@@ -103,7 +99,6 @@ public class CasScimConfiguration {
         public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
             return new DefaultScimV2PrincipalAttributeMapper();
         }
-
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = PrincipalProvisioner.BEAN_NAME)
