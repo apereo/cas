@@ -2,6 +2,9 @@
 
 PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-8}
+if [[ $PUPPETEER_BUILD_CTR -ne 8 ]]; then
+  echo "Build counter overridden to ${PUPPETEER_BUILD_CTR}"
+fi
 
 tmp="${TMPDIR}"
 if [[ -z "${tmp}" ]] ; then
