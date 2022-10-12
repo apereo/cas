@@ -64,4 +64,9 @@ public class SyncopeAuthenticationProperties extends BaseSyncopeProperties imple
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+    /**
+     * Handling just-in-time provisioning settings.
+     */
+    @NestedConfigurationProperty
+    private SyncopePrincipalProvisioningProperties provisioning = new SyncopePrincipalProvisioningProperties();
 }
