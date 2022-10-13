@@ -1,6 +1,5 @@
 package org.apereo.cas.syncope.web.flow;
 
-import org.apereo.cas.config.SyncopeWebflowConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
