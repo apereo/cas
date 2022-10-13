@@ -1998,4 +1998,8 @@ public interface CasWebflowConstants {
      * The action id 'spnego'.
      */
     String ACTION_ID_SPNEGO = "spnego";
+    /**
+     * The action id 'syncopePrincipalProvisionerAction'.
+     */
+    String ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION = "syncopePrincipalProvisionerAction";
 }

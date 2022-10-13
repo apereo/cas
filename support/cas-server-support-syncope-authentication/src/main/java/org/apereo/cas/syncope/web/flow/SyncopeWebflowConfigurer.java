@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope.web.flow;
 
+import org.apereo.cas.config.SyncopeWebflowConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -29,7 +30,7 @@ public class SyncopeWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val flow = getLoginFlow();
         if (flow != null) {
             val tgtAction = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
-            tgtAction.getExitActionList().add(createEvaluateAction("syncopePrincipalProvisionerAction"));
+            tgtAction.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION));
         }
     }
 }
