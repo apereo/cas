@@ -30,6 +30,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -278,11 +279,23 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
                 val remoteAddr = StringUtils.defaultIfBlank(
                     context.getRequest().getHeader(casProperties.getAudit().getEngine().getAlternateClientAddrHeaderName()),
                     context.getRequest().getRemoteAddr());
+
+                LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addresses);
+                val addressNets = properties.getRequiredIpAddresses()
+                        .stream()
+                        .filter(addr -> !addr.matches("\\.\\+|\\.\\*"))
+                        .filter(addr -> FunctionUtils.doWithoutThrows(ip -> new IpAddressMatcher(addr)))
+                        .map(IpAddressMatcher::new)
+                        .filter(ip -> ip.matches(remoteAddr))
+                        .findFirst();
+                if (addressNets.isPresent()) {
+                    return new AuthorizationDecision(true);
+                }
                 LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addresses);
                 val matcher = RegexUtils.createPattern(addresses, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
                 val granted = matcher.matches();
                 if (!granted) {
-                    LOGGER.warn("Provided regular expression pattern [{}] does not match [{}]", addresses, remoteAddr);
+                    LOGGER.warn("Provided regular expression or IP/netmask [{}] does not match [{}]", addresses, remoteAddr);
                 }
                 return new AuthorizationDecision(granted);
             });
