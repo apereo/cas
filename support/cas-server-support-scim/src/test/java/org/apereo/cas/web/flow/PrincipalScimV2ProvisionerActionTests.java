@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SCIM")
 public class PrincipalScimV2ProvisionerActionTests extends BaseScimProvisionerActionTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
     public void verifyAction() throws Exception {
