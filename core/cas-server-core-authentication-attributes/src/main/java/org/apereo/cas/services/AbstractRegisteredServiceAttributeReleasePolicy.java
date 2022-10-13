@@ -137,27 +137,34 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         LOGGER.debug("Initial set of consentable attributes are [{}]", attributes);
 
         val results = Optional.ofNullable(this.consentPolicy)
-            .filter(policy -> policy.getStatus().isTrue())
+            .filter(policy -> Objects.nonNull(policy.getStatus()))
             .map(policy -> {
-                if (policy.getExcludedServices() != null && policy.getExcludedServices().stream()
-                    .anyMatch(ex -> RegexUtils.find(ex, context.getService().getId()))) {
-                    LOGGER.debug("Consent policy will exclude service [{}].", context.getService());
+                if (policy.getStatus().isFalse()) {
+                    LOGGER.debug("Cconsent policy is turned off and disabled for service [{}].", context.getService());
                     return new HashMap<String, List<Object>>();
                 }
-                LOGGER.debug("Activating consent policy [{}] for service [{}]", policy, context.getService());
-                val excludedAttributes = policy.getExcludedAttributes();
-                if (excludedAttributes != null && !excludedAttributes.isEmpty()) {
-                    excludedAttributes.forEach(attributes::remove);
-                    LOGGER.debug("Consentable attributes after removing excluded attributes are [{}]", attributes);
-                } else {
-                    LOGGER.debug("No attributes are defined per the consent policy to be excluded from the consentable attributes");
-                }
-                val includeOnlyAttributes = policy.getIncludeOnlyAttributes();
-                if (includeOnlyAttributes != null && !includeOnlyAttributes.isEmpty()) {
-                    attributes.keySet().retainAll(includeOnlyAttributes);
-                    LOGGER.debug("Consentable attributes after force-including attributes are [{}]", attributes);
-                } else {
-                    LOGGER.debug("No attributes are defined per the consent policy to forcefully be included in the consentable attributes");
+                if (policy.getStatus().isTrue()) {
+                    if (policy.getExcludedServices() != null && policy.getExcludedServices().stream()
+                        .anyMatch(ex -> RegexUtils.find(ex, context.getService().getId()))) {
+                        LOGGER.debug("Consent policy will exclude service [{}].", context.getService());
+                        return new HashMap<String, List<Object>>();
+                    }
+
+                    LOGGER.debug("Activating consent policy [{}] for service [{}]", policy, context.getService());
+                    val excludedAttributes = policy.getExcludedAttributes();
+                    if (excludedAttributes != null && !excludedAttributes.isEmpty()) {
+                        excludedAttributes.forEach(attributes::remove);
+                        LOGGER.debug("Consentable attributes after removing excluded attributes are [{}]", attributes);
+                    } else {
+                        LOGGER.debug("No attributes are defined per the consent policy to be excluded from the consentable attributes");
+                    }
+                    val includeOnlyAttributes = policy.getIncludeOnlyAttributes();
+                    if (includeOnlyAttributes != null && !includeOnlyAttributes.isEmpty()) {
+                        attributes.keySet().retainAll(includeOnlyAttributes);
+                        LOGGER.debug("Consentable attributes after force-including attributes are [{}]", attributes);
+                    } else {
+                        LOGGER.debug("No attributes are defined per the consent policy to forcefully be included in the consentable attributes");
+                    }
                 }
                 return attributes;
             })
