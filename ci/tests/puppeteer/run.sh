@@ -1,10 +1,6 @@
 #!/bin/bash
 
 PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-8}
-if [[ $PUPPETEER_BUILD_CTR -ne 8 ]]; then
-  echo "Build counter overridden to ${PUPPETEER_BUILD_CTR}"
-fi
 
 tmp="${TMPDIR}"
 if [[ -z "${tmp}" ]] ; then
@@ -310,6 +306,14 @@ if [[ -n "${buildScript}" ]]; then
 fi
 
 if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
+  if [[ "${CI}" == "true" && ! -z "${GRADLE_BUILDCACHE_PSW}" ]]; then
+    # remote gradle cache employed
+    DEFAULT_PUPPETEER_BUILD_CTR=8
+  else
+    DEFAULT_PUPPETEER_BUILD_CTR=30
+  fi
+  PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-$DEFAULT_PUPPETEER_BUILD_CTR}
+
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
