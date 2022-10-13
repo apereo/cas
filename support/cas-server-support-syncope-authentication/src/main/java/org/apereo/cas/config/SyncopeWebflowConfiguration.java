@@ -37,6 +37,7 @@ import org.springframework.webflow.execution.Action;
 @AutoConfiguration
 public class SyncopeWebflowConfiguration {
 
+
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "syncope")
     @Configuration(value = "SyncopeProvisioningWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -55,7 +56,7 @@ public class SyncopeWebflowConfiguration {
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "syncopePrincipalProvisionerAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action syncopePrincipalProvisionerAction(

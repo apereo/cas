@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Syncope")
 public class SyncopeWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier("syncopePrincipalProvisionerAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION)
     private Action syncopePrincipalProvisionerAction;
 
     @Test
