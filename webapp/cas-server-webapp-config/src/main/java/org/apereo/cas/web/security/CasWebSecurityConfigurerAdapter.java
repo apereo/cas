@@ -283,7 +283,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
                 LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addresses);
                 val addressNets = properties.getRequiredIpAddresses()
                         .stream()
-                        .filter(addr -> !addr.matches("\\.\\+|\\.\\*"))
+                        .filter(addr -> !addr.contains(".+"))
+                        .filter(addr -> !addr.contains(".*"))
                         .filter(addr -> FunctionUtils.doWithoutThrows(ip -> new IpAddressMatcher(addr)))
                         .map(IpAddressMatcher::new)
                         .filter(ip -> ip.matches(remoteAddr))
