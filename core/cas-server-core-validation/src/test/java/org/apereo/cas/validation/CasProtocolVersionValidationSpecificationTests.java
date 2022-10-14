@@ -29,7 +29,7 @@ public class CasProtocolVersionValidationSpecificationTests extends BaseCasCoreT
             Set.of(CasProtocolValidationSpecification.CasProtocolVersions.CAS10));
         val registeredService = mock(RegisteredService.class);
         val assertion = CoreValidationTestUtils.getAssertion(registeredService);
-        assertFalse(spec.isSatisfiedBy(assertion, new MockHttpServletRequest()));
+        assertTrue(spec.isSatisfiedBy(assertion, new MockHttpServletRequest()));
     }
 
     @Test
