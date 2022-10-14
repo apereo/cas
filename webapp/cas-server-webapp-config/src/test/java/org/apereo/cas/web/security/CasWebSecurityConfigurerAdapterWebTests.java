@@ -48,7 +48,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "cas.monitor.endpoints.endpoint.env.access=AUTHENTICATED",
 
         "cas.monitor.endpoints.endpoint.health.access=IP_ADDRESS",
-        "cas.monitor.endpoints.endpoint.health.required-ip-addresses=196.+",
+        "cas.monitor.endpoints.endpoint.health.required-ip-addresses[0]=196.+",
+        "cas.monitor.endpoints.endpoint.health.required-ip-addresses[1]=10.0.0.0/24",
+        "cas.monitor.endpoints.endpoint.health.required-ip-addresses[2]=172.16.0.0/16",
+        "cas.monitor.endpoints.endpoint.health.required-ip-addresses[3]=200\\\\.0\\\\.0\\\\....",
 
         "cas.monitor.endpoints.form-login-enabled=true"
     }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -87,6 +90,15 @@ public class CasWebSecurityConfigurerAdapterWebTests {
             .andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "196.1.1.0"))
             .andExpect(status().isOk());
+        mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "10.0.0.9"))
+                .andExpect(status().isOk());
+        mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "172.16.55.9"))
+                .andExpect(status().isOk());
+        mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "200.0.0.123"))
+                .andExpect(status().isOk());
+        mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "192.168.0.1"))
+                .andExpect(status().isUnauthorized());
+
         mvc.perform(get("/cas/actuator/health")).andExpect(status().isUnauthorized());
     }
 

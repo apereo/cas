@@ -75,6 +75,51 @@ public class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
+    public void verifyConsentForServiceInDisabled() {
+        val policy = new ReturnAllAttributeReleasePolicy();
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", List.of("CommonName")));
+        val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
+        consentPolicy.setIncludeOnlyAttributes(Set.of("cn"));
+        consentPolicy.setStatus(TriStateBoolean.FALSE);
+        policy.setConsentPolicy(consentPolicy);
+
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val consented = policy.getConsentableAttributes(releasePolicyContext);
+        assertTrue(consented.isEmpty());
+    }
+
+    @Test
+    public void verifyConsentForServiceInUndefined() {
+        val policy = new ReturnAllAttributeReleasePolicy();
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", List.of("CommonName")));
+        val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
+        consentPolicy.setIncludeOnlyAttributes(Set.of("cn"));
+        consentPolicy.setStatus(TriStateBoolean.UNDEFINED);
+        policy.setConsentPolicy(consentPolicy);
+        policy.postLoad();
+
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val consented = policy.getConsentableAttributes(releasePolicyContext);
+        assertEquals(1, consented.size());
+        assertTrue(consented.containsKey("cn"));
+    }
+
+
+    @Test
     public void verifyExcludedServicesFromConsent() {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -99,8 +144,56 @@ public class ReturnAllAttributeReleasePolicyTests {
         assertTrue(results.containsKey("uid"));
 
         val consented = policy.getConsentableAttributes(releasePolicyContext);
-        assertTrue(consented.containsKey("cn"));
-        assertTrue(consented.containsKey("uid"));
+        assertTrue(consented.isEmpty());
     }
+
+    @Test
+    public void verifyNoConsentPolicy() {
+        val policy = new ReturnAllAttributeReleasePolicy();
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
+        policy.setConsentPolicy(null);
+
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val results = policy.getAttributes(releasePolicyContext);
+        assertTrue(results.containsKey("cn"));
+        assertTrue(results.containsKey("uid"));
+
+        val consented = policy.getConsentableAttributes(releasePolicyContext);
+        assertEquals(results, consented);
+    }
+
+    @Test
+    public void verifyConsentPolicyActive() {
+        val policy = new ReturnAllAttributeReleasePolicy();
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
+        val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
+        consentPolicy.setIncludeOnlyAttributes(Set.of("cn"));
+        consentPolicy.setExcludedAttributes(Set.of("uid"));
+        consentPolicy.setStatus(TriStateBoolean.TRUE);
+        policy.setConsentPolicy(consentPolicy);
+
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        
+        val consented = policy.getConsentableAttributes(releasePolicyContext);
+        assertEquals(1, consented.size());
+        assertTrue(consented.containsKey("cn"));
+    }
+
 
 }

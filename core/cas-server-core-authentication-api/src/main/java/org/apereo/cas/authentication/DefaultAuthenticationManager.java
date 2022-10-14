@@ -434,7 +434,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         /**
          * Indicate success, if no failures are present.
          *
-         * @return the boolean
+         * @return true/false
          */
         public boolean isSuccess() {
             return failures.isEmpty();

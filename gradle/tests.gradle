@@ -159,6 +159,10 @@ tasks.named('test') {
 }
 
 tasks.withType(Test).configureEach {
+    it.inputs.property("github.repository") {
+        System.getenv("GITHUB_REPOSITORY") ?: "apereo/cas"
+    }
+    
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000

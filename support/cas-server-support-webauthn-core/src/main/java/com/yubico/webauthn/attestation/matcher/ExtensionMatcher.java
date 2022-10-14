@@ -10,6 +10,7 @@ import org.bouncycastle.asn1.DEROctetString;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
 /**
@@ -20,7 +21,7 @@ import java.security.cert.X509Certificate;
  */
 @Slf4j
 public class ExtensionMatcher implements DeviceMatcher {
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     public static final String SELECTOR_TYPE = "x509Extension";
 

@@ -41,6 +41,7 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         myAccountView.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE));
         createTransitionForState(myAccountView, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_REQUEST);
         createTransitionForState(myAccountView, CasWebflowConstants.TRANSITION_ID_UPDATE_SECURITY_QUESTIONS, CasWebflowConstants.STATE_ID_UPDATE_SECURITY_QUESTIONS);
+        createTransitionForState(myAccountView, CasWebflowConstants.TRANSITION_ID_DELETE, CasWebflowConstants.STATE_ID_REMOVE_SINGLE_SIGNON_SESSION);
 
         val updateQuestions = createActionState(accountFlow, CasWebflowConstants.STATE_ID_UPDATE_SECURITY_QUESTIONS,
             CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS);
@@ -65,7 +66,14 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
 
         accountFlow.setStartState(validate);
         mainFlowDefinitionRegistry.registerFlowDefinition(accountFlow);
-        
+
+
+        val removeSession = createActionState(accountFlow, CasWebflowConstants.STATE_ID_REMOVE_SINGLE_SIGNON_SESSION,
+            CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION);
+        createTransitionForState(removeSession, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
+        createTransitionForState(removeSession, CasWebflowConstants.TRANSITION_ID_VALIDATE, accountFlow.getStartState().getId());
+
+
         val successView = getState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS, EndState.class);
         val expression = createExpression(String.format("'%s'", accountFlow.getId()));
         successView.getEntryActionList().add(new ExternalRedirectAction(expression));

@@ -316,6 +316,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 client.setAuthUrl(oauth.getAuthUrl());
                 client.setScope(oauth.getScope());
                 client.setCustomParams(oauth.getCustomParams());
+                client.setWithState(oauth.isWithState());
                 client.getConfiguration().setResponseType(oauth.getResponseType());
                 configureClient(client, oauth, casProperties);
                 LOGGER.debug("Created client [{}]", client);
@@ -391,7 +392,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             LOGGER.debug("Building OpenID Connect client for Apple...");
             val cfg = getOidcConfigurationForClient(clientProperties.getApple(), AppleOidcConfiguration.class);
 
-            FunctionUtils.doUnchecked(u -> {
+            FunctionUtils.doUnchecked(__ -> {
                 val factory = new PrivateKeyFactoryBean();
                 factory.setAlgorithm("EC");
                 factory.setSingleton(false);

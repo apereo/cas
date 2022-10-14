@@ -48,7 +48,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
      * Is proxy class?
      *
      * @param result the result
-     * @return the boolean
+     * @return true/false
      */
     static boolean isProxy(final Object result) {
         return result != null && Proxy.isProxyClass(result.getClass())
@@ -59,7 +59,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
      * Is not proxy class?
      *
      * @param result the result
-     * @return the boolean
+     * @return true/false
      */
     static boolean isNotProxy(final Object result) {
         return result != null && !isProxy(result);

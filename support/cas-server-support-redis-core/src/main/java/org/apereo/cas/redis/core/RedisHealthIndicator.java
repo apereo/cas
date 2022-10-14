@@ -5,14 +5,12 @@ import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisConnectionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 
 /**
  * This is {@link RedisHealthIndicator}.
@@ -51,11 +49,5 @@ public class RedisHealthIndicator extends AbstractHealthIndicator {
                     RedisConnectionUtils.releaseConnection(connection, factory);
                 }
             });
-    }
-
-    protected Map addDetailsFor(final RedisConnection connection, final String section) {
-        val entries = new TreeMap();
-        entries.put(section, Objects.requireNonNull(connection.info(section)));
-        return entries;
     }
 }

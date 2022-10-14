@@ -35,7 +35,7 @@ The following additional settings can be specified for a Saml IdP attribute defi
 |----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `friendlyName` | (Optional) Friendly name of the attribute shared with the target application during attribute release.                                                                                               |
 | `urn`          | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`).                                                                                               |
-| `persistent`   | (Optional) Bollean flag to indicate whether the attribute value should be generated as a persistent value.                                                                                           |
+| `persistent`   | (Optional) Boolean flag to indicate whether the attribute value should be generated as a persistent value.                                                                                           |
 | `salt`         | Required Salt value to use when creating persistent attribute definition values. This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax |
 
 To learn more about attribute definitions, please [see this guide](../integration/Attribute-Definitions.html).

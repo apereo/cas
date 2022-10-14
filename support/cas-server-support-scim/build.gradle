@@ -20,7 +20,8 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-mfa")
 
     implementation project(":support:cas-server-support-scim-core")
-
+    implementation project(":support:cas-server-support-actions-core")
+    
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-notifications")

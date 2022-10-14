@@ -25,7 +25,7 @@ import java.io.Serial;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("SyncopeAuthenticationProperties")
-public class SyncopeAuthenticationProperties extends AbstractSyncopeProperties implements CasFeatureModule {
+public class SyncopeAuthenticationProperties extends BaseSyncopeProperties implements CasFeatureModule {
 
     @Serial
     private static final long serialVersionUID = -2446926316502297496L;
@@ -64,4 +64,9 @@ public class SyncopeAuthenticationProperties extends AbstractSyncopeProperties i
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+    /**
+     * Handling just-in-time provisioning settings.
+     */
+    @NestedConfigurationProperty
+    private SyncopePrincipalProvisioningProperties provisioning = new SyncopePrincipalProvisioningProperties();
 }

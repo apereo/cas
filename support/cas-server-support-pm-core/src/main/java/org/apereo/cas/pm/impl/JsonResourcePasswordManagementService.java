@@ -149,7 +149,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     private void readAccountsFromJsonResource() {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
                 val personList = new TypeReference<Map<String, JsonBackedAccount>>() {
                 };

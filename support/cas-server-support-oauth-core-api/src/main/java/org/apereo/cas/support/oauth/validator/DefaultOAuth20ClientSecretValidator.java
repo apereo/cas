@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.validator;
 
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -29,9 +30,9 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
             LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
             return true;
         }
-
+        val clientSecretDecoded = EncodingUtils.urlDecode(clientSecret);
         val definedSecret = cipherExecutor.decode(registeredService.getClientSecret(), new Object[]{registeredService});
-        if (!StringUtils.equals(definedSecret, clientSecret)) {
+        if (!StringUtils.equals(definedSecret, clientSecretDecoded)) {
             LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
             return false;
         }
@@ -47,7 +48,7 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
      * Is client secret defined for boolean.
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isClientSecretUndefined(final OAuthRegisteredService registeredService) {
         return registeredService != null && StringUtils.isBlank(registeredService.getClientSecret());
