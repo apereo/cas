@@ -69,8 +69,13 @@ to be provisioned to [Apache Syncope](../registration/Account-Registration-Provi
 - Apache Shiro
 - Netty
 - Errorprone
+- Jackson
 - Hazelcast
 - Lettuce
 - Micrometer
 - Nimbus
 - WSS4j
+- Hibernate
+- Jodatime
+- Spring Data
+- Azure CosmosDb
