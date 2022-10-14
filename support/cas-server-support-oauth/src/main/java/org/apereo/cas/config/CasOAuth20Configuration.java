@@ -1403,14 +1403,17 @@ public class CasOAuth20Configuration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
-            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new OAuth20UsernamePasswordAuthenticator(
                 authenticationSystemSupport,
                 servicesManager,
                 webApplicationServiceFactory,
                 oauthDistributedSessionStore,
                 oauthRequestParameterResolver,
-                oauth20ClientSecretValidator);
+                oauth20ClientSecretValidator,
+                authenticationAttributeReleasePolicy);
         }
 
         @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")
