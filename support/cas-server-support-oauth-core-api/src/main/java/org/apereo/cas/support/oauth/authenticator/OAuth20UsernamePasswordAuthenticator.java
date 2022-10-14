@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,8 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
     private final OAuth20RequestParameterResolver requestParameterResolver;
 
     private final OAuth20ClientSecretValidator clientSecretValidator;
+
+    private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     @Override
     public void validate(final Credentials credentials, final WebContext webContext,
@@ -93,9 +96,12 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             val id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
             LOGGER.debug("Created profile id [{}]", id);
 
+            val authnAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(authentication,
+                    null, new HashMap<>(0), registeredService);
+
             profile.setId(id);
             profile.addAttributes((Map) attributes);
-            profile.addAuthenticationAttributes(new HashMap<>(authentication.getAttributes()));
+            profile.addAuthenticationAttributes(new HashMap<>(authnAttributes));
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);
         } catch (final Exception e) {
