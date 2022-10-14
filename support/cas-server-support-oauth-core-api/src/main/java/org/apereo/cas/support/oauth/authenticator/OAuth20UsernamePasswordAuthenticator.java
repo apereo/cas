@@ -23,6 +23,7 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -94,6 +95,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
 
             profile.setId(id);
             profile.addAttributes((Map) attributes);
+            profile.addAuthenticationAttributes(new HashMap<>(authentication.getAttributes()));
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);
         } catch (final Exception e) {
