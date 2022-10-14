@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -63,6 +64,7 @@ public class DelegatedAuthenticationClientLogoutActionTests {
         val result = delegatedAuthenticationClientLogoutAction.execute(context);
         assertNull(result);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        assertNotNull(WebUtils.getDelegatedAuthenticationLogoutRequest(context, DelegatedAuthenticationClientLogoutRequest.class));
         val tgt = new MockTicketGrantingTicket("casuser");
 
         logoutManager.performLogout(SingleLogoutExecutionRequest.builder()

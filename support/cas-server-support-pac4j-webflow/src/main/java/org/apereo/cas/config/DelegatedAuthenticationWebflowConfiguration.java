@@ -52,8 +52,6 @@ import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationPostP
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
-import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientFinishLogoutAction;
-import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientLogoutAction;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryAction;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationGenerateClientsAction;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;
@@ -63,6 +61,8 @@ import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationFailureActio
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationRedirectAction;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationStoreWebflowStateAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientFinishLogoutAction;
+import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogoutAction;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.controller.DefaultDelegatedAuthenticationNavigationController;
 import org.apereo.cas.web.flow.error.DefaultDelegatedClientAuthenticationFailureEvaluator;
