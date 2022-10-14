@@ -1,5 +1,6 @@
-package org.apereo.cas.web.flow.actions;
+package org.apereo.cas.web.flow.actions.logout;
 
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -71,7 +72,6 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         if (clientResult.isPresent()) {
             val client = clientResult.get();
             LOGGER.trace("Located client [{}]", client);
-
             val service = WebUtils.getService(requestContext);
             val targetUrl = service != null ? service.getId() : null;
             LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
@@ -79,6 +79,9 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
             val actionResult = client.getLogoutAction(context, sessionStore, currentProfile, targetUrl);
             if (actionResult.isPresent()) {
                 val action = (HttpAction) actionResult.get();
+                val logoutAction = DelegatedAuthenticationClientLogoutRequest.builder().status(action.getCode())
+                    .message(action.getMessage()).build();
+                WebUtils.putDelegatedAuthenticationLogoutRequest(requestContext, logoutAction);
                 LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
                 JEEHttpActionAdapter.INSTANCE.adapt(action, context);
             }

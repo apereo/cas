@@ -2047,4 +2047,28 @@ public class WebUtils {
                                                                         final Serializable profile) {
         context.getFlashScope().put("delegatedClientAuthenticationCandidateProfile", profile);
     }
+
+    /**
+     * Put delegated authentication logout request.
+     *
+     * @param requestContext the request context
+     * @param logoutAction   the logout action
+     */
+    public static void putDelegatedAuthenticationLogoutRequest(final RequestContext requestContext,
+                                                               final Serializable logoutAction) {
+        requestContext.getFlashScope().put("delegatedAuthenticationLogoutRequest", logoutAction);
+    }
+
+    /**
+     * Gets delegated authentication logout request.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the delegated authentication logout request
+     */
+    public <T> T getDelegatedAuthenticationLogoutRequest(final RequestContext requestContext,
+                                                         final Class<T> clazz) {
+        return requestContext.getFlashScope().get("delegatedAuthenticationLogoutRequest", clazz);
+    }
 }
