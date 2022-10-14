@@ -13,7 +13,7 @@ is done by using the `rest/users/self` REST API that is exposed by a running Syn
 As part of a successful authentication attempt, the properties of the provided user object 
 are transformed into CAS attributes that can then be released to applications, etc.
 
-## Components
+## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -31,6 +31,7 @@ provided by Apache Syncope are collected by CAS:
 | `syncopeUserRoles`            |
 | `syncopeUserSecurityQuestion` |
 | `syncopeUserStatus`           |
+| `syncopeUserKey`              |
 | `syncopeUserRealm`            |
 | `syncopeUserCreator`          |
 | `syncopeUserCreationDate`     |

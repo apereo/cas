@@ -344,7 +344,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
             return assertion;
         } finally {
-            FunctionUtils.doUnchecked(s -> {
+            FunctionUtils.doUnchecked(__ -> {
                 if (serviceTicket.isExpired()) {
                     configurationContext.getTicketRegistry().deleteTicket(serviceTicketId);
                 } else {
@@ -376,7 +376,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val factory = (TicketGrantingTicketFactory) configurationContext.getTicketFactory().get(TicketGrantingTicket.class);
         val ticketGrantingTicket = factory.create(authentication, service, TicketGrantingTicket.class);
 
-        FunctionUtils.doUnchecked(s -> {
+        FunctionUtils.doUnchecked(__ -> {
             configurationContext.getTicketRegistry().addTicket(ticketGrantingTicket);
             doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
         });

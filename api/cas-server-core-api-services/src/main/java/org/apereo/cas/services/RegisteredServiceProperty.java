@@ -544,7 +544,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * Does property belong to the requested group?
          *
          * @param group the group
-         * @return the boolean
+         * @return true/false
          */
         @JsonIgnore
         public boolean isMemberOf(final RegisteredServicePropertyGroups group) {

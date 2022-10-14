@@ -45,7 +45,7 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      * Contains key ?
      *
      * @param key the key
-     * @return the boolean
+     * @return true/false
      */
     boolean containsKey(K key);
 

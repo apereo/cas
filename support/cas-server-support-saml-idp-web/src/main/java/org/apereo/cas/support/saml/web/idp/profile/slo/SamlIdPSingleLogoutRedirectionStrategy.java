@@ -125,7 +125,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
         FunctionUtils.doIfNotNull(sloService,
-            s -> FunctionUtils.doUnchecked(u -> produceSamlLogoutResponseRedirect(adaptor,
+            __ -> FunctionUtils.doUnchecked(u -> produceSamlLogoutResponseRedirect(adaptor,
                 sloService, context, samlRegisteredService, samlLogoutRequest)));
     }
 
@@ -141,7 +141,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                                                     final SamlRegisteredService samlRegisteredService,
                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI);
-        FunctionUtils.doIfNotNull(sloService, s -> FunctionUtils.doUnchecked(u -> produceSamlLogoutResponsePost(adaptor,
+        FunctionUtils.doIfNotNull(sloService, __ -> FunctionUtils.doUnchecked(u -> produceSamlLogoutResponsePost(adaptor,
             sloService, context, samlRegisteredService, samlLogoutRequest)));
     }
 

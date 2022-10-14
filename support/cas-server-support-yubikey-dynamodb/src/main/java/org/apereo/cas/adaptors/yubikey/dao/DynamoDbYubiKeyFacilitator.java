@@ -97,7 +97,7 @@ public class DynamoDbYubiKeyFacilitator {
      * @param deleteTables the delete tables
      */
     public void createTable(final boolean deleteTables) {
-        FunctionUtils.doUnchecked(u -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+        FunctionUtils.doUnchecked(__ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
             dynamoDbProperties.getTableName(), deleteTables,
             List.of(AttributeDefinition.builder()
                 .attributeName(ColumnNames.USERNAME.getColumnName())
@@ -172,7 +172,7 @@ public class DynamoDbYubiKeyFacilitator {
      * Save.
      *
      * @param registration the registration
-     * @return the boolean
+     * @return true/false
      */
     public boolean save(final YubiKeyAccount registration) {
         val values = buildTableAttributeValuesMap(registration);
@@ -187,7 +187,7 @@ public class DynamoDbYubiKeyFacilitator {
      * Save.
      *
      * @param registration the registration
-     * @return the boolean
+     * @return true/false
      */
     public boolean update(final YubiKeyAccount registration) {
         val updateRequest = UpdateItemRequest.builder()

@@ -25,7 +25,7 @@ public record DelegatedAuthenticationSingleSignOnEvaluator(DelegatedClientAuthen
      * Single sign on session authorized for service boolean.
      *
      * @param requestContext the context
-     * @return the boolean
+     * @return true/false
      */
     public boolean singleSignOnSessionAuthorizedForService(final RequestContext requestContext) {
         val resolvedService = resolveServiceFromRequestContext(requestContext);

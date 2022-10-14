@@ -168,7 +168,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      * @param context           the context
      * @param registeredService the registered service
      * @param redirectUri       the redirect uri
-     * @return the boolean
+     * @return true/false
      */
     protected boolean verifyRedirectUriForRegisteredService(final WebContext context,
                                                             final OAuthRegisteredService registeredService,

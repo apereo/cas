@@ -12,3 +12,5 @@ docker run -p 9876:9876 -p 8076:8076 \
   -e ACS_URL=https://httpbin.org/post \
   -v ${SCENARIO_FOLDER}/saml-md/idp-metadata.xml:/sp-webapp/idp-metadata.xml \
   -v ${CAS_KEYSTORE}:/etc/cas/thekeystore apereo/saml2-sp:latest
+
+docker logs -f saml2-sp &

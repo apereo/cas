@@ -34,7 +34,7 @@ public class RestfulLoginWebflowDecorator implements WebflowDecorator {
 
     @Override
     public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             HttpResponse response = null;
             try {
                 val exec = HttpUtils.HttpExecutionRequest.builder()

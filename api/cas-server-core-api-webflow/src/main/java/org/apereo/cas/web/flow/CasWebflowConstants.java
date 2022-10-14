@@ -976,6 +976,10 @@ public interface CasWebflowConstants {
      * State id 'updateSecurityQuestions'.
      */
     String STATE_ID_UPDATE_SECURITY_QUESTIONS = "updateSecurityQuestions";
+    /**
+     * State id 'removeSingleSignOnSession'.
+     */
+    String STATE_ID_REMOVE_SINGLE_SIGNON_SESSION = "removeSingleSignOnSession";
 
     /**
      * State id 'viewRegistration'.
@@ -1970,6 +1974,10 @@ public interface CasWebflowConstants {
      * Action id 'accountProfileUpdateSecurityQuestionsAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS = "accountProfileUpdateSecurityQuestionsAction";
+    /**
+     * Action id 'accountProfileRemoveSingleSignOnSessionAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION = "accountProfileRemoveSingleSignOnSessionAction";
 
     /**
      * Action id 'ldapSpnegoClientAction'.
@@ -1990,4 +1998,8 @@ public interface CasWebflowConstants {
      * The action id 'spnego'.
      */
     String ACTION_ID_SPNEGO = "spnego";
+    /**
+     * The action id 'syncopePrincipalProvisionerAction'.
+     */
+    String ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION = "syncopePrincipalProvisionerAction";
 }

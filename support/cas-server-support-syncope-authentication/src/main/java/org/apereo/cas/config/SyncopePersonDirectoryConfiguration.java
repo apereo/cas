@@ -4,13 +4,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.syncope.SyncopePersonAttributeDao;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import com.google.common.base.Splitter;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,10 +46,18 @@ public class SyncopePersonDirectoryConfiguration {
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val properties = casProperties.getAuthn().getAttributeRepository().getSyncope();
-                val dao = new SyncopePersonAttributeDao(properties);
-                dao.setOrder(properties.getOrder());
-                FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
-                return BeanContainer.of(CollectionUtils.wrapList(dao));
+
+                val syncope = casProperties.getAuthn().getSyncope();
+                val repositories = Splitter.on(",").splitToList(syncope.getDomain())
+                    .stream()
+                    .map(domain -> {
+                        val dao = new SyncopePersonAttributeDao(properties);
+                        dao.setOrder(properties.getOrder());
+                        FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
+                        return dao;
+                    })
+                    .toList();
+                return BeanContainer.of(repositories);
             })
             .otherwise(BeanContainer::empty)
             .get();

@@ -20,16 +20,17 @@ import org.apereo.cas.acct.webflow.FinalizeAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.LoadAccountRegistrationPropertiesAction;
 import org.apereo.cas.acct.webflow.SubmitAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.ValidateAccountRegistrationTokenAction;
-import org.apereo.cas.api.PrincipalProvisioner;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -108,7 +109,7 @@ public class CasAccountManagementWebflowConfiguration {
         final CipherExecutor accountMgmtCipherExecutor,
         @Qualifier("accountRegistrationUsernameBuilder")
         final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder,
-        @Qualifier("accountMgmtRegistrationProvisioner")
+        @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
         final AccountRegistrationProvisioner accountMgmtRegistrationProvisioner) {
         return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader, casProperties, accountMgmtCipherExecutor, accountRegistrationUsernameBuilder,
             accountMgmtRegistrationProvisioner);
@@ -128,7 +129,7 @@ public class CasAccountManagementWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
+        @ConditionalOnMissingBean(name = AccountRegistrationProvisioner.BEAN_NAME)
         public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner(
             final List<AccountRegistrationProvisionerConfigurer> beans) {
             val configurers = beans.stream()
@@ -174,7 +175,7 @@ public class CasAccountManagementWebflowConfiguration {
         }
     }
 
-    @ConditionalOnClass(PrincipalProvisioner.class)
+    @ConditionalOnClass(ScimV2PrincipalAttributeMapper.class)
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "scim")
@@ -185,11 +186,11 @@ public class CasAccountManagementWebflowConfiguration {
         public AccountRegistrationProvisionerConfigurer scimAccountRegistrationProvisionerConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
-            final ObjectProvider<PrincipalProvisioner> scimProvisioner) throws Exception {
+            final ObjectProvider<PrincipalProvisioner> principalProvisioners) {
             return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
                 .when(BeanCondition.on("cas.account-registration.provisioning.scim.enabled").isTrue()
                     .given(applicationContext.getEnvironment()))
-                .supply(() -> () -> new ScimAccountRegistrationProvisioner(scimProvisioner.getObject(),
+                .supply(() -> () -> new ScimAccountRegistrationProvisioner(principalProvisioners.getObject(),
                     PrincipalFactoryUtils.newPrincipalFactory()))
                 .otherwiseProxy()
                 .get();

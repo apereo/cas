@@ -73,7 +73,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
             val msg = httpClient.sendMessageToEndPoint(new URL(url));
             if (msg != null) {
-                val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
+                val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8);
                 LOGGER.debug("Received Duo ping response [{}]", response);
 
                 val result = MAPPER.readTree(response);

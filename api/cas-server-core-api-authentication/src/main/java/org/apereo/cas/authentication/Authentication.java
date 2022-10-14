@@ -131,7 +131,7 @@ public interface Authentication extends Serializable {
      * should be destroyed first.
      *
      * @param auth2 the second auth
-     * @return the boolean
+     * @return true/false
      */
     boolean isEqualTo(Authentication auth2);
 }

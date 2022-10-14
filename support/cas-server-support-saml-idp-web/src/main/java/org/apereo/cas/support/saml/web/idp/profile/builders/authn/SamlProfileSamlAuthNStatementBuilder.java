@@ -22,6 +22,7 @@ import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 
 import java.io.Serial;
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -65,8 +66,21 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         return subjectLocality;
     }
 
-    private AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
+    protected AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
         val authenticationMethod = authnContextClassRefBuilder.build(context);
+        val id = buildAuthnStatementSessionIdex(context);
+        val statement = newAuthnStatement(authenticationMethod,
+            DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getAuthenticationDate()), id);
+        statement.setSessionNotOnOrAfter(buildSessionNotOnOrAfter(context));
+
+        val subjectLocality = buildSubjectLocality(context);
+        if (subjectLocality != null) {
+            statement.setSubjectLocality(subjectLocality);
+        }
+        return statement;
+    }
+
+    private static String buildAuthnStatementSessionIdex(final SamlProfileBuilderContext context) {
         var id = Optional.ofNullable(context.getHttpRequest())
             .map(request -> request.getParameter(CasProtocolConstants.PARAMETER_TICKET))
             .filter(StringUtils::isNotBlank)
@@ -75,19 +89,14 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
             LOGGER.info("Unable to locate service ticket as the session index; Generating random identifier instead...");
             id = '_' + String.valueOf(RandomUtils.nextLong());
         }
-        val statement = newAuthnStatement(authenticationMethod,
-            DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getAuthenticationDate()), id);
-        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getValidUntilDate());
+        return id;
+    }
 
+    protected Instant buildSessionNotOnOrAfter(final SamlProfileBuilderContext context) {
+        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getValidUntilDate());
         val skewAllowance = context.getRegisteredService().getSkewAllowance() > 0
             ? context.getRegisteredService().getSkewAllowance()
             : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
-        statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
-        
-        val subjectLocality = buildSubjectLocality(context);
-        if (subjectLocality != null) {
-            statement.setSubjectLocality(subjectLocality);
-        }
-        return statement;
+        return dt.plusSeconds(skewAllowance).toInstant();
     }
 }

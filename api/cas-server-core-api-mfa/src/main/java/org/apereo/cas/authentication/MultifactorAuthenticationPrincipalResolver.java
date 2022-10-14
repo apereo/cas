@@ -30,7 +30,7 @@ public interface MultifactorAuthenticationPrincipalResolver extends Ordered {
      * Supports resolution?
      *
      * @param principal the principal
-     * @return the boolean
+     * @return true/false
      */
     default boolean supports(final Principal principal) {
         return principal != null;

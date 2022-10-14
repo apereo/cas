@@ -79,7 +79,7 @@ public interface SamlIdPMetadataLocator {
      * Should generate metadata for service?
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     default boolean shouldGenerateMetadataFor(final Optional<SamlRegisteredService> registeredService) {
         return registeredService.isEmpty();

@@ -71,7 +71,7 @@ public record CasAuthenticationAuthenticationEventListener(CasEventRepository ca
     public void handleCasAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent event) throws Exception {
         val dto = prepareCasEvent(event);
         dto.setPrincipalId(event.getCredential().getId());
-        dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
+        dto.putEventId(CasAuthenticationTransactionFailureEvent.class.getSimpleName());
         this.casEventRepository.save(dto);
     }
 
