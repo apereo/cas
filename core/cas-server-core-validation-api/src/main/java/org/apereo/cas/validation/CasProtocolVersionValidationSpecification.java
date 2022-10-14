@@ -29,6 +29,6 @@ public class CasProtocolVersionValidationSpecification implements CasProtocolVal
             return casService.getSupportedProtocols().isEmpty()
                    || casService.getSupportedProtocols().containsAll(supportedVersions);
         }
-        return false;
+        return true;
     }
 }
