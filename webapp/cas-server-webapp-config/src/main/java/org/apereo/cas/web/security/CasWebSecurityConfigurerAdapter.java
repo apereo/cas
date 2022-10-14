@@ -30,6 +30,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -271,18 +272,25 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         requests
             .requestMatchers(endpoint)
             .access((authentication, context) -> {
-                val addresses = properties.getRequiredIpAddresses()
-                    .stream()
-                    .map(address -> '(' + address + ')')
-                    .collect(Collectors.joining("|"));
                 val remoteAddr = StringUtils.defaultIfBlank(
                     context.getRequest().getHeader(casProperties.getAudit().getEngine().getAlternateClientAddrHeaderName()),
                     context.getRequest().getRemoteAddr());
-                LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addresses);
-                val matcher = RegexUtils.createPattern(addresses, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
-                val granted = matcher.matches();
+
+                val addresses = properties.getRequiredIpAddresses()
+                        .stream()
+                        .filter(addr -> FunctionUtils.doAndHandle(() -> {
+                            val ipAddressMatcher = new IpAddressMatcher(addr);
+                            LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addr);
+                            return ipAddressMatcher.matches(remoteAddr);
+                        }, e -> {
+                            val matcher = RegexUtils.createPattern(addr, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
+                            LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addr);
+                            return matcher.matches();
+                        }).get())
+                        .findFirst();
+                val granted = addresses.isPresent();
                 if (!granted) {
-                    LOGGER.warn("Provided regular expression pattern [{}] does not match [{}]", addresses, remoteAddr);
+                    LOGGER.warn("Provided regular expression or IP/netmask [{}] does not match [{}]", properties.getRequiredIpAddresses(), remoteAddr);
                 }
                 return new AuthorizationDecision(granted);
             });
