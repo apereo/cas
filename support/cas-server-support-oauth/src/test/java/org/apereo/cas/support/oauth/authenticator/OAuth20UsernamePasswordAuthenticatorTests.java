@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -46,6 +47,7 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
+        assertTrue(((CommonProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
     }
 
     @Test
@@ -58,6 +60,7 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
+        assertTrue(((CommonProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
     }
 
     @Test
@@ -118,5 +121,6 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
+        assertTrue(((CommonProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
     }
 }
