@@ -97,6 +97,7 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -692,9 +693,12 @@ public class OidcConfiguration {
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .discoverySettings(oidcServerDiscoverySettings)
                 .requestParameterResolver(oauthRequestParameterResolver)
                 .issuerService(oidcIssuerService)
