@@ -5,19 +5,21 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.*;
 
 /**
  * This is {@link OAuth20UsernamePasswordAuthenticatorTests}.
@@ -27,16 +29,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
  */
 @Tag("OAuth")
 public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
-    protected OAuth20UsernamePasswordAuthenticator authenticator;
-
-    @BeforeEach
-    public void init() {
-        authenticator = new OAuth20UsernamePasswordAuthenticator(
-            authenticationSystemSupport,
-            servicesManager, serviceFactory,
-            JEESessionStore.INSTANCE,
-            oauthRequestParameterResolver, oauth20ClientSecretValidator);
-    }
+    @Autowired
+    @Qualifier("oauthUserAuthenticator")
+    private Authenticator authenticator;
 
     @Test
     public void verifyAcceptedCredentialsWithClientId() {
@@ -47,7 +42,7 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
-        assertTrue(((CommonProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
+        assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
     }
 
     @Test
@@ -60,7 +55,7 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
-        assertTrue(((CommonProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
+        assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
     }
 
     @Test
@@ -121,6 +116,6 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
-        assertTrue(((CommonProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
+        assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
     }
 }

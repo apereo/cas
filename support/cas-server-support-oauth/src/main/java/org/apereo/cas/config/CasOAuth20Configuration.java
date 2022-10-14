@@ -236,6 +236,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ConfigurationContext oauth20ConfigurationContext(
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
             final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
@@ -322,6 +324,7 @@ public class CasOAuth20Configuration {
                 .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders)
                 .oauthRequestValidators(oauthAuthorizationRequestValidators)
                 .clientSecretValidator(oauth20ClientSecretValidator)
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .build();
         }
     }
@@ -1402,6 +1405,8 @@ public class CasOAuth20Configuration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
             final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
             return new OAuth20UsernamePasswordAuthenticator(
@@ -1410,7 +1415,8 @@ public class CasOAuth20Configuration {
                 webApplicationServiceFactory,
                 oauthDistributedSessionStore,
                 oauthRequestParameterResolver,
-                oauth20ClientSecretValidator);
+                oauth20ClientSecretValidator,
+                authenticationAttributeReleasePolicy);
         }
 
         @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")

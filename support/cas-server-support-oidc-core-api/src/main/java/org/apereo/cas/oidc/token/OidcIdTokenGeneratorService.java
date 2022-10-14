@@ -32,6 +32,7 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -92,8 +93,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                        final OAuth20ResponseTypes responseType,
                                        final OAuth20GrantTypes grantType) {
         val authentication = accessToken.getAuthentication();
+        val activePrincipal = buildPrincipalForAttributeFilter(accessToken, registeredService);
         val principal = getConfigurationContext().getProfileScopeToAttributesFilter()
-            .filter(accessToken.getService(), authentication.getPrincipal(), registeredService, accessToken);
+            .filter(accessToken.getService(), activePrincipal, registeredService, accessToken);
         LOGGER.debug("Principal to use to build the ID token is [{}]", principal);
 
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
@@ -173,6 +175,16 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
 
         return claims;
+    }
+
+    private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
+                                                       final RegisteredService registeredService) {
+        val authentication = accessToken.getAuthentication();
+        val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
+        val authnAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
+            .getAuthenticationAttributesForRelease(authentication, registeredService);
+        attributes.putAll(authnAttributes);
+        return getConfigurationContext().getPrincipalFactory().createPrincipal(authentication.getPrincipal().getId(), attributes);
     }
 
     /**
