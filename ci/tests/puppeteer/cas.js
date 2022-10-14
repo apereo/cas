@@ -604,7 +604,7 @@ exports.refreshContext = async(url = "https://localhost:8443/cas") => {
     console.log(response);
 };
 
-exports.loginDuoSecurityBypassCode = async (page, type) => {
+exports.loginDuoSecurityBypassCode = async (page, type, username = "casuser") => {
     await page.waitForTimeout(12000);
     if (type === "websdk") {
         const frame = await page.waitForSelector("iframe#duo_iframe");
@@ -620,7 +620,7 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
     } else {
         await this.click(page, "button#passcode");
     }
-    let bypassCodes = await this.fetchDuoSecurityBypassCodes();
+    let bypassCodes = await this.fetchDuoSecurityBypassCodes(username);
     console.log(`Duo Security ${type}: Retrieved bypass codes ${bypassCodes}`);
     if (type === "websdk") {
         let bypassCode = String(bypassCodes[0]);
