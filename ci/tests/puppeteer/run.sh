@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-8}
 
 tmp="${TMPDIR}"
 if [[ -z "${tmp}" ]] ; then
@@ -256,16 +257,22 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 keystore="${PUPPETEER_DIR}/overlay/thekeystore"
+public_cert="${PUPPETEER_DIR}/overlay/server.crt"
 export CAS_KEYSTORE="${keystore}"
+export CAS_CERT="${public_cert}"
 
 if [[ "${RERUN}" != "true" ]]; then
   dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
-  subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
+  subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
   printgreen "\nGenerating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
   [ -f "${keystore}" ] && rm "${keystore}"
+  [ -f "${public_cert}" ] && rm "${public_cert}"
   keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
-    -keystore "${keystore}" -dname "${dname}"
+    -keystore "${keystore}" -dname "${dname}" -ext "SAN=$subjectAltName"
   [ -f "${keystore}" ] && echo "Created ${keystore}"
+  printgreen "\nExporting cert for adding to trust bundles if needed by test"
+  keytool -export -noprompt -alias cas -keypass changeit -storepass changeit \
+    -keystore "${keystore}" -file "${public_cert}" -rfc
 fi
 
 project=$(jq -j '.project // "tomcat"' "${config}")
@@ -293,6 +300,14 @@ if [[ -n "${buildScript}" ]]; then
 fi
 
 if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
+  if [[ "${CI}" == "true" && ! -z "${GRADLE_BUILDCACHE_PSW}" ]]; then
+    # remote gradle cache employed
+    DEFAULT_PUPPETEER_BUILD_CTR=8
+  else
+    DEFAULT_PUPPETEER_BUILD_CTR=30
+  fi
+  PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-$DEFAULT_PUPPETEER_BUILD_CTR}
+
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
@@ -326,8 +341,8 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     counter=0
     until [[ -f ${targetArtifact} ]]; do
        let counter++
-       if [[ $counter -gt 60 ]]; then
-          printred "\nBuild taking longer then 15 minutes, aborting."
+       if [[ $counter -gt $PUPPETEER_BUILD_CTR ]]; then
+          printred "\nBuild is taking too long; aborting."
           printred "Build log"
           cat build.log
           printred "Build thread dump"
@@ -368,6 +383,31 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
+  environmentVariables=$(jq -j '.environmentVariables // empty | join(";")' "$config");
+  IFS=';' read -r -a variables <<< "$environmentVariables"
+  for env in "${variables[@]}"
+  do
+      cmd="export \"$env\""
+      if [[ "${CI}" != "true" ]]; then
+        echo "$cmd"
+      fi
+      eval "$cmd"
+  done
+  
+  bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
+  bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
+  bootstrapScript="${bootstrapScript//\$\{SCENARIO\}/${scenarioName}}"
+
+  if [[ -n "${bootstrapScript}" ]]; then
+    printgreen "Running bootstrap script: ${bootstrapScript}"
+    chmod +x "${bootstrapScript}"
+    eval "${bootstrapScript}"
+    if [[ $? -ne 0 ]]; then
+      printred "Bootstrap script [${bootstrapScript}] failed."
+      exit 1
+    fi
+  fi
+
   serverPort=8443
   processIds=()
   instances=$(jq -j '.instances // 1' "${config}")
@@ -495,7 +535,8 @@ if [[ "${RERUN}" != "true" ]]; then
   
   printgreen "Removing previous build artifacts..."
   rm "$PWD"/cas.${projectType}
-  rm "${PUPPETEER_DIR}/overlay/thekeystore"
+  rm "${keystore}"
+  rm "${public_cert}"
   rm -Rf "${PUPPETEER_DIR}/overlay"
 
   if [[ "${CI}" == "true" && $dockerInstalled -eq 0 ]]; then
