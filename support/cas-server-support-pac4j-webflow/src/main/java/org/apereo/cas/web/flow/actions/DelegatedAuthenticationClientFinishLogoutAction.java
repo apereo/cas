@@ -17,6 +17,8 @@ import org.pac4j.saml.client.SAML2Client;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link DelegatedAuthenticationClientFinishLogoutAction}.
  * <p>
@@ -64,18 +66,22 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                     });
             }
         } else {
+            val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
             clients.findClient(clientName)
                 .filter(client -> client instanceof SAML2Client)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {
                     LOGGER.debug("Located client from webflow state: [{}]", client);
-                    val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
-                    if (logoutRedirect != null) {
-                        val validator = client.getLogoutValidator();
-                        validator.setPostLogoutURL(logoutRedirect);
-                        LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
-                        WebUtils.putLogoutRedirectUrl(requestContext, null);
-                    }
+                    val logoutSent = requestContext.getFlowScope().get("delegatedAuthenticationLogoutRequest", Boolean.class);
+                    Optional.ofNullable(logoutSent)
+                        .filter(r -> StringUtils.isNotBlank(logoutRedirect))
+                        .ifPresent(__ -> {
+                            LOGGER.debug("Located client from webflow state: [{}]", client);
+                            val validator = client.getLogoutValidator();
+                            validator.setPostLogoutURL(logoutRedirect);
+                            LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
+                            WebUtils.putLogoutRedirectUrl(requestContext, null);
+                        });
                 });
         }
         return null;

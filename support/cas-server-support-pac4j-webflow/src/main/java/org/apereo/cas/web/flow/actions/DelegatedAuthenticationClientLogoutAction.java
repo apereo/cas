@@ -51,6 +51,8 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
             : clients.findClient(currentProfile.getClientName());
         if (clientResult.isPresent()) {
             val client = clientResult.get();
+            requestContext.getFlowScope().put("delegatedAuthenticationLogoutRequest", true);
+            
             LOGGER.debug("Handling logout for delegated authentication client [{}]", client);
             WebUtils.putDelegatedAuthenticationClientName(requestContext, client.getName());
             sessionStore.set(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, client.getName());
