@@ -86,6 +86,8 @@ This capability will require the forceful fetching of the metadata over HTTP to 
 {% endtab %}
 
 {% tab metadata File %}
+    
+Metadata files for SAML2 service providers can be found on the file system directly: 
 
 ```json
 {

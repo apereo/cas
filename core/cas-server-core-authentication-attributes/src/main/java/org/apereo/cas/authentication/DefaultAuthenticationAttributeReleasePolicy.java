@@ -71,6 +71,10 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
                                                                            final Assertion assertion,
                                                                            final Map<String, Object> model,
                                                                            final RegisteredService service) {
+        if (!service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
+            LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service.getServiceId());
+            return new LinkedHashMap<>(0);
+        }
         val attrs = getAuthenticationAttributesForRelease(authentication, service);
         
         if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
