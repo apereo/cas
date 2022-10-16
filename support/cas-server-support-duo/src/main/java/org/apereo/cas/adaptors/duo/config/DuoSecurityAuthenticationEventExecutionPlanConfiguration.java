@@ -28,7 +28,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.DirectObjectProvider;
@@ -203,6 +203,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             final List<MultifactorAuthenticationPrincipalResolver> resolvers,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             @Qualifier("httpClient")
             final HttpClient httpClient,
             @Qualifier("duoSecurityBypassEvaluator")
@@ -292,11 +294,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .build()
                 .get();
         }
-
+        
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_DUO_USER_ACCOUNT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action determineDuoUserAccountAction(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
@@ -304,7 +308,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                    .supply(DuoSecurityDetermineUserAccountAction::new)
+                    .supply(() -> new DuoSecurityDetermineUserAccountAction(casProperties, servicesManager))
                     .otherwiseProxy()
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DETERMINE_DUO_USER_ACCOUNT)

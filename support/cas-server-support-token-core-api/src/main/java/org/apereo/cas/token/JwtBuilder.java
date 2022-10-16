@@ -52,6 +52,11 @@ public class JwtBuilder {
 
     private final CasConfigurationProperties casProperties;
 
+    public JwtBuilder(final CipherExecutor<Serializable, String> cipherExecutor,
+                      final ServicesManager servicesManager, final CasConfigurationProperties properties) {
+        this(cipherExecutor, servicesManager, RegisteredServiceCipherExecutor.noOp(), properties);
+    }
+
     /**
      * Parse jwt.
      *
@@ -139,7 +144,7 @@ public class JwtBuilder {
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());
-        
+
         payload.getAttributes().forEach((name, value) -> {
             var claimValue = value.size() == 1 ? CollectionUtils.firstElement(value).get() : value;
             if (claimValue instanceof ZonedDateTime) {
@@ -156,9 +161,7 @@ public class JwtBuilder {
         val registeredService = payload.getRegisteredService().isEmpty()
             ? locateRegisteredService(serviceAudience)
             : payload.getRegisteredService().get();
-
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(serviceAudience, registeredService);
         LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
         if (registeredServiceCipherExecutor.supports(registeredService)) {
             LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
@@ -190,12 +193,14 @@ public class JwtBuilder {
     @SuperBuilder
     @Getter
     @ToString
+    @SuppressWarnings("JavaUtilDate")
     public static class JwtRequest {
         private final String jwtId;
 
         private final String serviceAudience;
 
-        private final Date issueDate;
+        @Builder.Default
+        private final Date issueDate = new Date();
 
         private final String subject;
 
