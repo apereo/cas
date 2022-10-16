@@ -22,7 +22,7 @@ Duo offers several options for authenticating users:
 
 <div class="alert alert-warning"><strong>Usage</strong>
 <p>Please note that support for Duo multifactor authentication that is based on the Duo's Web SDK and the embedded iFrame
-is deprecated and scheduled to be removed in the future. You should consider switching to the 'Universal Prompt' variant
+is deprecated and scheduled to be removed on March 30, 2024. You should consider switching to the 'Universal Prompt' variant
 described in this document to avoid surprises in future upgrades.</p>
 </div>
 
