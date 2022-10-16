@@ -161,17 +161,22 @@ exports.assertInvisibility = async (page, selector) => {
 
 
 exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
-    const theCookie = (await page.cookies()).filter(value => {
-        console.log(`Checking cookie ${value.name}`);
-        return value.name === cookieName
+    const cookies = (await page.cookies()).filter(c => {
+        console.log(`Checking cookie ${c.name}:${c.value}`);
+        return c.name === cookieName
     });
+    console.log(`Found cookies ${cookies.length}`);
     if (present) {
         console.log(`Checking for cookie ${cookieName}`);
-        assert(theCookie.length !== 0);
-        console.log(`Asserting cookie:\n${colors.green(JSON.stringify(theCookie, undefined, 2))}`);
-        return theCookie[0];
+        assert(cookies.length !== 0);
+        console.log(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
+        return cookies[0];
     } else {
-        assert(theCookie.length === 0);
+        if (cookies.length > 0) {
+            let ck = cookies[0];
+            console.log(`Found cookie ${ck.name}:${ck.value}:${ck.path}:${ck.domain}:${ck.httpOnly}:${ck.secure}`)
+        }
+        assert(cookies.length === 0);
         console.log(`Cookie ${cookieName} cannot be found`);
     }
 };
