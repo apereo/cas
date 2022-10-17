@@ -25,7 +25,7 @@
                          th:src="@{${#themes.code('cas.hero-banner.file')}}"/>
                 </p>
             </div>
-            <div class="service-ui" th:replace="fragments/serviceui :: serviceUI">
+            <div class="service-ui" th:replace="~{fragments/serviceui :: serviceUI}">
                 <a href="fragments/serviceui.html">service ui fragment</a>
             </div>
         </div>
@@ -308,7 +308,7 @@
                     <section class="cas-field">
 
                         <span th:if="${recaptchaLoginEnabled}">
-                            <div th:replace="fragments/recaptcha :: recaptchaToken"/>
+                            <div th:replace="~{fragments/recaptcha :: recaptchaToken}"/>
                         </span>
 
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
@@ -324,7 +324,7 @@
                         </p>
                     </section>
 
-                    <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')"/>
+                    <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
                 </div>
             </form>
 
@@ -370,7 +370,7 @@
                     $('#webauthnLoginPanel').show();
                 </script>
 
-                <div th:replace="fragments/webAuthnLogin :: webAuthnLogin"/>
+                <div th:replace="~{fragments/webAuthnLogin :: webAuthnLogin}"/>
                 <hr class="my-4"/>
             </span>
 
@@ -378,7 +378,7 @@
             <span th:if="${loginFormViewable and loginFormEnabled}">
                 <span th:remove="tag"
                       th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}">
-                    <div th:replace="fragments/pmlinks :: pmlinks"/>
+                    <div th:replace="~{fragments/pmlinks :: pmlinks}"/>
                 </span>
             </span>
 
@@ -402,7 +402,7 @@
         </div>
 
         <span th:if="${loginFormViewable and loginFormEnabled}">
-            <div th:replace="fragments/loginsidebar :: loginsidebar"/>
+            <div th:replace="~{fragments/loginsidebar :: loginsidebar}"/>
         </span>
     </div>
 </main>
