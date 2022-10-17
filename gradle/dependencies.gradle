@@ -140,7 +140,7 @@ ext.libraries = [
                 }
         ],
         springdoc : [
-                dependencies.create("org.springdoc:springdoc-openapi-ui:$springDocVersion") {
+                dependencies.create("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion") {
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
