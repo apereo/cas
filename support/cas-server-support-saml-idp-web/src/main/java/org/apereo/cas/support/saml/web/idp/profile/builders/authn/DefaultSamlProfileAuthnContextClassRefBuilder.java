@@ -107,6 +107,7 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder implements SamlProfil
 
         val definedContexts = CollectionUtils.convertDirectedListToMap(
             casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
+        LOGGER.debug("Defined authentication context mappings are [{}]", definedContexts);
 
         val mappedMethod = authnContextClassRefs.stream()
             .filter(ref -> StringUtils.isNotBlank(ref.getURI()))
@@ -122,11 +123,14 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder implements SamlProfil
                                                        final Pair<AuthnContextClassRef, String> mappedMethod) {
         val attributes = context.getAuthenticatedAssertion().getAttributes();
         val contextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+        LOGGER.debug("Checking for mapped authentication context method [{}] in attributes [{}] via [{}]",
+            mappedMethod, attributes, contextAttribute);
         if (attributes.containsKey(contextAttribute) && mappedMethod != null) {
             val authnContext = attributes.get(contextAttribute);
             val satisfiedContext = CollectionUtils.firstElement(authnContext)
                 .map(Object::toString)
                 .orElse(null);
+            LOGGER.debug("Comparig satisfied authentication context [{}] against [{}]", satisfiedContext, mappedMethod.getValue());
             if (StringUtils.equals(mappedMethod.getValue(), satisfiedContext)) {
                 return mappedMethod.getLeft().getURI();
             }

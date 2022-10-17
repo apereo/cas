@@ -95,7 +95,7 @@ public class JpaBeans {
         bean.setJdbcUrl(url);
         bean.setUsername(jpaProperties.getUser());
         bean.setPassword(jpaProperties.getPassword());
-        FunctionUtils.doUnchecked(u -> bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).getSeconds()));
+        FunctionUtils.doUnchecked(__ -> bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).getSeconds()));
         bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
         bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
         bean.setIdleTimeout(Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
@@ -148,7 +148,7 @@ public class JpaBeans {
      *
      * @param ds      the ds
      * @param timeout the timeout
-     * @return the boolean
+     * @return true/false
      */
     public boolean isValidDataSourceConnection(final CloseableDataSource ds, final int timeout) {
         try (val con = ds.getConnection()) {

@@ -49,7 +49,7 @@ public interface PasswordManagementService {
      * Unlock account for credential.
      *
      * @param credential the credential
-     * @return the boolean
+     * @return true/false
      */
     default boolean unlockAccount(final Credential credential) {
         return false;

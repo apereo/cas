@@ -86,11 +86,19 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertFalse(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookupAll(ba).isEmpty());
         assertTrue(webAuthnCredentialRepository.stream().count() > 0);
-        val constructor = AssertionResult.class.getDeclaredConstructor(boolean.class, ByteArray.class,
-            ByteArray.class, String.class, long.class, boolean.class,
-            ClientAssertionExtensionOutputs.class, AuthenticatorAssertionExtensionOutputs.class);
+
+        val constructor = AssertionResult.class.getDeclaredConstructor(boolean.class,
+            RegisteredCredential.class, String.class,
+            long.class, boolean.class,
+            ClientAssertionExtensionOutputs.class,
+            AuthenticatorAssertionExtensionOutputs.class);
         constructor.setAccessible(true);
-        val result = constructor.newInstance(true, ba, ba, id, 1, true,
+        val credential = RegisteredCredential.builder()
+            .credentialId(ba)
+            .userHandle(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
+            .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
+            .build();
+        val result = constructor.newInstance(true, credential, id, 1, true,
             ClientAssertionExtensionOutputs.builder().build(),
             AuthenticatorAssertionExtensionOutputs.builder().build());
         webAuthnCredentialRepository.updateSignatureCount(result);

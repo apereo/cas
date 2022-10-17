@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,7 +19,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
-import org.jooq.lambda.Unchecked;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpMethod;
@@ -42,9 +42,10 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataResolver {
 
-    public MetadataQueryProtocolMetadataResolver(final SamlIdPProperties samlIdPProperties,
+    public MetadataQueryProtocolMetadataResolver(final HttpClient httpClient,
+                                                 final SamlIdPProperties samlIdPProperties,
                                                  final OpenSamlConfigBean configBean) {
-        super(samlIdPProperties, configBean);
+        super(httpClient, samlIdPProperties, configBean);
     }
 
     @Override
@@ -72,17 +73,20 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         try (val output = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             IOUtils.write(result, output);
             output.flush();
-
             StreamSupport.stream(path.getFileSystem().getFileStores().spliterator(), false)
                 .filter(store -> store.supportsFileAttributeView(UserDefinedFileAttributeView.class))
-                .forEach(Unchecked.consumer(store -> {
-                    val etag = response.getFirstHeader("ETag").getValue();
-                    Files.setAttribute(path, "user:ETag",
-                        ByteBuffer.wrap(etag.getBytes(StandardCharsets.UTF_8)));
-                }));
+                .forEach(store -> setFileAttribute(response, backupFile));
         }
         EntityUtils.consume(entity);
         return new InMemoryResourceMetadataResolver(backupFile, configBean);
+    }
+
+    private static void setFileAttribute(final HttpResponse response, final File backupFile) {
+        FunctionUtils.doAndHandle(t -> {
+            val path = backupFile.toPath();
+            val etag = response.getFirstHeader("ETag").getValue();
+            Files.setAttribute(path, "user:ETag", ByteBuffer.wrap(etag.getBytes(StandardCharsets.UTF_8)));
+        });
     }
 
     @Override

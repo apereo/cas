@@ -98,7 +98,7 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
     }
 
     private void writeDevicesToFile() {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             val file = jsonResource.getFile();
             MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
         });

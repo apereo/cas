@@ -27,7 +27,7 @@ and produce an example metadata for review and study.
 
 ## Metadata Management
 
-Service provider or identity provider metadata can also be managed using the following strategies.
+Identity provider metadata can also be managed using the following strategies.
 
 ### File System
 

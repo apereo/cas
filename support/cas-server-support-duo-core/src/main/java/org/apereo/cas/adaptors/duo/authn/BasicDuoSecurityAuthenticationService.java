@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -73,7 +73,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
             val msg = httpClient.sendMessageToEndPoint(new URL(url));
             if (msg != null) {
-                val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
+                val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8);
                 LOGGER.debug("Received Duo ping response [{}]", response);
 
                 val result = MAPPER.readTree(response);

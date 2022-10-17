@@ -215,9 +215,9 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         val resolutionPlan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         val props = casProperties.getAuthn().getSamlIdp();
         resolutionPlan.registerMetadataResolver(
-            new UrlResourceMetadataResolver(props, openSamlConfigBean));
+            new UrlResourceMetadataResolver(httpClient, props, openSamlConfigBean));
         resolutionPlan.registerMetadataResolver(
-            new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean));
+            new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean));
         resolutionPlan.registerMetadataResolver(
             new ClasspathResourceMetadataResolver(props, openSamlConfigBean));
         val cacheLoader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, resolutionPlan);

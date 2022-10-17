@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.account.provision;
 
+import org.apereo.cas.configuration.model.support.syncope.SyncopeAccountManagementRegistrationProvisioningProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -25,6 +26,12 @@ import java.io.Serializable;
 public class AccountManagementRegistrationProvisioningProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -1279683905942523034L;
+
+    /**
+     * Provision accounts via Syncope.
+     */
+    @NestedConfigurationProperty
+    private SyncopeAccountManagementRegistrationProvisioningProperties syncope = new SyncopeAccountManagementRegistrationProvisioningProperties();
 
     /**
      * Provision accounts via REST.

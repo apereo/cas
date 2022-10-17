@@ -44,7 +44,7 @@ public class DefaultOpenSamlConfigBean implements OpenSamlConfigBean {
     public DefaultOpenSamlConfigBean(final @NonNull ParserPool parserPool) {
         this.parserPool = parserPool;
 
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             LOGGER.trace("Initializing OpenSaml configuration...");
             InitializationService.initialize();
         });

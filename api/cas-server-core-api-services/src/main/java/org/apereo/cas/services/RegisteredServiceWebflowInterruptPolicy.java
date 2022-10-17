@@ -18,7 +18,7 @@ public interface RegisteredServiceWebflowInterruptPolicy extends Serializable {
     /**
      * Whether webflow interrupt is enabled for this service.
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isEnabled();
 

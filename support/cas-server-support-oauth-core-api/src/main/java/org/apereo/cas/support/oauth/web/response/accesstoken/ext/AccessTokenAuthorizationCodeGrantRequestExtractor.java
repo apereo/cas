@@ -87,7 +87,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * Ensure that the ticket-granting-ticket is not expired by retrieving it.
      *
      * @param token the token
-     * @return the boolean
+     * @return true/false
      */
     protected boolean ensureTicketGrantingTicketIsNotExpired(final OAuth20Token token) {
         return token.isCode() && getConfigurationContext().getTicketRegistry()

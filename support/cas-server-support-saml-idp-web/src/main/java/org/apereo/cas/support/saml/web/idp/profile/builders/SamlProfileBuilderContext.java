@@ -23,7 +23,6 @@ import jakarta.validation.constraints.NotNull;
  */
 @Getter
 @SuperBuilder
-@SuppressWarnings("ObjectToString")
 @ToString(of = {"authenticatedAssertion", "registeredService", "binding"})
 public class SamlProfileBuilderContext {
     private final RequestAbstractType samlRequest;

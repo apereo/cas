@@ -36,7 +36,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
         super(requestStorage, casProperties, cipherExecutor);
         val jsonResource = casProperties.getAuthn().getMfa().getU2f().getJson().getLocation();
         if (!ResourceUtils.doesResourceExist(jsonResource)) {
-            FunctionUtils.doUnchecked(u -> {
+            FunctionUtils.doUnchecked(__ -> {
                 if (jsonResource.getFile().createNewFile()) {
                     LOGGER.debug("Created JSON resource [{}] for U2F device registrations", jsonResource);
                 }

@@ -15,7 +15,7 @@ public interface DelegatedClientAuthenticationCredentialResolver {
      * Supports this client credential?
      *
      * @param credentials the credentials
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(ClientCredential credentials);
 

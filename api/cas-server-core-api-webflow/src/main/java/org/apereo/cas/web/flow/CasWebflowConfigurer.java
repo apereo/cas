@@ -516,7 +516,7 @@ public interface CasWebflowConfigurer extends Ordered {
      *
      * @param flow    the flow
      * @param stateId the state id
-     * @return the boolean
+     * @return true/false
      */
     boolean containsFlowState(Flow flow, String stateId);
 
@@ -525,7 +525,7 @@ public interface CasWebflowConfigurer extends Ordered {
      *
      * @param flow    the flow
      * @param stateId the state id
-     * @return the boolean
+     * @return true/false
      */
     boolean containsSubflowState(Flow flow, String stateId);
 
@@ -534,7 +534,7 @@ public interface CasWebflowConfigurer extends Ordered {
      *
      * @param state      the state
      * @param transition the transition
-     * @return the boolean
+     * @return true/false
      */
     boolean containsTransition(TransitionableState state, String transition);
 

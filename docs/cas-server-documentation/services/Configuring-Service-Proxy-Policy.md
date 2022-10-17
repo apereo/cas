@@ -20,7 +20,9 @@ application to exercise proxy authentication. Blindly authorizing an application
 ticket may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those 
 features and that you understand the why. Avoid where and when you can.</p></div>
 
-## Refuse
+{% tabs proxyauthnpolicy %}
+
+{% tab proxyauthnpolicy Refuse %}
 
 Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
 
@@ -36,7 +38,9 @@ Disallows proxy authentication for a service. This is default policy and need no
 }
 ```
 
-## Regex
+{% endtab %}
+
+{% tab proxyauthnpolicy Regex %}
 
 A proxy policy that only allows proxying to PGT urls that match the specified regex pattern.
 
@@ -55,15 +59,16 @@ A proxy policy that only allows proxying to PGT urls that match the specified re
 }
 ```
 
-As noted earlier, the `pattern` must be specified as a valid regular expression. Furthermore, 
+As noted earlier, the `pattern` must be specified as a valid regular expression. Furthermore,
 
-- If the pattern used here is identical to the pattern used by the registered service itself as specified by the `serviceId`, you may be able to reuse the same 
-existing regular expression here via the `useServiceId` setting. 
-- The setting `exactMatch` treats the regular expression pattern as an exact liteal and turns off the evaluation of the pattern as a regular expression in 
+- If the pattern used here is identical to the pattern used by the registered service itself as specified by the `serviceId`, you may be able to reuse the same
+  existing regular expression here via the `useServiceId` setting.
+- The setting `exactMatch` treats the regular expression pattern as an exact liteal and turns off the evaluation of the pattern as a regular expression in
   favor of a literal comparison.
+- 
+{% endtab %}
 
-
-## REST
+{% tab proxyauthnpolicy REST %}
 
 A proxy policy that reaches out to an external REST endpoint to determine proxy authorization.
 
@@ -86,4 +91,8 @@ A proxy policy that reaches out to an external REST endpoint to determine proxy 
 
 Endpoints must be designed to accept/process `application/json`, where the request body will contain
 the contents of the registered service definition, and the requesing PGT url is passed as `pgtUrl` request parameter.
-A successful `200` status code will allow proxy authentication to proceed. 
+A successful `200` status code will allow proxy authentication to proceed.
+
+{% endtab %}
+
+{% endtabs %}

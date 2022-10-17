@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 9666)
 public class ScimAccountRegistrationProvisionerTests {
     @Autowired
-    @Qualifier("accountMgmtRegistrationProvisioner")
+    @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
     @BeforeEach

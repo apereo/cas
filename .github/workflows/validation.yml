@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.10.1
+      - uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
 
@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -67,7 +67,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -99,7 +99,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -130,9 +130,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v3
@@ -174,9 +174,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v3
@@ -214,9 +214,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v3
@@ -245,9 +245,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v3
@@ -276,9 +276,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v3
@@ -307,9 +307,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v3

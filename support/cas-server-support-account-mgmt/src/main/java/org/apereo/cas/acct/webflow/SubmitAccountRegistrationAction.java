@@ -87,7 +87,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
      *
      * @param registrationRequest the registration request
      * @param url                 the url
-     * @return the boolean
+     * @return true/false
      */
     protected boolean sendAccountRegistrationActivationSms(final AccountRegistrationRequest registrationRequest, final String url) {
         if (StringUtils.isNotBlank(registrationRequest.getPhone())) {
@@ -107,7 +107,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
      * @param registrationRequest the registration request
      * @param url                 the url
      * @param requestContext      the request context
-     * @return the boolean
+     * @return true/false
      */
     protected EmailCommunicationResult sendAccountRegistrationActivationEmail(final AccountRegistrationRequest registrationRequest,
                                                                               final String url,

@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * This is {@link AbstractSyncopeProperties}.
+ * This is {@link BaseSyncopeProperties}.
  *
  * @author Francesco Chicchiriccò
  * @since 6.5.0
@@ -22,7 +22,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AbstractSyncopeProperties")
-public abstract class AbstractSyncopeProperties implements Serializable {
+public abstract class BaseSyncopeProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 98513672245088L;

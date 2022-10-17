@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 public class RestfulAccountRegistrationProvisionerTests {
     @Autowired
-    @Qualifier("accountMgmtRegistrationProvisioner")
+    @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
     @BeforeEach

@@ -41,7 +41,7 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
     public Optional<Pair<? extends SignableSAMLObject, MessageContext>> extract(final HttpServletRequest request,
                                                                                 final BaseHttpServletRequestXMLMessageDecoder decoder,
                                                                                 final Class<? extends SignableSAMLObject> clazz) {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             LOGGER.trace("Received SAML profile request [{}]", request.getRequestURI());
             decoder.setHttpServletRequestSupplier(() -> request);
             decoder.setParserPool(this.parserPool);
