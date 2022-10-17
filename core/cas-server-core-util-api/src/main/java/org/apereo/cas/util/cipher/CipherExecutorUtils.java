@@ -36,10 +36,7 @@ public class CipherExecutorUtils {
                 crypto.getAlg(),
                 crypto.getSigning().getKeySize(),
                 crypto.getEncryption().getKeySize());
-            cipher.setEncryptionEnabled(crypto.getEncryption().isEnabled());
-            cipher.setSigningEnabled(crypto.getSigning().isEnabled());
             cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getStrategyType()));
-            cipher.initialize();
             return cipher;
         }).get();
     }
