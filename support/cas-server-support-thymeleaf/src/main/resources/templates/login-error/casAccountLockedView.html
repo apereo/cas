@@ -13,7 +13,7 @@
                 <h2 th:utext="#{screen.accountlocked.heading}">This account has been locked.</h2>
                 <span th:remove="tag" th:if="${#bools.isTrue(enableAccountUnlock)}">
                     <p th:utext="#{screen.account.unlock.description}">Please unlock the account.</p>
-                    <div th:replace="fragments/unlockaccount :: unlock"></div>
+                    <div th:replace="~{fragments/unlockaccount :: unlock}"></div>
                 </span>
                 <span th:remove="tag" th:unless="${enableAccountUnlock}">
                     <p th:utext="#{screen.accountlocked.message}">Please contact the system administrator to regain access.</p>

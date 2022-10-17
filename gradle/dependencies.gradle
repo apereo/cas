@@ -156,7 +156,7 @@ ext.libraries = [
                 }
         ],
         swagger                 : [
-                dependencies.create("io.swagger.core.v3:swagger-core:$swaggerVersion") {
+                dependencies.create("io.swagger.core.v3:swagger-core-jakarta:$swaggerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
@@ -164,7 +164,7 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "javax.validation", module: "validation-api")
                 },
-                dependencies.create("io.swagger.core.v3:swagger-jaxrs2:$swaggerVersion") {
+                dependencies.create("io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")

@@ -16,7 +16,7 @@
         <section id="loginForm"
                  class="login-section login-form"
                  th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
-            <div th:replace="fragments/loginform :: loginform">
+            <div th:replace="~{fragments/loginform :: loginform}">
                 <a href="fragments/loginform.html">Login Form goes here</a>
             </div>
         </section>
