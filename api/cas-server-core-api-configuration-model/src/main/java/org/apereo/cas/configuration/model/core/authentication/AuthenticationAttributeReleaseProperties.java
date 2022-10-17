@@ -25,7 +25,8 @@ public class AuthenticationAttributeReleaseProperties implements Serializable {
 
     /**
      * Whether CAS authentication/protocol attributes
-     * should be released as part of ticket validation.
+     * should be released as part of ticket validation
+     * or for the resource owner password grant type.
      */
     private boolean enabled = true;
 
