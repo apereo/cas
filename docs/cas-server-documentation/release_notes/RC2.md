@@ -66,7 +66,7 @@ to be provisioned to [Apache Syncope](../registration/Account-Registration-Provi
 - Spring Boot   
 - Apache Tomcat
 - Twilio
-- Jose4j
+- Jose4j                                            X
 - Apache Ignite
 - Apache Shiro
 - Netty
@@ -78,6 +78,9 @@ to be provisioned to [Apache Syncope](../registration/Account-Registration-Provi
 - Nimbus
 - WSS4j
 - Hibernate
+- Groovy
+- HAL Explorer
+- Swagger
 - Jodatime
 - Spring Data
 - Azure CosmosDb

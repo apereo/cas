@@ -450,6 +450,20 @@ exports.createJwt = async (payload, key, alg = "RS256", options = {}) => {
     return token;
 };
 
+exports.verifyJwt = async (token, secret, options) => {
+    console.log(`Decoding token ${token}`);
+    let decoded = JwtOps.verify(token, secret, options, undefined);
+    if (options.complete) {
+        console.log(`Decoded token header: ${colors.green(decoded.header)}`);
+        console.log("Decoded token payload:");
+        await this.logg(decoded.payload);
+    } else {
+        console.log("Decoded token payload:");
+        await this.logg(decoded);
+    }
+    return decoded;
+};
+
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
     let decoded = JwtOps.decode(token, {complete: complete});

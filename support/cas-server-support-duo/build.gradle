@@ -18,6 +18,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-registry")
     
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-duo-core")

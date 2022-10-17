@@ -13,6 +13,7 @@ import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -29,6 +30,7 @@ import java.util.UUID;
  * @since 5.2.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
 
     private final CasConfigurationProperties casProperties;
@@ -46,7 +48,9 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
         val eventFactorySupport = new EventFactorySupport();
         if (account.getStatus() == DuoSecurityUserAccountStatus.ENROLL) {
             if (StringUtils.isNotBlank(provider.getRegistration().getRegistrationUrl())) {
-                requestContext.getFlowScope().put("duoRegistrationUrl", buildDuoRegistrationUrlFor(requestContext, provider, principal));
+                val url = buildDuoRegistrationUrlFor(requestContext, provider, principal);
+                LOGGER.info("Duo Security registration url for enrollment is [{}]", url);
+                requestContext.getFlowScope().put("duoRegistrationUrl", url);
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
             }
         }
