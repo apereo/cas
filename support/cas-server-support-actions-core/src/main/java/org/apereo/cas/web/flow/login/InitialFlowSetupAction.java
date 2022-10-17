@@ -115,7 +115,6 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     protected void clearTicketGrantingCookieFromContext(final RequestContext context, final String ticketGrantingTicketId) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        ticketGrantingTicketCookieGenerator.removeCookie(response);
         ticketGrantingTicketCookieGenerator.removeAll(request, response);
         WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
         Optional.ofNullable(ticketGrantingTicketId)

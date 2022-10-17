@@ -77,7 +77,7 @@ public class OidcClientRegistrationProperties implements Serializable {
         /**
          * Is protected?
          *
-         * @return the boolean
+         * @return true/false
          */
         public boolean isProtected() {
             return this == DynamicClientRegistrationModes.PROTECTED;

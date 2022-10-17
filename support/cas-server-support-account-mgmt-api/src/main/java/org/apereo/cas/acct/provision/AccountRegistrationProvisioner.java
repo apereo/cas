@@ -11,6 +11,10 @@ import org.apereo.cas.acct.AccountRegistrationResponse;
  */
 @FunctionalInterface
 public interface AccountRegistrationProvisioner {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "accountMgmtRegistrationProvisioner";
 
     /**
      * Provision.

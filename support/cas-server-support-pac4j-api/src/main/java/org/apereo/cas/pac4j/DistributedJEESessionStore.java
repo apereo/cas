@@ -82,14 +82,14 @@ public class DistributedJEESessionStore implements SessionStore {
         val ticket = getTransientSessionTicketForSession(context);
         if (value == null && ticket != null) {
             ticket.getProperties().remove(key);
-            FunctionUtils.doUnchecked(s -> ticketRegistry.updateTicket(ticket));
+            FunctionUtils.doUnchecked(__ -> ticketRegistry.updateTicket(ticket));
         } else if (ticket == null) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val created = transientFactory.create(sessionId, properties);
-            FunctionUtils.doUnchecked(s -> ticketRegistry.addTicket(created));
+            FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(created));
         } else {
             ticket.getProperties().putAll(properties);
-            FunctionUtils.doUnchecked(s -> ticketRegistry.updateTicket(ticket));
+            FunctionUtils.doUnchecked(__ -> ticketRegistry.updateTicket(ticket));
         }
     }
 
@@ -98,7 +98,7 @@ public class DistributedJEESessionStore implements SessionStore {
         val sessionId = fetchSessionIdFromContext(webContext);
         if (sessionId != null) {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
-            FunctionUtils.doUnchecked(s -> ticketRegistry.deleteTicket(ticketId));
+            FunctionUtils.doUnchecked(__ -> ticketRegistry.deleteTicket(ticketId));
 
             val context = JEEContext.class.cast(webContext);
             cookieGenerator.removeCookie(context.getNativeResponse());

@@ -120,6 +120,10 @@ public class CasDocumentationApplication {
         aud.setRequired(false);
         options.addOption(aud);
 
+        var dver = new Option("ver", "versions", true, "Generate data for CAS dependency versions");
+        dver.setRequired(false);
+        options.addOption(dver);
+
         new HelpFormatter().printHelp("CAS Documentation", options);
         var cmd = new DefaultParser().parse(options, args);
 
@@ -195,6 +199,30 @@ public class CasDocumentationApplication {
         if (StringUtils.equalsIgnoreCase("true", audit)) {
             exportAuditableEvents(dataPath);
         }
+        var dversions = cmd.getOptionValue("versions", "true");
+        if (StringUtils.equalsIgnoreCase("true", dversions)) {
+            exportDependencyVersions(projectRootDirectory, dataPath);
+        }
+    }
+
+    private static void exportDependencyVersions(final String rootDir, final File dataPath) throws Exception {
+        var file = new File(rootDir, "docs/cas-server-documentation-processor/build/dependencies.json");
+        if (!file.exists()) {
+            LOGGER.error("[{}] does not exist", file.getCanonicalPath());
+            return;
+        }
+
+        var parentPath = new File(dataPath, "dependency-versions");
+        if (parentPath.exists()) {
+            FileUtils.deleteQuietly(parentPath);
+        }
+        parentPath.mkdirs();
+        var depFile = new File(parentPath, "config.yml");
+
+        var dependencies = CasConfigurationMetadataCatalog.getObjectMapper().readValue(
+            FileUtils.readFileToString(file, StandardCharsets.UTF_8), List.class);
+        LOGGER.info("Writing [{}] dependencies found in [{}]", dependencies.size(), file.getCanonicalPath());
+        CasConfigurationMetadataCatalog.export(depFile, dependencies);
     }
 
     private static void exportAuditableEvents(final File dataPath) {

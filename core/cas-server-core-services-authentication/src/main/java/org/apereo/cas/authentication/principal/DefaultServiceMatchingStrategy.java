@@ -20,8 +20,8 @@ public record DefaultServiceMatchingStrategy(ServicesManager servicesManager) im
     @Override
     public boolean matches(final Service service, final Service serviceToMatch) {
         try {
-            val thisUrl = URLDecoder.decode(service.getId(), StandardCharsets.UTF_8.name());
-            val serviceUrl = URLDecoder.decode(serviceToMatch.getId(), StandardCharsets.UTF_8.name());
+            val thisUrl = URLDecoder.decode(service.getId(), StandardCharsets.UTF_8);
+            val serviceUrl = URLDecoder.decode(serviceToMatch.getId(), StandardCharsets.UTF_8);
 
             LOGGER.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
             return thisUrl.equalsIgnoreCase(serviceUrl);

@@ -61,7 +61,7 @@ public interface SingleLogoutServiceLogoutUrlBuilder extends Ordered {
      * @param registeredService   the registered service
      * @param singleLogoutService the single logout service
      * @param httpRequest         the http request
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(RegisteredService registeredService,
                      WebApplicationService singleLogoutService,

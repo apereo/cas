@@ -73,7 +73,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param username the username
      * @param record   the record
-     * @return the boolean
+     * @return true/false
      * @throws Exception the exception
      */
     @PostMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)

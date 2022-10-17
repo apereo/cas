@@ -66,6 +66,6 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
             ticketGrantingTicket,
             issuerId,
             relyingPartyId, samlMessage);
-        FunctionUtils.doUnchecked(s -> ticketRegistry.addTicket(ticket));
+        FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(ticket));
     }
 }

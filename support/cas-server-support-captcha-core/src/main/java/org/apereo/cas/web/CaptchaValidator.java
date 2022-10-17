@@ -33,7 +33,7 @@ public interface CaptchaValidator {
      *
      * @param recaptchaResponse the recaptcha response
      * @param userAgent         the user agent
-     * @return the boolean
+     * @return true/false
      */
     boolean validate(String recaptchaResponse, String userAgent);
 

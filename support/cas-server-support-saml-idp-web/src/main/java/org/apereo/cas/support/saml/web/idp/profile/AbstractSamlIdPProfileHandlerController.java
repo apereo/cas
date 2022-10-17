@@ -428,7 +428,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param pair     the pair
      * @param request  the request
      * @param response the response
-     * @return the boolean
+     * @return true/false
      */
     protected Optional<TicketGrantingTicket> singleSignOnSessionExists(
         final Pair<? extends SignableSAMLObject, MessageContext> pair,

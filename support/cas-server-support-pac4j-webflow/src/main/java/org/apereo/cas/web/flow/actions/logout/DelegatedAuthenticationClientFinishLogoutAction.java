@@ -1,7 +1,8 @@
-package org.apereo.cas.web.flow.actions;
+package org.apereo.cas.web.flow.actions.logout;
 
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Optional;
 
 /**
  * This is {@link DelegatedAuthenticationClientFinishLogoutAction}.
@@ -64,18 +67,22 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                     });
             }
         } else {
+            val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
             clients.findClient(clientName)
                 .filter(client -> client instanceof SAML2Client)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {
-                    LOGGER.debug("Located client from webflow state: [{}]", client);
-                    val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
-                    if (logoutRedirect != null) {
-                        val validator = client.getLogoutValidator();
-                        validator.setPostLogoutURL(logoutRedirect);
-                        LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
-                        WebUtils.putLogoutRedirectUrl(requestContext, null);
-                    }
+                    val logoutRequest = WebUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
+                        DelegatedAuthenticationClientLogoutRequest.class);
+                    Optional.ofNullable(logoutRequest)
+                        .filter(r -> StringUtils.isNotBlank(logoutRedirect))
+                        .ifPresent(__ -> {
+                            LOGGER.debug("Located client from webflow state: [{}]", client);
+                            val validator = client.getLogoutValidator();
+                            validator.setPostLogoutURL(logoutRedirect);
+                            LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
+                            WebUtils.putLogoutRedirectUrl(requestContext, null);
+                        });
                 });
         }
         return null;

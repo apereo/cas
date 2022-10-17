@@ -20,7 +20,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     RefreshAutoConfiguration.class,
     CasAcmeConfiguration.class
 }, properties = {
-    "cas.acme.domains=cas.example.org",
+    "cas.acme.domains=cas.apereo.org",
     "cas.acme.server-url=acme://letsencrypt.org/staging",
     "cas.acme.user-key.location=file:${java.io.tmpdir}/user.key",
     "cas.acme.domain-key.location=file:${java.io.tmpdir}/domain.key",

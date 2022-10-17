@@ -14,9 +14,11 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -27,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -124,20 +127,37 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 val questionsAndAnswers = ldap.getSecurityQuestionsAttributes();
                 LOGGER.debug("Security question attributes are defined to be [{}]", questionsAndAnswers);
 
-                questionsAndAnswers.forEach((k, v) -> {
-                    val questionAttribute = entry.getAttribute(k);
-                    val answerAttribute = entry.getAttribute(v);
-                    if (questionAttribute != null && answerAttribute != null) {
-                        val question = questionAttribute.getStringValue();
-                        val answer = answerAttribute.getStringValue();
-                        if (StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer)) {
-                            LOGGER.debug("Added security question [{}] with answer [{}]", question, answer);
-                            results.put(question, answer);
-                        }
+                questionsAndAnswers.forEach((key, value) -> {
+                    val questionAndAnswer = getSecurityQuestionAndAnswer(entry, ldap, key, value);
+                    val question = questionAndAnswer.getKey();
+                    val answer = questionAndAnswer.getValue();
+
+                    if (StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer)) {
+                        LOGGER.debug("Added security question [{}] with answer [{}]", question, answer);
+                        results.put(question, answer);
                     }
                 });
             });
         return results;
+    }
+
+    protected Pair<String, String> getSecurityQuestionAndAnswer(
+        final LdapEntry entry,
+        final LdapPasswordManagementProperties properties,
+        final String questionAttributeName,
+        final String answerAttributeName) {
+        val questionAttribute = entry.getAttribute(questionAttributeName);
+        val answerAttribute = entry.getAttribute(answerAttributeName);
+
+        val question = Optional.ofNullable(questionAttribute)
+            .map(LdapAttribute::getStringValue)
+            .orElseGet(() -> StringUtils.EMPTY);
+
+        val answer = Optional.ofNullable(answerAttribute)
+            .map(LdapAttribute::getStringValue)
+            .orElseGet(() -> StringUtils.EMPTY);
+
+        return Pair.of(question, answer);
     }
 
     @Override
@@ -179,12 +199,14 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             .stream()
             .map(entry -> {
                 LOGGER.debug("Found LDAP entry [{}] to use", entry);
-                return attributeNames.stream()
+                return attributeNames
+                    .stream()
                     .map(attributeName -> {
                         val attr = entry.getAttribute(attributeName);
                         if (attr != null) {
                             val attributeValue = attr.getStringValue();
-                            LOGGER.debug("Found [{}] [{}] for user [{}].", attributeName, attributeValue, context.getUsername());
+                            LOGGER.debug("Found [{}] [{}] for user [{}].", attributeName,
+                                attributeValue, context.getUsername());
                             return attributeValue;
                         }
                         LOGGER.warn("Could not locate LDAP attribute [{}] for [{}]",

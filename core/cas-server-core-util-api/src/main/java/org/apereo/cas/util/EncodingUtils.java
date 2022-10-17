@@ -254,7 +254,7 @@ public class EncodingUtils {
     public static String urlDecode(final String value) {
         return StringUtils.isBlank(value)
             ? value
-            : Unchecked.supplier(() -> URLDecoder.decode(value, StandardCharsets.UTF_8.name())).get();
+            : Unchecked.supplier(() -> URLDecoder.decode(value, StandardCharsets.UTF_8)).get();
     }
 
     /**

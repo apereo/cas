@@ -22,6 +22,10 @@ the [CAS service registry](../services/Service-Management.html) similar to the f
 }
 ```
 
+<div class="alert alert-info"><strong>Entity ID Patterns</strong><p>The <code>serviceId</code> field here should represent the entity id
+of the SAML2 service provider in form of a proper regular expression, allowing you to authorize and register multiple SAML2 service providers 
+in your metadata file, if necessary. Remember to escape all the right characters when you build the expression pattern.</p></div>
+
 The following fields are available for SAML services:
 
 | Field                                             | Description                                                                                                                                                                                                                                                                                                                                                                              |

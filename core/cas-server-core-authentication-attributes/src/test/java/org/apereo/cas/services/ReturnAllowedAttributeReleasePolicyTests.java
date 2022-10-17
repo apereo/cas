@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -150,6 +151,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
             allowedAttributes.add("givenName");
             val policy = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
             val consentPolicy = new DefaultRegisteredServiceConsentPolicy(Set.of("cn"), Set.of("givenName"));
+            consentPolicy.setStatus(TriStateBoolean.TRUE);
             policy.setConsentPolicy(consentPolicy);
             val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
             val registeredService = CoreAuthenticationTestUtils.getRegisteredService();

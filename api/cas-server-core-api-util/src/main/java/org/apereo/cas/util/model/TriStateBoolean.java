@@ -48,7 +48,7 @@ public enum TriStateBoolean implements Serializable {
     /**
      * Is true.
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean isTrue() {
         return Boolean.TRUE.equals(this.state);
@@ -57,7 +57,7 @@ public enum TriStateBoolean implements Serializable {
     /**
      * Is false.
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean isFalse() {
         return Boolean.FALSE.equals(this.state);
@@ -66,7 +66,7 @@ public enum TriStateBoolean implements Serializable {
     /**
      * Is undefined.
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean isUndefined() {
         return this.state == null;
@@ -75,7 +75,7 @@ public enum TriStateBoolean implements Serializable {
     /**
      * To boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     public Boolean toBoolean() {
         return state;

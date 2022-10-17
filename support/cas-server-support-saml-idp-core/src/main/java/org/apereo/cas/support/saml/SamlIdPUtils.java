@@ -249,7 +249,7 @@ public class SamlIdPUtils {
 
         LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
 
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             chainingMetadataResolver.setResolvers(resolvers);
             chainingMetadataResolver.setId(entityID);
             chainingMetadataResolver.initialize();

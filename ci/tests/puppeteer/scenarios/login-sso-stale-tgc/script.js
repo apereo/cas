@@ -28,6 +28,7 @@ const assert = require('assert');
 })();
 
 async function buildCookie(page, value, path, name = "TGC") {
+    console.log(`Adding cookie ${name}:${value}:${path}`);
     return {
         name: name,
         value: value,

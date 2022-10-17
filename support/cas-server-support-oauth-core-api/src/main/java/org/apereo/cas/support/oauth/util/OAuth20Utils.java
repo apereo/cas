@@ -214,7 +214,7 @@ public class OAuth20Utils {
      *
      * @param registeredService the registered service
      * @param responseType      the response type
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isResponseModeTypeFragment(final OAuthRegisteredService registeredService,
                                                      final OAuth20ResponseModeTypes responseType) {

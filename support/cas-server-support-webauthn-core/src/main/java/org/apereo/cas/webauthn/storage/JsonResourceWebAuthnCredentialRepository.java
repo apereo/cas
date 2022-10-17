@@ -68,7 +68,7 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
                 return record;
             }).toList();
         storage.put(username.trim().toLowerCase(), new LinkedHashSet<>(records));
-        FunctionUtils.doUnchecked(u -> WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage));
+        FunctionUtils.doUnchecked(__ -> WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage));
     }
 
     private Map<String, Set<CredentialRegistration>> readFromJsonRepository() {

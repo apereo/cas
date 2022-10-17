@@ -417,6 +417,9 @@ ext.libraries = [
                 dependencies.create("org.apache.groovy:groovy-json:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
+                dependencies.create("org.apache.groovy:groovy-yaml:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                },
                 dependencies.create("org.apache.groovy:groovy-xml:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },

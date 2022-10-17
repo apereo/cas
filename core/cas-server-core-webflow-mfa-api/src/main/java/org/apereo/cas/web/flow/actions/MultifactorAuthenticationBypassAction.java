@@ -60,7 +60,7 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
      * @param requestContext the request context
      * @param service        the service
      * @param provider       the provider
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isMultifactorAuthenticationBypass(final RequestContext requestContext,
                                                       final RegisteredService service,

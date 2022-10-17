@@ -313,7 +313,7 @@ public class ResourceUtils {
      * Is url boolean.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isUrl(final String resource) {
         return StringUtils.isNotBlank(resource) && resource.startsWith("http");

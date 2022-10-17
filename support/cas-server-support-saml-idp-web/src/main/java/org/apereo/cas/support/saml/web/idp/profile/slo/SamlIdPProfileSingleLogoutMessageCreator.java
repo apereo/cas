@@ -121,7 +121,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + serviceId));
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            FunctionUtils.doUnchecked(u -> samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor,
+            FunctionUtils.doUnchecked(__ -> samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor,
                 httpResponse, httpRequest, binding, samlLogoutRequest, new MessageContext()));
         }
 

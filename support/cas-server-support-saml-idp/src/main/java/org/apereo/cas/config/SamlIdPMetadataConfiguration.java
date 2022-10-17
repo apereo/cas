@@ -185,8 +185,10 @@ public class SamlIdPMetadataConfiguration {
         public SamlRegisteredServiceMetadataResolver metadataQueryProtocolMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean) {
-            return new MetadataQueryProtocolMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean);
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("httpClient")
+            final HttpClient httpClient) {
+            return new MetadataQueryProtocolMetadataResolver(httpClient, casProperties.getAuthn().getSamlIdp(), openSamlConfigBean);
         }
 
         @ConditionalOnMissingBean(name = "jsonResourceMetadataResolver")
@@ -218,8 +220,10 @@ public class SamlIdPMetadataConfiguration {
         public SamlRegisteredServiceMetadataResolver urlResourceMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean) {
-            return new UrlResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean);
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("httpClient")
+            final HttpClient httpClient) {
+            return new UrlResourceMetadataResolver(httpClient, casProperties.getAuthn().getSamlIdp(), openSamlConfigBean);
         }
 
         @ConditionalOnMissingBean(name = "classpathResourceMetadataResolver")

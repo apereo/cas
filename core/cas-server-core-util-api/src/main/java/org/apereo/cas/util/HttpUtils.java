@@ -243,7 +243,7 @@ public class HttpUtils {
         /**
          * Is basic authentication?
          *
-         * @return the boolean
+         * @return true/false
          */
         private boolean isBasicAuthentication() {
             return StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword);
@@ -252,7 +252,7 @@ public class HttpUtils {
         /**
          * Is bearer authentication?
          *
-         * @return the boolean
+         * @return true/false
          */
         private boolean isBearerAuthentication() {
             return StringUtils.isNotBlank(bearerToken);
