@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa.duo;
 
-import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -32,8 +32,8 @@ public class DuoSecurityMultifactorAuthenticationRegistrationProperties extends 
      * Crypto settings on duo registration payloads and redirects to the url.
      */
     @NestedConfigurationProperty
-    private EncryptionJwtSigningJwtCryptographyProperties crypto =
-        new EncryptionJwtSigningJwtCryptographyProperties();
+    private EncryptionOptionalSigningOptionalJwtCryptographyProperties crypto =
+        new EncryptionOptionalSigningOptionalJwtCryptographyProperties();
 
     /**
      * Link to a registration app, typically developed in-house

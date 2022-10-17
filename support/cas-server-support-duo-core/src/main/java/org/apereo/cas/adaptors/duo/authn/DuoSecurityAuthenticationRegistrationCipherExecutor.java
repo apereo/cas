@@ -11,14 +11,14 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  */
 public class DuoSecurityAuthenticationRegistrationCipherExecutor extends BaseStringCipherExecutor {
 
-    public DuoSecurityAuthenticationRegistrationCipherExecutor(final String secretKeyEncryption,
-                                                               final String secretKeySigning,
-                                                               final String alg,
-                                                               final int signingKeySize,
+    public DuoSecurityAuthenticationRegistrationCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+                                                               final String alg, final boolean encryptionEnabled,
+                                                               final boolean signingEnabled, final int signingKeySize,
                                                                final int encryptionKeySize) {
-        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
+        super(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled,
+            signingEnabled, signingKeySize, encryptionKeySize);
     }
-
+    
     @Override
     public String getName() {
         return "Duo Security Registration";

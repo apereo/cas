@@ -11,7 +11,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -103,14 +102,10 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         this.encryptionKeySize = encryptionKeyLength <= 0
             ? CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE : encryptionKeyLength;
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
-
+        initialize();
     }
 
-    /**
-     * Initialize.
-     */
-    @Synchronized
-    public void initialize() {
+    private void initialize() {
         if (!initialized) {
             if (this.encryptionEnabled) {
                 configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
@@ -129,7 +124,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
-        initialize();
         if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
             return encryptAndSign(value, getEncryptionKey(), getSigningKey());
         }
@@ -138,7 +132,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
-        initialize();
         return decode(value, parameters, getEncryptionKey(), getSigningKey());
     }
 
@@ -153,7 +146,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      */
     protected String decode(final Serializable value, final Object[] parameters,
                             final Key encKey, final Key signingKey) {
-        initialize();
         if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
             return verifyAndDecrypt(value, encKey, signingKey);
         }

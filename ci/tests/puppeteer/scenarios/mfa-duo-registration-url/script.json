@@ -23,7 +23,7 @@
     
     "--cas.authn.mfa.duo[0].registration.registration-url=https://httpbin.org/anything/1",
     "--cas.authn.mfa.duo[0].registration.crypto.enabled=true",
-    "--cas.authn.mfa.duo[0].registration.crypto.encryption.enabled=false",
+    "--cas.authn.mfa.duo[0].registration.crypto.encryption-enabled=false",
     "--cas.authn.mfa.duo[0].registration.crypto.signing.key=${DUO_REGISTRATION_SIGNING_KEY}",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",

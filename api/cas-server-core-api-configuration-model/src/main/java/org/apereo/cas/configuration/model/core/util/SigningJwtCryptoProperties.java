@@ -36,9 +36,4 @@ public class SigningJwtCryptoProperties implements Serializable {
      * The signing key size.
      */
     private int keySize = 512;
-
-    /**
-     * Whether or not signing should be enabled.
-     */
-    private boolean enabled = true;
 }
