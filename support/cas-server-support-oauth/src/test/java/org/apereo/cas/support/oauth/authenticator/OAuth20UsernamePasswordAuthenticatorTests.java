@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpHeaders.*;
 
@@ -32,6 +34,8 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
     @Autowired
     @Qualifier("oauthUserAuthenticator")
     private Authenticator authenticator;
+            oauth20ClientSecretValidator,
+            authenticationAttributeReleasePolicy);
 
     @Test
     public void verifyAcceptedCredentialsWithClientId() {
@@ -43,6 +47,25 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
         assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
+    }
+
+    @Test
+    public void verifyAcceptedCredentialsWithClientIdButRejectAllAuthnAttributes() {
+        authenticator = new OAuth20UsernamePasswordAuthenticator(
+                authenticationSystemSupport,
+                servicesManager, serviceFactory,
+                JEESessionStore.INSTANCE,
+                oauthRequestParameterResolver,
+                oauth20ClientSecretValidator,
+                (authentication, assertion, model, service) -> new HashMap<>());
+        val credentials = new UsernamePasswordCredentials("casuser", "casuser");
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        assertNotNull(credentials.getUserProfile());
+        assertEquals("casuser", credentials.getUserProfile().getId());
+        assertEquals(0, ((CommonProfile) credentials.getUserProfile()).getAuthenticationAttributes().size());
     }
 
     @Test

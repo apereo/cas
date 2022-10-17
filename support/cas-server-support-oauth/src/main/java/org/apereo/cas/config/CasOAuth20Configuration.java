@@ -1408,7 +1408,9 @@ public class CasOAuth20Configuration {
             @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
-            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new OAuth20UsernamePasswordAuthenticator(
                 authenticationSystemSupport,
                 servicesManager,
