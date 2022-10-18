@@ -318,12 +318,13 @@ public class MonitoredRepository {
         }
         if (!allComments.isEmpty()) {
             allComments.sort(Collections.reverseOrder(Comparator.comparing(Comment::getUpdatedTime)));
-            var lastComment = allComments.get(0);
-            var body = lastComment.getBody().trim();
-            val runci = body.equals("@apereocas-bot runci");
-            if (gitHubProperties.getRepository().getCommitters().contains(lastComment.getUser().getLogin()) && runci) {
-                gitHub.removeComment(getOrganization(), getName(), lastComment.getId());
-                return true;
+            for (final Comment lastComment : allComments) {
+                var body = lastComment.getBody().trim();
+                val runci = body.equals("@apereocas-bot runci");
+                if (gitHubProperties.getRepository().getCommitters().contains(lastComment.getUser().getLogin()) && runci) {
+                    gitHub.removeComment(getOrganization(), getName(), lastComment.getId());
+                    return true;
+                }
             }
         }
         return false;
