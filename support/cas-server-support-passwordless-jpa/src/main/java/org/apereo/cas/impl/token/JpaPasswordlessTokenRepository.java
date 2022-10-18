@@ -31,7 +31,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
 
     private static final String QUERY_PARAM_USERNAME = "username";
 
-    @PersistenceContext(unitName = "passwordlessEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaPasswordlessAuthNContext")
     private EntityManager entityManager;
 
     public JpaPasswordlessTokenRepository(final int tokenExpirationInSeconds) {
