@@ -32,6 +32,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -131,6 +132,8 @@ public class OAuth20ConfigurationContext {
     private final OAuth20RequestParameterResolver requestParameterResolver;
 
     private final OAuth20ClientSecretValidator clientSecretValidator;
+
+    private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     /**
      * Gets ticket granting ticket.

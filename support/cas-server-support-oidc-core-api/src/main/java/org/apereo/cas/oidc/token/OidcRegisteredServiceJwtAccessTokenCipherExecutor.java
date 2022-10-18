@@ -197,13 +197,13 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
         @Override
         protected String decode(final Serializable value, final Object[] parameters,
-                                final Key encryptionKey, final Key signingKey) {
+                                final Key encKey, final Key signingKey) {
             if (parameters.length > 0) {
                 val registeredService = (RegisteredService) parameters[0];
                 val decryptionKey = getEncryptionKeyForDecryption(registeredService);
                 return super.decode(value, parameters, decryptionKey, signingKey);
             }
-            return super.decode(value, parameters, encryptionKey, signingKey);
+            return super.decode(value, parameters, encKey, signingKey);
         }
     }
 

@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBea
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.http.HttpClient;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -50,13 +50,13 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
     @Override
     public DuoSecurityMultifactorAuthenticationProvider createProvider(final DuoSecurityMultifactorAuthenticationProperties properties) {
         val provider = new DefaultDuoSecurityMultifactorAuthenticationProvider();
-        provider.setRegistrationUrl(properties.getRegistrationUrl());
         provider.setDuoAuthenticationService(getDuoAuthenticationService(properties));
         provider.setFailureMode(properties.getFailureMode());
         provider.setFailureModeEvaluator(failureModeEvaluator);
         provider.setBypassEvaluator(getMultifactorAuthenticationProviderBypass(properties));
         provider.setOrder(properties.getRank());
         provider.setId(properties.getId());
+        provider.setRegistration(properties.getRegistration());
         return provider;
     }
 

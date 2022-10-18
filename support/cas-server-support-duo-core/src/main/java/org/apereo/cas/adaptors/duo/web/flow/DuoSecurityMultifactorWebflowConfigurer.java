@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -159,7 +159,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
     private static void createDuoRedirectToRegistrationAction(final List<AbstractStateModel> states) {
         val endModel = new ViewStateModel(VIEW_ID_REDIRECT_TO_DUO_REGISTRATION);
-        endModel.setView("externalRedirect:#{flowScope.duoRegistrationUrl}");
+        endModel.setView("externalRedirect:#{flowScope.duoRegistrationUrl}?");
         states.add(endModel);
     }
 

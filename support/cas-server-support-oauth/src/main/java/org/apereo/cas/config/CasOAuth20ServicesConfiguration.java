@@ -34,7 +34,6 @@ import org.springframework.core.Ordered;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
 public class CasOAuth20ServicesConfiguration {
-
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oauthServiceRegistryExecutionPlanConfigurer")

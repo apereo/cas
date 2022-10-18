@@ -22,7 +22,7 @@ Duo offers several options for authenticating users:
 
 <div class="alert alert-warning"><strong>Usage</strong>
 <p>Please note that support for Duo multifactor authentication that is based on the Duo's Web SDK and the embedded iFrame
-is deprecated and scheduled to be removed in the future. You should consider switching to the 'Universal Prompt' variant
+is deprecated and scheduled to be removed on March 30, 2024. You should consider switching to the 'Universal Prompt' variant
 described in this document to avoid surprises in future upgrades.</p>
 </div>
 
@@ -70,7 +70,24 @@ the health status of the service using Duo Security's `ping` API.
 The results of the operations are recorded and reported using `health` endpoint 
 provided by [CAS Monitoring endpoints](../monitoring/Monitoring-Statistics.html).
 Of course, the same result throughout the Duo authentication flow is also used to determine failure modes.
- 
+  
+## User Registration
+
+If you would rather not rely on Duo Security's built-in registration flow and have your
+own registration application that allows users to onboard and enroll with Duo Security, you can instruct CAS
+to redirect to your enrollment application, if the user's account status is determined to require enrollment.
+This typically means that you must turn on user-account-status checking in CAS so that it can verify
+the user's account status directly with Duo Security. You must also make sure your integration type, as selected
+in Duo Security's admin dashboard, is chosen to be the correct type that would allow CAS to execute such
+requests and of course, the user in question must not have been onboard, enrolled or created previously anywhere
+in Duo Security. 
+                   
+The redirect URL to your enrollment application may include a special `principal` parameter that contains
+the user's identity as JWT. Cipher operations and settings must be abled in CAS settings for Duo Security's
+registration before this parameter can be built and added to the final URL.
+
+{% include_cached casproperties.html properties="cas.authn.mfa.duo[].registration" %}
+
 ## Universal Prompt
 
 Universal Prompt is a variation of Duo Multifactor Authentication 
