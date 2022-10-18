@@ -66,7 +66,7 @@ to be provisioned to [Apache Syncope](../registration/Account-Registration-Provi
 - Spring Boot   
 - Apache Tomcat
 - Twilio
-- Jose4j                                            X
+- Jose4j
 - Apache Ignite
 - Apache Shiro
 - Netty
