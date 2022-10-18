@@ -12,8 +12,8 @@
 
     "--spring.session.store-type=HAZELCAST",
 
-    "--cas.webflow.session.hazelcast.cluster.network.port-auto-increment=false",
-    "--cas.webflow.session.hazelcast.cluster.network.port=5703",
+    "--cas.webflow.session.server.hazelcast.cluster.network.port-auto-increment=false",
+    "--cas.webflow.session.server.hazelcast.cluster.network.port=5703",
 
     "--cas.webflow.session.storage=true"
   ]

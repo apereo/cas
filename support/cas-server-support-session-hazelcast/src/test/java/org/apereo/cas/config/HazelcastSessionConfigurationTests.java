@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
         RefreshAutoConfiguration.class,
         HazelcastSessionConfiguration.class
     },
-    properties = "cas.webflow.session.hazelcast.cluster.core.instance-name=hzsessioninstance")
+    properties = "cas.webflow.session.server.hazelcast.cluster.core.instance-name=hzsessioninstance")
 @Tag("Hazelcast")
 public class HazelcastSessionConfigurationTests {
     @Autowired
