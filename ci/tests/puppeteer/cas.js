@@ -16,7 +16,7 @@ const NodeStaticAuth = require("node-static-auth");
 const operativeSystemModule = require("os");
 const figlet = require("figlet");
 const CryptoJS = require("crypto-js");
-
+const jose = require('jose');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -462,6 +462,11 @@ exports.verifyJwt = async (token, secret, options) => {
         await this.logg(decoded);
     }
     return decoded;
+};
+
+exports.decryptJwt = async(ticket, rsaPrivateKeyPath, alg = "RS256") => {
+    const secretKey = await jose.importPKCS8(rsaPrivateKeyPath, alg);
+    return await jose.jwtDecrypt(ticket, secretKey, {});
 };
 
 exports.decodeJwt = async (token, complete = false) => {
