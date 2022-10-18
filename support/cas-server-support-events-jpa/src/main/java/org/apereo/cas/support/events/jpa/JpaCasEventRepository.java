@@ -39,8 +39,8 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
 
     private final JpaBeanFactory jpaBeanFactory;
 
-    @PersistenceContext(unitName = "eventsEntityManagerFactory")
-    private transient EntityManager entityManager;
+    @PersistenceContext(unitName = "jpaEventRegistryContext")
+    private EntityManager entityManager;
 
     public JpaCasEventRepository(final CasEventRepositoryFilter eventRepositoryFilter,
                                  final PlatformTransactionManager transactionManager,

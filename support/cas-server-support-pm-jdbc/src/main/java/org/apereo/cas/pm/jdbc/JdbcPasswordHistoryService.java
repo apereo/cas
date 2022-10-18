@@ -26,8 +26,8 @@ import java.util.Collection;
 public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
     private static final String SELECT_QUERY = "SELECT p FROM JdbcPasswordHistoryEntity p ";
 
-    @PersistenceContext(unitName = "passwordHistoryEntityManagerFactory")
-    private transient EntityManager entityManager;
+    @PersistenceContext(unitName = "jpaPasswordHistoryContext")
+    private EntityManager entityManager;
 
     @Override
     public boolean exists(final PasswordChangeRequest changeRequest) {
