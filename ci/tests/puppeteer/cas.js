@@ -161,17 +161,22 @@ exports.assertInvisibility = async (page, selector) => {
 
 
 exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
-    const theCookie = (await page.cookies()).filter(value => {
-        console.log(`Checking cookie ${value.name}`);
-        return value.name === cookieName
+    const cookies = (await page.cookies()).filter(c => {
+        console.log(`Checking cookie ${c.name}:${c.value}`);
+        return c.name === cookieName
     });
+    console.log(`Found cookies ${cookies.length}`);
     if (present) {
         console.log(`Checking for cookie ${cookieName}`);
-        assert(theCookie.length !== 0);
-        console.log(`Asserting cookie:\n${colors.green(JSON.stringify(theCookie, undefined, 2))}`);
-        return theCookie[0];
+        assert(cookies.length !== 0);
+        console.log(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
+        return cookies[0];
     } else {
-        assert(theCookie.length === 0);
+        if (cookies.length > 0) {
+            let ck = cookies[0];
+            console.log(`Found cookie ${ck.name}:${ck.value}:${ck.path}:${ck.domain}:${ck.httpOnly}:${ck.secure}`)
+        }
+        assert(cookies.length === 0);
         console.log(`Cookie ${cookieName} cannot be found`);
     }
 };
@@ -445,6 +450,20 @@ exports.createJwt = async (payload, key, alg = "RS256", options = {}) => {
     return token;
 };
 
+exports.verifyJwt = async (token, secret, options) => {
+    console.log(`Decoding token ${token}`);
+    let decoded = JwtOps.verify(token, secret, options, undefined);
+    if (options.complete) {
+        console.log(`Decoded token header: ${colors.green(decoded.header)}`);
+        console.log("Decoded token payload:");
+        await this.logg(decoded.payload);
+    } else {
+        console.log("Decoded token payload:");
+        await this.logg(decoded);
+    }
+    return decoded;
+};
+
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
     let decoded = JwtOps.decode(token, {complete: complete});
@@ -604,7 +623,7 @@ exports.refreshContext = async(url = "https://localhost:8443/cas") => {
     console.log(response);
 };
 
-exports.loginDuoSecurityBypassCode = async (page, type) => {
+exports.loginDuoSecurityBypassCode = async (page, type, username = "casuser") => {
     await page.waitForTimeout(12000);
     if (type === "websdk") {
         const frame = await page.waitForSelector("iframe#duo_iframe");
@@ -620,7 +639,7 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
     } else {
         await this.click(page, "button#passcode");
     }
-    let bypassCodes = await this.fetchDuoSecurityBypassCodes();
+    let bypassCodes = await this.fetchDuoSecurityBypassCodes(username);
     console.log(`Duo Security ${type}: Retrieved bypass codes ${bypassCodes}`);
     if (type === "websdk") {
         let bypassCode = String(bypassCodes[0]);

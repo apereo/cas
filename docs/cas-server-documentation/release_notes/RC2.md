@@ -44,7 +44,7 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `346` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `347` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Account Registration
@@ -53,18 +53,20 @@ The [account registration functionality](../registration/Account-Registration-Ov
 to be provisioned to [Apache Syncope](../registration/Account-Registration-Provisioning-Syncope.html).
 
 ## Other Stuff
-
+     
+- Client secrets for [OpenID Connect Services](../authentication/OIDC-Authentication-Clients.html) are now URL-decoded before validations.
 - A [DynamoDb-based health indicator](../monitoring/Configuring-Monitoring-DynamoDb.html) is available to report back on the health status of
   DynamoDb tables and connections.
 - [Git service registry](../services/Git-Service-Management.html) is now able to support rebase operations.
 - SSO sessions under [account profile](../registration/Account-Management-Overview.html) can now be selectively removed.
+- Authentication attributes can now optionally be included in OpenID Connect ID token or user profile payloads. 
 
 ## Library Upgrades
 
 - Spring Boot   
 - Apache Tomcat
 - Twilio
-- Jose4j
+- Jose4j                                            X
 - Apache Ignite
 - Apache Shiro
 - Netty
@@ -76,6 +78,9 @@ to be provisioned to [Apache Syncope](../registration/Account-Registration-Provi
 - Nimbus
 - WSS4j
 - Hibernate
+- Groovy
+- HAL Explorer
+- Swagger
 - Jodatime
 - Spring Data
 - Azure CosmosDb

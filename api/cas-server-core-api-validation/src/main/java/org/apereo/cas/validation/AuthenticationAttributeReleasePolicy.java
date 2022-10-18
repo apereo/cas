@@ -13,7 +13,6 @@ import java.util.Map;
  * @author Daniel Frett
  * @since 5.2.0
  */
-@FunctionalInterface
 public interface AuthenticationAttributeReleasePolicy {
     /**
      * Default bean name.
@@ -35,11 +34,33 @@ public interface AuthenticationAttributeReleasePolicy {
                                                                     RegisteredService service);
 
     /**
+     * Gets authentication attributes for release.
+     *
+     * @param authentication the authentication
+     * @param service        the service
+     * @return the authentication attributes for release
+     */
+    Map<String, List<Object>> getAuthenticationAttributesForRelease(Authentication authentication, RegisteredService service);
+
+    /**
      * NoOp authentication attribute release policy.
      *
      * @return the authentication attribute release policy
      */
     static AuthenticationAttributeReleasePolicy none() {
-        return (authentication, assertion, model, service) -> new HashMap<>(0);
+        return new AuthenticationAttributeReleasePolicy() {
+            @Override
+            public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
+                                                                                   final Assertion assertion, final Map<String, Object> model,
+                                                                                   final RegisteredService service) {
+                return new HashMap<>(0);
+            }
+
+            @Override
+            public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
+                                                                                   final RegisteredService service) {
+                return new HashMap<>(0);
+            }
+        };
     }
 }

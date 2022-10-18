@@ -45,6 +45,7 @@ import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpoin
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.val;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
@@ -153,11 +154,14 @@ public class CasOAuthUmaConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("umaResourceSetRepository")
             final ResourceSetRepository umaResourceSetRepository,
             final CasConfigurationProperties casProperties) {
 
             return UmaConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .applicationContext(applicationContext)
                 .accessTokenGenerator(oauthTokenGenerator)
                 .casProperties(casProperties)
