@@ -1,5 +1,6 @@
-package org.apereo.cas.configuration.model.support.mfa;
+package org.apereo.cas.configuration.model.support.mfa.duo;
 
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -9,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
 
@@ -75,14 +77,11 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
     private String duoApiHost;
 
     /**
-     * Link to a registration app, typically developed in-house
-     * in order to allow new users to sign-up for duo functionality.
-     * If the user account status requires enrollment and this link
-     * is specified, CAS will redirect the authentication flow
-     * to this registration app. Otherwise, the default duo mechanism
-     * for new-user registrations shall take over.
+     * Settings for Duo registration of unenrolled accounts.
      */
-    private String registrationUrl;
+    @NestedConfigurationProperty
+    private DuoSecurityMultifactorAuthenticationRegistrationProperties registration =
+        new DuoSecurityMultifactorAuthenticationRegistrationProperties();
 
     /**
      * Indicates whether this provider should support trusted devices.

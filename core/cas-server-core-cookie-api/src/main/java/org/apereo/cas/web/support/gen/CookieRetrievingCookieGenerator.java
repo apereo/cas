@@ -164,48 +164,34 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         return null;
     }
-    /**
-     * Override Spring CookieGenerator to cause cookies to be added
-     * in the same way using 'setHeader' or 'addHeader' methods.
-     * This prevents a bug when a cookie is added to a response via addCookie as well as
-     *  the using addHeader/setHeader method to set the cookie.
-     *  The reason why its a bug is because there is a conflict in order of operations,
-     *  and the 'addCookie' method is added after add/setHeader, thus winning.
-     *  However, addCookie doesn't currently support
-     *  'SameSite' which led to this method being overridden.
-     *  Once CAS is migrated to a Servlet API that supports SameSite,
-     *  this can be removed.
-     * @param response the response
-     */
-    @Override
-    public void removeCookie(final HttpServletResponse response){
-        val cookie = createCookie(StringUtils.EMPTY);
-        cookie.setMaxAge(0);
-        addCookieHeaderToResponse(cookie, StringUtils.EMPTY, response);
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace("Removed cookie '" + this.getCookieName() + "'");
-        }
-    }
 
     @Override
     public void removeAll(final HttpServletRequest request, final HttpServletResponse response) {
         Optional.ofNullable(request.getCookies()).ifPresent(cookies -> Arrays.stream(cookies)
-            .filter(c -> StringUtils.equalsIgnoreCase(c.getName(), getCookieName()))
-            .forEach(c -> Stream.of("/", getCookiePath(), StringUtils.appendIfMissing(getCookiePath(), "/"))
-                .forEach(path -> {
-                    c.setMaxAge(0);
-                    c.setPath(path);
-                    c.setSecure(isCookieSecure());
-                    c.setHttpOnly(isCookieHttpOnly());
-                    c.setComment(cookieGenerationContext.getComment());
-                    LOGGER.debug("Removing cookie [{}] with path [{}]", c.getName(), c.getPath());
-                    addCookieHeaderToResponse(c, request, response);
-                })));
+            .filter(cookie -> StringUtils.equalsIgnoreCase(cookie.getName(), getCookieName()))
+            .forEach(cookie ->
+                Stream
+                    .of("/", getCookiePath(),
+                        StringUtils.removeEndIgnoreCase(getCookiePath(), "/"),
+                        StringUtils.appendIfMissing(getCookiePath(), "/"))
+                    .distinct()
+                    .forEach(path -> {
+                        val crm = new Cookie(cookie.getName(), cookie.getValue());
+                        crm.setMaxAge(0);
+                        crm.setPath(path);
+                        crm.setSecure(cookie.getSecure());
+                        crm.setHttpOnly(cookie.isHttpOnly());
+                        crm.setComment(cookie.getComment());
+                        LOGGER.debug("Removing cookie [{}] with path [{}] and [{}]", crm.getName(), crm.getPath(), crm.getValue());
+                        response.addCookie(crm);
+                    })));
     }
 
     @Nonnull
     @Override
-    protected Cookie createCookie(@NonNull final String cookieValue) {
+    protected Cookie createCookie(
+        @NonNull
+        final String cookieValue) {
         val c = super.createCookie(cookieValue);
         c.setComment(cookieGenerationContext.getComment());
         c.setPath(cleanCookiePath(c.getPath()));
@@ -223,20 +209,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     protected Cookie addCookieHeaderToResponse(final Cookie cookie,
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) {
-        val sameSiteResult = CookieSameSitePolicy.of(cookieGenerationContext).build(request, response);
-        return addCookieHeaderToResponse(cookie, sameSiteResult.isPresent() ? sameSiteResult.get() : StringUtils.EMPTY, response);
-    }
-    /**
-     *  Add cookie header to response
-     *  Taking the 'sameSiteResult' from a previous calculation.
-     * @param cookie The initial cookie
-     * @param sameSiteResult  The value of sameSite to be added
-     * @param response  The HttpResponse to add the cookie too
-     * @return the cookie
-     */
-    protected Cookie addCookieHeaderToResponse(final Cookie cookie,
-                                               final String sameSiteResult,
-                                               final HttpServletResponse response){
         val builder = new StringBuilder();
         builder.append(String.format("%s=%s;", cookie.getName(), cookie.getValue()));
 
@@ -248,14 +220,13 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         val path = cleanCookiePath(cookie.getPath());
         builder.append(String.format(" Path=%s;", path));
-        if (StringUtils.isNotEmpty(sameSiteResult)) {
-            builder.append(String.format(" %s", sameSiteResult));
-        }
+        val sameSiteResult = CookieSameSitePolicy.of(cookieGenerationContext).build(request, response);
+        sameSiteResult.ifPresent(result -> builder.append(String.format(" %s", result)));
         val sameSitePolicy = cookieGenerationContext.getSameSitePolicy().toLowerCase();
-        if (cookie.getSecure() || (StringUtils.isNotEmpty(sameSiteResult) && StringUtils.equalsIgnoreCase(sameSiteResult, "none"))) {
+        if (cookie.getSecure() || (sameSiteResult.isPresent() && StringUtils.equalsIgnoreCase(sameSiteResult.get(), "none"))) {
             builder.append(" Secure;");
             LOGGER.trace("Marked cookie [{}] as secure as indicated by cookie configuration or "
-                    + "the configured same-site policy set to [{}]", cookie.getName(), sameSitePolicy);
+                         + "the configured same-site policy set to [{}]", cookie.getName(), sameSitePolicy);
         }
         if (cookie.isHttpOnly()) {
             builder.append(" HttpOnly;");
@@ -265,8 +236,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val setCookieHeaders = response.getHeaders("Set-Cookie");
         response.setHeader("Set-Cookie", value);
         setCookieHeaders.stream()
-                .filter(header -> !header.startsWith(cookie.getName() + '='))
-                .forEach(header -> response.addHeader("Set-Cookie", header));
+            .filter(header -> !header.startsWith(cookie.getName() + '='))
+            .forEach(header -> response.addHeader("Set-Cookie", header));
         return cookie;
     }
 }

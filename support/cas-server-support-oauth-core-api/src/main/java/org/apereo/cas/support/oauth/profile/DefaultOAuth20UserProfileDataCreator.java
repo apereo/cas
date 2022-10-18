@@ -63,14 +63,33 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
     protected Principal getAccessTokenAuthenticationPrincipal(final OAuth20AccessToken accessToken,
                                                               final JEEContext context,
                                                               final RegisteredService registeredService) {
-        val currentPrincipal = accessToken.getAuthentication().getPrincipal();
-        LOGGER.debug("Preparing user profile response based on CAS principal [{}]", currentPrincipal);
+        val authentication = accessToken.getAuthentication();
+        val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
+        val authnAttributes = getConfigurationContext().getObject().getAuthenticationAttributeReleasePolicy()
+            .getAuthenticationAttributesForRelease(authentication, registeredService);
+        attributes.putAll(authnAttributes);
+        val operatingPrincipal = getConfigurationContext().getObject().getPrincipalFactory()
+            .createPrincipal(authentication.getPrincipal().getId(), attributes);
+        
+        LOGGER.debug("Preparing user profile response based on CAS principal [{}]", operatingPrincipal);
         val principal = configurationContext.getObject().getProfileScopeToAttributesFilter().filter(
-            accessToken.getService(), currentPrincipal, registeredService, accessToken);
+            accessToken.getService(), operatingPrincipal, registeredService, accessToken);
         LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
         return principal;
     }
 
+    /*
+    private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
+                                                       final RegisteredService registeredService) {
+        val authentication = accessToken.getAuthentication();
+        val attributes = new HashMap<>(authentication.getAttributes());
+        val authnAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
+            .getAuthenticationAttributesForRelease(authentication, registeredService);
+        attributes.putAll(authnAttributes);
+        return getConfigurationContext().getPrincipalFactory().createPrincipal(authentication.getPrincipal().getId(), attributes);
+    }
+     */
+    
     protected void finalizeProfileResponse(final OAuth20AccessToken accessTokenTicket,
                                            final Map<String, Object> modelAttributes,
                                            final Principal principal,

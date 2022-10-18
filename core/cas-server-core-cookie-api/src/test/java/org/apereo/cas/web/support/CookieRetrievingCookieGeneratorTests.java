@@ -77,8 +77,8 @@ public class CookieRetrievingCookieGeneratorTests {
         request.setCookies(cookie1, cookie2, cookie3);
         response = new MockHttpServletResponse();
         gen1.removeAll(request, response);
-        assertEquals(9, response.getCookies().length);
-        assertTrue(Arrays.stream(response.getCookies()).allMatch(c -> c.getMaxAge() == 0));
+        assertEquals(6, response.getCookies().length);
+        assertTrue(Arrays.stream(response.getCookies()).allMatch(cookie -> cookie.getMaxAge() == 0));
     }
 
     @Test
