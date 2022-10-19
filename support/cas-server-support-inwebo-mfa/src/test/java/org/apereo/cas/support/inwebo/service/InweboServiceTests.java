@@ -13,6 +13,7 @@ import org.apereo.cas.util.ssl.SSLUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -129,7 +130,7 @@ public class InweboServiceTests {
         val loginQueryResult = new LoginQueryResult();
         loginQueryResult.setErr("OK");
         loginQueryResult.getManame().add("Authenticator");
-        loginQueryResult.getManame().add("");
+        loginQueryResult.getManame().add(StringUtils.EMPTY);
         when(service.consoleAdmin().loginQuery(anyLong())).thenReturn(loginQueryResult);
 
         val output = service.loginSearchQuery("login");
@@ -154,7 +155,7 @@ public class InweboServiceTests {
         loginQueryResult.setErr("OK");
         loginQueryResult.getManame().add("Authenticator");
         loginQueryResult.getManame().add("SomethingElse");
-        loginQueryResult.getManame().add("");
+        loginQueryResult.getManame().add(StringUtils.EMPTY);
         when(service.consoleAdmin().loginQuery(anyLong())).thenReturn(loginQueryResult);
 
         val output = service.loginSearchQuery("login");
