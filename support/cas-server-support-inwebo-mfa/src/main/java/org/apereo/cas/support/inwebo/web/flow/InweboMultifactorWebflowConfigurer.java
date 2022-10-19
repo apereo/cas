@@ -52,18 +52,23 @@ public class InweboMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
 
             val checkUserState = createActionState(flow, "checkUser", CasWebflowConstants.ACTION_ID_INWEBO_CHECK_USER);
             createTransitionForState(checkUserState, WebflowConstants.PUSH, "startPush");
-            createTransitionForState(checkUserState, WebflowConstants.BROWSER, "startBrowser");
+            createTransitionForState(checkUserState, WebflowConstants.VA, "startVA");
+            createTransitionForState(checkUserState, WebflowConstants.MA, "startMA");
             createTransitionForState(checkUserState, WebflowConstants.SELECT, "selectAuthent");
             createTransitionForState(checkUserState, CasWebflowConstants.TRANSITION_ID_ERROR, "inweboError");
 
             val selectAuthentState = createViewState(flow, "selectAuthent", "inwebo/casInweboSelectAuthnView");
             createTransitionForState(selectAuthentState, WebflowConstants.PUSH, "startPush");
-            createTransitionForState(selectAuthentState, WebflowConstants.BROWSER, "startBrowser");
+            createTransitionForState(selectAuthentState, WebflowConstants.VA, "startVA");
+            createTransitionForState(selectAuthentState, WebflowConstants.MA, "startMA");
 
-            val startBrowserState = createViewState(flow, "startBrowser", "inwebo/casInweboBrowserAuthnView");
-            createTransitionForState(startBrowserState, "enroll", "mustEnroll");
-            createTransitionForState(startBrowserState, "otp", CasWebflowConstants.STATE_ID_REAL_SUBMIT);
-            createTransitionForState(startBrowserState, CasWebflowConstants.TRANSITION_ID_ERROR, "inweboError");
+            val startMAState = createViewState(flow, "startMA", "inwebo/casInweboMAAuthnView");
+            createTransitionForState(startMAState, "enroll", "mustEnroll");
+            createTransitionForState(startMAState, "otp", CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+            createTransitionForState(startMAState, CasWebflowConstants.TRANSITION_ID_ERROR, "inweboError");
+
+            val startVAState = createViewState(flow, "startVA", "inwebo/casInweboVAAuthnView");
+            createTransitionForState(startVAState, "otp", CasWebflowConstants.STATE_ID_REAL_SUBMIT);
 
             val mustEnrollState = createActionState(flow, "mustEnroll", CasWebflowConstants.ACTION_ID_INWEBO_MUST_ENROLL);
             createTransitionForState(mustEnrollState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "inweboError");
@@ -81,12 +86,13 @@ public class InweboMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, "inweboError");
 
             val inweboErrorState = createViewState(flow, "inweboError", "inwebo/casInweboErrorView");
-            createTransitionForState(inweboErrorState, WebflowConstants.BROWSER, "startBrowser");
+            createTransitionForState(inweboErrorState, WebflowConstants.VA, "startVA");
+            createTransitionForState(inweboErrorState, WebflowConstants.MA, "startMA");
             createTransitionForState(inweboErrorState, CasWebflowConstants.TRANSITION_ID_RETRY, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
             createTransitionForState(inweboErrorState, CasWebflowConstants.TRANSITION_ID_ERROR, "inweboError");
         });
 
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_INWEBO_EVENT_ID,
-            casProperties.getAuthn().getMfa().getInwebo().getId());
+                casProperties.getAuthn().getMfa().getInwebo().getId());
     }
 }
