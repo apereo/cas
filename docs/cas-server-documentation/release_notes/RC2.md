@@ -50,13 +50,19 @@ As a quick status update, we anticipate the work to finalize in the next release
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `347` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `350` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Account Registration
 
 The [account registration functionality](../registration/Account-Registration-Overview.html) now allows user accounts
 to be provisioned to [Apache Syncope](../registration/Account-Registration-Provisioning-Syncope.html).
+
+### Inwebo Multifactor Authentication
+
+Major improvements to [Inwebo Multifactor Authentication](../mfa/Inwebo-Authentication.html) to better detect authentication methods,
+support Inwebo's virtual authenticator and provide better control over push/browser settings. The mAccessWeb enrollment is also
+improved with a PIN code confirmation.
 
 ### Duo Security Onboarding
 
