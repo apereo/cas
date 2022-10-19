@@ -27,13 +27,13 @@
         </div>
         <script th:inline="javascript">
             /*<![CDATA[*/
-                let casLogin = /*[[${login}]]*/ '';
-                let siteAlias = /*[[${siteAlias}]]*/ '';
-                let siteDescription = /*[[${siteDescription}]]*/ '';
+            let casLogin = /*[[${login}]]*/ '';
+            let siteAlias = /*[[${siteAlias}]]*/ '';
+            let siteDescription = /*[[${siteDescription}]]*/ '';
 
-                window.onload = () => {
-                    neon = new Neon.Neon(siteAlias, siteDescription);
-                    neon.initOnline()
+            window.onload = () => {
+                neon = new Neon.Neon(siteAlias, siteDescription);
+                neon.initOnline()
                     .then(logins => {
                         if (logins.length === 0 || !logins.includes(casLogin)) {
                             $('#enrollForm').submit();
@@ -43,21 +43,21 @@
                     .catch(e => {
                         $('#inweboErrorForm').submit();
                     });
-                };
+            };
 
-                function getOtp() {
-                    let pin = document.getElementById('pin').value;
-                    if (pin !== '') {
-                        neon.getOnlineOtpWithPin(casLogin, pin)
+            function getOtp() {
+                let pin = document.getElementById('pin').value;
+                if (pin !== '') {
+                    neon.getOnlineOtpWithPin(casLogin, pin)
                         .then(otp => {
                             document.getElementById('otp').value = otp;
                             $('#otpForm').submit();
                         }).catch(e => {
-                            $('#otpError').css('display', 'block');
-                        });
-                    }
-                    return false;
+                        $('#otpError').css('display', 'block');
+                    });
                 }
+                return false;
+            }
             /*]]>*/
         </script>
         <div class="form-wrapper">

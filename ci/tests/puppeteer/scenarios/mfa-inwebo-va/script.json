@@ -8,7 +8,7 @@
 
     "--cas.audit.engine.enabled=false",
 
-    "--cas.authn.accept.users=testcas::password",
+    "--cas.authn.accept.users=testcasva::password",
 
     "--cas.authn.mfa.inwebo.service-id=7046",
     "--cas.authn.mfa.inwebo.site-alias=3cd94e791bef73bad0e25bce8d47f86a",
