@@ -23,6 +23,8 @@ import javax.net.ssl.SSLContext;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
+
 /**
  * The Inwebo service.
  *
@@ -59,23 +61,42 @@ public class InweboService {
     }
 
     /**
-     * Login search.
+     * Login search and query.
      *
      * @param login the login
-     * @return the inwebo login search response
+     * @return the inwebo login search/query response
      */
-    public InweboLoginSearchResponse loginSearch(final String login) {
-        val soap = consoleAdmin.loginSearch(login);
-        val err = soap.getErr();
+    public InweboLoginSearchResponse loginSearchQuery(final String login) {
+        val loginSearchResult = consoleAdmin.loginSearch(login);
+        val err = loginSearchResult.getErr();
         val response = (InweboLoginSearchResponse) buildResponse(new InweboLoginSearchResponse(),
-            "loginSearch(" + login + ')', err);
+                "loginSearch(" + login + ')', err);
         if (response.isOk()) {
-            val count = soap.getCount();
+            val count = loginSearchResult.getCount();
             response.setCount(count);
             if (count == 1) {
-                response.setUserId(soap.getId().get(0));
-                response.setUserStatus(soap.getStatus().get(0));
-                response.setActivationStatus(soap.getActivationStatus().get(0));
+                var activationStatus = loginSearchResult.getActivationStatus().get(0);
+                val userId = loginSearchResult.getId().get(0);
+                if (activationStatus == 1) {
+                    val loginQueryResult = consoleAdmin.loginQuery(userId);
+                    if ("OK".equals(loginQueryResult.getErr())) {
+                        var hasAuthenticator = false;
+                        for (val maname : loginQueryResult.getManame()) {
+                            if (maname.contains("Authenticator")) {
+                                hasAuthenticator = true;
+                                break;
+                            }
+                        }
+                        if (!hasAuthenticator) {
+                            activationStatus = BROWSER_AUTHENTICATION_STATUS;
+                        } else if (loginQueryResult.getManame().size() > 2) {
+                            activationStatus = PUSH_AND_BROWSER_AUTHENTICATION_STATUS;
+                        }
+                    }
+                }
+                response.setUserId(userId);
+                response.setUserStatus(loginSearchResult.getStatus().get(0));
+                response.setActivationStatus(activationStatus);
             }
         }
         return response;

@@ -1,6 +1,9 @@
 package org.apereo.cas.support.inwebo.service;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.inwebo.service.soap.generated.LoginQuery;
+import org.apereo.cas.support.inwebo.service.soap.generated.LoginQueryResponse;
+import org.apereo.cas.support.inwebo.service.soap.generated.LoginQueryResult;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginSearch;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginSearchResponse;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginSearchResult;
@@ -36,5 +39,18 @@ public class InweboConsoleAdmin extends WebServiceGatewaySupport {
         loginSearch.setNmax(1);
         loginSearch.setSort(0);
         return ((LoginSearchResponse) getWebServiceTemplate().marshalSendAndReceive(loginSearch)).getLoginSearchReturn();
+    }
+
+    /**
+     * Login query.
+     *
+     * @param userId the user identifier
+     * @return the login query result
+     */
+    public LoginQueryResult loginQuery(final long userId) {
+        val loginQuery = new LoginQuery();
+        loginQuery.setUserid(0);
+        loginQuery.setLoginid(userId);
+        return ((LoginQueryResponse) getWebServiceTemplate().marshalSendAndReceive(loginQuery)).getLoginQueryReturn();
     }
 }

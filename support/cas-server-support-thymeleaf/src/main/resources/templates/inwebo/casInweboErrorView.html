@@ -40,10 +40,13 @@
             </form>
             <form id="startBrowserForm" method="POST">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <input type="hidden" name="_eventId" value="browser"/>
+                <input type="hidden" name="_eventId" th:value="${browserAuthenticator}"/>
             </form>
             <div id="enrollError" class="banner banner-danger alert alert-danger banner-dismissible" style="display:none;">
                 <p th:utext="#{cas.inwebo.enroll.failure}">The enrollment failed</p>
+            </div>
+            <div id="enrollBadPinConfirmation" class="banner banner-danger alert alert-danger banner-dismissible" style="display:none;">
+                <p th:utext="#{cas.inwebo.enroll.badpinconfirmation}">Bad code PIN confirmation</p>
             </div>
             <script th:inline="javascript">
                 /*<![CDATA[*/
@@ -63,12 +66,19 @@
                 function doEnroll() {
                     let code = document.getElementById('code').value;
                     let pin = document.getElementById('pin').value;
+                    let pin2 = document.getElementById('pin2').value;
+                    if (pin !== pin2) {
+                        $('#enrollBadPinConfirmation').css('display', 'block');
+                        $('#enrollError').css('display', 'none');
+                        return false;
+                    }
                     if (code !== '' && pin !== '') {
                         neon.activateWithPin(code, pin)
                             .then(login => {
                                 $('#startBrowserForm').submit();
                             }).catch(e => {
                             $('#enrollError').css('display', 'block');
+                            $('#enrollBadPinConfirmation').css('display', 'none');
                         });
                     }
                     return false;
@@ -99,7 +109,6 @@
                                 </span>
                         </label>
                     </section>
-                    
                     <section class="cas-field form-group my-3">
                         <label class="mdc-text-field mdc-text-field--outlined control-label">
                             <input class="mdc-text-field__input form-control"
@@ -115,7 +124,28 @@
                                     <span class="mdc-notched-outline__leading"></span>
                                     <span class="mdc-notched-outline__notch">
                                         <span class="mdc-floating-label"
-                                              th:text="#{cas.inwebo.pin}">Activation Code</span>
+                                              th:text="#{cas.inwebo.pin}">PIN code</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                        </label>
+                    </section>
+                    <section class="cas-field form-group my-3">
+                        <label class="mdc-text-field mdc-text-field--outlined control-label">
+                            <input class="mdc-text-field__input form-control"
+                                   id="pin2"
+                                   name="pin2"
+                                   size="6"
+                                   maxlength="6"
+                                   type="text"
+                                   autocomplete="off" required
+                                   autocapitalize="none"
+                                   spellcheck="false" />
+                            <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label"
+                                              th:text="#{cas.inwebo.pin2}">PIN code confirmation</span>
                                     </span>
                                     <span class="mdc-notched-outline__trailing"></span>
                                 </span>

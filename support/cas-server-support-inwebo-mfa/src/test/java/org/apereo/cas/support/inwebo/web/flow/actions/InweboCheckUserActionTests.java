@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +27,8 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     private static final String SITE_ALIAS = "7845zesf357dsq89s74za6z4e5df";
     private static final int USER_ID = 123456;
 
+    private InweboMultifactorAuthenticationProperties inwebo;
+
     private InweboCheckUserAction action;
 
     @Override
@@ -33,7 +36,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     public void setUp() {
         super.setUp();
 
-        val inwebo = new InweboMultifactorAuthenticationProperties();
+        inwebo = new InweboMultifactorAuthenticationProperties();
         inwebo.setSiteAlias(SITE_ALIAS);
         val casProperties = new CasConfigurationProperties();
         casProperties.getAuthn().getMfa().setInwebo(inwebo);
@@ -50,73 +53,189 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifySelectMethod() {
-        when(service.loginSearch(LOGIN)).thenReturn(loginSearchOk(3, USER_ID));
-
-        val event = action.doExecute(requestContext);
-        assertEquals(WebflowConstants.SELECT, event.getId());
-    }
-
-    @Test
-    public void verifyPush() {
-        when(service.loginSearch(LOGIN)).thenReturn(loginSearchOk(1, USER_ID));
-
-        val event = action.doExecute(requestContext);
-        assertEquals(WebflowConstants.PUSH, event.getId());
-    }
-
-    @Test
-    public void verifyBrowser() {
-        when(service.loginSearch(LOGIN)).thenReturn(loginSearchOk(2, USER_ID));
-
-        val event = action.doExecute(requestContext);
-        assertEquals(WebflowConstants.BROWSER, event.getId());
-    }
-
-    @Test
-    public void verifyMustEnroll() {
-        when(service.loginSearch(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
+    public void verifyNoUser() {
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(3, 0));
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
-        assertTrue((Boolean) requestContext.getFlowScope().get(WebflowConstants.MUST_ENROLL));
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyInweboException() {
+        when(service.loginSearchQuery(LOGIN)).thenThrow(new RuntimeException());
+
+        val event = action.doExecute(requestContext);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
     }
 
     @Test
     public void verifyUserBlocked() {
         val loginSearch = loginSearchOk(3, USER_ID);
         loginSearch.setUserStatus(1);
-        when(service.loginSearch(LOGIN)).thenReturn(loginSearch);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearch);
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
     }
 
     @Test
-    public void verifyUnknownStatus() {
-        when(service.loginSearch(LOGIN)).thenReturn(loginSearchOk(4, USER_ID));
+    public void verifyUserNotRegisteredVA() {
+        inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
 
         val event = action.doExecute(requestContext);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
+        assertEquals(VA, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(VA, flowScope.get(BROWSER_AUTHENTICATOR));
     }
 
     @Test
-    public void verifyNoUser() {
-        when(service.loginSearch(LOGIN)).thenReturn(loginSearchOk(3, 0));
+    public void verifyUserNotRegisteredMA() {
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
+        val flowScope = requestContext.getFlowScope();
+        assertTrue((Boolean) flowScope.get(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
     }
 
     @Test
-    public void verifyInweboException() {
-        when(service.loginSearch(LOGIN)).thenThrow(new RuntimeException());
+    public void verifyPush() {
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(1, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(PUSH, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyUnexpectedStatus2() {
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(2, USER_ID));
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyUnexpectedStatus3() {
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(3, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyBrowserVA() {
+        inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(4, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(VA, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(VA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyBrowserMA() {
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(4, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(MA, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyPushAndBrowserVA() {
+        inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(SELECT, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(VA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyPushAndBrowserMA() {
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(SELECT, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyPushAndBrowserNone() {
+        inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.NONE);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(PUSH, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertNull(flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyPushDisabledAndBrowserVA() {
+        inwebo.setPushEnabled(false);
+        inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(VA, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(VA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyPushDisabledAndBrowserMA() {
+        inwebo.setPushEnabled(false);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(MA, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    public void verifyPushDisabledAndBrowserNone() {
+        inwebo.setPushEnabled(false);
+        inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.NONE);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertNull(flowScope.get(BROWSER_AUTHENTICATOR));
     }
 }
