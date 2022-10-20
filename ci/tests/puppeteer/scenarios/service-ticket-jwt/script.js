@@ -14,12 +14,11 @@ const assert = require('assert');
 
     const keyPath = path.join(__dirname, 'private.key');
     const { payload, protectedHeader } = await cas.decryptJwt(ticket, keyPath);
-    
     assert(payload.iss === "https://localhost:8443/cas");
     assert(payload.aud === "https://httpbin.org/anything/1");
     assert(payload.credentialType === "UsernamePasswordCredential");
     assert(payload.sub === "casuser");
-    assert(payload.jti.startsWith("ST-1-"));
+    assert(payload.jti.startsWith("ST-"));
     
     await browser.close();
 })();
