@@ -33,10 +33,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
      */
     public static final String FLOW_VAR_ID_PASSWORD = "password";
 
-    /**
-     * Name of parameter that can be supplied to login url to force display of password change during login.
-     */
-    public static final String DO_CHANGE_PASSWORD_PARAMETER = "doChangePassword";
 
     public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -75,6 +71,9 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
             val startState = (ActionState) flow.getStartState();
             prependActionsToActionStateExecutionList(flow, startState.getId(), CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VALIDATE_TOKEN);
+
+            createTransitionForState(startState, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD,
+                CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW);
             createTransitionForState(startState, CasWebflowConstants.TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN,
                 CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW);
             createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW,
@@ -144,8 +143,9 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             val pswdResetSubFlowState = createSubflowState(flow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW, FLOW_ID_PASSWORD_RESET);
 
             val createTgt = getTransitionableState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
-            createTgt.getEntryActionList().add(
-                createEvaluateAction(String.join(DO_CHANGE_PASSWORD_PARAMETER, "flowScope.", " = requestParameters.", " != null")));
+            val setAction = createEvaluateAction(String.join(PasswordManagementService.PARAMETER_DO_CHANGE_PASSWORD,
+                "flowScope.", " = requestParameters.", " != null"));
+            createTgt.getEntryActionList().add(setAction);
 
             createDecisionState(flow, CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION,
                 "requestParameters."
@@ -166,7 +166,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
             createDecisionState(flow,
                 CasWebflowConstants.STATE_ID_CHECK_DO_CHANGE_PASSWORD,
-                "flowScope." + DO_CHANGE_PASSWORD_PARAMETER + " == true",
+                "flowScope." + PasswordManagementService.PARAMETER_DO_CHANGE_PASSWORD + " == true",
                 CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD,
                 createTgt.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId())
                 .getEntryActionList().add(createEvaluateAction("flowScope.pswdChangePostLogin=true"));

@@ -19,6 +19,11 @@ import java.util.Map;
 public interface PasswordManagementService {
 
     /**
+     * Name of parameter that can be supplied to login url to force display of password change during login.
+     */
+    String PARAMETER_DO_CHANGE_PASSWORD = "doChangePassword";
+
+    /**
      * Param name for the token.
      */
     String PARAMETER_PASSWORD_RESET_TOKEN = "pswdrst";

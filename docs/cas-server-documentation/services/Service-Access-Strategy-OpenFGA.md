@@ -35,13 +35,12 @@ of the authorization request are taught to CAS using the settings typically defi
 
 The following fields are available to this access strategy:
 
-| Field      | Description                                                                                      |
-|------------|--------------------------------------------------------------------------------------------------|
-| `relation` | <sup>*</sup> The relation or access request in the authorization tuple; defaults to `owner`.     |
-| `object`   | <sup>*</sup> The **object** of the authorization tuple; default to the service URL if undefined. |
-| `storeId`  | <sup>*</sup> The authorization store identifier.                                                 |
-| `apiUrl`   | <sup>*</sup> The OpenFGA endpoint URL.                                                           |
-| `token`    | <sup>*</sup> The bearer token to use in the `Authorization` header, if required.                 |
+| Field      | Description                                                                                        |
+|------------|----------------------------------------------------------------------------------------------------|
+| `relation` | <sup>[1]</sup> The relation or access request in the authorization tuple; defaults to `owner`.     |
+| `object`   | <sup>[1]</sup> The **object** of the authorization tuple; default to the service URL if undefined. |
+| `storeId`  | <sup>[1]</sup> The authorization store identifier.                                                 |
+| `apiUrl`   | <sup>[1]</sup> The OpenFGA endpoint URL.                                                           |
+| `token`    | <sup>[1]</sup> The bearer token to use in the `Authorization` header, if required.                 |
   
-
-<sup>*</sup> *This fields supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax*
+*[1] This fields supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.*
