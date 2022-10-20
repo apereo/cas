@@ -31,6 +31,7 @@ import org.apereo.cas.services.GroovyRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.InMemoryServiceRegistryTests;
 import org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategyTests;
+import org.apereo.cas.services.OpenFGARegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategyTests;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicyTests;
@@ -108,6 +109,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultRegisteredServiceAuthenticationPolicyTests.class,
     UnauthorizedProxyingExceptionTests.class,
     RegisteredServiceTests.class,
+    OpenFGARegisteredServiceAccessStrategyTests.class,
     LiteralRegisteredServiceMatchingStrategyTests.class,
     PartialRegexRegisteredServiceMatchingStrategyTests.class,
     FullRegexRegisteredServiceMatchingStrategyTests.class,

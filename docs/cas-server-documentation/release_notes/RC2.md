@@ -64,6 +64,11 @@ Major improvements to [Inwebo Multifactor Authentication](../mfa/Inwebo-Authenti
 support Inwebo's virtual authenticator and provide better control over push/browser settings. The mAccessWeb enrollment is also
 improved with a PIN code confirmation.
 
+### OpenFGA Access Strategy
+
+A new access strategy is now available to enforce fine-grained authorization 
+requests based on [Auth0's OpenFGA](../services/Service-Access-Strategy-OpenFGA.html).
+
 ### Duo Security Onboarding
 
 If you would rather not rely on [Duo Security](../mfa/DuoSecurity-Authentication.html)’s built-in 
@@ -83,7 +88,7 @@ that contains the user’s identity as JWT.
 - SSO sessions under [account profile](../registration/Account-Management-Overview.html) can now be selectively removed.
 - Authentication attributes can now optionally be included in OpenID Connect ID token or user profile payloads. 
 - The ability to secure actuator endpoints via subnet addresses is now restored.
-- The persistence units for all JPA integrations is now corrected to refer to the unit name.
+- The persistence units for all JPA integrations is now corrected to refer to the defined unit name.
 
 ## Library Upgrades
 

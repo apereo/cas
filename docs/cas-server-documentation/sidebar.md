@@ -399,6 +399,7 @@ layout: null
         *   [Chaining](/cas/{{ version }}/services/Service-Access-Strategy-Chain.html)
         *   [Groovy](/cas/{{ version }}/services/Service-Access-Strategy-Groovy.html)
         *   [Grouper](/cas/{{ version }}/services/Service-Access-Strategy-Grouper.html)
+        *   [OpenFGA](/cas/{{ version }}/services/Service-Access-Strategy-OpenFGA.html)
         *   [HTTP](/cas/{{ version }}/services/Service-Access-Strategy-Http.html)
         *   [REST](/cas/{{ version }}/services/Service-Access-Strategy-REST.html)
         *   [Time](/cas/{{ version }}/services/Service-Access-Strategy-Time.html)
