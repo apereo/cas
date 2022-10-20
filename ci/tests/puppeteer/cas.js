@@ -464,9 +464,13 @@ exports.verifyJwt = async (token, secret, options) => {
     return decoded;
 };
 
-exports.decryptJwt = async(ticket, rsaPrivateKeyPath, alg = "RS256") => {
-    const secretKey = await jose.importPKCS8(rsaPrivateKeyPath, alg);
-    return await jose.jwtDecrypt(ticket, secretKey, {});
+exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
+    console.log(`Using private key path ${keyPath}`);
+    if (fs.existsSync(keyPath)) {
+        const secretKey = await jose.importPKCS8(keyPath, alg);
+        return await jose.jwtDecrypt(ticket, secretKey, {});
+    }
+    throw `Unable to locate private key ${keyPath} to verify JWT`
 };
 
 exports.decodeJwt = async (token, complete = false) => {

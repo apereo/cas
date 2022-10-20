@@ -12,7 +12,8 @@ const assert = require('assert');
     await page.waitForTimeout(2000);
     let ticket = await cas.assertTicketParameter(page);
 
-    const { payload, protectedHeader } = await cas.decryptJwt(ticket, path.join(__dirname, 'private.key'));
+    const keyPath = path.join(__dirname, 'private.key');
+    const { payload, protectedHeader } = await cas.decryptJwt(ticket, keyPath);
     
     assert(payload.iss === "https://localhost:8443/cas");
     assert(payload.aud === "https://httpbin.org/anything/1");
