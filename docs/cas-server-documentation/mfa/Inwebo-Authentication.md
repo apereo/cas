@@ -6,7 +6,7 @@ category: Multifactor Authentication
 
 {% include variables.html %}
 
-# Inwebo Authentication
+# Inwebo Multifactor Authentication
 
 You can secure your CAS server with a second factor provided by [Inwebo](https://www.inwebo.com).
 

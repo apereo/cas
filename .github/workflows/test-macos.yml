@@ -115,7 +115,7 @@ jobs:
       - id: print-categories
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
-        run: echo "::set-output name=categories::$(./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories)]}"
+        run: echo "categories=$(./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories)" >> $GITHUB_OUTPUT
   ##########################################################################
 
   tests:

@@ -34,5 +34,6 @@ attribute release and filters.</p></div>
 | Time-Based            | See [this guide](Service-Access-Strategy-Time.html).    |
 | (Remote) HTTP Request | See [this guide](Service-Access-Strategy-Http.html).    |
 | Grouper               | See [this guide](Service-Access-Strategy-Grouper.html). |
+| OpenFGA               | See [this guide](Service-Access-Strategy-OpenFGA.html). |
 | Chaining              | See [this guide](Service-Access-Strategy-Chain.html).   |
 
