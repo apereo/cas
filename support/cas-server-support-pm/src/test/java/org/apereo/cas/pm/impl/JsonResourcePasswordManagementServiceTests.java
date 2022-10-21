@@ -126,16 +126,15 @@ public class JsonResourcePasswordManagementServiceTests {
         assertTrue(passwordChangeService.getSecurityQuestions(
             PasswordManagementQuery.builder().username(UUID.randomUUID().toString()).build()).isEmpty());
     }
-
     @Test
     public void verifyUserPasswordChange() {
         val bean = new PasswordChangeRequest();
+        bean.setUsername("casuser");
         bean.setConfirmedPassword("newPassword".toCharArray());
         bean.setPassword("newPassword".toCharArray());
         val res = passwordChangeService.change(bean);
         assertTrue(res);
     }
-
     @Test
     public void verifyUserPasswordChangeFail() {
         val c = new UsernamePasswordCredential("casuser", "password");
@@ -153,7 +152,6 @@ public class JsonResourcePasswordManagementServiceTests {
         res = passwordChangeService.change(bean);
         assertFalse(res);
     }
-
     @Test
     public void verifyPasswordValidationService() {
         val c = new UsernamePasswordCredential("casuser", "password");
@@ -164,7 +162,6 @@ public class JsonResourcePasswordManagementServiceTests {
         val isValid = passwordValidationService.isValid(bean);
         assertTrue(isValid);
     }
-
     @Test
     public void verifySecurityQuestions() {
         val query = PasswordManagementQuery.builder().username("casuser").build();
