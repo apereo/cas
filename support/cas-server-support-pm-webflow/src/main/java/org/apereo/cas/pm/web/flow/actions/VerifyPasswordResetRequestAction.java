@@ -10,7 +10,9 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +21,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -45,25 +48,21 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val transientTicket = request.getParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
+        PasswordResetRequest resetRequest = null;
+
         try {
             val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
-
             if (StringUtils.isBlank(transientTicket) && StringUtils.isBlank(tgt)) {
                 LOGGER.error("Password reset token is missing");
                 return error();
             }
-
-            val username = getUsernameFromTransientTicket(requestContext, transientTicket).orElseGet(() -> {
-                val principal = ticketRegistrySupport.getAuthenticatedPrincipalFrom(tgt);
-                return principal.getId();
-            });
-            
-            val query = PasswordManagementQuery.builder().username(username).build();
+            resetRequest = getPasswordResetRequestFrom(requestContext, transientTicket).orElseGet(() -> getPasswordResetRequestFrom(tgt));
+            val query = PasswordManagementQuery.builder().username(resetRequest.getUsername()).build();
             val pm = casProperties.getAuthn().getPm();
             if (pm.getReset().isSecurityQuestionsEnabled()) {
                 val questions = PasswordManagementService.canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(query));
                 if (questions.isEmpty()) {
-                    LOGGER.warn("No security questions could be found for [{}]", username);
+                    LOGGER.warn("No security questions could be found for [{}]", resetRequest);
                     return error();
                 }
                 PasswordManagementWebflowUtils.putPasswordResetSecurityQuestions(requestContext, questions);
@@ -71,7 +70,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
                 LOGGER.debug("Security questions are not enabled");
             }
 
-            PasswordManagementWebflowUtils.putPasswordResetUsername(requestContext, username);
+            PasswordManagementWebflowUtils.putPasswordResetUsername(requestContext, resetRequest.getUsername());
             PasswordManagementWebflowUtils.putPasswordResetSecurityQuestionsEnabled(requestContext,
                 pm.getReset().isSecurityQuestionsEnabled());
 
@@ -84,31 +83,45 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             LoggingUtils.error(LOGGER, "Password reset token could not be located or verified", e);
             return error();
         } finally {
-            removeTransientTicketIfNecessary(transientTicket);
+            removeTransientTicketIfNecessary(resetRequest);
         }
     }
 
-    private void removeTransientTicketIfNecessary(final String transientTicket) throws Exception {
-        if (StringUtils.isNotBlank(transientTicket)) {
-            FunctionUtils.doAndHandle(__ -> {
-                val passwordResetTicket = ticketRegistrySupport.ticketRegistry().getTicket(transientTicket, TransientSessionTicket.class);
-                if (passwordResetTicket != null && passwordResetTicket.getExpirationPolicy().isExpired(passwordResetTicket)) {
-                    ticketRegistrySupport.ticketRegistry().deleteTicket(passwordResetTicket);
-                }
-            });
-        }
+    private void removeTransientTicketIfNecessary(final PasswordResetRequest resetRequest) {
+        Optional.ofNullable(resetRequest)
+            .map(PasswordResetRequest::getPasswordResetTicket)
+            .filter(Objects::nonNull)
+            .filter(r -> r.getExpirationPolicy().isExpired(r))
+            .ifPresent(token -> FunctionUtils.doAndHandle(__ -> ticketRegistrySupport.getTicketRegistry().deleteTicket(token)));
     }
 
-    private Optional<String> getUsernameFromTransientTicket(final RequestContext requestContext,
-                                                            final String transientTicket) {
+    private PasswordResetRequest getPasswordResetRequestFrom(final String tgt) {
+        val principal = ticketRegistrySupport.getAuthenticatedPrincipalFrom(tgt);
+        return PasswordResetRequest.builder().username(principal.getId()).build();
+    }
+    
+    private Optional<PasswordResetRequest> getPasswordResetRequestFrom(final RequestContext requestContext,
+                                                                       final String transientTicket) {
         return Optional.ofNullable(transientTicket)
             .map(Unchecked.function(__ -> {
-                val passwordResetTicket = ticketRegistrySupport.ticketRegistry().getTicket(transientTicket, TransientSessionTicket.class);
+                val ticketRegistry = ticketRegistrySupport.getTicketRegistry();
+                val passwordResetTicket = ticketRegistry.getTicket(transientTicket, TransientSessionTicket.class);
                 passwordResetTicket.update();
-                ticketRegistrySupport.ticketRegistry().updateTicket(passwordResetTicket);
+                ticketRegistry.updateTicket(passwordResetTicket);
                 val token = passwordResetTicket.getProperties().get(PasswordManagementService.PARAMETER_TOKEN).toString();
                 PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
-                return passwordManagementService.parseToken(token);
+                return PasswordResetRequest.builder()
+                    .passwordResetTicket(passwordResetTicket)
+                    .username(passwordManagementService.parseToken(token))
+                    .build();
             }));
+    }
+
+    @SuperBuilder
+    @Getter
+    private static class PasswordResetRequest {
+        private final String username;
+
+        private final TransientSessionTicket passwordResetTicket;
     }
 }
