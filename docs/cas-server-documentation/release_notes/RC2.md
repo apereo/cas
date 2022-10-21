@@ -69,6 +69,11 @@ improved with a PIN code confirmation.
 A new access strategy is now available to enforce fine-grained authorization 
 requests based on [Auth0's OpenFGA](../services/Service-Access-Strategy-OpenFGA.html).
 
+### OPA Access Strategy
+
+A new access strategy is now available to enforce fine-grained authorization
+requests based on [Open Policy Agent](../services/Service-Access-Strategy-OpenPolicyAgent.html).
+
 ### Duo Security Onboarding
 
 If you would rather not rely on [Duo Security](../mfa/DuoSecurity-Authentication.html)’s built-in 
