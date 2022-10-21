@@ -16,7 +16,7 @@ const NodeStaticAuth = require("node-static-auth");
 const operativeSystemModule = require("os");
 const figlet = require("figlet");
 const CryptoJS = require("crypto-js");
-
+const jose = require('jose');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -462,6 +462,20 @@ exports.verifyJwt = async (token, secret, options) => {
         await this.logg(decoded);
     }
     return decoded;
+};
+
+exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
+    console.log(`Using private key path ${keyPath}`);
+    if (fs.existsSync(keyPath)) {
+        const keyContent = fs.readFileSync(keyPath, 'utf8');
+        await this.logg("Using private key to verify JWT:");
+        console.log(keyContent);
+        const secretKey = await jose.importPKCS8(keyContent, alg);
+        const decoded = await jose.jwtDecrypt(ticket, secretKey, {});
+        await this.logg(decoded.payload);
+        return decoded;
+    }
+    throw `Unable to locate private key ${keyPath} to verify JWT`
 };
 
 exports.decodeJwt = async (token, complete = false) => {

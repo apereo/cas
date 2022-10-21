@@ -41,7 +41,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
 
     private static final String SELECT_QUERY = String.format("SELECT r from %s r ", SamlMetadataDocument.class.getSimpleName());
 
-    @PersistenceContext(unitName = "samlMetadataEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaSamlMetadataContext")
     private EntityManager entityManager;
 
     public JpaSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties, final OpenSamlConfigBean configBean) {

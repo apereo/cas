@@ -32,7 +32,7 @@ import java.util.stream.LongStream;
 public class JpaServiceRegistry extends AbstractServiceRegistry {
     private final TransactionOperations transactionTemplate;
 
-    @PersistenceContext(unitName = "serviceEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaServiceRegistryContext")
     private EntityManager entityManager;
 
     private final StringSerializer<RegisteredService> serializer;
