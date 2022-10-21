@@ -33,12 +33,12 @@ of the authorization request are taught to CAS using the settings typically defi
 
 The following fields are available to this access strategy:
 
-| Field      | Purpose                                                                                             |
-|------------|-----------------------------------------------------------------------------------------------------|
-| `relation` | <sup>[1]</sup> The relation or access request in the authorization tuple; defaults to `owner`.      |
-| `object`   | <sup>[1]</sup> The **object** of the authorization tuple; defaults to the service URL if undefined. |
-| `storeId`  | <sup>[1]</sup> The authorization store identifier.                                                  |
-| `apiUrl`   | <sup>[1]</sup> The OpenFGA endpoint URL.                                                            |
-| `token`    | <sup>[1]</sup> The bearer token to use in the `Authorization` header, if required.                  |
+| Field      | Purpose                                                                                            |
+|------------|----------------------------------------------------------------------------------------------------|
+| `relation` | <sup>[1]</sup> The relation or the type of access in the authorization tuple; defaults to `owner`. |
+| `object`   | <sup>[1]</sup> The *object* of the authorization tuple; defaults to the service URL if undefined.  |
+| `storeId`  | <sup>[1]</sup> The authorization store identifier.                                                 |
+| `apiUrl`   | <sup>[1]</sup> The OpenFGA endpoint URL.                                                           |
+| `token`    | <sup>[1]</sup> The bearer token to use in the `Authorization` header, if required.                 |
   
 *[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.*
