@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -86,6 +87,7 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
         changeReq.setPassword("P@ssword".toCharArray());
         changeReq.setConfirmedPassword("P@ssword".toCharArray());
         context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
+        PasswordManagementWebflowUtils.putPasswordResetUsername(context, changeReq.getUsername());
         assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORD_UPDATE_SUCCESS, passwordChangeAction.execute(context).getId());
     }
 
@@ -126,6 +128,7 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
         changeReq.setPassword("P@ssword".toCharArray());
         changeReq.setConfirmedPassword("P@ssword".toCharArray());
         context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
+        PasswordManagementWebflowUtils.putPasswordResetUsername(context, changeReq.getUsername());
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
     }
 
