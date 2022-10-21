@@ -13,9 +13,6 @@ PAR fosters security by providing clients a simple means for a confidential and 
 
 PAR allows CAS to authenticate the client before any user interaction happens. The increased confidence in the identity of the client during the authorization process allows the authorization server to refuse illegitimate requests much earlier in the process, which can prevent attempts to spoof clients or otherwise tamper with or misuse an authorization request.
 
-<div class="alert alert-warning"><strong>Workers Ahead</strong><p>This feature is a work-in-progress and will receive additional
-updates in future releases. Please check back later.</p></div>
-
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.authn.oidc.par" %}
