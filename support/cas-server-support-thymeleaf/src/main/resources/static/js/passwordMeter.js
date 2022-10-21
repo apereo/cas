@@ -1,5 +1,3 @@
-/* global jqueryReady, policyPattern, zxcvbn, passwordStrengthI18n */
-/*eslint-disable no-unused-vars*/
 function jqueryReady() {
     var strength = passwordStrengthI18n;
 
@@ -15,14 +13,13 @@ function jqueryReady() {
             progressBarClass4: 'progress-bar-success'
         }, options);
 
+        $(settings.passwordInput).keyup(event => {
+            UpdateProgressBar();
+        });
+        
         return this.each(function () {
             settings.progressBar = this;
-            //init progress bar display
             UpdateProgressBar();
-            //Update progress bar on each keypress of password input
-            $(settings.passwordInput).keyup(function (event) {
-                UpdateProgressBar();
-            });
         });
 
         function setProgress(value, bar) {
@@ -35,10 +32,10 @@ function jqueryReady() {
         }
 
         function UpdateProgressBar() {
-            var progressBar = settings.progressBar;
+            let progressBar = settings.progressBar;
 
-            var indicator = document.getElementById('progress-strength-indicator');
-            var password = document.getElementById('password').value;
+            let indicator = document.getElementById('progress-strength-indicator');
+            let password = document.getElementById('password').value;
 
             if (password) {
                 var result = zxcvbn(password, settings.userInputs);
@@ -46,27 +43,27 @@ function jqueryReady() {
                 var scorePercentage = (result.score + 1) * 20;
                 setProgress(scorePercentage, settings.bar);
 
-                if (result.score == 0) {
+                if (result.score === 0) {
                     //weak
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass0);
                     $(indicator).html(strength[0]);
                 }
-                else if (result.score == 1) {
+                else if (result.score === 1) {
                     //normal
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass1);
                     $(indicator).html(strength[1]);
                 }
-                else if (result.score == 2) {
+                else if (result.score === 2) {
                     //medium
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass2);
                     $(indicator).html(strength[2]);
                 }
-                else if (result.score == 3) {
+                else if (result.score === 3) {
                     //strong
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass3);
                     $(indicator).html(strength[3]);
                 }
-                else if (result.score == 4) {
+                else if (result.score === 4) {
                     //very strong
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass4);
                     $(indicator).html(strength[4]);
@@ -91,10 +88,14 @@ function jqueryReady() {
     }
     
 
+    password.addEventListener('keyup', event => {
+        validate();
+    });
+    
     password.addEventListener('input', validate);
     confirmed.addEventListener('input', validate);
 
-    var alertSettings = {
+    let alertSettings = {
         allAlertClasses: 'mdi-close-circle mdi-alert-circle mdi-information mdi-check-circle text-danger text-warning text-secondary text-success',
         alertClassDanger: 'mdi-close-circle text-danger',
         alertClassWarning: 'mdi-alert-circle text-warning',
@@ -103,8 +104,8 @@ function jqueryReady() {
     };
 
     function validate() {
-        var val = password.value;
-        var cnf = confirmed.value;
+        let val = password.value;
+        let cnf = confirmed.value;
 
         $('#password-strength-msg').hide();
         $('#password-policy-violation-msg').hide();
@@ -162,7 +163,6 @@ function jqueryReady() {
         // Check password policy
         if (passwordPolicyViolated) {
             $('#password-policy-violation-msg').show();
-            return;
         }
     }
 }

@@ -6,7 +6,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
@@ -197,10 +196,11 @@ public record LdapConnectionFactory(ConnectionFactory connectionFactory) impleme
      * letting user change their own (e.g. expiring) password.
      */
     public boolean executePasswordModifyOperation(final String currentDn,
-                                                  final String oldPassword,
-                                                  final String newPassword,
+                                                  final char[] oldPassword,
+                                                  final char[] newPassword,
                                                   final AbstractLdapProperties.LdapType type) {
         try {
+            val oldPasswordAvailable = oldPassword != null && oldPassword.length > 0;
             val connConfig = connectionFactory.getConnectionConfig();
             val secureLdap = connConfig.getLdapUrl() != null && !connConfig.getLdapUrl().toLowerCase().contains("ldaps://");
             if (connConfig.getUseStartTLS() || secureLdap) {
@@ -211,16 +211,17 @@ public record LdapConnectionFactory(ConnectionFactory connectionFactory) impleme
             if (type == AbstractLdapProperties.LdapType.AD) {
                 LOGGER.debug("Executing password change op for active directory based on "
                              + "[https://support.microsoft.com/en-us/kb/269190]"
-                             + "change type: [{}]", StringUtils.isBlank(oldPassword) ? "reset" : "change");
+                             + "change type: [{}]", oldPasswordAvailable ? "change" : "reset");
                 val operation = new ModifyOperation(connectionFactory);
-                val response = StringUtils.isBlank(oldPassword)
+                val response = oldPasswordAvailable
                     ?
                     operation.execute(new ModifyRequest(currentDn,
-                        new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(newPassword))))
+                        new AttributeModification(AttributeModification.Type.DELETE, new UnicodePwdAttribute(new String(oldPassword))),
+                        new AttributeModification(AttributeModification.Type.ADD, new UnicodePwdAttribute(new String(newPassword)))))
                     :
                     operation.execute(new ModifyRequest(currentDn,
-                        new AttributeModification(AttributeModification.Type.DELETE, new UnicodePwdAttribute(oldPassword)),
-                        new AttributeModification(AttributeModification.Type.ADD, new UnicodePwdAttribute(newPassword))));
+                        new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(new String(newPassword)))));
+
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
@@ -228,8 +229,7 @@ public record LdapConnectionFactory(ConnectionFactory connectionFactory) impleme
             LOGGER.debug("Executing password modification op for generic LDAP");
             val operation = new ExtendedOperation(connectionFactory);
             val response = operation.execute(new PasswordModifyRequest(currentDn,
-                StringUtils.isNotBlank(oldPassword) ? oldPassword : null,
-                newPassword));
+                oldPasswordAvailable ? new String(oldPassword) : null, new String(newPassword)));
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final Exception e) {

@@ -46,7 +46,7 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("casuser");
-        changeReq.setPassword("123456");
+        changeReq.setPassword("123456".toCharArray());
         context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
     }
@@ -64,7 +64,7 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
 
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("casuser");
-        changeReq.setPassword("123456");
+        changeReq.setPassword("123456".toCharArray());
         context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
     }
@@ -83,8 +83,8 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
 
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("casuser");
-        changeReq.setPassword("P@ssword");
-        changeReq.setConfirmedPassword("P@ssword");
+        changeReq.setPassword("P@ssword".toCharArray());
+        changeReq.setConfirmedPassword("P@ssword".toCharArray());
         context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
         assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORD_UPDATE_SUCCESS, passwordChangeAction.execute(context).getId());
     }
@@ -103,8 +103,8 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
 
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("bad-credential");
-        changeReq.setPassword("P@ssword");
-        changeReq.setConfirmedPassword("P@ssword");
+        changeReq.setPassword("P@ssword".toCharArray());
+        changeReq.setConfirmedPassword("P@ssword".toCharArray());
         context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
     }
@@ -123,8 +123,8 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
 
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("error-credential");
-        changeReq.setPassword("P@ssword");
-        changeReq.setConfirmedPassword("P@ssword");
+        changeReq.setPassword("P@ssword".toCharArray());
+        changeReq.setConfirmedPassword("P@ssword".toCharArray());
         context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
     }

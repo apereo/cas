@@ -129,11 +129,10 @@ public class JsonResourcePasswordManagementServiceTests {
 
     @Test
     public void verifyUserPasswordChange() {
-        val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("newPassword");
-        bean.setPassword("newPassword");
-        val res = passwordChangeService.change(c, bean);
+        bean.setConfirmedPassword("newPassword".toCharArray());
+        bean.setPassword("newPassword".toCharArray());
+        val res = passwordChangeService.change(bean);
         assertTrue(res);
     }
 
@@ -141,17 +140,17 @@ public class JsonResourcePasswordManagementServiceTests {
     public void verifyUserPasswordChangeFail() {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("newPassword");
-        var res = passwordChangeService.change(c, bean);
+        bean.setConfirmedPassword("newPassword".toCharArray());
+        var res = passwordChangeService.change(bean);
         assertFalse(res);
-        bean.setConfirmedPassword("newPassword");
-        bean.setPassword("unknown");
-        res = passwordChangeService.change(c, bean);
+        bean.setConfirmedPassword("newPassword".toCharArray());
+        bean.setPassword("unknown".toCharArray());
+        res = passwordChangeService.change(bean);
         assertFalse(res);
 
         bean.setPassword(bean.getConfirmedPassword());
         c.setUsername(UUID.randomUUID().toString());
-        res = passwordChangeService.change(c, bean);
+        res = passwordChangeService.change(bean);
         assertFalse(res);
     }
 
@@ -160,9 +159,9 @@ public class JsonResourcePasswordManagementServiceTests {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
         bean.setUsername(c.getUsername());
-        bean.setConfirmedPassword("Test1@1234");
-        bean.setPassword("Test1@1234");
-        val isValid = passwordValidationService.isValid(c, bean);
+        bean.setConfirmedPassword("Test1@1234".toCharArray());
+        bean.setPassword("Test1@1234".toCharArray());
+        val isValid = passwordValidationService.isValid(bean);
         assertTrue(isValid);
     }
 
