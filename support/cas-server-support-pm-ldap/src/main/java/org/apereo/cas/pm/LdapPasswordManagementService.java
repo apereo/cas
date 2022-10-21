@@ -1,7 +1,6 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.LdapPasswordManagementProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.impl.BasePasswordManagementService;
@@ -161,18 +160,17 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
+    public boolean changeInternal(final PasswordChangeRequest bean) {
         return FunctionUtils.doAndHandle(() -> {
-            val results = findEntries(CollectionUtils.wrap(credential.getId()))
+            val results = findEntries(CollectionUtils.wrap(bean.getUsername()))
                 .entrySet()
                 .stream()
                 .map(entry -> {
                     val dn = entry.getKey().getDn();
                     LOGGER.debug("Updating account password for [{}]", dn);
-                    val upc = (UsernamePasswordCredential) credential;
                     val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(entry.getValue().getLdapUrl()));
-                    if (ldapConnectionFactory.executePasswordModifyOperation(dn, upc.toPassword(), bean.getPassword(),
-                        entry.getValue().getType())) {
+                    if (ldapConnectionFactory.executePasswordModifyOperation(dn, bean.getCurrentPassword(),
+                        bean.getPassword(), entry.getValue().getType())) {
                         LOGGER.debug("Successfully updated the account password for [{}]", dn);
                         return Boolean.TRUE;
                     }

@@ -21,7 +21,7 @@ public class InMemoryPasswordHistoryService extends BasePasswordHistoryService {
     @Override
     public boolean exists(final PasswordChangeRequest changeRequest) {
         val username = changeRequest.getUsername();
-        val password = changeRequest.getPassword();
+        val password = changeRequest.toPassword();
         val encodedPassword = encodePassword(password);
         return history
             .stream()
@@ -44,7 +44,7 @@ public class InMemoryPasswordHistoryService extends BasePasswordHistoryService {
     @Override
     public boolean store(final PasswordChangeRequest changeRequest) {
         val username = changeRequest.getUsername();
-        val password = changeRequest.getPassword();
+        val password = changeRequest.toPassword();
         val encodedPassword = encodePassword(password);
         val entity = new PasswordHistoryEntity();
         entity.setUsername(username);

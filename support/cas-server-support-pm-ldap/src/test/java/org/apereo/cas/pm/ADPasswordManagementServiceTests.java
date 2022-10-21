@@ -53,20 +53,20 @@ public class ADPasswordManagementServiceTests extends BaseLdapPasswordManagement
     public void verifyPasswordReset() {
         val credential = new UsernamePasswordCredential("changepassword", StringUtils.EMPTY);
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("P@ssw0rdMellon");
-        bean.setPassword("P@ssw0rdMellon");
+        bean.setConfirmedPassword("P@ssw0rdMellon".toCharArray());
+        bean.setPassword("P@ssw0rdMellon".toCharArray());
         bean.setUsername(credential.getUsername());
-        assertTrue(passwordChangeService.change(credential, bean));
+        assertTrue(passwordChangeService.change(bean));
     }
 
     @Test
     public void verifyPasswordChange() {
         val credential = new UsernamePasswordCredential("changepasswordnoreset", "P@ssw0rd");
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("P@ssw0rd2");
-        bean.setPassword("P@ssw0rd2");
+        bean.setConfirmedPassword("P@ssw0rd2".toCharArray());
+        bean.setPassword("P@ssw0rd2".toCharArray());
         bean.setUsername(credential.getUsername());
-        assertTrue(passwordChangeService.change(credential, bean));
+        assertTrue(passwordChangeService.change(bean));
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -21,7 +22,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link PasswordChangeAction}.
@@ -49,25 +50,25 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
      * @return the password change request
      */
     protected static PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext) {
-        val credential = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
         val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
-        bean.setUsername(credential.getUsername());
+        bean.setUsername(PasswordManagementWebflowUtils.getPasswordResetUsername(requestContext));
         return bean;
     }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            val creds = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
             val bean = getPasswordChangeRequest(requestContext);
-
-            LOGGER.debug("Attempting to validate the password change bean for username [{}]", creds.getUsername());
-            if (!passwordValidationService.isValid(creds, bean)) {
+            Optional.ofNullable(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class))
+                    .ifPresent(credential -> bean.setCurrentPassword(bean.getCurrentPassword()));
+            
+            LOGGER.debug("Attempting to validate the password change bean for username [{}]", bean.getUsername());
+            if (!passwordValidationService.isValid(bean)) {
                 LOGGER.error("Failed to validate the provided password");
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
             }
-            if (passwordManagementService.change(creds, bean)) {
-                val credential = new UsernamePasswordCredential(creds.getUsername(), bean.getPassword());
+            if (passwordManagementService.change(bean)) {
+                val credential = new UsernamePasswordCredential(bean.getUsername(), bean.toPassword());
                 WebUtils.putCredential(requestContext, credential);
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
                 return getSuccessEvent(requestContext, bean);

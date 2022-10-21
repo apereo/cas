@@ -25,8 +25,11 @@ public class InitPasswordChangeAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        WebUtils.putPasswordPolicyPattern(requestContext,
-            casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern());
+        val core = casProperties.getAuthn().getPm().getCore();
+        WebUtils.putPasswordPolicyPattern(requestContext, core.getPasswordPolicyPattern());
+        requestContext.getViewScope().put("passwordPolicyCharacterSet", core.getPasswordPolicyCharacterSet());
+        requestContext.getViewScope().put("passwordPolicyPasswordLength", core.getPasswordPolicyPasswordLength());
+
         val attributes = requestContext.getCurrentEvent().getAttributes();
         if (!attributes.isEmpty() && attributes.contains(Credential.class.getName())) {
             val upc = attributes.get(Credential.class.getName(), UsernamePasswordCredential.class);

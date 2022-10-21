@@ -3,8 +3,8 @@ package org.apereo.cas.pm.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.StringToCharArrayConverter;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -243,11 +243,13 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private void configurePasswordResetFlow(final Flow flow, final String id, final String viewId) {
         createFlowVariable(flow, FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
 
-        val binder = createStateBinderConfiguration(CollectionUtils.wrapList(FLOW_VAR_ID_PASSWORD, "confirmedPassword"));
+        val propertiesToBind = Map.of(
+            FLOW_VAR_ID_PASSWORD, Map.of("converter", StringToCharArrayConverter.ID),
+            "confirmedPassword", Map.of("converter", StringToCharArrayConverter.ID));
+        val binder = createStateBinderConfiguration(propertiesToBind);
         val viewState = createViewState(flow, id, viewId, binder);
         createStateModelBinding(viewState, FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
-
-
+        
         viewState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE));
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
             CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
