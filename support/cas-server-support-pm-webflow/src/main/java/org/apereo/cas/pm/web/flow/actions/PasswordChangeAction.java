@@ -63,7 +63,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                     .ifPresent(credential -> bean.setCurrentPassword(bean.getCurrentPassword()));
             
             LOGGER.debug("Attempting to validate the password change bean for username [{}]", bean.getUsername());
-            if (!passwordValidationService.isValid(bean)) {
+            if (StringUtils.isBlank(bean.getUsername()) || !passwordValidationService.isValid(bean)) {
                 LOGGER.error("Failed to validate the provided password");
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
             }
