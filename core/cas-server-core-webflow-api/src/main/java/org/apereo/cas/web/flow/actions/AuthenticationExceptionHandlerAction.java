@@ -40,7 +40,6 @@ public class AuthenticationExceptionHandlerAction extends BaseCasWebflowAction {
         val error = currentEvent.getAttributes().get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
         if (error != null) {
             LOGGER.debug("Located error attribute [{}] with message [{}] from the current event", error.getClass(), error.getMessage());
-
             val event = handle(error, requestContext);
             LOGGER.debug("Final event id resolved from the error is [{}]", event);
             return new EventFactorySupport().event(this, event, currentEvent.getAttributes());

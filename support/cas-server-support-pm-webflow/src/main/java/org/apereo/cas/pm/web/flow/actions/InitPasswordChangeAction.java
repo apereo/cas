@@ -3,6 +3,7 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -27,14 +28,15 @@ public class InitPasswordChangeAction extends BaseCasWebflowAction {
     protected Event doExecute(final RequestContext requestContext) {
         val core = casProperties.getAuthn().getPm().getCore();
         WebUtils.putPasswordPolicyPattern(requestContext, core.getPasswordPolicyPattern());
-        requestContext.getViewScope().put("passwordPolicyCharacterSet", core.getPasswordPolicyCharacterSet());
-        requestContext.getViewScope().put("passwordPolicyPasswordLength", core.getPasswordPolicyPasswordLength());
+        requestContext.getFlowScope().put("passwordPolicyCharacterSet", core.getPasswordPolicyCharacterSet());
+        requestContext.getFlowScope().put("passwordPolicyPasswordLength", core.getPasswordPolicyPasswordLength());
 
         val attributes = requestContext.getCurrentEvent().getAttributes();
         if (!attributes.isEmpty() && attributes.contains(Credential.class.getName())) {
             val upc = attributes.get(Credential.class.getName(), UsernamePasswordCredential.class);
             LOGGER.debug("Restoring credential [{}] for password management", upc);
             WebUtils.putCredential(requestContext, upc);
+            PasswordManagementWebflowUtils.putPasswordResetUsername(requestContext, upc.getId());
         }
         return null;
     }

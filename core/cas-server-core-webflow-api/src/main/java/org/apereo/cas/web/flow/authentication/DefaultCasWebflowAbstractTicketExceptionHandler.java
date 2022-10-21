@@ -57,7 +57,7 @@ public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebfl
     protected String handleAbstractTicketException(final AbstractTicketException e, final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
         val match = this.errors.getRegisteredExceptions().stream()
-            .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
+            .filter(ex -> ex.isInstance(e)).map(Class::getSimpleName)
             .findFirst();
 
         val msg = new MessageBuilder()

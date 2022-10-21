@@ -79,5 +79,5 @@ public interface TicketRegistrySupport {
      *
      * @return the ticket registry
      */
-    TicketRegistry ticketRegistry();
+    TicketRegistry getTicketRegistry();
 }
