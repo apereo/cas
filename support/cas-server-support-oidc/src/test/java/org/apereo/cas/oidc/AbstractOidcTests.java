@@ -73,6 +73,7 @@ import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -158,9 +159,11 @@ public abstract class AbstractOidcTests {
     protected static final String TGT_ID = "TGT-0";
 
     @Autowired
+    @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
+    protected OAuth20ResponseModeFactory oauthResponseModeFactory;
+    @Autowired
     @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
     protected OAuth20RequestParameterResolver oauthRequestParameterResolver;
-
     @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     protected CasCookieBuilder ticketGrantingTicketCookieGenerator;

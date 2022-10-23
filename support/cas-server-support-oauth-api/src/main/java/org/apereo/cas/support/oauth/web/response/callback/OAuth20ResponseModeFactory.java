@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@FunctionalInterface
 public interface OAuth20ResponseModeFactory {
     String BEAN_NAME = "oauthResponseModeFactory";
 
@@ -42,6 +41,21 @@ public interface OAuth20ResponseModeFactory {
             OAuth20ResponseModeTypes.FRAGMENT.getType(), registeredService.getResponseType()));
     }
 
+    /**
+     * Is response mode type query jwt?
+     *
+     * @param registeredService the registered service
+     * @param responseType      the response type
+     * @return the boolean
+     */
+    static boolean isResponseModeTypeQueryJwt(final RegisteredService registeredService,
+                                              final OAuth20ResponseModeTypes responseType) {
+        return responseType == OAuth20ResponseModeTypes.QUERY_JWT
+               || (registeredService != null && StringUtils.equalsIgnoreCase(
+            OAuth20ResponseModeTypes.QUERY_JWT.getType(), registeredService.getResponseType()));
+    }
+
+    OAuth20ResponseModeFactory registerBuilder(OAuth20ResponseModeBuilder builder);
 
     /**
      * Gets builder.

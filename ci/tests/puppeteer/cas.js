@@ -464,6 +464,16 @@ exports.verifyJwt = async (token, secret, options) => {
     return decoded;
 };
 
+exports.verifyJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+    await this.logg("Using key to verify JWT:");
+    console.log(keyContent);
+    const secretKey = await jose.importJWK(keyContent, alg);
+    const decoded = await jose.jwtVerify(ticket, secretKey);
+    console.log("Verified JWT:");
+    await this.logg(decoded.payload);
+    return decoded;
+};
+
 exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
     console.log(`Using private key path ${keyPath}`);
     if (fs.existsSync(keyPath)) {
@@ -472,6 +482,7 @@ exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
         console.log(keyContent);
         const secretKey = await jose.importPKCS8(keyContent, alg);
         const decoded = await jose.jwtDecrypt(ticket, secretKey, {});
+        console.log("Verified JWT:\n");
         await this.logg(decoded.payload);
         return decoded;
     }
@@ -480,6 +491,7 @@ exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
 
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
+    
     let decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
         console.log(`Decoded token header: ${colors.green(decoded.header)}`);
