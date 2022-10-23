@@ -85,9 +85,13 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.mode.DefaultOAuth20ResponseModeFactory;
+import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeFormPostBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeFragmentBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeQueryBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
@@ -727,8 +731,31 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = OAuth20ResponseModeFactory.BEAN_NAME)
-        public OAuth20ResponseModeFactory oauthResponseModeFactory() {
-            return new DefaultOAuth20ResponseModeFactory();
+        public OAuth20ResponseModeFactory oauthResponseModeFactory(final List<OAuth20ResponseModeBuilder> responseModeBuilders) {
+            val factory = new DefaultOAuth20ResponseModeFactory();
+            responseModeBuilders.forEach(factory::registerBuilder);
+            return factory;
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthQueryResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthQueryResponseModeBuilder() {
+            return new OAuth20ResponseModeQueryBuilder();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthFormPostResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthFormPostResponseModeBuilder() {
+            return new OAuth20ResponseModeFormPostBuilder();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthFragmentResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthFragmentResponseModeBuilder() {
+            return new OAuth20ResponseModeFragmentBuilder();
         }
 
         @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")

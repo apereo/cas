@@ -1,8 +1,11 @@
 package org.apereo.cas.support.oauth.web.response.callback.mode;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.client.utils.URIBuilder;
@@ -19,7 +22,15 @@ import java.util.stream.Collectors;
  * @since 7.0.0
  */
 @Slf4j
+@Getter
+@RequiredArgsConstructor
 public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBuilder {
+
+    @Override
+    public OAuth20ResponseModeTypes getResponseMode() {
+        return OAuth20ResponseModeTypes.FRAGMENT;
+    }
+
     @Override
     public ModelAndView build(final RegisteredService registeredService, final String redirectUrl,
                               final Map<String, String> parameters) throws Exception {
