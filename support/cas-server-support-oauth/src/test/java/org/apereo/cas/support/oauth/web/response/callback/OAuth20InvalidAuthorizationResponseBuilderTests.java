@@ -34,7 +34,7 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
     private OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder;
 
     @Test
-    public void verifyRequestWithoutCallback() {
+    public void verifyRequestWithoutCallback() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -52,7 +52,7 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
     }
 
     @Test
-    public void verifyRequestWithCallbackAndDescription() {
+    public void verifyRequestWithCallbackAndDescription() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://github.com/apereo/cas");
@@ -81,7 +81,7 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
     }
 
     @Test
-    public void verifyRequestWithCallbackWithoutDescription() {
+    public void verifyRequestWithCallbackWithoutDescription() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://github.com/apereo/cas");
