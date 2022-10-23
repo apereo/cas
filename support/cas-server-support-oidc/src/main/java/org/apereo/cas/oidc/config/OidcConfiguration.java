@@ -77,6 +77,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -815,12 +816,14 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder(
+            @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
+            final OAuth20ResponseModeFactory oauthResponseModeFactory,
             final CasConfigurationProperties casProperties,
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService) {
-            return new OidcAuthorizationModelAndViewBuilder(oidcIssuerService, casProperties);
+            return new OidcAuthorizationModelAndViewBuilder(oauthResponseModeFactory, oidcIssuerService, casProperties);
         }
-
+        
         @Bean
         @ConditionalOnMissingBean(name = OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
