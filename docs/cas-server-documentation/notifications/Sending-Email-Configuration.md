@@ -102,3 +102,18 @@ The outcome of the script should be message body text.
 {% endtab %}
 
 {% endtabs %}
+
+## Custom
+
+You may also define your own communication manager that would be tasked to send emails, etc using the following
+bean definition and by implementing `CommunicationsManager`:
+
+```java
+@Bean
+public CommunicationsManager communicationsManager() {
+    return new MyCommunicationsManager();   
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn
+more about how to register configurations into the CAS runtime.
