@@ -86,3 +86,18 @@ The following parameters are passed to the script:
 | `locale`     | The object representing the available `Locale`, if any and available.              |
 
 The outcome of the script should be message body text.
+
+## Custom
+
+You may also define your own communication manager that would be tasked to send emails, etc using the following
+bean definition and by implementing `CommunicationsManager`:
+
+```java
+@Bean
+public CommunicationsManager communicationsManager() {
+    return new MyCommunicationsManager();   
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn
+more about how to register configurations into the CAS runtime.
