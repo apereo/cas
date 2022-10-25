@@ -468,11 +468,22 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcAccessTokenJwtCipherExecutor")
         public CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
             final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) {
-            return new OidcJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache, oidcIssuerService);
+
+            val crypto = casProperties.getAuthn().getOauth().getAccessToken().getCrypto();
+            return FunctionUtils.doIf(crypto.isEnabled(),
+                () -> {
+                    val cipher = new OidcJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache, oidcIssuerService);
+                    cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getStrategyType()));
+                    cipher.setSigningEnabled(crypto.isSigningEnabled());
+                    cipher.setEncryptionEnabled(crypto.isEncryptionEnabled());
+                    return cipher;
+                },
+                CipherExecutor::noOpOfSerializableToString).get();
         }
 
     }

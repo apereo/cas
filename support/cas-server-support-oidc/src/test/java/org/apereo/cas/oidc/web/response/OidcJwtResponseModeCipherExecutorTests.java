@@ -25,6 +25,7 @@ public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
         "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT",
     })
     @Nested
+    @SuppressWarnings("ClassCanBeStatic")
     public class EncryptOnlyTests extends AbstractOidcTests {
         @Test
         public void verifyOperation() throws Exception {
@@ -43,6 +44,7 @@ public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
         "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT",
     })
     @Nested
+    @SuppressWarnings("ClassCanBeStatic")
     public class SignOnlyTests extends AbstractOidcTests {
         @Test
         public void verifyOperation() throws Exception {
@@ -61,6 +63,7 @@ public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
         "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT",
     })
     @Nested
+    @SuppressWarnings("ClassCanBeStatic")
     public class SignAndEncryptTests extends AbstractOidcTests {
         @Test
         public void verifyOperation() throws Exception {
