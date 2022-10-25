@@ -1,5 +1,8 @@
 {
   "dependencies": "oidc",
+  "environmentVariables": [
+    "OIDC_KEYSTORE=/tmp/queryjwt.jwks"
+  ],
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -8,10 +11,12 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoint.refresh.enabled=true",
     "--management.endpoints.web.exposure.include=refresh",
-    
+                
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone",
-    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/queryjwt.jwks",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file://${#environmentVariables['OIDC_KEYSTORE']}",
+    "--cas.authn.oidc.response.crypto.signing-enabled=false",
+    "--cas.authn.oidc.response.crypto.encryption-enabled=true",
 
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
     "--cas.authn.attribute-repository.stub.attributes.name=CAS",

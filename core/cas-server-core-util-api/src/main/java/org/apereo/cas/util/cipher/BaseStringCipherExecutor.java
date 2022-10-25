@@ -105,7 +105,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         initialize();
     }
 
-    private void initialize() {
+    protected void initialize() {
         if (!initialized) {
             if (this.encryptionEnabled) {
                 configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
@@ -337,7 +337,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return encryptValueAsJwt(encryptionKey, value);
+                return encryptValueAsJwt(encryptionKey, encoded);
             },
             () -> encoded).get();
     }

@@ -29,6 +29,12 @@ public class OidcProperties implements Serializable {
     private static final long serialVersionUID = 813028615694269276L;
 
     /**
+     * Control OIDC response and response mode settings.
+     */
+    @NestedConfigurationProperty
+    private OidcResponseProperties response = new OidcResponseProperties();
+    
+    /**
      * Configuration properties managing the jwks settings for OIDC.
      */
     @NestedConfigurationProperty

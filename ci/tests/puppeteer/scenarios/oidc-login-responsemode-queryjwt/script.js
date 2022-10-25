@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const assert = require('assert');
+const fs = require("fs");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -13,29 +14,18 @@ const assert = require('assert');
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    console.log(`Page url: ${await page.url()}`);
+    console.log(`Page url: ${await page.url()}\n`);
     let response = await cas.assertParameter(page, "response");
 
-    let token = await cas.decodeJwt(response, true);
-    let kid = token.header.kid;
-    console.log(`Token is signed via key identifier ${kid}`);
-
-    await cas.doGet("https://localhost:8443/cas/oidc/jwks",
-        res => {
-            assert(res.status === 200);
-            assert(res.data.keys[0]["kid"] === kid);
-            cas.verifyJwtWithJwk(response, res.data.keys[0], "RS512").then(verified => {
-                // console.log(verified)
-                assert(verified.payload.aud === "client");
-                assert(verified.payload.iss === "https://localhost:8443/cas/oidc");
-                assert(verified.payload.state === "1001");
-                assert(verified.payload.nonce === "vn4qulthnx");
-                assert(verified.payload.code !== undefined);
-            });
-        },
-        error => {
-            throw error;
-        });
+    console.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
+    const keyContent = JSON.parse(fs.readFileSync(process.env.OIDC_KEYSTORE, 'utf8'));
+    cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then(verified => {
+        assert(verified.payload.aud === "client");
+        assert(verified.payload.iss === "https://localhost:8443/cas/oidc");
+        assert(verified.payload.state === "1001");
+        assert(verified.payload.nonce === "vn4qulthnx");
+        assert(verified.payload.code !== undefined);
+    });
     await browser.close();
 })();
 
