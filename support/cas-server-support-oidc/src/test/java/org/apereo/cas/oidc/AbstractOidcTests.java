@@ -217,6 +217,10 @@ public abstract class AbstractOidcTests {
     protected CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor;
 
     @Autowired
+    @Qualifier("oidcResponseModeJwtCipherExecutor")
+    protected CipherExecutor<Serializable, String> oidcResponseModeJwtCipherExecutor;
+
+    @Autowired
     @Qualifier("oidcUserProfileViewRenderer")
     protected OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer;
 

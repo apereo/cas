@@ -46,7 +46,7 @@ public class OidcResponseModeQueryJwtBuilder implements OAuth20ResponseModeBuild
                 parameters.forEach(claimsBuilder::claim);
                 val claimSet = claimsBuilder.build();
                 LOGGER.debug("Generating JWT response based on claims [{}]", claimSet.toString());
-                val token = ctx.getAccessTokenJwtBuilder().build(registeredService, claimSet);
+                val token = ctx.getResponseModeJwtBuilder().build(registeredService, claimSet);
                 val mv = new RedirectView(redirectUrl);
                 return new ModelAndView(mv, Map.of("response", token));
             })

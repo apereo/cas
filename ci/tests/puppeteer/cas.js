@@ -218,7 +218,7 @@ exports.assertParameter = async (page, param) => {
     console.log(`Asserting parameter ${param} in URL: ${page.url()}`);
     let result = new URL(page.url());
     let value = result.searchParams.get(param);
-    console.log(`Parameter ${param} with value ${value}`);
+    console.log(`Parameter ${colors.green(param)} with value ${colors.green(value)}`);
     assert(value != null);
     return value;
 };
@@ -487,6 +487,15 @@ exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
         return decoded;
     }
     throw `Unable to locate private key ${keyPath} to verify JWT`
+};
+
+exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+    const secretKey = await jose.importJWK(keyContent, alg);
+    console.log("Decrypting JWT");
+    const decoded = await jose.jwtDecrypt(ticket, secretKey);
+    console.log("Verified JWT:");
+    await this.logg(decoded);
+    return decoded;
 };
 
 exports.decodeJwt = async (token, complete = false) => {

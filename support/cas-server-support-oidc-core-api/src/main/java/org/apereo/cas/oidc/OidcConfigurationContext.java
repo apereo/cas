@@ -8,6 +8,7 @@ import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.token.JwtBuilder;
 
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -39,4 +40,6 @@ public class OidcConfigurationContext extends OAuth20ConfigurationContext {
     private final IdTokenGeneratorService idTokenGeneratorService;
     
     private final ExpirationPolicyBuilder idTokenExpirationPolicy;
+
+    private final JwtBuilder responseModeJwtBuilder;
 }
