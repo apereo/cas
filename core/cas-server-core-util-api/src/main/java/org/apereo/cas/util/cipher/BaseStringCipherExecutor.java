@@ -342,7 +342,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             () -> encoded).get();
     }
 
-    private String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
+    protected String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
         return JsonWebTokenEncryptor.builder()
             .key(encryptionKey)
             .algorithm(encryptionAlgorithm)

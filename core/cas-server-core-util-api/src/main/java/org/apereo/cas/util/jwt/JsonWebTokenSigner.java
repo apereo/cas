@@ -1,6 +1,8 @@
 package org.apereo.cas.util.jwt;
 
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.IdentifiableKey;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Builder;
 import lombok.experimental.SuperBuilder;
@@ -83,8 +85,14 @@ public class JsonWebTokenSigner {
         jws.setAlgorithmHeaderValue(this.algorithm);
         jws.setAlgorithmConstraints(getAlgorithmConstraints());
         jws.setHeader("typ", "JWT");
-        jws.setKey(key);
-        jws.setKeyIdHeaderValue(this.keyId);
+
+        if (this.key instanceof IdentifiableKey idk) {
+            jws.setKey(idk.getKey());
+            jws.setKeyIdHeaderValue(idk.getId());
+        } else {
+            jws.setKey(key);
+            FunctionUtils.doIfNotNull(this.keyId, jws::setKeyIdHeaderValue);
+        }
         headers.forEach((header, value) -> jws.setHeader(header, value.toString()));
         LOGGER.trace("Signing id token with key id header value [{}] and algorithm header value [{}]",
             jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());
