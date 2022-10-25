@@ -28,7 +28,6 @@ import org.springframework.security.authentication.jaas.JaasAuthenticationProvid
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
@@ -65,35 +64,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     public void destroy() {
         FunctionUtils.doIfNotNull(endpointLdapAuthenticationProvider, EndpointLdapAuthenticationProvider::destroy);
     }
-
-    /**
-     * Disable Spring Security configuration for protocol endpoints
-     * allowing CAS' own security configuration to handle protection
-     * of endpoints where necessary.
-     *
-     * @param web web security
-     */
-    public void configureWebSecurity(final WebSecurity web) {
-        val patterns = protocolEndpointWebSecurityConfigurers.stream()
-            .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
-            .flatMap(List<String>::stream)
-            .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
-            .collect(Collectors.toList());
-
-        patterns.add("/webjars/**");
-        patterns.add("/js/**");
-        patterns.add("/css/**");
-        patterns.add("/images/**");
-        patterns.add("/static/**");
-        patterns.add("/error");
-        patterns.add("/favicon.ico");
-
-        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
-        web.debug(LOGGER.isDebugEnabled())
-            .ignoring()
-            .antMatchers(patterns.toArray(String[]::new));
-    }
-
 
     /**
      * Configure http security.
@@ -135,6 +105,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         requests.antMatchers(patterns.toArray(String[]::new))
             .permitAll()
             .and()
+            .cors()
+            .disable()
             .securityContext()
             .disable()
             .sessionManagement()

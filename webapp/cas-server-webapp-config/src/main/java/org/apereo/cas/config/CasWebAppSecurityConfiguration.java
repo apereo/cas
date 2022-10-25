@@ -26,7 +26,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
@@ -78,18 +77,6 @@ public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfigur
     @Configuration(value = "CasWebappCoreSecurityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebappCoreSecurityConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(name = "casWebSecurityCustomizer")
-        public WebSecurityCustomizer casWebSecurityCustomizer(
-            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
-            final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
-            final SecurityProperties securityProperties,
-            final CasConfigurationProperties casProperties) {
-            val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-                pathMappedEndpoints, configurersList);
-            return adapter::configureWebSecurity;
-        }
-
         @Bean
         @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
         public SecurityFilterChain casWebSecurityConfigurerAdapter(
