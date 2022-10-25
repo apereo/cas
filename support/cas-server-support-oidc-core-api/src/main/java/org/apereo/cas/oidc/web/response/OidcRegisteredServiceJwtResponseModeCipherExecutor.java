@@ -4,7 +4,10 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
+import org.apereo.cas.oidc.util.InternalJwtAccessTokenCipherExecutor;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -51,5 +54,30 @@ public class OidcRegisteredServiceJwtResponseModeCipherExecutor extends Register
     public Optional<String> getEncryptionKey(final RegisteredService registeredService) {
         val jwks = OidcJsonWebKeyStoreUtils.fetchJsonWebKeySetForEncryption(registeredService, this);
         return jwks.map(JsonWebKeySet::toJson);
+    }
+
+    @Override
+    protected RegisteredServiceProperty.RegisteredServiceProperties getCipherStrategyTypeRegisteredServiceProperty(
+        final RegisteredService registeredService) {
+        return RegisteredServiceProperty.RegisteredServiceProperties.OIDC_RESPONSE_MODE_JWT_CIPHER_STRATEGY_TYPE;
+    }
+
+    @Override
+    protected JwtTicketCipherExecutor createCipherExecutorInstance(
+        final String encryptionKey,
+        final String signingKey,
+        final RegisteredService registeredService) {
+        return InternalJwtAccessTokenCipherExecutor.get(signingKey, encryptionKey, registeredService, this);
+    }
+
+
+    @Override
+    protected RegisteredServiceProperty.RegisteredServiceProperties getCipherOperationRegisteredServiceSigningEnabledProperty() {
+        return RegisteredServiceProperty.RegisteredServiceProperties.OIDC_RESPONSE_MODE_JWT_CIPHER_SIGNING_ENABLED;
+    }
+
+    @Override
+    protected RegisteredServiceProperty.RegisteredServiceProperties getCipherOperationRegisteredServiceEncryptionEnabledProperty() {
+        return RegisteredServiceProperty.RegisteredServiceProperties.OIDC_RESPONSE_MODE_JWT_CIPHER_ENCRYPTION_ENABLED;
     }
 }
