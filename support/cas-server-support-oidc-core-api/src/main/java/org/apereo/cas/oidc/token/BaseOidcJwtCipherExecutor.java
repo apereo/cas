@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
+import org.apereo.cas.util.cipher.BasicIdentifiableKey;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 
@@ -54,15 +56,19 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
         getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
             .map(jwks -> jwks.getJsonWebKeys().get(0))
             .map(PublicJsonWebKey.class::cast)
-            .ifPresent(key -> setSigningKey(key.getPrivateKey()));
+            .ifPresent(key -> setSigningKey(new BasicIdentifiableKey(key.getKeyId(), key.getPrivateKey())));
 
         getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION)
             .map(jwks -> jwks.getJsonWebKeys().get(0))
             .ifPresent(key -> {
-                setEncryptionKey(key.getKey());
-                setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+                setEncryptionKey(new BasicIdentifiableKey(key.getKeyId(), key.getKey()));
+                configureEncryptionSettingsFor(key);
             });
+    }
+
+    protected void configureEncryptionSettingsFor(final JsonWebKey key) {
+        setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }
 
     @Override
@@ -76,14 +82,13 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
             .map(jwks -> jwks.getJsonWebKeys().get(0))
             .map(PublicJsonWebKey.class::cast)
             .ifPresent(key -> {
-                setEncryptionKey(key.getPrivateKey());
-                setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+                setEncryptionKey(new BasicIdentifiableKey(key.getKeyId(), key.getPrivateKey()));
+                configureEncryptionSettingsFor(key);
             });
         getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
             .map(jwks -> jwks.getJsonWebKeys().get(0))
             .map(PublicJsonWebKey.class::cast)
-            .ifPresent(key -> setSigningKey(key.getPublicKey()));
+            .ifPresent(key -> setSigningKey(new BasicIdentifiableKey(key.getKeyId(), key.getKey())));
     }
 
 
