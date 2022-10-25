@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -29,7 +30,6 @@ import java.io.Serializable;
 import java.security.Key;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcRegisteredServiceJwtAccessTokenCipherExecutor}.
@@ -40,7 +40,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20RegisteredServiceJwtAccessTokenCipherExecutor {
+public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20RegisteredServiceJwtAccessTokenCipherExecutor
+    implements OidcRegisteredServiceJwtCipherExecutor {
     /**
      * The default keystore for OIDC tokens.
      */
@@ -49,7 +50,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
     /**
      * The service keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache;
+    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> registeredServiceJsonWebKeystoreCache;
 
     /**
      * OIDC issuer.
@@ -73,25 +74,9 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         if (result.isPresent()) {
             return result;
         }
-        val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
-        val issuer = oidcIssuerService.determineIssuer(Optional.of(oidcRegisteredService));
-        LOGGER.trace("Using issuer [{}] to determine JWKS from default keystore cache", issuer);
-        var jwks = Objects.requireNonNull(serviceJsonWebKeystoreCache.get(
-            new OidcJsonWebKeyCacheKey(oidcRegisteredService, OidcJsonWebKeyUsage.SIGNING)));
-        if (jwks.isPresent()) {
-            val jsonWebKey = jwks.get();
-            LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
-            val keys = jsonWebKey.getJsonWebKeys().stream()
-                .filter(key -> key.getKey() != null).collect(Collectors.toList());
-            return Optional.of(new JsonWebKeySet(keys).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
-        }
-        jwks = Objects.requireNonNull(defaultJsonWebKeystoreCache.get(
-            new OidcJsonWebKeyCacheKey(issuer, OidcJsonWebKeyUsage.SIGNING)));
-        if (jwks.isEmpty()) {
-            LOGGER.warn("No signing key could be found for issuer " + issuer);
-            return Optional.empty();
-        }
-        return Optional.of(jwks.get().toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
+
+        val jwks = OidcJsonWebKeyStoreUtils.fetchJsonWebKeySetForSigning(registeredService, this, true);
+        return jwks.map(keys -> keys.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
     }
 
     @Override
@@ -106,24 +91,8 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         }
 
         if (svc instanceof OidcRegisteredService) {
-            val jwks = Objects.requireNonNull(serviceJsonWebKeystoreCache.get(
-                new OidcJsonWebKeyCacheKey(svc, OidcJsonWebKeyUsage.ENCRYPTION)));
-            if (jwks.isEmpty()) {
-                LOGGER.warn("Service " + svc.getServiceId()
-                            + " with client id " + svc.getClientId()
-                            + " is configured to encrypt tokens, yet no JSON web key is available");
-                return Optional.empty();
-            }
-            val jsonWebKey = jwks.get();
-            LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
-
-            val keys = jsonWebKey.getJsonWebKeys().stream()
-                .filter(key -> key.getKey() != null).collect(Collectors.toList());
-            if (keys.isEmpty()) {
-                LOGGER.warn("No valid JSON web keys used to sign the token can be found");
-                return Optional.empty();
-            }
-            return Optional.of(new JsonWebKeySet(keys).toJson());
+            val jwks = OidcJsonWebKeyStoreUtils.fetchJsonWebKeySetForEncryption(registeredService, this);
+            return jwks.map(JsonWebKeySet::toJson);
         }
         return result;
     }
@@ -136,7 +105,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         final CipherOperationsStrategyType type) {
 
         val cipher = new InternalJwtAccessTokenCipherExecutor(encryptionKey, signingKey);
-        Unchecked.consumer(c -> {
+        Unchecked.consumer(__ -> {
             if (EncodingUtils.isJsonWebKey(encryptionKey)) {
                 val jsonWebKey = toJsonWebKey(encryptionKey);
                 cipher.setEncryptionKey(jsonWebKey.getPublicKey());
@@ -145,7 +114,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             if (EncodingUtils.isJsonWebKey(signingKey)) {
                 val jsonWebKey = toJsonWebKey(signingKey);
 
-                /**
+                /*
                  * Use the private key as the primary key to handle signing operations.
                  * The private key may also be used for validating signed objects.
                  * If the private key is not found, in the case where the keystore only contains a public
@@ -210,12 +179,11 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
     private Key getEncryptionKeyForDecryption(final RegisteredService registeredService) {
         val svc = (OAuthRegisteredService) registeredService;
         if (svc instanceof OidcRegisteredService) {
-            val jwks = Objects.requireNonNull(this.serviceJsonWebKeystoreCache.get(
+            val jwks = Objects.requireNonNull(this.registeredServiceJsonWebKeystoreCache.get(
                 new OidcJsonWebKeyCacheKey(svc, OidcJsonWebKeyUsage.ENCRYPTION)));
             if (jwks.isEmpty()) {
-                LOGGER.warn("Service " + svc.getServiceId()
-                            + " with client id " + svc.getClientId()
-                            + " is configured to encrypt tokens, yet no JSON web key is available");
+                LOGGER.warn("Service [{}] with client id [{}] is configured to encrypt tokens, yet no JSON web key is available",
+                    svc.getServiceId(), svc.getClientId());
                 return null;
             }
             val jsonWebKey = (PublicJsonWebKey) jwks.get().getJsonWebKeys().get(0);

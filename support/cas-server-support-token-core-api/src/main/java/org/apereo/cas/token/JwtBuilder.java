@@ -162,6 +162,13 @@ public class JwtBuilder {
         return build(registeredService, claimsSet);
     }
 
+    /**
+     * Build JWT.
+     *
+     * @param registeredService the registered service
+     * @param claimsSet         the claims set
+     * @return the string
+     */
     public String build(final RegisteredService registeredService,
                         final JWTClaimsSet claimsSet) {
 
