@@ -325,7 +325,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return encryptValueAsJwt(encryptionKey, value);
+                return encryptValueAsJwt(encryptionKey, encoded);
             },
             () -> encoded).get();
     }
