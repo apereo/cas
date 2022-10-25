@@ -21,6 +21,7 @@ import org.jose4j.jwk.PublicJsonWebKey;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.LinkedHashMap;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default
@@ -343,11 +344,13 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
     protected String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
+        val headers = new LinkedHashMap<>(getCommonHeaders());
+        headers.putAll(getEncryptionOpHeaders());
         return JsonWebTokenEncryptor.builder()
             .key(encryptionKey)
             .algorithm(encryptionAlgorithm)
             .encryptionMethod(contentEncryptionAlgorithmIdentifier)
-            .headers(getCustomHeaders())
+            .headers(headers)
             .build()
             .encrypt(value);
     }

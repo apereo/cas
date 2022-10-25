@@ -4,7 +4,6 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
-import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
@@ -67,8 +66,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests exten
 
         val service = getOidcRegisteredService("whatever");
 
-        val exec = cipher.createCipherExecutorInstance(null, null, service,
-            BaseStringCipherExecutor.CipherOperationsStrategyType.ENCRYPT_AND_SIGN);
+        val exec = cipher.createCipherExecutorInstance(null, null, service);
         assertEquals("value", exec.decode("value", new Object[]{service}));
 
         when(serviceCache.get(any())).thenReturn(Optional.of(new JsonWebKeySet(mock(PublicJsonWebKey.class))));

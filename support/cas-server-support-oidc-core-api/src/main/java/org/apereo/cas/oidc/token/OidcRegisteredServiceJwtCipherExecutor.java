@@ -16,9 +16,24 @@ import java.util.Optional;
  */
 public interface OidcRegisteredServiceJwtCipherExecutor {
 
+    /**
+     * Gets default json web keystore cache.
+     *
+     * @return the default json web keystore cache
+     */
     LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> getDefaultJsonWebKeystoreCache();
 
+    /**
+     * Gets registered service json web keystore cache.
+     *
+     * @return the registered service json web keystore cache
+     */
     LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> getRegisteredServiceJsonWebKeystoreCache();
 
+    /**
+     * Gets oidc issuer service.
+     *
+     * @return the oidc issuer service
+     */
     OidcIssuerService getOidcIssuerService();
 }

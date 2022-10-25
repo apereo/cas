@@ -491,7 +491,7 @@ exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
 
 exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
     const secretKey = await jose.importJWK(keyContent, alg);
-    console.log("Decrypting JWT");
+    console.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
     const decoded = await jose.jwtDecrypt(ticket, secretKey);
     console.log("Verified JWT:");
     await this.logg(decoded);

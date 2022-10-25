@@ -51,7 +51,11 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
 
     private Key signingKey;
 
-    private Map<String, Object> customHeaders = new LinkedHashMap<>();
+    private Map<String, Object> signingOpHeaders = new LinkedHashMap<>();
+    
+    private Map<String, Object> encryptionOpHeaders = new LinkedHashMap<>();
+
+    private Map<String, Object> commonHeaders = new LinkedHashMap<>();
 
     /**
      * Extract private key from resource private key.
@@ -126,9 +130,12 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the byte [ ]
      */
     protected byte[] signWith(final byte[] value, final String algHeaderValue, final Key key) {
+        val headers = new LinkedHashMap<>(commonHeaders);
+        headers.putAll(getSigningOpHeaders());
+
         return JsonWebTokenSigner.builder()
             .key(key)
-            .headers(this.customHeaders)
+            .headers(headers)
             .algorithm(algHeaderValue)
             .build()
             .sign(value);
