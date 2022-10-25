@@ -22,7 +22,7 @@ public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
     @TestPropertySource(properties = {
         "cas.authn.oidc.response.crypto.signing-enabled=false",
         "cas.authn.oidc.response.crypto.encryption-enabled=true",
-        "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT",
+        "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT"
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -41,7 +41,7 @@ public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
     @TestPropertySource(properties = {
         "cas.authn.oidc.response.crypto.signing-enabled=true",
         "cas.authn.oidc.response.crypto.encryption-enabled=false",
-        "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT",
+        "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT"
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -60,7 +60,7 @@ public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
     @TestPropertySource(properties = {
         "cas.authn.oidc.response.crypto.signing-enabled=true",
         "cas.authn.oidc.response.crypto.encryption-enabled=true",
-        "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT",
+        "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT"
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")

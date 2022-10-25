@@ -1,6 +1,8 @@
 package org.apereo.cas.oidc.jwks;
 
+import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -30,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.ECParameterSpec;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -231,5 +234,69 @@ public class OidcJsonWebKeyStoreUtils {
                 return newJwk;
             }
         }
+    }
+
+
+    /**
+     * Fetch json web key set for signing operations.
+     *
+     * @param registeredService the registered service
+     * @param cipherExecutor    the cipher executor
+     * @param fallbackToDefault the fallback to default
+     * @return the optional
+     */
+    public static Optional<JsonWebKeySet> fetchJsonWebKeySetForSigning(
+        final RegisteredService registeredService,
+        final OidcRegisteredServiceJwtCipherExecutor cipherExecutor,
+        final boolean fallbackToDefault) {
+        val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
+        val issuer = cipherExecutor.getOidcIssuerService().determineIssuer(Optional.of(oidcRegisteredService));
+        LOGGER.trace("Using issuer [{}] to determine JWKS from default keystore cache", issuer);
+        var jwks = Objects.requireNonNull(cipherExecutor.getRegisteredServiceJsonWebKeystoreCache().get(
+            new OidcJsonWebKeyCacheKey(oidcRegisteredService, OidcJsonWebKeyUsage.SIGNING)));
+        if (jwks.isPresent()) {
+            val jsonWebKey = jwks.get();
+            LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
+            val keys = jsonWebKey.getJsonWebKeys().stream()
+                .filter(key -> key.getKey() != null).collect(Collectors.toList());
+            return Optional.of(new JsonWebKeySet(keys));
+        }
+        if (fallbackToDefault) {
+            jwks = Objects.requireNonNull(cipherExecutor.getDefaultJsonWebKeystoreCache().get(
+                new OidcJsonWebKeyCacheKey(issuer, OidcJsonWebKeyUsage.SIGNING)));
+            if (jwks.isEmpty()) {
+                LOGGER.warn("No [{}] key could be found for issuer [{}]", OidcJsonWebKeyUsage.SIGNING, issuer);
+                return Optional.empty();
+            }
+        }
+        return jwks;
+    }
+
+    /**
+     * Fetch json web key set for encryption.
+     *
+     * @param registeredService the registered service
+     * @param cipherExecutor    the cipher executor
+     * @return the optional
+     */
+    public static Optional<JsonWebKeySet> fetchJsonWebKeySetForEncryption(final RegisteredService registeredService,
+                                                                          final OidcRegisteredServiceJwtCipherExecutor cipherExecutor) {
+        val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
+        val jwks = Objects.requireNonNull(cipherExecutor.getRegisteredServiceJsonWebKeystoreCache().get(
+            new OidcJsonWebKeyCacheKey(oidcRegisteredService, OidcJsonWebKeyUsage.ENCRYPTION)));
+        if (jwks.isEmpty()) {
+            LOGGER.warn("Service [{}] with client id [{}] is configured to encrypt tokens, yet no JSON web key is available",
+                oidcRegisteredService.getServiceId(), oidcRegisteredService.getClientId());
+            return Optional.empty();
+        }
+        val jsonWebKey = jwks.get();
+        LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
+
+        val keys = jsonWebKey.getJsonWebKeys().stream().filter(key -> key.getKey() != null).toList();
+        if (keys.isEmpty()) {
+            LOGGER.warn("No valid JSON web keys used for encryption can be found");
+            return Optional.empty();
+        }
+        return Optional.of(new JsonWebKeySet(keys));
     }
 }

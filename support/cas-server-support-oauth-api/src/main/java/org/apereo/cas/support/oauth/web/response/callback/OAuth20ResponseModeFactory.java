@@ -12,6 +12,9 @@ import org.apache.commons.lang3.StringUtils;
  * @since 7.0.0
  */
 public interface OAuth20ResponseModeFactory {
+    /**
+     * Default bean name.
+     */
     String BEAN_NAME = "oauthResponseModeFactory";
 
     /**
@@ -55,6 +58,12 @@ public interface OAuth20ResponseModeFactory {
             OAuth20ResponseModeTypes.QUERY_JWT.getType(), registeredService.getResponseType()));
     }
 
+    /**
+     * Register builder for mode factory.
+     *
+     * @param builder the builder
+     * @return the o auth 20 response mode factory
+     */
     OAuth20ResponseModeFactory registerBuilder(OAuth20ResponseModeBuilder builder);
 
     /**

@@ -100,12 +100,12 @@ public class GenerateFullJwtCommand {
             val jwt = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),
                 jwtClaims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
             val token = new String(jwt, StandardCharsets.UTF_8);
-            LOGGER.info("Producing signed JWT:\n" + token + '\n');
+            LOGGER.info("Producing signed JWT:\n{}\n", token);
             return token;
         }
         val jwt = new PlainJWT(JWTClaimsSet.parse(jwtClaims.getClaimsMap()));
         val token = jwt.serialize();
-        LOGGER.info("Producing plain JWT:\n" + token + '\n');
+        LOGGER.info("Producing plain JWT:\n{}\n", token);
         return token;
     }
 }

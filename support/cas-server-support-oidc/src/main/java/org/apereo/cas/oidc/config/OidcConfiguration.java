@@ -58,6 +58,7 @@ import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcClientSecretValidator;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.response.OidcJwtResponseModeCipherExecutor;
+import org.apereo.cas.oidc.web.response.OidcRegisteredServiceJwtResponseModeCipherExecutor;
 import org.apereo.cas.oidc.web.response.OidcResponseModeQueryJwtBuilder;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryListener;
@@ -931,15 +932,35 @@ public class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcRegisteredServiceResponseModeJwtCipherExecutor")
+        public RegisteredServiceCipherExecutor oidcRegisteredServiceResponseModeJwtCipherExecutor(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("oidcServiceJsonWebKeystoreCache")
+            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcServiceJsonWebKeystoreCache,
+            @Qualifier(OidcIssuerService.BEAN_NAME)
+            final OidcIssuerService oidcIssuerService,
+            @Qualifier("oidcDefaultJsonWebKeystoreCache")
+            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) {
+            val crypto = casProperties.getAuthn().getOidc().getResponse().getCrypto();
+            return FunctionUtils.doIf(crypto.isEnabled(),
+                () -> new OidcRegisteredServiceJwtResponseModeCipherExecutor(oidcDefaultJsonWebKeystoreCache,
+                    oidcServiceJsonWebKeystoreCache, oidcIssuerService),
+                RegisteredServiceCipherExecutor::noOp).get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcResponseModeJwtBuilder")
         public JwtBuilder oidcResponseModeJwtBuilder(
+            @Qualifier("oidcRegisteredServiceResponseModeJwtCipherExecutor")
+            final RegisteredServiceCipherExecutor oidcRegisteredServiceResponseModeJwtCipherExecutor,
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcResponseModeJwtCipherExecutor")
             final CipherExecutor<Serializable, String> oidcResponseModeJwtCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20JwtBuilder(oidcResponseModeJwtCipherExecutor, servicesManager,
-                RegisteredServiceCipherExecutor.noOp(), casProperties);
+                oidcRegisteredServiceResponseModeJwtCipherExecutor, casProperties);
         }
 
     }
