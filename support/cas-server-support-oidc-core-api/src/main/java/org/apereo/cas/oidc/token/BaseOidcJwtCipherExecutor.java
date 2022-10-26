@@ -43,7 +43,9 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
 
     @Override
     public boolean isEnabled() {
-        return isSigningEnabled() && getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING).stream().findAny().isPresent();
+        val signing = isSigningEnabled() && getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING).stream().findAny().isPresent();
+        val enc = isEncryptionEnabled() && getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION).stream().findAny().isPresent();
+        return signing || enc;
     }
 
     @Override
