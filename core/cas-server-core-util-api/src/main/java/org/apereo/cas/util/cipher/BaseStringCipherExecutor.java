@@ -97,7 +97,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         this.secretKeyEncryption = secretKeyEncryption;
         this.secretKeySigning = secretKeySigning;
         this.signingEnabled = signingEnabled || StringUtils.isNotBlank(secretKeySigning);
-        this.encryptionEnabled = this.signingEnabled && (encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption));
+        this.encryptionEnabled = encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption);
         this.signingKeySize = signingKeyLength <= 0
             ? CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE : signingKeyLength;
         this.encryptionKeySize = encryptionKeyLength <= 0
@@ -163,6 +163,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
         setEncryptionKey(object);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return super.isEnabled() || isEncryptionPossible(this.encryptionKey);
     }
 
     /**

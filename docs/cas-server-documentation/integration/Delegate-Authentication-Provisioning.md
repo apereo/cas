@@ -89,4 +89,4 @@ how to register configurations into the CAS runtime.
 
 {% endtab %}
 
-{$ endtabs %}
+{% endtabs %}
