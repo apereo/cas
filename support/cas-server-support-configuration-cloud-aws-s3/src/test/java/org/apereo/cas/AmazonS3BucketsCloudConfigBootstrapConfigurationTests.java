@@ -18,6 +18,7 @@ import org.springframework.mock.env.MockEnvironment;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -67,12 +68,10 @@ public class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
         environment.setProperty(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
         environment.setProperty(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
         environment.setProperty(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
-
+        val clientBuilder = S3Client.builder().serviceConfiguration(S3Configuration.Builder::pathStyleAccessEnabled).forcePathStyle(true);
         val builder = new AmazonEnvironmentAwareClientBuilder(AmazonS3BucketsCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX, environment);
-        val s3Client = builder.build(S3Client.builder(), S3Client.class);
-
+        val s3Client = builder.build(clientBuilder, S3Client.class);
         deleteBucket(s3Client);
-
         s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
         val properties = "cas.authn.accept.users=" + STATIC_AUTHN_USERS;
         val request = PutObjectRequest.builder().bucket(BUCKET_NAME).key("cas.properties").build();

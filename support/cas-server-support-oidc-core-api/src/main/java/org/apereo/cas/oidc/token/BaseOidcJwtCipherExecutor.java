@@ -43,7 +43,7 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
 
     @Override
     public boolean isEnabled() {
-        return this.isSigningEnabled() && getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING).stream().findAny().isPresent();
+        return isSigningEnabled() && getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING).stream().findAny().isPresent();
     }
 
     @Override

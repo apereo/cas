@@ -213,14 +213,14 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Whether signing operations should be enabled when producing JWTs.
          **/
-        TOKEN_AS_SERVICE_TICKET_SIGNING_ENABLED("jwtAsServiceTicketSigningEnabled", StringUtils.EMPTY,
+        TOKEN_AS_SERVICE_TICKET_SIGNING_ENABLED("jwtAsServiceTicketSigningEnabled", "true",
             RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.BOOLEAN,
             "Whether signing operations should be enabled when producing JWTs."),
 
         /**
          * Whether encryption operations should be enabled when producing JWTs.
          **/
-        TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ENABLED("jwtAsServiceTicketEncryptionEnabled", StringUtils.EMPTY,
+        TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ENABLED("jwtAsServiceTicketEncryptionEnabled", "true",
             RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.BOOLEAN,
             "Whether encryption operations should be enabled when producing JWTs."),
 
