@@ -44,7 +44,7 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ### Spring Boot 3
 
 The migration of the entire codebase to Spring Boot 3 and Jakarta APIs is ongoing, and at the moment
-is pending for the wider ecosystem of suppprting frameworks and libraries to catch up to these changes. 
+is pending for the wider ecosystem of suppporting frameworks and libraries to catch up to these changes. 
 As a quick status update, we anticipate the work to finalize in the next release candidate.
 
 ### Testing Strategy
@@ -74,7 +74,7 @@ requests based on [Auth0's OpenFGA](../services/Service-Access-Strategy-OpenFGA.
 A new access strategy is now available to enforce fine-grained authorization
 requests based on [Open Policy Agent](../services/Service-Access-Strategy-OpenPolicyAgent.html).
 
-### Duo Security Onboarding
+### Duo Security Enrollment
 
 If you would rather not rely on [Duo Security](../mfa/DuoSecurity-Authentication.html)’s built-in 
 registration flow and have your own registration application 

@@ -55,7 +55,7 @@ the namespace `org.apereo.cas.oidc.claims` and are described below:
 | `o.a.c.o.c.OidcCustomScopeAttributeReleasePolicy`  | Release claims mapped to the CAS-defined `custom` scope.      |
    
 You are encouraged to use scopes where possible, when deciding on the strategy to share attributes and claims with client applications. 
-CAS will automatically translate scopes and bundled claims within each scope into the appropriate attribute release policy. If the oppurtunity
+CAS will automatically translate scopes and bundled claims within each scope into the appropriate attribute release policy. If the opportunity
 presents itself, avoid using an attribute release policy directly.
 
 ## Mapping Claims
@@ -116,7 +116,7 @@ These such as `displayName` above, get bundled into a `custom` scope which
 can be used and requested by services and clients.
 
 <div class="alert alert-info"><strong>Usage</strong><p>All user-defined custom scopes as well any custom claims
-that would be mapped to those scopes must always be advertised via OpenID Connect dioscvery document and specified
+that would be mapped to those scopes must always be advertised via OpenID Connect discovery document and specified
 in CAS settings for scopes and claims to be recognized as valid during claim processing.</p>
 </div>
 

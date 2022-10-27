@@ -28,7 +28,7 @@ Note that OpenID connect clients as service definitions are an
 extension of [OAuth services](OAuth-Authentication-Clients.html) in CAS. All settings 
 that apply to an OAuth service definition should equally apply here as well. 
 
-<div class="alert alert-info"><strong>Redirect URIs</strong><p>Client applicatin redirect URIs are specified
+<div class="alert alert-info"><strong>Redirect URIs</strong><p>Client application redirect URIs are specified
 using the <code>serviceId</code> field which supports regular expression patterns. If you need to support multiple URIs, you can
 try to <i>OR</i> them together or you may be able to construct the pattern that supports and matches all URIs with minor changes.</p></div>
 

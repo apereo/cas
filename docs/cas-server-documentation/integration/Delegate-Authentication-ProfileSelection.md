@@ -10,7 +10,7 @@ category: Authentication
 
 Delegated authentication flows can be customized to allow the end-user to select an authentication profile,
 in cases where the user account produced by the identity provider can match multiple records
-and is linked to multiple personas. When mutiple matches are found, the CAS user interface allows the end-user to select
+and is linked to multiple personas. When multiple matches are found, the CAS user interface allows the end-user to select
 the appropriate profile with which authentication should resume. 
                
 The credential resolution rules for the delegation flow are consulted using the following options.
@@ -71,6 +71,6 @@ executed using a specific order.</p></div>
 The implementation body of the resolver is responsible for accepting a response that is produced by the identity provider.
 This response that carries the initial user profile can then be processed to determine if it can be linked and matched
 to multiple *internal* user accounts, or the response itself could be examined without external dependencies to determine
-if the user account has mutiple parallel profiles available via i.e. looking at a multi-valued attribute in the
+if the user account has multiple parallel profiles available via i.e. looking at a multi-valued attribute in the
 response. Whatever the resolution rules may be, the end result of the implementation is expected to
 produce a list of `DelegatedAuthenticationCandidateProfile` objects that represents various traits of the user profile.
