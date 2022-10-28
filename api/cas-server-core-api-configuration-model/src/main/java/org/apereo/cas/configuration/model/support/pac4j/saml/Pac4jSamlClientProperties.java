@@ -290,6 +290,15 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     private String messageStoreFactory = "org.pac4j.saml.store.EmptyStoreFactory";
 
     /**
+     * Controls the way SAML attributes are converted from the SAML authentication response into pac4j attributes.
+     * <ul>
+     *     <li>{@code org.pac4j.saml.profile.converter.SimpleSAML2AttributeConverter}: Values of complex types are serialized into a single attribute. (default)</li>
+     *     <li>{@code org.pac4j.saml.profile.converter.ComplexTypeSAML2AttributeConverter}: Values of complex types are unboxed into several attributes; one per child element.</li>
+     * </ul>
+     */
+    private String samlAttributeConverter = "org.pac4j.saml.profile.converter.SimpleSAML2AttributeConverter";
+
+    /**
      * Indicate the strategy that should be used to sign the generated metadata.
      * <ul>
      *     <li>{@code Default}: Uses a signing strategy using the XMLSecTool tool.</li>
