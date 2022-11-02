@@ -569,9 +569,9 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setProviderName(saml.getProviderName());
                 cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
-                if (!saml.getSamlAttributeConverter().isEmpty()) {
+                if (!saml.getSaml2AttributeConverter().isEmpty()) {
                     FunctionUtils.doAndHandle(__ -> {
-                        val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSamlAttributeConverter());
+                        val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
                         val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
                         cfg.setSamlAttributeConverter(converter);
                     });
