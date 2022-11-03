@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -43,7 +44,15 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
-public record DynamoDbTicketRegistryFacilitator(TicketCatalog ticketCatalog, DynamoDbTicketRegistryProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
+@Getter
+@RequiredArgsConstructor
+public class DynamoDbTicketRegistryFacilitator {
+    private final TicketCatalog ticketCatalog;
+
+    private final DynamoDbTicketRegistryProperties dynamoDbProperties;
+
+    private final DynamoDbClient amazonDynamoDBClient;
+
     private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
         val encoded = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
         LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
@@ -106,7 +115,7 @@ public record DynamoDbTicketRegistryFacilitator(TicketCatalog ticketCatalog, Dyn
             val result = this.amazonDynamoDBClient.scan(scan);
             LOGGER.debug("Scanned table with result [{}]", scan);
             tickets.addAll(result.items().stream()
-                .map(DynamoDbTicketRegistryFacilitator::deserializeTicket).toList());
+                .map(DynamoDbTicketRegistryFacilitator::deserializeTicket).collect(Collectors.toList()));
         });
         return tickets;
     }
@@ -222,6 +231,26 @@ public record DynamoDbTicketRegistryFacilitator(TicketCatalog ticketCatalog, Dyn
             keys,
             DynamoDbTicketRegistryFacilitator::deserializeTicket);
     }
+
+    /**
+     * Count tickets and return value.
+     *
+     * @param ticketType the ticket type
+     * @param prefix     the prefix
+     * @return the long
+     */
+    public long countTickets(final Class<? extends Ticket> ticketType, final String prefix) {
+        val keys = List.<DynamoDbQueryBuilder>of(
+            DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.PREFIX.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().s(prefix).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
+        return ticketCatalog.findTicketDefinition(ticketType)
+            .map(def -> DynamoDbTableUtils.scan(amazonDynamoDBClient, def.getProperties().getStorageName(), keys).count())
+            .orElse(-1);
+    }
+
 
     /**
      * Column names for tables holding tickets.
