@@ -31,6 +31,7 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.http.callback.NoParameterCallbackUrlResolver;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
 import org.pac4j.core.http.callback.QueryParameterCallbackUrlResolver;
+import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -573,6 +574,14 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 }
                 cfg.setProviderName(saml.getProviderName());
                 cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
+
+                if (StringUtils.isNotBlank(saml.getSaml2AttributeConverter())) {
+                    FunctionUtils.doAndHandle(__ -> {
+                        val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
+                        val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
+                        cfg.setSamlAttributeConverter(converter);
+                    });
+                }
 
                 val mappedAttributes = saml.getMappedAttributes();
                 if (!mappedAttributes.isEmpty()) {
