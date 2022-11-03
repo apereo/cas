@@ -35,7 +35,7 @@ import java.util.Optional;
 @Slf4j
 public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+            .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Serial
     private static final long serialVersionUID = 1600024683199961892L;
@@ -54,20 +54,21 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val service = WebUtils.getService(requestContext);
             val parameters = CollectionUtils.<String, String>wrap(
-                "username", principal.getId(),
-                "locale", request.getLocale().toString());
+                    "username", principal.getId(),
+                    "locale", request.getLocale().toString());
             if (service != null) {
                 parameters.put("service", service.getId());
             }
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(rest.getBasicAuthPassword())
-                .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
-                .url(rest.getUrl())
-                .parameters(parameters)
-                .build();
+                    .basicAuthPassword(rest.getBasicAuthPassword())
+                    .basicAuthUsername(rest.getBasicAuthUsername())
+                    .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
+                    .url(rest.getUrl())
+                    .parameters(parameters)
+                    .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getStatusLine().getStatusCode();
+            LOGGER.warn("AUP submit policy request returned with response code [{}]", statusCode);
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);
@@ -81,21 +82,24 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val rest = aupProperties.getRest();
             val url = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("policy");
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(rest.getBasicAuthPassword())
-                .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
-                .url(url)
-                .parameters(CollectionUtils.wrap("username", principal.getId()))
-                .build();
+                    .basicAuthPassword(rest.getBasicAuthPassword())
+                    .basicAuthUsername(rest.getBasicAuthUsername())
+                    .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
+                    .url(url)
+                    .parameters(CollectionUtils.wrap("username", principal.getId(),
+                            "locale", request.getLocale().toString()))
+                    .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getStatusLine().getStatusCode();
+            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
                 return Optional.ofNullable(terms);
             }
+            LOGGER.warn("AUP fetch policy request returned with response code [{}] and content [{}]", statusCode, result);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
