@@ -105,13 +105,13 @@ The outcome of the script should be message body text.
 
 ## Custom
 
-You may also define your own communication manager that would be tasked to send emails, etc using the following
-bean definition and by implementing `CommunicationsManager`:
+You may also define your own email sender that would be tasked to submit emails, etc using the following
+bean definition and by implementing `EmailSender`:
 
 ```java
 @Bean
-public CommunicationsManager communicationsManager() {
-    return new MyCommunicationsManager();   
+public EmailSender emailSender() {
+    return new MyEmailSender();   
 }
 ```
 
