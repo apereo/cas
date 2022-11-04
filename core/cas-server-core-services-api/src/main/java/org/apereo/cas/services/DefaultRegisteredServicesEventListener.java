@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -69,8 +70,10 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
                 .stream()
                 .filter(contact -> StringUtils.isNotBlank(contact.getEmail()))
                 .forEach(contact -> {
-                    val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
-                        .to(List.of(contact.getEmail())).body(body).build();
+                    val emailRequest = EmailMessageRequest.builder()
+                        .emailProperties(mail)
+                        .to(List.of(contact.getEmail()))
+                        .body(body).build();
                     communicationsManager.email(emailRequest);
                 });
         }
