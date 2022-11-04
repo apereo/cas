@@ -99,7 +99,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
                 return Optional.ofNullable(terms);
             }
-            LOGGER.debug("AUP fetch policy request returned with response code [{}] and content [{}]", statusCode, result);
+            LOGGER.warn("AUP fetch policy request returned with response code [{}] and content [{}]", statusCode, result);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
