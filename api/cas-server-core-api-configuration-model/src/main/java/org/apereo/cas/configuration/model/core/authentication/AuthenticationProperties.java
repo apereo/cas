@@ -194,7 +194,7 @@ public class AuthenticationProperties implements Serializable {
      * REST-based authentication settings.
      */
     @NestedConfigurationProperty
-    private RestAuthenticationProperties rest = new RestAuthenticationProperties();
+    private List<RestAuthenticationProperties> rest = new ArrayList<>(0);
 
     /**
      * Collection of settings related to LDAP authentication.

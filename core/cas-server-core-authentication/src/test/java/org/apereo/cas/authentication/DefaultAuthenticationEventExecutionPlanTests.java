@@ -60,7 +60,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
         plan.registerAuthenticationPreProcessor(transaction -> false);
         plan.registerAuthenticationMetadataPopulators(
             Set.of(new RememberMeAuthenticationMetaDataPopulator(new RememberMeAuthenticationProperties())));
-        plan.registerAuthenticationHandlerWithPrincipalResolvers(
+        plan.registerAuthenticationHandlersWithPrincipalResolver(
             Set.of(new SimpleTestUsernamePasswordAuthenticationHandler()), new PersonDirectoryPrincipalResolver(context));
         plan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
         plan.registerAuthenticationPolicyResolver(transaction -> Set.of(new AllCredentialsValidatedAuthenticationPolicy()));
@@ -72,7 +72,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
     @Test
     public void verifyMismatchedCount() {
         val plan = new DefaultAuthenticationEventExecutionPlan();
-        plan.registerAuthenticationHandlerWithPrincipalResolvers(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
+        plan.registerAuthenticationHandlersWithPrincipalResolver(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
         assertTrue(plan.getAuthenticationHandlers().isEmpty());
     }
 

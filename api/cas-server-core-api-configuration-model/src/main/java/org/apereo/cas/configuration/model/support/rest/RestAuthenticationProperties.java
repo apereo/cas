@@ -35,11 +35,6 @@ public class RestAuthenticationProperties implements Serializable {
     private String uri;
 
     /**
-     * Charset to encode the credentials sent to the REST endpoint.
-     */
-    private String charset = "US-ASCII";
-
-    /**
      * Password encoder settings for REST authentication.
      */
     @NestedConfigurationProperty

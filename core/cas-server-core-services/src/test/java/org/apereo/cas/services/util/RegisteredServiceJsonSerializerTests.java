@@ -102,8 +102,7 @@ public class RegisteredServiceJsonSerializerTests {
                       "name" : "XYZ",
                       "id" : "20161214"
             "authenticationPolicy" : {
-              "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
-              "criteria":""  }    }""".indent(2);
+              "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy"}}""".indent(2);
 
         val serialized = zer.from(json);
         assertNotNull(serialized);
