@@ -61,7 +61,7 @@ Select the username from the resolved attribute, `cn`, and make sure it's transf
 
 {% endtab %}
 
-{% tab accessstrategyprincipal Attribute %}
+{% tab accessstrategyprincipal Advanced %}
 
 Select the username from the resolved attribute, `email`, and make sure it's transformed into an uppercase string.
 Then, remove all values that match the pattern `@.+` from the result, and scope the result to `example.org`.

@@ -69,6 +69,11 @@ improved with a PIN code confirmation.
 A new access strategy is now available to enforce fine-grained authorization 
 requests based on [Auth0's OpenFGA](../services/Service-Access-Strategy-OpenFGA.html).
 
+### REST Authentication
+
+Support for [REST authentication](../authentication/Rest-Authentication.html) is now improved to support
+multiple REST endpoints and configuration blocks.
+
 ### OPA Access Strategy
 
 A new access strategy is now available to enforce fine-grained authorization
@@ -94,6 +99,8 @@ that contains the user’s identity as JWT.
 - Authentication attributes can now optionally be included in OpenID Connect ID token or user profile payloads. 
 - The ability to secure actuator endpoints via subnet addresses is now restored.
 - The persistence units for all JPA integrations is now corrected to refer to the defined unit name.
+- Username providers [based on attributes](../integration/Attribute-Release-PrincipalId-Attribute.html) are now able to remove text from the final username 
+  using regular expressions. 
 
 ## Library Upgrades
 
@@ -101,6 +108,7 @@ that contains the user’s identity as JWT.
 - Apache Tomcat
 - Twilio
 - Jose4j
+- Gradle
 - Apache Ignite
 - Apache Shiro
 - Netty
@@ -110,6 +118,7 @@ that contains the user’s identity as JWT.
 - Lettuce
 - Micrometer
 - Nimbus
+- InfluxDb
 - WSS4j
 - Hibernate
 - Groovy
