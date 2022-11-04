@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.CoreAuthenticationUtilsTests;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlanTests;
 import org.apereo.cas.authentication.DefaultAuthenticationManagerTests;
 import org.apereo.cas.authentication.DefaultAuthenticationTests;
+import org.apereo.cas.authentication.DefaultCasSSLContextTests;
 import org.apereo.cas.authentication.DefaultPasswordEncoderTests;
 import org.apereo.cas.authentication.FileTrustStoreSslSocketFactoryTests;
 import org.apereo.cas.authentication.OneTimePasswordCredentialTests;
@@ -80,6 +81,7 @@ import org.junit.platform.suite.api.Suite;
     AcceptUsersAuthenticationHandlerTests.class,
     CacheCredentialsMetaDataPopulatorTests.class,
     OneTimePasswordCredentialTests.class,
+    DefaultCasSSLContextTests.class,
     BlockingPrincipalNameTransformerTests.class,
     UniquePrincipalAuthenticationPolicyTests.class,
     RestfulAuthenticationPolicyTests.class,

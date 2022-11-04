@@ -20,6 +20,7 @@ import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
@@ -154,19 +155,16 @@ public class DynamoDbTableUtils {
     }
 
     /**
-     * Gets records by keys.
+     * Scan table based on query and return response.
      *
-     * @param <T>            the type parameter
      * @param dynamoDbClient the dynamo db client
      * @param tableName      the table name
      * @param queries        the queries
-     * @param itemMapper     the item mapper
-     * @return the records by keys
+     * @return the scan response
      */
-    public static <T> Stream<T> getRecordsByKeys(final DynamoDbClient dynamoDbClient,
-                                                 final String tableName,
-                                                 final List<? extends DynamoDbQueryBuilder> queries,
-                                                 final Function<Map<String, AttributeValue>, T> itemMapper) {
+    public static ScanResponse scan(final DynamoDbClient dynamoDbClient,
+                                    final String tableName,
+                                    final List<? extends DynamoDbQueryBuilder> queries) {
         try {
             val scanFilter = queries.stream()
                 .map(query -> {
@@ -182,14 +180,30 @@ public class DynamoDbTableUtils {
                 .scanFilter(scanFilter)
                 .build();
             LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
-            val items = dynamoDbClient.scan(scanRequest).items();
-            return items
-                .stream()
-                .map(itemMapper);
+            return dynamoDbClient.scan(scanRequest);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return Stream.empty();
+        return ScanResponse.builder().items(Map.of()).build();
+    }
+
+    /**
+     * Gets records by keys.
+     *
+     * @param <T>            the type parameter
+     * @param dynamoDbClient the dynamo db client
+     * @param tableName      the table name
+     * @param queries        the queries
+     * @param itemMapper     the item mapper
+     * @return the records by keys
+     */
+    public static <T> Stream<T> getRecordsByKeys(final DynamoDbClient dynamoDbClient,
+                                                 final String tableName,
+                                                 final List<? extends DynamoDbQueryBuilder> queries,
+                                                 final Function<Map<String, AttributeValue>, T> itemMapper) {
+        val scanResponse = scan(dynamoDbClient, tableName, queries);
+        val items = scanResponse.items();
+        return items.stream().map(itemMapper);
     }
 
     private static TableDescription waitForTableDescription(final DynamoDbClient dynamo,

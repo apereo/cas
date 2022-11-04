@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -76,5 +78,15 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     public long deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
         return dbTableService.delete(ticketIdToDelete, ticketId) ? 1 : 0;
+    }
+
+    @Override
+    public long sessionCount() {
+        return dbTableService.countTickets(TicketGrantingTicket.class, TicketGrantingTicket.PREFIX);
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        return dbTableService.countTickets(ServiceTicket.class, ServiceTicket.PREFIX);
     }
 }
