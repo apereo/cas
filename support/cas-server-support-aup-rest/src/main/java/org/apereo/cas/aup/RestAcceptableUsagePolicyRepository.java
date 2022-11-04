@@ -90,7 +90,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
                 .url(url)
                 .parameters(CollectionUtils.wrap("username", principal.getId(),
-                        "locale", request.getLocale().toString()))
+                    "locale", request.getLocale().toString()))
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getStatusLine().getStatusCode();
