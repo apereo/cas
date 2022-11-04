@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**

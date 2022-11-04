@@ -30,5 +30,5 @@ public interface EmailSender {
      * @return the email communication result
      * @throws Exception the exception
      */
-    EmailCommunicationResult send(EmailMessageRequest emailRequest) throws Exception ;
+    EmailCommunicationResult send(EmailMessageRequest emailRequest) throws Exception;
 }
