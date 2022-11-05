@@ -30,6 +30,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcResponseModeQueryJwtBuilder implements OAuth20ResponseModeBuilder {
+    private static final int EXPIRATION_TIME_MINUTES = 1;
+
     private final ObjectProvider<OidcConfigurationContext> configurationContext;
 
     @Override
@@ -41,7 +43,7 @@ public class OidcResponseModeQueryJwtBuilder implements OAuth20ResponseModeBuild
                 val oidcService = Objects.requireNonNull((OidcRegisteredService) registeredService);
                 val claimsBuilder = new JWTClaimsSet.Builder()
                     .issuer(ctx.getIssuerService().determineIssuer(Optional.of(oidcService)))
-                    .expirationTime(DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC()).plusMinutes(5)))
+                    .expirationTime(DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC()).plusMinutes(EXPIRATION_TIME_MINUTES)))
                     .audience(oidcService.getClientId());
                 parameters.forEach(claimsBuilder::claim);
                 val claimSet = claimsBuilder.build();

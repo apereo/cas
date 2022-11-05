@@ -87,6 +87,11 @@ that allows users to onboard and enroll with Duo Security, you can instruct CAS 
 application, if the user’s account status is determined to require enrollment with a special `principal` parameter
 that contains the user’s identity as JWT.
 
+### OpenID Connect JARM
+
+Initial support for [JWT Secured Authorization Response](../authentication/OIDC-Authentication-JARM.html) is now available for OpenID Connect,
+and will gradually improve to support other response modes in future releases.
+
 ## Other Stuff
     
 - Small adjustments to [attribute consent](../integration/Attribute-Release-Consent-Activation.html) rules when activated for and assigned to a specific 

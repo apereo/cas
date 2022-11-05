@@ -18,8 +18,8 @@ typically would produce a `request_uri` as such:
 
 ```json
 {
-  expires_in: 30,
-  request_uri: 'OPAR-1-...'
+  "expires_in": 30,
+  "request_uri": "OPAR-1-..."
 }
 ```
 
