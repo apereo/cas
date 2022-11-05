@@ -601,10 +601,13 @@ public interface RegisteredServiceProperty extends Serializable {
         @JsonIgnore
         public RegisteredServiceProperty getPropertyValue(final RegisteredService service) {
             if (isAssignedTo(service)) {
-                val property = service.getProperties().entrySet()
-                    .stream().filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
+                val property = service.getProperties()
+                    .entrySet()
+                    .stream()
+                    .filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
                         && StringUtils.isNotBlank(entry.getValue().value()))
-                    .distinct().findFirst();
+                    .distinct()
+                    .findFirst();
                 if (property.isPresent()) {
                     return property.get().getValue();
                 }

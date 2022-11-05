@@ -7,11 +7,15 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.util.io.pem.PemReader;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,7 +40,13 @@ public class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndp
     private JwtTokenCipherSigningPublicKeyEndpoint endpoint;
 
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperationWithoutService() throws Exception {
+        val publicKey = endpoint.fetchPublicKey(StringUtils.EMPTY);
+        assertEquals(StringUtils.EMPTY, publicKey);
+    }
+
+    @Test
+    public void verifyOperationByService() throws Exception {
         val service = RegisteredServiceTestUtils.getService("https://publickey.service");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
 
@@ -45,6 +55,10 @@ public class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndp
         registeredService.getProperties().put(
             RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(), signingKey);
         servicesManager.save(registeredService);
-        assertNotNull(endpoint.fetchPublicKey(service.getId()));
+        val publicKey = endpoint.fetchPublicKey(service.getId());
+        assertNotNull(publicKey);
+        try (val r = new PemReader(new StringReader(publicKey))) {
+            assertNotNull(r.readPemObject());
+        }
     }
 }
