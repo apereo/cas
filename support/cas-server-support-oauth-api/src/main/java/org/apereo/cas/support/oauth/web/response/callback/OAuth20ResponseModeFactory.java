@@ -24,6 +24,20 @@ public interface OAuth20ResponseModeFactory {
      * @param responseType      the response type
      * @return the boolean
      */
+    static boolean isResponseModeTypeFormPostJwt(final OAuthRegisteredService registeredService,
+                                              final OAuth20ResponseModeTypes responseType) {
+        return responseType == OAuth20ResponseModeTypes.FORM_POST_JWT
+               || (registeredService != null
+                   && StringUtils.equalsIgnoreCase(OAuth20ResponseModeTypes.FORM_POST_JWT.getType(), registeredService.getResponseMode()));
+    }
+
+    /**
+     * Is response mode type form post?
+     *
+     * @param registeredService the registered service
+     * @param responseType      the response type
+     * @return the boolean
+     */
     static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService,
                                               final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FORM_POST

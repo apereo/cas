@@ -72,6 +72,28 @@ Location: https://app.example.org/redirect#response=eyJraWQiOiJsYWViIiwiYWxnIjoi
 
 {% endtab %}
 
+{% tab oidcjarmmodes Query %}
+
+The response mode `query.jwt` causes CAS to send the authorization response as HTTP redirect
+to the redirect URI of the client. CAS adds the parameter `response` containing the JWT to
+the query component of the redirect URI:
+
+```bash
+HTTP/1.1 302 Found
+Location: https://app.example.org/redirect?response=eyJraWQiOiJsYWViIiwiYWxnIjoiRVMyN...
+```
+
+{% endtab %}
+
+{% tab oidcjarmmodes Form Post %}
+
+The response mode `form_post.jwt` causes CAS to `POST` the authorization response to
+the redirect URI of the client. The `response` parameter containing the JWT is encoded as HTML 
+form value that is auto-submitted and thus is transmitted via the HTTP `POST` method to the client, 
+with the result parameters being encoded in the body using the `application/x-www-form-urlencoded` format.
+
+{% endtab %}
+
 {% endtabs %}
 
 ## Configuration
