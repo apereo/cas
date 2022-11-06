@@ -196,6 +196,7 @@ import org.junit.platform.suite.api.Suite;
     OidcIdTokenExpirationPolicyBuilderTests.class,
     OidcInitialAccessTokenControllerTests.class,
     OidcClientRegistrationRequestTranslatorTests.class,
+    OidcResponseModeFragmentJwtBuilderTests.class,
     OidcPushedAuthorizationRequestTests.class,
     OidcJwtResponseModeCipherExecutorTests.class,
     OidcDefaultJsonWebKeyStoreListenerTests.class,

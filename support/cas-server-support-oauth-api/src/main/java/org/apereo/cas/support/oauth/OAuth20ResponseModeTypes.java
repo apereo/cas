@@ -37,6 +37,11 @@ public enum OAuth20ResponseModeTypes {
     FRAGMENT_JWT("fragment.jwt"),
 
     /**
+     * {@code form_post.jwt} response mode.
+     */
+    FORM_POST_JWT("form_post.jwt"),
+
+    /**
      * {@code form_post} response mode.
      */
     FORM_POST("form_post");
