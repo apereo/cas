@@ -193,7 +193,6 @@ public class AuthenticationProperties implements Serializable {
     /**
      * REST-based authentication settings.
      */
-    @NestedConfigurationProperty
     private List<RestAuthenticationProperties> rest = new ArrayList<>(0);
 
     /**
