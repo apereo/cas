@@ -95,6 +95,7 @@ import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurerTests;
 import org.apereo.cas.oidc.web.response.OidcJwtResponseModeCipherExecutorTests;
+import org.apereo.cas.oidc.web.response.OidcResponseModeFragmentJwtBuilderTests;
 import org.apereo.cas.oidc.web.response.OidcResponseModeQueryJwtBuilderTests;
 
 import org.junit.platform.suite.api.SelectClasses;
@@ -188,6 +189,7 @@ import org.junit.platform.suite.api.Suite;
     OidcClientSecretValidatorTests.class,
     OidcMessageSanitizerTests.class,
     OidcDPoPAuthenticatorTests.class,
+    OidcResponseModeFragmentJwtBuilderTests.class,
     OidcResponseModeQueryJwtBuilderTests.class,
     OidcSimpleIdTokenClaimCollectorTests.class,
     OidcIdTokenClaimCollectorTests.class,
