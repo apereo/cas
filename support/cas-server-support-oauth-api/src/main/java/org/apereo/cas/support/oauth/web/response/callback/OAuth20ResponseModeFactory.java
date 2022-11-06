@@ -27,9 +27,9 @@ public interface OAuth20ResponseModeFactory {
     static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService,
                                               final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FORM_POST
-               || (registeredService != null &&
-                   (StringUtils.equalsIgnoreCase("post", registeredService.getResponseMode())
-                    || StringUtils.equalsIgnoreCase(OAuth20ResponseModeTypes.FORM_POST.getType(), registeredService.getResponseMode())));
+               || (registeredService != null
+                   && (StringUtils.equalsIgnoreCase("post", registeredService.getResponseMode())
+                       || StringUtils.equalsIgnoreCase(OAuth20ResponseModeTypes.FORM_POST.getType(), registeredService.getResponseMode())));
     }
 
     /**
@@ -44,6 +44,20 @@ public interface OAuth20ResponseModeFactory {
         return responseType == OAuth20ResponseModeTypes.FRAGMENT
                || (registeredService != null && StringUtils.equalsIgnoreCase(
             OAuth20ResponseModeTypes.FRAGMENT.getType(), registeredService.getResponseMode()));
+    }
+
+    /**
+     * Is response mode type fragment jwt?
+     *
+     * @param registeredService the registered service
+     * @param responseType      the response type
+     * @return the boolean
+     */
+    static boolean isResponseModeTypeFragmentJwt(final OAuthRegisteredService registeredService,
+                                                 final OAuth20ResponseModeTypes responseType) {
+        return responseType == OAuth20ResponseModeTypes.FRAGMENT_JWT
+               || (registeredService != null && StringUtils.equalsIgnoreCase(
+            OAuth20ResponseModeTypes.FRAGMENT_JWT.getType(), registeredService.getResponseMode()));
     }
 
     /**

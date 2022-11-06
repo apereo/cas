@@ -38,6 +38,9 @@ public class DefaultOAuth20ResponseModeFactory implements OAuth20ResponseModeFac
         if (OAuth20ResponseModeFactory.isResponseModeTypeQueryJwt(registeredService, responseMode)) {
             return builders.get(OAuth20ResponseModeTypes.QUERY_JWT.getType());
         }
+        if (OAuth20ResponseModeFactory.isResponseModeTypeFragmentJwt(registeredService, responseMode)) {
+            return builders.get(OAuth20ResponseModeTypes.FRAGMENT_JWT.getType());
+        }
         return builders.get(OAuth20ResponseModeTypes.QUERY.getType());
     }
 }

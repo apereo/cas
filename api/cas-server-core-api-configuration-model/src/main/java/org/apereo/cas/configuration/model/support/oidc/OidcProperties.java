@@ -77,6 +77,12 @@ public class OidcProperties implements Serializable {
     private OidcPushedAuthorizationProperties par = new OidcPushedAuthorizationProperties();
 
     /**
+     * OIDC pushed authorization requests configuration.
+     */
+    @NestedConfigurationProperty
+    private OidcJwtAuthorizationResponseModeProperties jarm = new OidcJwtAuthorizationResponseModeProperties();
+
+    /**
      * OIDC handling of dynamic client registration requests and settings.
      */
     @NestedConfigurationProperty
