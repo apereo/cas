@@ -14,8 +14,7 @@ encryption of the response. A signed response provides message integrity, sender
 audience restriction, and protection from mix-up attacks. Encrypting the response provides 
 confidentiality of the response parameter values. 
 
-A relying party definition in CAS can be marked to produce JWT authorization responses 
-using the `responseType` property in the registration record:
+A relying party definition in CAS can be marked to produce JWT authorization responses:
 
 ```json
 {
@@ -26,7 +25,7 @@ using the `responseType` property in the registration record:
   "id": 1,
   "scopes" : [ "java.util.HashSet", [ "profile", "openid" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
-  "responseType": "query.jwt"
+  "responseMode": "query.jwt"
 }
 ```
 

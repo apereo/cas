@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.services;
 
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
+import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -57,6 +58,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     private String userProfileViewType;
 
     private Set<String> scopes = new HashSet<>(0);
+
+    private String responseMode;
 
     @JsonIgnore
     @Override
