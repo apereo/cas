@@ -59,6 +59,8 @@ import org.apereo.cas.oidc.web.OidcClientSecretValidator;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.response.OidcJwtResponseModeCipherExecutor;
 import org.apereo.cas.oidc.web.response.OidcRegisteredServiceJwtResponseModeCipherExecutor;
+import org.apereo.cas.oidc.web.response.OidcResponseModeFormPostJwtBuilder;
+import org.apereo.cas.oidc.web.response.OidcResponseModeFragmentJwtBuilder;
 import org.apereo.cas.oidc.web.response.OidcResponseModeQueryJwtBuilder;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryListener;
@@ -909,6 +911,23 @@ public class OidcConfiguration {
             return new OidcResponseModeQueryJwtBuilder(oidcConfigurationContext);
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthFragmentJwtResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthFragmentJwtResponseModeBuilder(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcResponseModeFragmentJwtBuilder(oidcConfigurationContext);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthFormPostJwtResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthFormPostJwtResponseModeBuilder(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcResponseModeFormPostJwtBuilder(oidcConfigurationContext);
+        }
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcResponseModeJwtCipherExecutor")

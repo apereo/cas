@@ -31,6 +31,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -125,7 +126,9 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
                 .build()
                 .get();
             val emailRequest = EmailMessageRequest.builder().emailProperties(emailProps)
-                .to(List.of(registrationRequest.getEmail())).body(text).build();
+                .locale(locale.orElseGet(Locale::getDefault))
+                .to(List.of(registrationRequest.getEmail()))
+                .body(text).build();
             return communicationsManager.email(emailRequest);
         }
         return EmailCommunicationResult.builder().success(false).build();

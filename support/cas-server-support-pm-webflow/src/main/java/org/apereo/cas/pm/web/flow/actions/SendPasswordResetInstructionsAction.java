@@ -38,6 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -191,9 +192,13 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
                 .get();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);
 
-            val emailRequest = EmailMessageRequest.builder().emailProperties(reset)
+            val emailRequest = EmailMessageRequest.builder()
+                .emailProperties(reset)
                 .principal(person)
-                .to(List.of(to)).body(text).build();
+                .to(List.of(to))
+                .locale(locale.orElseGet(Locale::getDefault))
+                .body(text)
+                .build();
             return this.communicationsManager.email(emailRequest);
         }
         return EmailCommunicationResult.builder().success(false).to(List.of(to)).build();

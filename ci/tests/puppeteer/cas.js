@@ -181,10 +181,16 @@ exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
     }
 };
 
-exports.submitForm = async (page, selector) => {
+exports.submitForm = async (page, selector, predicate = undefined) => {
     console.log(`Submitting form ${selector}`);
-    await page.$eval(selector, form => form.submit());
-    await page.waitForTimeout(2500)
+    if (predicate === undefined) {
+        console.log("Waiting for page to produce a valid response status code");
+        predicate = async response => response.status() > 0;
+    }
+    return await Promise.all([
+        page.waitForResponse(predicate),
+        page.$eval(selector, form => form.submit())
+    ]);
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {

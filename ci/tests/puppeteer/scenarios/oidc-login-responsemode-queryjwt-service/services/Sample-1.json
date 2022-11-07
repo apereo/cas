@@ -6,7 +6,7 @@
   "id": 1,
   "scopes" : [ "java.util.HashSet", [ "profile", "email", "openid" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
-  "responseType": "query.jwt",
+  "responseMode": "query.jwt",
   "jwks": "file:${#environmentVars['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVars['SCENARIO']}/services/Sample-1.jwks",
   "properties" : {
     "@class" : "java.util.HashMap",

@@ -39,6 +39,7 @@ The following fields are supported:
 | `renewRefreshToken`      | Whether the existing refresh token should be expired and a new one generated (and sent along) whenever a new access token is requested (with `grant_type` = `refresh_token`). Only possible if `generateRefreshToken` is set to `true`. Default is `false`. |
 | `jwtAccessToken`         | Whether access tokens should be created as JWTs. Default is `false`.                                                                                                                                                                                        |
 | `serviceId`              | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc).                                                                                            |
+| `responseMode`           | Allow CAS to alter the mechanism used for returning responses back to the client. Typical values might be `query`, `fragment`, or `form_post`.                                                                                                              |
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain 
 properties and settings needed for a particular integration. It is <strong>UNNECESSARY</strong> to grab a copy of 

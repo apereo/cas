@@ -478,6 +478,7 @@ layout: null
                 *   [Attribute Definitions](/cas/{{ version }}/authentication/OIDC-Attribute-Definitions.html)
             * [Expiration Policies](/cas/{{ version }}/authentication/OIDC-Authentication-TokenExpirationPolicy.html)
             * [PAR](/cas/{{ version }}/authentication/OIDC-Authentication-PAR.html)
+            * [JARM](/cas/{{ version }}/authentication/OIDC-Authentication-JARM.html)
             * [WebFinger Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-WebFinger.html)
         *   [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)
     *   [WS-Federation](#wsfedprotocol)

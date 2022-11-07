@@ -1,0 +1,12 @@
+{
+  "casuser": {
+    "memberOf": [
+      "CN=first-group",
+      "CN=GRP-MFA-Exempt",
+      "CN=second-group"
+    ],
+    "cn": [
+      "CAS"
+    ]
+  }
+}

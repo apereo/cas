@@ -79,12 +79,12 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         service.setClientSecretExpiration(clientSecretExpiration);
         servicesManager.save(service);
 
-        val jsonBody = '{'
-                       + "\"redirect_uris\": [\"https://apereo.github.io\"],\n"
-                       + "\"client_name\": \"Apereo Blog\",\n"
-                       + "\"contacts\": [\"cas@example.org\"],\n"
-                       + "\"grant_types\": [\"client_credentials\"],\n"
-                       + '}';
+        val jsonBody = """
+            {"redirect_uris": ["https://apereo.github.io"],
+            "client_name": "Apereo Blog",
+            "contacts": ["cas@example.org"],
+            "grant_types": ["client_credentials"],
+            }""";
         val responseEntity = controller.handleUpdates(clientId, jsonBody, request, response);
         assertEquals(HttpStatus.SC_OK, responseEntity.getStatusCodeValue());
         assertNotNull(responseEntity.getBody());
