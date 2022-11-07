@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.web.response;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
-import org.apereo.cas.token.JwtBuilder;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +9,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Map;
