@@ -36,7 +36,7 @@ public class OidcResponseModeFormPostJwtBuilderTests {
                 Map.of("code", "123456", "state", "abcdef"));
             assertEquals(CasWebflowConstants.VIEW_ID_POST_RESPONSE, mv.getViewName());
             assertEquals("https://apereo.github.io", mv.getModelMap().get("originalUrl"));
-            val params = ((Map) mv.getModelMap().get("parameters"));
+            val params = (Map) mv.getModelMap().get("parameters");
             assertEquals(1, params.size());
             assertTrue(params.containsKey("response"));
         }
@@ -51,7 +51,7 @@ public class OidcResponseModeFormPostJwtBuilderTests {
                 Map.of("code", "123456", "state", "abcdef"));
             assertEquals(CasWebflowConstants.VIEW_ID_POST_RESPONSE, mv.getViewName());
             assertEquals("https://apereo.github.io", mv.getModelMap().get("originalUrl"));
-            val params = ((Map) mv.getModelMap().get("parameters"));
+            val params = (Map) mv.getModelMap().get("parameters");
             assertEquals(1, params.size());
             assertTrue(params.containsKey("response"));
         }
