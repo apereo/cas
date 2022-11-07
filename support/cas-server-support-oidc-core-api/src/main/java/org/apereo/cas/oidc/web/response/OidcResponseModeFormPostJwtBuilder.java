@@ -7,11 +7,9 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

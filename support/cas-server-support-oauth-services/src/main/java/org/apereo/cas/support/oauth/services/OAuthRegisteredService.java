@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.services;
 
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
-import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
