@@ -8,9 +8,12 @@ export MSYS_NO_PATHCONV=1
 
 echo "Running SQL Server docker image..."
 docker stop mssql-server || true
-docker run --rm -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=p@ssw0rd' \
-  --name "mssql-server" --rm -d \
-  -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
+# docker run --rm -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=p@ssw0rd' \
+#   --name "mssql-server" --rm -d \
+#   -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
+
+docker run -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=p@ssw0rd" \
+    -p 1433:1433 --rm -d --name "mssql-server" mcr.microsoft.com/azure-sql-edge
 sleep 45
 docker ps | grep "mssql-server"
 retVal=$?
