@@ -81,15 +81,15 @@ while (("$#")); do
     propFilter=$2
     shift 2
     ;;
-  --actuators)
+  --actuators|--act)
     actuators=$2
     shift 2
     ;;
-  --thirdParty|--thirdparty)
+  --thirdParty|--thirdparty|--tp)
     thirdParty=$2
     shift 2
     ;;
-  --serviceProperties)
+  --serviceProperties|--sp)
     serviceProps=$2
     shift 2
     ;;
@@ -105,7 +105,7 @@ while (("$#")); do
     dependencyVersions=$2
     shift 2
     ;;
-  --features)
+  --features|--feat)
     buildFeatures=$2
     shift 2
     ;;

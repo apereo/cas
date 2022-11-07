@@ -508,7 +508,7 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Empty String constants"/>
             <property name="severity" value="error"/>
-            <property name="format" value="(?&lt;!\\)&quot;(?&lt;!\\)&quot;"/>
+            <property name="format" value="(?&lt;!&quot;)(?&lt;!\\)&quot;{2}(?!&quot;)"/>
             <property name="message" value="Consider using StringUtils.EMPTY instead"/>
         </module>
 

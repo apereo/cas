@@ -56,8 +56,6 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private String privacyUrl;
 
-    private String responseType;
-
     @Id
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 

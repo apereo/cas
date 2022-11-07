@@ -100,7 +100,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         val func = FunctionUtils.doIf(StringUtils::isBlank,
             __ -> {
                 val registeredService = servicesManager.findServiceBy(finalService);
-                return registeredService != null ? registeredService.getResponseType() : null;
+                return registeredService instanceof CasModelRegisteredService casService ? casService.getResponseType() : null;
             },
             __ -> methodRequest);
         val method = func.apply(methodRequest);

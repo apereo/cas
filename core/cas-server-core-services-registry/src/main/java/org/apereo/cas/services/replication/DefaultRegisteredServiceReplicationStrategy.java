@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.services.stream.StreamingServi
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
@@ -17,8 +18,6 @@ import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -109,20 +108,13 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         return service;
     }
 
-
-    private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
-        val seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
-    }
-
-
     @Override
     public List<RegisteredService> updateLoadedRegisteredServicesFromCache(final List<RegisteredService> services,
                                                                            final ServiceRegistry serviceRegistry) {
         val cachedServices = distributedCacheManager.getAll()
             .stream()
             .sorted(Comparator.<DistributedCacheObject>comparingLong(DistributedCacheObject::getTimestamp).reversed())
-            .filter(distinctByKey(service -> service.getValue().getId()))
+            .filter(CollectionUtils.distinctByKey(service -> service.getValue().getId()))
             .toList();
         for (val entry : cachedServices) {
             val cachedService = (RegisteredService) entry.getValue();

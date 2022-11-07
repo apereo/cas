@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -99,14 +98,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
         return StringUtils.EMPTY;
     }
 
-    /**
-     * Response determines how CAS should contact the matching service
-     * typically with a ticket id. By default, the strategy is a 302 redirect.
-     *
-     * @return the response type
-     * @see Response.ResponseType
-     */
-    String getResponseType();
 
     /**
      * Gets the relative evaluation order of this service when determining
