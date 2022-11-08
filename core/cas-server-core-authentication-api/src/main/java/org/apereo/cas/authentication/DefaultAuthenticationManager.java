@@ -170,8 +170,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val supported = pops.stream()
             .filter(processor -> transaction.getCredentials()
                 .stream()
-                .anyMatch(processor::supports))
-            .collect(Collectors.toList());
+                .anyMatch(processor::supports)).toList();
 
         var processed = true;
         val it = supported.iterator();

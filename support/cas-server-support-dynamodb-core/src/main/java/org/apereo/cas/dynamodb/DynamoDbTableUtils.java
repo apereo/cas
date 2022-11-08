@@ -27,6 +27,7 @@ import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -166,15 +167,7 @@ public class DynamoDbTableUtils {
                                     final String tableName,
                                     final List<? extends DynamoDbQueryBuilder> queries) {
         try {
-            val scanFilter = queries.stream()
-                .map(query -> {
-                    val cond = Condition.builder()
-                        .comparisonOperator(query.getOperator())
-                        .attributeValueList(query.getAttributeValue())
-                        .build();
-                    return Pair.of(query.getKey(), cond);
-                })
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            val scanFilter = buildRequestQueryFilter(queries);
             val scanRequest = ScanRequest.builder()
                 .tableName(tableName)
                 .scanFilter(scanFilter)
@@ -185,6 +178,25 @@ public class DynamoDbTableUtils {
             LoggingUtils.error(LOGGER, e);
         }
         return ScanResponse.builder().items(Map.of()).build();
+    }
+
+    /**
+     * Build request query filter map.
+     *
+     * @param queries the queries
+     * @return the map
+     */
+    public static Map<String, Condition> buildRequestQueryFilter(final List<? extends DynamoDbQueryBuilder> queries) {
+        return queries
+            .stream()
+            .map(query -> {
+                val cond = Condition.builder()
+                    .comparisonOperator(query.getOperator())
+                    .attributeValueList(query.getAttributeValue())
+                    .build();
+                return Pair.of(query.getKey(), cond);
+            })
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     /**
@@ -229,6 +241,32 @@ public class DynamoDbTableUtils {
             Thread.sleep(interval);
         }
         return table;
+    }
+
+    /**
+     * Stream and scan using pagination.
+     *
+     * @param <T>                  the type parameter
+     * @param amazonDynamoDBClient the amazon dynamo db client
+     * @param tableName            the table name
+     * @param keys                 the keys
+     * @param itemMapper           the item mapper
+     * @return the stream
+     */
+    public static <T> Stream<T> scanPaginator(final DynamoDbClient amazonDynamoDBClient,
+                                              final String tableName,
+                                              final List<DynamoDbQueryBuilder> keys,
+                                              final Function<Map<String, AttributeValue>, T> itemMapper) {
+        val scanRequest = ScanRequest.builder()
+            .tableName(tableName)
+            .scanFilter(DynamoDbTableUtils.buildRequestQueryFilter(keys))
+            .build();
+        LOGGER.debug("Scanning table with scan request [{}]", scanRequest);
+        return amazonDynamoDBClient.scanPaginator(scanRequest)
+            .stream()
+            .flatMap(results -> results.items().stream())
+            .map(itemMapper)
+            .filter(Objects::nonNull);
     }
 
     static class TableNeverTransitionedToStateException extends SdkClientException {

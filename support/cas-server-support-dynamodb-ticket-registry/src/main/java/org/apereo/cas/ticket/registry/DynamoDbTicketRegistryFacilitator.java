@@ -8,24 +8,29 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import com.google.common.collect.Streams;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jooq.lambda.Unchecked;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -33,8 +38,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 /**
@@ -47,6 +53,9 @@ import java.util.stream.Stream;
 @Getter
 @RequiredArgsConstructor
 public class DynamoDbTicketRegistryFacilitator {
+
+    private static final int BATCH_PUT_REQUEST_LIMIT = 25;
+
     private final TicketCatalog ticketCatalog;
 
     private final DynamoDbTicketRegistryProperties dynamoDbProperties;
@@ -102,6 +111,29 @@ public class DynamoDbTicketRegistryFacilitator {
     }
 
     /**
+     * Scan and paginate.
+     *
+     * @return the stream
+     */
+    public Stream<Ticket> stream() {
+        val metadata = ticketCatalog.findAll();
+        val resultStreams = metadata
+            .stream()
+            .map(defn -> {
+                val keys = List.<DynamoDbQueryBuilder>of(
+                    DynamoDbQueryBuilder.builder()
+                        .key(ColumnNames.PREFIX.getColumnName())
+                        .attributeValue(List.of(AttributeValue.builder().s(defn.getPrefix()).build()))
+                        .operator(ComparisonOperator.EQ)
+                        .build());
+                return DynamoDbTableUtils.scanPaginator(amazonDynamoDBClient, defn.getProperties().getStorageName(),
+                    keys, DynamoDbTicketRegistryFacilitator::deserializeTicket);
+            })
+            .toList();
+        return Streams.concat(resultStreams.toArray(new Stream[]{}));
+    }
+
+    /**
      * Gets all.
      *
      * @return the all
@@ -114,8 +146,11 @@ public class DynamoDbTicketRegistryFacilitator {
             LOGGER.debug("Scanning table with request [{}]", scan);
             val result = this.amazonDynamoDBClient.scan(scan);
             LOGGER.debug("Scanned table with result [{}]", scan);
-            tickets.addAll(result.items().stream()
-                .map(DynamoDbTicketRegistryFacilitator::deserializeTicket).collect(Collectors.toList()));
+            tickets.addAll(result.items()
+                .stream()
+                .map(DynamoDbTicketRegistryFacilitator::deserializeTicket)
+                .filter(Objects::nonNull)
+                .toList());
         });
         return tickets;
     }
@@ -151,6 +186,37 @@ public class DynamoDbTicketRegistryFacilitator {
     }
 
     /**
+     * Put.
+     *
+     * @param toSave the to save
+     */
+    public void put(final Stream<Triple<Ticket, Ticket, String>> toSave) {
+        val queue = new HashMap<String, Collection<WriteRequest>>();
+        val count = new AtomicLong(0);
+        toSave.forEach(entry -> {
+            val encodedTicket = entry.getMiddle();
+            val ticket = entry.getLeft();
+            val principal = entry.getRight();
+            val metadata = ticketCatalog.find(ticket);
+            val entries = queue.getOrDefault(metadata.getProperties().getStorageName(), new ArrayList<>());
+            entries.add(WriteRequest.builder().putRequest(buildPutRequest(ticket, encodedTicket, principal)).build());
+            count.getAndIncrement();
+            
+            queue.put(metadata.getProperties().getStorageName(), entries);
+            if (count.get() >= BATCH_PUT_REQUEST_LIMIT) {
+                val batchRequest = BatchWriteItemRequest.builder().requestItems(queue).build();
+                amazonDynamoDBClient.batchWriteItem(batchRequest);
+                queue.clear();
+                count.set(0);
+            }
+        });
+        if (!queue.isEmpty()) {
+            val batchRequest = BatchWriteItemRequest.builder().requestItems(queue).build();
+            amazonDynamoDBClient.batchWriteItem(batchRequest);
+        }
+    }
+
+    /**
      * Put ticket.
      *
      * @param ticket        the ticket
@@ -159,14 +225,23 @@ public class DynamoDbTicketRegistryFacilitator {
      */
     public void put(final Ticket ticket, final Ticket encodedTicket,
                     final String principal) {
-        val metadata = this.ticketCatalog.find(ticket);
-        val values = buildTableAttributeValuesMapFromTicket(ticket, encodedTicket, principal);
-        LOGGER.debug("Adding ticket id [{}] with attribute values [{}]", encodedTicket.getId(), values);
-        val putItemRequest = PutItemRequest.builder().tableName(metadata.getProperties().getStorageName()).item(values).build();
+        val putItemRequest = buildPutItemRequest(ticket, encodedTicket, principal);
         LOGGER.debug("Submitting put request [{}] for ticket id [{}]", putItemRequest, encodedTicket.getId());
         val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Ticket added with result [{}]", putItemResult);
-        getAll();
+    }
+
+    private PutRequest buildPutRequest(final Ticket ticket, final Ticket encodedTicket, final String principal) {
+        val values = buildTableAttributeValuesMapFromTicket(ticket, encodedTicket, principal);
+        LOGGER.debug("Adding ticket id [{}] with attribute values [{}]", encodedTicket.getId(), values);
+        return PutRequest.builder().item(values).build();
+    }
+
+    private PutItemRequest buildPutItemRequest(final Ticket ticket, final Ticket encodedTicket, final String principal) {
+        val metadata = this.ticketCatalog.find(ticket);
+        val values = buildTableAttributeValuesMapFromTicket(ticket, encodedTicket, principal);
+        LOGGER.debug("Adding ticket id [{}] with attribute values [{}]", encodedTicket.getId(), values);
+        return PutItemRequest.builder().tableName(metadata.getProperties().getStorageName()).item(values).build();
     }
 
     /**
