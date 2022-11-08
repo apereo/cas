@@ -166,7 +166,6 @@ public class DynamoDbTicketRegistryFacilitator {
         LOGGER.debug("Submitting put request [{}] for ticket id [{}]", putItemRequest, encodedTicket.getId());
         val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Ticket added with result [{}]", putItemResult);
-        getAll();
     }
 
     /**
