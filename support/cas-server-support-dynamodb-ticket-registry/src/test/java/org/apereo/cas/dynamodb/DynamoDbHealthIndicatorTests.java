@@ -30,7 +30,6 @@ public class DynamoDbHealthIndicatorTests extends BaseDynamoDbTicketRegistryFaci
     public void verifyHealthOperation() throws Exception {
         val health = dynamoDbHealthIndicator.health();
         val section = health.getDetails();
-        assertTrue(section.containsKey("DynamoDbCasServices"));
         assertTrue(section.containsKey("proxyTicketsTable"));
         assertTrue(section.containsKey("proxyGrantingTicketsTable"));
         assertTrue(section.containsKey("serviceTicketsTable"));
