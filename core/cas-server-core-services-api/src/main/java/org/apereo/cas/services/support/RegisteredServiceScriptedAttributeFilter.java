@@ -8,6 +8,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -68,7 +69,11 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
 
             if (matcherFile.find()) {
-                val resource = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(matcherFile.group(2)));
+                val resource = FunctionUtils.doUnchecked(() -> {
+                    val scriptFile = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group(2));
+                    LOGGER.debug("Loading attribute filter groovy script from [{}]", scriptFile);
+                    return ResourceUtils.getRawResourceFrom(scriptFile);
+                });
                 this.executableScript = new WatchableGroovyScriptResource(resource);
             } else if (matcherInline.find()) {
                 this.executableScript = new GroovyShellScript(matcherInline.group(1));
