@@ -89,7 +89,7 @@ that contains the user’s identity as JWT.
 
 ### OpenID Connect JARM
 
-Initial support for [JWT Secured Authorization Response](../authentication/OIDC-Authentication-JARM.html) is now available for OpenID Connect,
+Initial support for [JWT Secured Authorization Response Mode](../authentication/OIDC-Authentication-JARM.html) is now available for OpenID Connect,
 and will gradually improve to support other response modes in future releases.
 
 ## Other Stuff

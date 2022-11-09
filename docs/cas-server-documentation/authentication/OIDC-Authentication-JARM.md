@@ -5,7 +5,7 @@ category: Protocols
 ---
 {% include variables.html %}
 
-# JWT Secured Authorization Response (JARM) - OpenID Connect Authentication
+# JWT Secured Authorization Response Mode (JARM) - OpenID Connect Authentication
 
 JWT Secured Authorization Response (JARM) allows for a number of strategies that allow
 a new JWT-based mode to encode authorization responses back to the client. This mechanism enhances 

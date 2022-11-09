@@ -242,7 +242,7 @@ def run(final Object... args) {
     def logger = args[1]
 
     logger.info "Attributes currently resolved: ${attributes}"
-    def map =...
+    def map = ...
     return map
 }
 ```
