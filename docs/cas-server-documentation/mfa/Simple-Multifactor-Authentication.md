@@ -37,3 +37,9 @@ Please see [this guide](Simple-Multifactor-Authentication-RateLimiting.html).
 ## Token Management
 
 Please see [this guide](Simple-Multifactor-Authentication-TokenManagement.html).
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="mfaSimple" %}
