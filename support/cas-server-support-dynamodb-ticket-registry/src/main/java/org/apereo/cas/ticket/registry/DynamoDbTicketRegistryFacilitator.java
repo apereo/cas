@@ -295,7 +295,7 @@ public class DynamoDbTicketRegistryFacilitator {
     public Map<String, AttributeValue> buildTableAttributeValuesMapFromTicket(
         final Ticket ticket, final Ticket encTicket, final String principal) {
         val values = new HashMap<String, AttributeValue>();
-        val ttl = DateTimeUtils.dateOf(encTicket.getExpirationPolicy().getMaximumExpirationTime(encTicket)).getTime();
+        val ttl = encTicket.getExpirationPolicy().getMaximumExpirationTime(encTicket).toEpochSecond();
         values.put(ColumnNames.EXPIRATION.getColumnName(),
             AttributeValue.builder().n(String.valueOf(ttl)).build());
         values.put(ColumnNames.ID.getColumnName(),
