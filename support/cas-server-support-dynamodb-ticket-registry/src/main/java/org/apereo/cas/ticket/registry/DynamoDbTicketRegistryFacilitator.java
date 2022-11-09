@@ -6,6 +6,7 @@ import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.collect.Streams;
@@ -201,7 +202,7 @@ public class DynamoDbTicketRegistryFacilitator {
             val entries = queue.getOrDefault(metadata.getProperties().getStorageName(), new ArrayList<>());
             entries.add(WriteRequest.builder().putRequest(buildPutRequest(ticket, encodedTicket, principal)).build());
             count.getAndIncrement();
-            
+
             queue.put(metadata.getProperties().getStorageName(), entries);
             if (count.get() >= BATCH_PUT_REQUEST_LIMIT) {
                 val batchRequest = BatchWriteItemRequest.builder().requestItems(queue).build();
@@ -251,10 +252,36 @@ public class DynamoDbTicketRegistryFacilitator {
      */
     public void createTicketTables(final boolean deleteTables) {
         val metadata = this.ticketCatalog.findAll();
-        metadata.forEach(Unchecked.consumer(r -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-            r.getProperties().getStorageName(), deleteTables,
-            List.of(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.S).build()),
-            List.of(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build()))));
+        metadata.forEach(Unchecked.consumer(r -> {
+            val attributeDefns = List.of(
+                AttributeDefinition.builder()
+                    .attributeName(ColumnNames.PRINCIPAL.getColumnName())
+                    .attributeType(ScalarAttributeType.S)
+                    .build(),
+                AttributeDefinition.builder()
+                    .attributeName(ColumnNames.PREFIX.getColumnName())
+                    .attributeType(ScalarAttributeType.S)
+                    .build(),
+                AttributeDefinition.builder()
+                    .attributeName(ColumnNames.ID.getColumnName())
+                    .attributeType(ScalarAttributeType.S)
+                    .build(),
+                AttributeDefinition.builder()
+                    .attributeName(ColumnNames.EXPIRATION.getColumnName())
+                    .attributeType(ScalarAttributeType.N)
+                    .build());
+            val keySchemaElements = List.of(KeySchemaElement.builder()
+                .attributeName(ColumnNames.ID.getColumnName())
+                .keyType(KeyType.HASH)
+                .build());
+            val tableDesc = DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+                r.getProperties().getStorageName(),
+                deleteTables,
+                attributeDefns,
+                keySchemaElements);
+            DynamoDbTableUtils.enableTimeToLiveOnTable(amazonDynamoDBClient,
+                tableDesc.tableName(), ColumnNames.EXPIRATION.getColumnName());
+        }));
     }
 
     /**
@@ -268,6 +295,9 @@ public class DynamoDbTicketRegistryFacilitator {
     public Map<String, AttributeValue> buildTableAttributeValuesMapFromTicket(
         final Ticket ticket, final Ticket encTicket, final String principal) {
         val values = new HashMap<String, AttributeValue>();
+        val ttl = DateTimeUtils.dateOf(encTicket.getExpirationPolicy().getMaximumExpirationTime(encTicket)).getTime();
+        values.put(ColumnNames.EXPIRATION.getColumnName(),
+            AttributeValue.builder().n(String.valueOf(ttl)).build());
         values.put(ColumnNames.ID.getColumnName(),
             AttributeValue.builder().s(encTicket.getId()).build());
         values.put(ColumnNames.PRINCIPAL.getColumnName(),
@@ -362,6 +392,10 @@ public class DynamoDbTicketRegistryFacilitator {
          * timeToIdle column.
          */
         TIME_TO_IDLE("timeToIdle"),
+        /**
+         * expiration column.
+         */
+        EXPIRATION("expiration"),
         /**
          * encoded column.
          */

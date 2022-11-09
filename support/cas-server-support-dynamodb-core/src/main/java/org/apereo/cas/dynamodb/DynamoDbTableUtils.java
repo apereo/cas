@@ -23,6 +23,8 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
+import software.amazon.awssdk.services.dynamodb.model.TimeToLiveSpecification;
+import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveRequest;
 
 import java.io.Serial;
 import java.util.List;
@@ -117,17 +119,17 @@ public class DynamoDbTableUtils {
      * @param deleteTable          the delete tables
      * @param attributeDefinitions the attribute definitions
      * @param keySchemaElements    the key schema elements
+     * @return the table description
      * @throws Exception the exception
      */
-    public static void createTable(final DynamoDbClient dynamoDbClient,
-                                   final AbstractDynamoDbProperties dynamoDbProperties,
-                                   final String tableName,
-                                   final boolean deleteTable,
-                                   final List<AttributeDefinition> attributeDefinitions,
-                                   final List<KeySchemaElement> keySchemaElements) throws Exception {
+    public static TableDescription createTable(final DynamoDbClient dynamoDbClient,
+                                               final AbstractDynamoDbProperties dynamoDbProperties,
+                                               final String tableName,
+                                               final boolean deleteTable,
+                                               final List<AttributeDefinition> attributeDefinitions,
+                                               final List<KeySchemaElement> keySchemaElements) throws Exception {
 
         val billingMode = BillingMode.fromValue(dynamoDbProperties.getBillingMode().name());
-
         val throughput = billingMode == BillingMode.PROVISIONED ? ProvisionedThroughput.builder()
             .readCapacityUnits(dynamoDbProperties.getReadCapacity())
             .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
@@ -153,6 +155,28 @@ public class DynamoDbTableUtils {
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
         val tableDescription = dynamoDbClient.describeTable(describeTableRequest).table();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
+        return tableDescription;
+    }
+
+    /**
+     * Enable time to live on table.
+     *
+     * @param dynamoDbClient   the dynamo db client
+     * @param tableName        the table name
+     * @param ttlAttributeName the ttl attribute name
+     */
+    public static void enableTimeToLiveOnTable(final DynamoDbClient dynamoDbClient,
+                                               final String tableName,
+                                               final String ttlAttributeName) {
+        val ttlSpec = TimeToLiveSpecification.builder()
+            .attributeName(ttlAttributeName)
+            .enabled(true)
+            .build();
+        val request = UpdateTimeToLiveRequest.builder()
+            .tableName(tableName)
+            .timeToLiveSpecification(ttlSpec)
+            .build();
+        dynamoDbClient.updateTimeToLive(request);
     }
 
     /**
