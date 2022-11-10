@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.DefaultCasSSLContextTests;
 import org.apereo.cas.view.CasReloadableMessageBundleTests;
 import org.apereo.cas.web.RegisteredServiceCorsConfigurationSourceTests;
 import org.apereo.cas.web.RegisteredServiceResponseHeadersEnforcementFilterTests;
@@ -26,7 +25,6 @@ import org.junit.platform.suite.api.Suite;
     SimpleUrlValidatorFactoryBeanTests.class,
     DynamicHtmlViewTests.class,
     WebUtilsTests.class,
-    DefaultCasSSLContextTests.class,
     CasLocaleChangeInterceptorTests.class,
     RegisteredServiceCorsConfigurationSourceTests.class,
     SimpleUrlValidatorTests.class,

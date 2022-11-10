@@ -50,6 +50,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Installation](installation/WAR-Overlay-Installation.html)
 * [Blog](https://apereo.github.io)
+* [Release Schedule](https://github.com/apereo/cas/milestones)
 
 ## Powered By
 

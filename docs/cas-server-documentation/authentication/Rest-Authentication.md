@@ -62,5 +62,5 @@ If the authentication is successful, these warnings will be shown to the user di
 
 ## Configuration
 
-{% include_cached casproperties.html properties="cas.authn.rest" %}
+{% include_cached casproperties.html properties="cas.authn.rest[]" %}
 

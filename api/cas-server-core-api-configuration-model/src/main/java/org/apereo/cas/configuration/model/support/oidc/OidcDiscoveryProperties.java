@@ -89,7 +89,8 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * Supported response modes.
      */
-    private List<String> responseModesSupported = Stream.of("query", "fragment", "form_post", "query.jwt").toList();
+    private List<String> responseModesSupported = Stream.of("query", "fragment",
+        "form_post", "query.jwt", "form_post.jwt", "fragment.jwt").toList();
 
     /**
      * Supported prompt values.

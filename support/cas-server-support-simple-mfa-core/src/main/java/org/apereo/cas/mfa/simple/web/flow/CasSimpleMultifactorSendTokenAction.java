@@ -31,6 +31,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -103,6 +104,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                 .build()
                 .get();
             val emailRequest = EmailMessageRequest.builder().emailProperties(mailProperties)
+                .locale(locale.orElseGet(Locale::getDefault))
                 .principal(principal).attribute(mailProperties.getAttributeName())
                 .body(body).build();
             return communicationsManager.email(emailRequest);

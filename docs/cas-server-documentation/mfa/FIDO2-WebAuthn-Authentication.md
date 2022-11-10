@@ -62,14 +62,14 @@ This option should only be used for demo and testing purposes.
 
 Device registrations can also be managed using any one of the following strategies.
 
-| Storage          | Description                                         
-|--------------------------------------------------------------------------------------------------
-| JSON     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JSON.html).  
-| MongoDb     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-MongoDb.html).  
-| LDAP     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-LDAP.html).  
-| JPA     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JPA.html).  
-| Redis     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Redis.html).  
-| DynamoDb     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-DynamoDb.html).
-| REST     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Rest.html).
+| Storage  | Description                                                                 |
+|----------|-----------------------------------------------------------------------------|
+| JSON     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JSON.html).     |
+| MongoDb  | [See this guide](FIDO2-WebAuthn-Authentication-Registration-MongoDb.html).  |
+| LDAP     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-LDAP.html).     |
+| JPA      | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JPA.html).      |
+| Redis    | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Redis.html).    |
+| DynamoDb | [See this guide](FIDO2-WebAuthn-Authentication-Registration-DynamoDb.html). |
+| REST     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Rest.html).     |
 
 

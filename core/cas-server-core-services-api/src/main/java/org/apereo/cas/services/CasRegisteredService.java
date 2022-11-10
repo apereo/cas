@@ -43,6 +43,8 @@ public class CasRegisteredService extends BaseWebBasedRegisteredService implemen
 
     private Set<String> supportedProtocols = new LinkedHashSet<>(0);
 
+    private String responseType;
+    
     @JsonIgnore
     @Override
     public String getFriendlyName() {
