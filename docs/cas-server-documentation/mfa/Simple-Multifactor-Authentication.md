@@ -43,3 +43,10 @@ Please see [this guide](Simple-Multifactor-Authentication-TokenManagement.html).
 The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="mfaSimple" %}
+
+## REST Protocol Credential Extraction
+
+In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on,
+a special credential extractor is injected into the REST authentication engine in
+order to recognize simple multifactor credentials and authenticate them as part of the REST
+request. The expected parameter name in the request body is `sotp`.
