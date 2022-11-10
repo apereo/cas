@@ -189,7 +189,8 @@ exports.submitForm = async (page, selector, predicate = undefined) => {
     }
     return await Promise.all([
         page.waitForResponse(predicate),
-        page.$eval(selector, form => form.submit())
+        page.$eval(selector, form => form.submit()),
+        page.waitForTimeout(3000)
     ]);
 };
 
