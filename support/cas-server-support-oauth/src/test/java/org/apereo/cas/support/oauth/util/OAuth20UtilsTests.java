@@ -114,7 +114,7 @@ public class OAuth20UtilsTests extends AbstractOAuth20Tests {
     public void verifyPostResponse() {
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
-        registeredService.setResponseType("post");
+        registeredService.setResponseMode("post");
         assertTrue(OAuth20ResponseModeFactory.isResponseModeTypeFormPost(registeredService, OAuth20ResponseModeTypes.NONE));
         assertTrue(OAuth20Utils.isResponseModeType("form_post", OAuth20ResponseModeTypes.FORM_POST));
     }

@@ -287,7 +287,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
             final BeanContainer<AuthenticationHandler> jaasAuthenticationHandlers,
             @Qualifier("jaasPersonDirectoryPrincipalResolvers")
             final BeanContainer<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers) {
-            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers.toList(),
+            return plan -> plan.registerAuthenticationHandlersWithPrincipalResolver(jaasAuthenticationHandlers.toList(),
                 jaasPersonDirectoryPrincipalResolvers.toList());
         }
     }

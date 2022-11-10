@@ -50,7 +50,7 @@ As a quick status update, we anticipate the work to finalize in the next release
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `350` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `358` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Account Registration
@@ -69,6 +69,11 @@ improved with a PIN code confirmation.
 A new access strategy is now available to enforce fine-grained authorization 
 requests based on [Auth0's OpenFGA](../services/Service-Access-Strategy-OpenFGA.html).
 
+### REST Authentication
+
+Support for [REST authentication](../authentication/Rest-Authentication.html) is now improved to support
+multiple REST endpoints and configuration blocks.
+
 ### OPA Access Strategy
 
 A new access strategy is now available to enforce fine-grained authorization
@@ -82,6 +87,11 @@ that allows users to onboard and enroll with Duo Security, you can instruct CAS 
 application, if the user’s account status is determined to require enrollment with a special `principal` parameter
 that contains the user’s identity as JWT.
 
+### OpenID Connect JARM
+
+Initial support for [JWT Secured Authorization Response](../authentication/OIDC-Authentication-JARM.html) is now available for OpenID Connect,
+and will gradually improve to support other response modes in future releases.
+
 ## Other Stuff
     
 - Small adjustments to [attribute consent](../integration/Attribute-Release-Consent-Activation.html) rules when activated for and assigned to a specific 
@@ -94,6 +104,8 @@ that contains the user’s identity as JWT.
 - Authentication attributes can now optionally be included in OpenID Connect ID token or user profile payloads. 
 - The ability to secure actuator endpoints via subnet addresses is now restored.
 - The persistence units for all JPA integrations is now corrected to refer to the defined unit name.
+- Username providers [based on attributes](../integration/Attribute-Release-PrincipalId-Attribute.html) are now able to remove text from the final username 
+  using regular expressions. 
 
 ## Library Upgrades
 
@@ -101,6 +113,7 @@ that contains the user’s identity as JWT.
 - Apache Tomcat
 - Twilio
 - Jose4j
+- Gradle
 - Apache Ignite
 - Apache Shiro
 - Netty
@@ -110,6 +123,7 @@ that contains the user’s identity as JWT.
 - Lettuce
 - Micrometer
 - Nimbus
+- InfluxDb
 - WSS4j
 - Hibernate
 - Groovy

@@ -6,5 +6,5 @@
   "id": 1,
   "scopes" : [ "java.util.HashSet", [ "profile", "email", "openid" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
-  "responseType": "query.jwt"
+  "responseMode": "query.jwt"
 }
