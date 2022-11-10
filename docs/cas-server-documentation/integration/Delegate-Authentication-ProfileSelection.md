@@ -14,9 +14,11 @@ and is linked to multiple personas. When multiple matches are found, the CAS use
 the appropriate profile with which authentication should resume. 
                
 The credential resolution rules for the delegation flow are consulted using the following options.
+    
+{% tabs delegatedauthnprofileselection %}
 
-## Groovy
-   
+{% tab delegatedauthnprofileselection Groovy %}
+
 {% include_cached casproperties.html properties="cas.authn.pac4j.profile-selection.groovy" %}
 
 Profile selection rules can be supplied to CAS using an external Groovy script, whose outline should match the following:
@@ -51,7 +53,9 @@ The following parameters are passed to the script:
 | `userProfile`         | Points to the *resolved* user profile from the identity provider in exchange for the credential.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
-## Custom
+{% endtab %}
+
+{% tab delegatedauthnprofileselection Custom %}
 
 If you wish to create your own profile resolution and selection strategy, you will need to
 design a component and register it with CAS to handle the rendering of the user profile:
@@ -74,3 +78,7 @@ to multiple *internal* user accounts, or the response itself could be examined w
 if the user account has multiple parallel profiles available via i.e. looking at a multi-valued attribute in the
 response. Whatever the resolution rules may be, the end result of the implementation is expected to
 produce a list of `DelegatedAuthenticationCandidateProfile` objects that represents various traits of the user profile.
+
+{% endtab %}
+
+{% endtabs %}
