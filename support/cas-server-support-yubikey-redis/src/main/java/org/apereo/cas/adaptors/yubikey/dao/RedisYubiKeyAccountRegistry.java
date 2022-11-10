@@ -91,7 +91,7 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void deleteAll() {
-        val keys = redisTemplate.keys(getPatternYubiKeyDevices(), this.scanCount)
+        val keys = redisTemplate.scan(getPatternYubiKeyDevices(), this.scanCount)
             .collect(Collectors.toSet());
         this.redisTemplate.delete(keys);
     }
