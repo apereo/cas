@@ -5,6 +5,7 @@ import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -33,12 +34,14 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
 import java.nio.ByteBuffer;
+import java.time.chrono.ChronoZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
@@ -282,7 +285,10 @@ public class DynamoDbTicketRegistryFacilitator {
     public Map<String, AttributeValue> buildTableAttributeValuesMapFromTicket(
         final Ticket ticket, final Ticket encTicket, final String principal) {
         val values = new HashMap<String, AttributeValue>();
-        val ttl = encTicket.getExpirationPolicy().getMaximumExpirationTime(encTicket).toEpochSecond();
+        val ttl = Optional.ofNullable(ticket.getExpirationPolicy().getMaximumExpirationTime(ticket))
+            .or(() -> Optional.ofNullable(NeverExpiresExpirationPolicy.INSTANCE.getMaximumExpirationTime(encTicket)))
+            .map(ChronoZonedDateTime::toEpochSecond)
+            .orElseGet(() -> -1L);
         values.put(ColumnNames.EXPIRATION.getColumnName(),
             AttributeValue.builder().n(String.valueOf(ttl)).build());
         values.put(ColumnNames.ID.getColumnName(),
