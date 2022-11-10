@@ -50,7 +50,7 @@ As a quick status update, we anticipate the work to finalize in the next release
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `358` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `363` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Account Registration

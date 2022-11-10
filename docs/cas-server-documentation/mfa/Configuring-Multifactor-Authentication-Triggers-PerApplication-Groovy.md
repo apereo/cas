@@ -24,7 +24,7 @@ or the identifier of the multifactor provider that should be considered for acti
          
 {% tabs groovymfaperapp %}
 
-{% tab File %}
+{% tab groovymfaperapp File %}
 
 The script may be defined in the service definition using its full path:
 
@@ -60,7 +60,7 @@ def run(final Object... args) {
 
 {% endtab %}
 
-{% tab Inline %}
+{% tab groovymfaperapp Inline %}
 
 The script may be embedded directly in the service definition, as such:
 

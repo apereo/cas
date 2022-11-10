@@ -6,7 +6,6 @@ import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.collect.Streams;
@@ -255,20 +254,8 @@ public class DynamoDbTicketRegistryFacilitator {
         metadata.forEach(Unchecked.consumer(r -> {
             val attributeDefns = List.of(
                 AttributeDefinition.builder()
-                    .attributeName(ColumnNames.PRINCIPAL.getColumnName())
-                    .attributeType(ScalarAttributeType.S)
-                    .build(),
-                AttributeDefinition.builder()
-                    .attributeName(ColumnNames.PREFIX.getColumnName())
-                    .attributeType(ScalarAttributeType.S)
-                    .build(),
-                AttributeDefinition.builder()
                     .attributeName(ColumnNames.ID.getColumnName())
                     .attributeType(ScalarAttributeType.S)
-                    .build(),
-                AttributeDefinition.builder()
-                    .attributeName(ColumnNames.EXPIRATION.getColumnName())
-                    .attributeType(ScalarAttributeType.N)
                     .build());
             val keySchemaElements = List.of(KeySchemaElement.builder()
                 .attributeName(ColumnNames.ID.getColumnName())
