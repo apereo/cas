@@ -94,12 +94,12 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getStatusLine().getStatusCode();
-            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
                 return Optional.ofNullable(terms);
             }
-            LOGGER.warn("AUP fetch policy request returned with response code [{}] and content [{}]", statusCode, result);
+            LOGGER.warn("AUP fetch policy request returned with response code [{}] check your API for problems", statusCode);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
