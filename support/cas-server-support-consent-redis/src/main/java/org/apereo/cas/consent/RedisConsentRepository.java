@@ -51,7 +51,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        val redisKeys = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ":*", this.scanCount);
+        val redisKeys = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*", this.scanCount);
         return redisKeys
             .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
@@ -61,7 +61,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions() {
-        val redisKeys = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + '*', this.scanCount);
+        val redisKeys = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + '*', this.scanCount);
         return redisKeys
             .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
@@ -83,7 +83,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        val redisKey = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId, this.scanCount)
+        val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId, this.scanCount)
             .collect(Collectors.toSet());
         val count = this.redisTemplate.delete(redisKey);
         return count != null && count.intValue() > 0;
@@ -91,14 +91,14 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public void deleteAll() {
-        val redisKey = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + '*', this.scanCount)
+        val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + '*', this.scanCount)
             .collect(Collectors.toSet());
         this.redisTemplate.delete(redisKey);
     }
 
     @Override
     public boolean deleteConsentDecisions(final String principal) {
-        val redisKey = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ":*", this.scanCount)
+        val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*", this.scanCount)
             .collect(Collectors.toSet());
         val count = this.redisTemplate.delete(redisKey);
         return count != null && count.intValue() > 0;

@@ -5,15 +5,20 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +40,28 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")
 public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
+    private static final int COUNT = 500;
+
+    @RepeatedTest(2)
+    public void verifyLargeDataset() throws Exception {
+        val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId,
+                    CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+            })
+            .limit(COUNT);
+        var stopwatch = new StopWatch();
+        stopwatch.start();
+        getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+        var tickets = getNewTicketRegistry().getTickets();
+        assertFalse(tickets.isEmpty());
+        val ticketStream = getNewTicketRegistry().stream();
+        ticketStream.forEach(ticket -> assertNotNull(getNewTicketRegistry().getTicket(ticket.getId())));
+        stopwatch.stop();
+        var time = stopwatch.getTime(TimeUnit.SECONDS);
+        assertTrue(time <= 10);
+    }
 
     @RepeatedTest(2)
     public void verifyHealthOperation() throws Exception {
@@ -56,7 +83,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         val tgt = getNewTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         assertNotNull(tgt);
 
-        val secondRegistry = new RedisTicketRegistry(ticketRedisTemplate, 0);
+        val secondRegistry = new RedisTicketRegistry(ticketRedisTemplate);
         secondRegistry.setCipherExecutor(CipherExecutor.noOp());
         val ticket = secondRegistry.getTicket(ticketGrantingTicketId);
         assertNull(ticket);
