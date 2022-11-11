@@ -148,13 +148,13 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                                                    final List<Object> currentValues,
                                                    final AttributeDefinitionResolutionContext context) {
         LOGGER.trace("Locating attribute value via script for definition [{}]", this);
-        val scriptDefinition = SpringExpressionLanguageValueResolver.getInstance().resolve(getScript());
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(scriptDefinition);
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
 
         if (matcherInline.find()) {
             return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, matcherInline.group(1), context);
         }
 
+        val scriptDefinition = SpringExpressionLanguageValueResolver.getInstance().resolve(getScript());
         val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(scriptDefinition);
         if (matcherFile.find()) {
             return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, matcherFile.group(), context);
