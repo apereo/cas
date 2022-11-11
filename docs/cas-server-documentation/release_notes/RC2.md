@@ -97,6 +97,11 @@ that contains the user’s identity as JWT.
 ### OpenID Connect JARM
 
 Initial support for [JWT Secured Authorization Response Mode](../authentication/OIDC-Authentication-JARM.html) is now available for OpenID Connect.
+     
+### Delegated Authentication Profile Selection
+
+[Delegated authentication profile selection](../integration/Delegate-Authentication-ProfileSelection.html) can 
+now support an LDAP directory to locate candidate linked profiles.
 
 ### DynamoDb Ticket Registry
 
@@ -120,6 +125,7 @@ improvements are now in place to support scanning, counting and updating ticket 
 - The persistence units for all JPA integrations are now corrected to refer to the defined unit name.
 - Username providers [based on attributes](../integration/Attribute-Release-PrincipalId-Attribute.html) are now able to remove text from the final username 
   using regular expressions. 
+- Performance improvements to [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html), particularly around fetching tickets from Redis.
 
 ## Library Upgrades
 

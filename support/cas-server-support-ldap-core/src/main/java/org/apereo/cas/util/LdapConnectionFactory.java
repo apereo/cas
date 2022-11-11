@@ -3,6 +3,8 @@ package org.apereo.cas.util;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -41,7 +43,10 @@ import java.util.stream.Collectors;
  * @since 6.6.0
  */
 @Slf4j
-public record LdapConnectionFactory(ConnectionFactory connectionFactory) implements Closeable {
+@RequiredArgsConstructor
+@Getter
+public class LdapConnectionFactory implements Closeable {
+    private final ConnectionFactory connectionFactory;
     /**
      * Execute add operation.
      *

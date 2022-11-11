@@ -92,7 +92,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             LOGGER.debug("LDAP query located an entry for [{}] and responded with [{}]", id, response);
-            return Optional.of(Triple.of(connectionFactory.connectionFactory(), response, ldap));
+            return Optional.of(Triple.of(connectionFactory.getConnectionFactory(), response, ldap));
         }
         LOGGER.debug("LDAP query could not locate an entry for [{}]", id);
         return Optional.empty();
