@@ -43,7 +43,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
     /**
      * Default implementation bean id.
      */
-    public static final String DEFAULT_BEAN_NAME = "delegatedClientAuthenticationConfigurationContext";
+    public static final String BEAN_NAME = "delegatedClientAuthenticationConfigurationContext";
 
     private final Clients clients;
 

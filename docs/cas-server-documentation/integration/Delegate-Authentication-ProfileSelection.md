@@ -17,6 +17,15 @@ The credential resolution rules for the delegation flow are consulted using the 
     
 {% tabs delegatedauthnprofileselection %}
 
+{% tab delegatedauthnprofileselection LDAP %}
+
+Candidate profiles after delegated authentication can be found inside an LDAP directory. There are options available to fetch
+specific attributes from LDAP for each profile and the ability to specify the attribute which would be used the profile identifier.
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.profile-selection.ldap" %}
+
+{% endtab %}
+
 {% tab delegatedauthnprofileselection Groovy %}
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.profile-selection.groovy" %}
