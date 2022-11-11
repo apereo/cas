@@ -2,11 +2,22 @@ const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
-    const body = await cas.doRequest("https://localhost:8443/cas/v1/users?username=casuser&password=Mellon&passcode=123056", "POST", {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }, 401);
-    console.log(body);
+    const codes = await cas.fetchDuoSecurityBypassCodes("casuser");
+    const url = `https://localhost:8443/cas/v1/users`;
+    const body = await cas.doRequest(`${url}?username=casuser&password=Mellon&passcode=${codes[0]}`, "POST",
+        {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }, 200);
     let result = JSON.parse(body);
-    assert(result.authentication_exceptions != null);
+    console.dir(result, {depth: null, colors: true});
+    assert(result.authentication.authenticationDate !== undefined);
+    assert(result.authentication.principal.id === "casuser");
+    assert(result.authentication.attributes.authnContextClass[0] === "mfa-duo");
+
+    assert(result.authentication.successes["STATIC"].principal.id === "casuser");
+    assert(result.authentication.successes["STATIC"].credentialMetaData.credentialClass.includes("UsernamePasswordCredential"));
+
+    assert(result.authentication.successes["DuoSecurityAuthenticationHandler"].credentialMetaData.credentialClass.includes("DuoSecurityPasscodeCredential"));
+    assert(result.authentication.successes["DuoSecurityAuthenticationHandler"].principal.id === "casuser");
 })();
