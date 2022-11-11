@@ -27,7 +27,7 @@ const cas = require('../../cas.js');
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }, 200);
            
-            let result = JSON.parse(body)
+            let result = JSON.parse(body);
             console.dir(result, {depth: null, colors: true});
             
             assert(result.authentication.principal.id === "casuser");

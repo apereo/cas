@@ -127,7 +127,7 @@ exports.loginWith = async (page, user, password,
     await this.type(page, usernameField, user);
 
     await page.waitForSelector(passwordField, {visible: true});
-    await this.type(page, passwordField, password);
+    await this.type(page, passwordField, password, true);
 
     await page.keyboard.press('Enter');
     return await page.waitForNavigation();

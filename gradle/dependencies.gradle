@@ -1148,6 +1148,8 @@ ext.libraries = [
                 },
                 dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("com.squareup.okhttp3:logging-interceptor:$okhttp3Version") {
                 }
         ],
         oktasdk                 : [
