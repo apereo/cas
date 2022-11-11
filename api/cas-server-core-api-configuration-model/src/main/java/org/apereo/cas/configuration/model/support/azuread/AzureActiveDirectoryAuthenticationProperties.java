@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.azuread;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -56,6 +57,7 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
      * Client id of the application.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String clientId;
 
     /**
