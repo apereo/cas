@@ -530,8 +530,6 @@ exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
     return JSON.parse(response)["mfa-duo"];
 };
 
-exports.fetchDuoSecurityBypassCode = async (user = "casuser") => await this.fetchDuoSecurityBypassCode(user)[0];
-
 exports.base64Decode = async (data) => {
     let buff = Buffer.from(data, 'base64');
     return buff.toString('ascii');
