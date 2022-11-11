@@ -50,7 +50,7 @@ As a quick status update, we anticipate the work to finalize in the next release
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `363` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `364` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Account Registration
@@ -73,7 +73,7 @@ requests based on [Auth0's OpenFGA](../services/Service-Access-Strategy-OpenFGA.
 
 The [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) module can now enable
 a special actuator endpoint to allow REST clients to create tokens programmatically. This extension module is also enhanced
-to support [REST-based authentication](../protocol/REST-Protocol-CredentialAuthentication.md) via a special `sotp` parameter, 
+to support [REST-based authentication](../protocol/REST-Protocol-CredentialAuthentication.html) via a special `sotp` parameter, 
 in scenarios where the request may require and/or trigger multifactor authentication.
 
 ### REST Authentication
