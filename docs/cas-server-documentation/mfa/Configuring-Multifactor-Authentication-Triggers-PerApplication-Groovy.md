@@ -58,6 +58,8 @@ def run(final Object... args) {
 }
 ``` 
 
+The `script` attribute supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
 {% endtab %}
 
 {% tab groovymfaperapp Inline %}
