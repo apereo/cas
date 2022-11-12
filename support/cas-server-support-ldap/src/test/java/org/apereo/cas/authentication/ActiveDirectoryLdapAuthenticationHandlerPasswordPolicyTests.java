@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.ldap[0].password-policy.enabled=true"
 })
 @EnabledIfListeningOnPort(port = 10390)
-@Tag("Ldap")
+@Tag("ActiveDirectory")
 public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     @Override

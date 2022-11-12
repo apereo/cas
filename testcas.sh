@@ -346,9 +346,16 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/memcached/run-memcached-server.sh
                 task+="testMemcached "
                 ;;
-            ldap|ad|activedirectory)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+            activedirectory|ad)
                 isDockerOnLinux && ./ci/tests/ldap/run-ad-server.sh true
+                task+="testActiveDirectory "
+                ;;
+            ldapauthentication|ldapauthn)
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                task+="testLdapAuthentication "
+                ;;
+            ldap)
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
                 task+="testLdap "
                 ;;
             couchbase)
