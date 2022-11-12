@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.redis.port=6379",
     "cas.ticket.registry.redis.pool.max-active=20",
     "cas.ticket.registry.redis.pool.enabled=true",
-
     "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
     "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })

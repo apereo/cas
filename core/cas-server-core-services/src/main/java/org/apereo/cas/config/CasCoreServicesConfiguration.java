@@ -49,7 +49,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
@@ -324,13 +323,8 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "servicesManagerCache")
         public Cache<Long, RegisteredService> servicesManagerCache(final CasConfigurationProperties casProperties) {
             val cacheProperties = casProperties.getServiceRegistry().getCache();
-            val builder = Caffeine.newBuilder();
             val duration = Beans.newDuration(cacheProperties.getDuration());
-            return builder
-                .initialCapacity(cacheProperties.getInitialCapacity())
-                .maximumSize(cacheProperties.getCacheSize())
-                .expireAfterWrite(duration)
-                .build();
+            return Beans.newCache(casProperties.getServiceRegistry().getCache(), duration);
         }
 
         @EventListener

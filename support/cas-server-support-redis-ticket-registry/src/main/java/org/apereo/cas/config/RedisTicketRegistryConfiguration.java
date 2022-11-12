@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.Ticket;
@@ -17,7 +18,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -90,11 +90,7 @@ public class RedisTicketRegistryConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val redis = casProperties.getTicket().getRegistry().getRedis();
-                    val cache = Caffeine.newBuilder()
-                        .initialCapacity(redis.getCache().getInitialCapacity())
-                        .maximumSize(redis.getCache().getCacheSize())
-                        .expireAfter(new CachedTicketExpirationPolicy())
-                        .build();
+                    val cache = Beans.newCache(redis.getCache(), new CachedTicketExpirationPolicy());
                     val registry = new RedisTicketRegistry(ticketRedisTemplate, cache);
                     registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));
                     return registry;

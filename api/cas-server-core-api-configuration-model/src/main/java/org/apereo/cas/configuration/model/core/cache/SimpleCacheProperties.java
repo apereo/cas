@@ -31,6 +31,7 @@ public class SimpleCacheProperties implements Serializable {
      * exceed the threshold while evicting. As the cache size grows close to the maximum,
      * the cache evicts entries that are less likely to be used again. For example, the
      * cache may evict an entry because it hasn't been used recently or very often.
+     * Note: to disable the cache, you may choose a cache size of {@code 0}.
      */
     private long cacheSize = 10_000L;
 
