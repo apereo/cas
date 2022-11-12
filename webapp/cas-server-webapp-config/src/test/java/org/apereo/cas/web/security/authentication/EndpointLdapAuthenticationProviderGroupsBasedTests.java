@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.endpoints.ldap.bind-dn=cn=Directory Manager",
         "cas.monitor.endpoints.ldap.bind-credential=password"
     })
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class EndpointLdapAuthenticationProviderGroupsBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
 

@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].search-entry-handlers[7].type=RANGE_ENTRY",
     "cas.authn.attribute-repository.ldap[0].search-entry-handlers[8].type=PRIMARY_GROUP"
 })
-@Tag("Ldap")
+@Tag("LdapAttributes")
 @EnabledIfListeningOnPort(port = 10389)
 public class PersonDirectoryPrincipalResolverLdapTests {
     @Autowired
