@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolver;
-import org.apereo.cas.authentication.principal.GroovyDelegatedClientAuthenticationCredentialResolver;
 import org.apereo.cas.authentication.principal.ldap.LdapDelegatedClientAuthenticationCredentialResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;

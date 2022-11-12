@@ -27,6 +27,11 @@ public class RedisCompositeKey {
     @Builder.Default
     private final String prefix = "*";
 
+    /**
+     * To key pattern string.
+     *
+     * @return the string
+     */
     public String toKeyPattern() {
         return String.format("%s:%s:%s:%s", CAS_TICKET_PREFIX, id, principal, prefix);
     }
