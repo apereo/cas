@@ -17,13 +17,13 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link ADPasswordManagementServiceTests}.
+ * This is {@link ActiveDirectoryPasswordManagementServiceTests}.
  * Change password handling is different for Active Directory and this test exercises that AD specific code branch.
  *
  * @author Hal Deadman
  * @since 6.1.0
  */
-@Tag("Ldap")
+@Tag("ActiveDirectory")
 @TestPropertySource(properties = {
     "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
     "cas.authn.pm.ldap[0].ldap-url=ldaps://localhost:10636",
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].hostname-verifier=DEFAULT"
 })
 @EnabledIfListeningOnPort(port = 10636)
-public class ADPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
+public class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
 
     @BeforeAll
     @SneakyThrows
