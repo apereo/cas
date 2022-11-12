@@ -39,6 +39,7 @@ enum TestCategories {
     JDBCAuthentication,
     JMX,
     Kafka,
+    LdapAttributes,
     LdapAuthentication,
     Ldap,
     Logout,

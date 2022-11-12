@@ -354,6 +354,10 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
                 task+="testLdapAuthentication "
                 ;;
+            ldapattributes|ldapattrs)
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                task+="testLdapAttributes "
+                ;;
             ldap)
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
                 task+="testLdap "
