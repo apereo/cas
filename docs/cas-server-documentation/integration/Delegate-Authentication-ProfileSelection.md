@@ -22,6 +22,8 @@ The credential resolution rules for the delegation flow are consulted using the 
 Candidate profiles after delegated authentication can be found inside an LDAP directory. There are options available to fetch
 specific attributes from LDAP for each profile and the ability to specify the attribute which would be used the profile identifier.
 
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-core" %}
+
 {% include_cached casproperties.html properties="cas.authn.pac4j.profile-selection.ldap" %}
 
 {% endtab %}
