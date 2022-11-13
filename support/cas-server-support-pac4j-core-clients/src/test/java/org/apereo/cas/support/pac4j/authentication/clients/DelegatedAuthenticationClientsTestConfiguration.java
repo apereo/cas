@@ -78,7 +78,8 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         facebookClient.setProfileCreator((credentials, context, store) -> {
             val profile = new CommonProfile();
             profile.setClientName(facebookClient.getName());
-            profile.setId("casuser");
+            val id = context.getRequestAttribute(Credentials.class.getName()).orElse("casuser");
+            profile.setId(id.toString());
             profile.addAttribute("uid", "casuser");
             profile.addAttribute("givenName", "ApereoCAS");
             profile.addAttribute("memberOf", "admin");
