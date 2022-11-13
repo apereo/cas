@@ -73,7 +73,7 @@ public class LdapTestUtils {
                 .collect(Collectors.joining(NEWLINE));
             LOGGER.debug("LDIF to process is [{}]", ldapString);
             val entries = new LdifReader(new StringReader(ldapString)).read().getEntries();
-            LOGGER.debug("Total entries read from LDAP are [{}] with baseDn [{}]", entries.size(), baseDn);
+            LOGGER.debug("Total entries read from LDIF are [{}] with baseDn [{}]", entries.size(), baseDn);
             return entries;
         }
     }

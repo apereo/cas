@@ -17,6 +17,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -80,6 +81,7 @@ public class LdapDelegatedClientAuthenticationCredentialResolverTests {
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.setAttribute(Credentials.class.getName(), "caspac4j");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
@@ -90,7 +92,7 @@ public class LdapDelegatedClientAuthenticationCredentialResolverTests {
         val results = ldapDelegatedClientAuthenticationCredentialResolver.resolve(context, clientCredential);
         assertEquals(1, results.size());
         val profile = results.get(0);
-        assertEquals("casuser", profile.getLinkedId());
+        assertEquals("caspac4j", profile.getLinkedId());
         assertEquals(USER, profile.getId());
         assertTrue(profile.getAttributes().containsKey("mail"));
         assertTrue(profile.getAttributes().containsKey("uid"));

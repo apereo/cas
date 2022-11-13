@@ -6,5 +6,5 @@ objectClass: account
 cn: $user
 userPassword: 123456
 sn: caspac4j
-uid: casuser
+uid: caspac4j
 mail: caspac4j@example.org
