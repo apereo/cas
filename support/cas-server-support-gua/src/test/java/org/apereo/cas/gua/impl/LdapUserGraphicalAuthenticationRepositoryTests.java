@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 @SpringBootTest(classes = AbstractGraphicalAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.gua.ldap.base-dn=dc=example,dc=org",

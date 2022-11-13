@@ -105,7 +105,9 @@ public class LdapTestUtils {
             val ad = new AddRequest(entry.getDn(), attrs);
             LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
             try {
-                connection.add(ad);
+                val result = connection.add(ad);
+                LOGGER.debug("Added entry [{}]: result code [{}] on matched DN [{}]",
+                    entry, result.getResultString(), result.getMatchedDN());
             } catch (final LDAPException e) {
                 LOGGER.debug(e.getMessage(), e);
                 if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
