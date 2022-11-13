@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Ldap")
+@Tag("LdapRepository")
 @SpringBootTest(classes = {
     SurrogateLdapAuthenticationConfiguration.class,
     BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class

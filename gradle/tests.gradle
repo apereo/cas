@@ -42,6 +42,7 @@ enum TestCategories {
     LdapAttributes,
     LdapAuthentication,
     Ldap,
+    LdapRepository,
     Logout,
     Mail,
     MariaDb,
