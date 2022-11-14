@@ -256,6 +256,35 @@ public class CoreAuthenticationUtils {
      * @return the credential selection predicate
      */
     public static Predicate<Credential> newCredentialSelectionPredicate(final String selectionCriteria) {
+        // This is not a real PR but a way to start a discussion.
+        // This whole method is trying to guess witch kind of parameter has been used, given this documentation (from
+        // https://apereo.github.io/cas/6.6.x/authentication/LDAP-Authentication.html#configuration):
+        // 1) A regular expression pattern that is tested against the credential identifier.
+        // 2) A fully qualified class name of your own design that implements Predicate.
+        // 3) Path to an external Groovy script that implements the same interface.
+        // Such parameters with several kind of values are a problem as these is no way for the code to be sure which
+        // kind is wanted by the user, it has to be guessed. This implies guesses may fail. This implies there can be
+        // bad guesses.
+        // Bad guesses are only a small problem if the user has an alert about them, but this is not the case here:
+        // If there is any problem about a .groovy or a class selection criteria (file/class does not exist, class
+        // that can’t be created for any reason…) there will be NO WARNING about this and a Pattern will be used, and
+        // have an unexpected behaviour.
+        // From my point of view this kind of configuration mistake should prevent the application to start (as it is
+        // better to not start than to start with configuration which is known to not work as espected). But I can
+        // imagine there is other points of views here.
+        // I wanted to add a simple error log in case of errors on a groovy or class configuration mistake, but this
+        // is not possible: with the code done as it is done today, an error log here will print an perpetual fake
+        // error for users that want to use the REGEX way.
+        // I am open to develop the solution to this problem but I want to discuss it before implementation. Some
+        // propositions:
+        // 1. Split the selection-criteria config key in 3 (groovy, class, regex) with a warning if more than 1 is
+        //    used. This is the cleaner way but introduces incompatibility and requires lot of modifications.
+        // 2. Print a lag (INFO or more level to be displayed on default log level values) on the exception part of the
+        //    method if an error has been thrown/catched, with a message part "this can be ignored if you uses regex
+        //    on purpose".
+        // 3. Same, but display the log only if there is a change the selectionCriteria may be a groovy or a class (I
+        //    don’t know exactly how to do this now).
+        // 4. Something else, please detail.
         try {
             if (StringUtils.isBlank(selectionCriteria)) {
                 return credential -> true;
