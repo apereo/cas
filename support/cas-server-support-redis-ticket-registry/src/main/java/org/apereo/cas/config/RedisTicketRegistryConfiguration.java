@@ -88,7 +88,7 @@ public class RedisTicketRegistryConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val redis = casProperties.getTicket().getRegistry().getRedis();
-                    val r = new RedisTicketRegistry(ticketRedisTemplate, redis.getScanCount());
+                    val r = new RedisTicketRegistry(ticketRedisTemplate);
                     r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));
                     return r;
                 })
