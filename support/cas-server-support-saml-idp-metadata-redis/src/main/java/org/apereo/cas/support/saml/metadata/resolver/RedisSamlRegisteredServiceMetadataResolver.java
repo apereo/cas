@@ -48,7 +48,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        return redisTemplate.keys(getPatternRedisKey(), this.scanCount)
+        return redisTemplate.scan(getPatternRedisKey(), this.scanCount)
             .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .map(doc -> buildMetadataResolverFrom(service, doc))

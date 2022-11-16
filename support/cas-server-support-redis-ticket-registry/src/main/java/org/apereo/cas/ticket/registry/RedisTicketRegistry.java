@@ -170,6 +170,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     private Stream<String> getKeysStream(final String key) {
-        return client.keys(key, this.scanCount);
+        return Objects.requireNonNull(client.keys(key)).stream();
     }
 }
