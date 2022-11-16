@@ -29,9 +29,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
 
     private final CasRedisTemplate<String, Ticket> client;
-
-    private final long scanCount;
-
+    
     /**
      * If not time out value is specified, expire the ticket immediately.
      *
