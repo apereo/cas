@@ -181,9 +181,9 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         return registeredService;
     }
 
-    private Event returnAuthenticationExceptionEventIfNeeded(final Exception exception,
-                                                             final Credential credential,
-                                                             final WebApplicationService service) {
+    protected Event returnAuthenticationExceptionEventIfNeeded(final Exception exception,
+                                                               final Credential credential,
+                                                               final WebApplicationService service) {
         val result = (exception instanceof AuthenticationException || exception instanceof AbstractTicketException)
             ? Optional.of(exception)
             : (exception.getCause() instanceof AuthenticationException || exception.getCause() instanceof AbstractTicketException)
