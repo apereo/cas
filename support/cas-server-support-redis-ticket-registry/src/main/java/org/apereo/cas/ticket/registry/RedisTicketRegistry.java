@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -36,23 +37,28 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     private final Cache<String, Ticket> ticketCache;
 
+    private final RedisTicketRegistryMessagePublisher messagePublisher;
+
     @Override
     public long deleteAll() {
         val redisKeys = scanKeys().collect(Collectors.toSet());
         val size = Objects.requireNonNull(redisKeys).size();
         redisTemplate.delete(redisKeys);
         ticketCache.invalidateAll();
+        messagePublisher.deleteAll();
         return size;
     }
 
     @Override
     public long deleteSingleTicket(final String ticketId) {
         val redisKey = RedisCompositeKey.builder().id(encodeTicketId(ticketId)).build();
-        ticketCache.invalidate(redisKey.getId());
         val redisKeyPattern = redisKey.toKeyPattern();
-        return scanKeys(redisKeyPattern)
+        val count = scanKeys(redisKeyPattern)
             .mapToInt(id -> BooleanUtils.toBoolean(redisTemplate.delete(id)) ? 1 : 0)
             .sum();
+        ticketCache.invalidate(redisKey.getId());
+        messagePublisher.delete(redisKey.getId());
+        return count;
     }
 
     @Override
@@ -79,6 +85,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             ticketCache.put(redisKey.getId(), ticket);
             val redisKeyPattern = redisKey.toKeyPattern();
             redisTemplate.boundValueOps(redisKeyPattern).set(encodeTicket, timeout, TimeUnit.SECONDS);
+            messagePublisher.add(ticket);
         });
     }
 
@@ -90,7 +97,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 .id(encodeTicketId(ticketId))
                 .prefix(prefix)
                 .build();
-
             val ticket = ticketCache.get(redisKey.getId(), __ -> {
                 val redisKeyPattern = redisKey.toKeyPattern();
                 return scanKeys(redisKeyPattern)
@@ -106,6 +112,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 return ticket;
             }
             ticketCache.invalidate(redisKey.getId());
+            messagePublisher.delete(redisKey.getId());
             return null;
         });
 
@@ -144,6 +151,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             val timeout = RedisCompositeKey.getTimeout(ticket);
             redisTemplate.boundValueOps(redisKeyPattern).set(encodeTicket, timeout, TimeUnit.SECONDS);
             ticketCache.put(ticket.getId(), ticket);
+            messagePublisher.update(ticket);
             return encodeTicket;
         });
     }

@@ -1,6 +1,7 @@
 const assert = require('assert');
 const axios = require('axios');
 const https = require('https');
+const http = require('http');
 const {spawn} = require('child_process');
 const waitOn = require('wait-on');
 const JwtOps = require('jsonwebtoken');
@@ -265,6 +266,8 @@ exports.doRequest = async (url, method = "GET", headers = {},
             rejectUnauthorized: false,
             headers: headers
         };
+        options.agent = new https.Agent( options );
+
         console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
         const handler = (res) => {
             console.log(`Response status code: ${colors.green(res.statusCode)}`);
@@ -301,6 +304,7 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
     if (responseType !== undefined) {
         config["responseType"] = responseType
     }
+    console.log(`Sending GET request to ${url}`);
     await instance
         .get(url, config)
         .then(res => {

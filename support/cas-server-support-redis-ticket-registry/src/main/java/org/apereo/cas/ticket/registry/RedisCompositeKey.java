@@ -16,6 +16,11 @@ import lombok.val;
 @SuperBuilder
 @Getter
 public class RedisCompositeKey {
+    /**
+     * Redis message topic key used to sync memory cache across nodes.
+     */
+    public static final String REDIS_TICKET_REGISTRY_MESSAGE_TOPIC = "redisTicketRegistryMessageTopic";
+
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET";
 
     @Builder.Default
