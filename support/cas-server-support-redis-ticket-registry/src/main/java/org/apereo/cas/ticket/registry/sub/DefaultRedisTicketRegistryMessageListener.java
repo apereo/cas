@@ -23,7 +23,7 @@ public class DefaultRedisTicketRegistryMessageListener implements RedisTicketReg
     private final Cache<String, Ticket> ticketCache;
 
     @Override
-    public void handleMessage(final RedisMessagePayload command, String topic) {
+    public void handleMessage(final RedisMessagePayload command, final String topic) {
         if (!publisherIdentifier.equals(command.getIdentifier())) {
             LOGGER.trace("Processing Redis message payload [{}] at [{}]", command, publisherIdentifier);
             switch (command.getMessageType()) {
