@@ -23,7 +23,12 @@ $metadata['__DYNAMIC:1__'] = [
      * 'config/authsources.php'.
      */
     'auth' => 'example-userpass',
-    
+
+    'SingleSignOnServiceBinding' => [
+        'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+        'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
+    ],
+
     'SingleLogoutServiceBinding' => [
         'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
         'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
