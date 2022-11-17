@@ -123,7 +123,6 @@ public class X509AuthenticationWebflowConfiguration {
     public static class X509TomcatServletWebServiceFactoryConfiguration {
         @ConditionalOnMissingBean(name = "x509TomcatServletWebServiceFactoryCustomizer")
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebServerFactoryCustomizer x509TomcatServletWebServiceFactoryCustomizer(
             final ServerProperties serverProperties,
             final CasConfigurationProperties casProperties) {

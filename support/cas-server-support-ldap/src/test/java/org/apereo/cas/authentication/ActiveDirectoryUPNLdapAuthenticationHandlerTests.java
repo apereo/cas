@@ -34,7 +34,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].trust-manager=ANY"
 })
 @EnabledIfListeningOnPort(port = 10390)
-@Tag("Ldap")
+@Tag("ActiveDirectory")
 public class ActiveDirectoryUPNLdapAuthenticationHandlerTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     /**

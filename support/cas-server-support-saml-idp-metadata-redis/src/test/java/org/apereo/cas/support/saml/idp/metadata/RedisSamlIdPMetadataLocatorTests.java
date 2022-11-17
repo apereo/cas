@@ -41,7 +41,7 @@ public class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests
     @BeforeEach
     public void setup() {
         val key = RedisSamlIdPMetadataLocator.CAS_PREFIX + '*';
-        val keys = redisSamlIdPMetadataTemplate.keys(key, 0).collect(Collectors.toSet());
+        val keys = redisSamlIdPMetadataTemplate.scan(key, 0).collect(Collectors.toSet());
         redisSamlIdPMetadataTemplate.delete(keys);
     }
 

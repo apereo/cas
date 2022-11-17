@@ -40,6 +40,8 @@ dependencies {
     testImplementation libraries.hazelcast
     testImplementation libraries.casclient
 
+    compileOnly project(":support:cas-server-support-ldap-core")
+
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
@@ -69,4 +71,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
 }

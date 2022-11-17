@@ -50,7 +50,7 @@ As a quick status update, we anticipate the work to finalize in the next release
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `358` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `364` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Account Registration
@@ -68,6 +68,13 @@ improved with a PIN code confirmation.
 
 A new access strategy is now available to enforce fine-grained authorization 
 requests based on [Auth0's OpenFGA](../services/Service-Access-Strategy-OpenFGA.html).
+ 
+### Simple Multifactor Authentication
+
+The [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) module can now enable
+a special actuator endpoint to allow REST clients to create tokens programmatically. This extension module is also enhanced
+to support [REST-based authentication](../protocol/REST-Protocol-CredentialAuthentication.html) via a special `sotp` parameter, 
+in scenarios where the request may require and/or trigger multifactor authentication.
 
 ### REST Authentication
 
@@ -89,11 +96,23 @@ that contains the user’s identity as JWT.
 
 ### OpenID Connect JARM
 
-Initial support for [JWT Secured Authorization Response](../authentication/OIDC-Authentication-JARM.html) is now available for OpenID Connect,
-and will gradually improve to support other response modes in future releases.
+Initial support for [JWT Secured Authorization Response Mode](../authentication/OIDC-Authentication-JARM.html) is now available for OpenID Connect.
+     
+### Delegated Authentication Profile Selection
+
+[Delegated authentication profile selection](../integration/Delegate-Authentication-ProfileSelection.html) can 
+now support an LDAP directory to locate candidate linked profiles.
+
+### DynamoDb Ticket Registry
+
+When creating tickets, the [DynamoDb Ticket Registry](../ticketing/DynamoDb-Ticket-Registry.html) will adjust tables to enable auto-expiry of 
+ticket objects. On a per-table basis, a special `expiration` attribute is assigned to the table which is the expiration time of the ticket 
+in POSIX timestamp format. This attribute is automatically defined, calculated and populated for all ticket objects. Doing so should allow you
+to turn off the ticket registry cleaner and let DynamoDb remove expired objects on its own. Furthermore, a number of performance 
+improvements are now in place to support scanning, counting and updating ticket objects in DynamoDb using pagination and batch operations.
 
 ## Other Stuff
-    
+
 - Small adjustments to [attribute consent](../integration/Attribute-Release-Consent-Activation.html) rules when activated for and assigned to a specific 
   service definition. 
 - Client secrets for [OpenID Connect Services](../authentication/OIDC-Authentication-Clients.html) are now URL-decoded before validations.
@@ -103,9 +122,10 @@ and will gradually improve to support other response modes in future releases.
 - SSO sessions under [account profile](../registration/Account-Management-Overview.html) can now be selectively removed.
 - Authentication attributes can now optionally be included in OpenID Connect ID token or user profile payloads. 
 - The ability to secure actuator endpoints via subnet addresses is now restored.
-- The persistence units for all JPA integrations is now corrected to refer to the defined unit name.
+- The persistence units for all JPA integrations are now corrected to refer to the defined unit name.
 - Username providers [based on attributes](../integration/Attribute-Release-PrincipalId-Attribute.html) are now able to remove text from the final username 
   using regular expressions. 
+- Performance improvements to [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html), particularly around fetching tickets from Redis.
 
 ## Library Upgrades
 

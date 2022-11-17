@@ -22,6 +22,7 @@ async function impersonatePreSelected(page, browser) {
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await cas.assertCookie(page);
+    await page.waitForTimeout(1000);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
     await page.waitForTimeout(2000);
     await cas.goto(page, "https://localhost:8443/cas/logout");
@@ -43,6 +44,7 @@ async function impersonateWithMenu(page, browser) {
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     await cas.assertCookie(page);
+    await page.waitForTimeout(1000);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
     await page.waitForTimeout(2000);
     await cas.goto(page, "https://localhost:8443/cas/logout");

@@ -1,6 +1,7 @@
 import java.util.regex.*
 
 enum TestCategories {
+    ActiveDirectory,
     ActuatorEndpoint,
     AmazonWebServices,
     AMQP,
@@ -38,7 +39,10 @@ enum TestCategories {
     JDBCAuthentication,
     JMX,
     Kafka,
+    LdapAttributes,
+    LdapAuthentication,
     Ldap,
+    LdapRepository,
     Logout,
     Mail,
     MariaDb,

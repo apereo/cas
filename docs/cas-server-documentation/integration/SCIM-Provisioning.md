@@ -1,12 +1,12 @@
 ---
 layout: default
-title: CAS - SCIM Provisioning Integration
+title: CAS - SCIM Provisioning
 category: Integration
 ---
 
 {% include variables.html %}
 
-# Overview
+# SCIM Principal Provisioning
 
 The [SCIM standard](http://www.simplecloud.info/) is created to simplify user management and provisioning in the cloud by
 defining a schema for representing users and groups and a REST API for all the necessary CRUD operations. SCIM 

@@ -25,6 +25,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -221,7 +222,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                                  + "store, or no attribute definitions are requested.");
                     return availableAttributes;
                 }
-                val requestedDefinitions = new ArrayList<>(determineRequestedAttributeDefinitions(context));
+                val requestedDefinitions = new LinkedHashSet<>(determineRequestedAttributeDefinitions(context));
                 requestedDefinitions.addAll(principalAttributes.keySet());
 
                 LOGGER.debug("Finding requested attribute definitions [{}] based on available attributes [{}]",
