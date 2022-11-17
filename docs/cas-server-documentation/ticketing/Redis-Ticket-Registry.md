@@ -24,12 +24,17 @@ collateral tasks such as monitoring, notifications and acts as a configuration p
 
 {% include_cached casproperties.html properties="cas.ticket.registry.redis" %}
 
-### In-memory Cache
+### Caching & Messaging
 
 The Redis ticket registry layers an in-memory cache on top of Redis to assist with performance, particularly
-when it comes to fetching ticket objects from Redis using `SCAN`or `KEYS` operations that execute pattern matching.
+when it comes to fetching ticket objects from Redis using `SCAN` or `KEYS` operations that execute pattern matching.
 This cache is specific and isolated to the CAS server node's memory, and is able to clean up after itself with a dedicated
-expiration policy that is constructed off of the ticket's expiration policy.
+expiration policy that is constructed off of the ticket's expiration policy. Each cache inside an individual CAS server node
+will attempt to synchronize ticket changes and updates with other CAS server nodes via a message-based mechanism backed by 
+Redis itself. Note that you can always entirely disable the caching mechanism by forcing its maximum capacity to be at zero
+via dedicated CAS settings.
+
+{% include_cached casproperties.html properties="cas.ticket.registry.redis.cache" %}
 
 ### Eviction Policy
 
