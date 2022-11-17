@@ -50,7 +50,7 @@ As a quick status update, we anticipate the work to finalize in the next release
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `364` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `366` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Account Registration
@@ -103,6 +103,11 @@ Initial support for [JWT Secured Authorization Response Mode](../authentication/
 [Delegated authentication profile selection](../integration/Delegate-Authentication-ProfileSelection.html) can 
 now support an LDAP directory to locate candidate linked profiles.
 
+### Redis Ticket Registry
+
+A series of performance improvements to the [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) 
+to support synchronized caching and better key selection criteria across CAS server nodes in a clustered deployment. 
+
 ### DynamoDb Ticket Registry
 
 When creating tickets, the [DynamoDb Ticket Registry](../ticketing/DynamoDb-Ticket-Registry.html) will adjust tables to enable auto-expiry of 
@@ -152,3 +157,4 @@ improvements are now in place to support scanning, counting and updating ticket 
 - Jodatime
 - Spring Data
 - Azure CosmosDb
+- MongoDb
