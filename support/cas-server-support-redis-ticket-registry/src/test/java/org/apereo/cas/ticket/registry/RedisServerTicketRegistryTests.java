@@ -43,7 +43,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         val tgt = getNewTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         assertNotNull(tgt);
 
-        val secondRegistry = new RedisTicketRegistry(ticketRedisTemplate, 0);
+        val secondRegistry = new RedisTicketRegistry(ticketRedisTemplate);
         secondRegistry.setCipherExecutor(CipherExecutor.noOp());
         val ticket = secondRegistry.getTicket(ticketGrantingTicketId);
         assertNull(ticket);
