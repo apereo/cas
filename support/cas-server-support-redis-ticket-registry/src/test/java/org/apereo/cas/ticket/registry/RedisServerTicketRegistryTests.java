@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -26,6 +27,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link RedisTicketRegistry}.
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @TestPropertySource(properties = {
+    "cas.ticket.registry.redis.queue-identifier=cas-node-1",
     "cas.ticket.registry.redis.host=localhost",
     "cas.ticket.registry.redis.port=6379",
     "cas.ticket.registry.redis.pool.max-active=20",
@@ -95,7 +98,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         stopwatch.stop();
         val time = stopwatch.getTime(TimeUnit.MILLISECONDS);
         LOGGER.info("[{}]: [{}]ms", name, time);
-        assertTrue(time <= 1500);
+        assertTrue(time <= 2000);
     }
 
     @RepeatedTest(2)
@@ -119,7 +122,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         assertNotNull(tgt);
 
         val cache = Caffeine.newBuilder().initialCapacity(100).<String, Ticket>build();
-        val secondRegistry = new RedisTicketRegistry(ticketRedisTemplate, cache);
+        val secondRegistry = new RedisTicketRegistry(ticketRedisTemplate, cache, mock(RedisTicketRegistryMessagePublisher.class));
         secondRegistry.setCipherExecutor(CipherExecutor.noOp());
         val ticket = secondRegistry.getTicket(ticketGrantingTicketId);
         assertNull(ticket);

@@ -41,6 +41,15 @@ public class RedisTicketRegistryProperties extends BaseRedisProperties {
     @NestedConfigurationProperty
     private SimpleCacheProperties cache = new SimpleCacheProperties();
 
+    /**
+     * Identifier for this CAS server node
+     * that tags the sender/receiver in the queue
+     * and avoid processing of inbound calls.
+     * If left blank, an identifier is generated automatically
+     * and kept in memory.
+     */
+    private String queueIdentifier;
+
     public RedisTicketRegistryProperties() {
         crypto.setEnabled(false);
     }
