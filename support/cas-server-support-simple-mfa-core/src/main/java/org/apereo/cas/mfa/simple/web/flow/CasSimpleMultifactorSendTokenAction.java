@@ -58,13 +58,17 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     protected boolean isSmsSent(final CommunicationsManager communicationsManager,
                                 final CasSimpleMultifactorAuthenticationProperties properties,
                                 final Principal principal,
-                                final Ticket token,
+                                final Ticket tokenTicket,
                                 final RequestContext requestContext) {
         if (communicationsManager.isSmsSenderDefined()) {
             val smsProperties = properties.getSms();
+            val token = tokenTicket.getId();
+            val tokenWithoutPrefix = token.substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
             val smsText = StringUtils.isNotBlank(smsProperties.getText())
-                ? SmsBodyBuilder.builder().properties(smsProperties).parameters(Map.of("token", token.getId())).build().get()
-                : token.getId();
+                    ? SmsBodyBuilder.builder().properties(smsProperties).parameters(
+                            Map.of("token", token, "tokenWithoutPrefix", tokenWithoutPrefix))
+                    .build().get()
+                    : token;
 
             val smsRequest = SmsRequest.builder().from(smsProperties.getFrom())
                 .principal(principal).attribute(smsProperties.getAttributeName())
@@ -80,19 +84,23 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
      * @param communicationsManager the communication manager
      * @param properties            the properties
      * @param principal             the principal
-     * @param token                 the token
+     * @param tokenTicket           the token
      * @param requestContext        the request context
      * @return whether the email has been sent.
      */
     protected EmailCommunicationResult isMailSent(final CommunicationsManager communicationsManager,
                                                   final CasSimpleMultifactorAuthenticationProperties properties,
-                                                  final Principal principal, final Ticket token,
+                                                  final Principal principal, final Ticket tokenTicket,
                                                   final RequestContext requestContext) {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val parameters = CoreAuthenticationUtils.convertAttributeValuesToObjects(principal.getAttributes());
-            parameters.put("token", token.getId());
+
+            val token = tokenTicket.getId();
+            val tokenWithoutPrefix = token.substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
+            parameters.put("token", token);
+            parameters.put("tokenWithoutPrefix", tokenWithoutPrefix);
 
             val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
                 .map(resolver -> resolver.resolveLocale(request));
