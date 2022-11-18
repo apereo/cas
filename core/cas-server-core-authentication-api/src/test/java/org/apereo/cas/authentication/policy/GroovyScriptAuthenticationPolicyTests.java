@@ -29,12 +29,12 @@ public class GroovyScriptAuthenticationPolicyTests {
 
     @Test
     public void verifyActionExternalScript() throws Exception {
-        val script = "import org.apereo.cas.authentication.*\n"
-                     + "def run(Object[] args) {"
-                     + " def principal = args[0]\n"
-                     + " def logger = args[1]\n"
-                     + " return Optional.of(new AuthenticationException())\n"
-                     + '}';
+        val script = """
+            import org.apereo.cas.authentication.*
+            def run(Object[] args) { def principal = args[0]
+             def logger = args[1]
+             return Optional.of(new AuthenticationException())
+            }""";
 
         val scriptFile = Files.createTempFile("script1", ".groovy").toFile();
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
@@ -46,10 +46,10 @@ public class GroovyScriptAuthenticationPolicyTests {
 
     @Test
     public void verifyResumeOnFailureExternal() throws Exception {
-        val script = "def shouldResumeOnFailure(Object[] args) {"
-                     + " def failure = args[0] \n"
-                     + " return failure != null \n"
-                     + '}';
+        val script = """
+            def shouldResumeOnFailure(Object[] args) { def failure = args[0]\s
+             return failure != null\s
+            }""";
 
         val scriptFile = Files.createTempFile("script2", ".groovy").toFile();
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
@@ -66,10 +66,10 @@ public class GroovyScriptAuthenticationPolicyTests {
 
     @Test
     public void verifyBadFile() {
-        val script = "def shouldResumeOnFailure(Object[] args) {"
-                     + " def failure = args[0] \n"
-                     + " return failure != null \n"
-                     + '}';
+        val script = """
+            def shouldResumeOnFailure(Object[] args) { def failure = args[0]\s
+             return failure != null\s
+            }""";
         val p = new GroovyScriptAuthenticationPolicy(script);
         assertThrows(IllegalArgumentException.class, () -> p.shouldResumeOnFailure(new RuntimeException()));
     }

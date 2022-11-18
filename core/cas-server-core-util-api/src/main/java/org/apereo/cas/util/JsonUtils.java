@@ -43,7 +43,7 @@ public class JsonUtils {
      * @param response the response
      */
     public void render(final Object model, final HttpServletResponse response) {
-        Unchecked.consumer(o -> {
+        Unchecked.consumer(__ -> {
             val jsonConverter = new MappingJackson2HttpMessageConverter();
             jsonConverter.setPrettyPrint(true);
             val jsonMimeType = MediaType.APPLICATION_JSON;
@@ -92,7 +92,7 @@ public class JsonUtils {
      * Is valid json?.
      *
      * @param json the json
-     * @return the boolean
+     * @return true/false
      */
     public boolean isValidJson(final String json) {
         return FunctionUtils.doAndHandle(() -> !MAPPER.readTree(json).isEmpty(), t -> false).get();

@@ -120,7 +120,7 @@ public interface AuthenticationEventExecutionPlan {
      * @param handlers          the handlers
      * @param principalResolver the principal resolver
      */
-    void registerAuthenticationHandlerWithPrincipalResolvers(Collection<AuthenticationHandler> handlers, PrincipalResolver principalResolver);
+    void registerAuthenticationHandlersWithPrincipalResolver(Collection<AuthenticationHandler> handlers, PrincipalResolver principalResolver);
 
     /**
      * Register authentication handler with principal resolvers.
@@ -128,7 +128,7 @@ public interface AuthenticationEventExecutionPlan {
      * @param handlers          the handlers
      * @param principalResolver the principal resolver
      */
-    void registerAuthenticationHandlerWithPrincipalResolvers(List<AuthenticationHandler> handlers, List<PrincipalResolver> principalResolver);
+    void registerAuthenticationHandlersWithPrincipalResolver(List<AuthenticationHandler> handlers, List<PrincipalResolver> principalResolver);
 
     /**
      * Gets authentication handlers for transaction.

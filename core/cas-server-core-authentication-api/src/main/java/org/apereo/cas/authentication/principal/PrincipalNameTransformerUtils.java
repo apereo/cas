@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.transforms.BlockingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
@@ -37,14 +38,14 @@ public class PrincipalNameTransformerUtils {
         }
 
         if (StringUtils.isNotBlank(p.getPattern())) {
-            val t = new RegexPrincipalNameTransformer(p.getPattern());
+            val t = new RegexPrincipalNameTransformer(SpringExpressionLanguageValueResolver.getInstance().resolve(p.getPattern()));
             chain.addTransformer(t);
         }
 
         if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
             val t = new PrefixSuffixPrincipalNameTransformer();
-            t.setPrefix(p.getPrefix());
-            t.setSuffix(p.getSuffix());
+            t.setPrefix(SpringExpressionLanguageValueResolver.getInstance().resolve(p.getPrefix()));
+            t.setSuffix(SpringExpressionLanguageValueResolver.getInstance().resolve(p.getSuffix()));
             chain.addTransformer(t);
         }
 
@@ -61,7 +62,7 @@ public class PrincipalNameTransformerUtils {
         }
 
         if (StringUtils.isNotBlank(p.getBlockingPattern())) {
-            val t = new BlockingPrincipalNameTransformer(p.getBlockingPattern());
+            val t = new BlockingPrincipalNameTransformer(SpringExpressionLanguageValueResolver.getInstance().resolve(p.getBlockingPattern()));
             chain.addTransformer(t);
         }
 

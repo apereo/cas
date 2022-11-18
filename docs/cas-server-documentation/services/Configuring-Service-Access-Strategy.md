@@ -25,14 +25,16 @@ relying party. <a href="../integration/Attribute-Release.html">See this guide</a
 attribute release and filters.</p></div>
 
 
-| Topic                 | Resource                                                |
-|-----------------------|---------------------------------------------------------|
-| Basic                 | See [this guide](Service-Access-Strategy-Basic.html).   |
-| Unauthorized URLs     | See [this guide](Service-Access-Strategy-URL.html).     |
-| ABAC                  | See [this guide](Service-Access-Strategy-ABAC.html).    |
-| Groovy                | See [this guide](Service-Access-Strategy-Groovy.html).  |
-| Time-Based            | See [this guide](Service-Access-Strategy-Time.html).    |
-| (Remote) HTTP Request | See [this guide](Service-Access-Strategy-Http.html).    |
-| Grouper               | See [this guide](Service-Access-Strategy-Grouper.html). |
-| Chaining              | See [this guide](Service-Access-Strategy-Chain.html).   |
+| Topic                 | Resource                                                        |
+|-----------------------|-----------------------------------------------------------------|
+| Basic                 | See [this guide](Service-Access-Strategy-Basic.html).           |
+| Unauthorized URLs     | See [this guide](Service-Access-Strategy-URL.html).             |
+| ABAC                  | See [this guide](Service-Access-Strategy-ABAC.html).            |
+| Groovy                | See [this guide](Service-Access-Strategy-Groovy.html).          |
+| Time-Based            | See [this guide](Service-Access-Strategy-Time.html).            |
+| (Remote) HTTP Request | See [this guide](Service-Access-Strategy-Http.html).            |
+| Grouper               | See [this guide](Service-Access-Strategy-Grouper.html).         |
+| OpenFGA               | See [this guide](Service-Access-Strategy-OpenFGA.html).         |
+| Open Policy Agent     | See [this guide](Service-Access-Strategy-OpenPolicyAgent.html). |
+| Chaining              | See [this guide](Service-Access-Strategy-Chain.html).           |
 

@@ -1,11 +1,13 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -65,6 +67,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String patternFormat;
 
+    @ExpressionLanguageCapable
     private String script;
 
     private String canonicalizationMode;
@@ -151,7 +154,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, matcherInline.group(1), context);
         }
 
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(getScript());
+        val scriptDefinition = SpringExpressionLanguageValueResolver.getInstance().resolve(getScript());
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(scriptDefinition);
         if (matcherFile.find()) {
             return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, matcherFile.group(), context);
         }

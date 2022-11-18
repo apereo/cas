@@ -1,9 +1,9 @@
 package org.apereo.cas.scim.v2;
 
-import org.apereo.cas.api.PrincipalProvisioner;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;

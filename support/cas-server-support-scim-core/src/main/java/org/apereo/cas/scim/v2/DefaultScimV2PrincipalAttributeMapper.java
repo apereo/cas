@@ -53,7 +53,8 @@ public class DefaultScimV2PrincipalAttributeMapper implements ScimV2PrincipalAtt
         user.setPhoneNumbers(CollectionUtils.wrap(phone));
 
         user.setExternalId(getPrincipalAttributeValue(principal, "externalId", principal.getId()));
-
+        user.setGroups(null);
+        
         if (user.getMeta() == null) {
             val meta = new Meta();
             meta.setCreated(Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC)));

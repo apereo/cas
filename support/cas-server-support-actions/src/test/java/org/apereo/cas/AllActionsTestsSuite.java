@@ -28,6 +28,7 @@ import org.apereo.cas.web.flow.TerminateSessionActionTests;
 import org.apereo.cas.web.flow.TerminateSessionConfirmingActionTests;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckActionTests;
 import org.apereo.cas.web.flow.VerifyRequiredServiceActionTests;
+import org.apereo.cas.web.flow.account.AccountProfileRemoveSingleSignOnSessionTests;
 import org.apereo.cas.web.flow.account.PrepareAccountProfileViewActionTests;
 
 import org.junit.platform.suite.api.SelectClasses;
@@ -50,6 +51,7 @@ import org.junit.platform.suite.api.Suite;
     SessionStoreTicketGrantingTicketActionTests.class,
     RedirectUnauthorizedServiceUrlActionTests.class,
     RenderLoginActionTests.class,
+    AccountProfileRemoveSingleSignOnSessionTests.class,
     FlowExecutionExceptionResolverTests.class,
     InitializeLoginActionTests.class,
     PopulateSpringSecurityContextActionTests.class,

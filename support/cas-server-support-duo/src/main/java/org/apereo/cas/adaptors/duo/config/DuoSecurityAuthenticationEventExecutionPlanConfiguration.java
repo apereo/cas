@@ -28,8 +28,13 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.services.CasRegisteredService;
+import org.apereo.cas.services.ImmutableInMemoryServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.beans.BeanContainer;
@@ -45,6 +50,7 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -58,12 +64,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -203,6 +211,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             final List<MultifactorAuthenticationPrincipalResolver> resolvers,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             @Qualifier("httpClient")
             final HttpClient httpClient,
             @Qualifier("duoSecurityBypassEvaluator")
@@ -297,6 +307,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action determineDuoUserAccountAction(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
@@ -304,12 +316,35 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                    .supply(DuoSecurityDetermineUserAccountAction::new)
+                    .supply(() -> new DuoSecurityDetermineUserAccountAction(casProperties, servicesManager))
                     .otherwiseProxy()
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DETERMINE_DUO_USER_ACCOUNT)
                 .build()
                 .get();
+        }
+
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "duoServiceRegistryExecutionPlanConfigurer")
+        public ServiceRegistryExecutionPlanConfigurer duoServiceRegistryExecutionPlanConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return plan -> {
+                casProperties.getAuthn().getMfa().getDuo().stream()
+                    .filter(duo -> StringUtils.isNotBlank(duo.getRegistration().getRegistrationUrl()))
+                    .forEach(duo -> {
+                        val serviceId = FunctionUtils.doUnchecked(() -> new URL(duo.getRegistration().getRegistrationUrl()).getHost());
+                        val service = new CasRegisteredService();
+                        service.setId(RandomUtils.nextLong());
+                        service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+                        service.setName(service.getClass().getSimpleName());
+                        service.setDescription("Duo Security Registration URL for " + duo.getId());
+                        service.setServiceId(serviceId);
+                        plan.registerServiceRegistry(new ImmutableInMemoryServiceRegistry(List.of(service), applicationContext, List.of()));
+                    });
+            };
         }
     }
 
@@ -365,7 +400,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-        
+
         @Bean
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -384,7 +419,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-        
+
         @Bean
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -398,7 +433,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-        
+
         private static class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
             SurrogateWebflowConfigurer(
                 final FlowBuilderServices flowBuilderServices,

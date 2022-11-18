@@ -45,6 +45,7 @@ serve=false
 clone=true
 buildFeatures=true
 shellCommands=true
+dependencyVersions=true
 
 while (("$#")); do
   case "$1" in
@@ -80,15 +81,15 @@ while (("$#")); do
     propFilter=$2
     shift 2
     ;;
-  --actuators)
+  --actuators|--act)
     actuators=$2
     shift 2
     ;;
-  --thirdParty|--thirdparty)
+  --thirdParty|--thirdparty|--tp)
     thirdParty=$2
     shift 2
     ;;
-  --serviceProperties)
+  --serviceProperties|--sp)
     serviceProps=$2
     shift 2
     ;;
@@ -100,7 +101,11 @@ while (("$#")); do
     audit=$2
     shift 2
     ;;
-  --features)
+  --versions)
+    dependencyVersions=$2
+    shift 2
+    ;;
+  --features|--feat)
     buildFeatures=$2
     shift 2
     ;;
@@ -129,6 +134,7 @@ printgreen "Publish: \t${publishDocs}"
 printgreen "Filter: \t${propFilter}"
 printgreen "Actuators: \t${actuators}"
 printgreen "Third Party: \t${thirdParty}"
+printgreen "Dependency Versions: \t${dependencyVersions}"
 printgreen "Features: \t${buildFeatures}"
 printgreen "Shell: \t${shellCommands}"
 printgreen "Audit: \t${audit}"
@@ -211,7 +217,8 @@ if [[ $generateData == "true" ]]; then
   printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter...\n"
   ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
     -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
-    -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands" -aud "$audit"
+    -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands" \
+    -aud "$audit" -ver "$dependencyVersions"
   if [ $? -eq 1 ]; then
     printred "Unable to generate documentation data. Aborting..."
     exit 1

@@ -28,7 +28,7 @@ Note that OpenID connect clients as service definitions are an
 extension of [OAuth services](OAuth-Authentication-Clients.html) in CAS. All settings 
 that apply to an OAuth service definition should equally apply here as well. 
 
-<div class="alert alert-info"><strong>Redirect URIs</strong><p>Client applicatin redirect URIs are specified
+<div class="alert alert-info"><strong>Redirect URIs</strong><p>Client application redirect URIs are specified
 using the <code>serviceId</code> field which supports regular expression patterns. If you need to support multiple URIs, you can
 try to <i>OR</i> them together or you may be able to construct the pattern that supports and matches all URIs with minor changes.</p></div>
 
@@ -37,7 +37,7 @@ The following fields are specifically available for OpenID connect services:
 | Field                               | Description                                                                                                                                                                                                                   |
 |-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `clientId`                          | Required. The identifier for this client application.                                                                                                                                                                         |
-| `clientSecret`                      | Required. The secret for this client application.                                                                                                                                                                             |
+| `clientSecret`                      | Required. The secret for this client application. The client secret received from the service will be URL decoded before being compared to the secret in the CAS service definition.                                          |
 | `clientSecretExpiration`            | Optional. Time, measured in UTC epoch, at which the `client_secret` will expire or 0 if it will not expire.                                                                                                                   |
 | `serviceId`                         | Required. The authorized redirect URI for this OIDC client.                                                                                                                                                                   |
 | `supportedGrantTypes`               | Optional. Collection of supported grant types for this service.                                                                                                                                                               |

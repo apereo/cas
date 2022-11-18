@@ -135,7 +135,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Controls the amount of time that a connection can be out of the pool before a message
      * is logged indicating a possible connection leak.
      */
-    private long leakThreshold = 3_000L;
+    private long leakThreshold = 6_000L;
 
     /**
      * Allow hibernate to generate query statistics.

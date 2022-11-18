@@ -11,6 +11,7 @@ import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 /**
@@ -51,7 +52,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
     private boolean saml2compliant;
 
     public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
-        this.sourceIdDigest = FunctionUtils.doUnchecked(() -> DigestUtils.rawDigest("SHA", sourceId.getBytes("8859_1")));
+        this.sourceIdDigest = FunctionUtils.doUnchecked(() -> DigestUtils.rawDigest("SHA", sourceId.getBytes(StandardCharsets.ISO_8859_1)));
         this.random = RandomUtils.getNativeInstance();
     }
 

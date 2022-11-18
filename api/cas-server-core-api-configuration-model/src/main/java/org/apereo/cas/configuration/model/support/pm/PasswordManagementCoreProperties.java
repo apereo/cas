@@ -47,4 +47,14 @@ public class PasswordManagementCoreProperties implements Serializable {
      */
     @RequiredProperty
     private String passwordPolicyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
+
+    /**
+     * The character set that CAS may use to generate and suggest new passwords.
+     */
+    private String passwordPolicyCharacterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789![]{}()%&*$#^<>~@|";
+
+    /**
+     * The password length used by CAS when suggesting generated passwords.
+     */
+    private long passwordPolicyPasswordLength = 10;
 }

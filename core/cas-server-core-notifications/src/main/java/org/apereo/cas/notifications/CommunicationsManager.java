@@ -20,21 +20,21 @@ public interface CommunicationsManager {
     /**
      * Is mail sender defined?
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isMailSenderDefined();
 
     /**
      * Is sms sender defined?
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isSmsSenderDefined();
 
     /**
      * Is notification sender defined?
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isNotificationSenderDefined();
 

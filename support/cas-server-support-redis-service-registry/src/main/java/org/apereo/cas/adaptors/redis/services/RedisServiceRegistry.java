@@ -119,6 +119,6 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     }
 
     private Stream<String> getRegisteredServiceKeys() {
-        return template.keys(getPatternRegisteredServiceRedisKey(), this.scanCount);
+        return template.scan(getPatternRegisteredServiceRedisKey(), this.scanCount);
     }
 }

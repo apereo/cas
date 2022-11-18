@@ -39,6 +39,10 @@ public class CasConfigurationMetadataCatalog {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    public static ObjectMapper getObjectMapper() {
+        return MAPPER;
+    }   
+
     /**
      * Export.
      *

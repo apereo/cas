@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 public class GroovyAccountRegistrationProvisionerTests {
     @Autowired
-    @Qualifier("accountMgmtRegistrationProvisioner")
+    @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
     @BeforeEach

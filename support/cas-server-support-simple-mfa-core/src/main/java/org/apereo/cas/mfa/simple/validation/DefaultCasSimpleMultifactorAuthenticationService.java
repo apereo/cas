@@ -97,6 +97,6 @@ public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimp
      * @param acct the acct
      */
     protected void deleteToken(final CasSimpleMultifactorAuthenticationTicket acct) {
-        FunctionUtils.doUnchecked(s -> ticketRegistry.deleteTicket(acct.getId()));
+        FunctionUtils.doUnchecked(__ -> ticketRegistry.deleteTicket(acct.getId()));
     }
 }

@@ -58,7 +58,7 @@ public interface OAuth20RequestParameterResolver {
      *
      * @param context           the context
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     boolean isAuthorizedGrantTypeForService(WebContext context,
                                             OAuthRegisteredService registeredService);
@@ -160,7 +160,7 @@ public interface OAuth20RequestParameterResolver {
      *
      * @param context           the context
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     boolean isAuthorizedResponseTypeForService(WebContext context, OAuthRegisteredService registeredService);
 

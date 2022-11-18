@@ -4,8 +4,10 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandlerTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProviderTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactoryTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests;
+import org.apereo.cas.mfa.simple.rest.CasSimpleMultifactorRestHttpRequestCredentialFactoryTests;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilderTests;
 import org.apereo.cas.mfa.simple.validation.RestfulCasSimpleMultifactorAuthenticationServiceTests;
+import org.apereo.cas.mfa.simple.web.CasSimpleMultifactorAuthenticationEndpointTests;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenActionTests;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurerTests;
 
@@ -23,6 +25,8 @@ import org.junit.platform.suite.api.Suite;
     CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests.class,
     CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilderTests.class,
     CasSimpleMultifactorSendTokenActionTests.class,
+    CasSimpleMultifactorAuthenticationEndpointTests.class,
+    CasSimpleMultifactorRestHttpRequestCredentialFactoryTests.class,
     RestfulCasSimpleMultifactorAuthenticationServiceTests.class,
     CasSimpleMultifactorAuthenticationHandlerTests.class,
     CasSimpleMultifactorAuthenticationTicketFactoryTests.class,

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.client.CasClient;
+import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
@@ -301,6 +302,39 @@ public class DefaultDelegatedClientFactoryTests {
         public void verifyClient() {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
+        }
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = {
+            "cas.authn.pac4j.saml[0].saml2AttributeConverter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
+            "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+            "cas.authn.pac4j.saml[0].keystore-password=1234567890",
+            "cas.authn.pac4j.saml[0].private-key-password=1234567890",
+            "cas.authn.pac4j.saml[0].identity-provider-metadata-path=classpath:idp-metadata.xml",
+            "cas.authn.pac4j.saml[0].service-provider-metadata-path=file:/tmp/sp.xml",
+            "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
+            "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
+            "cas.authn.pac4j.core.lazy-init=true"
+    })
+    public class Saml2ClientsWithCustomAttributeConverter extends BaseDelegatedClientFactoryTests {
+        @Test
+        public void verifyClient() {
+
+            val saml2clients = delegatedClientFactory.build();
+            assertEquals(1, saml2clients.size());
+
+            val client = (SAML2Client) saml2clients.stream().findFirst().get();
+            assertTrue(client.getConfiguration().getSamlAttributeConverter() instanceof CustomAttributeConverterForTest);
+        }
+    }
+
+    public static class CustomAttributeConverterForTest implements AttributeConverter {
+
+        @Override
+        public Object convert(final Object o) {
+            return null;
         }
     }
 

@@ -41,7 +41,7 @@ public class RedisSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator 
     @Override
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
         val appliesTo = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
-        val keys = redisTemplate.keys(CAS_PREFIX + appliesTo + ":*", this.scanCount);
+        val keys = redisTemplate.scan(CAS_PREFIX + appliesTo + ":*", this.scanCount);
         return keys.findFirst()
             .map(key -> redisTemplate.boundValueOps(key).get())
             .orElse(null);

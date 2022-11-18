@@ -428,6 +428,9 @@ ext.libraries = [
                 dependencies.create("org.apache.groovy:groovy-json:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
+                dependencies.create("org.apache.groovy:groovy-yaml:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                },
                 dependencies.create("org.apache.groovy:groovy-xml:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
@@ -1145,6 +1148,8 @@ ext.libraries = [
                 },
                 dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("com.squareup.okhttp3:logging-interceptor:$okhttp3Version") {
                 }
         ],
         oktasdk                 : [

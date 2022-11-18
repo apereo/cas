@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.acct.AccountProfileServiceTicketGeneratorAuthority;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -227,12 +226,10 @@ public class PasswordManagementWebflowConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
             final PasswordManagementService passwordManagementService,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
+            final TicketRegistrySupport ticketRegistrySupport) {
             return new VerifyPasswordResetRequestAction(casProperties,
-                passwordManagementService, ticketRegistry);
+                passwordManagementService, ticketRegistrySupport);
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_EXPIRATION_HANDLE_WARNINGS)
@@ -262,9 +259,7 @@ public class PasswordManagementWebflowConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-            final PasswordManagementService passwordManagementService,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final PasswordManagementService passwordManagementService) {
             return new ValidatePasswordResetTokenAction(passwordManagementService, ticketRegistry);
         }
 

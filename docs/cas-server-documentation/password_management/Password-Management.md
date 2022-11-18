@@ -22,6 +22,10 @@ will allow the user to next reset their password and login again. You may also s
 By default, after a user has successfully changed their password they will be redirected to the login screen
 to enter their new password and log in. CAS can also be configured to automatically log the user in after
 a successful change. This behavior can be altered via CAS settings. 
+   
+CAS login requests also accept a special `doChangePassword` query parameter that allows one to forcefully launch into the
+password reset flow. Specifying this parameter with a value of `true` can be particularly useful in the presence
+of existing single sign-on sessions when the user who already has logged in wants to change their password.
 
 Support is enabled by including the following dependency in the WAR overlay:
 

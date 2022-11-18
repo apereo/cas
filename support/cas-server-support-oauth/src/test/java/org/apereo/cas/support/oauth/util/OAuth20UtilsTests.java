@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -113,8 +114,8 @@ public class OAuth20UtilsTests extends AbstractOAuth20Tests {
     public void verifyPostResponse() {
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
-        registeredService.setResponseType("post");
-        assertTrue(OAuth20Utils.isResponseModeTypeFormPost(registeredService, OAuth20ResponseModeTypes.NONE));
+        registeredService.setResponseMode("post");
+        assertTrue(OAuth20ResponseModeFactory.isResponseModeTypeFormPost(registeredService, OAuth20ResponseModeTypes.NONE));
         assertTrue(OAuth20Utils.isResponseModeType("form_post", OAuth20ResponseModeTypes.FORM_POST));
     }
 

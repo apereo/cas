@@ -61,7 +61,7 @@ It is quite possible that the problem you are trying to resolve has already been
 A patch release is a conservative incremental improvement that includes bug fixes and small enhancements and 
 is absolutely backward compatible with previous PATCH releases of the same MINOR release. For example, if you are currently
 on CAS version `6.5.1` and have run into a possible issue, you should consider upgrading to `6.5.2`, and 6.5.3` and so on
-to investigate further, assuming releases are of course availble and published.
+to investigate further, assuming releases are of course available and published.
 
 The project release schedule is [available here](https://github.com/apereo/cas/milestones), and you can always
 have a look at [published releases](https://github.com/apereo/cas/releases).

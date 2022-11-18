@@ -1,9 +1,9 @@
 ---
 layout: default
-title: CAS - Project Management Commitee
+title: CAS - Project Management Committee
 ---
 
-# Project Management Commitee
+# Project Management Committee
 
 CAS is governed by a Project Management Committee (PMC) modeled after Apache-style PMCs. All PMC-related matters, including new nominations of
 members MUST take place on the [mailing list](/cas/Mailing-Lists.html).
@@ -73,7 +73,7 @@ Communication happens primarily by public mailing lists. Exceptions are issues t
 private lists are the appropriate channel in those situations. Communication may also occur through other appropriate channels as needed,
 such as video/voice conference calls, IRC and IM. No official decisions may be made via any means other than voting on a project mailing list;
 if it didn't happen on list, it didn't happen. Discussions that occur in side channels such as IRC and IM SHOULD be summarized on a mailing list
-when they may impact decision making processes. The commitee SHOULD make an effort to meet periodically via a high-bandwidth synchronous medium
+when they may impact decision making processes. The committee SHOULD make an effort to meet periodically via a high-bandwidth synchronous medium
 such as in-person meetings at conferences or voice/video conference calls.
 
 ## Obligations

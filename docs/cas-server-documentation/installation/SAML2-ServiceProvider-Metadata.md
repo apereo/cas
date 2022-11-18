@@ -65,7 +65,9 @@ the signature of the metadata as necessary.
 Metadata location can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 {% tabs metadata %}
+
 {% tab metadata URL %}
+
 ```json
 {
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
@@ -84,6 +86,9 @@ This capability will require the forceful fetching of the metadata over HTTP to 
 {% endtab %}
 
 {% tab metadata File %}
+    
+Metadata files for SAML2 service providers can be found on the file system directly: 
+
 ```json
 {
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
@@ -93,6 +98,7 @@ This capability will require the forceful fetching of the metadata over HTTP to 
   "metadataLocation" : "/path/to/metadata.xml"
 }
 ```
+
 {% endtab %}
 
 {% tab metadata Directory %}

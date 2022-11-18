@@ -33,8 +33,8 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     private static final String SELECT_ACCOUNT_QUERY = SELECT_QUERY.concat(" WHERE r.username = :username");
 
-    @PersistenceContext(unitName = "yubiKeyEntityManagerFactory")
-    private transient EntityManager entityManager;
+    @PersistenceContext(unitName = "jpaYubiKeyRegistryContext")
+    private EntityManager entityManager;
 
     public JpaYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator) {
         super(accountValidator);

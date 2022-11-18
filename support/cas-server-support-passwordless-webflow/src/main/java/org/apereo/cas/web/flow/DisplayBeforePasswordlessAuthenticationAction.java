@@ -20,6 +20,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -82,6 +83,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
                 .locale(locale)
                 .parameters(Map.of("token", token)).build().get();
             val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
+                .locale(locale.orElseGet(Locale::getDefault))
                 .to(List.of(user.getEmail())).body(body).build();
             communicationsManager.email(emailRequest);
         }

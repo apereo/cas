@@ -220,17 +220,7 @@
                             </label>
                         </div>
                     </section>
-
-
-                    <section class="cas-field form-group"
-                             th:if="${passwordManagementEnabled != null && passwordManagementEnabled && param.doChangePassword != null}">
-                        <p>
-                            <input type="checkbox" name="doChangePassword" id="doChangePassword"
-                                   value="true" th:checked="${param.doChangePassword != null}"/>
-                            <label for="doChangePassword" th:text="#{screen.button.changePassword}">Change Password</label>
-                        </p>
-                    </section>
-
+                    
                     <section class="cas-field form-check"
                              th:if="${'true' == #strings.defaultString(#themes.code('cas.warn-on-redirect.enabled'), 'true')}">
                         <div class="mdc-form-field ">
@@ -357,7 +347,7 @@
 
                         /*]]>*/
                     </script>
-                    <a class="mdc-button mdc-button--raised btn btn-primary"
+                    <a id="x509LoginLink" class="mdc-button mdc-button--raised btn btn-primary"
                        onclick="javascript:x509login();"
                        th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
                 </span>

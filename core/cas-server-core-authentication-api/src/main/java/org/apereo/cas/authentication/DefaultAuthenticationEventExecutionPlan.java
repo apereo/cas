@@ -131,14 +131,14 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
+    public void registerAuthenticationHandlersWithPrincipalResolver(final Collection<AuthenticationHandler> handlers,
                                                                     final PrincipalResolver principalResolver) {
         handlers.stream().filter(BeanSupplier::isNotProxy)
             .forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
     }
 
     @Override
-    public void registerAuthenticationHandlerWithPrincipalResolvers(final List<AuthenticationHandler> handlers,
+    public void registerAuthenticationHandlersWithPrincipalResolver(final List<AuthenticationHandler> handlers,
                                                                     final List<PrincipalResolver> principalResolver) {
         if (handlers.size() != principalResolver.size()) {
             LOGGER.error("Total number of authentication handlers must match the number of provided principal resolvers");

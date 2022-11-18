@@ -1,6 +1,7 @@
 package org.apereo.cas.syncope.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.syncope.BaseSyncopeTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 

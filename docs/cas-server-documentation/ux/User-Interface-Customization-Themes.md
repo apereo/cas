@@ -174,7 +174,7 @@ response to determine the theme name. Empty response bodies will have CAS switch
 }
 ```
 
-The following parameters may be passed to a Groovy script:
+The following parameters may be passed to a REST endpoint:
 
 | Parameter | Description                        |
 |-----------|------------------------------------|

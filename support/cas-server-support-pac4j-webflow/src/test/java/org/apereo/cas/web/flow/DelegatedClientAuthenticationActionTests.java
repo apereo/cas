@@ -68,7 +68,7 @@ public class DelegatedClientAuthenticationActionTests {
     public static class CredentialTestConfiguration {
         @Bean
         public DelegatedClientAuthenticationCredentialResolver testDelegatedCredentialResolver(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext configurationContext) {
             return new TestBaseDelegatedClientAuthenticationCredentialResolver(configurationContext);
         }

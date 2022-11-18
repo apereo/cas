@@ -85,7 +85,13 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.mode.DefaultOAuth20ResponseModeFactory;
+import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeFormPostBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeFragmentBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeQueryBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
@@ -236,6 +242,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ConfigurationContext oauth20ConfigurationContext(
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
             final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
@@ -322,6 +330,7 @@ public class CasOAuth20Configuration {
                 .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders)
                 .oauthRequestValidators(oauthAuthorizationRequestValidators)
                 .clientSecretValidator(oauth20ClientSecretValidator)
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .build();
         }
     }
@@ -713,8 +722,40 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauthAuthorizationModelAndViewBuilder")
-        public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder() {
-            return new DefaultOAuth20AuthorizationModelAndViewBuilder();
+        public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder(
+            @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
+            final OAuth20ResponseModeFactory oauthResponseModeFactory) {
+            return new DefaultOAuth20AuthorizationModelAndViewBuilder(oauthResponseModeFactory);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = OAuth20ResponseModeFactory.BEAN_NAME)
+        public OAuth20ResponseModeFactory oauthResponseModeFactory(final List<OAuth20ResponseModeBuilder> responseModeBuilders) {
+            val factory = new DefaultOAuth20ResponseModeFactory();
+            responseModeBuilders.forEach(factory::registerBuilder);
+            return factory;
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthQueryResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthQueryResponseModeBuilder() {
+            return new OAuth20ResponseModeQueryBuilder();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthFormPostResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthFormPostResponseModeBuilder() {
+            return new OAuth20ResponseModeFormPostBuilder();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthFragmentResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthFragmentResponseModeBuilder() {
+            return new OAuth20ResponseModeFragmentBuilder();
         }
 
         @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")
@@ -1277,11 +1318,14 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder(
+            @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
+            final OAuth20ResponseModeFactory oauthResponseModeFactory,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20InvalidAuthorizationResponseBuilder(servicesManager, oauthRequestParameterResolver);
+            return new OAuth20InvalidAuthorizationResponseBuilder(servicesManager,
+                oauthRequestParameterResolver, oauthResponseModeFactory);
         }
 
     }
@@ -1403,14 +1447,17 @@ public class CasOAuth20Configuration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
-            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new OAuth20UsernamePasswordAuthenticator(
                 authenticationSystemSupport,
                 servicesManager,
                 webApplicationServiceFactory,
                 oauthDistributedSessionStore,
                 oauthRequestParameterResolver,
-                oauth20ClientSecretValidator);
+                oauth20ClientSecretValidator,
+                authenticationAttributeReleasePolicy);
         }
 
         @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")
