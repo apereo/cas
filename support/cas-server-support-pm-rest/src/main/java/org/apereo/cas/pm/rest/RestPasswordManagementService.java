@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.rest;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -43,19 +42,20 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
+    public boolean changeInternal(final PasswordChangeRequest bean) {
         val rest = properties.getRest();
 
         if (StringUtils.isBlank(rest.getEndpointUrlChange())) {
             return false;
         }
 
-        val upc = (UsernamePasswordCredential) credential;
         val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        headers.put(rest.getFieldNameUser(), CollectionUtils.wrap(upc.getUsername()));
-        headers.put(rest.getFieldNamePassword(), CollectionUtils.wrap(bean.getPassword()));
-        headers.put(rest.getFieldNamePasswordOld(), CollectionUtils.wrap(upc.toPassword()));
+        headers.put(rest.getFieldNameUser(), CollectionUtils.wrap(bean.getUsername()));
+        headers.put(rest.getFieldNamePassword(), CollectionUtils.wrap(bean.toPassword()));
+        if (bean.getCurrentPassword() != null) {
+            headers.put(rest.getFieldNamePasswordOld(), CollectionUtils.wrap(bean.toCurrentPassword()));
+        }
 
         val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);

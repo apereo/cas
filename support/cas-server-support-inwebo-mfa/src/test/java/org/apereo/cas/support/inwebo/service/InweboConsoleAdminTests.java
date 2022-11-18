@@ -30,7 +30,12 @@ public class InweboConsoleAdminTests {
     private InweboConsoleAdmin inweboConsoleAdmin;
 
     @Test
-    public void verifyOperation() {
+    public void verifyLoginSearch() {
         assertThrows(WebServiceTransportException.class, () -> inweboConsoleAdmin.loginSearch("casuser"));
+    }
+
+    @Test
+    public void verifyLoginQuery() {
+        assertThrows(WebServiceTransportException.class, () -> inweboConsoleAdmin.loginQuery(1L));
     }
 }

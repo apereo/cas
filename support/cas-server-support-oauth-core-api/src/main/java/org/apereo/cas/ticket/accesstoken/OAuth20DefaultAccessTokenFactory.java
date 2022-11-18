@@ -72,7 +72,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
                                      final OAuth20GrantTypes grantType) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
-        val accessTokenId = this.accessTokenIdGenerator.getNewTicketId(OAuth20AccessToken.PREFIX);
+        val accessTokenId = generateAccessTokenId(service, authentication);
 
         val at = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, token, scopes,
@@ -81,6 +81,10 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
             ticketGrantingTicket.getDescendantTickets().add(at.getId());
         }
         return at;
+    }
+
+    protected String generateAccessTokenId(final Service service, final Authentication authentication) {
+        return this.accessTokenIdGenerator.getNewTicketId(OAuth20AccessToken.PREFIX);
     }
 
     @Override

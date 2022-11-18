@@ -35,7 +35,8 @@ providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO U2F](mfa/F
 * Manage and register [client applications and services](services/Service-Management.html) with specific authentication policies.
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .NET, PHP, Perl, Apache, etc).
 * Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday, WebAdvisor](integration/Configuring-SAML-SP-Integrations.html), Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc.
-* Support for many other types of integrations, such as [SCIM](integration/SCIM-Integration.html), [reCAPTCHA](integration/Configuring-Google-reCAPTCHA.html), [Swagger](integration/Swagger-Integration.html), etc.
+* Support for many other types of integrations, such as [SCIM](integration/SCIM-Provisioning.html), [reCAPTCHA](integration/Configuring-Google-reCAPTCHA.html), 
+  [Swagger](integration/Swagger-Integration.html), etc.
 
 ## Contribute
 
@@ -50,6 +51,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Installation](installation/WAR-Overlay-Installation.html)
 * [Blog](https://apereo.github.io)
+* [Release Schedule](https://github.com/apereo/cas/milestones)
 
 ## Powered By
 

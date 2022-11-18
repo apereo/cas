@@ -49,7 +49,7 @@ public class X509RestMultipartBodyCredentialFactoryTests {
     public void createX509Credential() throws IOException {
         val requestBody = new LinkedMultiValueMap<String, String>();
         @Cleanup
-        val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8.name());
+        val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8);
         val certStr = scan.useDelimiter("\\Z").next();
         scan.close();
         requestBody.add("cert", certStr);

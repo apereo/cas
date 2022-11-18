@@ -16,6 +16,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-duo-core-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 

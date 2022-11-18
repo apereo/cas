@@ -32,8 +32,8 @@ import java.util.Optional;
 public class JpaResourceSetRepository extends BaseResourceSetRepository {
     private static final String ENTITY_NAME = JpaResourceSet.class.getSimpleName();
 
-    @PersistenceContext(unitName = "umaEntityManagerFactory")
-    private transient EntityManager entityManager;
+    @PersistenceContext(unitName = "umaResourceJpaContext")
+    private EntityManager entityManager;
 
     @Override
     public ResourceSet save(final ResourceSet set) {
@@ -41,7 +41,7 @@ public class JpaResourceSetRepository extends BaseResourceSetRepository {
             throw new IllegalArgumentException("Cannot save a resource set with inconsistent scopes.");
         }
         val jpaResource = new JpaResourceSet();
-        FunctionUtils.doUnchecked(u -> BeanUtils.copyProperties(jpaResource, set));
+        FunctionUtils.doUnchecked(__ -> BeanUtils.copyProperties(jpaResource, set));
 
         val isNew = jpaResource.getId() <= 0;
         val r = this.entityManager.merge(jpaResource);

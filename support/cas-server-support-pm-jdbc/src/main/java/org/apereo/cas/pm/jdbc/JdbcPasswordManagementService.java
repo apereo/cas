@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.jdbc;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -58,11 +57,10 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
+    public boolean changeInternal(final PasswordChangeRequest bean) {
         var result = this.transactionTemplate.execute(action -> {
-            val creds = (UsernamePasswordCredential) credential;
-            val password = passwordEncoder.encode(bean.getPassword());
-            val count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, creds.getId());
+            val password = passwordEncoder.encode(bean.toPassword());
+            val count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, bean.getUsername());
             return count > 0;
         });
         return BooleanUtils.toBoolean(result);

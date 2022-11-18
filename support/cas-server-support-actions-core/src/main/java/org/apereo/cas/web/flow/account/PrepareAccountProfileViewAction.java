@@ -75,7 +75,6 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
             buildAuditLogRecords(requestContext, ticket);
             buildActiveSingleSignOnSessions(requestContext, ticket);
         });
-
         return success();
     }
 
@@ -148,7 +147,10 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
         private final String geoLocation;
 
+        private final String id;
+
         SingleSignOnSession(final TicketGrantingTicket ticket) {
+            this.id = ticket.getId();
             this.principal = ticket.getAuthentication().getPrincipal().getId();
             this.userAgent = ticket.getAuthentication().getCredentials()
                 .stream()

@@ -47,6 +47,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
@@ -116,6 +117,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
     protected OAuth20ClientSecretValidator oauth20ClientSecretValidator;
 
+    @Autowired
+    @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+    protected AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+
     protected OAuthRegisteredService service;
 
     protected OAuthRegisteredService serviceJwtAccessToken;
@@ -168,8 +173,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceWithAttributesMapping.setServiceId("https://www.example5.org");
         serviceWithAttributesMapping.setClientSecret("secret");
         serviceWithAttributesMapping.setClientId("serviceWithAttributesMapping");
-        serviceWithAttributesMapping.setUsernameAttributeProvider(
-            new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.LOWER.name()));
+
+        val provider = new DefaultRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.LOWER.name());
+        serviceWithAttributesMapping.setUsernameAttributeProvider(provider);
         serviceWithAttributesMapping.setAttributeReleasePolicy(
             new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{"eduPersonAffiliation"})));
 

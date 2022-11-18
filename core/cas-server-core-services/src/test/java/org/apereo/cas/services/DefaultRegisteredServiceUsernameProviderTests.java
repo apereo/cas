@@ -49,7 +49,8 @@ public class DefaultRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifyRegServiceUsernameUpper() {
-        val provider = new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.UPPER.name());
+        val provider = new DefaultRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
         val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
@@ -57,8 +58,20 @@ public class DefaultRegisteredServiceUsernameProviderTests {
     }
 
     @Test
+    public void verifyPatternRemoval() {
+        val provider = new DefaultRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        provider.setRemovePattern("@.+");
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser@example.org");
+        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+        assertEquals(id, "CASUSER");
+    }
+
+    @Test
     public void verifyScopedUsername() {
-        val provider = new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.UPPER.name());
+        val provider = new DefaultRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         provider.setScope("example.org");
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
         val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),

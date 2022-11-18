@@ -30,7 +30,7 @@ import java.time.ZoneId;
 public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepository<GoogleAuthenticatorToken> {
     private final long expireTokensInSeconds;
 
-    @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaGoogleAuthenticatorContext")
     private EntityManager entityManager;
 
     private final TransactionTemplate transactionTemplate;
@@ -48,7 +48,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
 
     @Override
     public void store(final GoogleAuthenticatorToken token) {
-        FunctionUtils.doUnchecked(t -> {
+        FunctionUtils.doUnchecked(__ -> {
             val gToken = new JpaGoogleAuthenticatorToken();
             BeanUtils.copyProperties(gToken, token);
             gToken.setUserId(gToken.getUserId().trim().toLowerCase());

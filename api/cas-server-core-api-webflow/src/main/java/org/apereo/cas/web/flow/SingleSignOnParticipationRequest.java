@@ -66,7 +66,7 @@ public class SingleSignOnParticipationRequest {
      * Contains attribute.
      *
      * @param key the key
-     * @return the boolean
+     * @return true/false
      */
     public boolean containsAttribute(final String key) {
         return attributes.containsKey(key);

@@ -3,7 +3,6 @@ package org.apereo.cas.pm.impl;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.pm.InvalidPasswordException;
@@ -130,14 +129,14 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
         actionResolverName = AuditActionResolvers.CHANGE_PASSWORD_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
-    public boolean change(final Credential credential, final PasswordChangeRequest bean) throws InvalidPasswordException {
+    public boolean change(final PasswordChangeRequest bean) throws InvalidPasswordException {
         if (passwordHistoryService != null && passwordHistoryService.exists(bean)) {
-            LOGGER.debug("Password history policy disallows reusing the password for [{}]", credential.getId());
+            LOGGER.debug("Password history policy disallows reusing the password for [{}]", bean.getUsername());
             return false;
         }
-        if (changeInternal(credential, bean)) {
+        if (changeInternal(bean)) {
             if (passwordHistoryService != null) {
-                LOGGER.debug("Password successfully changed; storing used password in history for [{}]...", credential.getId());
+                LOGGER.debug("Password successfully changed; storing used password in history for [{}]...", bean.getUsername());
                 return passwordHistoryService.store(bean);
             }
             return true;
@@ -148,10 +147,9 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
     /**
      * Change password internally, by the impl.
      *
-     * @param credential the credential
      * @param bean the bean
      * @return true/false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
-    public abstract boolean changeInternal(Credential credential, PasswordChangeRequest bean) throws InvalidPasswordException;
+    public abstract boolean changeInternal(PasswordChangeRequest bean) throws InvalidPasswordException;
 }

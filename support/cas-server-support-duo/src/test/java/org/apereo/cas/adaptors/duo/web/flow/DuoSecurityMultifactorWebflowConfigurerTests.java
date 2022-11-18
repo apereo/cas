@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.duo.web.flow;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityAdminApiEndpoint;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
 import org.junit.jupiter.api.Tag;

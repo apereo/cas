@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasSimpleMultifactorAuthenticationComponentSerializ
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.CasSimpleMultifactorAuthenticationRestConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -71,6 +72,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
 
         CasSimpleMultifactorAuthenticationComponentSerializationConfiguration.class,
         CasSimpleMultifactorAuthenticationConfiguration.class,
+        CasSimpleMultifactorAuthenticationRestConfiguration.class,
         CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration.class,
         CasSimpleMultifactorAuthenticationTicketCatalogConfiguration.class,
         CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,

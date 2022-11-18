@@ -28,6 +28,9 @@ configurations.all {
                 if (requested.group == "org.hibernate")  {
                     details.useVersion("${hibernateVersion}")
                 }
+                if (requested.group == "com.squareup.okhttp3")  {
+                    details.useVersion("${okhttp3Version}")
+                }
                 if (requested.group == "org.postgresql")  {
                     details.useVersion("${postgresqlVersion}")
                 }

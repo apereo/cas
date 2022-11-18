@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.duo.authn.DefaultDuoSecurityMultifactorAuthentica
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProviderTests;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationRegistrationProperties;
 
 import org.junit.jupiter.api.Tag;
 
@@ -19,7 +20,8 @@ import static org.mockito.Mockito.*;
 public class DefaultDuoSecurityMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
-        return new DefaultDuoSecurityMultifactorAuthenticationProvider("https://www.example.org",
+        return new DefaultDuoSecurityMultifactorAuthenticationProvider(
+            new DuoSecurityMultifactorAuthenticationRegistrationProperties().setRegistrationUrl("https://www.example.org"),
             mock(DuoSecurityAuthenticationService.class));
     }
 }

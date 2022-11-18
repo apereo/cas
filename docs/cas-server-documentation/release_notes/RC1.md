@@ -63,13 +63,13 @@ A new ticket registry implementation backed by [Azure Cosmos DB](../ticketing/Co
 
 ### OpenID Connect Logging
 
-Authentication requests and responses for OpenID Connect and OAuth are logger via a dedicated 
+Authentication requests and responses for OpenID Connect and OAuth are logged via a dedicated 
 logger. Similar to CAS and SAML2 protocols, protocol responses such a profile requests, access token generation, etc 
 are sent to the `PROTOCOL_MESSAGE` logger.
 
 ### Removed Modules
 
-The following modules that were previously marked as deprecared are now removed from CAS and will no longer
+The following modules that were previously marked as deprecated are now removed from CAS and will no longer
 be supported, maintained or released:
 
 - OpenID Protocol
@@ -99,7 +99,7 @@ now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activa
 ### OAuth2/UMA Scopes
 
 Certain OAuth2 and/or UMA authorization requests are now able to enforce scope access by comparing requested scopes in the authorization
-requeds with what must be explicitly allowed in the registered service definition. In other words, scopes can only be allowed and requested
+request with what must be explicitly allowed in the registered service definition. In other words, scopes can only be allowed and requested
 if they are already authorized for the application definition in CAS.
 
 ### SAML2 Metadata Resolution
@@ -112,7 +112,7 @@ of the metadata over HTTP to be disabled.
 
 [Dynamic Discovery](../integration/Delegate-Authentication-DiscoverySelection.html) configured for delegated authentication is able to
 start the delegation flow based on a principal attribute that would then be matched against the configuration rules to locate the 
-approprivate external identity provider.
+appropriate external identity provider.
      
 ### AMQP Ticket Registry
 
@@ -149,7 +149,8 @@ A number of Docker images used for integration testing are now upgraded to their
 - Embedded YAML application configuration files are able to override default application properties that ship with CAS.
 - Authentication context classes in the SAML2 response can be determined from context mapping settings when no specific context class is present in the 
   SAML2 authentication context.
-- Integration tests for [CosmosDb Service Registry]() are now turned on using a Azure Cosmos DB account on Azure free services.
+- Integration tests for [CosmosDb Service Registry](../services/CosmosDb-Service-Management.html) are now turned on using a Azure Cosmos DB account on Azure 
+  free services.
 - SAML2 metadata resolution for service providers are now sent to the CAS audit log and recorded under `SAML2_METADATA_RESOLUTION`.
 - Support for [Google Analytics 4](../integration/Configuring-Google-Analytics.html) is now included.
 - Small improvements to how [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) can count ticket types.

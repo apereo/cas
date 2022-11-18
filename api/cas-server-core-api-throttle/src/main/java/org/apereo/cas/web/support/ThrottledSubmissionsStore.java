@@ -63,7 +63,7 @@ public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
      *
      * @param key           the key
      * @param thresholdRate the threshold rate
-     * @return the boolean
+     * @return true/false
      */
     boolean exceedsThreshold(String key, double thresholdRate);
 

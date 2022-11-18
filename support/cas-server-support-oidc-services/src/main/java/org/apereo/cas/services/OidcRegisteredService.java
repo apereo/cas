@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Transient;
 
@@ -27,6 +28,7 @@ import java.time.ZonedDateTime;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
+@Accessors(chain = true)
 public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Serial

@@ -26,7 +26,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      * @param client  the client
      * @param service the service
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     default boolean isDelegatedClientAuthorizedForService(final Client client, final Service service,
                                                           final HttpServletRequest context) {
@@ -39,7 +39,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      * @param client  the client
      * @param service the service
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     default boolean isDelegatedClientAuthorizedForService(final Client client, final Service service,
                                                           final RequestContext context) {
@@ -52,7 +52,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      * @param authentication the authentication
      * @param service        the service
      * @param context        the context
-     * @return the boolean
+     * @return true/false
      */
     default boolean isDelegatedClientAuthorizedForAuthentication(final Authentication authentication,
                                                                  final Service service,
@@ -79,7 +79,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      * @param clientName the client name
      * @param service    the service
      * @param context    the context
-     * @return the boolean
+     * @return true/false
      */
     boolean isDelegatedClientAuthorizedFor(String clientName, Service service,
                                            RequestContext context);
@@ -90,7 +90,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      * @param clientName the client name
      * @param service    the service
      * @param request    the request
-     * @return the boolean
+     * @return true/false
      */
     boolean isDelegatedClientAuthorizedFor(String clientName, Service service,
                                            HttpServletRequest request);

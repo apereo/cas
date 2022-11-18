@@ -71,7 +71,7 @@ public class CouchbaseAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     protected void saveAuditRecord(final AuditActionContext audit) {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             try (val stringWriter = new StringWriter()) {
                 this.serializer.to(stringWriter, audit);
                 this.couchbase.bucketUpsertDefaultCollection(stringWriter.toString());

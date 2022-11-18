@@ -66,7 +66,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
      *
      * @param registeredService the registered service
      * @param service           the service
-     * @return the boolean
+     * @return true/false
      */
     protected Optional<Pair<SamlProtocolServiceAttribute, String>> getSamlParameterValue(final RegisteredService registeredService,
                                                                                          final Service service) {

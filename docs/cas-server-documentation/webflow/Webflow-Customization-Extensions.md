@@ -211,13 +211,13 @@ The parameters passed are as follows:
 
 Webflow operations are typically handled via `Action` components that are implemented and registered with the CAS runtime as `Bean` definitions. While these 
 definitions could be conditionally substituted with an alternative implementation, you also have the option to carry out the action operation via Groovy 
-scripts. In this scenario, you take over the responsibility of action implemention yourself, relieving CAS from providing you with an implementation.
+scripts. In this scenario, you take over the responsibility of action implementation yourself, relieving CAS from providing you with an implementation.
 
 {% include_cached casproperties.html properties="cas.webflow.groovy.actions" %}
 
 <div class="alert alert-info"><strong>Note</strong>
 <p>You will need to dig up the name of the original action <code>Bean</code> first before you can provide a Groovy substitute. This will require a careful
-analysis of CAS codebase. Furthermore, please note that not all Spring Webflow actions may be subtituted with a Groovy equivalent. Groovy support
+analysis of CAS codebase. Furthermore, please note that not all Spring Webflow actions may be substituted with a Groovy equivalent. Groovy support
 in this area is a continuous development effort and will gradually improve throughout various CAS releases. Cross-check with the codebase to be sure.
 </p></div>
 

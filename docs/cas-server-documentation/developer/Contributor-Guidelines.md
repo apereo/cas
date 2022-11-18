@@ -13,8 +13,8 @@ The goal of this guide is to, very simply put, help you learn how to catch fish.
 
 Shed all of your fears of making a mistake as part of your contributions to the project. Practice makes perfect and
 we are all here to help you as much as we can so you can ultimately become an independent contributor to the project. It's OK
-to make mistakes and it does take some time, effort and energy to improve the state of proposals and contributions. So do not be discouraged, keep at it
-and if you find anything that is unclear along the way, do not hesitate to ask questions.
+to make mistakes and it does take some time, effort and energy to improve the state of proposals and 
+contributions. So do not be discouraged, keep at it and if you find anything that is unclear along the way, do not hesitate to ask questions.
 
 The overarching theme of this guide starts with the following questions:
 
@@ -179,6 +179,17 @@ maintained by the project.
 By simply delivering the change and having it get merged into the codebase relevant branches. There is no predefined 
 roadmap for the project. Work items get completed based on the community's availability, interest, time and money. The 
 roadmap is the item **you** intend to work on, build and ultimately deliver to the project as a pull request.
+
+## Is there a wishlist for future CAS versions?
+
+You're welcome and encouraged to get in touch with the CAS community on the appropriate forums and chatrooms to 
+share your use case and ideas with others and brainstorm about variations and possibilities. Healthy and productive discussions
+often help clear the path to better and more objective solutions. That said, if you are specifically looking for an idea repository where you would
+log an idea or feature request for someone else to come along and spend time, money and energy to review and 
+provide a solution or enhancement for you, that place does not exist with the CAS project. As was noted earlier, 
+if you would like to see a enhancement in CAS, you are to either study, learn and do the work yourself and contribute that back 
+to the CAS project after having had the proper discussions with the wider developer community, or you can provide funding for 
+the work or contract with someone so they can do the work on your behalf. There are no other viable, sustainable options.
 
 ## Are there plans to...?
 

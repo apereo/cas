@@ -1,0 +1,8 @@
+{
+  "@class" : "java.util.TreeMap",
+  "external-groups" : {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key" : "external-groups",
+    "script": "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/ExternalGroups.groovy"
+  }
+}

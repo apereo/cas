@@ -50,6 +50,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -239,6 +240,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthHandlerInterceptorAdapter")
     protected HandlerInterceptor oauthHandlerInterceptorAdapter;
+
+    @Autowired
+    @Qualifier("servicesManagerConfigurationContext")
+    protected ServicesManagerConfigurationContext servicesManagerConfigurationContext;
 
     @Autowired
     @Qualifier("accessTokenController")

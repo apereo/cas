@@ -78,6 +78,7 @@ public class CasFiltersConfiguration {
         }
 
     }
+    
     @Configuration(value = "CasFiltersResponseHeadersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureAfter(CasCoreServicesConfiguration.class)

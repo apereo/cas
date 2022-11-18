@@ -3,6 +3,7 @@ package org.apereo.cas.util.cipher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.IdentifiableKey;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -50,7 +51,11 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
 
     private Key signingKey;
 
-    private Map<String, Object> customHeaders = new LinkedHashMap<>();
+    private Map<String, Object> signingOpHeaders = new LinkedHashMap<>();
+    
+    private Map<String, Object> encryptionOpHeaders = new LinkedHashMap<>();
+
+    private Map<String, Object> commonHeaders = new LinkedHashMap<>();
 
     /**
      * Extract private key from resource private key.
@@ -125,9 +130,12 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the byte [ ]
      */
     protected byte[] signWith(final byte[] value, final String algHeaderValue, final Key key) {
+        val headers = new LinkedHashMap<>(commonHeaders);
+        headers.putAll(getSigningOpHeaders());
+
         return JsonWebTokenSigner.builder()
             .key(key)
-            .headers(this.customHeaders)
+            .headers(headers)
             .algorithm(algHeaderValue)
             .build()
             .sign(value);
@@ -164,18 +172,12 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         setSigningKey(object);
     }
 
-    /**
-     * Verify signature.
-     *
-     * @param value            the value
-     * @param activeSigningKey the active signing key
-     * @return the value associated with the signature, which may have to be decoded, or null.
-     */
-    protected byte[] verifySignature(final byte[] value, final Key activeSigningKey) {
-        if (activeSigningKey == null) {
+    protected byte[] verifySignature(final byte[] value, final Key givenKey) {
+        if (givenKey == null) {
             return value;
         }
         try {
+            val activeSigningKey = givenKey instanceof IdentifiableKey idk ? idk.getKey() : givenKey;
             if (activeSigningKey instanceof RSAPrivateKey) {
                 val privKey = RSAPrivateKey.class.cast(activeSigningKey);
                 val keySpec = new RSAPublicKeySpec(privKey.getModulus(), RSA_PUBLIC_KEY_EXPONENT);

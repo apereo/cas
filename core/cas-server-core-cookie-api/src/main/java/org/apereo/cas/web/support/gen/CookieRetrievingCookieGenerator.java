@@ -168,22 +168,30 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Override
     public void removeAll(final HttpServletRequest request, final HttpServletResponse response) {
         Optional.ofNullable(request.getCookies()).ifPresent(cookies -> Arrays.stream(cookies)
-            .filter(c -> StringUtils.equalsIgnoreCase(c.getName(), getCookieName()))
-            .forEach(c -> Stream.of("/", getCookiePath(), StringUtils.appendIfMissing(getCookiePath(), "/"))
-                .forEach(path -> {
-                    c.setMaxAge(0);
-                    c.setPath(path);
-                    c.setSecure(isCookieSecure());
-                    c.setHttpOnly(isCookieHttpOnly());
-                    c.setComment(cookieGenerationContext.getComment());
-                    LOGGER.debug("Removing cookie [{}] with path [{}]", c.getName(), c.getPath());
-                    response.addCookie(c);
-                })));
+            .filter(cookie -> StringUtils.equalsIgnoreCase(cookie.getName(), getCookieName()))
+            .forEach(cookie ->
+                Stream
+                    .of("/", getCookiePath(),
+                        StringUtils.removeEndIgnoreCase(getCookiePath(), "/"),
+                        StringUtils.appendIfMissing(getCookiePath(), "/"))
+                    .distinct()
+                    .forEach(path -> {
+                        val crm = new Cookie(cookie.getName(), cookie.getValue());
+                        crm.setMaxAge(0);
+                        crm.setPath(path);
+                        crm.setSecure(cookie.getSecure());
+                        crm.setHttpOnly(cookie.isHttpOnly());
+                        crm.setComment(cookie.getComment());
+                        LOGGER.debug("Removing cookie [{}] with path [{}] and [{}]", crm.getName(), crm.getPath(), crm.getValue());
+                        response.addCookie(crm);
+                    })));
     }
 
     @Nonnull
     @Override
-    protected Cookie createCookie(@NonNull final String cookieValue) {
+    protected Cookie createCookie(
+        @NonNull
+        final String cookieValue) {
         val c = super.createCookie(cookieValue);
         c.setComment(cookieGenerationContext.getComment());
         c.setPath(cleanCookiePath(c.getPath()));
@@ -218,7 +226,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         if (cookie.getSecure() || (sameSiteResult.isPresent() && StringUtils.equalsIgnoreCase(sameSiteResult.get(), "none"))) {
             builder.append(" Secure;");
             LOGGER.trace("Marked cookie [{}] as secure as indicated by cookie configuration or "
-                + "the configured same-site policy set to [{}]", cookie.getName(), sameSitePolicy);
+                         + "the configured same-site policy set to [{}]", cookie.getName(), sameSitePolicy);
         }
         if (cookie.isHttpOnly()) {
             builder.append(" HttpOnly;");

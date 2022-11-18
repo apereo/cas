@@ -83,7 +83,10 @@ public class CasAuthenticationEventListenerTests {
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         applicationContext.publishEvent(event);
-        assertFalse(casEventRepository.load().findAny().isEmpty());
+        val savedEventOptional = casEventRepository.load().findFirst();
+        assertFalse(savedEventOptional.isEmpty());
+        val savedEvent = savedEventOptional.get();
+        assertEquals(CasAuthenticationTransactionFailureEvent.class.getSimpleName(), savedEvent.getEventId());
     }
 
     @Test

@@ -1,12 +1,10 @@
-/* global jqueryReady, policyPattern, zxcvbn, passwordStrengthI18n */
-/*eslint-disable no-unused-vars*/
 function jqueryReady() {
-    var strength = passwordStrengthI18n;
+    let strength = passwordStrengthI18n;
 
     $.fn.zxcvbnProgressBar = function (options) {
 
         //init settings
-        var settings = $.extend({
+        let settings = $.extend({
             allProgressBarClasses: 'progress-bar-danger progress-bar-warning progress-bar-success progress-bar-striped active',
             progressBarClass0: 'progress-bar-danger',
             progressBarClass1: 'progress-bar-danger',
@@ -15,18 +13,17 @@ function jqueryReady() {
             progressBarClass4: 'progress-bar-success'
         }, options);
 
+        $(settings.passwordInput).keyup(event => {
+            UpdateProgressBar();
+        });
+        
         return this.each(function () {
             settings.progressBar = this;
-            //init progress bar display
             UpdateProgressBar();
-            //Update progress bar on each keypress of password input
-            $(settings.passwordInput).keyup(function (event) {
-                UpdateProgressBar();
-            });
         });
 
         function setProgress(value, bar) {
-            var materialBar = bar.foundation;
+            let materialBar = bar.foundation;
             if (materialBar) {
                 materialBar.setProgress(value > 0 ? value / 100 : 0);
             } else {
@@ -35,38 +32,38 @@ function jqueryReady() {
         }
 
         function UpdateProgressBar() {
-            var progressBar = settings.progressBar;
+            let progressBar = settings.progressBar;
 
-            var indicator = document.getElementById('progress-strength-indicator');
-            var password = document.getElementById('password').value;
+            let indicator = document.getElementById('progress-strength-indicator');
+            let password = document.getElementById('password').value;
 
             if (password) {
-                var result = zxcvbn(password, settings.userInputs);
+                let result = zxcvbn(password, settings.userInputs);
                 //result.score: 0, 1, 2, 3 or 4 - if crack time is less than 10**2, 10**4, 10**6, 10**8, Infinity.
-                var scorePercentage = (result.score + 1) * 20;
+                let scorePercentage = (result.score + 1) * 20;
                 setProgress(scorePercentage, settings.bar);
 
-                if (result.score == 0) {
+                if (result.score === 0) {
                     //weak
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass0);
                     $(indicator).html(strength[0]);
                 }
-                else if (result.score == 1) {
+                else if (result.score === 1) {
                     //normal
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass1);
                     $(indicator).html(strength[1]);
                 }
-                else if (result.score == 2) {
+                else if (result.score === 2) {
                     //medium
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass2);
                     $(indicator).html(strength[2]);
                 }
-                else if (result.score == 3) {
+                else if (result.score === 3) {
                     //strong
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass3);
                     $(indicator).html(strength[3]);
                 }
-                else if (result.score == 4) {
+                else if (result.score === 4) {
                     //very strong
                     $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass4);
                     $(indicator).html(strength[4]);
@@ -78,23 +75,29 @@ function jqueryReady() {
             }
         }
     };
-    var policyPatternRegex = new RegExp(policyPattern);
-    var password = document.getElementById('password');
-    var confirmed = document.getElementById('confirmedPassword');
-    var barElement = document.getElementById('strengthProgressBar');
-    var bar;
+    let policyPatternRegex = new RegExp(policyPattern);
+    let password = document.getElementById('password');
+    let confirmed = document.getElementById('confirmedPassword');
+    let barElement = document.getElementById('strengthProgressBar');
+    let bar;
 
-    if (typeof mdc !== 'undefined') {
-        bar = new mdc.linearProgress.MDCLinearProgress(barElement);
-    } else {
-        bar = $(barElement);
+    if (barElement !== null && barElement !== undefined) {
+        if (typeof mdc !== 'undefined') {
+            bar = new mdc.linearProgress.MDCLinearProgress(barElement);
+        } else {
+            bar = $(barElement);
+        }
     }
-    
 
-    password.addEventListener('input', validate);
-    confirmed.addEventListener('input', validate);
+    if (password !== null && password !== undefined) {
+        password.addEventListener('keyup', event => {
+            validate();
+        });
+        password.addEventListener('input', validate);
+        confirmed.addEventListener('input', validate);
+    }
 
-    var alertSettings = {
+    let alertSettings = {
         allAlertClasses: 'mdi-close-circle mdi-alert-circle mdi-information mdi-check-circle text-danger text-warning text-secondary text-success',
         alertClassDanger: 'mdi-close-circle text-danger',
         alertClassWarning: 'mdi-alert-circle text-warning',
@@ -103,19 +106,19 @@ function jqueryReady() {
     };
 
     function validate() {
-        var val = password.value;
-        var cnf = confirmed.value;
+        let val = password.value;
+        let cnf = confirmed.value;
 
         $('#password-strength-msg').hide();
         $('#password-policy-violation-msg').hide();
         $('#password-confirm-mismatch-msg').hide();
 
-        var passwordPolicyViolated = val === '' || !policyPatternRegex.test(val);
-        var passwordMismatch = val !== '' && val !== cnf;
-        var disableSubmit = passwordPolicyViolated || passwordMismatch;
+        let passwordPolicyViolated = val === '' || !policyPatternRegex.test(val);
+        let passwordMismatch = val !== '' && val !== cnf;
+        let disableSubmit = passwordPolicyViolated || passwordMismatch;
         $('#submit').prop('disabled', disableSubmit);
 
-        var result = zxcvbn(val);
+        let result = zxcvbn(val);
         $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: 'password', bar: bar });
 
         // Check strength, update the text indicator
@@ -124,7 +127,7 @@ function jqueryReady() {
             $('#password-strength-warning').text(result.feedback.warning);
             $('#password-strength-suggestions').text(result.feedback.suggestions.join(' ').trim());
 
-            var clz = alertSettings.alertClassDanger;
+            let clz = alertSettings.alertClassDanger;
             switch (result.score) {
                 case 0:
                 case 1:
@@ -162,7 +165,6 @@ function jqueryReady() {
         // Check password policy
         if (passwordPolicyViolated) {
             $('#password-policy-violation-msg').show();
-            return;
         }
     }
 }

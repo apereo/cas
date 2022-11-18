@@ -52,8 +52,6 @@ import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationPostP
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
-import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientFinishLogoutAction;
-import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientLogoutAction;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryAction;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationGenerateClientsAction;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;
@@ -63,6 +61,8 @@ import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationFailureActio
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationRedirectAction;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationStoreWebflowStateAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientFinishLogoutAction;
+import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogoutAction;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.controller.DefaultDelegatedAuthenticationNavigationController;
 import org.apereo.cas.web.flow.error.DefaultDelegatedClientAuthenticationFailureEvaluator;
@@ -175,7 +175,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public DelegatedClientAuthenticationWebflowManager delegatedClientWebflowManager(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext) {
             return new DefaultDelegatedClientAuthenticationWebflowManager(delegatedClientAuthenticationConfigurationContext);
         }
@@ -184,7 +184,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public DelegatedClientAuthenticationWebflowStateContributor defaultDelegatedClientAuthenticationWebflowStateContributor(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext) {
             return new DefaultDelegatedClientAuthenticationWebflowStateContributor(delegatedClientAuthenticationConfigurationContext);
         }
@@ -212,7 +212,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         public DelegatedClientAuthenticationCredentialResolver groovyDelegatedClientAuthenticationCredentialResolver(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("delegatedClientAuthenticationConfigurationContext")
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext configContext) {
             return BeanSupplier.of(DelegatedClientAuthenticationCredentialResolver.class)
                 .when(BeanCondition.on("cas.authn.pac4j.profile-selection.groovy.location")
@@ -241,7 +241,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = DelegatedClientAuthenticationFailureEvaluator.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DelegatedClientAuthenticationFailureEvaluator delegatedClientAuthenticationFailureEvaluator(
-            @Qualifier("delegatedClientAuthenticationConfigurationContext")
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext configContext) {
             return new DefaultDelegatedClientAuthenticationFailureEvaluator(configContext);
         }
@@ -267,7 +267,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
         public DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final ObjectProvider<DelegatedClientAuthenticationConfigurationContext> configurationContext) {
             return new DefaultDelegatedClientIdentityProviderConfigurationProducer(configurationContext);
         }
@@ -327,7 +327,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action delegatedAuthenticationClientCredentialSelectionFinalizeAction(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext context,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
@@ -344,7 +344,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action delegatedAuthenticationClientCredentialSelectionAction(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext context,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
@@ -380,7 +380,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         public Action delegatedAuthenticationRedirectToClientAction(
             @Qualifier(DelegatedClientAuthenticationWebflowManager.DEFAULT_BEAN_NAME)
             final DelegatedClientAuthenticationWebflowManager delegatedClientWebflowManager,
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
@@ -400,7 +400,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         public Action delegatedAuthenticationStoreWebflowAction(
             @Qualifier(DelegatedClientAuthenticationWebflowManager.DEFAULT_BEAN_NAME)
             final DelegatedClientAuthenticationWebflowManager delegatedClientWebflowManager,
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
@@ -481,7 +481,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action delegatedAuthenticationCreateClientsAction(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
@@ -505,7 +505,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(DelegatedClientAuthenticationFailureEvaluator.BEAN_NAME)
             final DelegatedClientAuthenticationFailureEvaluator delegatedClientAuthenticationFailureEvaluator,
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext,
             @Qualifier(DelegatedClientAuthenticationWebflowManager.DEFAULT_BEAN_NAME)
             final DelegatedClientAuthenticationWebflowManager delegatedClientWebflowManager) {
@@ -525,7 +525,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public static class DelegatedAuthenticationWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+        @ConditionalOnMissingBean(name = DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
         public DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext(
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
@@ -634,7 +634,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DefaultDelegatedAuthenticationNavigationController defaultDelegatedAuthenticationNavigationController(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext) {
             return new DefaultDelegatedAuthenticationNavigationController(delegatedClientAuthenticationConfigurationContext);
         }

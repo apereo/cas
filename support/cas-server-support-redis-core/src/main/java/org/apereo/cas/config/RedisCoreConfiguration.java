@@ -25,7 +25,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @AutoConfiguration
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Monitoring, module = "redis")
 public class RedisCoreConfiguration {
-
     @ConditionalOnMissingBean(name = "casRedisHealthIndicator")
     @Bean
     @ConditionalOnEnabledHealthIndicator("redisHealthIndicator")

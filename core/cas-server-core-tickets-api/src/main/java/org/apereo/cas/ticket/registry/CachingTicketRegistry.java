@@ -46,7 +46,8 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
         this.storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
-            .expireAfter(new CachedTicketExpirationPolicy()).removalListener(new CachedTicketRemovalListener())
+            .expireAfter(new CachedTicketExpirationPolicy())
+            .removalListener(new CachedTicketRemovalListener())
             .build();
         this.mapInstance = this.storage.asMap();
         this.logoutManager = logoutManager;

@@ -20,6 +20,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].enhance-with-entry-resolver=false"
     })
 @EnabledIfListeningOnPort(port = 10389)
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 public class DirectLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -54,23 +53,22 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Override
-    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeRequest bean) {
-        val c = (UsernamePasswordCredential) credential;
-        if (StringUtils.isBlank(bean.getPassword())) {
+    public boolean changeInternal(final @NonNull PasswordChangeRequest bean) {
+        if (StringUtils.isBlank(bean.toPassword())) {
             LOGGER.error("Password cannot be blank");
             return false;
         }
-        if (!StringUtils.equals(bean.getPassword(), bean.getConfirmedPassword())) {
+        if (!StringUtils.equals(bean.toPassword(), bean.toConfirmedPassword())) {
             LOGGER.error("Password does not match and cannot be confirmed");
             return false;
         }
-        val account = jsonBackedAccounts.getOrDefault(c.getId(), null);
+        val account = jsonBackedAccounts.getOrDefault(bean.getUsername(), null);
         if (account == null) {
-            LOGGER.error("User account [{}] cannot be found", c.getId());
+            LOGGER.error("User account [{}] cannot be found", bean.getUsername());
             return false;
         }
-        account.setPassword(bean.getPassword());
-        jsonBackedAccounts.put(c.getId(), account);
+        account.setPassword(bean.toPassword());
+        jsonBackedAccounts.put(bean.getUsername(), account);
         return writeAccountToJsonResource();
     }
 
@@ -149,7 +147,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     private void readAccountsFromJsonResource() {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
                 val personList = new TypeReference<Map<String, JsonBackedAccount>>() {
                 };

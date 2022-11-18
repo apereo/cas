@@ -126,8 +126,8 @@ allprojects {
     apply plugin: "java-library"
     apply plugin: "jacoco"
 
-    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("install") }) {
-        apply plugin: "maven"
+    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("publishToMavenLocal") }) {
+        apply plugin: "maven-publish"
     }
 
     def skipRetry = providers.systemProperty('skipTestRetry').present
@@ -372,6 +372,10 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
+        it.inputs.property("github.repository") {
+            System.getenv("GITHUB_REPOSITORY") ?: "apereo/cas"
+        }
+        
         if (rootProject.generateGitProperties) {
             it.dependsOn("generateGitProperties")
         }
@@ -483,7 +487,6 @@ subprojects {
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
-            errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
         testImplementation libraries.tests
         testImplementation libraries.log4j

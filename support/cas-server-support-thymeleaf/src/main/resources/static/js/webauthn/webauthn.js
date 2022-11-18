@@ -256,7 +256,7 @@ function addDeviceAttributeAsRow(name, value) {
 }
 
 function addMessage(message) {
-    $('#messages').html("<p>" + message + "</p>");
+    $('#messages').html(`<p>${message}</p>`);
 }
 
 function addMessages(messages) {
@@ -265,7 +265,7 @@ function addMessages(messages) {
 
 function showJson(name, data) {
     if (data != null) {
-        $('#' + name).text(JSON.stringify(data, false, 4));
+        $(`#${name}`).text(JSON.stringify(data, false, 4));
     }
 }
 

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Ldap")
+@Tag("LdapRepository")
 @EnabledIfListeningOnPort(port = 10389)
 @TestPropertySource(properties = {
     "cas.authn.passwordless.accounts.ldap.ldap-url=ldap://localhost:10389",

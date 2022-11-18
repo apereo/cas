@@ -75,7 +75,8 @@ public class TemporaryFileSystemResource extends FileSystemResource {
         try {
             Files.delete(getFile().toPath());
         } catch (final IOException ex) {
-            LOGGER.warn("Failed to delete temporary heap dump file '" + getFile() + '\'', ex);
+            val msg = String.format("Failed to delete temporary heap dump file %s", getFile());
+            LOGGER.warn(msg, ex);
         }
     }
 

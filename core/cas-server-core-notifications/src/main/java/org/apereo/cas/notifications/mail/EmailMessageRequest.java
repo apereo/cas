@@ -42,7 +42,7 @@ public class EmailMessageRequest {
     /**
      * Has attribute value for the principal?
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean hasAttributeValue() {
         return StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute);

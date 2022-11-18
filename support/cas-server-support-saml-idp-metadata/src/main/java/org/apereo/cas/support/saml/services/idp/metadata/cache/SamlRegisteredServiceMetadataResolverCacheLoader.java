@@ -72,7 +72,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
             throw new SamlException("No metadata resolvers could be configured for service " + service.getName()
                                     + " with metadata location " + metadataLocation);
         }
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
             LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", metadataResolvers.size());
             metadataResolver.setResolvers(metadataResolvers);

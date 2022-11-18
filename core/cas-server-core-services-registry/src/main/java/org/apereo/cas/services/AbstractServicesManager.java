@@ -88,7 +88,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     public void save(final Stream<RegisteredService> toSave) {
         val resultingStream = toSave.peek(registeredService ->
             publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService)));
-        configurationContext.getServiceRegistry().save(resultingStream)
+        configurationContext.getServiceRegistry()
+            .save(resultingStream)
             .forEach(r -> {
                 cacheRegisteredService(r);
                 saveInternal(r);

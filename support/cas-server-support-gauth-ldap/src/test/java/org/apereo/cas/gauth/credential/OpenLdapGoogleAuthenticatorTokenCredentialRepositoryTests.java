@@ -34,7 +34,7 @@ import java.nio.charset.StandardCharsets;
         "cas.authn.mfa.gauth.crypto.enabled=true"
     })
 @EnableScheduling
-@Tag("Ldap")
+@Tag("LdapRepository")
 @EnabledIfListeningOnPort(port = 11636)
 public class OpenLdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
 

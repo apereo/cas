@@ -31,7 +31,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
 
     private static final String QUERY_PARAM_USERNAME = "username";
 
-    @PersistenceContext(unitName = "passwordlessEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaPasswordlessAuthNContext")
     private EntityManager entityManager;
 
     public JpaPasswordlessTokenRepository(final int tokenExpirationInSeconds) {
@@ -75,7 +75,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
 
     @Override
     public void saveToken(final String username, final String token) {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             val entity = PasswordlessAuthenticationToken.builder()
                 .token(token)
                 .username(username)
