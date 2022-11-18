@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 public class OptionalWarningLdapAccountStateHandlerTests {
     @Test
     public void verifyWarningOnMatch() {

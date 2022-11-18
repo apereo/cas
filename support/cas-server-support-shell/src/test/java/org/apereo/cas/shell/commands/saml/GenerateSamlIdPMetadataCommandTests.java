@@ -22,7 +22,7 @@ public class GenerateSamlIdPMetadataCommandTests extends BaseCasShellCommandTest
     @Test
     public void verifyOperation() {
         val location = FileUtils.getTempDirectoryPath();
-        assertDoesNotThrow(() -> shell.evaluate(() -> "generate-idp-metadata --force true --metadataLocation "
+        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-idp-metadata --force true --metadataLocation "
             + location + " --subjectAltNames helloworld"));
     }
 }

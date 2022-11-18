@@ -54,7 +54,7 @@ public class InMemoryPasswordHistoryServiceTests {
         passwordHistoryService.removeAll();
         assertTrue(passwordHistoryService.fetchAll().isEmpty());
 
-        val request = new PasswordChangeRequest("casuser", "password", "password");
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordHistoryService.exists(request));
         assertTrue(passwordHistoryService.store(request));
         assertTrue(passwordHistoryService.exists(request));

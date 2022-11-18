@@ -41,9 +41,9 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.actuate.trace.http.HttpTraceEndpoint;
-import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
-import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
+import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
+import org.springframework.boot.actuate.web.exchanges.HttpExchangesEndpoint;
+import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -71,6 +71,7 @@ public class CasReportsConfiguration {
     public CasFeaturesEndpoint casFeaturesEndpoint(final CasConfigurationProperties casProperties) {
         return new CasFeaturesEndpoint(casProperties);
     }
+
     @Bean
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -109,7 +110,7 @@ public class CasReportsConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ObjectProvider<ServicesManager> servicesManager,
         final CasConfigurationProperties casProperties) {
-        
+
         val serializers = CollectionUtils.wrapList(
             new RegisteredServiceYamlSerializer(applicationContext.getObject()),
             new RegisteredServiceJsonSerializer(applicationContext.getObject()));
@@ -214,9 +215,9 @@ public class CasReportsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnAvailableEndpoint(endpoint = HttpTraceEndpoint.class)
-    public HttpTraceRepository httpTraceRepository() {
-        return new InMemoryHttpTraceRepository();
+    @ConditionalOnAvailableEndpoint(endpoint = HttpExchangesEndpoint.class)
+    public HttpExchangeRepository exchangeRepository() {
+        return new InMemoryHttpExchangeRepository();
     }
 
     @Bean

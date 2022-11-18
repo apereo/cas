@@ -21,6 +21,7 @@ import org.jose4j.jwk.PublicJsonWebKey;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.LinkedHashMap;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default
@@ -96,7 +97,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         this.secretKeyEncryption = secretKeyEncryption;
         this.secretKeySigning = secretKeySigning;
         this.signingEnabled = signingEnabled || StringUtils.isNotBlank(secretKeySigning);
-        this.encryptionEnabled = this.signingEnabled && (encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption));
+        this.encryptionEnabled = encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption);
         this.signingKeySize = signingKeyLength <= 0
             ? CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE : signingKeyLength;
         this.encryptionKeySize = encryptionKeyLength <= 0
@@ -105,7 +106,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         initialize();
     }
 
-    private void initialize() {
+    protected void initialize() {
         if (!initialized) {
             if (this.encryptionEnabled) {
                 configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
@@ -162,6 +163,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
         setEncryptionKey(object);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return super.isEnabled() || isEncryptionPossible(this.encryptionKey);
     }
 
     /**
@@ -337,17 +343,19 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return encryptValueAsJwt(encryptionKey, value);
+                return encryptValueAsJwt(encryptionKey, encoded);
             },
             () -> encoded).get();
     }
 
-    private String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
+    protected String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
+        val headers = new LinkedHashMap<>(getCommonHeaders());
+        headers.putAll(getEncryptionOpHeaders());
         return JsonWebTokenEncryptor.builder()
             .key(encryptionKey)
             .algorithm(encryptionAlgorithm)
             .encryptionMethod(contentEncryptionAlgorithmIdentifier)
-            .headers(getCustomHeaders())
+            .headers(headers)
             .build()
             .encrypt(value);
     }

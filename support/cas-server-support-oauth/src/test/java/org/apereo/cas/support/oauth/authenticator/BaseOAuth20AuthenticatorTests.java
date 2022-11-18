@@ -173,8 +173,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceWithAttributesMapping.setServiceId("https://www.example5.org");
         serviceWithAttributesMapping.setClientSecret("secret");
         serviceWithAttributesMapping.setClientId("serviceWithAttributesMapping");
-        serviceWithAttributesMapping.setUsernameAttributeProvider(
-            new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.LOWER.name()));
+
+        val provider = new DefaultRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.LOWER.name());
+        serviceWithAttributesMapping.setUsernameAttributeProvider(provider);
         serviceWithAttributesMapping.setAttributeReleasePolicy(
             new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{"eduPersonAffiliation"})));
 

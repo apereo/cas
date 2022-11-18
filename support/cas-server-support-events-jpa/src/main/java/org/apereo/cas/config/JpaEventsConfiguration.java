@@ -105,7 +105,7 @@ public class JpaEventsConfiguration {
             @Qualifier("jpaEventPackagesToScan")
             final BeanContainer<String> jpaEventPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {

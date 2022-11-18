@@ -121,7 +121,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
                 }
             });
 
-            val principal = this.principalFactory.createPrincipal(username, attributeMap);
+            val principal = principalFactory.createPrincipal(username, attributeMap);
             LOGGER.debug("Created principal for id [{}] and [{}] attributes", username, attributeMap);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final Exception e) {

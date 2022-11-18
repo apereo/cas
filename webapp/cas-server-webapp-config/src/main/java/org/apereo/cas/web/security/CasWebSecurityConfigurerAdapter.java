@@ -91,7 +91,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
         web.debug(LOGGER.isDebugEnabled())
             .ignoring()
-            .antMatchers(patterns.toArray(String[]::new));
+            .requestMatchers(patterns.toArray(String[]::new));
     }
 
 
@@ -132,7 +132,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         patterns.add("/favicon.ico");
 
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
-        requests.antMatchers(patterns.toArray(String[]::new))
+        requests.requestMatchers(patterns.toArray(String[]::new))
             .permitAll()
             .and()
             .securityContext()
@@ -204,9 +204,9 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
             .permitAll();
         requests
-            .antMatchers("/resources/**")
+            .requestMatchers("/resources/**")
             .permitAll()
-            .antMatchers("/static/**")
+            .requestMatchers("/static/**")
             .permitAll();
     }
 

@@ -27,7 +27,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     private static final String SELECT_QUERY = "SELECT r from U2FJpaDeviceRegistration r ";
 
-    @PersistenceContext(unitName = "u2fEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaU2fRegistryContext")
     private EntityManager entityManager;
 
     private final TransactionOperations transactionTemplate;

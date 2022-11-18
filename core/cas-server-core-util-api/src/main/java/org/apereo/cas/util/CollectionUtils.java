@@ -27,6 +27,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +41,18 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class CollectionUtils {
+    /**
+     * Distinct by key predicate.
+     *
+     * @param <T>          the type parameter
+     * @param keyExtractor the key extractor
+     * @return the predicate
+     */
+    public static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
+        val seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
     /**
      * Converts the provided object into a collection
      * and return the first element, or empty.

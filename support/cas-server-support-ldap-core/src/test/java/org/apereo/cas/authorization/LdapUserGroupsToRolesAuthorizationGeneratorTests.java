@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @EnabledIfListeningOnPort(port = 10389)
-@Tag("Ldap")
+@Tag("LdapAttributes")
 public class LdapUserGroupsToRolesAuthorizationGeneratorTests {
 
     @BeforeAll

@@ -117,7 +117,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         if (rememberMe) {
             LOGGER.trace("Creating CAS cookie [{}] for remember-me authentication", getCookieName());
             cookie.setMaxAge(cookieGenerationContext.getRememberMeMaxAge());
-            cookie.setComment(String.format("%s Remember-Me", cookieGenerationContext.getComment()));
         } else {
             LOGGER.trace("Creating CAS cookie [{}]", getCookieName());
             if (getCookieMaxAge() != null) {
@@ -181,7 +180,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                         crm.setPath(path);
                         crm.setSecure(cookie.getSecure());
                         crm.setHttpOnly(cookie.isHttpOnly());
-                        crm.setComment(cookie.getComment());
                         LOGGER.debug("Removing cookie [{}] with path [{}] and [{}]", crm.getName(), crm.getPath(), crm.getValue());
                         response.addCookie(crm);
                     })));
@@ -191,7 +189,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Override
     protected Cookie createCookie(@NonNull final String cookieValue) {
         val cookie = super.createCookie(cookieValue);
-        cookie.setComment(cookieGenerationContext.getComment());
         cookie.setPath(cleanCookiePath(cookie.getPath()));
         return cookie;
     }

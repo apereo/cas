@@ -34,8 +34,7 @@ public class CasSpringBootAdminServerSecurityConfiguration {
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(adminContextPath + '/');
         http.authorizeRequests()
-            .antMatchers(adminContextPath + "/assets/**").permitAll()
-            .antMatchers(adminContextPath + "/login").permitAll()
+            .requestMatchers(adminContextPath + "/assets/**", adminContextPath + "/login").permitAll()
             .anyRequest().authenticated()
             .and()
             .formLogin().loginPage(adminContextPath + "/login").successHandler(successHandler).and()
@@ -43,7 +42,7 @@ public class CasSpringBootAdminServerSecurityConfiguration {
             .httpBasic().and()
             .csrf()
             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .ignoringAntMatchers(
+            .ignoringRequestMatchers(
                 adminContextPath + "/instances",
                 adminContextPath + "/actuator/**"
             );

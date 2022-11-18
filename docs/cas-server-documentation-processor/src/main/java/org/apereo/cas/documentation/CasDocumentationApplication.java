@@ -376,7 +376,7 @@ public class CasDocumentationApplication {
         if (webEndpoint != null) {
             return Pair.of(webEndpoint.id(), webEndpoint.annotationType().getSimpleName());
         }
-        LOGGER.warn("Unable to determine endpoint from " + clazz.getName());
+        LOGGER.warn("Unable to determine endpoint from [{}]", clazz.getName());
         return null;
     }
 

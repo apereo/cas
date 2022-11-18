@@ -19,6 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JasyptTestAlgorithmsCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(() -> shell.evaluate(() -> "jasypt-test-algorithms"));
+        assertDoesNotThrow(() -> shell.run(() -> () -> "jasypt-test-algorithms"));
     }
 }

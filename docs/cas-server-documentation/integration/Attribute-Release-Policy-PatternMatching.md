@@ -8,7 +8,7 @@ category: Attributes
 
 # Attribute Release Policy - Pattern Matching
 
-This policy allows the release of defined allowed attributes only if the attrribute value(s)
+This policy allows the release of defined allowed attributes only if the attribute value(s)
 matches the given regular expression pattern. If the attribute value is matched successfully, the policy
 is then able to apply transformation rules on the value to extract
 and collect the *matched groups* to then assemble the final attribute value.

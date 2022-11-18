@@ -20,7 +20,7 @@ public class PasswordManagementServiceTests {
     public void verifyOperation() {
         val service = new PasswordManagementService() {
         };
-        assertFalse(service.change(RegisteredServiceTestUtils.getHttpBasedServiceCredentials(), new PasswordChangeRequest()));
+        assertFalse(service.change(new PasswordChangeRequest()));
         assertFalse(service.unlockAccount(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
         assertNull(service.findEmail(PasswordManagementQuery.builder().email("user@example.org").build()));
         assertNull(service.findPhone(PasswordManagementQuery.builder().username("user").build()));

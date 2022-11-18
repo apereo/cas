@@ -33,6 +33,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -137,6 +138,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
             .build()
             .get();
         val emailRequest = EmailMessageRequest.builder().emailProperties(reset)
+            .locale(locale.orElseGet(Locale::getDefault))
             .to(List.of(query.getEmail())).body(body).build();
         return communicationsManager.email(emailRequest);
     }

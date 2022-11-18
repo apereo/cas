@@ -2,7 +2,6 @@ package org.apereo.cas.shell.commands.cipher;
 
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
-import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GenerateCryptoKeysCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
-        val result = shell.evaluate(() -> "generate-key --key-size 512");
-        assertNotNull(result);
+        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-key --key-size 512"));
     }
 }

@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
 import org.apache.coyote.ajp.AjpNio2Protocol;
 import org.apache.coyote.ajp.AjpNioProtocol;
-import org.apache.coyote.http11.Http11AprProtocol;
 import org.apache.coyote.http11.Http11Nio2Protocol;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http2.Http2Protocol;
@@ -65,7 +64,6 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             } else {
                 val protocolHandlerInstance = switch (proxy.getProtocol()) {
                     case "AJP/2" -> new AjpNio2Protocol();
-                    case "APR" -> new Http11AprProtocol();
                     case "HTTP/1.2" -> new Http11Nio2Protocol();
                     case "HTTP/1.1" -> new Http11NioProtocol();
                     default -> new AjpNioProtocol();

@@ -81,6 +81,10 @@ public interface RegisteredServiceProperty extends Serializable {
     @RequiredArgsConstructor
     enum RegisteredServicePropertyGroups {
         /**
+         * Property grouup for OpenID Connect.
+         */
+        OIDC,
+        /**
          * Property group for CORS settings.
          */
         CORS,
@@ -205,12 +209,49 @@ public interface RegisteredServiceProperty extends Serializable {
         TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY("jwtAsServiceTicketEncryptionKey", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.STRING,
             "Produce an encrypted JWT as a response when generating service tickets using the provided encryption key."),
+
+        /**
+         * Whether signing operations should be enabled when producing JWTs.
+         **/
+        TOKEN_AS_SERVICE_TICKET_SIGNING_ENABLED("jwtAsServiceTicketSigningEnabled", "true",
+            RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.BOOLEAN,
+            "Whether signing operations should be enabled when producing JWTs."),
+
+        /**
+         * Whether encryption operations should be enabled when producing JWTs.
+         **/
+        TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ENABLED("jwtAsServiceTicketEncryptionEnabled", "true",
+            RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.BOOLEAN,
+            "Whether encryption operations should be enabled when producing JWTs."),
+
         /**
          * Produce a signed JWT as a response when generating access tokens using the provided signing key.
          **/
         ACCESS_TOKEN_AS_JWT_SIGNING_KEY("accessTokenAsJwtSigningKey", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.STRING,
             "Produce a signed JWT as a response when generating access tokens using the provided signing key."),
+
+        /**
+         * Indicate the cipher strategy for JWTs for OIDC responses, to determine order of signing/encryption operations.
+         */
+        OIDC_RESPONSE_MODE_JWT_CIPHER_STRATEGY_TYPE("oidcResponseModeAsJwtCipherStrategyType", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.OIDC, RegisteredServicePropertyTypes.STRING,
+            "Indicate the cipher strategy for JWTs for OIDC responses, to determine order of signing/encryption operations."),
+
+        /**
+         * Enable signing JWTs as a response when generating resonse mode JWTs using the provided signing key.
+         **/
+        OIDC_RESPONSE_MODE_JWT_CIPHER_SIGNING_ENABLED("oidcResponseModeAsJwtCipherSigningEnabled", "true",
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.BOOLEAN,
+            "Enable signing JWTs as a response when generating resonse mode JWTs using the provided signing key."),
+
+        /**
+         * Enable encrypted JWTs as a response when generating resonse mode JWTs using the provided signing key.
+         **/
+        OIDC_RESPONSE_MODE_JWT_CIPHER_ENCRYPTION_ENABLED("oidcResponseModeAsJwtCipherEncryptionEnabled", "true",
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.BOOLEAN,
+            "Enable encrypted JWTs as a response when generating resonse mode JWTs using the provided encryption key."),
+
         /**
          * Indicate the cipher strategy for JWTs as access tokens, to determine order of signing/encryption operations.
          */
@@ -560,10 +601,13 @@ public interface RegisteredServiceProperty extends Serializable {
         @JsonIgnore
         public RegisteredServiceProperty getPropertyValue(final RegisteredService service) {
             if (isAssignedTo(service)) {
-                val property = service.getProperties().entrySet()
-                    .stream().filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
+                val property = service.getProperties()
+                    .entrySet()
+                    .stream()
+                    .filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
                         && StringUtils.isNotBlank(entry.getValue().value()))
-                    .distinct().findFirst();
+                    .distinct()
+                    .findFirst();
                 if (property.isPresent()) {
                     return property.get().getValue();
                 }

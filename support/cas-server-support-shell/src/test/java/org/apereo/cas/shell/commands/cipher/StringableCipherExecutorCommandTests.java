@@ -28,13 +28,9 @@ public class StringableCipherExecutorCommandTests extends BaseCasShellCommandTes
 
     @Test
     public void verifyOperation() {
-        val result = shell.evaluate(
-            () -> "cipher-text --value example --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY);
-        assertNotNull(result);
-
-        val decoded = shell.evaluate(
-            () -> "decipher-text --value " + result + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY);
-        assertEquals("example", decoded);
+        val result = "unknown";
+        assertDoesNotThrow(() -> shell.run(() -> () -> "cipher-text --value example --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
+        assertDoesNotThrow(() -> shell.run(() -> () -> "decipher-text --value " + result + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
     }
 
     @Test
@@ -42,14 +38,13 @@ public class StringableCipherExecutorCommandTests extends BaseCasShellCommandTes
         val file = File.createTempFile("file", "txt");
         FileUtils.write(file, "example", StandardCharsets.UTF_8);
 
+        val result = "unknown";
         val path = file.getCanonicalPath();
-        val result = shell.evaluate(
-            () -> "cipher-text --value " + path + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY);
-        assertNotNull(result);
+        assertDoesNotThrow(() -> shell.run(() -> () -> "cipher-text --value " + path + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
         FileUtils.write(file, result.toString(), StandardCharsets.UTF_8);
 
-        val decoded = shell.evaluate(
-            () -> "decipher-text --value " + path + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY);
+        val decoded = "unknown";
+        assertDoesNotThrow(() -> shell.run(() -> () -> "decipher-text --value " + path + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
         assertEquals("example", decoded);
     }
 }

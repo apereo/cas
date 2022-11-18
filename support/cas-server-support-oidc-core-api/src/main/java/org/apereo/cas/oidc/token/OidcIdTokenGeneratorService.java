@@ -187,13 +187,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         return getConfigurationContext().getPrincipalFactory().createPrincipal(authentication.getPrincipal().getId(), attributes);
     }
 
-    /**
-     * Collect id token claims.
-     *
-     * @param principal         the principal
-     * @param registeredService the registered service
-     * @param claims            the claims
-     */
     protected void collectIdTokenClaims(final Principal principal,
                                         final RegisteredService registeredService,
                                         final JwtClaims claims) {
@@ -204,7 +197,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             .entrySet()
             .stream()
             .filter(entry -> {
-                if (oidc.getDiscovery().getClaims().contains(entry.getKey())) {
+                if (isClaimSupportedForRelease(entry.getKey(), registeredService)) {
                     LOGGER.trace("Found supported claim [{}]", entry.getKey());
                     return true;
                 }
@@ -218,6 +211,13 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
                 registeredService, principal, claims, principal.getId());
         }
+    }
+
+    private boolean isClaimSupportedForRelease(final String claimName, final RegisteredService registeredService) {
+        val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
+        val mappedClaim = mapper.toMappedClaimName(claimName, registeredService);
+        val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
+        return oidc.getDiscovery().getClaims().contains(claimName) || oidc.getDiscovery().getClaims().contains(mappedClaim);
     }
 
     /**

@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -64,9 +63,8 @@ public class GroovyResourcePasswordManagementServiceTests {
 
     @Test
     public void verifyChangePassword() {
-        assertTrue(passwordChangeService.change(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password"),
-            new PasswordChangeRequest("casuser", "password", "password")));
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "password".toCharArray(), "password".toCharArray());
+        assertTrue(passwordChangeService.change(request));
     }
 
     @Test

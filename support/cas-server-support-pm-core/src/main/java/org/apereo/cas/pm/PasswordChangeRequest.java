@@ -26,8 +26,36 @@ public class PasswordChangeRequest implements Serializable {
     private static final long serialVersionUID = 8885460875620586503L;
 
     private String username;
+    private char[] currentPassword;
 
-    private @Size(min = 1, message = "required.password") String password;
+    private @Size(min = 1, message = "required.password") char[] password;
 
-    private @Size(min = 1, message = "required.confirmedPassword") String confirmedPassword;
+    private @Size(min = 1, message = "required.confirmedPassword") char[] confirmedPassword;
+
+    /**
+     * To current/old password string.
+     *
+     * @return the string
+     */
+    public String toCurrentPassword() {
+        return new String(this.currentPassword);
+    }
+
+    /**
+     * To new password string.
+     *
+     * @return the string
+     */
+    public String toPassword() {
+        return this.password == null ? null : new String(this.password);
+    }
+
+    /**
+     * To new/confirmed password string.
+     *
+     * @return the string
+     */
+    public String toConfirmedPassword() {
+        return new String(this.confirmedPassword);
+    }
 }

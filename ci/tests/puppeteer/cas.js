@@ -1,6 +1,7 @@
 const assert = require('assert');
 const axios = require('axios');
 const https = require('https');
+const http = require('http');
 const {spawn} = require('child_process');
 const waitOn = require('wait-on');
 const JwtOps = require('jsonwebtoken');
@@ -16,7 +17,7 @@ const NodeStaticAuth = require("node-static-auth");
 const operativeSystemModule = require("os");
 const figlet = require("figlet");
 const CryptoJS = require("crypto-js");
-
+const jose = require('jose');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -127,7 +128,7 @@ exports.loginWith = async (page, user, password,
     await this.type(page, usernameField, user);
 
     await page.waitForSelector(passwordField, {visible: true});
-    await this.type(page, passwordField, password);
+    await this.type(page, passwordField, password, true);
 
     await page.keyboard.press('Enter');
     return await page.waitForNavigation();
@@ -181,10 +182,17 @@ exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
     }
 };
 
-exports.submitForm = async (page, selector) => {
+exports.submitForm = async (page, selector, predicate = undefined) => {
     console.log(`Submitting form ${selector}`);
-    await page.$eval(selector, form => form.submit());
-    await page.waitForTimeout(2500)
+    if (predicate === undefined) {
+        console.log("Waiting for page to produce a valid response status code");
+        predicate = async response => response.status() > 0;
+    }
+    return await Promise.all([
+        page.waitForResponse(predicate),
+        page.$eval(selector, form => form.submit()),
+        page.waitForTimeout(3000)
+    ]);
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
@@ -218,7 +226,7 @@ exports.assertParameter = async (page, param) => {
     console.log(`Asserting parameter ${param} in URL: ${page.url()}`);
     let result = new URL(page.url());
     let value = result.searchParams.get(param);
-    console.log(`Parameter ${param} with value ${value}`);
+    console.log(`Parameter ${colors.green(param)} with value ${colors.green(value)}`);
     assert(value != null);
     return value;
 };
@@ -258,6 +266,8 @@ exports.doRequest = async (url, method = "GET", headers = {},
             rejectUnauthorized: false,
             headers: headers
         };
+        options.agent = new https.Agent( options );
+
         console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
         const handler = (res) => {
             console.log(`Response status code: ${colors.green(res.statusCode)}`);
@@ -294,6 +304,7 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
     if (responseType !== undefined) {
         config["responseType"] = responseType
     }
+    console.log(`Sending GET request to ${url}`);
     await instance
         .get(url, config)
         .then(res => {
@@ -464,8 +475,43 @@ exports.verifyJwt = async (token, secret, options) => {
     return decoded;
 };
 
+exports.verifyJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+    await this.logg("Using key to verify JWT:");
+    console.log(keyContent);
+    const secretKey = await jose.importJWK(keyContent, alg);
+    const decoded = await jose.jwtVerify(ticket, secretKey);
+    console.log("Verified JWT:");
+    await this.logg(decoded.payload);
+    return decoded;
+};
+
+exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
+    console.log(`Using private key path ${keyPath}`);
+    if (fs.existsSync(keyPath)) {
+        const keyContent = fs.readFileSync(keyPath, 'utf8');
+        await this.logg("Using private key to verify JWT:");
+        console.log(keyContent);
+        const secretKey = await jose.importPKCS8(keyContent, alg);
+        const decoded = await jose.jwtDecrypt(ticket, secretKey, {});
+        console.log("Verified JWT:\n");
+        await this.logg(decoded.payload);
+        return decoded;
+    }
+    throw `Unable to locate private key ${keyPath} to verify JWT`
+};
+
+exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+    const secretKey = await jose.importJWK(keyContent, alg);
+    console.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
+    const decoded = await jose.jwtDecrypt(ticket, secretKey);
+    console.log("Verified JWT:");
+    await this.logg(decoded);
+    return decoded;
+};
+
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
+    
     let decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
         console.log(`Decoded token header: ${colors.green(decoded.header)}`);
@@ -487,8 +533,6 @@ exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
         });
     return JSON.parse(response)["mfa-duo"];
 };
-
-exports.fetchDuoSecurityBypassCode = async (user = "casuser") => await this.fetchDuoSecurityBypassCode(user)[0];
 
 exports.base64Decode = async (data) => {
     let buff = Buffer.from(data, 'base64');

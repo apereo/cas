@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 
 import java.time.Instant;
 
@@ -66,22 +66,19 @@ public class CasConfigurationServerWebApplication {
     }
 
     /**
-     * Cas configuration server web security configurer adapter.
+     * CAS configuration server web security configurer adapter.
      *
      * @param serverProperties the server properties
      * @return the web security configurer adapter
      */
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public WebSecurityConfigurerAdapter casConfigurationServerWebSecurityConfigurerAdapter(final ServerProperties serverProperties) {
-        return new WebSecurityConfigurerAdapter() {
-            @Override
-            protected void configure(final HttpSecurity http) throws Exception {
-                val path = serverProperties.getServlet().getContextPath();
-                http.authorizeRequests().antMatchers(path + "/decrypt/**").authenticated().and().csrf().disable();
-                http.authorizeRequests().antMatchers(path + "/encrypt/**").authenticated().and().csrf().disable();
-                super.configure(http);
-            }
-        };
+    public SecurityFilterChain casConfigurationServerWebSecurityConfigurerAdapter(
+        final HttpSecurity http,
+        final ServerProperties serverProperties) throws Exception {
+        val path = serverProperties.getServlet().getContextPath();
+        http.authorizeHttpRequests().requestMatchers(path + "/decrypt/**",
+            path + "/encrypt/**").authenticated().and().csrf().disable();
+        return http.build();
     }
 }

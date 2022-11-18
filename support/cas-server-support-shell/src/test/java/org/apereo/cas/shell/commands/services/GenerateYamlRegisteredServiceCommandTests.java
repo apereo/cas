@@ -38,11 +38,11 @@ public class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellComma
             writer.flush();
         }
         assertTrue(file.exists() && file.length() > 0);
-        assertNotNull(shell.evaluate(() -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
         assertTrue(yaml.exists());
         val badFile = File.createTempFile("first", ".second");
-        assertNotNull(shell.evaluate(() -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
         FileUtils.write(badFile, "data", StandardCharsets.UTF_8);
-        assertNotNull(shell.evaluate(() -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
     }
 }

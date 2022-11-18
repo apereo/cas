@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.azuread;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -98,11 +99,13 @@ public class AzureActiveDirectoryAttributesProperties implements Serializable {
      * Client id of the registered app in microsoft azure portal.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String clientId;
 
     /**
      * Client secret of the registered app in microsoft azure portal.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String clientSecret;
 }
