@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JdbcPasswordHistoryServiceTests extends BaseJdbcPasswordManagementServiceTests {
     @Test
     public void verifyOperation() {
-        val request = new PasswordChangeRequest("casuser", "password", "password");
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordHistoryService.exists(request));
         assertTrue(passwordHistoryService.store(request));
         assertTrue(passwordHistoryService.exists(request));

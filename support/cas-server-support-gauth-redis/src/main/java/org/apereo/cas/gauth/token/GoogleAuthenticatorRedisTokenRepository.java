@@ -115,19 +115,19 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     private Stream<String> getGoogleAuthenticatorTokenKeys() {
         val key = getPatternGoogleAuthenticatorTokenRedisKey();
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return template.keys(key, this.scanCount);
+        return template.scan(key, this.scanCount);
     }
 
     private Stream<String> getGoogleAuthenticatorTokenKeys(final String username) {
         val key = getGoogleAuthenticatorTokenRedisKey(username);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, username);
-        return template.keys(key, this.scanCount);
+        return template.scan(key, this.scanCount);
     }
 
     private Stream<String> getGoogleAuthenticatorTokenKeys(final Integer otp) {
         val key = getGoogleAuthenticatorTokenRedisKey(otp);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, otp);
-        return template.keys(key, this.scanCount);
+        return template.scan(key, this.scanCount);
     }
 
     @Override

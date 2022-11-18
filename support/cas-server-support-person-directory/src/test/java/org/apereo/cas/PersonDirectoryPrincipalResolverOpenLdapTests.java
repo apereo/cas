@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].bind-credential=P@ssw0rd",
     "cas.authn.attribute-repository.ldap[0].attributes.sn=surname"
 })
-@Tag("Ldap")
+@Tag("LdapAttributes")
 @EnabledIfListeningOnPort(port = 11389)
 public class PersonDirectoryPrincipalResolverOpenLdapTests {
     @Autowired

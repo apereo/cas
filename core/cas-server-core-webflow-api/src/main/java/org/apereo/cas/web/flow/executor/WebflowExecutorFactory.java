@@ -43,7 +43,7 @@ public class WebflowExecutorFactory {
 
     private FlowExecutor buildFlowExecutorViaServerSessionBindingExecution() {
         val conversationManager = new SessionBindingConversationManager();
-        val session = webflowProperties.getSession();
+        val session = webflowProperties.getSession().getServer();
         conversationManager.setLockTimeoutSeconds((int) Beans.newDuration(session.getLockTimeout()).getSeconds());
         conversationManager.setMaxConversations(session.getMaxConversations());
 

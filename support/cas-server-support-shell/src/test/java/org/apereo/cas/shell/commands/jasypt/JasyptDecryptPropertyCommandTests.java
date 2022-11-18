@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JasyptDecryptPropertyCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(() -> shell.evaluate(() -> "decrypt-value --value {cas-cipher}iARpnWTURDdiAhWdcHXxqJpncj4iRo3w9i2UT33stcs= "
+        assertDoesNotThrow(() -> shell.run(() -> () -> "decrypt-value --value {cas-cipher}iARpnWTURDdiAhWdcHXxqJpncj4iRo3w9i2UT33stcs= "
             + "--password JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
     }
 
     @Test
     public void verifyOperationWithInitVector() {
-        assertDoesNotThrow(() -> shell.evaluate(() -> "decrypt-value --value {cas-cipher}vGJIJnpRIMoB7cusy2f5ogn9gJI/8n8kBr6D/ce62QjnBLdfe5dcPcNWKL7ypaKp "
+        assertDoesNotThrow(() -> shell.run(() -> () -> "decrypt-value --value {cas-cipher}vGJIJnpRIMoB7cusy2f5ogn9gJI/8n8kBr6D/ce62QjnBLdfe5dcPcNWKL7ypaKp "
                 + "--password JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
     }
 }

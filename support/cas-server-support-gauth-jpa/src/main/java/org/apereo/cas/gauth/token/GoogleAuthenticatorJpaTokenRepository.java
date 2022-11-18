@@ -30,7 +30,7 @@ import java.time.ZoneId;
 public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepository<GoogleAuthenticatorToken> {
     private final long expireTokensInSeconds;
 
-    @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaGoogleAuthenticatorContext")
     private EntityManager entityManager;
 
     private final TransactionTemplate transactionTemplate;

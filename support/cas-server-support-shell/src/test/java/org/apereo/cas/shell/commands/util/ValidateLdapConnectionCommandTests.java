@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.shell.Input;
+import org.springframework.shell.InputProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,23 +29,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 10389)
 public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
-            + "--bindCredential_password_--searchFilter_cn=admin_--userPassword_password_--userAttributes_cn";
-        val result = shell.evaluate(getUnderscoreToSpaceInput(cmd));
-        assertTrue((Boolean) result);
+                  + "--bindCredential_password_--searchFilter_cn=admin_--userPassword_password_--userAttributes_cn";
+        assertDoesNotThrow(() -> shell.run(getUnderscoreToSpaceInput(cmd)));
     }
 
     @Test
     public void verifyNoFilterOperation() {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
-            + "--bindCredential_password_--userPassword_password_--userAttributes_cn";
-        val result = shell.evaluate(getUnderscoreToSpaceInput(cmd));
-        assertTrue((Boolean) result);
+                  + "--bindCredential_password_--userPassword_password_--userAttributes_cn";
+        assertDoesNotThrow(() -> shell.run(getUnderscoreToSpaceInput(cmd)));
     }
 
-    private static Input getUnderscoreToSpaceInput(final String cmd) {
-        return new Input() {
+    private static InputProvider getUnderscoreToSpaceInput(final String cmd) {
+        val input = new Input() {
             @Override
             public String rawText() {
                 return StringUtils.replace(cmd, "_", " ");
@@ -55,36 +54,34 @@ public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests
                 return Arrays.asList(cmd.split("_"));
             }
         };
+        return () -> input;
     }
 
     @Test
     public void verifyFailsOperation() {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
-            + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
+                  + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
 
         val input = getUnderscoreToSpaceInput(cmd);
-        val result = shell.evaluate(input);
-        assertFalse((Boolean) result);
+        assertDoesNotThrow(() -> shell.run(input));
     }
 
     @Test
     public void verifyBadUrlOperation() {
         val cmd = "validate-ldap_--url_ldap://localhost:10399_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
-            + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
+                  + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
 
         val input = getUnderscoreToSpaceInput(cmd);
-        val result = shell.evaluate(input);
-        assertFalse((Boolean) result);
+        assertDoesNotThrow(() -> shell.run(input));
     }
 
 
     @Test
     public void verifyNoResult() {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
-            + "--bindCredential_password_--searchFilter_cn=123456_--userPassword_password_--userAttributes_cn";
+                  + "--bindCredential_password_--searchFilter_cn=123456_--userPassword_password_--userAttributes_cn";
 
         val input = getUnderscoreToSpaceInput(cmd);
-        val result = shell.evaluate(input);
-        assertFalse((Boolean) result);
+        assertDoesNotThrow(() -> shell.run(input));
     }
 }

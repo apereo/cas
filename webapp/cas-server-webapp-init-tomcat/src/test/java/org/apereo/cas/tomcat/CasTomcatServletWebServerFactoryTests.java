@@ -37,7 +37,6 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
         "cas.server.tomcat.socket.performance-connection-time=1000",
         "cas.server.tomcat.socket.performance-latency=10",
 
-        "cas.server.tomcat.apr.enabled=true",
         "cas.server.tomcat.ssl-valve.enabled=true",
 
         "cas.server.tomcat.http-proxy.enabled=true",

@@ -196,32 +196,6 @@ public class OAuth20Utils {
         return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(value));
     }
 
-    /**
-     * Is response mode type form post?
-     *
-     * @param registeredService the registered service
-     * @param responseType      the response type
-     * @return true/false
-     */
-    public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService,
-                                                     final OAuth20ResponseModeTypes responseType) {
-        return responseType == OAuth20ResponseModeTypes.FORM_POST
-               || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
-    }
-
-    /**
-     * Is response mode type fragment?.
-     *
-     * @param registeredService the registered service
-     * @param responseType      the response type
-     * @return true/false
-     */
-    public static boolean isResponseModeTypeFragment(final OAuthRegisteredService registeredService,
-                                                     final OAuth20ResponseModeTypes responseType) {
-        return responseType == OAuth20ResponseModeTypes.FRAGMENT
-               || (registeredService != null && StringUtils.equalsIgnoreCase(
-            OAuth20ResponseModeTypes.FRAGMENT.getType(), registeredService.getResponseType()));
-    }
 
     /**
      * Check the grant type against an expected grant type.

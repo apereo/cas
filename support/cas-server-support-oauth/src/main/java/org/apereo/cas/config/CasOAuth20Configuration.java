@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.client.authentication.AttributePrincipalImpl;
+import org.apereo.cas.client.validation.AssertionImpl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
@@ -85,7 +87,13 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.mode.DefaultOAuth20ResponseModeFactory;
+import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeFormPostBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeFragmentBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.mode.OAuth20ResponseModeQueryBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
@@ -130,8 +138,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.AssertionImpl;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Client;
@@ -716,8 +722,40 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauthAuthorizationModelAndViewBuilder")
-        public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder() {
-            return new DefaultOAuth20AuthorizationModelAndViewBuilder();
+        public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder(
+            @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
+            final OAuth20ResponseModeFactory oauthResponseModeFactory) {
+            return new DefaultOAuth20AuthorizationModelAndViewBuilder(oauthResponseModeFactory);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = OAuth20ResponseModeFactory.BEAN_NAME)
+        public OAuth20ResponseModeFactory oauthResponseModeFactory(final List<OAuth20ResponseModeBuilder> responseModeBuilders) {
+            val factory = new DefaultOAuth20ResponseModeFactory();
+            responseModeBuilders.forEach(factory::registerBuilder);
+            return factory;
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthQueryResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthQueryResponseModeBuilder() {
+            return new OAuth20ResponseModeQueryBuilder();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthFormPostResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthFormPostResponseModeBuilder() {
+            return new OAuth20ResponseModeFormPostBuilder();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthFragmentResponseModeBuilder")
+        public OAuth20ResponseModeBuilder oauthFragmentResponseModeBuilder() {
+            return new OAuth20ResponseModeFragmentBuilder();
         }
 
         @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")
@@ -1280,11 +1318,14 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder(
+            @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
+            final OAuth20ResponseModeFactory oauthResponseModeFactory,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20InvalidAuthorizationResponseBuilder(servicesManager, oauthRequestParameterResolver);
+            return new OAuth20InvalidAuthorizationResponseBuilder(servicesManager,
+                oauthRequestParameterResolver, oauthResponseModeFactory);
         }
 
     }

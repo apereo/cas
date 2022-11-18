@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Ldap")
+@Tag("LdapAttributes")
 public class PrincipalAttributeRepositoryFetcherLdapTests {
 
     @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={username})(name={username}))")

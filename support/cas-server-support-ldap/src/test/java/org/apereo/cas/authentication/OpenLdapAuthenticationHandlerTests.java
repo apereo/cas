@@ -34,7 +34,7 @@ import java.util.UUID;
     "cas.authn.ldap[0].bind-credential=P@ssw0rd",
     "cas.authn.ldap[0].principal-attribute-list=sn,cn,homePostalAddress:homePostalAddress;"
 })
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 @EnabledIfListeningOnPort(port = 11389)
 public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Autowired

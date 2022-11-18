@@ -82,7 +82,7 @@ key-value objects, representing user account details. An empty `Map`
 would indicate the absence of the user record, leading to a `404` 
 response status back to the relying party.
 
-{% include_cached casproperties.html properties="cas.authn.oidc.webfinger.userInfo.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.webfinger.user-info.groovy" %}
 
 ### REST UserInfo Repository
 

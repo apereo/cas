@@ -72,6 +72,34 @@ public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAu
      */
     private boolean trustedDeviceEnabled;
 
+    /**
+     * Whether the push notification (mobile/desktop) is enabled.
+     */
+    private boolean pushEnabled = true;
+
+    /**
+     * The browser authenticator to use (or none).
+     */
+    private BrowserAuthenticatorTypes browserAuthenticator = BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR;
+
+    /**
+     * Browser authenticator types.
+     */
+    public enum BrowserAuthenticatorTypes {
+        /**
+         * No browser authentication.
+         */
+        NONE,
+        /**
+         * Virtual Authenticator browser authentication.
+         */
+        VIRTUAL_AUTHENTICATOR,
+        /**
+         * mAccessWeb browser authentication.
+         */
+        M_ACCESS_WEB
+    }
+
     public InweboMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }

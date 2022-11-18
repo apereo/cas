@@ -21,7 +21,7 @@ const cas = require('../../cas.js');
         "metrics",
         "mappings",
         "loggers",
-        "httptrace",
+        "httpexchanges",
         "scheduledtasks",
 
         "configurationMetadata",

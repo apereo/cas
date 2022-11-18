@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
 public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private static final String ENTITY_NAME = JpaGoogleAuthenticatorAccount.class.getSimpleName();
 
-    @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
-    private transient EntityManager entityManager;
+    @PersistenceContext(unitName = "jpaGoogleAuthenticatorContext")
+    private EntityManager entityManager;
 
     public JpaGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
         final CipherExecutor<Number, Number> scratchCodesCipher, final IGoogleAuthenticator googleAuthenticator) {

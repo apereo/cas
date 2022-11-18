@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication.attribute;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -156,24 +153,14 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     @Override
     public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(
         final String key,
-        final List<Object> attributeValues,
-        final Principal principal,
-        final RegisteredService registeredService,
-        final Service service,
-        final Map<String, List<Object>> attributes) {
+        final AttributeDefinitionResolutionContext context) {
         val result = locateAttributeDefinition(key);
-        return result.map(definition -> {
-            val context = AttributeDefinitionResolutionContext.builder()
-                .attributeValues(attributeValues)
-                .scope(scope)
-                .principal(principal)
-                .registeredService(registeredService)
-                .service(service)
-                .attributes(attributes)
-                .build();
-            val currentValues = definition.resolveAttributeValues(context);
-            return Optional.of(Pair.of(definition, currentValues));
-        }).orElseGet(Optional::empty);
+        return result
+            .map(definition -> {
+                val currentValues = definition.resolveAttributeValues(context.withScope(this.scope));
+                return Optional.of(Pair.of(definition, currentValues));
+            })
+            .orElseGet(Optional::empty);
     }
 
     @Override
@@ -187,7 +174,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         samlStore.getAttributeDefinitions().forEach(this::registerAttributeDefinition);
         return this;
     }
-    
+
     @Override
     @CanIgnoreReturnValue
     public AttributeDefinitionStore store(final Resource resource) {

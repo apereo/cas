@@ -67,8 +67,8 @@ public class DynamoDbTicketRegistryFacilitatorTests {
         @Test
         public void verifyCreateTableWithOnDemandBilling() {
             dynamoDbTicketRegistryFacilitator.createTicketTables(true);
-            val client = dynamoDbTicketRegistryFacilitator.amazonDynamoDBClient();
-            dynamoDbTicketRegistryFacilitator.ticketCatalog().findAll().forEach(td -> {
+            val client = dynamoDbTicketRegistryFacilitator.getAmazonDynamoDBClient();
+            dynamoDbTicketRegistryFacilitator.getTicketCatalog().findAll().forEach(td -> {
                 DescribeTableResponse resp = client.describeTable(DescribeTableRequest.builder()
                         .tableName(td.getProperties().getStorageName())
                         .build());

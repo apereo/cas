@@ -57,6 +57,8 @@ public class PasswordEncoderProperties implements Serializable {
     /**
      * The encoding algorithm to use such as {@code MD5}.
      * Relevant when the type used is {@code DEFAULT} or {@code GLIBC_CRYPT}.
+     * When used with {@link PasswordEncoderTypes#PBKDF2}, it should be one of {@code PBKDF2WithHmacSHA1},
+     * {@code PBKDF2WithHmacSHA256} or {@code PBKDF2WithHmacSHA512}.
      */
     @RequiredProperty
     private String encodingAlgorithm;
@@ -76,11 +78,16 @@ public class PasswordEncoderProperties implements Serializable {
 
     /**
      * Strength or number of iterations to use for password hashing.
-     * Usually relevant when dealing with {@link PasswordEncoderTypes#PBKDF2},
-     * {@link PasswordEncoderTypes#BCRYPT} or {@link PasswordEncoderTypes#GLIBC_CRYPT}.
-     * When used by {@link PasswordEncoderTypes#ARGON2}, it indicates the salt strength.
+     * Usually relevant when dealing with {@link PasswordEncoderTypes#BCRYPT}, {@link PasswordEncoderTypes#PBKDF2} or {@link PasswordEncoderTypes#GLIBC_CRYPT}.
+     * When used by {@link PasswordEncoderTypes#ARGON2} or {@link PasswordEncoderTypes#PBKDF2}, it indicates the salt strength.
      */
     private int strength = 16;
+
+    /**
+     * When used by {@link PasswordEncoderTypes#PBKDF2}, it indicates the required number of iterations.
+     */
+    private int iterations = 310000;
+
 
     /**
      * When used by {@link PasswordEncoderTypes#ARGON2}, it indicates the hash strength/length.

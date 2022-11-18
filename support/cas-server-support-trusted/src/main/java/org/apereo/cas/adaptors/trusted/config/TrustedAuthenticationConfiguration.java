@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.trusted.config;
 
 import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
+import org.apereo.cas.adaptors.trusted.authentication.principal.DefaultRemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
-import org.apereo.cas.adaptors.trusted.authentication.principal.ShibbolethServiceProviderRequestPrincipalAttributesExtractor;
 import org.apereo.cas.adaptors.trusted.web.flow.ChainingPrincipalFromRequestNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestExtractorAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestHeaderNonInteractiveCredentialsAction;
@@ -99,7 +99,7 @@ public class TrustedAuthenticationConfiguration {
             final IPersonAttributeDao attributeRepository) {
             val resolver = new ChainingPrincipalResolver(principalElectionStrategy, casProperties);
             val personDirectory = casProperties.getPersonDirectory();
-            val trusted = casProperties.getAuthn().getTrusted();
+            val trusted = casProperties.getAuthn().getTrusted().getPersonDirectory();
             val bearingPrincipalResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory,
                 attributeRepository,
                 CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
@@ -119,8 +119,9 @@ public class TrustedAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "remoteRequestPrincipalAttributesExtractor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor() {
-            return new ShibbolethServiceProviderRequestPrincipalAttributesExtractor();
+        public RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor(final CasConfigurationProperties casProperties) {
+            val patterns = CollectionUtils.convertDirectedListToMap(casProperties.getAuthn().getTrusted().getAttributeHeaderPatterns());
+            return new DefaultRemoteRequestPrincipalAttributesExtractor(patterns);
         }
     }
 

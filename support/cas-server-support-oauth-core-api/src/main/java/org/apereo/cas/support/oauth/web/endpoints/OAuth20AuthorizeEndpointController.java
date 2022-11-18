@@ -143,24 +143,6 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         return manager.getProfile().isPresent();
     }
 
-    protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
-        val replicationProps = getConfigurationContext().getCasProperties().getAuthn().getPac4j().getCore().getSessionReplication();
-        val cookieAutoconfigured = replicationProps.getCookie().isAutoConfigureCookiePath();
-        if (replicationProps.isReplicateSessions() && cookieAutoconfigured) {
-            val contextPath = request.getContextPath();
-            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
-            val path = getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for OAuth distributed session cookie generator to: [{}]", cookiePath);
-                getConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("OAuth distributed cookie domain is [{}] with path [{}]",
-                    getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookieDomain(), path);
-            }
-        }
-    }
-
     /**
      * Gets registered service by client id.
      *

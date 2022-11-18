@@ -92,7 +92,7 @@ public class CasOAuthUmaJpaConfiguration {
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
                         .jpaVendorAdapter(jpaUmaVendorAdapter)
-                        .persistenceUnitName(getClass().getSimpleName())
+                        .persistenceUnitName("umaResourceJpaContext")
                         .dataSource(dataSourceUma)
                         .packagesToScan(jpaUmaPackagesToScan.toSet())
                         .build();

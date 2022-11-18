@@ -205,11 +205,12 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
             LOGGER.trace("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
             val params = resolver.resolveSingle(criteria);
             if (params != null) {
-                LOGGER.trace("Created signature signing parameters."
-                             + "\nSignature algorithm: [{}]"
-                             + "\nSignature canonicalization algorithm: [{}]"
-                             + "\nSignature reference digest methods: [{}]"
-                             + "\nSignature reference canonicalization algorithm: [{}]",
+                LOGGER.trace("""
+                        Created signature signing parameters.
+                        Signature algorithm: [{}]
+                        Signature canonicalization algorithm: [{}]
+                        Signature reference digest methods: [{}]
+                        Signature reference canonicalization algorithm: [{}]""",
                     params.getSignatureAlgorithm(),
                     params.getSignatureCanonicalizationAlgorithm(),
                     params.getSignatureReferenceDigestMethod(),

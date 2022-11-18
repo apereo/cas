@@ -58,6 +58,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private Set<String> scopes = new HashSet<>(0);
 
+    private String responseMode;
+
     @JsonIgnore
     @Override
     public String getFriendlyName() {

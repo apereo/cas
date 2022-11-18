@@ -27,10 +27,6 @@ public class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServ
     @Serial
     private static final long serialVersionUID = 5823989148794052951L;
 
-    public DefaultRegisteredServiceUsernameProvider(final String canonicalizationMode) {
-        super(canonicalizationMode, false, null);
-    }
-
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         LOGGER.debug("Returning the default principal id [{}] for username.", principal.getId());

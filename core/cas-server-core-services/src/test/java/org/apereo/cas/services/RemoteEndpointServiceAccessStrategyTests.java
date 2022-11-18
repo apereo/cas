@@ -25,11 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RemoteEndpointServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "remoteEndpointServiceAccessStrategy.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
+    public void verifySerializeToJson() throws IOException {
         val strategyWritten = new RemoteEndpointServiceAccessStrategy();
         MAPPER.writeValue(JSON_FILE, strategyWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, RemoteEndpointServiceAccessStrategy.class);

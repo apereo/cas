@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].attributes.objectSid=objectSid"
 })
 @EnabledIfListeningOnPort(port = 10390)
-@Tag("Ldap")
+@Tag("ActiveDirectory")
 public class PersonDirectoryPrincipalResolverActiveDirectoryTests {
     public static final String AD_TRUST_STORE = "file:/tmp/adcacerts.jks";
 

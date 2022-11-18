@@ -83,7 +83,6 @@ public class InitialFlowSetupActionTests {
                 .domain(null)
                 .secure(false)
                 .httpOnly(false)
-                .comment("CAS Cookie")
                 .build();
 
             val tgt = CookieGenerationContext.builder()
@@ -93,7 +92,6 @@ public class InitialFlowSetupActionTests {
                 .domain(null)
                 .secure(false)
                 .httpOnly(false)
-                .comment("CAS Cookie")
                 .build();
 
             this.warnCookieGenerator = new CookieRetrievingCookieGenerator(warn);

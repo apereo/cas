@@ -61,7 +61,7 @@ public class HazelcastSessionConfiguration {
                                                final HazelcastSessionProperties hazelcastSessionProperties,
                                                final SessionProperties sessionProperties,
                                                final ServerProperties serverProperties) {
-        val hz = casProperties.getWebflow().getSession().getHazelcast();
+        val hz = casProperties.getWebflow().getSession().getServer().getHazelcast();
         val config = HazelcastConfigurationFactory.build(hz);
         val serializerConfig = new SerializerConfig();
         serializerConfig.setImplementation(new HazelcastSessionSerializer()).setTypeClass(MapSession.class);

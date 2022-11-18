@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 public class CustomPasswordPolicyLdapAuthenticationHandlerTests {
     @TestPropertySource(properties = {
         "cas.authn.ldap[0].password-policy.enabled=true",

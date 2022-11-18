@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
@@ -44,14 +45,17 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
 
     private String scope;
 
+    private String removePattern;
+
     @Override
     public final String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-        val resolved = resolveUsernameInternal(principal, service, registeredService);
+        val resolvedUsername = resolveUsernameInternal(principal, service, registeredService);
         if (canonicalizationMode == null) {
             canonicalizationMode = CaseCanonicalizationMode.NONE.name();
         }
-        val username = FunctionUtils.doIfNotNull(scope, () -> String.format("%s@%s", resolved, scope), () -> resolved).get();
-        val uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(username.trim(), Locale.getDefault());
+        val removedUsername = removePatternFromUsernameIfNecessary(resolvedUsername);
+        val finalUsername = scopeUsernameIfNecessary(removedUsername);
+        val uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(finalUsername.trim(), Locale.getDefault());
         LOGGER.debug("Resolved username for [{}] is [{}]", service, uid);
         if (!this.encryptUsername) {
             return uid;
@@ -61,6 +65,14 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
             throw new IllegalArgumentException("Could not encrypt username " + uid + " for service " + service);
         }
         return encryptedId;
+    }
+
+    protected String removePatternFromUsernameIfNecessary(final String username) {
+        return FunctionUtils.doIfNotNull(removePattern, () -> RegExUtils.removePattern(username, removePattern), () -> username).get();
+    }
+
+    protected String scopeUsernameIfNecessary(final String resolved) {
+        return FunctionUtils.doIfNotNull(scope, () -> String.format("%s@%s", resolved, scope), () -> resolved).get();
     }
 
     /**

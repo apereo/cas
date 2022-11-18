@@ -9,7 +9,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * The generated SOAP class.
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -27,7 +27,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
+ *
  * @author Jerome LELEU
  * @since 6.4.0
  */
@@ -45,12 +45,18 @@ import jakarta.xml.bind.annotation.XmlType;
 public class LoginSearch {
 
     protected long userid;
+
     protected long serviceid;
+
     @XmlElement(required = true)
     protected String loginname;
+
     protected long exactmatch;
+
     protected long offset;
+
     protected long nmax;
+
     protected long sort;
 
     /**
@@ -91,11 +97,9 @@ public class LoginSearch {
 
     /**
      * Obtient la valeur de la propriété loginname.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLoginname() {
         return loginname;
@@ -103,11 +107,9 @@ public class LoginSearch {
 
     /**
      * Définit la valeur de la propriété loginname.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setLoginname(String value) {
         this.loginname = value;

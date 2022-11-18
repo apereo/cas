@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa.duo;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -12,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * This is {@link DuoSecurityMultifactorAuthenticationRegistrationProperties}.
@@ -24,7 +24,7 @@ import java.io.Serial;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("DuoSecurityMultifactorAuthenticationRegistrationProperties")
-public class DuoSecurityMultifactorAuthenticationRegistrationProperties extends BaseMultifactorAuthenticationProviderProperties {
+public class DuoSecurityMultifactorAuthenticationRegistrationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -1655375354167880807L;
 

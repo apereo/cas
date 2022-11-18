@@ -35,7 +35,7 @@ public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeysto
 
     private final TransactionOperations transactionTemplate;
 
-    @PersistenceContext(unitName = "oidcJwksEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaOidcJwksContext")
     private EntityManager entityManager;
 
     @Override

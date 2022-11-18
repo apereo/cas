@@ -153,15 +153,16 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifySignAssertionTrueWithDeserialization() {
-        val json = "{\n"
-                   + "  \"@class\" : \"org.apereo.cas.support.saml.services.SamlRegisteredService\",\n"
-                   + "  \"serviceId\" : \"the-entity\",\n"
-                   + "  \"name\" : \"SAMLService\",\n"
-                   + "  \"id\" : 10000003,\n"
-                   + "  \"evaluationOrder\" : 10,\n"
-                   + "  \"signAssertions\" : true,\n"
-                   + "  \"metadataLocation\" : \"https://url/to/metadata.xml\"\n"
-                   + '}';
+        val json = """
+            {
+              "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+              "serviceId" : "the-entity",
+              "name" : "SAMLService",
+              "id" : 10000003,
+              "evaluationOrder" : 10,
+              "signAssertions" : true,
+              "metadataLocation" : "https://url/to/metadata.xml"
+            }""";
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val serializer = new RegisteredServiceJsonSerializer(appCtx);
@@ -172,15 +173,16 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifySignAssertionFalseWithDeserialization() {
-        val json = "{\n"
-                   + "  \"@class\" : \"org.apereo.cas.support.saml.services.SamlRegisteredService\",\n"
-                   + "  \"serviceId\" : \"the-entity\",\n"
-                   + "  \"name\" : \"SAMLService\",\n"
-                   + "  \"id\" : 10000003,\n"
-                   + "  \"evaluationOrder\" : 10,\n"
-                   + "  \"signAssertions\" : false,\n"
-                   + "  \"metadataLocation\" : \"https://url/to/metadata.xml\"\n"
-                   + '}';
+        val json = """
+            {
+              "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+              "serviceId" : "the-entity",
+              "name" : "SAMLService",
+              "id" : 10000003,
+              "evaluationOrder" : 10,
+              "signAssertions" : false,
+              "metadataLocation" : "https://url/to/metadata.xml"
+            }""";
 
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();

@@ -48,13 +48,15 @@ public class AsciiArtUtils {
      * @param additional the additional
      */
     public static void printAsciiArtWarning(final Logger out, final String additional) {
-        val ascii = '\n'
-            + "  ____ _____ ___  ____  _ \n"
-            + " / ___|_   _/ _ \\|  _ \\| |\n"
-            + " \\___ \\ | || | | | |_) | |\n"
-            + "  ___) || || |_| |  __/|_|\n"
-            + " |____/ |_| \\___/|_|   (_)\n"
-            + "                          \n";
+        val ascii = """
+
+              ____ _____ ___  ____  _\s
+             / ___|_   _/ _ \\|  _ \\| |
+             \\___ \\ | || | | | |_) | |
+              ___) || || |_| |  __/|_|
+             |____/ |_| \\___/|_|   (_)
+                                     \s
+            """;
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.warn(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
@@ -67,13 +69,15 @@ public class AsciiArtUtils {
      * @param additional the additional
      */
     public static void printAsciiArtReady(final Logger out, final String additional) {
-        val ascii = '\n'
-            + "  ____  _____    _    ______   __\n"
-            + " |  _ \\| ____|  / \\  |  _ \\ \\ / /\n"
-            + " | |_) |  _|   / _ \\ | | | \\ V / \n"
-            + " |  _ <| |___ / ___ \\| |_| || |  \n"
-            + " |_| \\_\\_____/_/   \\_\\____/ |_|  \n"
-            + "                                 \n";
+        val ascii = """
+
+              ____  _____    _    ______   __
+             |  _ \\| ____|  / \\  |  _ \\ \\ / /
+             | |_) |  _|   / _ \\ | | | \\ V /\s
+             |  _ <| |___ / ___ \\| |_| || | \s
+             |_| \\_\\_____/_/   \\_\\____/ |_| \s
+                                            \s
+            """;
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.info(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_RESET);

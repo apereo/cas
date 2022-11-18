@@ -83,8 +83,8 @@ public class RestPasswordManagementServiceTests {
 
         @Test
         public void verifyEmailFound() {
-            assertFalse(passwordChangeService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                new PasswordChangeRequest("casuser", "123456", "123456")));
+            val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
+            assertFalse(passwordChangeService.change(request));
             assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build()));
             assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().username("casuser").build()));
             assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build()));
@@ -250,6 +250,7 @@ public class RestPasswordManagementServiceTests {
         @Test
         public void verifyPasswordChanged() {
             val data = "true";
+            val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
             try (val webServer = new MockWebServer(9309,
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
                 MediaType.APPLICATION_JSON_VALUE)) {
@@ -262,16 +263,14 @@ public class RestPasswordManagementServiceTests {
                 rest.setEndpointUrlEmail("http://localhost:9309");
                 val passwordService = getRestPasswordManagementService(props);
 
-                val result = passwordService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                    new PasswordChangeRequest("casuser", "123456", "123456"));
+                val result = passwordService.change(request);
                 assertTrue(result);
                 webServer.stop();
             }
 
             try (val webServer = new MockWebServer(9090, HttpStatus.NO_CONTENT)) {
                 webServer.start();
-                val result = passwordChangeService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                    new PasswordChangeRequest("casuser", "123456", "123456"));
+                val result = passwordChangeService.change(request);
                 assertFalse(result);
                 webServer.stop();
             }

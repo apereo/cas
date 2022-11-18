@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 public class DelegatedClientAuthenticationCredentialResolverTests {
     @Autowired
-    @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+    @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
     private DelegatedClientAuthenticationConfigurationContext configurationContext;
 
     @Test

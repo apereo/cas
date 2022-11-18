@@ -42,7 +42,7 @@ public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+        @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
         final DelegatedClientAuthenticationConfigurationContext configContext,
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(DelegatedAuthenticationDynamicDiscoveryProviderLocator.class)
@@ -60,7 +60,7 @@ public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
     public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+        @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
         final DelegatedClientAuthenticationConfigurationContext configContext,
         @Qualifier("delegatedAuthenticationDynamicDiscoveryProviderLocator")
         final DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator) {

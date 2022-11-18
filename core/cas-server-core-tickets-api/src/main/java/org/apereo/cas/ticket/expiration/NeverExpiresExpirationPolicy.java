@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 
@@ -12,6 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serial;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 
 /**
  * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
@@ -32,6 +35,8 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
      * Static instance of the policy.
      */
     public static final ExpirationPolicy INSTANCE = new NeverExpiresExpirationPolicy();
+    
+    private static final long MAX_EXPIRATION_IN_YEARS = 10L;
 
     @Serial
     private static final long serialVersionUID = 3833747698242303540L;
@@ -53,4 +58,13 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
         return (long) Integer.MAX_VALUE;
     }
 
+    @Override
+    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+        return ZonedDateTime.now(Clock.systemUTC()).plusYears(MAX_EXPIRATION_IN_YEARS);
+    }
+
+    @Override
+    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
+        return ZonedDateTime.now(Clock.systemUTC()).plusYears(MAX_EXPIRATION_IN_YEARS);
+    }
 }

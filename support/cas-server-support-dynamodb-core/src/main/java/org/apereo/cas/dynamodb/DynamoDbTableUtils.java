@@ -20,12 +20,16 @@ import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
+import software.amazon.awssdk.services.dynamodb.model.TimeToLiveSpecification;
+import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveRequest;
 
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -115,17 +119,17 @@ public class DynamoDbTableUtils {
      * @param deleteTable          the delete tables
      * @param attributeDefinitions the attribute definitions
      * @param keySchemaElements    the key schema elements
+     * @return the table description
      * @throws Exception the exception
      */
-    public static void createTable(final DynamoDbClient dynamoDbClient,
-                                   final AbstractDynamoDbProperties dynamoDbProperties,
-                                   final String tableName,
-                                   final boolean deleteTable,
-                                   final List<AttributeDefinition> attributeDefinitions,
-                                   final List<KeySchemaElement> keySchemaElements) throws Exception {
+    public static TableDescription createTable(final DynamoDbClient dynamoDbClient,
+                                               final AbstractDynamoDbProperties dynamoDbProperties,
+                                               final String tableName,
+                                               final boolean deleteTable,
+                                               final List<AttributeDefinition> attributeDefinitions,
+                                               final List<KeySchemaElement> keySchemaElements) throws Exception {
 
         val billingMode = BillingMode.fromValue(dynamoDbProperties.getBillingMode().name());
-
         val throughput = billingMode == BillingMode.PROVISIONED ? ProvisionedThroughput.builder()
             .readCapacityUnits(dynamoDbProperties.getReadCapacity())
             .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
@@ -151,6 +155,72 @@ public class DynamoDbTableUtils {
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
         val tableDescription = dynamoDbClient.describeTable(describeTableRequest).table();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
+        return tableDescription;
+    }
+
+    /**
+     * Enable time to live on table.
+     *
+     * @param dynamoDbClient   the dynamo db client
+     * @param tableName        the table name
+     * @param ttlAttributeName the ttl attribute name
+     */
+    public static void enableTimeToLiveOnTable(final DynamoDbClient dynamoDbClient,
+                                               final String tableName,
+                                               final String ttlAttributeName) {
+        val ttlSpec = TimeToLiveSpecification.builder()
+            .attributeName(ttlAttributeName)
+            .enabled(true)
+            .build();
+        val request = UpdateTimeToLiveRequest.builder()
+            .tableName(tableName)
+            .timeToLiveSpecification(ttlSpec)
+            .build();
+        dynamoDbClient.updateTimeToLive(request);
+    }
+
+    /**
+     * Scan table based on query and return response.
+     *
+     * @param dynamoDbClient the dynamo db client
+     * @param tableName      the table name
+     * @param queries        the queries
+     * @return the scan response
+     */
+    public static ScanResponse scan(final DynamoDbClient dynamoDbClient,
+                                    final String tableName,
+                                    final List<? extends DynamoDbQueryBuilder> queries) {
+        try {
+            val scanFilter = buildRequestQueryFilter(queries);
+            val scanRequest = ScanRequest.builder()
+                .tableName(tableName)
+                .scanFilter(scanFilter)
+                .build();
+            LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
+            return dynamoDbClient.scan(scanRequest);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return ScanResponse.builder().items(Map.of()).build();
+    }
+
+    /**
+     * Build request query filter map.
+     *
+     * @param queries the queries
+     * @return the map
+     */
+    public static Map<String, Condition> buildRequestQueryFilter(final List<? extends DynamoDbQueryBuilder> queries) {
+        return queries
+            .stream()
+            .map(query -> {
+                val cond = Condition.builder()
+                    .comparisonOperator(query.getOperator())
+                    .attributeValueList(query.getAttributeValue())
+                    .build();
+                return Pair.of(query.getKey(), cond);
+            })
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     /**
@@ -167,29 +237,9 @@ public class DynamoDbTableUtils {
                                                  final String tableName,
                                                  final List<? extends DynamoDbQueryBuilder> queries,
                                                  final Function<Map<String, AttributeValue>, T> itemMapper) {
-        try {
-            val scanFilter = queries.stream()
-                .map(query -> {
-                    val cond = Condition.builder()
-                        .comparisonOperator(query.getOperator())
-                        .attributeValueList(query.getAttributeValue())
-                        .build();
-                    return Pair.of(query.getKey(), cond);
-                })
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-            val scanRequest = ScanRequest.builder()
-                .tableName(tableName)
-                .scanFilter(scanFilter)
-                .build();
-            LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
-            val items = dynamoDbClient.scan(scanRequest).items();
-            return items
-                .stream()
-                .map(itemMapper);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Stream.empty();
+        val scanResponse = scan(dynamoDbClient, tableName, queries);
+        val items = scanResponse.items();
+        return items.stream().map(itemMapper);
     }
 
     private static TableDescription waitForTableDescription(final DynamoDbClient dynamo,
@@ -215,6 +265,32 @@ public class DynamoDbTableUtils {
             Thread.sleep(interval);
         }
         return table;
+    }
+
+    /**
+     * Stream and scan using pagination.
+     *
+     * @param <T>                  the type parameter
+     * @param amazonDynamoDBClient the amazon dynamo db client
+     * @param tableName            the table name
+     * @param keys                 the keys
+     * @param itemMapper           the item mapper
+     * @return the stream
+     */
+    public static <T> Stream<T> scanPaginator(final DynamoDbClient amazonDynamoDBClient,
+                                              final String tableName,
+                                              final List<DynamoDbQueryBuilder> keys,
+                                              final Function<Map<String, AttributeValue>, T> itemMapper) {
+        val scanRequest = ScanRequest.builder()
+            .tableName(tableName)
+            .scanFilter(DynamoDbTableUtils.buildRequestQueryFilter(keys))
+            .build();
+        LOGGER.debug("Scanning table with scan request [{}]", scanRequest);
+        return amazonDynamoDBClient.scanPaginator(scanRequest)
+            .stream()
+            .flatMap(results -> results.items().stream())
+            .map(itemMapper)
+            .filter(Objects::nonNull);
     }
 
     static class TableNeverTransitionedToStateException extends SdkClientException {

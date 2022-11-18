@@ -36,8 +36,8 @@ import java.util.Set;
 public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private static final String ENTITY_NAME = JpaMultifactorAuthenticationTrustRecord.class.getSimpleName();
 
-    @PersistenceContext(unitName = "mfaTrustedAuthnEntityManagerFactory")
-    private transient EntityManager entityManager;
+    @PersistenceContext(unitName = "jpaMfaTrustedAuthnContext")
+    private EntityManager entityManager;
 
     public JpaMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
                                                     final CipherExecutor<Serializable, String> cipherExecutor,

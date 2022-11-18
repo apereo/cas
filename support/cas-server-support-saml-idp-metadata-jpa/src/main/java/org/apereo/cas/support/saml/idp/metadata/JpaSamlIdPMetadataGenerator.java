@@ -32,7 +32,7 @@ import java.util.Optional;
 public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator implements InitializingBean {
     private final TransactionOperations transactionTemplate;
 
-    @PersistenceContext(unitName = "samlMetadataIdPEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaSamlMetadataIdPContext")
     private EntityManager entityManager;
 
     public JpaSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,

@@ -50,7 +50,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     private final CasConfigurationProperties casProperties;
 
-    @PersistenceContext(unitName = "ticketEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaTicketRegistryContext")
     private EntityManager entityManager;
 
     private static long countToLong(final Object result) {

@@ -21,20 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GenerateFullJwtCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyPlain() {
-        assertDoesNotThrow(() -> {
-            val result = shell.evaluate(() -> "generate-full-jwt --sub casuser --claims {'name':'CAS','clients':['1234']}");
-            assertNotNull(result);
-        });
+        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-full-jwt --sub casuser --claims {'name':'CAS','clients':['1234']}"));
     }
 
     @Test
     public void verifySigned() throws Exception {
         assertDoesNotThrow(() -> {
             val jwks = new ClassPathResource("jwks.json").getFile().getAbsolutePath();
-            val result = shell.evaluate(() -> "generate-full-jwt --sub casuser "
-                                              + "--claims {'client_id':'client'} "
-                                              + "--jwks " + jwks);
-            assertNotNull(result);
+            shell.run(() -> () -> "generate-full-jwt --sub casuser "
+                                  + "--claims {'client_id':'client'} "
+                                  + "--jwks " + jwks);
         });
     }
 
@@ -42,13 +38,12 @@ public class GenerateFullJwtCommandTests extends BaseCasShellCommandTests {
     public void verifySignedNeverExpires() throws Exception {
         assertDoesNotThrow(() -> {
             val jwks = new ClassPathResource("jwks.json").getFile().getAbsolutePath();
-            val result = shell.evaluate(() -> "generate-full-jwt --sub casuser "
-                                              + "--exp INFINITE "
-                                              + "--aud client "
-                                              + "--iss https://localhost:8443/cas/oidc "
-                                              + "--claims {'client_id':'client'} "
-                                              + "--jwks " + jwks);
-            assertNotNull(result);
+            shell.run(() -> () -> "generate-full-jwt --sub casuser "
+                                  + "--exp INFINITE "
+                                  + "--aud client "
+                                  + "--iss https://localhost:8443/cas/oidc "
+                                  + "--claims {'client_id':'client'} "
+                                  + "--jwks " + jwks);
         });
     }
 }
