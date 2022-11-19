@@ -29,7 +29,7 @@ prevent it from being released by other protocols.
 }
 ```
 
-The following additional settings can be specified for a SAML IdP attribute definition:
+The following additional settings can be specified for a SAML attribute definition:
 
 | Name           | Description                                                                                                                                                                                           |
 |----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
