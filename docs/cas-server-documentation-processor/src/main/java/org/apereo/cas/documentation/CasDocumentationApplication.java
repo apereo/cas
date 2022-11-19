@@ -277,12 +277,11 @@ public class CasDocumentationApplication {
                     for (var i = 0; i < parameterAnnotations.length; i++) {
                         for (var j = 0; j < parameterAnnotations[i].length; j++) {
                             var ann = (ShellOption) parameterAnnotations[i][j];
-                            var option = (ShellOption) ann;
                             cmd.parameters.add(Map.of(
-                                "name", String.join(",", option.value()),
-                                "help", String.valueOf(option.help()),
-                                "optOut", String.valueOf(option.optOut()),
-                                "defaultValue", option.defaultValue()));
+                                "name", String.join(",", ann.value()),
+                                "help", String.valueOf(ann.help()),
+                                "optOut", String.valueOf(ann.optOut()),
+                                "defaultValue", ann.defaultValue()));
                         }
                     }
 

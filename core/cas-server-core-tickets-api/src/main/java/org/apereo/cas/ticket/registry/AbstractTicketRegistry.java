@@ -144,8 +144,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
         count.getAndAdd(deleteSingleTicket(ticket.getId()));
-        val finalCount = count.intValue();
-        return finalCount;
+        return count.intValue();
     }
 
     /**

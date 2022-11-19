@@ -74,6 +74,6 @@ public class AdditionalMetadataVerificationTests {
         val values = new TypeReference<Set<ConfigurationMetadataProperty>>() {
         };
         val reader = mapper.readerFor(values);
-        return (Set<ConfigurationMetadataProperty>) reader.readValue(propertiesNode);
+        return reader.readValue(propertiesNode);
     }
 }

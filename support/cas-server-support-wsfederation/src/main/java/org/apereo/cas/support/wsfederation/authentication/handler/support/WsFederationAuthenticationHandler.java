@@ -13,7 +13,6 @@ import lombok.val;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * This handler authenticates Security token/credentials.
@@ -44,7 +43,7 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
         val wsFederationCredentials = (WsFederationCredential) credential;
         if (wsFederationCredentials != null) {
             val attributes = wsFederationCredentials.getAttributes();
-            val principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), (Map) attributes);
+            val principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), attributes);
             return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<>(0));
         }
         throw new FailedLoginException();
