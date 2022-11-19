@@ -7,8 +7,8 @@ category: Attributes
 
 # SAML2 Attribute Definitions
 
-Attribute definitions that specifically apply to the release of attributes as part of SAML response can be
-defined using the `SamlIdPAttributeDefinition`. Defining an attribute with this definition does not
+[Attribute definitions](../integration/Attribute-Definitions.html) that specifically apply to the release of 
+attributes as part of SAML response can be defined using the `SamlIdPAttributeDefinition`. Defining an attribute with this definition does not
 prevent it from being released by other protocols.
 
 ```json
@@ -29,7 +29,7 @@ prevent it from being released by other protocols.
 }
 ```
 
-The following additional settings can be specified for a Saml IdP attribute definition:
+The following additional settings can be specified for a SAML attribute definition:
 
 | Name           | Description                                                                                                                                                                                           |
 |----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

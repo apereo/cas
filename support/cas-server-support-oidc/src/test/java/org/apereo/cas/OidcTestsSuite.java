@@ -93,6 +93,7 @@ import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolve
 import org.apereo.cas.oidc.web.flow.OidcCasWebflowLoginContextProviderTests;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
+import org.apereo.cas.oidc.web.flow.OidcUnmetAuthenticationRequirementWebflowExceptionHandlerTests;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurerTests;
 import org.apereo.cas.oidc.web.response.OidcJwtResponseModeCipherExecutorTests;
 import org.apereo.cas.oidc.web.response.OidcResponseModeFormPostJwtBuilderTests;
@@ -182,6 +183,7 @@ import org.junit.platform.suite.api.Suite;
     OidcPushedAuthorizationModelAndViewBuilderTests.class,
     OidcDefaultPushedAuthorizationRequestFactoryTests.class,
     OidcPushedAuthorizationRequestExpirationPolicyBuilderTests.class,
+    OidcUnmetAuthenticationRequirementWebflowExceptionHandlerTests.class,
     OidcMongoDbJsonWebKeystoreGeneratorServiceTests.class,
     OidcDefaultJsonWebKeyStoreListenerTests.class,
     OidcCasWebflowLoginContextProviderTests.class,
