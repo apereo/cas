@@ -72,7 +72,7 @@ public class OAuth20Utils {
     public static ModelAndView writeError(final HttpServletResponse response,
                                           final String error, final String description) {
         val model = getErrorResponseBody(error, description);
-        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), (Map) model);
+        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
         mv.setStatus(HttpStatus.BAD_REQUEST);
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         return mv;

@@ -263,6 +263,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_REDIRECT = "redirect";
 
     /**
+     * The transition id 'serviceUnauthorizedCheck'.
+     */
+    String TRANSITION_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
+
+    /**
      * Transition id 'post' .
      */
     String TRANSITION_ID_POST = "post";

@@ -109,7 +109,6 @@ layout: null
         *   [Basic](/cas/{{ version }}/authentication/Basic-Authentication.html)
         *   [Groovy](/cas/{{ version }}/authentication/Groovy-Authentication.html)
         *   [QR Code](/cas/{{ version }}/authentication/QRCode-Authentication.html)
-        *   [~~Digest~~](/cas/{{ version }}/authentication/Digest-Authentication.html)
         *   [MongoDb](/cas/{{ version }}/authentication/MongoDb-Authentication.html)
         *   [Redis](/cas/{{ version }}/authentication/Redis-Authentication.html)
         *   [Azure Active Directory](/cas/{{ version }}/authentication/Azure-ActiveDirectory-Authentication.html)

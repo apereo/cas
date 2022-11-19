@@ -1319,7 +1319,7 @@ public class WebUtils {
      */
     public static <T> T getAcceptableUsagePolicyTermsFromFlowScope(final RequestContext requestContext, final Class<T> clazz) {
         if (requestContext.getFlowScope().contains("aupPolicy")) {
-            return (T) requestContext.getFlowScope().get("aupPolicy", clazz);
+            return requestContext.getFlowScope().get("aupPolicy", clazz);
         }
         return null;
     }
