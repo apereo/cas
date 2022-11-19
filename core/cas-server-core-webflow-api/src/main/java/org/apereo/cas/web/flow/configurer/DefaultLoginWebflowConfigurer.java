@@ -316,14 +316,13 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createTransitionForState(authnFailure, InvalidLoginTimeException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INVALID_AUTHENTICATION_HOURS);
         createTransitionForState(authnFailure, FailedLoginException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         createTransitionForState(authnFailure, AccountNotFoundException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(authnFailure, UnauthorizedServiceForPrincipalException.class.getSimpleName(),
-            CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(authnFailure, UnauthorizedServiceForPrincipalException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         createTransitionForState(authnFailure, PrincipalException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(authnFailure, UnsatisfiedAuthenticationPolicyException.class.getSimpleName(),
-            CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(authnFailure, UnauthorizedAuthenticationException.class.getSimpleName(),
-            CasWebflowConstants.STATE_ID_AUTHENTICATION_BLOCKED);
-        createTransitionForState(authnFailure, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+        createTransitionForState(authnFailure, UnsatisfiedAuthenticationPolicyException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(authnFailure, UnauthorizedAuthenticationException.class.getSimpleName(), CasWebflowConstants.STATE_ID_AUTHENTICATION_BLOCKED);
+        createTransitionForState(authnFailure, CasWebflowConstants.TRANSITION_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+        createTransitionForState(authnFailure, CasWebflowConstants.TRANSITION_ID_REDIRECT, CasWebflowConstants.STATE_ID_REDIRECT_VIEW);
+
         createStateDefaultTransition(authnFailure, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         authnFailure.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
     }
