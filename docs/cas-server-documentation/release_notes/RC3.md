@@ -46,6 +46,21 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 The following items are new improvements and enhancements presented in this release.
 
 ## Other Stuff
+        
+- Support for OpenID Connect `unmet_authentication_requirements` error code is now available.
+- Email templates and SMS notification messages for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) now have access to both 
+  `token` and `tokenWithoutPrefix` variables. 
 
 ## Library Upgrades
+
+- Spring
+- Spring Boot
+- Spring Security
+- Spring Data
+- Apache Tomcat
+- Spring Integration
+- Jetty
+- Undertow
+- Jakarta Servlet API
+- Pac4j
 
