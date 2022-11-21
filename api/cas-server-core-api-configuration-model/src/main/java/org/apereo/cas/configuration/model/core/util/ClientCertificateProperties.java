@@ -32,7 +32,7 @@ public class ClientCertificateProperties implements Serializable {
      * The location of the client certificate (PKCS12 format).
      */
     @RequiredProperty
-    private transient SpringResourceProperties certificate = new SpringResourceProperties();
+    private SpringResourceProperties certificate = new SpringResourceProperties();
 
     /**
      * The passphrase of the client certificate.
