@@ -71,7 +71,10 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         val id = buildAuthnStatementSessionIdex(context);
         val statement = newAuthnStatement(authenticationMethod,
             DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getAuthenticationDate()), id);
-        statement.setSessionNotOnOrAfter(buildSessionNotOnOrAfter(context));
+
+        if (!context.getRegisteredService().isSkipGeneratingSessionNotOnOrAfter()) {
+            statement.setSessionNotOnOrAfter(buildSessionNotOnOrAfter(context));
+        }
 
         val subjectLocality = buildSubjectLocality(context);
         if (subjectLocality != null) {
