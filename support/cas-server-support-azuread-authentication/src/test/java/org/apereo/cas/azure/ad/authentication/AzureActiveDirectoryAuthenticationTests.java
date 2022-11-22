@@ -33,7 +33,7 @@ public class AzureActiveDirectoryAuthenticationTests {
         "cas.authn.azure-active-directory.client-id=d430f66f-bc3b-4e2d-a9bf-bf6c7ded8b7e",
         "cas.authn.azure-active-directory.login-url=https://login.microsoftonline.com/common/",
         "cas.authn.azure-active-directory.tenant=2bbf190a-1ee3-487d-b39f-4d5038acf9ad",
-        "cas.authn.azure-active-directory.resource=https://unknown.example.org",
+        "cas.authn.azure-active-directory.resource=https://unknown.example.org"
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
