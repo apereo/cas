@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class OidcUnmetAuthenticationRequirementWebflowExceptionHandler implements CasWebflowExceptionHandler<AuthenticationException> {
     private final OidcConfigurationContext context;
 
-    private int order = 0;
+    private int order;
 
     @Override
     public Event handle(final AuthenticationException exception, final RequestContext requestContext) {

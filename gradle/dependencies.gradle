@@ -1115,7 +1115,7 @@ ext.libraries = [
                 }
         ],
         azuread                 : [
-                dependencies.create("com.microsoft.azure:adal4j:$azureadVersion") {
+                dependencies.create("com.microsoft.azure:msal4j:$azureadVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")

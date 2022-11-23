@@ -158,25 +158,26 @@ you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
    
 The following command-line options are supported for test execution:
 
-| Flag                              | Description
-|-----------------------------------+---------------------------------------------------------+
-| `--scenario`                      | The scenario name, typically modeled after the folder name that contains the test
-| `--install-puppeteer`, `--install`, `--i` | Install or update Puppeteer node modules.
-| `--debug`, `--d`                  | Launch the CAS web application with remote debugging enabled.
-| `--debug-port`, `--port`          | Specify the remote debugging port, typically `5000`.
-| `--debug-suspend`, `--suspend`, `--s` | Suspend the CAS web application on startup until a debugger session connects.
-| `--rebuild`, `--r`, `--build`     | Rebuild the CAS web application, and disregard previously-built WAR artifacts.
-| `--dry-run`, `--y`                | Launch the CAS web application configured in the test without actually running the test.
-| `--headless`, `--h`               | Launch the test scenario with a headless browser.
-| `--rerun`, `--resume`, `--r`      | Launch and assume the CAS is already running from a previous attempt.
-| `--hbo`                           | A combination of `--headless` and `--build` and Gradle's `--offline` flag.
-| `--bo`                            | A combination of `--build` and Gradle's `--offline` flag.
-| `--hr`                            | A combination of `--headless` and `--resume`.
-| `--ho`                            | A combination of `--headless` and Gradle's `--offline` flag.
-| `--hb`                            | A combination of `--headless` and `--build`.
-| `--body`, `--body`, `--boyd`      | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.
-| `--boy`                           | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.
-   
+| Flag                                      | Description                                                                              |
+|-------------------------------------------|------------------------------------------------------------------------------------------|
+| `--scenario`                              | The scenario name, typically modeled after the folder name that contains the test        |
+| `--install-puppeteer`, `--install`, `--i` | Install or update Puppeteer node modules.                                                |
+| `--debug`, `--d`                          | Launch the CAS web application with remote debugging enabled.                            |
+| `--debug-port`, `--port`                  | Specify the remote debugging port, typically `5000`.                                     |
+| `--debug-suspend`, `--suspend`, `--s`     | Suspend the CAS web application on startup until a debugger session connects.            |
+| `--rebuild`, `--build`                    | Rebuild the CAS web application, and disregard previously-built WAR artifacts.           |
+| `--dry-run`, `--y`                        | Launch the CAS web application configured in the test without actually running the test. |
+| `--headless`, `--h`                       | Launch the test scenario with a headless browser.                                        |
+| `--rerun`, `--resume`, `--r`              | Launch and assume CAS is already running from a previous attempt.                        |
+| `--hbo`                                   | A combination of `--headless` and `--build` and Gradle's `--offline` flag.               |
+| `--hbod`                                  | A combination of `--hbo` and Gradle's `--offline` flag.                                  |
+| `--bo`                                    | A combination of `--build` and Gradle's `--offline` flag.                                |
+| `--hr`                                    | A combination of `--headless` and `--resume`.                                            |
+| `--ho`                                    | A combination of `--headless` and Gradle's `--offline` flag.                             |
+| `--hb`                                    | A combination of `--headless` and `--build`.                                             |
+| `--body`, `--body`, `--boyd`              | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.        |
+| `--boy`                                   | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.                   |
+
 For example, the `login-success` test scenario may be run using: 
 
 ```bash
