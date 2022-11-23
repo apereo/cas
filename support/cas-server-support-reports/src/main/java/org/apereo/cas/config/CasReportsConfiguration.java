@@ -157,8 +157,6 @@ public class CasReportsConfiguration {
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
         @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
         final ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor,
         final CasConfigurationProperties casProperties) {
@@ -183,8 +181,6 @@ public class CasReportsConfiguration {
     public StatisticsEndpoint statisticsReportEndpoint(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final ObjectProvider<TicketRegistry> ticketRegistry,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
         final CasConfigurationProperties casProperties) {
         return new StatisticsEndpoint(ticketRegistry, casProperties);
     }
