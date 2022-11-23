@@ -79,7 +79,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getValidUntilDate());
 
         if (!context.getRegisteredService().isSkipGeneratingSessionNotOnOrAfter()) {
-        	val skewAllowance = context.getRegisteredService().getSkewAllowance() > 0
+        	val skewAllowance = context.getRegisteredService().getSkewAllowance() != 0
         		? context.getRegisteredService().getSkewAllowance()
                 : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
         	statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
