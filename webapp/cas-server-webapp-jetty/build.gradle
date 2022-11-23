@@ -10,3 +10,14 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency { DependencyResolveDetails details ->
+            if (requested.group.startsWith("jakarta.servlet"))  {
+                ansi.yellow "${project.name} does not support Servlet v6 specification yet; Downgrading to v5.0.0"
+                details.useVersion("5.0.0")
+            }
+        }
+    }
+}
