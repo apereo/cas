@@ -916,8 +916,6 @@ ext.libraries = [
                 },
                 dependencies.create("jakarta.activation:jakarta.activation-api:$jakartaActivationVersion") {
                 },
-                dependencies.create("com.sun.activation:jakarta.activation:$jakartaActivationVersion") {
-                },
                 dependencies.create("jakarta.persistence:jakarta.persistence-api:$jpaPersistenceApiVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
                 }
@@ -2478,25 +2476,23 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-
                 },
                 dependencies.create("org.apache.tomcat:tomcat-catalina-ha:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
-
                 },
                 dependencies.create("org.apache.tomcat.embed:tomcat-embed-core:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
-
                 },
                 dependencies.create("org.apache.tomcat.embed:tomcat-embed-el:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
-
+                },
+                dependencies.create("org.apache.tomcat:jakartaee-migration:1.0.5") {
+                    exclude(group: "commons-io", module: "commons-io")
                 }
         ],
         springbootjetty         : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-jetty:$springBootVersion") {
                     exclude(group: "org.ow2.asm", module: "asm")
-
                 },
                 dependencies.create("jakarta.annotation:jakarta.annotation-api:$javaxAnnotationApiVersion")
         ],
@@ -2577,7 +2573,6 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
-
                 },
         ],
         springcloudbuskafka     : [
@@ -2604,7 +2599,6 @@ ext.libraries = [
                     exclude(group: "log4j", module: "log4j")
                     exclude(group: "org.scala-lang", module: "scala-library")
                     exclude(group: "org.apache.kafka", module: "kafka-clients")
-
                 }
         ],
         springkafka : [
