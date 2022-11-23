@@ -21,4 +21,4 @@ Support is enabled by including the following module in the overlay:
 
 ## Registration
 
-By default, users are registered with authy based on their phone and email attributes retrieved by CAS.
+By default, users are registered with Authy based on their phone and email attributes retrieved by CAS.
