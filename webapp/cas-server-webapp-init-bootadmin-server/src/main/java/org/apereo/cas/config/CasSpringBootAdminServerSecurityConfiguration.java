@@ -33,7 +33,7 @@ public class CasSpringBootAdminServerSecurityConfiguration {
         val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(adminContextPath + '/');
-        http.authorizeRequests()
+        http.authorizeHttpRequests()
             .requestMatchers(adminContextPath + "/assets/**", adminContextPath + "/login").permitAll()
             .anyRequest().authenticated()
             .and()

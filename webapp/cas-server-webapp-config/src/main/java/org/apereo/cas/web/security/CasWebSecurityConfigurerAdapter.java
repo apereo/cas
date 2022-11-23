@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -55,6 +56,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     private final SecurityProperties securityProperties;
 
+    private final WebEndpointProperties webEndpointProperties;
+
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
     private final List<ProtocolEndpointWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
@@ -79,7 +82,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .flatMap(List<String>::stream)
             .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
             .collect(Collectors.toList());
-
         patterns.add("/webjars/**");
         patterns.add("/js/**");
         patterns.add("/css/**");
@@ -87,7 +89,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         patterns.add("/static/**");
         patterns.add("/error");
         patterns.add("/favicon.ico");
-
+        patterns.add("/");
+        patterns.add(webEndpointProperties.getBasePath());
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
         web.debug(LOGGER.isDebugEnabled())
             .ignoring()
@@ -131,7 +134,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         patterns.add("/error");
         patterns.add("/favicon.ico");
 
-        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
+        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
         requests.requestMatchers(patterns.toArray(String[]::new))
             .permitAll()
             .and()

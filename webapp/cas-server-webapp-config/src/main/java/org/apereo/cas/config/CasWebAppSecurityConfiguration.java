@@ -12,6 +12,7 @@ import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -83,10 +84,11 @@ public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfigur
         public WebSecurityCustomizer casWebSecurityCustomizer(
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
+            final WebEndpointProperties webEndpointProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties) {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-                pathMappedEndpoints, configurersList);
+                webEndpointProperties, pathMappedEndpoints, configurersList);
             return adapter::configureWebSecurity;
         }
 
@@ -96,10 +98,11 @@ public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfigur
             final HttpSecurity http,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
+            final WebEndpointProperties webEndpointProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties) throws Exception {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-                pathMappedEndpoints, configurersList);
+                webEndpointProperties, pathMappedEndpoints, configurersList);
             return adapter.configureHttpSecurity(http).build();
         }
     }
