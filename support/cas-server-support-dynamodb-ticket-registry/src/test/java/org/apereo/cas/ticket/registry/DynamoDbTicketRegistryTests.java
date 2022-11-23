@@ -139,7 +139,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         assertEquals(COUNT, newTicketRegistry.stream().count());
         stopwatch.stop();
         var time = stopwatch.getTime(TimeUnit.SECONDS);
-        assertTrue(time <= 15);
+        assertTrue(time <= 20);
     }
 
     private OAuth20Code createOAuthCode() {
