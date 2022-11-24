@@ -48,7 +48,7 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator {
         attributes.putAll(principal.getAttributes());
 
         profile.addAttributes(attributes);
-        profile.addPermissions(at.getScopes());
+        profile.addRoles(at.getScopes());
         profile.addAttribute(OAuth20AccessToken.class.getName(), at);
         profile.addAttribute(OAuth20Constants.CLIENT_ID, at.getClientId());
 
