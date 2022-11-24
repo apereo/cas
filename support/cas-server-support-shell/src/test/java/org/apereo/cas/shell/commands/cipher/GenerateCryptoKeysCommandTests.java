@@ -19,6 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GenerateCryptoKeysCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-key --key-size 512"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-key --key-size 512"));
     }
 }

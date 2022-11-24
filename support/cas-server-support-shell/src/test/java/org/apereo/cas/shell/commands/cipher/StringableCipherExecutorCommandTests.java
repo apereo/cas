@@ -28,9 +28,8 @@ public class StringableCipherExecutorCommandTests extends BaseCasShellCommandTes
 
     @Test
     public void verifyOperation() {
-        val result = "unknown";
-        assertDoesNotThrow(() -> shell.run(() -> () -> "cipher-text --value example --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
-        assertDoesNotThrow(() -> shell.run(() -> () -> "decipher-text --value " + result + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
+        val result = assertDoesNotThrow(() -> runShellCommand(() -> () -> "cipher-text --value example --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "decipher-text --value " + result + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
     }
 
     @Test
@@ -38,14 +37,14 @@ public class StringableCipherExecutorCommandTests extends BaseCasShellCommandTes
         val file = File.createTempFile("file", "txt");
         FileUtils.write(file, "example", StandardCharsets.UTF_8);
 
-        val result = "unknown";
         val path = file.getCanonicalPath();
-        assertDoesNotThrow(() -> shell.run(() -> () -> "cipher-text --value " + path + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
+        var result = assertDoesNotThrow(() -> runShellCommand(
+            () -> () -> "cipher-text --value " + path + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
         FileUtils.write(file, result.toString(), StandardCharsets.UTF_8);
 
-        val decoded = "unknown";
-        assertDoesNotThrow(() -> shell.run(() -> () -> "decipher-text --value " + path + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
-        assertEquals("example", decoded);
+        result = assertDoesNotThrow(() -> runShellCommand(
+            () -> () -> "decipher-text --value " + path + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
+        assertEquals("example", result.toString());
     }
 }
 

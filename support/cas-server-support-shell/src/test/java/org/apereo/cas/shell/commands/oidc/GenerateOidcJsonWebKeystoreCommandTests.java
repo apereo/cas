@@ -22,6 +22,6 @@ public class GenerateOidcJsonWebKeystoreCommandTests extends BaseCasShellCommand
     @Test
     public void verifyOperation() {
         val location = FileUtils.getTempDirectoryPath();
-        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-oidc-jwks --jwksFile " + location + " --jwksKeyId cas"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-oidc-jwks --jwksFile " + location + " --jwksKeyId cas"));
     }
 }

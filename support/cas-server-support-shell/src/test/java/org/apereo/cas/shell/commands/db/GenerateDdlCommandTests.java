@@ -23,26 +23,26 @@ public class GenerateDdlCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() throws Exception {
         val file = File.createTempFile("ddl", "sql");
-        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-ddl --createSchema --dropSchema --file " + file + " --dialect HSQL"));
-        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-ddl --file " + file + " --dialect HSQL"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --createSchema --dropSchema --file " + file + " --dialect HSQL"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --file " + file + " --dialect HSQL"));
     }
 
     @Test
     public void verifyCreateOperation() throws Exception {
         val file = File.createTempFile("ddl", "sql");
-        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-ddl --createSchema --file " + file + " --dialect HSQL"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --createSchema --file " + file + " --dialect HSQL"));
     }
 
     @Test
     public void verifyDropOperation() throws Exception {
         val file = File.createTempFile("ddl", "sql");
-        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-ddl --url jdbc:hsqldb:mem:cas2 --dropSchema --file " + file + " --dialect HSQL"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --url jdbc:hsqldb:mem:cas2 --dropSchema --file " + file + " --dialect HSQL"));
     }
 
     @Test
     public void verifyBadDialect() throws Exception {
         val file = File.createTempFile("ddl", "sql");
-        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-ddl --file " + file + " --dialect XYZ"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --file " + file + " --dialect XYZ"));
     }
 }
 

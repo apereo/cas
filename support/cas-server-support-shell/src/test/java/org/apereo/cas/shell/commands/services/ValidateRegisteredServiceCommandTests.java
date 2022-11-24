@@ -42,12 +42,12 @@ public class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTe
             writer.flush();
         }
         assertTrue(file.exists() && file.length() > 0);
-        assertDoesNotThrow(() -> shell.run(() -> () -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
         assertTrue(yaml.exists());
 
-        assertDoesNotThrow(() -> shell.run(() -> () -> "validate-service --file " + file.getPath()));
-        assertDoesNotThrow(() -> shell.run(() -> () -> "validate-service --file " + yaml.getPath()));
-        assertDoesNotThrow(() -> shell.run(() -> () -> "validate-service --directory " + file.getParent()));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-service --file " + file.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-service --file " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-service --directory " + file.getParent()));
     }
 }
 

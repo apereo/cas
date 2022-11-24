@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ExitCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() throws Exception {
-        shell.run(() -> () -> "quit");
+        runShellCommand(() -> () -> "quit");
         fail("Shell should have quit but did not");
     }
 }
