@@ -456,7 +456,9 @@ public class SamlIdPEndpointsConfiguration {
 
                 @Override
                 public List<String> getIgnoredEndpoints() {
-                    return List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
+                    return List.of(
+                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_IDP, "/"),
+                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
                         StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
                 }
             };

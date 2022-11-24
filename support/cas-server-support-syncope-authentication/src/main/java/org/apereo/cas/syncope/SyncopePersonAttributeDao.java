@@ -39,7 +39,7 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
+    public IPersonAttributes getPerson(final String uid, final Set<IPersonAttributes> resolvedPeople, final IPersonAttributeDaoFilter filter) {
         val attributes = new HashMap<String, List<Object>>();
         val results = syncopeSearch(uid);
         results.forEach(attributes::putAll);
@@ -47,20 +47,22 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public Set<IPersonAttributes> getPeople(final Map<String, Object> map, final IPersonAttributeDaoFilter filter) {
+    public Set<IPersonAttributes> getPeople(final Map<String, Object> map, final IPersonAttributeDaoFilter filter,
+                                            final Set<IPersonAttributes> resolvedPeople) {
         return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map), filter);
     }
 
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
-        final Map<String, List<Object>> map, final IPersonAttributeDaoFilter filter) {
+        final Map<String, List<Object>> map, final IPersonAttributeDaoFilter filter,
+        final Set<IPersonAttributes> resolvedPeople) {
         return map.entrySet()
             .stream()
             .filter(e -> Objects.nonNull(e.getValue()))
             .filter(e -> !e.getValue().isEmpty())
             .filter(e -> properties.getSearchFilter().contains(e.getKey()))
             .findFirst()
-            .map(e -> Set.of(getPerson(e.getValue().get(0).toString(), filter)))
+            .map(e -> Set.of(getPerson(e.getValue().get(0).toString(), resolvedPeople, filter)))
             .orElseGet(() -> new LinkedHashSet<>(0));
     }
 
