@@ -46,7 +46,7 @@ public class CouchbasePersonAttributeDaoTests {
 
     @Test
     public void verifyAttributes() {
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
         val attributes = person.getAttributes();
         assertTrue(attributes.containsKey("firstname"));
@@ -56,7 +56,7 @@ public class CouchbasePersonAttributeDaoTests {
 
     @Test
     public void verifyUnknown() {
-        val person = attributeRepository.getPerson("unknown", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson("unknown");
         assertNull(person);
         
         val persons = attributeRepository.getPeople(Map.of("username", "casuser"), IPersonAttributeDaoFilter.alwaysChoose());

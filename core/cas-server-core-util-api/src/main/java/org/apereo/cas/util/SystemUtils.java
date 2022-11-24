@@ -71,7 +71,7 @@ public class SystemUtils {
         info.put("Java Home", properties.get("java.home"));
         info.put("Java Vendor", properties.get("java.vendor"));
         info.put("Java Version", properties.get("java.version"));
-        info.put("Http Servlet Version", HttpServlet.class.getPackage().getImplementationVersion());
+        info.put("Servlet Version", HttpServlet.class.getPackage().getImplementationVersion());
 
         val runtime = Runtime.getRuntime();
         info.put("JVM Free Memory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
