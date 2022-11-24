@@ -33,7 +33,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.boot.actuate.endpoint.web.annotation.WebEndpoint;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -661,7 +661,7 @@ public class CasDocumentationApplication {
 
         var paramNames = ArrayUtils.EMPTY_STRING_ARRAY;
         try {
-            paramNames = new LocalVariableTableParameterNameDiscoverer().getParameterNames(method);
+            paramNames = new StandardReflectionParameterNameDiscoverer().getParameterNames(method);
         } catch (final Throwable e) {
             LOGGER.error(e.getMessage());
         }

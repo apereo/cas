@@ -14,8 +14,8 @@ dependencies {
 configurations.all {
     resolutionStrategy {
         eachDependency { DependencyResolveDetails details ->
-            if (requested.group.startsWith("jakarta.servlet"))  {
-                ansi.yellow "${project.name} does not support Servlet v6 specification yet; Downgrading to v5.0.0"
+            if (requested.name == "jakarta.servlet-api")  {
+                ansi.yellow "${project.name} does not yet support Servlet specification v6; Downgrading to v5.0.0"
                 details.useVersion("5.0.0")
             }
         }

@@ -9,6 +9,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +20,6 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link BaseUmaEndpointController}.
@@ -57,7 +56,7 @@ public abstract class BaseUmaEndpointController {
             throw new AuthenticationException("Unable to locate authenticated profile");
         }
         val profile = profileResult.get();
-        if (!profile.getPermissions().contains(requiredPermission)) {
+        if (!profile.getRoles().contains(requiredPermission)) {
             throw new AuthenticationException("Authenticated profile does not carry the UMA protection scope");
         }
         return profile;
@@ -95,9 +94,9 @@ public abstract class BaseUmaEndpointController {
      */
     protected String getResourceSetUriLocation(final ResourceSet saved) {
         return getUmaConfigurationContext().getCasProperties()
-            .getAuthn().getOauth().getUma().getCore().getIssuer()
-            + OAuth20Constants.BASE_OAUTH20_URL + '/'
-            + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/'
-            + saved.getId();
+                   .getAuthn().getOauth().getUma().getCore().getIssuer()
+               + OAuth20Constants.BASE_OAUTH20_URL + '/'
+               + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/'
+               + saved.getId();
     }
 }

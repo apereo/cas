@@ -59,7 +59,6 @@ public class LdapUserAttributesToRolesAuthorizationGeneratorTests {
             assertFalse(result.isEmpty());
             assertTrue(profile.getAttributes().isEmpty());
             assertTrue(profile.getRoles().isEmpty());
-            assertTrue(profile.getPermissions().isEmpty());
         });
     }
 

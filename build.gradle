@@ -483,8 +483,8 @@ subprojects {
         api libraries.springsecurity
         api libraries.springintegration
         api libraries.springwebflow
-        api libraries.javaxel
-        api libraries.javax
+        api libraries.jakartael
+        api libraries.jakarta
 
         annotationProcessor libraries.springindexer
 
