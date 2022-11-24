@@ -26,6 +26,7 @@ import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
@@ -128,6 +129,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         if (state instanceof EndState) {
             stateMap.put("isEndState", Boolean.TRUE);
         }
+
         if (state.isViewState()) {
             val viewState = (ViewState) state;
 
@@ -172,7 +174,6 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         }
 
         if (state instanceof TransitionableState stDef) {
-
             acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
                 .map(Object::toString)
                 .collect(Collectors.toList());
