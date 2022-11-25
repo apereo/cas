@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,8 @@ public class CasThymeleafLoginFormDirector {
     public boolean isLoginFormViewable(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();
         return context != null
-            && WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
-            && WebUtils.isCasLoginFormViewable(context);
+               && DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(context) == null
+               && WebUtils.isCasLoginFormViewable(context);
     }
 
     /**

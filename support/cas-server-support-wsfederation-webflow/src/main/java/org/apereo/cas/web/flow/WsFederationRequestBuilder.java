@@ -8,6 +8,7 @@ import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.apereo.cas.web.support.WebUtils;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -60,19 +60,19 @@ public class WsFederationRequestBuilder {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val service = (WebApplicationService) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
         configurations.forEach(Unchecked.consumer(cfg -> {
-            val c = new WsFedClient();
-            c.setName(cfg.getName());
+            val client = new WsFedClient();
+            client.setName(cfg.getName());
             val id = UUID.randomUUID().toString();
             val rpId = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
-            c.setAuthorizationUrl(cfg.getAuthorizationUrl(rpId, id));
-            c.setReplyingPartyId(rpId);
-            c.setId(id);
-            c.setRedirectUrl(getRelativeRedirectUrlFor(cfg, service, request));
-            c.setAutoRedirectType(cfg.getAutoRedirectType());
-            clients.add(c);
+            client.setAuthorizationUrl(cfg.getAuthorizationUrl(rpId, id));
+            client.setReplyingPartyId(rpId);
+            client.setId(id);
+            client.setRedirectUrl(getRelativeRedirectUrlFor(cfg, service, request));
+            client.setAutoRedirectType(cfg.getAutoRedirectType());
+            clients.add(client);
 
             if (cfg.getAutoRedirectType() != DelegationAutoRedirectTypes.NONE) {
-                WebUtils.putDelegatedAuthenticationProviderPrimary(context, c);
+                DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(context, client);
             }
         }));
         WebUtils.putWsFederationDelegatedClients(context, clients);
