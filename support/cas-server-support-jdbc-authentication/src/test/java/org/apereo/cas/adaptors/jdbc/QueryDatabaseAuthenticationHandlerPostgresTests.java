@@ -10,6 +10,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,11 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
     "database.driver-class=org.postgresql.Driver",
     "database.name=postgres",
     "database.url=jdbc:postgresql://localhost:5432/",
-    "database.dialect=org.hibernate.dialect.PostgreSQL10Dialect"
+    "database.dialect=org.hibernate.dialect.PostgreSQLDialect"
 })
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")

@@ -71,7 +71,8 @@ public class PasswordEncoderUtilsTests {
     @Test
     public void verifyPbkdf2() {
         val properties = new PasswordEncoderProperties();
-        properties.setSecret(null);
+        properties.setSecret(UUID.randomUUID().toString());
+        properties.setStrength(16);
         properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.PBKDF2.name());
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
         verifyEncodeAndMatch(encoder);
@@ -99,7 +100,11 @@ public class PasswordEncoderUtilsTests {
         Arrays.stream(PasswordEncoderProperties.PasswordEncoderTypes.values()).forEach(type -> {
             val properties = new PasswordEncoderProperties();
             properties.setSecret(secret);
-            properties.setEncodingAlgorithm("SHA-256");
+            val algorithm = switch (type) {
+                case PBKDF2 -> "PBKDF2WithHmacSHA512";
+                default -> "SHA-256";
+            };
+            properties.setEncodingAlgorithm(algorithm);
             properties.setStrength(16);
             properties.setType(type.name());
             val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
