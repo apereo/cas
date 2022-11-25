@@ -15,7 +15,7 @@
 
     <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
          th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
-                loginFormViewable=${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                loginFormViewable=${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
 
         <div th:if="${delegatedAuthenticationProviderPrimary == null}">
             <div th:if="${!#strings.isEmpty(#themes.code('cas.hero-banner.file'))}">
@@ -73,7 +73,7 @@
                             <input class="mdc-text-field__input form-control" id="username"
                                    size="25"
                                    type="text"
-                                   th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
+                                   th:readonly="!${@casThymeleafTemplatesDirector.isLoginFormUsernameInputVisible(#vars)}"
                                    th:field="*{username}"
                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                    autocapitalize="none"
@@ -89,8 +89,8 @@
 
                         <script type="text/javascript" th:inline="javascript">
                             /*<![CDATA[*/
-                            let username = /*[[${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}]]*/;
-                            let disabled = /*[[${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
+                            let username = /*[[${@casThymeleafTemplatesDirector.getLoginFormUsername(#vars)}]]*/;
+                            let disabled = /*[[${@casThymeleafTemplatesDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
 
                             if (username != null && username !== '') {
                                 $('#username').val(username);

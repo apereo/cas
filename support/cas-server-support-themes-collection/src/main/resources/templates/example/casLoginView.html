@@ -15,7 +15,7 @@
     <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-50">
         <section id="loginForm"
                  class="login-section login-form"
-                 th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                 th:if="${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
             <div th:replace="~{fragments/loginform :: loginform}">
                 <a href="fragments/loginform.html">Login Form goes here</a>
             </div>

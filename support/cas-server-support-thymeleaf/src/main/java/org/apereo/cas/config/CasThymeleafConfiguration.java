@@ -2,8 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.services.web.CasThymeleafLoginFormDirector;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
+import org.apereo.cas.services.web.CasThymeleafTemplatesDirector;
 import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurer;
 import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
@@ -185,13 +185,13 @@ public class CasThymeleafConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ThymeleafWebflowConfiguration {
 
-        @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
+        @ConditionalOnMissingBean(name = "casThymeleafTemplatesDirector")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(
+        public CasThymeleafTemplatesDirector casThymeleafTemplatesDirector(
             @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
             final CasWebflowExecutionPlan webflowExecutionPlan) {
-            return new CasThymeleafLoginFormDirector(webflowExecutionPlan);
+            return new CasThymeleafTemplatesDirector(webflowExecutionPlan);
         }
     }
 

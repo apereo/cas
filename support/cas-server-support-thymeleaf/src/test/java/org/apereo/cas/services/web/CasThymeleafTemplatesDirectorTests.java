@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web;
 
+import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 
@@ -15,6 +17,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 import org.thymeleaf.context.WebEngineContext;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,15 +25,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link CasThymeleafLoginFormDirectorTests}.
+ * This is {@link CasThymeleafTemplatesDirectorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @Tag("Web")
-public class CasThymeleafLoginFormDirectorTests {
+public class CasThymeleafTemplatesDirectorTests {
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -41,7 +44,9 @@ public class CasThymeleafLoginFormDirectorTests {
         val plan = mock(CasWebflowExecutionPlan.class);
         when(plan.getWebflowLoginContextProviders()).thenReturn(List.of());
 
-        val director = new CasThymeleafLoginFormDirector(plan);
+        val director = new CasThymeleafTemplatesDirector(plan);
+        assertNotNull(director.getExceptionClassSimpleName(new AuthenticationException()));
+        assertNotNull(director.getUrlExternalForm(new URL(RegisteredServiceTestUtils.CONST_TEST_URL)));
         assertTrue(director.isLoginFormViewable(mock(WebEngineContext.class)));
         assertTrue(director.isLoginFormUsernameInputVisible(mock(WebEngineContext.class)));
         assertFalse(director.isLoginFormUsernameInputDisabled(mock(WebEngineContext.class)));
