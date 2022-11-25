@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.services.web.CasThymeleafLoginFormDirectorTests;
+import org.apereo.cas.services.web.CasThymeleafTemplatesDirectorTests;
 import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurerTests;
 import org.apereo.cas.services.web.ThemeBasedViewResolverTests;
 import org.apereo.cas.web.view.CasMustacheViewTests;
@@ -24,7 +24,7 @@ import org.junit.platform.suite.api.Suite;
     CasThymeleafViewResolverConfigurerTests.class,
     ChainingTemplateViewResolverTests.class,
     CasProtocolThymeleafViewFactoryTests.class,
-    CasThymeleafLoginFormDirectorTests.class,
+    CasThymeleafTemplatesDirectorTests.class,
     ThemeFileTemplateResolverTests.class,
     ThemeBasedViewResolverTests.class,
     CasMustacheViewTests.class,

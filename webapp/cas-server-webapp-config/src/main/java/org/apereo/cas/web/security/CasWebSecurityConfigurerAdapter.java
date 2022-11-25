@@ -14,6 +14,7 @@ import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProv
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
@@ -80,7 +81,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
-            .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
+            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
             .collect(Collectors.toList());
         patterns.add("/webjars/**");
         patterns.add("/js/**");
@@ -95,6 +96,12 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         web.debug(LOGGER.isDebugEnabled())
             .ignoring()
             .requestMatchers(patterns.toArray(String[]::new));
+    }
+
+    private static String prepareProtocolEndpoint(final String endpoint) {
+        val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
+        val ext = FilenameUtils.getExtension(baseEndpoint);
+        return StringUtils.isBlank(ext) ? baseEndpoint.concat("/**") : baseEndpoint.concat("**");
     }
 
 
@@ -123,7 +130,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
-            .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
+            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
             .collect(Collectors.toList());
 
         patterns.add("/webjars/**");
