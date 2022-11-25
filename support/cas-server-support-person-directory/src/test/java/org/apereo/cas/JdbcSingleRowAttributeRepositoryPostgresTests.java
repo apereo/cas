@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].password=password",
     "cas.authn.attribute-repository.jdbc[0].driver-class=org.postgresql.Driver",
     "cas.authn.attribute-repository.jdbc[0].url=jdbc:postgresql://localhost:5432/postgres",
-    "cas.authn.attribute-repository.jdbc[0].dialect=org.hibernate.dialect.PostgreSQL10Dialect",
+    "cas.authn.attribute-repository.jdbc[0].dialect=org.hibernate.dialect.PostgreSQLDialect",
     "cas.authn.attribute-repository.jdbc[0].ddl-auto=create-drop"
 })
 @EnabledIfListeningOnPort(port = 5432)

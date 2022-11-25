@@ -8,9 +8,7 @@ import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.AssertionResult;
 import com.yubico.webauthn.RegisteredCredential;
-import com.yubico.webauthn.data.AuthenticatorAssertionExtensionOutputs;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.ClientAssertionExtensionOutputs;
 import com.yubico.webauthn.data.UserIdentity;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -24,6 +22,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BaseWebAuthnCredentialRepositoryTests}.
@@ -87,20 +86,18 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertFalse(webAuthnCredentialRepository.lookupAll(ba).isEmpty());
         assertTrue(webAuthnCredentialRepository.stream().count() > 0);
 
-        val constructor = AssertionResult.class.getDeclaredConstructor(boolean.class,
-            RegisteredCredential.class, String.class,
-            long.class, boolean.class,
-            ClientAssertionExtensionOutputs.class,
-            AuthenticatorAssertionExtensionOutputs.class);
-        constructor.setAccessible(true);
         val credential = RegisteredCredential.builder()
             .credentialId(ba)
             .userHandle(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
             .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
             .build();
-        val result = constructor.newInstance(true, credential, id, 1, true,
-            ClientAssertionExtensionOutputs.builder().build(),
-            AuthenticatorAssertionExtensionOutputs.builder().build());
+
+        val result = mock(AssertionResult.class);
+        when(result.getCredential()).thenReturn(credential);
+        when(result.getSignatureCount()).thenReturn(1L);
+        when(result.getUsername()).thenReturn(id);
+        when(result.getCredentialId()).thenReturn(ba);
+
         webAuthnCredentialRepository.updateSignatureCount(result);
 
         webAuthnCredentialRepository.removeAllRegistrations(id.toUpperCase());

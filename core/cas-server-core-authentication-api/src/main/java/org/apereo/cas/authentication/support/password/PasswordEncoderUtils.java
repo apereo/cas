@@ -106,9 +106,11 @@ public class PasswordEncoderUtils {
                             + "This strategy is here to support legacy implementations and using it is considered insecure.");
                 return new LdapShaPasswordEncoder();
             case PBKDF2:
+                val encodingAlgorithm = StringUtils.defaultString(properties.getEncodingAlgorithm(),
+                    Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256.name());
                 return new Pbkdf2PasswordEncoder(properties.getSecret(),
                     properties.getStrength(), properties.getIterations(),
-                    Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.valueOf(properties.getEncodingAlgorithm()));
+                    Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.valueOf(encodingAlgorithm));
             case GLIBC_CRYPT:
                 val hasSecret = StringUtils.isNotBlank(properties.getSecret());
                 val msg = String.format("Creating glibc CRYPT encoder with encoding alg [%s], strength [%s] and %ssecret",

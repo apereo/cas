@@ -45,8 +45,9 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
         val results = new HashMap<String, List<Object>>();
         if (StringUtils.isNotBlank(username)) {
             val allAttributes = new HashMap<>(attributes);
-            allAttributes.put("people", new ArrayList<>(resultPeople));
-            
+            if (resultPeople != null && !resultPeople.isEmpty()) {
+                allAttributes.put("people", new ArrayList<>(resultPeople));
+            }
             val args = new Object[]{username, allAttributes, LOGGER, casProperties, applicationContext};
             val finalAttributes = (Map<String, ?>) ScriptingUtils.executeGroovyScript(
                     groovyPrincipalAttributesProperties.getLocation(), args, Map.class, true);

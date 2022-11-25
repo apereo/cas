@@ -56,7 +56,7 @@ public class RedisClusterNodeProperties implements Serializable {
 
     /**
      * Indicate the type/role of this node.
-     * Accepted values are: {@code MASTER, SLAVE}.
+     * Accepted values are: {@code MASTER, REPLICA}.
      */
     @RequiredProperty
     private String type;
