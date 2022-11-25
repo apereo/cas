@@ -67,6 +67,7 @@ public interface AuthenticationResultBuilder extends Serializable {
      * Provided credential metadata collected for the authentication transaction.
      * Metadata represents arbitrary details linked to a credential
      * such as browser user agent, etc that do not strictly belong to a credential type.
+     *
      * @param credential the credential
      * @return the authentication context builder
      */

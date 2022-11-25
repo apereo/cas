@@ -57,7 +57,7 @@ public class HazelcastKubernetesDiscoveryProperties implements Serializable {
     private String namespace;
 
     /**
-     *  Defines if not ready addresses should be evaluated to be discovered on startup.
+     * Defines if not ready addresses should be evaluated to be discovered on startup.
      */
     private boolean resolveNotReadyAddresses;
 

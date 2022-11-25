@@ -29,6 +29,11 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public record DefaultLogoutManager(boolean singleLogoutCallbacksDisabled, LogoutExecutionPlan logoutExecutionPlan) implements LogoutManager {
+    private static <T> Predicate<T> distinctByKey(final Function<? super T, Object> keyExtractor) {
+        val seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
     @Override
     public List<SingleLogoutRequestContext> performLogout(final SingleLogoutExecutionRequest context) {
         val ticket = context.getTicketGrantingTicket();
@@ -79,10 +84,5 @@ public record DefaultLogoutManager(boolean singleLogoutCallbacksDisabled, Logout
             .flatMap(Collection::stream)
             .filter(distinctByKey(SingleLogoutRequestContext::getService))
             .collect(Collectors.toList());
-    }
-
-    private static <T> Predicate<T> distinctByKey(final Function<? super T, Object> keyExtractor) {
-        val seen = new ConcurrentHashMap<>();
-        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }

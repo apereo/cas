@@ -26,10 +26,11 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
     /**
      * Specify how the delegated idp provider should be selected for authentication
      * dynamically typically using an external script.
+     *
      * @return strategy type
      */
     String getSelectionStrategy();
-    
+
     /**
      * Indicate whether authentication should be exclusively
      * limited to allowed providers, disabling other forms of
@@ -61,6 +62,7 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
 
     /**
      * Indicates whether use of the allowed providers should be required and forced.
+     *
      * @return true if the policy is exclusive and, either provides are defined or undefined providers are not allowed.
      */
     @JsonIgnore

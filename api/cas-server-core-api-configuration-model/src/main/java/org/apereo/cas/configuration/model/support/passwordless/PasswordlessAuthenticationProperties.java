@@ -43,5 +43,5 @@ public class PasswordlessAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PasswordlessAuthenticationCoreProperties core = new PasswordlessAuthenticationCoreProperties();
-    
+
 }

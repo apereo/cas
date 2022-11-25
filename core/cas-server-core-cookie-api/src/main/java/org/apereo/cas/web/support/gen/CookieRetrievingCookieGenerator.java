@@ -12,7 +12,6 @@ import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
-import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +20,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -96,16 +97,17 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
-    private String cleanCookiePath(final String givenPath) {
-        return FunctionUtils.doIf(StringUtils.isBlank(cookieGenerationContext.getPath()), () -> {
-            val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
-            return StringUtils.defaultIfBlank(path, "/");
-        }, () -> givenPath).get();
-    }
-
     @Override
     public void setCookieDomain(final String cookieDomain) {
         super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
+    }
+
+    @Nonnull
+    @Override
+    protected Cookie createCookie(@NonNull final String cookieValue) {
+        val cookie = super.createCookie(cookieValue);
+        cookie.setPath(cleanCookiePath(cookie.getPath()));
+        return cookie;
     }
 
     @Override
@@ -185,14 +187,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                     })));
     }
 
-    @Nonnull
-    @Override
-    protected Cookie createCookie(@NonNull final String cookieValue) {
-        val cookie = super.createCookie(cookieValue);
-        cookie.setPath(cleanCookiePath(cookie.getPath()));
-        return cookie;
-    }
-
     /**
      * Add cookie header to response.
      *
@@ -234,5 +228,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             .filter(header -> !header.startsWith(cookie.getName() + '='))
             .forEach(header -> response.addHeader("Set-Cookie", header));
         return cookie;
+    }
+
+    private String cleanCookiePath(final String givenPath) {
+        return FunctionUtils.doIf(StringUtils.isBlank(cookieGenerationContext.getPath()), () -> {
+            val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
+            return StringUtils.defaultIfBlank(path, "/");
+        }, () -> givenPath).get();
     }
 }

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,10 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
         return service;
     }
 
+    public ServiceFactory<? extends WebApplicationService> getServiceFactory() {
+        return this.serviceFactories.get(0);
+    }
+
     /**
      * Extract service from the request.
      *
@@ -52,9 +57,5 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
      * @return the web application service
      */
     protected abstract WebApplicationService extractServiceInternal(HttpServletRequest request);
-
-    public ServiceFactory<? extends WebApplicationService> getServiceFactory() {
-        return this.serviceFactories.get(0);
-    }
 
 }

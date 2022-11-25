@@ -19,7 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-web", automated = true)
 @Getter
 @Setter
-@Accessors(chain = true)    
+@Accessors(chain = true)
 @JsonFilter("Cas20ProxyViewProperties")
 public class Cas20ProxyViewProperties implements Serializable {
 

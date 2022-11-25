@@ -34,13 +34,6 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     }
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
-                                                           final Map<String, List<Object>> attributes) {
-        LOGGER.trace("Ignoring all attributes given the service is designed to never receive any.");
-        return new HashMap<>(0);
-    }
-
-    @Override
     public boolean isExcludeDefaultAttributes() {
         return true;
     }
@@ -61,6 +54,13 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     public boolean isAuthorizedToReleaseAuthenticationAttributes() {
         LOGGER.trace("CAS will not authorize the release of authentication attributes, given the service is denied access to all attributes.");
         return false;
+    }
+
+    @Override
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> attributes) {
+        LOGGER.trace("Ignoring all attributes given the service is designed to never receive any.");
+        return new HashMap<>(0);
     }
 
     @Override

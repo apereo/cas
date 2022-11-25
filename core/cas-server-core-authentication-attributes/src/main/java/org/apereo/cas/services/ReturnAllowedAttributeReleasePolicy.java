@@ -48,6 +48,11 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         return authorizeReleaseOfAllowedAttributes(context, attributes);
     }
 
+    @Override
+    protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
+        return getAllowedAttributes();
+    }
+
     /**
      * Authorize release of allowed attributes map.
      *
@@ -69,10 +74,5 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
                 attributesToRelease.put(attr, resolvedAttributes.get(attr));
             });
         return attributesToRelease;
-    }
-
-    @Override
-    protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
-        return getAllowedAttributes();
     }
 }

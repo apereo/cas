@@ -13,7 +13,7 @@ public interface WebApplicationService extends Service {
      * Bean name for the factory implementation that creates this service type.
      */
     String BEAN_NAME_FACTORY = "webApplicationServiceFactory";
-    
+
     /**
      * Retrieves the artifact supplied with the service. May be null.
      *

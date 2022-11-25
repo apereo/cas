@@ -18,6 +18,8 @@ import java.util.List;
 @Setter
 public class ConfigurationMetadataHint {
     private final List<ValueHint> values = new ArrayList<>(0);
+
     private final List<ValueProvider> providers = new ArrayList<>(0);
+
     private String name;
 }

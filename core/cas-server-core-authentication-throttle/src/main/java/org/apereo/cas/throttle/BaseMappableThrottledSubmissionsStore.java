@@ -37,6 +37,29 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
      */
     protected final CasConfigurationProperties casProperties;
 
+    /**
+     * Computes the instantaneous rate in between two given dates corresponding to two submissions.
+     *
+     * @param a First date.
+     * @param b Second date.
+     * @return Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
+     */
+    private static double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
+        val rate = SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
+        LOGGER.debug("Submitting rate for [{}] and [{}] is [{}]", a, b, rate);
+        return rate;
+    }
+
+    @Override
+    public void removeIf(final Predicate<T> condition) {
+        backingMap.entrySet().removeIf(entry -> condition.test(entry.getValue()));
+    }
+
+    @Override
+    public void remove(final String key) {
+        backingMap.remove(key);
+    }
+
     @Override
     public void put(final T submission) {
         backingMap.put(submission.getKey(), submission);
@@ -58,16 +81,6 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     }
 
     @Override
-    public void removeIf(final Predicate<T> condition) {
-        backingMap.entrySet().removeIf(entry -> condition.test(entry.getValue()));
-    }
-
-    @Override
-    public void remove(final String key) {
-        backingMap.remove(key);
-    }
-
-    @Override
     public boolean exceedsThreshold(final String key, final double thresholdRate) {
         val submissionEntry = get(key);
         LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, submissionEntry);
@@ -78,18 +91,5 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     public void release(final double thresholdRate) {
         val now = ZonedDateTime.now(ZoneOffset.UTC);
         removeIf(entry -> submissionRate(now, entry.getValue()) < thresholdRate);
-    }
-
-    /**
-     * Computes the instantaneous rate in between two given dates corresponding to two submissions.
-     *
-     * @param a First date.
-     * @param b Second date.
-     * @return Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
-     */
-    private static double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
-        val rate = SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
-        LOGGER.debug("Submitting rate for [{}] and [{}] is [{}]", a, b, rate);
-        return rate;
     }
 }

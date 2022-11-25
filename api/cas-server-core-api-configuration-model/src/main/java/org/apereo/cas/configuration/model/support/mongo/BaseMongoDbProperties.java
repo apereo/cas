@@ -123,7 +123,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
      * Sets whether writes should be retried if they fail due to a network error.
      */
     private boolean retryWrites;
-    
+
     /**
      * Name of the database to use for authentication.
      */
@@ -133,7 +133,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
      * Whether connections require SSL.
      */
     private boolean sslEnabled;
-    
+
     /**
      * A replica set in MongoDB is a group of {@code mongod} processes that maintain
      * the same data set. Replica sets provide redundancy and high availability, and are the basis for all production deployments.

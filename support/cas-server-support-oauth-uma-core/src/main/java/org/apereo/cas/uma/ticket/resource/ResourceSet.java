@@ -2,9 +2,6 @@ package org.apereo.cas.uma.ticket.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonType;
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Transient;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +11,10 @@ import org.hibernate.annotations.Type;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.data.annotation.Id;
 import org.springframework.http.HttpStatus;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 
 import java.io.Serial;
 import java.io.Serializable;

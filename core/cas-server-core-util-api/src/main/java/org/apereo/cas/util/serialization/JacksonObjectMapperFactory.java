@@ -88,16 +88,6 @@ public class JacksonObjectMapperFactory {
         return initialize(mapper);
     }
 
-    private MapperBuilder<?, ?> determineMapperInstance() {
-        if (jsonFactory instanceof YAMLFactory) {
-            return YAMLMapper.builder((YAMLFactory) jsonFactory);
-        }
-        if (jsonFactory instanceof XmlFactory) {
-            return XmlMapper.builder((XmlFactory) jsonFactory);
-        }
-        return JsonMapper.builder(jsonFactory);
-    }
-
     /**
      * Initialize.
      *
@@ -132,5 +122,15 @@ public class JacksonObjectMapperFactory {
                 ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         }
         return obm;
+    }
+
+    private MapperBuilder<?, ?> determineMapperInstance() {
+        if (jsonFactory instanceof YAMLFactory) {
+            return YAMLMapper.builder((YAMLFactory) jsonFactory);
+        }
+        if (jsonFactory instanceof XmlFactory) {
+            return XmlMapper.builder((XmlFactory) jsonFactory);
+        }
+        return JsonMapper.builder(jsonFactory);
     }
 }

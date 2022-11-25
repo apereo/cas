@@ -9,12 +9,13 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
-import jakarta.annotation.Nonnull;
 import lombok.val;
 import org.springframework.http.MediaType;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Map;

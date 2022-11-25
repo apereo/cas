@@ -69,7 +69,7 @@ public class DefaultAuthenticationAttributeReleasePolicyTests {
     public void verifyReleaseAll() {
         val policy = new DefaultAuthenticationAttributeReleasePolicy(Set.of(),
             Set.of(), "authnContext");
-        
+
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
         when(service.getAttributeReleasePolicy()).thenReturn(attrPolicy);

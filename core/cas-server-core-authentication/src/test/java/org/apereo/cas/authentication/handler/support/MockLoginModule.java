@@ -10,6 +10,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+
 import java.util.Map;
 
 /**
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 public class MockLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
+
     private Subject subject;
 
     @Override

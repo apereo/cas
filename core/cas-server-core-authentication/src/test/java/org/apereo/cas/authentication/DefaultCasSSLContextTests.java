@@ -19,6 +19,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import javax.net.ssl.HttpsURLConnection;
+
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 

@@ -41,7 +41,7 @@ public class CasConfigurationMetadataCatalog {
 
     public static ObjectMapper getObjectMapper() {
         return MAPPER;
-    }   
+    }
 
     /**
      * Export.

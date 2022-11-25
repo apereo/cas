@@ -26,7 +26,7 @@ public class GroovyRegisteredServiceAccessStrategyTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
-    
+
     @Test
     public void checkDefaultAuthzStrategyConfig() {
         val authz = new GroovyRegisteredServiceAccessStrategy();

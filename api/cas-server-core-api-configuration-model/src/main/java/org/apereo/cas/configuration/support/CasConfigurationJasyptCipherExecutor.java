@@ -75,6 +75,38 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
+     * Return true if the algorithm requires initialization vector.
+     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) require an initialization vector.
+     * Other algorithms may also use an initialization vector and it will increase the encrypted text's length.
+     *
+     * @param algorithm the algorithm to check
+     * @return true if algorithm requires initialization vector
+     */
+    private static boolean isVectorInitializationRequiredFor(final String algorithm) {
+        return StringUtils.isNotBlank(algorithm) && ALGS_THAT_REQUIRE_IV_PATTERN.matcher(algorithm).matches();
+    }
+
+    /**
+     * Is value encrypted, and does it start with the required prefix.
+     *
+     * @param value the value
+     * @return true/false
+     */
+    public static boolean isValueEncrypted(final String value) {
+        return StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX);
+    }
+
+    /**
+     * Extract encrypted value as string to decode later.
+     *
+     * @param value the value
+     * @return the string
+     */
+    public static String extractEncryptedValue(final String value) {
+        return isValueEncrypted(value) ? value.substring(ENCRYPTED_VALUE_PREFIX.length()) : value;
+    }
+
+    /**
      * Sets algorithm.
      *
      * @param alg the alg
@@ -95,18 +127,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public void setIvGenerator(final IvGenerator iv) {
         jasyptInstance.setIvGenerator(iv);
-    }
-
-    /**
-     * Return true if the algorithm requires initialization vector.
-     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) require an initialization vector.
-     * Other algorithms may also use an initialization vector and it will increase the encrypted text's length.
-     *
-     * @param algorithm the algorithm to check
-     * @return true if algorithm requires initialization vector
-     */
-    private static boolean isVectorInitializationRequiredFor(final String algorithm) {
-        return StringUtils.isNotBlank(algorithm) && ALGS_THAT_REQUIRE_IV_PATTERN.matcher(algorithm).matches();
     }
 
     /**
@@ -189,17 +209,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
-     * Encrypt value string (but don't log error, for use in shell).
-     *
-     * @param value the value
-     * @return the string
-     */
-    private String encryptValueAndThrow(final String value) {
-        initializeJasyptInstanceIfNecessary();
-        return ENCRYPTED_VALUE_PREFIX + jasyptInstance.encrypt(value);
-    }
-
-    /**
      * Decrypt value string.
      *
      * @param value the value
@@ -212,6 +221,17 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
             LOGGER.warn("Could not decrypt value [{}]", value, e);
         }
         return null;
+    }
+
+    /**
+     * Encrypt value string (but don't log error, for use in shell).
+     *
+     * @param value the value
+     * @return the string
+     */
+    private String encryptValueAndThrow(final String value) {
+        initializeJasyptInstanceIfNecessary();
+        return ENCRYPTED_VALUE_PREFIX + jasyptInstance.encrypt(value);
     }
 
     /**
@@ -230,26 +250,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         }
         LOGGER.warn("Encrypted value [{}] has no values.", value);
         return value;
-    }
-
-    /**
-     * Is value encrypted, and does it start with the required prefix.
-     *
-     * @param value the value
-     * @return true/false
-     */
-    public static boolean isValueEncrypted(final String value) {
-        return StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX);
-    }
-
-    /**
-     * Extract encrypted value as string to decode later.
-     *
-     * @param value the value
-     * @return the string
-     */
-    public static String extractEncryptedValue(final String value) {
-        return isValueEncrypted(value) ? value.substring(ENCRYPTED_VALUE_PREFIX.length()) : value;
     }
 
     /**

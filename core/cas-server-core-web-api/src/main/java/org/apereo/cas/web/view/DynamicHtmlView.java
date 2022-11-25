@@ -1,12 +1,13 @@
 package org.apereo.cas.web.view;
 
-import jakarta.annotation.Nonnull;
 import org.springframework.http.MediaType;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.View;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Map;
 
 /**
@@ -23,8 +24,7 @@ public record DynamicHtmlView(String html) implements View {
 
     @Override
     public void render(final Map<String, ?> model,
-                       @Nonnull
-                       final HttpServletRequest request,
+                       @Nonnull final HttpServletRequest request,
                        final HttpServletResponse response) throws Exception {
         response.setContentType(this.getContentType());
         FileCopyUtils.copy(this.html, response.getWriter());

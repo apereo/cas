@@ -47,6 +47,41 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
+    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
+        return getFilterForProperty(Pair.of(p, "true"));
+    }
+
+    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
+            .build();
+
+        val servicesManager = new DefaultServicesManager(context);
+        val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
+
+        val service = RegisteredServiceTestUtils.getRegisteredService("service-0");
+        val props1 = new LinkedHashMap<String, RegisteredServiceProperty>();
+        for (val p : properties) {
+            val prop1 = new DefaultRegisteredServiceProperty();
+            prop1.addValue(p.getValue());
+            props1.put(p.getKey().getPropertyName(), prop1);
+        }
+        service.setProperties(props1);
+        servicesManager.save(service);
+
+        return new RegisteredServiceResponseHeadersEnforcementFilter(new DirectObjectProvider<>(servicesManager),
+            new DirectObjectProvider<>(argumentExtractor),
+            new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
+            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties())));
+    }
+
     @Test
     public void verifyCacheControl() throws Exception {
         val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
@@ -212,40 +247,5 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-0");
         filter.doFilter(request, response, new MockFilterChain());
         assertNull(response.getHeader("X-XSS-Protection"));
-    }
-
-    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
-        return getFilterForProperty(Pair.of(p, "true"));
-    }
-
-    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
-            .applicationContext(appCtx)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-
-        val servicesManager = new DefaultServicesManager(context);
-        val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
-
-        val service = RegisteredServiceTestUtils.getRegisteredService("service-0");
-        val props1 = new LinkedHashMap<String, RegisteredServiceProperty>();
-        for (val p : properties) {
-            val prop1 = new DefaultRegisteredServiceProperty();
-            prop1.addValue(p.getValue());
-            props1.put(p.getKey().getPropertyName(), prop1);
-        }
-        service.setProperties(props1);
-        servicesManager.save(service);
-
-        return new RegisteredServiceResponseHeadersEnforcementFilter(new DirectObjectProvider<>(servicesManager),
-            new DirectObjectProvider<>(argumentExtractor),
-            new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
-            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties())));
     }
 }

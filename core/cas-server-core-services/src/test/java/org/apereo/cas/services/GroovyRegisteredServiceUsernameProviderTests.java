@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 public class GroovyRegisteredServiceUsernameProviderTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceUsernameProviderTests.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -41,7 +42,7 @@ public class GroovyRegisteredServiceUsernameProviderTests {
         val p = new GroovyRegisteredServiceUsernameProvider();
         p.setGroovyScript("groovy { return attributes['uid'] + '123456789' }");
         var id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("uid", "CAS-System")), RegisteredServiceTestUtils.getService(),
+                CollectionUtils.wrap("uid", "CAS-System")), RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService());
         assertEquals("CAS-System123456789", id);
     }
@@ -51,7 +52,7 @@ public class GroovyRegisteredServiceUsernameProviderTests {
         val p = new GroovyRegisteredServiceUsernameProvider();
         p.setGroovyScript("groovy { return attributes['uid'][0] + '123456789' }");
         var id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("uid", List.of("CAS-System"))), RegisteredServiceTestUtils.getService(),
+                CollectionUtils.wrap("uid", List.of("CAS-System"))), RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService());
         assertEquals("CAS-System123456789", id);
     }

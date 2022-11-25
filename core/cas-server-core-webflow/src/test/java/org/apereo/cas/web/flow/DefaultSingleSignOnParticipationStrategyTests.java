@@ -45,7 +45,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(true);
         when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
-        
+
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

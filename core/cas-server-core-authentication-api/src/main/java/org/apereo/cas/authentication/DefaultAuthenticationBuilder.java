@@ -191,16 +191,16 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder setSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
-        this.successes.clear();
-        return addSuccesses(successes);
+    public AuthenticationBuilder addAttributes(final Map<String, Object> attributes) {
+        attributes.forEach(this::addAttribute);
+        return this;
     }
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder addAttributes(final Map<String, Object> attributes) {
-        attributes.forEach(this::addAttribute);
-        return this;
+    public AuthenticationBuilder setSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
+        this.successes.clear();
+        return addSuccesses(successes);
     }
 
     @Override
@@ -230,15 +230,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
                 key);
         }
         this.successes.put(key, value);
-        return this;
-    }
-
-    @Override
-    @CanIgnoreReturnValue
-    public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
-        if (d != null) {
-            this.authenticationDate = d;
-        }
         return this;
     }
 
@@ -312,6 +303,15 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         val collection = CollectionUtils.toCollection(currentValue, ArrayList.class);
         collection.addAll(CollectionUtils.toCollection(value));
         return addAttribute(key, collection);
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
+        if (d != null) {
+            this.authenticationDate = d;
+        }
+        return this;
     }
 
     @Override

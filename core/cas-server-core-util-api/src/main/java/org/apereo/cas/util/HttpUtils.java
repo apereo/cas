@@ -32,6 +32,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import javax.net.ssl.SSLHandshakeException;
+
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -196,7 +197,7 @@ public class HttpUtils {
         requestConfig.setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS);
         requestConfig.setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS);
         requestConfig.setSocketTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS);
-        
+
         val builder = HttpClientBuilder
             .create()
             .useSystemProperties()

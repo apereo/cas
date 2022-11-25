@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -28,6 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Authentication")
 public class DefaultAuthenticationBuilderTests {
+    private static Credential getCredential() {
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername("casuser");
+        credential.assignPassword("P@$$w0rd");
+        return credential;
+    }
+
     @Test
     public void verifyMergeCredentialMetadata() {
         val meta1 = new BasicCredentialMetaData(getCredential(), Map.of("P1", "V1"));
@@ -105,12 +113,5 @@ public class DefaultAuthenticationBuilderTests {
         authn.updateAll(authn2);
         assertTrue(authn.getAttributes().containsKey("authn2"));
         assertTrue(authn.containsAttribute("authn2"));
-    }
-
-    private static Credential getCredential() {
-        val credential = new UsernamePasswordCredential();
-        credential.setUsername("casuser");
-        credential.assignPassword("P@$$w0rd");
-        return credential;
     }
 }

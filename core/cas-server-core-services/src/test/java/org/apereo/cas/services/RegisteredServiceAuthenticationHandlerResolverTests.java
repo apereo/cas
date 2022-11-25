@@ -95,7 +95,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         val resolver = new DefaultAuthenticationHandlerResolver();
         val transaction = new DefaultAuthenticationTransactionFactory()
             .newTransaction(RegisteredServiceTestUtils.getService("serviceid2"),
-            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+                RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);
         assertEquals(handlers.size(), this.authenticationHandlers.size());
     }
@@ -106,7 +106,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = new DefaultAuthenticationTransactionFactory()
             .newTransaction(RegisteredServiceTestUtils.getService("serviceid3"),
-            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+                RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);
         assertEquals(1, handlers.size());
         assertEquals("handler2", handlers.iterator().next().getName());

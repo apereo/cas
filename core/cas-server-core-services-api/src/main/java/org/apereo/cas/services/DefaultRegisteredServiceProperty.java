@@ -13,6 +13,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+
 import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;

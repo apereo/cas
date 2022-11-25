@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
 import javax.crypto.Cipher;
+
 import java.io.Serial;
 import java.security.PublicKey;
 

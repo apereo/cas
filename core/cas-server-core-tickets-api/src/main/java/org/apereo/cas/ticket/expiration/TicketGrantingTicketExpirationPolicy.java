@@ -50,10 +50,8 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
 
     @JsonCreator
     public TicketGrantingTicketExpirationPolicy(
-        @JsonProperty("timeToLive")
-        final long maxTimeToLive,
-        @JsonProperty("timeToIdle")
-        final long timeToKill) {
+        @JsonProperty("timeToLive") final long maxTimeToLive,
+        @JsonProperty("timeToIdle") final long timeToKill) {
         this.maxTimeToLiveInSeconds = maxTimeToLive;
         this.timeToKillInSeconds = timeToKill;
     }

@@ -59,12 +59,6 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     }
 
     @Override
-    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
-        configureSessionClustering(tomcat);
-        return super.getTomcatWebServer(tomcat);
-    }
-
-    @Override
     protected void postProcessContext(final Context context) {
         casProperties.getServer().getTomcat().getHttp()
             .stream()
@@ -77,6 +71,12 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
                 securityConstraint.addCollection(collection);
                 context.addConstraint(securityConstraint);
             });
+    }
+
+    @Override
+    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
+        configureSessionClustering(tomcat);
+        return super.getTomcatWebServer(tomcat);
     }
 
     private void configureSessionClustering(final Tomcat tomcat) {

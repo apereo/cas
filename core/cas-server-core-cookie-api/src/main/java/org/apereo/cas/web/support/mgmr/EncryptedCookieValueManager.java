@@ -10,6 +10,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -24,6 +25,7 @@ import java.io.Serializable;
 public class EncryptedCookieValueManager implements CookieValueManager {
     @Serial
     private static final long serialVersionUID = 6362136147071376270L;
+
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */

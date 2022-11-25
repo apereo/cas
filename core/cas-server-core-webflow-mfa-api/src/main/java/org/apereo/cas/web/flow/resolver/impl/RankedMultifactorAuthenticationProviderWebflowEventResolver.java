@@ -70,6 +70,16 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         return CollectionUtils.wrapSet(resultEvent);
     }
 
+    private static List<String> getOperableTransitions() {
+        val events = new ArrayList<String>();
+        events.add(CasWebflowConstants.TRANSITION_ID_ERROR);
+        events.add(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+        events.add(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        events.add(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS);
+        events.add(CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE);
+        return events;
+    }
+
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         val tgt = WebUtils.getTicketGrantingTicketId(context);
@@ -166,15 +176,5 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         val success = new EventFactorySupport().event(this,
             CasWebflowConstants.TRANSITION_ID_SUCCESS, new LocalAttributeMap<>());
         return CollectionUtils.wrapSet(success);
-    }
-
-    private static List<String> getOperableTransitions() {
-        val events = new ArrayList<String>();
-        events.add(CasWebflowConstants.TRANSITION_ID_ERROR);
-        events.add(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
-        events.add(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        events.add(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS);
-        events.add(CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE);
-        return events;
     }
 }

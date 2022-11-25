@@ -129,7 +129,7 @@ public class MultifactorAuthenticationProviderBypassTests {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
-        
+
         val request = new MockHttpServletRequest();
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setCredentialClassType(Credential.class.getName());

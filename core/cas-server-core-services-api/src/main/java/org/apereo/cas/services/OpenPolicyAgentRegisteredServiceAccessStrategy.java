@@ -64,7 +64,7 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
     private String token;
 
     private Map<String, Object> context = new HashMap<>();
-    
+
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         HttpResponse response = null;

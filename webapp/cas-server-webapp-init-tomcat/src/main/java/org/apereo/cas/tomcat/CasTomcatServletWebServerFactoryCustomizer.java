@@ -43,6 +43,9 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServerFactoryCustomizer {
+    private static final int PORT_RANGE_MIN = 4000;
+    private static final int PORT_RANGE_MAX = 9000;
+
     private final CasConfigurationProperties casProperties;
 
     private final ServerProperties serverProperties;
@@ -180,7 +183,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                 val connector = new Connector(http.getProtocol());
                 var port = http.getPort();
                 if (port <= 0) {
-                    port = RandomUtils.nextInt(4000, 9000);
+                    port = RandomUtils.nextInt(PORT_RANGE_MIN, PORT_RANGE_MAX);
                     LOGGER.warn("No explicit port configuration is provided to CAS. Using random port [{}]", port);
                 }
                 LOGGER.info("Activated embedded tomcat container HTTP port on [{}]", port);

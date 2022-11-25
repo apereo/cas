@@ -6,7 +6,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
-import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +14,10 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Map;
 
 /**
@@ -50,10 +51,8 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     @Override
     @SneakyThrows
     protected void renderMergedOutputModel(final Map<String, Object> model,
-                                           @Nonnull
-                                           final HttpServletRequest request,
-                                           @Nonnull
-                                           final HttpServletResponse response) {
+                                           @Nonnull final HttpServletRequest request,
+                                           @Nonnull final HttpServletResponse response) {
 
         val requestWrapper = new ContentCachingRequestWrapper(request);
         val responseWrapper = new ContentCachingResponseWrapper(response);

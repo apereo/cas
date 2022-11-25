@@ -21,6 +21,18 @@ import static org.mockito.Mockito.*;
 @Tag("Authentication")
 public class CredentialTests {
 
+    private static AbstractCredential getCredential() {
+        return new AbstractCredential() {
+            @Serial
+            private static final long serialVersionUID = -1746359565306558329L;
+
+            @Override
+            public String getId() {
+                return UUID.randomUUID().toString();
+            }
+        };
+    }
+
     @Test
     public void verifyCred() {
         val c1 = getCredential();
@@ -53,18 +65,6 @@ public class CredentialTests {
         val context = mock(ValidationContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         assertDoesNotThrow(() -> c.validate(context));
-    }
-
-    private static AbstractCredential getCredential() {
-        return new AbstractCredential() {
-            @Serial
-            private static final long serialVersionUID = -1746359565306558329L;
-
-            @Override
-            public String getId() {
-                return UUID.randomUUID().toString();
-            }
-        };
     }
 
 }

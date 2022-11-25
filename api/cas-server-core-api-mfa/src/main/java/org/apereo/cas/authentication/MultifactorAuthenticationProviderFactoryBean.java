@@ -12,7 +12,7 @@ import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticat
  */
 @FunctionalInterface
 public interface MultifactorAuthenticationProviderFactoryBean<T extends MultifactorAuthenticationProvider,
-                                                              P extends BaseMultifactorAuthenticationProviderProperties> {
+    P extends BaseMultifactorAuthenticationProviderProperties> {
 
     /**
      * Default suffix to add to the bean name.

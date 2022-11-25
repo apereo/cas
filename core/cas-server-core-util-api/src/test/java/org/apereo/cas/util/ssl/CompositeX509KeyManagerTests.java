@@ -4,9 +4,9 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.X509KeyManager;
+
 import java.net.Socket;
 import java.security.KeyStore;
 import java.security.Principal;

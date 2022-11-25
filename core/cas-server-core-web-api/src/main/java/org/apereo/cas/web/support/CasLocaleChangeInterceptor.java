@@ -17,6 +17,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -61,10 +62,8 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
-                             @Nonnull
-                             final HttpServletResponse response,
-                             @Nonnull
-                             final Object handler) throws ServletException {
+                             @Nonnull final HttpServletResponse response,
+                             @Nonnull final Object handler) throws ServletException {
         val requestUrl = request.getRequestURL().toString();
         if (casProperties.getObject().getLocale().isForceDefaultLocale()) {
             val locale = Locale.forLanguageTag(casProperties.getObject().getLocale().getDefaultValue());

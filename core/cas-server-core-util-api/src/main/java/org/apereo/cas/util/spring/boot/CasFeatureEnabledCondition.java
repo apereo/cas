@@ -23,27 +23,6 @@ import java.util.Map;
 @Slf4j
 public class CasFeatureEnabledCondition extends SpringBootCondition {
 
-    @Override
-    public ConditionOutcome getMatchOutcome(final ConditionContext context,
-                                            final AnnotatedTypeMetadata metadata) {
-        val attributes = metadata.getAnnotationAttributes(ConditionalOnFeatureEnabled.class.getName());
-        if (attributes == null) {
-            val conditions = (AnnotationAttributes[]) metadata.getAnnotationAttributes(
-                ConditionalOnFeaturesEnabled.class.getName()).get("value");
-            val builder = new StringBuilder();
-            val match = Arrays.stream(conditions).allMatch(annotation -> {
-                val feature = (CasFeatureModule.FeatureCatalog) annotation.get("feature");
-                val module = annotation.getString("module");
-                val enabledByDefault = annotation.getBoolean("enabledByDefault");
-                val conditionOutcome = getConditionOutcome(context, feature, module, enabledByDefault);
-                builder.append(conditionOutcome.getMessage()).append(' ');
-                return conditionOutcome.isMatch();
-            });
-            return match ? ConditionOutcome.match(builder.toString()) : ConditionOutcome.noMatch(builder.toString());
-        }
-        return evaluateFeatureCondition(context, attributes);
-    }
-
     private static ConditionOutcome evaluateFeatureCondition(final ConditionContext context,
                                                              final Map<String, Object> attributes) {
         val feature = (CasFeatureModule.FeatureCatalog) attributes.get("feature");
@@ -75,5 +54,26 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
         LOGGER.trace(message);
         feature.register(module);
         return ConditionOutcome.match(message);
+    }
+
+    @Override
+    public ConditionOutcome getMatchOutcome(final ConditionContext context,
+                                            final AnnotatedTypeMetadata metadata) {
+        val attributes = metadata.getAnnotationAttributes(ConditionalOnFeatureEnabled.class.getName());
+        if (attributes == null) {
+            val conditions = (AnnotationAttributes[]) metadata.getAnnotationAttributes(
+                ConditionalOnFeaturesEnabled.class.getName()).get("value");
+            val builder = new StringBuilder();
+            val match = Arrays.stream(conditions).allMatch(annotation -> {
+                val feature = (CasFeatureModule.FeatureCatalog) annotation.get("feature");
+                val module = annotation.getString("module");
+                val enabledByDefault = annotation.getBoolean("enabledByDefault");
+                val conditionOutcome = getConditionOutcome(context, feature, module, enabledByDefault);
+                builder.append(conditionOutcome.getMessage()).append(' ');
+                return conditionOutcome.isMatch();
+            });
+            return match ? ConditionOutcome.match(builder.toString()) : ConditionOutcome.noMatch(builder.toString());
+        }
+        return evaluateFeatureCondition(context, attributes);
     }
 }

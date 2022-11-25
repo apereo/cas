@@ -51,18 +51,18 @@ public class DefaultEncodedTicket implements EncodedTicket {
         this.prefix = prefix;
     }
 
-    @JsonIgnore
-    @Override
-    public int getCountOfUses() {
-        getOpNotSupportedMessage("getCountOfUses");
-        return 0;
-    }
-
     @Override
     @JsonIgnore
     public ZonedDateTime getCreationTime() {
         getOpNotSupportedMessage("getCreationTime");
         return null;
+    }
+
+    @JsonIgnore
+    @Override
+    public int getCountOfUses() {
+        getOpNotSupportedMessage("getCountOfUses");
+        return 0;
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @AutoConfiguration
 public class CasCoreEventsConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.events.core.enabled").isTrue().evenIfMissing();
+
     @Configuration(value = "CasCoreEventsListenerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreEventsListenerConfiguration {
@@ -41,11 +42,9 @@ public class CasCoreEventsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasAuthenticationEventListener defaultCasEventListener(
-            @Qualifier(MessageSanitizer.BEAN_NAME)
-            final MessageSanitizer messageSanitizer,
+            @Qualifier(MessageSanitizer.BEAN_NAME) final MessageSanitizer messageSanitizer,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasEventRepository.BEAN_NAME)
-            final CasEventRepository casEventRepository) throws Exception {
+            @Qualifier(CasEventRepository.BEAN_NAME) final CasEventRepository casEventRepository) throws Exception {
             return BeanSupplier.of(CasAuthenticationEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new CasAuthenticationAuthenticationEventListener(casEventRepository, messageSanitizer))
@@ -53,6 +52,7 @@ public class CasCoreEventsConfiguration {
                 .get();
         }
     }
+
     @Configuration(value = "CasCoreEventsWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreEventsWebConfiguration {
@@ -66,6 +66,7 @@ public class CasCoreEventsConfiguration {
             return new CasEventsReportEndpoint(casProperties, applicationContext);
         }
     }
+
     @Configuration(value = "CasCoreEventsRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreEventsRepositoryConfiguration {

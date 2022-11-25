@@ -65,6 +65,23 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
+    private static String prepareProtocolEndpoint(final String endpoint) {
+        val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
+        val ext = FilenameUtils.getExtension(baseEndpoint);
+        return StringUtils.isBlank(ext) ? baseEndpoint.concat("/**") : baseEndpoint.concat("**");
+    }
+
+    private static void configureJaasAuthenticationProvider(final HttpSecurity http,
+                                                            final JaasSecurityActuatorEndpointsMonitorProperties jaas)
+        throws Exception {
+        val p = new JaasAuthenticationProvider();
+        p.setLoginConfig(jaas.getLoginConfig());
+        p.setLoginContextName(jaas.getLoginContextName());
+        p.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
+        p.afterPropertiesSet();
+        http.authenticationProvider(p);
+    }
+
     @Override
     public void destroy() {
         FunctionUtils.doIfNotNull(endpointLdapAuthenticationProvider, EndpointLdapAuthenticationProvider::destroy);
@@ -97,13 +114,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .ignoring()
             .requestMatchers(patterns.toArray(String[]::new));
     }
-
-    private static String prepareProtocolEndpoint(final String endpoint) {
-        val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
-        val ext = FilenameUtils.getExtension(baseEndpoint);
-        return StringUtils.isBlank(ext) ? baseEndpoint.concat("/**") : baseEndpoint.concat("**");
-    }
-
 
     /**
      * Configure http security.
@@ -203,7 +213,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         });
     }
 
-
     /**
      * Configure endpoint access for static resources.
      *
@@ -261,24 +270,24 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     }
 
     protected void configureEndpointAccessPermitAll(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests,
-                                                  final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests.requestMatchers(endpoint).permitAll();
     }
 
     protected void configureEndpointAccessToDenyAll(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests,
-                                                  final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests.requestMatchers(endpoint).denyAll();
     }
 
     protected void configureEndpointAccessAnonymously(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                      final EndpointRequest.EndpointRequestMatcher endpoint) {
 
         requests.requestMatchers(endpoint).permitAll();
     }
 
     protected void configureEndpointAccessByIpAddress(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests,
-                                                    final ActuatorEndpointProperties properties,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                      final ActuatorEndpointProperties properties,
+                                                      final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests
             .requestMatchers(endpoint)
             .access((authentication, context) -> {
@@ -287,17 +296,17 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
                     context.getRequest().getRemoteAddr());
 
                 val addresses = properties.getRequiredIpAddresses()
-                        .stream()
-                        .filter(addr -> FunctionUtils.doAndHandle(() -> {
-                            val ipAddressMatcher = new IpAddressMatcher(addr);
-                            LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addr);
-                            return ipAddressMatcher.matches(remoteAddr);
-                        }, e -> {
-                            val matcher = RegexUtils.createPattern(addr, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
-                            LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addr);
-                            return matcher.matches();
-                        }).get())
-                        .findFirst();
+                    .stream()
+                    .filter(addr -> FunctionUtils.doAndHandle(() -> {
+                        val ipAddressMatcher = new IpAddressMatcher(addr);
+                        LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addr);
+                        return ipAddressMatcher.matches(remoteAddr);
+                    }, e -> {
+                        val matcher = RegexUtils.createPattern(addr, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
+                        LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addr);
+                        return matcher.matches();
+                    }).get())
+                    .findFirst();
                 val granted = addresses.isPresent();
                 if (!granted) {
                     LOGGER.warn("Provided regular expression or IP/netmask [{}] does not match [{}]", properties.getRequiredIpAddresses(), remoteAddr);
@@ -345,17 +354,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
                && StringUtils.isNotBlank(ldap.getSearchFilter())
                && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
                    || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
-    }
-
-    private static void configureJaasAuthenticationProvider(final HttpSecurity http,
-                                                            final JaasSecurityActuatorEndpointsMonitorProperties jaas)
-        throws Exception {
-        val p = new JaasAuthenticationProvider();
-        p.setLoginConfig(jaas.getLoginConfig());
-        p.setLoginContextName(jaas.getLoginContextName());
-        p.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
-        p.afterPropertiesSet();
-        http.authenticationProvider(p);
     }
 
     private void configureLdapAuthenticationProvider(final HttpSecurity http,

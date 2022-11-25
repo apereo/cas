@@ -112,7 +112,7 @@ public abstract class BaseAmazonWebServicesProperties implements Serializable {
      * Accepted values are {@code STANDARD, LEGACY}.
      */
     private String retryMode = "STANDARD";
-    
+
     /**
      * Local address.
      */

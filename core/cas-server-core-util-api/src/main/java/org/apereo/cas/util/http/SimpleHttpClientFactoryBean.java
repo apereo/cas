@@ -40,6 +40,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -232,6 +233,18 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
         return false;
     }
 
+    @Override
+    public void destroy() {
+        if (this.executorService != null) {
+            try {
+                this.executorService.awaitTermination(TERMINATION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            } catch (final Exception e) {
+                LOGGER.trace(e.getMessage(), e);
+            }
+            this.executorService = null;
+        }
+    }
+
     /**
      * Build a HTTP client based on the current properties.
      *
@@ -294,18 +307,6 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
             this.executorService = new ThreadPoolExecutor(this.threadsNumber, this.threadsNumber, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(this.queueSize));
         }
         return new FutureRequestExecutionService(httpClient, this.executorService);
-    }
-
-    @Override
-    public void destroy() {
-        if (this.executorService != null) {
-            try {
-                this.executorService.awaitTermination(TERMINATION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-            } catch (final Exception e) {
-                LOGGER.trace(e.getMessage(), e);
-            }
-            this.executorService = null;
-        }
     }
 
     /**

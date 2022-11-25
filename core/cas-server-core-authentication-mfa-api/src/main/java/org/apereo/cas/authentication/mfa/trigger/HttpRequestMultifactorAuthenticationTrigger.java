@@ -21,6 +21,7 @@ import org.springframework.core.Ordered;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;

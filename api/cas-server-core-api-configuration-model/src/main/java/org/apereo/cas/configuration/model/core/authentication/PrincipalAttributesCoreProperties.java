@@ -98,10 +98,10 @@ public class PrincipalAttributesCoreProperties implements Serializable {
          */
         MERGE,
         /**
-         *  Query multiple repositories in order and merge the results into
-         *  a single result set. As each repository is queried
-         *  the attributes from the first query in the result set are
-         *  used as the query for the next repository.
+         * Query multiple repositories in order and merge the results into
+         * a single result set. As each repository is queried
+         * the attributes from the first query in the result set are
+         * used as the query for the next repository.
          */
         CASCADE
     }

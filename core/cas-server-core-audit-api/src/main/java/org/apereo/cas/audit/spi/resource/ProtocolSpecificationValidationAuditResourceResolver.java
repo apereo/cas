@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,22 +24,6 @@ import java.util.TreeMap;
  */
 @Slf4j
 public class DefaultPrincipalAttributesMapper implements PrincipalAttributesMapper {
-
-    @Override
-    public Map<String, List<Object>> map(final AttributeMappingRequest request) {
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(request.getMappedAttributeName());
-        if (matcherInline.find()) {
-            val inlineGroovy = matcherInline.group(1);
-            return fetchAttributeValueAsInlineGroovyScript(request.getAttributeName(), request.getResolvedAttributes(), inlineGroovy);
-        }
-        
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(request.getMappedAttributeName());
-        if (matcherFile.find()) {
-            val file = matcherFile.group();
-            return fetchAttributeValueFromExternalGroovyScript(request.getAttributeName(), request.getResolvedAttributes(), file);
-        }
-        return mapSimpleSingleAttributeDefinition(request);
-    }
 
     private static Map<String, List<Object>> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
                                                                                          final Map<String, List<Object>> resolvedAttributes,
@@ -86,8 +71,7 @@ public class DefaultPrincipalAttributesMapper implements PrincipalAttributesMapp
     }
 
     private static Map<String, List<Object>> fetchAttributeValueFromScript(
-        @NotNull
-        final ExecutableCompiledGroovyScript script,
+        @NotNull final ExecutableCompiledGroovyScript script,
         final String attributeName,
         final Map<String, List<Object>> resolvedAttributes) {
         val attributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
@@ -101,5 +85,21 @@ public class DefaultPrincipalAttributesMapper implements PrincipalAttributesMapp
             LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", attributeName);
         }
         return attributesToRelease;
+    }
+
+    @Override
+    public Map<String, List<Object>> map(final AttributeMappingRequest request) {
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(request.getMappedAttributeName());
+        if (matcherInline.find()) {
+            val inlineGroovy = matcherInline.group(1);
+            return fetchAttributeValueAsInlineGroovyScript(request.getAttributeName(), request.getResolvedAttributes(), inlineGroovy);
+        }
+
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(request.getMappedAttributeName());
+        if (matcherFile.find()) {
+            val file = matcherFile.group();
+            return fetchAttributeValueFromExternalGroovyScript(request.getAttributeName(), request.getResolvedAttributes(), file);
+        }
+        return mapSimpleSingleAttributeDefinition(request);
     }
 }

@@ -29,6 +29,7 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
@@ -55,6 +56,28 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final RestAuthenticationPolicyProperties properties;
+
+    private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
+        if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {
+            return new AccountDisabledException("Could not authenticate forbidden account for " + p.getId());
+        }
+        if (statusCode == HttpStatus.UNAUTHORIZED) {
+            return new FailedLoginException("Could not authenticate account for " + p.getId());
+        }
+        if (statusCode == HttpStatus.NOT_FOUND) {
+            return new AccountNotFoundException("Could not locate account for " + p.getId());
+        }
+        if (statusCode == HttpStatus.LOCKED) {
+            return new AccountLockedException("Could not authenticate locked account for " + p.getId());
+        }
+        if (statusCode == HttpStatus.PRECONDITION_FAILED) {
+            return new AccountExpiredException("Could not authenticate expired account for " + p.getId());
+        }
+        if (statusCode == HttpStatus.PRECONDITION_REQUIRED) {
+            return new AccountPasswordMustChangeException("Account password must change for " + p.getId());
+        }
+        return new FailedLoginException("Rest endpoint returned an unknown status code " + statusCode);
+    }
 
     @Override
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
@@ -83,27 +106,5 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
         } finally {
             HttpUtils.close(response);
         }
-    }
-
-    private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
-        if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {
-            return new AccountDisabledException("Could not authenticate forbidden account for " + p.getId());
-        }
-        if (statusCode == HttpStatus.UNAUTHORIZED) {
-            return new FailedLoginException("Could not authenticate account for " + p.getId());
-        }
-        if (statusCode == HttpStatus.NOT_FOUND) {
-            return new AccountNotFoundException("Could not locate account for " + p.getId());
-        }
-        if (statusCode == HttpStatus.LOCKED) {
-            return new AccountLockedException("Could not authenticate locked account for " + p.getId());
-        }
-        if (statusCode == HttpStatus.PRECONDITION_FAILED) {
-            return new AccountExpiredException("Could not authenticate expired account for " + p.getId());
-        }
-        if (statusCode == HttpStatus.PRECONDITION_REQUIRED) {
-            return new AccountPasswordMustChangeException("Account password must change for " + p.getId());
-        }
-        return new FailedLoginException("Rest endpoint returned an unknown status code " + statusCode);
     }
 }

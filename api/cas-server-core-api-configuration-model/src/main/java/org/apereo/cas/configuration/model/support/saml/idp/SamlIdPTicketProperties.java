@@ -31,7 +31,7 @@ public class SamlIdPTicketProperties implements Serializable {
      * name that should be given to the saml artifact cache storage name.
      */
     private String samlArtifactsCacheStorageName = "samlArtifactsCache";
-    
+
     /**
      * The name that should be given to the saml attribute query cache storage name.
      */

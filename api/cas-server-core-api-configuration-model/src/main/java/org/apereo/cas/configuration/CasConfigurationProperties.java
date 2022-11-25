@@ -364,7 +364,7 @@ public class CasConfigurationProperties implements Serializable {
     public Serializable withHolder() {
         return new Holder(this);
     }
-    
+
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private record Holder(CasConfigurationProperties cas) implements Serializable {
         @Serial

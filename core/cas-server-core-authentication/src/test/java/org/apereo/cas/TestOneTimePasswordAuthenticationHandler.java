@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.Map;
 
@@ -48,12 +49,12 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
     }
 
     @Override
-    public boolean supports(final Class<? extends Credential> clazz) {
-        return OneTimePasswordCredential.class.isAssignableFrom(clazz);
+    public boolean supports(final Credential credential) {
+        return credential instanceof OneTimePasswordCredential;
     }
 
     @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof OneTimePasswordCredential;
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return OneTimePasswordCredential.class.isAssignableFrom(clazz);
     }
 }

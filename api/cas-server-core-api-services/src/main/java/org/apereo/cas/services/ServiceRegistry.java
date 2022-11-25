@@ -120,7 +120,7 @@ public interface ServiceRegistry {
 
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Object [" + service + " is of type " + service.getClass()
-                + " when we were expecting " + clazz);
+                                         + " when we were expecting " + clazz);
         }
         return clazz.cast(service);
     }
@@ -183,7 +183,7 @@ public interface ServiceRegistry {
 
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Object [" + service + " is of type " + service.getClass()
-                + " when we were expecting " + clazz);
+                                         + " when we were expecting " + clazz);
         }
         return clazz.cast(service);
     }
