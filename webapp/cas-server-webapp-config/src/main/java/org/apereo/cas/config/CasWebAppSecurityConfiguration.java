@@ -37,6 +37,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Nonnull;
+
 import java.util.List;
 
 /**
@@ -66,8 +67,7 @@ public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfigur
             return new WebMvcConfigurer() {
                 @Override
                 public void addViewControllers(
-                    @Nonnull
-                    final ViewControllerRegistry registry) {
+                    @Nonnull final ViewControllerRegistry registry) {
                     registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
                         .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
                     registry.setOrder(Ordered.HIGHEST_PRECEDENCE);

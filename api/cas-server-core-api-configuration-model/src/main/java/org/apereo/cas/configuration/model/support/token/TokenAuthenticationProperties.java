@@ -49,7 +49,7 @@ public class TokenAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(100);
-    
+
     /**
      * Name of the authentication handler.
      */
@@ -60,7 +60,7 @@ public class TokenAuthenticationProperties implements Serializable {
      * and the lifecycle in which it can be invoked or activated.
      */
     private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
-    
+
     public TokenAuthenticationProperties() {
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);

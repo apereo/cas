@@ -27,13 +27,6 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Groovy")
 public class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
-    @Test
-    public void verifyAction() {
-        assertTrue(runGroovyBypassFor(getAuthentication("casuser")));
-        assertFalse(runGroovyBypassFor(getAuthentication("anotheruser")));
-        assertTrue(runGroovyBypassFor(mock(Authentication.class)));
-    }
-
     private static boolean runGroovyBypassFor(final Authentication authentication) {
         val request = new MockHttpServletRequest();
         val properties = new MultifactorAuthenticationProviderBypassProperties();
@@ -51,7 +44,7 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
-        
+
         return groovy.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
     }
 
@@ -61,5 +54,12 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
         when(principal.getId()).thenReturn(username);
         when(authentication.getPrincipal()).thenReturn(principal);
         return authentication;
+    }
+
+    @Test
+    public void verifyAction() {
+        assertTrue(runGroovyBypassFor(getAuthentication("casuser")));
+        assertFalse(runGroovyBypassFor(getAuthentication("anotheruser")));
+        assertTrue(runGroovyBypassFor(mock(Authentication.class)));
     }
 }

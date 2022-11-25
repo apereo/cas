@@ -22,6 +22,7 @@ public abstract class BaseAsynchronousCouchDbProperties extends BaseCouchDbPrope
 
     @Serial
     private static final long serialVersionUID = -7920471433876478891L;
+
     /**
      * Make DB updates asynchronously.
      */

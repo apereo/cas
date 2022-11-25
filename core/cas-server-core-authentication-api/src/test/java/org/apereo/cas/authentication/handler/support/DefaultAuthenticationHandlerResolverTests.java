@@ -39,7 +39,7 @@ public class DefaultAuthenticationHandlerResolverTests {
 
     @Test
     public void verifyNoOp() {
-       assertFalse(noOp().supports(Set.of(), mock(AuthenticationTransaction.class)));
-       assertTrue(noOp().resolve(Set.of(), mock(AuthenticationTransaction.class)).isEmpty());
+        assertFalse(noOp().supports(Set.of(), mock(AuthenticationTransaction.class)));
+        assertTrue(noOp().resolve(Set.of(), mock(AuthenticationTransaction.class)).isEmpty());
     }
 }

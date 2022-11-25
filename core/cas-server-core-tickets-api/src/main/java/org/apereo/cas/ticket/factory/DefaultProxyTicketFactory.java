@@ -52,18 +52,9 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         return produceTicket(proxyGrantingTicket, service, ticketId, clazz);
     }
 
-    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
-        val registeredService = servicesManager.findServiceBy(service, CasModelRegisteredService.class);
-        if (registeredService != null && registeredService.getProxyTicketExpirationPolicy() != null) {
-            val policy = registeredService.getProxyTicketExpirationPolicy();
-            val count = policy.getNumberOfUses();
-            val ttl = policy.getTimeToLive();
-            if (count > 0 && StringUtils.isNotBlank(ttl)) {
-                return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(count,
-                    Beans.newDuration(ttl).getSeconds());
-            }
-        }
-        return proxyTicketExpirationPolicy.buildTicketExpirationPolicy();
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return ProxyTicket.class;
     }
 
     /**
@@ -119,8 +110,17 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         return encodedId;
     }
 
-    @Override
-    public Class<? extends Ticket> getTicketType() {
-        return ProxyTicket.class;
+    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
+        val registeredService = servicesManager.findServiceBy(service, CasModelRegisteredService.class);
+        if (registeredService != null && registeredService.getProxyTicketExpirationPolicy() != null) {
+            val policy = registeredService.getProxyTicketExpirationPolicy();
+            val count = policy.getNumberOfUses();
+            val ttl = policy.getTimeToLive();
+            if (count > 0 && StringUtils.isNotBlank(ttl)) {
+                return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(count,
+                    Beans.newDuration(ttl).getSeconds());
+            }
+        }
+        return proxyTicketExpirationPolicy.buildTicketExpirationPolicy();
     }
 }

@@ -34,6 +34,18 @@ public class AdditionalMetadataVerificationTests {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    private static Set<ConfigurationMetadataProperty> getProperties(final Resource jsonFile) throws IOException {
+        val mapper = new ObjectMapper().findAndRegisterModules();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
+        val jsonNodeRoot = mapper.readTree(jsonFile.getURL());
+        val propertiesNode = jsonNodeRoot.get("properties");
+        val values = new TypeReference<Set<ConfigurationMetadataProperty>>() {
+        };
+        val reader = mapper.readerFor(values);
+        return reader.readValue(propertiesNode);
+    }
+
     /**
      * Make sure the property names are canonical (not camel case) otherwise app won't start.
      * Spring boot {@link org.springframework.boot.context.properties.migrator.PropertiesMigrationListener}
@@ -63,17 +75,5 @@ public class AdditionalMetadataVerificationTests {
                 }
             }
         }
-    }
-
-    private static Set<ConfigurationMetadataProperty> getProperties(final Resource jsonFile) throws IOException {
-        val mapper = new ObjectMapper().findAndRegisterModules();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
-        val jsonNodeRoot = mapper.readTree(jsonFile.getURL());
-        val propertiesNode = jsonNodeRoot.get("properties");
-        val values = new TypeReference<Set<ConfigurationMetadataProperty>>() {
-        };
-        val reader = mapper.readerFor(values);
-        return reader.readValue(propertiesNode);
     }
 }

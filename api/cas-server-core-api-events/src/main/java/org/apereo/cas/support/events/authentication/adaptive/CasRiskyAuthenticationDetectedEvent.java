@@ -23,7 +23,9 @@ public class CasRiskyAuthenticationDetectedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = 291168297497263298L;
 
     private final Authentication authentication;
+
     private final RegisteredService service;
+
     private final Object score;
 
     public CasRiskyAuthenticationDetectedEvent(final Object source, final Authentication authentication,

@@ -29,8 +29,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +49,9 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -1248,7 +1249,6 @@ public class WebUtils {
     }
 
 
-
     /**
      * Put available authentication handle names.
      *
@@ -1545,7 +1545,6 @@ public class WebUtils {
     public static String getSingleLogoutRequest(final HttpServletRequest request) {
         return (String) request.getAttribute("singleLogoutRequest");
     }
-
 
 
     /**

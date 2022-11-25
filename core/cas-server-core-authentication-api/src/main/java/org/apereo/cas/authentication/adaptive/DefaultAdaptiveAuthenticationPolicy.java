@@ -25,7 +25,9 @@ import org.springframework.webflow.execution.RequestContext;
 public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticationPolicy {
 
     private final GeoLocationService geoLocationService;
+
     private final IPAddressIntelligenceService ipAddressIntelligenceService;
+
     private final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
 
     @Override

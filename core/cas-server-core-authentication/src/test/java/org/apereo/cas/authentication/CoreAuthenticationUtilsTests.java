@@ -241,13 +241,6 @@ public class CoreAuthenticationUtilsTests {
         assertEquals(r3, r1);
     }
 
-    public static class PredicateExample implements Predicate<Credential> {
-        @Override
-        public boolean test(final Credential credential) {
-            return true;
-        }
-    }
-
     @Test
     public void verifyPersonDirectoryOverrides() {
         val principal = new PersonDirectoryPrincipalResolverProperties();
@@ -307,5 +300,12 @@ public class CoreAuthenticationUtilsTests {
         assertTrue(principalResolutionContext4.isReturnNullIfNoAttributes());
         assertEquals(2, principalResolutionContext4.getActiveAttributeRepositoryIdentifiers().size());
         assertEquals("principalAttribute", principalResolutionContext4.getPrincipalAttributeNames());
+    }
+
+    public static class PredicateExample implements Predicate<Credential> {
+        @Override
+        public boolean test(final Credential credential) {
+            return true;
+        }
     }
 }

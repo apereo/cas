@@ -13,6 +13,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -79,7 +80,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      * Consent security policy.
      */
     public static final String INIT_PARAM_CONTENT_SECURITY_POLICY = "contentSecurityPolicy";
-    
+
     /**
      * Static resources file extension values.
      */
@@ -164,7 +165,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         val xframeOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS);
         val xssOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_XSS_PROTECTION);
         val cacheControlStaticResources = filterConfig.getInitParameter(INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES);
-        
+
         this.cacheControlStaticResourcesPattern = Pattern.compile("^.+\\.(" + cacheControlStaticResources + ")$", Pattern.CASE_INSENSITIVE);
         this.enableCacheControl = Boolean.parseBoolean(cacheControl);
         this.enableXContentTypeOptions = Boolean.parseBoolean(contentTypeOpts);
@@ -202,7 +203,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
         } catch (final Exception e) {
             logException(new ServletException(getClass().getSimpleName()
-                + " is blocking this request. Examine the cause in this stack trace to understand why.", e));
+                                              + " is blocking this request. Examine the cause in this stack trace to understand why.", e));
         }
 
         filterChain.doFilter(servletRequest, servletResponse);

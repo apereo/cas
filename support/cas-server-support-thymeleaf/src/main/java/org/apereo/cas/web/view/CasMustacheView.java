@@ -3,11 +3,12 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.samskivert.mustache.Mustache;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
 import lombok.val;
 import org.springframework.boot.web.servlet.view.MustacheView;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.InputStreamReader;
 import java.io.StringWriter;

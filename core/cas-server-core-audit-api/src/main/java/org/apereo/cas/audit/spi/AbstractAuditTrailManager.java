@@ -23,7 +23,6 @@ import java.util.concurrent.Executors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractAuditTrailManager implements AuditTrailManager, DisposableBean {
-
     /**
      * Save records asynchronously.
      */
@@ -31,6 +30,7 @@ public abstract class AbstractAuditTrailManager implements AuditTrailManager, Di
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(
         r -> new Thread(r, "AuditTrailManagerThread"));
+
 
     @Override
     public void record(final AuditActionContext audit) {
@@ -48,6 +48,7 @@ public abstract class AbstractAuditTrailManager implements AuditTrailManager, Di
 
     /**
      * Actual audit record save method.
+     *
      * @param audit Audit record to be saved.
      */
     protected abstract void saveAuditRecord(AuditActionContext audit);

@@ -138,27 +138,6 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         return new WebApplicationServiceFactory().createService(request);
     }
 
-    private TicketFactory getTicketFactory() {
-        val factory = new DefaultTicketFactory();
-        factory.addTicketFactory(ProxyGrantingTicket.class,
-            new DefaultProxyGrantingTicketFactory(null,
-                null, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
-        factory.addTicketFactory(TicketGrantingTicket.class,
-            new DefaultTicketGrantingTicketFactory(null,
-                null, CipherExecutor.noOpOfSerializableToString(), mock(ServicesManager.class)));
-        factory.addTicketFactory(ServiceTicket.class,
-            new DefaultServiceTicketFactory(neverExpiresExpirationPolicyBuilder(),
-                new HashMap<>(0), serviceTicketSessionTrackingPolicy,
-                CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
-        factory.addTicketFactory(ProxyTicket.class,
-            new DefaultProxyTicketFactory(null, new HashMap<>(0),
-                CipherExecutor.noOpOfStringToString(), serviceTicketSessionTrackingPolicy, mock(ServicesManager.class)));
-        factory.addTicketFactory(TransientSessionTicket.class,
-            new DefaultTransientSessionTicketFactory(neverExpiresExpirationPolicyBuilder()));
-        assertSame(Ticket.class, factory.getTicketType());
-        return factory;
-    }
-
     @BeforeEach
     public void prepareNewCAS() {
         this.authentication = mock(Authentication.class);
@@ -239,7 +218,6 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             () -> this.cas.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(SVC1_ID), getAuthenticationContext()));
     }
 
-
     @Test
     public void verifyChainedAuthenticationsOnValidation() {
         val svc = RegisteredServiceTestUtils.getService(SVC2_ID);
@@ -256,12 +234,25 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             .forEach(i -> assertEquals(assertion.chainedAuthentications().get(i), authentication));
     }
 
-    @SuppressWarnings("UnusedVariable")
-    private record VerifyServiceByIdMatcher(String id) implements ArgumentMatcher<Service> {
-        @Override
-        public boolean matches(final Service service) {
-            return service != null && service.getId().equals(id());
-        }
+    private TicketFactory getTicketFactory() {
+        val factory = new DefaultTicketFactory();
+        factory.addTicketFactory(ProxyGrantingTicket.class,
+            new DefaultProxyGrantingTicketFactory(null,
+                null, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
+        factory.addTicketFactory(TicketGrantingTicket.class,
+            new DefaultTicketGrantingTicketFactory(null,
+                null, CipherExecutor.noOpOfSerializableToString(), mock(ServicesManager.class)));
+        factory.addTicketFactory(ServiceTicket.class,
+            new DefaultServiceTicketFactory(neverExpiresExpirationPolicyBuilder(),
+                new HashMap<>(0), serviceTicketSessionTrackingPolicy,
+                CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
+        factory.addTicketFactory(ProxyTicket.class,
+            new DefaultProxyTicketFactory(null, new HashMap<>(0),
+                CipherExecutor.noOpOfStringToString(), serviceTicketSessionTrackingPolicy, mock(ServicesManager.class)));
+        factory.addTicketFactory(TransientSessionTicket.class,
+            new DefaultTransientSessionTicketFactory(neverExpiresExpirationPolicyBuilder()));
+        assertSame(Ticket.class, factory.getTicketType());
+        return factory;
     }
 
     private AuthenticationResult getAuthenticationContext() {
@@ -305,5 +296,13 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         when(tgtMock.getAuthentication()).thenReturn(this.authentication);
 
         return tgtMock;
+    }
+
+    @SuppressWarnings("UnusedVariable")
+    private record VerifyServiceByIdMatcher(String id) implements ArgumentMatcher<Service> {
+        @Override
+        public boolean matches(final Service service) {
+            return service != null && service.getId().equals(id());
+        }
     }
 }

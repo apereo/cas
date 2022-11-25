@@ -19,6 +19,7 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
     private static final UrlValidator URL_VALIDATOR_ALLOW_LOCAL_URLS = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
 
     private final boolean allowLocalUrls;
+
     private final UrlValidator urlValidatorWithRegex;
 
     public SimpleUrlValidatorFactoryBean(final boolean allowLocalUrls) {
@@ -47,6 +48,20 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
         return new SimpleUrlValidator(getUrlValidator(), getDomainValidator());
     }
 
+    @Override
+    public Class<?> getObjectType() {
+        return SimpleUrlValidator.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    public DomainValidator getDomainValidator() {
+        return DomainValidator.getInstance(this.allowLocalUrls);
+    }
+
     private UrlValidator getUrlValidator() {
         if (this.urlValidatorWithRegex != null) {
             return urlValidatorWithRegex;
@@ -57,20 +72,6 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
         }
 
         return UrlValidator.getInstance();
-    }
-
-    public DomainValidator getDomainValidator() {
-        return DomainValidator.getInstance(this.allowLocalUrls);
-    }
-
-    @Override
-    public Class<?> getObjectType() {
-        return SimpleUrlValidator.class;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
 }

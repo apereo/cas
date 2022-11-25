@@ -1,11 +1,12 @@
 package org.apereo.cas.web.support;
 
-import jakarta.annotation.Nonnull;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -100,11 +101,8 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
 
     @Override
     default void afterConcurrentHandlingStarted(
-        @Nonnull
-        final HttpServletRequest request,
-        @Nonnull
-        final HttpServletResponse response,
-        @Nonnull
-        final Object handler) throws Exception {
+        @Nonnull final HttpServletRequest request,
+        @Nonnull final HttpServletResponse response,
+        @Nonnull final Object handler) throws Exception {
     }
 }

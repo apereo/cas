@@ -28,13 +28,6 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) throws Exception {
-        val encTicket = encodeTicket(ticket);
-        LOGGER.debug("Putting ticket [{}] in registry.", ticket.getId());
-        getMapInstance().put(encTicket.getId(), encTicket);
-    }
-
-    @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(ticketId)) {
@@ -55,12 +48,6 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketId) {
-        val encTicketId = encodeTicketId(ticketId);
-        return !StringUtils.isBlank(encTicketId) && getMapInstance().remove(encTicketId) != null ? 1 : 0;
-    }
-
-    @Override
     public long deleteAll() {
         val size = getMapInstance().size();
         getMapInstance().clear();
@@ -77,6 +64,19 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
         LOGGER.trace("Updating ticket [{}] in registry...", ticket.getId());
         addTicket(ticket);
         return ticket;
+    }
+
+    @Override
+    public long deleteSingleTicket(final String ticketId) {
+        val encTicketId = encodeTicketId(ticketId);
+        return !StringUtils.isBlank(encTicketId) && getMapInstance().remove(encTicketId) != null ? 1 : 0;
+    }
+
+    @Override
+    public void addTicketInternal(final Ticket ticket) throws Exception {
+        val encTicket = encodeTicket(ticket);
+        LOGGER.debug("Putting ticket [{}] in registry.", ticket.getId());
+        getMapInstance().put(encTicket.getId(), encTicket);
     }
 
     /**

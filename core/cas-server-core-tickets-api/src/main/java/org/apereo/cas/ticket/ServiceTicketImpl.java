@@ -68,16 +68,11 @@ public class ServiceTicketImpl extends AbstractTicket
      */
     @JsonCreator
     public ServiceTicketImpl(
-        @JsonProperty("id")
-        final @NonNull String id,
-        @JsonProperty("ticketGrantingTicket")
-        final @NonNull TicketGrantingTicket ticket,
-        @JsonProperty("service")
-        final @NonNull Service service,
-        @JsonProperty("credentialProvided")
-        final boolean credentialProvided,
-        @JsonProperty("expirationPolicy")
-        final ExpirationPolicy policy) {
+        @JsonProperty("id") final @NonNull String id,
+        @JsonProperty("ticketGrantingTicket") final @NonNull TicketGrantingTicket ticket,
+        @JsonProperty("service") final @NonNull Service service,
+        @JsonProperty("credentialProvided") final boolean credentialProvided,
+        @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         this.ticketGrantingTicket = ticket;
         this.service = service;

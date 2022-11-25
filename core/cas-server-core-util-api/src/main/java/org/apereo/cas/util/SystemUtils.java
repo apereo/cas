@@ -2,7 +2,6 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
 
-import jakarta.servlet.http.HttpServlet;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -12,6 +11,8 @@ import org.springframework.boot.info.GitProperties;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+
+import jakarta.servlet.http.HttpServlet;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

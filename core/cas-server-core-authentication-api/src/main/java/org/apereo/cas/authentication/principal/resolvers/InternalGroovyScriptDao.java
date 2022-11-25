@@ -50,7 +50,7 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
             }
             val args = new Object[]{username, allAttributes, LOGGER, casProperties, applicationContext};
             val finalAttributes = (Map<String, ?>) ScriptingUtils.executeGroovyScript(
-                    groovyPrincipalAttributesProperties.getLocation(), args, Map.class, true);
+                groovyPrincipalAttributesProperties.getLocation(), args, Map.class, true);
             LOGGER.debug("Groovy-based attributes found are [{}]", finalAttributes);
 
             finalAttributes.forEach((key, v) -> {

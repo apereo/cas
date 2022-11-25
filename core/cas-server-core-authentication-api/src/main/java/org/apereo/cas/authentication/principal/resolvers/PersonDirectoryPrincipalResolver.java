@@ -162,8 +162,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
             if (result.isEmpty()) {
                 LOGGER.warn("Principal resolution is set to resolve users via attribute(s) [{}], and yet "
-                        + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is "
-                        + "likely due to misconfiguration and CAS will use [{}] as the final principal id",
+                            + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is "
+                            + "likely due to misconfiguration and CAS will use [{}] as the final principal id",
                     context.getPrincipalAttributeNames(), principalIdAttributes.keySet(), principalId);
                 builder.success(false);
             } else {
@@ -221,12 +221,12 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 return principal.getId();
             } else {
                 LOGGER.debug("CAS will NOT be using the identifier from the resolved principal [{}] as it's not "
-                    + "configured to use the currently-resolved principal id and will fall back onto using the identifier "
-                    + "for the credential, that is [{}], for principal resolution", principal, id);
+                             + "configured to use the currently-resolved principal id and will fall back onto using the identifier "
+                             + "for the credential, that is [{}], for principal resolution", principal, id);
             }
         } else {
             LOGGER.debug("No principal is currently resolved and available. Falling back onto using the identifier "
-                + " for the credential, that is [{}], for principal resolution", id);
+                         + " for the credential, that is [{}], for principal resolution", id);
         }
         LOGGER.debug("Extracted principal id [{}]", id);
         return StringUtils.isNotBlank(id) ? id.trim() : null;

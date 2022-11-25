@@ -13,7 +13,6 @@ import com.unboundid.scim2.client.ScimInterface;
 import com.unboundid.scim2.client.ScimService;
 import com.unboundid.scim2.common.filters.Filter;
 import com.unboundid.scim2.common.types.UserResource;
-import jakarta.ws.rs.client.ClientBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,6 +21,8 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.client.oauth2.OAuth2ClientSupport;
 import org.springframework.util.Assert;
+
+import jakarta.ws.rs.client.ClientBuilder;
 
 import java.util.Optional;
 

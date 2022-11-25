@@ -29,7 +29,7 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
     private final EmailSender emailSender;
 
     private final NotificationSender notificationSender;
-    
+
     @Override
     public boolean isMailSenderDefined() {
         return this.emailSender != null && this.emailSender.canSend();
@@ -65,7 +65,7 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
         return EmailCommunicationResult.builder().success(false)
             .to(recipients).body(emailRequest.getBody()).build();
     }
-    
+
     @Override
     public boolean sms(final SmsRequest smsRequest) {
         val recipient = smsRequest.getRecipient();

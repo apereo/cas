@@ -21,6 +21,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import jakarta.persistence.Transient;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;

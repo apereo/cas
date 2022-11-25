@@ -2,8 +2,6 @@ package org.apereo.cas.shell.commands.db;
 
 import org.apereo.cas.util.ReflectionUtils;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.MappedSuperclass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -41,6 +39,9 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.MappedSuperclass;
 
 import java.util.EnumSet;
 import java.util.HashMap;

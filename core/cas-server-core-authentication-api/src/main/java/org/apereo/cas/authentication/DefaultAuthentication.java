@@ -72,6 +72,16 @@ public class DefaultAuthentication implements Authentication {
     private Map<String, Throwable> failures = new LinkedHashMap<>();
 
     @Override
+    public void addAttribute(final String name, final Object value) {
+        this.attributes.put(name, CollectionUtils.toCollection(value, ArrayList.class));
+    }
+
+    @Override
+    public boolean containsAttribute(final String name) {
+        return this.attributes.containsKey(name);
+    }
+
+    @Override
     public void update(final Authentication authn) {
         this.attributes.putAll(authn.getAttributes());
         this.authenticationDate = authn.getAuthenticationDate();
@@ -81,16 +91,6 @@ public class DefaultAuthentication implements Authentication {
     public void updateAll(final Authentication authn) {
         this.attributes.clear();
         update(authn);
-    }
-
-    @Override
-    public void addAttribute(final String name, final Object value) {
-        this.attributes.put(name, CollectionUtils.toCollection(value, ArrayList.class));
-    }
-
-    @Override
-    public boolean containsAttribute(final String name) {
-        return this.attributes.containsKey(name);
     }
 
     @Override

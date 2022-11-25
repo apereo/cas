@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.stream.Stream;

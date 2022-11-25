@@ -32,6 +32,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import javax.net.ssl.HostnameVerifier;
+
 import java.util.ArrayList;
 
 /**
@@ -53,10 +54,8 @@ public class CasCoreHttpConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LayeredConnectionSocketFactory trustStoreSslSocketFactory(
-            @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext,
-            @Qualifier("hostnameVerifier")
-            final HostnameVerifier hostnameVerifier) {
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
+            @Qualifier("hostnameVerifier") final HostnameVerifier hostnameVerifier) {
             return new SSLConnectionSocketFactory(casSslContext.getSslContext(), hostnameVerifier);
         }
     }
@@ -82,8 +81,7 @@ public class CasCoreHttpConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasSSLContext casSslContext(
-            @Qualifier("hostnameVerifier")
-            final HostnameVerifier hostnameVerifier,
+            @Qualifier("hostnameVerifier") final HostnameVerifier hostnameVerifier,
             final CasConfigurationProperties casProperties) throws Exception {
             val client = casProperties.getHttpClient().getTruststore();
             if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
@@ -140,12 +138,9 @@ public class CasCoreHttpConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<SimpleHttpClient> httpClient(
-            @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext,
-            @Qualifier("hostnameVerifier")
-            final HostnameVerifier hostnameVerifier,
-            @Qualifier("trustStoreSslSocketFactory")
-            final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
+            @Qualifier("hostnameVerifier") final HostnameVerifier hostnameVerifier,
+            @Qualifier("trustStoreSslSocketFactory") final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) throws Exception {
             return buildHttpClientFactoryBean(casSslContext, hostnameVerifier,
                 trustStoreSslSocketFactory, casProperties);
@@ -155,12 +150,9 @@ public class CasCoreHttpConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpClient noRedirectHttpClient(
-            @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext,
-            @Qualifier("hostnameVerifier")
-            final HostnameVerifier hostnameVerifier,
-            @Qualifier("trustStoreSslSocketFactory")
-            final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
+            @Qualifier("hostnameVerifier") final HostnameVerifier hostnameVerifier,
+            @Qualifier("trustStoreSslSocketFactory") final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) throws Exception {
             return getHttpClient(false, casSslContext, hostnameVerifier,
                 trustStoreSslSocketFactory, casProperties);
@@ -170,12 +162,9 @@ public class CasCoreHttpConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpClient supportsTrustStoreSslSocketFactoryHttpClient(
-            @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext,
-            @Qualifier("hostnameVerifier")
-            final HostnameVerifier hostnameVerifier,
-            @Qualifier("trustStoreSslSocketFactory")
-            final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
+            @Qualifier("hostnameVerifier") final HostnameVerifier hostnameVerifier,
+            @Qualifier("trustStoreSslSocketFactory") final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) throws Exception {
             return getHttpClient(true, casSslContext, hostnameVerifier,
                 trustStoreSslSocketFactory, casProperties);

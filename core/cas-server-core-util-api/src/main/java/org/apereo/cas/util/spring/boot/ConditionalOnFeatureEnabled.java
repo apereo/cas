@@ -39,6 +39,7 @@ public @interface ConditionalOnFeatureEnabled {
     /**
      * Indicate if this feature should be enabled by default
      * if not explicitly enabled.
+     *
      * @return true/false
      */
     boolean enabledByDefault() default true;

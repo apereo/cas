@@ -12,13 +12,14 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
-import jakarta.annotation.Nonnull;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml1.core.Response;
+
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -56,12 +57,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     @Override
     protected void renderMergedOutputModel(
-        @Nonnull
-        final Map<String, Object> model,
-        @Nonnull
-        final HttpServletRequest request,
-        @Nonnull
-        final HttpServletResponse response) throws Exception {
+        @Nonnull final Map<String, Object> model,
+        @Nonnull final HttpServletRequest request,
+        @Nonnull final HttpServletResponse response) throws Exception {
         try {
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             val service = this.samlArgumentExtractor.extractService(request);

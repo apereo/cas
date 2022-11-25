@@ -17,7 +17,7 @@ public interface CasCookieBuilder {
      * Bean name that generates the cookie for the ticket-granting cookie.
      */
     String BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER = "ticketGrantingTicketCookieGenerator";
-    
+
     /**
      * Adds the cookie, taking into account {@link RememberMeCredential#REQUEST_PARAMETER_REMEMBER_ME}
      * in the request.

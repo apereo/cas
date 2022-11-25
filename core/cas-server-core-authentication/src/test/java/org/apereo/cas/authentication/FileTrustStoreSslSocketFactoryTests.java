@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("FileSystem")
 public class FileTrustStoreSslSocketFactoryTests {
     private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
+
     private static final ClassPathResource RESOURCE_P12 = new ClassPathResource("truststore.p12");
 
     @SneakyThrows

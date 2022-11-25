@@ -39,6 +39,15 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    private static RegisteredService newService(final String name) {
+        val service = new CasRegisteredService();
+        service.setServiceId("^https?://.*");
+        service.setName(name);
+        service.setId(1000L);
+        service.setDescription("Test description");
+        return service;
+    }
+
     @Test
     public void verifySetInCache() {
         val id = new PublisherIdentifier();
@@ -200,14 +209,5 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
         val results = strategy.updateLoadedRegisteredServicesFromCache(CollectionUtils.wrapList(service), serviceRegistry);
         assertFalse(results.isEmpty());
         assertEquals(2, results.size());
-    }
-
-    private static RegisteredService newService(final String name) {
-        val service = new CasRegisteredService();
-        service.setServiceId("^https?://.*");
-        service.setName(name);
-        service.setId(1000L);
-        service.setDescription("Test description");
-        return service;
     }
 }

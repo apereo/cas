@@ -2,6 +2,7 @@ package org.apereo.cas.logout.slo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
 /**

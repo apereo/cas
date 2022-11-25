@@ -85,7 +85,7 @@ public enum TriStateBoolean implements Serializable {
 
         @Override
         public TriStateBoolean deserialize(final JsonParser jsonParser,
-                                  final DeserializationContext deserializationContext) throws IOException {
+                                           final DeserializationContext deserializationContext) throws IOException {
             val value = jsonParser.getText();
             if (StringUtils.equalsIgnoreCase(value, Boolean.TRUE.toString())) {
                 return TriStateBoolean.TRUE;

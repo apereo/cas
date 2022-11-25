@@ -22,7 +22,7 @@ public class BasicIdentifiableKey implements IdentifiableKey {
     private static final long serialVersionUID = 2615165623502691246L;
 
     private final String id;
-    
+
     @Delegate(types = Key.class)
     private final Key key;
 }

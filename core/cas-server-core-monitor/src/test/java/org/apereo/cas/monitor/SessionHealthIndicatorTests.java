@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SessionHealthIndicatorTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
+
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     private TicketRegistry defaultRegistry;

@@ -34,7 +34,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private final ConfigurableApplicationContext applicationContext;
-    
+
     @Override
     public void authorize(final HttpServletRequest request, final Service service, final Assertion assertion) {
         val registeredService = this.servicesManager.findServiceBy(service);

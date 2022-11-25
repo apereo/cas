@@ -34,7 +34,7 @@ public class RedisSamlMetadataProperties extends BaseRedisProperties {
      * are expected to be found in the database.
      */
     private boolean idpMetadataEnabled;
-    
+
     /**
      * Crypto settings that sign/encrypt the metadata records.
      */

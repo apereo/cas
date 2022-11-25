@@ -13,6 +13,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.Transient;
+
 import java.io.Serial;
 import java.net.URL;
 import java.util.LinkedHashMap;

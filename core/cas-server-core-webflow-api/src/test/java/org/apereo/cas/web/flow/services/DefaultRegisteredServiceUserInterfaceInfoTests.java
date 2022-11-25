@@ -43,13 +43,13 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
             }
 
             @Override
-            public Collection<Logo> getLogoUrls() {
-                return List.of(new Logo("https://logo.url", 32, 32));
+            public Collection<String> getPrivacyStatementURLs() {
+                return List.of("https://apereo.org/cas");
             }
 
             @Override
-            public Collection<String> getPrivacyStatementURLs() {
-                return List.of("https://apereo.org/cas");
+            public Collection<Logo> getLogoUrls() {
+                return List.of(new Logo("https://logo.url", 32, 32));
             }
         };
         assertNotNull(info.getDescription());
@@ -85,13 +85,13 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
             }
 
             @Override
-            public Collection<Logo> getLogoUrls() {
-                throw new RuntimeException("Bad Logo");
+            public Collection<String> getPrivacyStatementURLs() {
+                return List.of();
             }
 
             @Override
-            public Collection<String> getPrivacyStatementURLs() {
-                return List.of();
+            public Collection<Logo> getLogoUrls() {
+                throw new RuntimeException("Bad Logo");
             }
         };
         assertNotNull(info.getInformationURL());

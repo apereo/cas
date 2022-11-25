@@ -65,11 +65,11 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             val validAuthn = validateExistingAuthentication(authn, context);
             if (validAuthn) {
                 LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
-                    + "CAS will try to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
+                             + "CAS will try to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
                 return true;
             }
             LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is NOT valid. "
-                    + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
+                         + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
                 ticketGrantingTicketId, service);
             return false;
         }
@@ -114,8 +114,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
 
             if (existingAuthn != null && !existingAuthn.getPrincipal().equals(principal)) {
                 LOGGER.trace("Existing authentication context linked to ticket-granting ticket [{}] is issued for principal [{}] "
-                        + " which does not match [{}], established by the requested authentication transaction. CAS will NOT re-use the existing "
-                        + "authentication context to issue service tickets",
+                             + " which does not match [{}], established by the requested authentication transaction. CAS will NOT re-use the existing "
+                             + "authentication context to issue service tickets",
                     ticketGrantingTicketId, existingAuthn.getPrincipal(), principal);
                 return null;
             }

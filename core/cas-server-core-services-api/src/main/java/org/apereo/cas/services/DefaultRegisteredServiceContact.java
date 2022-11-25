@@ -12,11 +12,12 @@ import lombok.experimental.Accessors;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Table;
+
 import java.io.Serial;
 
 /**
  * Contact assigned to a service definition.
- * 
+ *
  * @author Travis Schmidt
  * @since 5.2
  */
@@ -49,5 +50,5 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
 
     @Column
     private String type;
-    
+
 }

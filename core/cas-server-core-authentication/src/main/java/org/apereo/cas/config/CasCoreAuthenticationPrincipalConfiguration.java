@@ -60,8 +60,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         public PrincipalResolver defaultPrincipalResolver(
             final ObjectProvider<List<PrincipalResolutionExecutionPlanConfigurer>> configurers,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
-            final PrincipalElectionStrategy principalElectionStrategy) {
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME) final PrincipalElectionStrategy principalElectionStrategy) {
             val plan = new DefaultPrincipalResolutionExecutionPlan();
             val sortedConfigurers = new ArrayList<>(
                 Optional.ofNullable(configurers.getIfAvailable()).orElseGet(() -> new ArrayList<>(0)));
@@ -88,8 +87,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategy principalElectionStrategy(
             final List<PrincipalElectionStrategyConfigurer> configurers,
-            @Qualifier("principalElectionAttributeMerger")
-            final IAttributeMerger attributeMerger) {
+            @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger) {
             LOGGER.trace("Building principal election strategies from [{}]", configurers);
             val chain = new ChainingPrincipalElectionStrategy();
             chain.setAttributeMerger(attributeMerger);
@@ -113,11 +111,9 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
-            @Qualifier("principalElectionAttributeMerger")
-            final IAttributeMerger attributeMerger,
+            @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,
-            @Qualifier("principalFactory")
-            final PrincipalFactory principalFactory) {
+            @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
             return chain -> {
                 val conflictResolver = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory());
                 val strategy = new DefaultPrincipalElectionStrategy(principalFactory, conflictResolver);

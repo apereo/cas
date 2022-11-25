@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 import lombok.val;
 
 import jakarta.persistence.Transient;
+
 import java.io.Serial;
 import java.net.URI;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
         buildGroovyAccessStrategyInstanceIfNeeded();
         return this.groovyStrategyInstance.isServiceAccessAllowed();
     }
-    
+
     @Override
     @JsonIgnore
     public boolean isServiceAccessAllowedForSso() {

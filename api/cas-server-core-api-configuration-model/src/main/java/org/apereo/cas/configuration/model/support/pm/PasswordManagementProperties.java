@@ -44,7 +44,7 @@ public class PasswordManagementProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
-    
+
     /**
      * Manage account passwords in LDAP.
      */
@@ -78,7 +78,7 @@ public class PasswordManagementProperties implements Serializable {
      * Settings related to fetching usernames.
      */
     @NestedConfigurationProperty
-    private ForgotUsernamePasswordManagementProperties forgotUsername = 
+    private ForgotUsernamePasswordManagementProperties forgotUsername =
         new ForgotUsernamePasswordManagementProperties();
 
     /**

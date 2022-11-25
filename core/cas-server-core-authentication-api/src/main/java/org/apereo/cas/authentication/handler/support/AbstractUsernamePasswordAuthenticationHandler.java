@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
@@ -56,11 +57,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     }
 
     @Override
-    public boolean supports(final Class<? extends Credential> clazz) {
-        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
-    }
-
-    @Override
     public boolean supports(final Credential credential) {
         if (!UsernamePasswordCredential.class.isInstance(credential)) {
             LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", getName());
@@ -74,6 +70,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         val result = getCredentialSelectionPredicate().test(credential);
         LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]", credential, getName(), BooleanUtils.toStringTrueFalse(result));
         return result;
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

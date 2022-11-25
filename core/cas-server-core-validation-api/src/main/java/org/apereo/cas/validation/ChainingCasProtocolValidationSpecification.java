@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +50,12 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
             .allMatch(s -> s.isSatisfiedBy(assertion, request));
     }
 
+    @Override
+    public void reset() {
+        this.specifications.forEach(CasProtocolValidationSpecification::reset);
+        setRenew(false);
+    }
+
     /**
      * Add policy.
      *
@@ -74,11 +81,5 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
      */
     public int size() {
         return specifications.size();
-    }
-
-    @Override
-    public void reset() {
-        this.specifications.forEach(CasProtocolValidationSpecification::reset);
-        setRenew(false);
     }
 }

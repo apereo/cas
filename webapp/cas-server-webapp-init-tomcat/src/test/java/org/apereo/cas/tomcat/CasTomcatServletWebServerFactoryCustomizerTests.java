@@ -33,6 +33,14 @@ public class CasTomcatServletWebServerFactoryCustomizerTests {
     @Autowired
     protected ServerProperties serverProperties;
 
+    private static TomcatServletWebServerFactory execCustomize(final CasTomcatServletWebServerFactoryCustomizer customizer) {
+        val factory = mock(TomcatServletWebServerFactory.class);
+        val customizers = new ArrayList<TomcatConnectorCustomizer>();
+        when(factory.getTomcatConnectorCustomizers()).thenReturn(customizers);
+        assertDoesNotThrow(() -> customizer.customize(factory));
+        return factory;
+    }
+
     @Test
     public void verifyExtAccessLogDir() {
         val casProperties = new CasConfigurationProperties();
@@ -100,14 +108,6 @@ public class CasTomcatServletWebServerFactoryCustomizerTests {
         val factory = execCustomize(customizer);
         factory.getTomcatConnectorCustomizers().forEach(c ->
             assertDoesNotThrow(() -> c.customize(new Connector())));
-    }
-
-    private static TomcatServletWebServerFactory execCustomize(final CasTomcatServletWebServerFactoryCustomizer customizer) {
-        val factory = mock(TomcatServletWebServerFactory.class);
-        val customizers = new ArrayList<TomcatConnectorCustomizer>();
-        when(factory.getTomcatConnectorCustomizers()).thenReturn(customizers);
-        assertDoesNotThrow(() -> customizer.customize(factory));
-        return factory;
     }
 
 }

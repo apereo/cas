@@ -55,8 +55,7 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnEnabledHealthIndicator("sessionHealthIndicator")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HealthIndicator sessionHealthIndicator(
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry,
+        @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
         final CasConfigurationProperties casProperties) {
         val warnSt = casProperties.getMonitor().getSt().getWarn();
         val warnTgt = casProperties.getMonitor().getTgt().getWarn();
@@ -76,8 +75,7 @@ public class CasCoreMonitorConfiguration {
         @ConditionalOnAvailableEndpoint(endpoint = MetricsEndpoint.class)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HealthIndicator systemHealthIndicator(
-            @Qualifier("metricsEndpoint")
-            final ObjectProvider<MetricsEndpoint> metricsEndpoint,
+            @Qualifier("metricsEndpoint") final ObjectProvider<MetricsEndpoint> metricsEndpoint,
             final CasConfigurationProperties casProperties) {
             val warnLoad = casProperties.getMonitor().getLoad().getWarn();
             return new SystemMonitorHealthIndicator(metricsEndpoint, warnLoad.getThreshold());

@@ -25,6 +25,11 @@ public class DefaultTicketFactory implements TicketFactory {
         return (TicketFactory) this.factoryMap.get(clazz.getCanonicalName());
     }
 
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return Ticket.class;
+    }
+
     /**
      * Add ticket factory.
      *
@@ -37,10 +42,5 @@ public class DefaultTicketFactory implements TicketFactory {
                                                  final @NonNull TicketFactory factory) {
         this.factoryMap.put(ticketClass.getCanonicalName(), factory);
         return this;
-    }
-
-    @Override
-    public Class<? extends Ticket> getTicketType() {
-        return Ticket.class;
     }
 }

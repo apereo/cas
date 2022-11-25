@@ -28,6 +28,12 @@ public class PasswordEncoderUtilsTests {
 
     private StaticApplicationContext applicationContext;
 
+    private static void verifyEncodeAndMatch(final PasswordEncoder encoder) {
+        assertNotNull(encoder);
+        val result = encoder.encode(RAW_PASSWORD);
+        assertTrue(encoder.matches(RAW_PASSWORD, result));
+    }
+
     @BeforeEach
     public void setup() {
         applicationContext = new StaticApplicationContext();
@@ -51,12 +57,6 @@ public class PasswordEncoderUtilsTests {
         properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.ARGON2.name());
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
         verifyEncodeAndMatch(encoder);
-    }
-
-    private static void verifyEncodeAndMatch(final PasswordEncoder encoder) {
-        assertNotNull(encoder);
-        val result = encoder.encode(RAW_PASSWORD);
-        assertTrue(encoder.matches(RAW_PASSWORD, result));
     }
 
     @Test

@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.stream.Stream;

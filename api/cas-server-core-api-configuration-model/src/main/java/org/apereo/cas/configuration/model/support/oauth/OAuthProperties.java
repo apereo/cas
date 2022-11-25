@@ -53,27 +53,31 @@ public class OAuthProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OAuthGrantsProperties grants = new OAuthGrantsProperties();
+
     /**
      * Settings related to oauth codes.
      */
     @NestedConfigurationProperty
     private OAuthCodeProperties code = new OAuthCodeProperties();
+
     /**
      * Settings related to oauth access tokens.
      */
     @NestedConfigurationProperty
     private OAuthAccessTokenProperties accessToken = new OAuthAccessTokenProperties();
+
     /**
      * Settings related to oauth refresh tokens.
      */
     @NestedConfigurationProperty
     private OAuthRefreshTokenProperties refreshToken = new OAuthRefreshTokenProperties();
+
     /**
      * Settings related to oauth device tokens.
      */
     @NestedConfigurationProperty
     private OAuthDeviceTokenProperties deviceToken = new OAuthDeviceTokenProperties();
-                                                                        
+
     /**
      * Settings related to oauth device user codes.
      */
@@ -91,7 +95,7 @@ public class OAuthProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OAuthCoreProperties core = new OAuthCoreProperties();
-    
+
     public OAuthProperties() {
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);

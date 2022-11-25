@@ -52,7 +52,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     private Key signingKey;
 
     private Map<String, Object> signingOpHeaders = new LinkedHashMap<>();
-    
+
     private Map<String, Object> encryptionOpHeaders = new LinkedHashMap<>();
 
     private Map<String, Object> commonHeaders = new LinkedHashMap<>();

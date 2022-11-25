@@ -55,7 +55,7 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
         "cas.server.tomcat.ajp.secret=s3cr3t",
         "cas.server.tomcat.ajp.redirect-port=1234",
         "cas.server.tomcat.ajp.proxy-port=1212",
-        
+
         "cas.server.tomcat.basic-authn.enabled=true",
         "cas.server.tomcat.ext-access-log.enabled=true",
         "cas.server.tomcat.rewrite-valve.location=classpath:/container/tomcat/rewrite.config"
@@ -74,7 +74,7 @@ public class CasTomcatServletWebServerFactoryTests {
     @Autowired
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
-    
+
     @Test
     public void verifyOperation() {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);

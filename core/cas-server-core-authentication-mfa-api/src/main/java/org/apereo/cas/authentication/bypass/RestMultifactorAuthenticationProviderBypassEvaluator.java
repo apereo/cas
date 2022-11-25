@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.Serial;
 
 /**
@@ -45,7 +46,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
             val principal = resolvePrincipal(authentication.getPrincipal());
             val rest = bypassProperties.getRest();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
-                    + "service [{}] and provider [{}] via REST endpoint [{}]",
+                         + "service [{}] and provider [{}] via REST endpoint [{}]",
                 principal.getId(), registeredService, provider, rest.getUrl());
 
             val parameters = CollectionUtils.<String, String>wrap("principal", principal.getId(), "provider", provider.getId());

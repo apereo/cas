@@ -72,6 +72,16 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         Arrays.stream(defns).forEach(this::registerAttributeDefinition);
     }
 
+    private static String getAttributeDefinitionKey(final String key, final AttributeDefinition defn) {
+        if (StringUtils.isNotBlank(defn.getKey()) && !StringUtils.equalsIgnoreCase(defn.getKey(), key)) {
+            LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
+                        + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
+                        + "to register the attribute definition in the attribute store", defn.getKey(), key, defn.getKey());
+            return defn.getKey();
+        }
+        return key;
+    }
+
     @Override
     @CanIgnoreReturnValue
     public AttributeDefinitionStore registerAttributeDefinition(final AttributeDefinition defn) {
@@ -85,16 +95,6 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         val keyToUse = getAttributeDefinitionKey(key, defn);
         attributeDefinitions.putIfAbsent(keyToUse, defn);
         return this;
-    }
-
-    private static String getAttributeDefinitionKey(final String key, final AttributeDefinition defn) {
-        if (StringUtils.isNotBlank(defn.getKey()) && !StringUtils.equalsIgnoreCase(defn.getKey(), key)) {
-            LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
-                        + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
-                        + "to register the attribute definition in the attribute store", defn.getKey(), key, defn.getKey());
-            return defn.getKey();
-        }
-        return key;
     }
 
     @Override
@@ -170,13 +170,6 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
 
     @Override
     @CanIgnoreReturnValue
-    public AttributeDefinitionStore importStore(final AttributeDefinitionStore samlStore) {
-        samlStore.getAttributeDefinitions().forEach(this::registerAttributeDefinition);
-        return this;
-    }
-
-    @Override
-    @CanIgnoreReturnValue
     public AttributeDefinitionStore store(final Resource resource) {
         return FunctionUtils.doUnchecked(() -> {
             val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);
@@ -187,6 +180,13 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             }
             return this;
         });
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public AttributeDefinitionStore importStore(final AttributeDefinitionStore samlStore) {
+        samlStore.getAttributeDefinitions().forEach(this::registerAttributeDefinition);
+        return this;
     }
 
     @Override

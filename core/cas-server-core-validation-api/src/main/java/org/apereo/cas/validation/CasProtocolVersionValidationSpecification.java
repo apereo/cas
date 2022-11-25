@@ -5,6 +5,7 @@ import org.apereo.cas.services.CasModelRegisteredService;
 import lombok.val;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 

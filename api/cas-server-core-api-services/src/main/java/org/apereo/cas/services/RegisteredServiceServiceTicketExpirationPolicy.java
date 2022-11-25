@@ -17,20 +17,6 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceServiceTicketExpirationPolicy extends Serializable {
     /**
-     * Gets number of times this ticket can be used.
-     *
-     * @return the number of uses
-     */
-    long getNumberOfUses();
-
-    /**
-     * Get the TTL of this ticket, in seconds.
-     *
-     * @return the time to live
-     */
-    String getTimeToLive();
-
-    /**
      * Undefined registered service service ticket expiration policy.
      *
      * @return the registered service service ticket expiration policy
@@ -51,4 +37,18 @@ public interface RegisteredServiceServiceTicketExpirationPolicy extends Serializ
             }
         };
     }
+
+    /**
+     * Gets number of times this ticket can be used.
+     *
+     * @return the number of uses
+     */
+    long getNumberOfUses();
+
+    /**
+     * Get the TTL of this ticket, in seconds.
+     *
+     * @return the time to live
+     */
+    String getTimeToLive();
 }

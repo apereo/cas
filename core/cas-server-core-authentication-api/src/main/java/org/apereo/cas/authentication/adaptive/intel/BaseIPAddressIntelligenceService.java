@@ -27,12 +27,6 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
         context.getFlowScope().put("ipAddressIntelligenceResponse", response);
     }
 
-    private boolean isClientIpAddressRejected(final String clientIp) {
-        val rejectIpAddresses = this.adaptiveAuthenticationProperties.getPolicy().getRejectIpAddresses();
-        return StringUtils.isNotBlank(rejectIpAddresses)
-            && Pattern.compile(rejectIpAddresses).matcher(clientIp).find();
-    }
-
     @Override
     public IPAddressIntelligenceResponse examine(final RequestContext context, final String clientIpAddress) {
         if (isClientIpAddressRejected(clientIpAddress)) {
@@ -53,4 +47,10 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
      * @return the ip address intelligence response
      */
     public abstract IPAddressIntelligenceResponse examineInternal(RequestContext context, String clientIpAddress);
+
+    private boolean isClientIpAddressRejected(final String clientIp) {
+        val rejectIpAddresses = this.adaptiveAuthenticationProperties.getPolicy().getRejectIpAddresses();
+        return StringUtils.isNotBlank(rejectIpAddresses)
+               && Pattern.compile(rejectIpAddresses).matcher(clientIp).find();
+    }
 }

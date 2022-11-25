@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link MultiTimeUseOrTimeoutExpirationPolicy}.
+ *
  * @author Scott Battaglia
  * @since 3.0.0
  */
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "multiTimeUseOrTimeoutExpirationPolicy.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -44,6 +46,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     private MultiTimeUseOrTimeoutExpirationPolicy expirationPolicy;
 
     private TicketGrantingTicketImpl ticket;
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
+    }
 
     @BeforeEach
     public void initialize() {
@@ -89,11 +97,5 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, MultiTimeUseOrTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
-    }
-
-    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
-        val props = new CasConfigurationProperties();
-        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
-        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
     }
 }

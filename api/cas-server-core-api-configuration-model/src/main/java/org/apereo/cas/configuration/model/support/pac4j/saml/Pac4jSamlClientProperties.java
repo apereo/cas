@@ -293,8 +293,9 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * Controls the way SAML2 attributes are converted from the authentication response into pac4j attributes.
      * By default, values of complex types are serialized into a single attribute. To change this behaviour, a
      * converter class implementing the {@code
-        AttributeConverter
-    } interface.
+     * AttributeConverter
+     * } interface.
+     *
      * @see <a href="https://www.pac4j.org/docs/clients/saml.html">Pac4j</a>
      */
     private String saml2AttributeConverter;

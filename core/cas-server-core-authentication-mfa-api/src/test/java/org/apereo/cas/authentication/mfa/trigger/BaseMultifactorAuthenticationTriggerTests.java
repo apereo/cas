@@ -55,7 +55,7 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
     protected TestMultifactorAuthenticationProvider multifactorAuthenticationProvider;
 
     protected ConfigurableApplicationContext applicationContext;
-    
+
     @BeforeEach
     public void setup(final TestInfo info) {
         this.applicationContext = new StaticApplicationContext();

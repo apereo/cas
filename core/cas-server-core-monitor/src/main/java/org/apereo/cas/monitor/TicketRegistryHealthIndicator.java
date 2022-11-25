@@ -33,6 +33,14 @@ public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
      */
     private final int sessionCountWarnThreshold;
 
+    private static void buildHealthCheckStatus(final Health.Builder builder,
+                                               final long sessionCount, final long ticketCount, final String msg) {
+        builder
+            .withDetail("sessionCount", sessionCount)
+            .withDetail("ticketCount", ticketCount)
+            .withDetail("message", msg);
+    }
+
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         builder.withDetail("name", getClass().getSimpleName());
@@ -60,13 +68,5 @@ public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
         }
 
         buildHealthCheckStatus(builder.up(), sessionCount, ticketCount, "OK");
-    }
-
-    private static void buildHealthCheckStatus(final Health.Builder builder,
-                                               final long sessionCount, final long ticketCount, final String msg) {
-        builder
-            .withDetail("sessionCount", sessionCount)
-            .withDetail("ticketCount", ticketCount)
-            .withDetail("message", msg);
     }
 }

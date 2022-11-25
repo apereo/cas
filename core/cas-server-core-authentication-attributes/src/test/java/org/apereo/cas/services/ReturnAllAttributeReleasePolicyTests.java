@@ -189,7 +189,7 @@ public class ReturnAllAttributeReleasePolicyTests {
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();
-        
+
         val consented = policy.getConsentableAttributes(releasePolicyContext);
         assertEquals(1, consented.size());
         assertTrue(consented.containsKey("cn"));

@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * This is {@link DetailedCredentialMetaData}.
  * Carries additional properties and details for a credential metadata.
+ *
  * @author Misagh Moayyed
  * @since 4.2.0
  */

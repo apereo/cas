@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
+
 import java.io.Serial;
 
 /**
@@ -60,6 +61,20 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
         this.groovyScript = script;
     }
 
+    @Override
+    public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
+        if (StringUtils.isNotBlank(this.groovyScript)) {
+            initializeWatchableScriptIfNeeded();
+            val result = getGroovyAttributeValue(principal, service);
+            if (result != null) {
+                LOGGER.debug("Found username [{}] from script", result);
+                return result.toString();
+            }
+        }
+        LOGGER.warn("Groovy script [{}] is not valid. CAS will switch to use the default principal identifier [{}]", this.groovyScript, principal.getId());
+        return principal.getId();
+    }
+
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
         if (this.executableScript == null) {
@@ -74,20 +89,6 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
                 this.executableScript = new GroovyShellScript(matcherInline.group(1));
             }
         }
-    }
-
-    @Override
-    public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
-        if (StringUtils.isNotBlank(this.groovyScript)) {
-            initializeWatchableScriptIfNeeded();
-            val result = getGroovyAttributeValue(principal, service);
-            if (result != null) {
-                LOGGER.debug("Found username [{}] from script", result);
-                return result.toString();
-            }
-        }
-        LOGGER.warn("Groovy script [{}] is not valid. CAS will switch to use the default principal identifier [{}]", this.groovyScript, principal.getId());
-        return principal.getId();
     }
 
     private Object getGroovyAttributeValue(final Principal principal, final Service service) {

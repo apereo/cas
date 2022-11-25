@@ -52,7 +52,7 @@ public class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
 
         val resolver = new MultifactorAuthenticationProviderBypassAuditResourceResolver();
         resolver.setAuditFormat(AuditTrailManager.AuditFormats.JSON);
-        
+
         val jp = mock(JoinPoint.class);
         val args = new Object[]{
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),

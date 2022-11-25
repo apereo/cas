@@ -45,7 +45,7 @@ public class ReturnStaticAttributeReleasePolicy extends AbstractRegisteredServic
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
-                                                                     final Map<String, List<Object>> resolvedAttributes) {
+                                                           final Map<String, List<Object>> resolvedAttributes) {
         return allowedAttributes
             .entrySet()
             .stream()

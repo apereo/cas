@@ -42,32 +42,6 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
 
     @Override
     public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
-                                                                           final RegisteredService service) {
-        if (!service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
-            LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service.getServiceId());
-            return new LinkedHashMap<>(0);
-        }
-
-        val attrs = new LinkedHashMap<>(authentication.getAttributes());
-        attrs.keySet().removeAll(neverReleaseAttributes);
-
-        if (onlyReleaseAttributes != null && !onlyReleaseAttributes.isEmpty()) {
-            attrs.keySet().retainAll(onlyReleaseAttributes);
-        }
-
-        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE)) {
-            attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
-                CollectionUtils.wrap(authentication.getAuthenticationDate()));
-        }
-
-        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attrs, authentication, service);
-
-        LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
-        return attrs;
-    }
-
-    @Override
-    public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
                                                                            final Assertion assertion,
                                                                            final Map<String, Object> model,
                                                                            final RegisteredService service) {
@@ -76,7 +50,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
             return new LinkedHashMap<>(0);
         }
         val attrs = getAuthenticationAttributesForRelease(authentication, service);
-        
+
         if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
             var forceAuthn = assertion != null && assertion.fromNewLogin();
             if (!forceAuthn) {
@@ -106,6 +80,32 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
         }
 
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attrs, model, service);
+        LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
+        return attrs;
+    }
+
+    @Override
+    public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
+                                                                           final RegisteredService service) {
+        if (!service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
+            LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service.getServiceId());
+            return new LinkedHashMap<>(0);
+        }
+
+        val attrs = new LinkedHashMap<>(authentication.getAttributes());
+        attrs.keySet().removeAll(neverReleaseAttributes);
+
+        if (onlyReleaseAttributes != null && !onlyReleaseAttributes.isEmpty()) {
+            attrs.keySet().retainAll(onlyReleaseAttributes);
+        }
+
+        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE)) {
+            attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
+                CollectionUtils.wrap(authentication.getAuthenticationDate()));
+        }
+
+        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attrs, authentication, service);
+
         LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
         return attrs;
     }

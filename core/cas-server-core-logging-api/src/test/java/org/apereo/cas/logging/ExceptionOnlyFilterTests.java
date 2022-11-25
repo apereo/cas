@@ -25,6 +25,17 @@ import static org.mockito.Mockito.*;
 @Slf4j
 public class ExceptionOnlyFilterTests {
 
+    private static long getFileSize() {
+        var logFile = FileUtils.getFile("build/slf4j-exceptions.log");
+        assertTrue(logFile.exists(), "Log file not found");
+        return logFile.length();
+    }
+
+    @SneakyThrows
+    private static void sleep(final int millis) {
+        Thread.sleep(millis);
+    }
+
     /**
      * Test that only log messages with Exception pass the {@link ExceptionOnlyFilter} filter.
      * This test implicitly should test generation of
@@ -60,17 +71,6 @@ public class ExceptionOnlyFilterTests {
             filter.filter(mock(Logger.class), Level.INFO, mock(Marker.class), "message", "value1", new Throwable()));
         assertEquals(Filter.Result.DENY,
             filter.filter(mock(Logger.class), Level.INFO, mock(Marker.class), "message", "value1", "value2"));
-    }
-
-    private static long getFileSize() {
-        var logFile = FileUtils.getFile("build/slf4j-exceptions.log");
-        assertTrue(logFile.exists(), "Log file not found");
-        return logFile.length();
-    }
-
-    @SneakyThrows
-    private static void sleep(final int millis) {
-        Thread.sleep(millis);
     }
 
 

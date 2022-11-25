@@ -16,6 +16,7 @@ import java.util.Map;
 @Getter
 public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     private final transient Script groovyScript;
+
     private final String script;
 
     public GroovyShellScript(final String script) {
@@ -53,7 +54,7 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
             variables.forEach(binding::setVariable);
         }
     }
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

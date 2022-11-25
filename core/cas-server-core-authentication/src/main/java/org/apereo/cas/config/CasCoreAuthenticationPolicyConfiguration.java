@@ -62,10 +62,8 @@ public class CasCoreAuthenticationPolicyConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy(
             final CasConfigurationProperties casProperties,
-            @Qualifier("ipAddressIntelligenceService")
-            final IPAddressIntelligenceService ipAddressIntelligenceService,
-            @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<GeoLocationService> geoLocationService) {
+            @Qualifier("ipAddressIntelligenceService") final IPAddressIntelligenceService ipAddressIntelligenceService,
+            @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService) {
             return new DefaultAdaptiveAuthenticationPolicy(geoLocationService.getIfAvailable(),
                 ipAddressIntelligenceService, casProperties.getAuthn().getAdaptive());
         }

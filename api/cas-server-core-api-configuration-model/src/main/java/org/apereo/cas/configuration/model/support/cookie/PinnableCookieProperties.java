@@ -13,6 +13,7 @@ import java.io.Serial;
  * Base property class for cookies that can be pinned to the HTTP session.
  * Pinned cookies are ignored if they arrive on a request with different attributes, such as IP address or user-agent,
  * than what was present whent the cookie was created.
+ *
  * @author Hal Deadman
  * @since 6.4.0
  */

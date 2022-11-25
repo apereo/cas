@@ -24,6 +24,7 @@ import lombok.val;
 
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
+
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,12 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
         this.script = script;
     }
 
+    @Override
+    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
+        initializeWatchableScriptIfNeeded();
+        return getGroovyAttributeValue(givenAttributes);
+    }
+
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
         if (this.executableScript == null) {
@@ -85,12 +92,6 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
         val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
         executableScript.setBinding(args);
         return executableScript.execute(args.values().toArray(), Map.class);
-    }
-
-    @Override
-    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
-        initializeWatchableScriptIfNeeded();
-        return getGroovyAttributeValue(givenAttributes);
     }
 
 }

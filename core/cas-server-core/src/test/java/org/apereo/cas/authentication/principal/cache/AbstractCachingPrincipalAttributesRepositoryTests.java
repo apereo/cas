@@ -37,7 +37,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     private static final String MAIL = "mail";
 
     protected IPersonAttributeDao dao;
-
+    
     private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 
     private Map<String, List<Object>> attributes;

@@ -39,8 +39,7 @@ public class CasDefaultServiceTicketIdGeneratorsConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public UniqueTicketIdGeneratorConfigurer casDefaultServiceTicketUniqueTicketIdGeneratorConfigurer(
-        @Qualifier("serviceTicketUniqueIdGenerator")
-        final UniqueTicketIdGenerator serviceTicketUniqueIdGenerator) {
+        @Qualifier("serviceTicketUniqueIdGenerator") final UniqueTicketIdGenerator serviceTicketUniqueIdGenerator) {
         return () -> CollectionUtils.wrap(
             Pair.of(SimpleWebApplicationServiceImpl.class.getName(), serviceTicketUniqueIdGenerator));
     }

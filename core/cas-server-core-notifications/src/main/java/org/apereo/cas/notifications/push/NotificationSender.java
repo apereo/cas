@@ -14,6 +14,15 @@ import java.util.Map;
  */
 @FunctionalInterface
 public interface NotificationSender extends Ordered {
+    /**
+     * No op notification sender.
+     *
+     * @return the notification sender
+     */
+    static NotificationSender noOp() {
+        return (principal, messageData) -> true;
+    }
+
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
@@ -36,13 +45,4 @@ public interface NotificationSender extends Ordered {
      * @return true/false
      */
     boolean notify(Principal principal, Map<String, String> messageData);
-
-    /**
-     * No op notification sender.
-     *
-     * @return the notification sender
-     */
-    static NotificationSender noOp() {
-        return (principal, messageData) -> true;
-    }
 }

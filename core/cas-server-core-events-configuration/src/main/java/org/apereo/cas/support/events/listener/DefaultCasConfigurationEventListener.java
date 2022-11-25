@@ -37,15 +37,15 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     private final ApplicationContext applicationContext;
 
     @Override
-    public void onEnvironmentChangedEvent(final EnvironmentChangeEvent event) {
-        LOGGER.trace("Received event [{}]", event);
-        rebind();
-    }
-
-    @Override
     public void onRefreshScopeRefreshed(final RefreshScopeRefreshedEvent event) {
         LOGGER.info("Refreshing application context beans eagerly...");
         initializeBeansEagerly();
+    }
+
+    @Override
+    public void onEnvironmentChangedEvent(final EnvironmentChangeEvent event) {
+        LOGGER.trace("Received event [{}]", event);
+        rebind();
     }
 
     @Override

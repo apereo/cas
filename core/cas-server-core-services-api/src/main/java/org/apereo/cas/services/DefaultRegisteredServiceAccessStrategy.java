@@ -14,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 
 import jakarta.persistence.PostLoad;
+
 import java.io.Serial;
 import java.net.URI;
 import java.util.HashMap;
@@ -132,21 +133,11 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
         this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>(0));
     }
 
-    /**
-     * Expose underlying attributes for auditing purposes.
-     *
-     * @return required attributes
-     */
-    @Override
-    public Map<String, Set<String>> getRequiredAttributes() {
-        return requiredAttributes;
-    }
-
     @JsonIgnore
     @Override
-    public boolean isServiceAccessAllowedForSso() {
-        if (!this.ssoEnabled) {
-            LOGGER.trace("Service is not authorized to participate in SSO.");
+    public boolean isServiceAccessAllowed() {
+        if (!this.enabled) {
+            LOGGER.trace("Service is not enabled in service registry.");
             return false;
         }
         return true;
@@ -154,9 +145,9 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
 
     @JsonIgnore
     @Override
-    public boolean isServiceAccessAllowed() {
-        if (!this.enabled) {
-            LOGGER.trace("Service is not enabled in service registry.");
+    public boolean isServiceAccessAllowedForSso() {
+        if (!this.ssoEnabled) {
+            LOGGER.trace("Service is not authorized to participate in SSO.");
             return false;
         }
         return true;
@@ -175,5 +166,15 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
                 .apply(request);
         }
         return activationCriteria.isAllowIfInactive();
+    }
+
+    /**
+     * Expose underlying attributes for auditing purposes.
+     *
+     * @return required attributes
+     */
+    @Override
+    public Map<String, Set<String>> getRequiredAttributes() {
+        return requiredAttributes;
     }
 }

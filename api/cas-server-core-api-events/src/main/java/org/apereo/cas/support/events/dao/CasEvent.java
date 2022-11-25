@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;

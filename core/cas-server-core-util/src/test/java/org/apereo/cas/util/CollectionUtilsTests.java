@@ -30,6 +30,7 @@ public class CollectionUtilsTests {
         assertEquals(1, result.size());
         assertSame(ImmutablePair.class, result.get(0).getClass());
     }
+
     @Test
     public void verifyToCol() {
         assertThrows(IllegalArgumentException.class, () ->
