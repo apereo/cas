@@ -2,6 +2,7 @@
 apply plugin: "war"
 ext {
     mainClassName = "org.apereo.cas.web.CasWebApplication"
+    casWebApplication = true
 }
 description = "Apereo CAS Web Application"
 
@@ -12,6 +13,7 @@ sourceSets {
             srcDirs "${project.buildDir}/generated-src/main/resources"
         }
     }
+
 }
 
 apply from: rootProject.file("gradle/springboot.gradle")
