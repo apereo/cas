@@ -23,6 +23,14 @@ dependencyResolutionManagement {
         mavenLocal()
         mavenCentral()
         maven {
+            url "https://build.shibboleth.net/nexus/content/repositories/snapshots"
+            mavenContent { snapshotsOnly() }
+            content {
+                includeGroupByRegex "org\\.opensaml.*"
+                includeGroupByRegex "net\\.shibboleth.*"
+            }
+        }
+        maven {
             url "https://build.shibboleth.net/maven/releases/"
             content {
                 includeGroupByRegex "org\\.opensaml.*"
@@ -52,14 +60,8 @@ dependencyResolutionManagement {
             url "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
         }
-
         maven {
             url "https://repo.spring.io/snapshot"
-            mavenContent { snapshotsOnly() }
-        }
-
-        maven {
-            url "https://build.shibboleth.net/nexus/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
         maven {
@@ -69,7 +71,13 @@ dependencyResolutionManagement {
             }
             mavenContent { releasesOnly() }
         }
-
+        maven {
+            url "https://jitpack.io"
+            content {
+                includeGroupByRegex "com.github.mmoayyed.scim2"
+            }
+            mavenContent { releasesOnly() }
+        }
     }
 }
 
