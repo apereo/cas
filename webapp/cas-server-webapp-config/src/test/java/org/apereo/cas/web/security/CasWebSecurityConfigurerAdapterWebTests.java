@@ -77,8 +77,6 @@ public class CasWebSecurityConfigurerAdapterWebTests {
 
     @Test
     public void verifyAccessToEndpoints() throws Exception {
-        mvc.perform(get("/cas/oidc/accessToken")).andExpect(status().isOk());
-        mvc.perform(post("/cas/oidc/accessToken")).andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/beans")).andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/info")
                 .with(httpBasic("casuser", "Mellon")))
