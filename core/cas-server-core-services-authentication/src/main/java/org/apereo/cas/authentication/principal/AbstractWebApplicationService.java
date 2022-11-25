@@ -3,21 +3,22 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.validation.ValidationResponseType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.Type;
+
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
@@ -69,17 +70,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @Column
     private ValidationResponseType format = ValidationResponseType.XML;
 
-    @Column
-    @Lob
+    @Column(columnDefinition = "json")
+    @Type(JsonType.class)
     private Map<String, List<Object>> attributes = new HashMap<>(0);
 
-    /**
-     * Instantiates a new abstract web application service.
-     *
-     * @param id          the id
-     * @param originalUrl the original url
-     * @param artifactId  the artifact id
-     */
     protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
         this.id = id;
         this.originalUrl = originalUrl;
