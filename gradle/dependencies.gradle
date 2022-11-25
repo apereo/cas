@@ -629,7 +629,14 @@ ext.libraries = [
                 }
         ],
         hibernate                  : [
-                dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
+                dependencies.create("com.vladmihalcea:hibernate-types-60:$hibernateTypesVersion") {
+                    exclude(group: "javax.xml.bind", module: "jaxb-api")
+                },
+                dependencies.create("org.hibernate.orm:hibernate-community-dialects:$hibernateVersion") {
+                },
+                dependencies.create("org.hibernate.orm:hibernate-graalvm:$hibernateVersion") {
+                },
+                dependencies.create("org.hibernate.orm:hibernate-core:$hibernateVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
                     exclude(group: "org.javassist", module: "javassist")
@@ -637,7 +644,7 @@ ext.libraries = [
                     exclude(group: "org.dom4j", module: "dom4j")
                     exclude(group: "org.glassfish.jaxb", module: "jaxb-runtime")
                 },
-                dependencies.create("org.hibernate:hibernate-ant:$hibernateVersion") {
+                dependencies.create("org.hibernate.orm:hibernate-ant:$hibernateVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
@@ -649,7 +656,7 @@ ext.libraries = [
                 dependencies.create("org.dom4j:dom4j:$dom4jVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
                 },
-                dependencies.create("org.hibernate:hibernate-hikaricp:$hibernateVersion") {
+                dependencies.create("org.hibernate.orm:hibernate-hikaricp:$hibernateVersion") {
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "org.dom4j", module: "dom4j")
                     exclude(group: "xml-apis", module: "xml-apis")

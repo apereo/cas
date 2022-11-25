@@ -31,7 +31,7 @@ configurations.all {
                 if (requested.name == "hibernate-validator") {
                     details.useVersion("${hibernateValidatorVersion}")
                 }
-                if (requested.group == "org.hibernate")  {
+                if (requested.group == "org.hibernate.orm")  {
                     details.useVersion("${hibernateVersion}")
                 }
                 if (requested.group == "com.squareup.okhttp3")  {
