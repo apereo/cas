@@ -59,8 +59,8 @@ public class DelegatedClientIdentityProviderConfigurationProducerTests {
         servicesManager.save(registeredService);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://delegated2.example.org"));
         assertNotNull(producer.produce(context));
-        assertNotNull(WebUtils.getDelegatedAuthenticationProviderConfigurations(context));
-        assertNotNull(WebUtils.getDelegatedAuthenticationProviderPrimary(context));
+        assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationProviderConfigurations(context));
+        assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(context));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class DelegatedClientIdentityProviderConfigurationProducerTests {
         servicesManager.save(registeredService);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://delegated.example.org"));
         assertNotNull(producer.produce(context));
-        assertNotNull(WebUtils.getDelegatedAuthenticationProviderConfigurations(context));
-        assertNotNull(WebUtils.getDelegatedAuthenticationProviderPrimary(context));
+        assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationProviderConfigurations(context));
+        assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(context));
     }
 }

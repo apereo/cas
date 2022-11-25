@@ -1,7 +1,18 @@
+import org.apereo.cas.api.*
+
 def run(Object[] args) {
-    def passwordlessUser = args[0]
-    def clients = (Set) args[1]
+    def passwordlessUser = args[0] as PasswordlessUserAccount
+    def clients = args[1] as Set
     def httpServletRequest = args[2]
     def logger = args[3]
-    return clients[0]
+
+    logger.info("Available identity providers are {}", clients)
+    logger.info("Passwordless user account is {}", passwordlessUser.username)
+    if (passwordlessUser.username == "casuser-server") {
+        return clients.find { it.name == "CasClient-Server" }
+    }
+    if (passwordlessUser.username == "casuser-client") {
+        return clients.find { it.name == "CasClient-Client" }
+    }
+    return clients.find { it.name == "CasClient-None" }
 }

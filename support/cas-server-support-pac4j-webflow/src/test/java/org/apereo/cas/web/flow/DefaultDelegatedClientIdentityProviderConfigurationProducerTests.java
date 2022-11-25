@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +75,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
                 context.getNativeResponse(), "SAML2Client");
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
             assertFalse(results.isEmpty());
-            assertNotNull(WebUtils.getDelegatedAuthenticationProviderPrimary(requestContext));
+            assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(requestContext));
         }
 
         @Test
@@ -101,7 +100,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
         public void verifySelectionOperation() {
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
             assertFalse(results.isEmpty());
-            assertTrue(WebUtils.isDelegatedAuthenticationDynamicProviderSelection(requestContext));
+            assertTrue(DelegationWebflowUtils.isDelegatedAuthenticationDynamicProviderSelection(requestContext));
         }
     }
 }

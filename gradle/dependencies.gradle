@@ -44,6 +44,8 @@ ext.libraries = [
         ],
         jakartael                  : [
                 dependencies.create("jakarta.el:jakarta.el-api:$jakartaElVersion") {
+                },
+                dependencies.create("org.glassfish.expressly:expressly:$jakartaElImplVersion") {
                 }
         ],
         aspectj                    : [
