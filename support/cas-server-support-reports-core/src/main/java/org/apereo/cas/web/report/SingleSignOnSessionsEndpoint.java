@@ -57,16 +57,16 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
 
-    private final TicketRegistry ticketRegistry;
+    private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
 
     private final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
 
     public SingleSignOnSessionsEndpoint(
-        final TicketRegistry ticketRegistry,
+        final ObjectProvider<TicketRegistry> ticketRegistry,
         final CasConfigurationProperties casProperties,
         final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
         super(casProperties);
-        this.ticketRegistry = ticketRegistry;
+        this.ticketRegistryProvider = ticketRegistry;
         this.singleLogoutRequestExecutor = singleLogoutRequestExecutor;
     }
 
@@ -190,7 +190,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
         if (StringUtils.isNotBlank(username)) {
             val sessionsMap = new HashMap<String, Object>(1);
-            var tickets = ticketRegistry.getSessionsFor(username);
+            var tickets = ticketRegistryProvider.getObject().getSessionsFor(username);
             if (from >= 0) {
                 tickets = tickets.skip(from);
             }
@@ -310,7 +310,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     }
 
     private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(final long from, final long count) {
-        var tickets = ticketRegistry.getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
+        var tickets = ticketRegistryProvider.getObject().getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
         if (from >= 0) {
             tickets = tickets.skip(from);
         }

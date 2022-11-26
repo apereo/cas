@@ -32,8 +32,13 @@ import java.util.HashMap;
 @RestController("identityProviderDiscoveryFeedController")
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(path = "/idp/discovery")
+@RequestMapping(path = SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY)
 public class SamlIdentityProviderDiscoveryFeedController {
+    /**
+     * Base endpoint url.
+     */
+    public static final String BASE_ENDPOINT_IDP_DISCOVERY = "/idp/discovery";
+
     private final CasConfigurationProperties casProperties;
 
     private final SamlIdentityProviderDiscoveryFeedService samlIdentityProviderDiscoveryFeedService;

@@ -15,7 +15,7 @@ env:
   JDK_CURRENT: 17
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: "ldaprepository|scim|redis|wsfederation|webapp|webflowactions|webflowconfig|samlmetadata.*" # Limit which test categories run
+  CATEGORY_REGEX: "scim|redis|samlmetadata" # Limit which test categories run
 
 ##########################################################################
 
