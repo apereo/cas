@@ -197,12 +197,21 @@ public class JpaTicketRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository(
+            @Qualifier("ticketTransactionManager")
+            final PlatformTransactionManager ticketTransactionManager,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")
             final CloseableDataSource dataSourceTicket) {
             return BeanSupplier.of(org.springframework.integration.jdbc.lock.LockRepository.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket))
+                .supply(() -> {
+                    val repo = new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket);
+                    repo.setApplicationContext(applicationContext);
+                    repo.setTransactionManager(ticketTransactionManager);
+                    repo.afterPropertiesSet();
+                    repo.afterSingletonsInstantiated();
+                    return repo;
+                })
                 .otherwiseProxy()
                 .get();
         }
