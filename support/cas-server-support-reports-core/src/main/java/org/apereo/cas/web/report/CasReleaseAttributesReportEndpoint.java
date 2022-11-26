@@ -18,6 +18,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
@@ -33,19 +34,19 @@ import java.util.Map;
  */
 @Endpoint(id = "releaseAttributes", enableByDefault = false)
 public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint {
-    private final ServicesManager servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final AuthenticationSystemSupport authenticationSystemSupport;
+    private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
-    private final ServiceFactory<WebApplicationService> serviceFactory;
+    private final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
 
-    private final PrincipalFactory principalFactory;
+    private final ObjectProvider<PrincipalFactory> principalFactory;
 
     public CasReleaseAttributesReportEndpoint(final CasConfigurationProperties casProperties,
-                                              final ServicesManager servicesManager,
-                                              final AuthenticationSystemSupport authenticationSystemSupport,
-                                              final ServiceFactory<WebApplicationService> serviceFactory,
-                                              final PrincipalFactory principalFactory) {
+                                              final ObjectProvider<ServicesManager> servicesManager,
+                                              final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+                                              final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
+                                              final ObjectProvider<PrincipalFactory> principalFactory) {
         super(casProperties);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
@@ -73,11 +74,11 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
                                                           final String service) {
 
 
-        val selectedService = this.serviceFactory.createService(service);
-        val registeredService = this.servicesManager.findServiceBy(selectedService);
+        val selectedService = serviceFactory.getObject().createService(service);
+        val registeredService = servicesManager.getObject().findServiceBy(selectedService);
 
         val credential = new UsernamePasswordCredential(username, password);
-        val result = this.authenticationSystemSupport.finalizeAuthenticationTransaction(selectedService, credential);
+        val result = authenticationSystemSupport.getObject().finalizeAuthenticationTransaction(selectedService, credential);
         val authentication = result.getAuthentication();
 
         val principal = authentication.getPrincipal();
@@ -89,7 +90,7 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
         val builder = DefaultAuthenticationBuilder.of(
             principal,
-            this.principalFactory,
+            principalFactory.getObject(),
             attributesToRelease,
             selectedService,
             registeredService,

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeaturesEnabled;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.flow.configurer.acct.AccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,6 +34,8 @@ import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.executor.FlowExecutor;
+
+import java.util.List;
 
 /**
  * This is {@link CasWebflowAccountProfileConfiguration}.
@@ -111,5 +115,17 @@ public class CasWebflowAccountProfileConfiguration {
         handler.setFlowRegistry(accountProfileFlowRegistry);
         handler.setInterceptors(webflowExecutionPlan.getWebflowInterceptors().toArray());
         return handler;
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "accountProfileFlowEndpointConfigurer")
+    public ProtocolEndpointWebSecurityConfigurer<Void> accountProfileFlowEndpointConfigurer() {
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(StringUtils.prependIfMissing(CasWebflowConfigurer.FLOW_ID_ACCOUNT, "/"));
+            }
+        };
     }
 }

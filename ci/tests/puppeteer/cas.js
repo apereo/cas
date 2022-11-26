@@ -156,7 +156,7 @@ exports.assertVisibility = async (page, selector) => {
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
     let result = element == null || await element.boundingBox() == null;
-    console.log(`Checking element invisibility for ${selector} while on page ${page.url()}:${result}`);
+    console.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
     assert(result);
 };
 
@@ -309,7 +309,9 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         .get(url, config)
         .then(res => {
             if (responseType !== "blob" && responseType !== "stream") {
-                console.log(res.data);
+                // let json = JSON.parse(body)
+                console.dir(res.data, {depth: null, colors: true});
+                // console.log(res.data);
             }
             successHandler(res);
         })
