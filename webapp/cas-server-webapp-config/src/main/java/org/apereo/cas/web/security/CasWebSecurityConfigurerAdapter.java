@@ -34,7 +34,9 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -65,10 +67,9 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
-    private static String prepareProtocolEndpoint(final String endpoint) {
+    private static List<String> prepareProtocolEndpoint(final String endpoint) {
         val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
-        val ext = FilenameUtils.getExtension(baseEndpoint);
-        return StringUtils.isBlank(ext) ? baseEndpoint.concat("/**") : baseEndpoint.concat("**");
+        return List.of(baseEndpoint.concat("**"), StringUtils.appendIfMissing(endpoint, "/").concat("**"));
     }
 
     private static void configureJaasAuthenticationProvider(final HttpSecurity http,
@@ -99,6 +100,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
             .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
+            .flatMap(List::stream)
             .collect(Collectors.toList());
         patterns.add("/webjars/**");
         patterns.add("/js/**");
@@ -141,6 +143,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
             .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
+            .flatMap(List::stream)
             .collect(Collectors.toList());
 
         patterns.add("/webjars/**");

@@ -54,15 +54,15 @@ dependencyResolutionManagement {
             content {
                 includeGroupByRegex ".*splunk.*"
             }
-            mavenContent { releasesOnly() }
+            mavenContent {releasesOnly() }
         }
         maven {
             url "https://repo.spring.io/milestone"
-            mavenContent { releasesOnly() }
+            mavenContent {releasesOnly() }
         }
         maven {
             url "https://repo.spring.io/snapshot"
-            mavenContent { snapshotsOnly() }
+            mavenContent {snapshotsOnly() }
         }
         maven {
             url "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
@@ -75,6 +75,7 @@ dependencyResolutionManagement {
             url "https://jitpack.io"
             content {
                 includeGroupByRegex "com.github.mmoayyed.scim2"
+                includeGroupByRegex "com.github.mmoayyed.ws-wss4j"
             }
             mavenContent { releasesOnly() }
         }

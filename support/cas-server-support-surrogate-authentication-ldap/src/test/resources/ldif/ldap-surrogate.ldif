@@ -1,13 +1,13 @@
-dn: cn=casuser,ou=surrogates,dc=example,dc=org
+dn: cn=$user,ou=surrogates,dc=example,dc=org
 objectClass: organizationalRole
 objectClass: inetOrgPerson
 objectClass: person
 objectClass: account
-cn: casuser
+cn: $user
 userPassword: 123456
-mail: casuser@example.org
+mail: $user@example.org
 sn: CAS
-uid: casuser
+uid: $user
 employeeType: banderson
 
 dn: cn=casadmin,ou=surrogates,dc=example,dc=org
@@ -15,9 +15,9 @@ objectClass: organizationalRole
 objectClass: inetOrgPerson
 objectClass: person
 objectClass: account
-cn: casuser
+cn: casadmin
 userPassword: 123456
 mail: *
 sn: CAS
-uid: casuser
+uid: casadmin
 employeeType: *

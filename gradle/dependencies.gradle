@@ -992,7 +992,7 @@ ext.libraries = [
                 }
         ],
         unboundidscim              : [
-                dependencies.create("com.github.mmoayyed.scim2:scim-sdk-client:$unboundidScim2Version") {
+                dependencies.create("com.unboundid.product.scim2:scim-sdk-client:$unboundidScim2Version") {
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
