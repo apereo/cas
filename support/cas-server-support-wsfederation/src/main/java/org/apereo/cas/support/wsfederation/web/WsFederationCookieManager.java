@@ -55,7 +55,7 @@ public class WsFederationCookieManager {
         }
 
         val configuration = configurations.stream()
-            .filter(c -> c.getId().equalsIgnoreCase(contextId))
+            .filter(cookie -> cookie.getId().equalsIgnoreCase(contextId))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not locate WsFederation configuration for " + contextId));
         
@@ -107,6 +107,7 @@ public class WsFederationCookieManager {
 
         val cookieValue = serializeSessionValues(session);
         val cookieGen = configuration.getCookieGenerator();
+        LOGGER.debug("Adding WsFederation cookie [{}] with value [{}]", cookieGen.getCookieName(), cookieValue);
         cookieGen.addCookie(request, response, cookieValue);
     }
 

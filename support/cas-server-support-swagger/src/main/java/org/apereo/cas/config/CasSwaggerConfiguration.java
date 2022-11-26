@@ -34,7 +34,7 @@ public class CasSwaggerConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casSwaggerEndpointConfigurer")
-    public ProtocolEndpointWebSecurityConfigurer<Void> delegatedClientEndpointConfigurer(
+    public ProtocolEndpointWebSecurityConfigurer<Void> casSwaggerEndpointConfigurer(
         final SwaggerUiConfigProperties swaggerUiConfigProperties,
         final SpringDocConfigProperties springDocConfigProperties) {
         return new ProtocolEndpointWebSecurityConfigurer<>() {

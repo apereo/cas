@@ -14,10 +14,10 @@ configurations.all {
             eachDependency { DependencyResolveDetails details ->
                 def requested = details.requested
                 if (requested.group == "org.bouncycastle" && requested.name.endsWith("-jdk15on")) {
-                    details.useTarget group: "org.bouncycastle", name: requested.name.replaceAll("-jdk15on","-jdk18on"), version: "${bouncyCastleVersion}"
+                    details.useTarget group: requested.group, name: requested.name.replaceAll("-jdk15on","-jdk18on"), version: "${bouncyCastleVersion}"
                 }
                 if (requested.group == "gnu-getopt")  {
-                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
+                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: requested.version
                 }
                 if (requested.group == "org.opensaml")  {
                     details.useVersion("${opensamlVersion}")
@@ -93,7 +93,7 @@ configurations.all {
                 if (requested.group == "net.sourceforge.jtds")  {
                     details.useVersion("${jtdsVersion}")
                 }
-                if (requested.group == "com.couchbase.client" && details.requested.name == "java-client")  {
+                if (requested.group == "com.couchbase.client" && requested.name == "java-client")  {
                     details.useVersion("${couchbaseVersion}")
                 }
                 if (requested.group == "com.github.ben-manes.caffeine")  {
@@ -146,6 +146,18 @@ configurations.all {
                 }
                 if (requested.group == "org.slf4j")  {
                     details.useVersion("${slf4jVersion}")
+                }
+                if (requested.group == "org.apache.logging.log4j") {
+                    details.useVersion("${log4jVersion}")
+                }
+                if (requested.group == "org.apache.wss4j") {
+                    details.useTarget group: "com.github.mmoayyed.ws-wss4j", name: requested.name, version: "${wss4jVersion}"
+                    details.because "WSS4J library does not support OpenSAML v5"
+                }
+
+                if (requested.group == "com.unboundid.product.scim2")  {
+                    details.useTarget group: "com.github.mmoayyed.scim2", name: requested.name, version: "${unboundidScim2Version}"
+                    details.because "UnboundID SCIM library does not support Jakarta APIs and Servlet Specification v6"
                 }
             }
         }

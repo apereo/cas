@@ -31,7 +31,7 @@ env:
   NODE_CURRENT: '18'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 15
-  SCENARIO_REGEX: ".*" # Use this to limit which tests run
+  SCENARIO_REGEX: "adfs.*|saml2.*|delegated.*|jpa-.*|oauth2.*|oidc.*|pm-.*|qr.*|service-registry-repl.*|themes-ext.*|uma-.*|x509.*|wsfed.*|.*-profiles"
 
 on:
   push:
