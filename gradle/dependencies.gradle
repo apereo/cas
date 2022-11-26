@@ -2727,12 +2727,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "javax.servlet", module: "servlet-api")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-core")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-httpclient")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
@@ -2764,7 +2758,6 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "com.netflix.netflix-commons", module: "netflix-eventbus")
                     exclude(group: "com.google.code.gson", module: "gson")
@@ -2786,93 +2779,6 @@ ext.libraries = [
                     exclude(group: "com.google.code.gson", module: "gson")
                 }
         ],
-        ribbon                     : [
-                dependencies.create("com.netflix.ribbon:ribbon:$ribbonVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "com.netflix.archaius", module: "archaius-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "io.reactivex", module: "rxjava")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.google.code.findbugs", module: "jsr305")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-httpclient")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                },
-                dependencies.create("com.netflix.ribbon:ribbon-loadbalancer:$ribbonVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "io.reactivex", module: "rxjava")
-                    exclude(group: "com.google.code.findbugs", module: "jsr305")
-                    exclude(group: "com.netflix.servo", module: "servo-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                },
-                dependencies.create("com.netflix.ribbon:ribbon-httpclient:$ribbonVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "io.reactivex", module: "rxjava")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
-                    exclude(group: "com.netflix.servo", module: "servo-core")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.google.code.findbugs", module: "jsr305")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                },
-                dependencies.create("com.netflix.ribbon:ribbon-eureka:$ribbonVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "io.reactivex", module: "rxjava")
-                    exclude(group: "com.netflix.eureka", module: "eureka-client")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
-                    exclude(group: "com.netflix.servo", module: "servo-core")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.google.code.findbugs", module: "jsr305")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                },
-                dependencies.create("com.netflix.ribbon:ribbon-transport:$ribbonVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "io.reactivex", module: "rxjava")
-                    exclude(group: "com.netflix.servo", module: "servo-core")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.google.code.findbugs", module: "jsr305")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                },
-                dependencies.create("com.netflix.ribbon:ribbon-core:$ribbonVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "io.reactivex", module: "rxjava")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.google.code.findbugs", module: "jsr305")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                }
-        ],
         springcloudeurekaserver    : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:$springCloudEurekaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2881,15 +2787,15 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "com.netflix.eureka", module: "eureka-client")
-                    exclude(group: "org.springframework.cloud", module: "spring-cloud-starter-ribbon")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
-                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "javax.servlet", module: "servlet-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create("com.google.code.gson:gson:$gsonVersion") {
                 }
         ],
         springcloudzookeeper       : [

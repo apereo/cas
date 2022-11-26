@@ -21,7 +21,6 @@ buildscript {
     dependencies {
 //        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
         classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
-        classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
@@ -444,20 +443,6 @@ subprojects {
             showViolations true
             toolVersion "${checkstyleVersion}"
         }
-    }
-
-
-    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("checkLicense") }) {
-        apply plugin: "com.github.jk1.dependency-license-report"
-        licenseReport {
-            outputDir = "$projectDir/build/licenses"
-            projects = project
-            excludeOwnGroup = true
-            configurations = ['runtimeClasspath']
-            filters = [new com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter()]
-            allowedLicensesFile = new File("$rootProject.projectDir/etc/allowed-licenses.json")
-        }
-        checkLicense.finalizedBy outputDependenciesWithoutLicense
     }
 
     dependencies {
