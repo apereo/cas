@@ -37,7 +37,7 @@ public class DelegatedAuthenticationErrorViewResolver extends DefaultErrorViewRe
                                          final HttpStatus status, final Map<String, Object> map) {
 
         val mv = failureEvaluator.evaluate(request, status.value());
-        val exception = request.getAttribute("javax.servlet.error.exception");
+        val exception = request.getAttribute("jakarta.servlet.error.exception");
         if (exception != null) {
             val cause = ((Throwable) exception).getCause();
             if (cause instanceof UnauthorizedServiceException) {

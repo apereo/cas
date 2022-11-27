@@ -84,6 +84,9 @@ configurations.all {
                         details.useVersion("${nettyVersion}")
                     }
                 }
+                if (requested.group == "org.apache.kafka") {
+                    details.useVersion("${kafkaVersion}")
+                }
                 if (requested.group == "org.mongodb")  {
                     details.useVersion("${mongoDriverVersion}")
                 }

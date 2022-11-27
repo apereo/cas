@@ -2564,6 +2564,10 @@ ext.libraries = [
                 }
         ],
         springkafka                : [
+                dependencies.create("org.apache.kafka:kafka-streams:$kafkaVersion") {
+                },
+                dependencies.create("org.apache.kafka:kafka-clients:$kafkaVersion") {
+                },
                 dependencies.create("org.springframework.kafka:spring-kafka:$springKafkaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework", module: "spring-messaging")
