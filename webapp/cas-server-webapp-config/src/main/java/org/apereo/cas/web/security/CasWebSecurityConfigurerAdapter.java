@@ -103,6 +103,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .flatMap(List::stream)
             .collect(Collectors.toList());
         patterns.add("/webjars/**");
+        patterns.add("/themes/**");
         patterns.add("/js/**");
         patterns.add("/css/**");
         patterns.add("/images/**");
@@ -147,6 +148,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .collect(Collectors.toList());
 
         patterns.add("/webjars/**");
+        patterns.add("/themes/**");
         patterns.add("/js/**");
         patterns.add("/css/**");
         patterns.add("/images/**");

@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 public class X509RestTlsClientCertCredentialFactory implements RestHttpRequestCredentialFactory {
 
-    private static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
+    private static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "jakarta.servlet.request.X509Certificate";
 
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
