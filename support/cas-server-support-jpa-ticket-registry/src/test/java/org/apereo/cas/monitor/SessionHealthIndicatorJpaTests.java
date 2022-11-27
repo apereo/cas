@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -68,7 +69,7 @@ public class SessionHealthIndicatorJpaTests {
     @Rollback(false)
     public void verifyObserveOkJpaTicketRegistry() throws Exception {
         addTicketsToRegistry(jpaRegistry, 5, 5);
-        val monitor = new TicketRegistryHealthIndicator(jpaRegistry, -1, -1);
+        val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(jpaRegistry), -1, -1);
         val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }

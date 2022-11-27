@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -75,7 +76,7 @@ public class SessionHealthIndicatorTests {
     @Test
     public void verifyObserveOk() {
         addTicketsToRegistry(this.defaultRegistry, 5, 10);
-        val monitor = new TicketRegistryHealthIndicator(defaultRegistry, -1, -1);
+        val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), -1, -1);
         val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
@@ -83,7 +84,7 @@ public class SessionHealthIndicatorTests {
     @Test
     public void verifyObserveWarnSessionsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 10, 1);
-        val monitor = new TicketRegistryHealthIndicator(defaultRegistry, 0, 5);
+        val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), 0, 5);
         val status = monitor.health();
         assertEquals("WARN", status.getStatus().getCode());
     }
@@ -91,7 +92,7 @@ public class SessionHealthIndicatorTests {
     @Test
     public void verifyObserveWarnServiceTicketsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 1, 10);
-        val monitor = new TicketRegistryHealthIndicator(defaultRegistry, 5, 0);
+        val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), 5, 0);
         val status = monitor.health();
         assertEquals("WARN", status.getStatus().getCode());
     }
