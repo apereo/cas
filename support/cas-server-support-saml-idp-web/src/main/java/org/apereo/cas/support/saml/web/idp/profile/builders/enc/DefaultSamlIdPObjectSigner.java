@@ -271,9 +271,9 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
 
         val finalCredentials = new ArrayList<Credential>();
         credentials.stream()
-            .map(c -> getResolvedSigningCredential(c, privateKey, service))
+            .map(creds -> getResolvedSigningCredential(creds, privateKey, service))
             .filter(Objects::nonNull)
-            .filter(c -> doesCredentialFingerprintMatch(c, service))
+            .filter(creds -> doesCredentialFingerprintMatch(creds, service))
             .forEach(finalCredentials::add);
 
         if (finalCredentials.isEmpty()) {
