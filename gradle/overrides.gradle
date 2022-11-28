@@ -157,11 +157,6 @@ configurations.all {
                     details.useTarget group: "com.github.mmoayyed.ws-wss4j", name: requested.name, version: "${wss4jVersion}"
                     details.because "WSS4J library does not support OpenSAML v5"
                 }
-
-                if (requested.group == "com.unboundid.product.scim2")  {
-                    details.useTarget group: "com.github.mmoayyed.scim2", name: requested.name, version: "${unboundidScim2Version}"
-                    details.because "UnboundID SCIM library does not support Jakarta APIs and Servlet Specification v6"
-                }
             }
         }
     }
@@ -173,6 +168,7 @@ configurations.all {
     exclude(group: "org.apache.logging.log4j", module: "log4j-to-slf4j")
     exclude(group: "pull-parser", module: "pull-parser")
     exclude(group: "javax.servlet", module: "servlet-api")
+    exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
     exclude(group: "javax.annotation", module: "javax.annotation-api")
     exclude(group: "javax.activation", module: "activation")
     exclude(group: "commons-logging", module: "commons-logging")

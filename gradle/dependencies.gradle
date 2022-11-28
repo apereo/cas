@@ -991,31 +991,11 @@ ext.libraries = [
                 dependencies.create("com.samskivert:jmustache:${mustacheVersion}") {
                 }
         ],
-        unboundidscim              : [
-                dependencies.create("com.unboundid.product.scim2:scim-sdk-client:$unboundidScim2Version") {
+        scimsdk              : [
+                dependencies.create("de.captaingoldfish:scim-sdk-client:${scimSdkClientVersion}") {
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.fasterxml.jackson.jaxrs", module: "jackson-jaxrs-json-provider")
-                    exclude(group: "org.apache.wink", module: "wink-client")
-                    exclude(group: "org.apache.wink", module: "wink-common")
-                    exclude(group: "com.unboundid.components", module: "json")
-                    exclude(group: "org.apache.geronimo.specs", module: "geronimo-jaxrs_1.1_spec")
-                },
-                dependencies.create("org.glassfish.jersey.security:oauth2-client:$jerseyVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.google.guava", module: "guava")
-                },
-                dependencies.create("org.glassfish.jersey.inject:jersey-hk2:$jerseyVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.google.guava", module: "guava")
                 }
         ],
         jackson                    : [
