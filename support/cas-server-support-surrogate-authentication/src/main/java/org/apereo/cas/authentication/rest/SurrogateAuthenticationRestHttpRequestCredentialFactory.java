@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.rest;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
-import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
@@ -72,9 +71,9 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
      * @return the surrogate username password credential
      * @throws Exception the exception
      */
-    protected SurrogateUsernamePasswordCredential extractCredential(final HttpServletRequest request,
+    protected UsernamePasswordCredential extractCredential(final HttpServletRequest request,
                                                                     final List<Credential> credentials) throws Exception {
-        val sc = new SurrogateUsernamePasswordCredential();
+        val sc = new UsernamePasswordCredential();
         val credential = UsernamePasswordCredential.class.cast(credentials.get(0));
         BeanUtils.copyProperties(sc, credential);
 

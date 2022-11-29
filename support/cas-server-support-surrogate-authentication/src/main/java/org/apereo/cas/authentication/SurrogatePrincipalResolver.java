@@ -32,7 +32,7 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
 
     @Override
     public boolean supports(final Credential credential) {
-        return super.supports(credential) && SurrogateUsernamePasswordCredential.class.isAssignableFrom(credential.getClass());
+        return super.supports(credential) && SurrogateCredential.class.isAssignableFrom(credential.getClass());
     }
 
     @Override
@@ -52,13 +52,13 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         LOGGER.debug("Attempting to extract principal id for principal [{}]", currentPrincipal);
         if (!supports(credential)) {
-            LOGGER.trace("Provided credential is not one of [{}]", SurrogateUsernamePasswordCredential.class.getName());
+            LOGGER.trace("Provided credential is not one of [{}]", SurrogateCredential.class.getName());
             return super.extractPrincipalId(credential, currentPrincipal);
         }
         if (currentPrincipal.isEmpty()) {
             throw new IllegalArgumentException("Current principal resolved cannot be null");
         }
-        val id = SurrogateUsernamePasswordCredential.class.cast(credential).getSurrogateUsername();
+        val id = SurrogateCredential.class.cast(credential).getSurrogateUsername();
         LOGGER.debug("Resolving principal id for surrogate authentication as [{}]", id);
         return id;
     }

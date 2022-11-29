@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.action;
 
+import org.apereo.cas.authentication.SurrogateCredential;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
-import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.util.LoggingUtils;
@@ -36,7 +36,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
 
     private boolean loadSurrogates(final RequestContext requestContext) {
         val credential = WebUtils.getCredential(requestContext);
-        if (credential instanceof UsernamePasswordCredential) {
+        if (credential instanceof SurrogateCredential) {
             val username = credential.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
             val surrogates = surrogateService.getImpersonationAccounts(username)
@@ -75,13 +75,13 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP_SURROGATE);
             }
 
-            val currentCredential = WebUtils.getCredential(requestContext);
-            if (currentCredential instanceof SurrogateUsernamePasswordCredential credential) {
+            val currentCredential = WebUtils.getCredential(requestContext, SurrogateCredential.class);
+            if (currentCredential != null && currentCredential.getSurrogateUsername() != null) {
                 val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
                 val registeredService = WebUtils.getRegisteredService(requestContext);
                 val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
                     authenticationResultBuilder, currentCredential,
-                    credential.getSurrogateUsername(), registeredService);
+                        currentCredential.getSurrogateUsername(), registeredService);
                 result.ifPresent(builder -> WebUtils.putAuthenticationResultBuilder(builder, requestContext));
             }
             return success();
