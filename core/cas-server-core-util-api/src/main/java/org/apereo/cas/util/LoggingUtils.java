@@ -3,22 +3,15 @@ package org.apereo.cas.util;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.PropertiesFactoryBean;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link LoggingUtils}.
@@ -27,33 +20,15 @@ import java.util.stream.Stream;
  * @since 6.3.0
  */
 @UtilityClass
-@Slf4j
 public class LoggingUtils {
 
     private static boolean SUMMARIZED_STACK_TRACES_DISABLED;
-    private static int SUMMARIZED_STACK_TRACE_LENGTH = 3;
 
     /*
-     * Allow customization of whether and how this class will summarize stack traces when log level higher than debug.
+     * Allow customization of whether this class will summarize stack traces when log level higher than debug.
      */
     static {
-        val properties = new PropertiesFactoryBean();
-        val resourceLoader = new DefaultResourceLoader();
-        val resourceList = Stream.of("classpath:/org/apereo/cas/util/LoggingUtils.properties",
-                        "file:/etc/cas/config/LoggingUtils.properties")
-                .map(resourceLoader::getResource)
-                .collect(Collectors.toList());
-        properties.setLocations(resourceList.toArray(Resource[]::new));
-        properties.setSingleton(true);
-        properties.setIgnoreResourceNotFound(true);
-        try {
-            properties.afterPropertiesSet();
-            val props = properties.getObject();
-            SUMMARIZED_STACK_TRACES_DISABLED = Boolean.parseBoolean(props.getProperty("summarizedStackTracesDisabled"));
-            SUMMARIZED_STACK_TRACE_LENGTH = Integer.parseInt(props.getProperty("summarizedStackTraceLength"));
-        } catch (final IOException|NumberFormatException e) {
-            LOGGER.error("Error loading LoggingUtils config: [{}]", e.getMessage());
-        }
+        SUMMARIZED_STACK_TRACES_DISABLED = Boolean.getBoolean("cas.summarizedStackTracesDisabled");
     }
 
     private static final int CHAR_REPEAT_ACCOUNT = 60;
@@ -159,7 +134,7 @@ public class LoggingUtils {
 
     private static String summarizeStackTrace(final String message, final Throwable throwable) {
         val builder = new StringBuilder(message).append('\n');
-        Arrays.stream(throwable.getStackTrace()).limit(SUMMARIZED_STACK_TRACE_LENGTH).forEach(trace -> {
+        Arrays.stream(throwable.getStackTrace()).limit(3).forEach(trace -> {
             val error = String.format("\t%s:%s:%s%n", trace.getFileName(), trace.getMethodName(), trace.getLineNumber());
             builder.append(error);
         });
