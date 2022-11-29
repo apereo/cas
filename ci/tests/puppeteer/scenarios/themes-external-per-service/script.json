@@ -6,7 +6,6 @@
     "--cas.audit.slf4j.use-single-line=true",
 
     "--logging.level.org.apereo.cas=debug",
-    "--logging.level.org.thymeleaf=debug",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",

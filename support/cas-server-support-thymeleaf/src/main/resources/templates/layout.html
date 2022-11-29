@@ -11,6 +11,19 @@
     </title>
 
     <!--/* Core CAS CSS */-->
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        console.log("Loading theme files here...");
+        let files = /*[[${#themes.code('cas.standard.css.file')}]]*/;
+        console.log(files);
+
+        let name = /*[[${#themes.code('cas.theme.name')}]]*/;
+        console.log(name);
+
+        /*]]>*/
+    </script>
+    
     <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.css.core.enabled'), 'true')}">
         <span th:replace="~{fragments/includes :: stylesheets}">
             <a href="fragments/includes.html">Theme</a> stylesheet fragment will go here

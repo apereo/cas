@@ -357,7 +357,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
           exit 3
        fi
        echo -n '.'
-       sleep 15
+       sleep 30
     done
     wait $pid
     if [ $? -ne 0 ]; then

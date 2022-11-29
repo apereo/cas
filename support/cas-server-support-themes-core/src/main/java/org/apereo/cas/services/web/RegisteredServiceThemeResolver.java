@@ -149,7 +149,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             .stream()
             .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(theme).concat(".properties"))
             .anyMatch(ResourceUtils::doesResourceExist)) {
-            LOGGER.trace("Found custom extrnal theme [{}] for service [{}]", theme, registeredService.getName());
+            LOGGER.trace("Found custom external theme [{}] for service [{}]", theme, registeredService.getName());
             return theme;
         }
 
