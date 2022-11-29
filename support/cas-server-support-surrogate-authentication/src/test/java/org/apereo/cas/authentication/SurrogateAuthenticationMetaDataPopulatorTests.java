@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 
 import lombok.val;
@@ -20,9 +21,9 @@ public class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAction() {
         val p = new SurrogateAuthenticationMetaDataPopulator();
-        assertFalse(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertTrue(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
-        val c = new SurrogateUsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setSurrogateUsername("cassurrogate");
         c.setUsername("casuser");
         c.assignPassword("password");

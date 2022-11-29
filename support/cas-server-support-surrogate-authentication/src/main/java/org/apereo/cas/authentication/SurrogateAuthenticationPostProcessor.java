@@ -51,7 +51,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             throw new AuthenticationException("Unable to determine primary credentials");
         }
         val primaryPrincipal = SurrogatePrincipal.class.cast(principal);
-        val surrogateCredentials = (SurrogateUsernamePasswordCredential) primaryCredential.get();
+        val surrogateCredentials = (SurrogateCredential) primaryCredential.get();
         val targetUserId = surrogateCredentials.getSurrogateUsername();
 
         try {
@@ -105,7 +105,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential.getClass().equals(SurrogateUsernamePasswordCredential.class);
+        return credential instanceof SurrogateCredential;
     }
 
     private void publishFailureEvent(final Principal principal, final String surrogate) {

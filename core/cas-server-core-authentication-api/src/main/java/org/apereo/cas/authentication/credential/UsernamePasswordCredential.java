@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.credential;
 
+import org.apereo.cas.authentication.SurrogateCredential;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,9 +32,8 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class UsernamePasswordCredential extends AbstractCredential {
+public class UsernamePasswordCredential extends AbstractCredential implements SurrogateCredential {
     /**
      * Authentication attribute name for password.
      **/
@@ -52,14 +51,39 @@ public class UsernamePasswordCredential extends AbstractCredential {
 
     private Map<String, Object> customFields = new LinkedHashMap<>();
 
+    private String surrogateUsername;
+
     public UsernamePasswordCredential(final String username, final String password) {
         this.username = username;
         assignPassword(StringUtils.defaultString(password));
     }
 
+    public UsernamePasswordCredential(final String username, final char[] password,
+                                      final String source, final Map<String, Object> customFields) {
+        this.username = username;
+        this.password = password;
+        this.source = source;
+        this.customFields = customFields;
+    }
+
     @Override
     public String getId() {
         return this.username;
+    }
+
+    @Override
+    public void setId(final String id) {
+        this.username = id;
+    }
+
+    @Override
+    public String getSurrogateUsername() {
+        return surrogateUsername;
+    }
+
+    @Override
+    public void setSurrogateUsername(final String surrogateUsername) {
+        this.surrogateUsername = surrogateUsername;
     }
 
     @Override
