@@ -123,16 +123,16 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
-          cache: 'gradle'
+#          cache: 'gradle'
 #      - name: Setup Gradle Wrapper Cache
 #        uses: actions/cache@v3
 #        with:
 #          path: ~/.gradle/wrapper
 #          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Download Dependencies
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
-      - id: print-scenarios
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
+#      - name: Download Dependencies
+#        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
+#      - id: print-scenarios
+#        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
       - id: get-scenarios255
         run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> $GITHUB_OUTPUT
       - id: get-scenarios511
@@ -165,8 +165,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_CURRENT }}
-          cache: 'npm'
-          cache-dependency-path: ./ci/tests/puppeteer/package.json
+#          cache: 'npm'
+#          cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh
       #      - name: Setup tmate session
@@ -199,7 +199,7 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
-          cache: 'gradle'
+#          cache: 'gradle'
 #      - name: Setup Gradle Wrapper Cache
 #        uses: actions/cache@v3
 #        with:
@@ -209,8 +209,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_CURRENT }}
-          cache: 'npm'
-          cache-dependency-path: ./ci/tests/puppeteer/package.json
+#          cache: 'npm'
+#          cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh
       #      - name: Setup tmate session
