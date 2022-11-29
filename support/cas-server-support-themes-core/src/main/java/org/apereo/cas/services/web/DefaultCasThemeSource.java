@@ -43,7 +43,7 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
                     val properties = new Properties();
                     properties.load(is);
                     properties.forEach((key, value) -> {
-                        LOGGER.trace("Loading theme property [{}] from [{}]", key, path);
+                        LOGGER.trace("Loading theme property [{}] with value [{}] from [{}]", key, value, path);
                         source.addMessage(key.toString(), Locale.getDefault(), value.toString());
                     });
                     return source;
