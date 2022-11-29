@@ -23,16 +23,15 @@ public class SurrogateAuthenticationMetaDataPopulator extends BaseAuthentication
 
         val current = SurrogateCredential.class.cast(credential.get());
         val surrogateUsername = current.getSurrogateUsername();
-        if (surrogateUsername != null) {
-            LOGGER.debug("Recording surrogate username [{}] as an authentication attribute", surrogateUsername);
-            builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, surrogateUsername);
-            builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, current.getId());
-            builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, Boolean.TRUE.toString());
-        }
+        LOGGER.debug("Recording surrogate username [{}] as an authentication attribute", surrogateUsername);
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, surrogateUsername);
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, current.getId());
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, Boolean.TRUE.toString());
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null && SurrogateCredential.class.isAssignableFrom(credential.getClass());
+        return credential != null && SurrogateCredential.class.isAssignableFrom(credential.getClass())
+                && ((SurrogateCredential) credential).getSurrogateUsername() != null;
     }
 }

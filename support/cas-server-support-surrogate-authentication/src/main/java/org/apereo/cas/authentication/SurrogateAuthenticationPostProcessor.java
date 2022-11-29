@@ -105,7 +105,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential instanceof SurrogateCredential;
+        return credential instanceof SurrogateCredential && ((SurrogateCredential) credential).getSurrogateUsername() != null;
     }
 
     private void publishFailureEvent(final Principal principal, final String surrogate) {

@@ -21,7 +21,7 @@ public class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAction() {
         val p = new SurrogateAuthenticationMetaDataPopulator();
-        assertTrue(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertFalse(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
         val c = new UsernamePasswordCredential();
         c.setSurrogateUsername("cassurrogate");
