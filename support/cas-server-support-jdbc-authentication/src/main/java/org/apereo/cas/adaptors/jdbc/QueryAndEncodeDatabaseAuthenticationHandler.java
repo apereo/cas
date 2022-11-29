@@ -67,7 +67,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
         val username = transformedCredential.getUsername();
         try {
-            val values = getJdbcTemplate().queryForMap(properties.getSql(), username);
+            val values = performSqlQuery(username);
             val digestedPassword = digestEncodedPassword(transformedCredential.toPassword(), values);
 
             if (!values.get(properties.getPasswordFieldName()).equals(digestedPassword)) {
@@ -95,6 +95,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         } catch (final DataAccessException e) {
             throw new PreventedException(e);
         }
+    }
+
+    protected Map<String, Object> performSqlQuery(final String username) {
+        return getJdbcTemplate().queryForMap(properties.getSql(), username);
     }
 
     /**
