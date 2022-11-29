@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -36,12 +37,15 @@ public class SurrogateAuthenticationPostProcessorTests {
 
     @Test
     public void verifySupports() {
-        assertTrue(surrogateAuthenticationPostProcessor.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertFalse(surrogateAuthenticationPostProcessor.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        val credential = new UsernamePasswordCredential();
+        credential.setSurrogateUsername("something");
+        assertTrue(surrogateAuthenticationPostProcessor.supports(credential));
     }
 
     @Test
     public void verifySurrogateCredentialNotFound() {
-        val c = new SurrogateUsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername("casuser");
         c.assignPassword("Mellon");
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("service"), c);
@@ -54,7 +58,7 @@ public class SurrogateAuthenticationPostProcessorTests {
 
     @Test
     public void verifyProcessorWorks() {
-        val c = new SurrogateUsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername("casuser");
         c.assignPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
@@ -77,7 +81,7 @@ public class SurrogateAuthenticationPostProcessorTests {
 
     @Test
     public void verifyAuthN() {
-        val c = new SurrogateUsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername("casuser");
         c.assignPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
@@ -94,7 +98,7 @@ public class SurrogateAuthenticationPostProcessorTests {
 
     @Test
     public void verifyFailAuthN() {
-        val c = new SurrogateUsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername("casuser");
         c.assignPassword("Mellon");
         c.setSurrogateUsername("other-user");

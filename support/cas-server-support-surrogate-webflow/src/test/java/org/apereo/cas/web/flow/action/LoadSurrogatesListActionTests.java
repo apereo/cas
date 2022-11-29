@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -67,7 +67,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        val creds = new SurrogateUsernamePasswordCredential();
+        val creds = new UsernamePasswordCredential();
         creds.assignPassword("Mellon");
         creds.setUsername("casuser");
         creds.setSurrogateUsername("cassurrogate");
@@ -96,7 +96,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        val creds = new SurrogateUsernamePasswordCredential();
+        val creds = new UsernamePasswordCredential();
         creds.assignPassword("Mellon");
         creds.setUsername("casuser");
         creds.setSurrogateUsername("unknown-user");
@@ -126,7 +126,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        val creds = new SurrogateUsernamePasswordCredential();
+        val creds = new UsernamePasswordCredential();
         creds.assignPassword("Mellon");
         creds.setUsername("someuser");
         creds.setSurrogateUsername("others");

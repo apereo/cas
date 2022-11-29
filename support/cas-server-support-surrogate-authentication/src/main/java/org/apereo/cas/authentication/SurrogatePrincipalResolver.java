@@ -32,7 +32,8 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
 
     @Override
     public boolean supports(final Credential credential) {
-        return super.supports(credential) && SurrogateCredential.class.isAssignableFrom(credential.getClass());
+        return super.supports(credential) && SurrogateCredential.class.isAssignableFrom(credential.getClass())
+                && ((SurrogateCredential) credential).getSurrogateUsername() != null;
     }
 
     @Override
