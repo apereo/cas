@@ -2,21 +2,21 @@ ext.isCiServer = System.getenv().containsKey("CI")
 ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
 ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
 
-//buildCache {
-//    local {
-//        enabled = !(buildCachePsw?.trim() && buildCacheUser?.trim())
-//    }
-//    remote(HttpBuildCache) {
-//        enabled = (buildCachePsw?.trim() && buildCacheUser?.trim())
-//        url = 'https://cas-gradle-buildcache.herokuapp.com/cache/'
-//        push = isCiServer
-//
-//        credentials {
-//            username = buildCacheUser
-//            password = buildCachePsw
-//        }
-//    }
-//}
+buildCache {
+    local {
+        enabled = !(buildCachePsw?.trim() && buildCacheUser?.trim())
+    }
+    remote(HttpBuildCache) {
+        enabled = (buildCachePsw?.trim() && buildCacheUser?.trim())
+        url = 'https://cas-gradle-buildcache.herokuapp.com/cache/'
+        push = isCiServer
+
+        credentials {
+            username = buildCacheUser
+            password = buildCachePsw
+        }
+    }
+}
 
 dependencyResolutionManagement {
     repositories {
