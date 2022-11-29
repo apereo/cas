@@ -9,9 +9,10 @@ or override log42.component.properties to turn off async
     <Properties>
         <Property name="baseDir">/tmp/logs</Property>
         
-        <Property name="cas.log.level">${main:\--logging.level.org.apereo.cas:-info}</Property>
+        <Property name="cas.log.level">${main:\--logging.level.org.apereo.cas:-trace}</Property>
         <Property name="spring.webflow.log.level">${main:\--logging.level.org.springframework.webflow:-warn}</Property>
         <Property name="spring.security.log.level">info</Property>
+        <Property name="thymeleaf.log.level">trace</Property>
         <Property name="spring.cloud.log.level">warn</Property>
         <Property name="spring.web.log.level">${main:\--logging.level.org.springframework.web:-warn}</Property>
         <Property name="spring.boot.log.level">warn</Property>
@@ -148,7 +149,7 @@ or override log42.component.properties to turn off async
         <Logger name="org.apache" level="error"/>
         <Logger name="com.netflix" level="warn"/>
         <Logger name="org.quartz" level="warn"/>
-        <Logger name="org.thymeleaf" level="warn"/>
+        <Logger name="org.thymeleaf" level="${sys:thymeleaf.log.level}" />
         <Logger name="org.pac4j" level="${sys:pac4j.log.level}"/>
 
         <Logger name="org.opensaml" level="${sys:opensaml.log.level}"/>
