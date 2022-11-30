@@ -44,7 +44,7 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
                     properties.load(is);
                     properties.forEach((key, value) -> {
                         LOGGER.trace("Loading theme property [{}] with value [{}] from [{}]", key, value, path);
-                        source.addMessage(key.toString(), Locale.getDefault(), value.toString());
+                        source.addMessage(key.toString(), Locale.ENGLISH, value.toString());
                     });
                     return source;
                 }
