@@ -1,6 +1,7 @@
 package org.thymeleaf.spring6.expression;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.context.Theme;
 import org.thymeleaf.context.IExpressionContext;
@@ -33,6 +34,8 @@ public class Themes {
         var defaultMsg = "This is a default message";
         final MessageSource messageSource = theme.getMessageSource();
         LOGGER.debug("Theme message source {}", messageSource.toString());
-        return messageSource.getMessage(code, null, defaultMsg, this.locale);
+        val message = messageSource.getMessage(code, null, defaultMsg, this.locale);
+        LOGGER.debug("Found value [{}] for code [{}]", message, code);
+        return message;
     }
 }
