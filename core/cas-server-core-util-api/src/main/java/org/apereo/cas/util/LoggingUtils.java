@@ -9,9 +9,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ServiceLoader;
 
 /**
  * This is {@link LoggingUtils}.
@@ -26,6 +26,16 @@ public class LoggingUtils {
 
     private static final String LOGGER_NAME_PROTOCOL_MESSAGE = "PROTOCOL_MESSAGE";
 
+    private static final LogMessageSummarizer LOG_MESSAGE_SUMMARIZER;
+
+    /*
+     * Allow customization of whether this class will summarize stack traces when log level higher than debug.
+     */
+    static {
+        LOG_MESSAGE_SUMMARIZER = ServiceLoader.load(LogMessageSummarizer.class)
+            .findFirst()
+            .orElse(new DefaultLogMessageSummarizer());
+    }
     /**
      * Protocol message.
      *
@@ -94,9 +104,9 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void error(final Logger logger, final String msg, final Throwable throwable) {
-        FunctionUtils.doIf(logger.isDebugEnabled(),
+        FunctionUtils.doIf(LOG_MESSAGE_SUMMARIZER.shouldSummarize(logger),
                 __ -> logger.error(msg, throwable),
-                __ -> logger.error(summarizeStackTrace(msg, throwable)))
+                __ -> logger.error(LOG_MESSAGE_SUMMARIZER.summarizeStackTrace(msg, throwable)))
             .accept(throwable);
     }
 
@@ -130,19 +140,10 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void warn(final Logger logger, final String message, final Throwable throwable) {
-        FunctionUtils.doIf(logger.isDebugEnabled(),
+        FunctionUtils.doIf(LOG_MESSAGE_SUMMARIZER.shouldSummarize(logger),
                 __ -> logger.warn(message, throwable),
-                __ -> logger.warn(summarizeStackTrace(message, throwable)))
+                __ -> logger.warn(LOG_MESSAGE_SUMMARIZER.summarizeStackTrace(message, throwable)))
             .accept(throwable);
-    }
-
-    private static String summarizeStackTrace(final String message, final Throwable throwable) {
-        val builder = new StringBuilder(message).append('\n');
-        Arrays.stream(throwable.getStackTrace()).limit(3).forEach(trace -> {
-            val error = String.format("\t%s:%s:%s%n", trace.getFileName(), trace.getMethodName(), trace.getLineNumber());
-            builder.append(error);
-        });
-        return builder.toString();
     }
 
     /**
