@@ -14,6 +14,7 @@ import org.springframework.ui.context.support.ResourceBundleThemeSource;
 
 import jakarta.annotation.Nonnull;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -42,10 +43,11 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
                     val source = new StaticMessageSource();
                     val properties = new Properties();
                     properties.load(is);
-                    properties.forEach((key, value) -> {
-                        LOGGER.trace("Loading theme property [{}] with value [{}] from [{}]", key, value, path);
-                        source.addMessage(key.toString(), Locale.ENGLISH, value.toString());
-                    });
+                    properties.forEach((key, value) ->
+                        List.of(Locale.US, Locale.CANADA, Locale.ENGLISH).forEach(locale -> {
+                            LOGGER.trace("Adding theme property [{}] with value [{}] from [{}] for locale [{}]", key, value, path, locale);
+                            source.addMessage(key.toString(), locale, value.toString());
+                        }));
                     return source;
                 }
             }))
