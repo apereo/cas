@@ -129,7 +129,6 @@ or override log42.component.properties to turn off async
 
         <Logger name="org.springframework.ui" level="trace" />
         <Logger name="org.springframework.context" level="trace" />
-
         <Logger name="org.springframework.webflow" level="${sys:spring.webflow.log.level}"/>
         <Logger name="org.springframework.aop" level="warn" />
         <Logger name="org.springframework.session" level="warn"/>
@@ -154,6 +153,7 @@ or override log42.component.properties to turn off async
         <Logger name="com.netflix" level="warn"/>
         <Logger name="org.quartz" level="warn"/>
         <Logger name="org.thymeleaf" level="${sys:thymeleaf.log.level}" />
+        <Logger name="org.thymeleaf.spring6.expression" level="trace" />
         <Logger name="org.pac4j" level="${sys:pac4j.log.level}"/>
 
         <Logger name="org.opensaml" level="${sys:opensaml.log.level}"/>

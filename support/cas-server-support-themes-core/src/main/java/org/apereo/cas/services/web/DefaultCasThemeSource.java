@@ -13,6 +13,7 @@ import org.springframework.context.support.StaticMessageSource;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
 
 import jakarta.annotation.Nonnull;
+
 import java.util.Locale;
 import java.util.Properties;
 
@@ -30,8 +31,7 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
     @Nonnull
     @Override
     protected MessageSource createMessageSource(
-        @Nonnull
-        final String basename) {
+        @Nonnull final String basename) {
         return casProperties.getView().getTemplatePrefixes()
             .stream()
             .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(basename).concat(".properties"))
