@@ -27,4 +27,24 @@ Attributes authorized and allowed for release by this policy may not necessarily
 as resolved principal attributes and can be resolved on the fly dynamically
 using the [attribute definition store](Attribute-Definitions.html).
 
+Allowed attributes may also contain inline Groovy script that would be tasked to build attributes
+dynamically on the fly and return back a `Map<String, List<Object>>` of results:
 
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", 
+      [ 
+        "cn", 
+        "groovy { [ fullName: [ 'FN/' + attributes['fullName'][0] ] ] }", 
+        "sn" 
+      ] 
+    ]
+  }
+}
+```
