@@ -632,8 +632,6 @@ ext.libraries = [
                 dependencies.create("com.vladmihalcea:hibernate-types-60:$hibernateTypesVersion") {
                     exclude(group: "javax.xml.bind", module: "jaxb-api")
                 },
-                dependencies.create("org.hibernate.orm:hibernate-community-dialects:$hibernateVersion") {
-                },
                 dependencies.create("org.hibernate.orm:hibernate-graalvm:$hibernateVersion") {
                 },
                 dependencies.create("org.hibernate.orm:hibernate-core:$hibernateVersion") {
