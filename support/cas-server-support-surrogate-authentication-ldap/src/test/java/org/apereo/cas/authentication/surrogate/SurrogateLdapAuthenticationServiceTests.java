@@ -54,6 +54,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 10389)
 public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
+    private static final String ADMIN_USER = RandomUtils.randomAlphabetic(10);
 
     private static final int LDAP_PORT = 10389;
 
@@ -81,7 +82,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
             "dc=example,dc=org");
 
         val ldif = IOUtils.toString(new ClassPathResource("ldif/ldap-surrogate.ldif").getInputStream(), StandardCharsets.UTF_8)
-            .replace("$user", USER);
+            .replace("$user", USER).replace("$admin", ADMIN_USER);
         LdapIntegrationTestsOperations.populateEntries(
             localhost,
             new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8)),
@@ -91,6 +92,11 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
     @Override
     public String getTestUser() {
         return USER;
+    }
+
+    @Override
+    public String getAdminUser() {
+        return ADMIN_USER;
     }
 
     @Test
