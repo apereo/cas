@@ -1,5 +1,9 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.scripting.GroovyShellScript;
+import org.apereo.cas.util.scripting.ScriptingUtils;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -53,26 +57,32 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         return getAllowedAttributes();
     }
 
-    /**
-     * Authorize release of allowed attributes map.
-     *
-     * @param context    the context
-     * @param attributes the attributes
-     * @return the map
-     */
     protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(
         final RegisteredServiceAttributeReleasePolicyContext context,
         final Map<String, List<Object>> attributes) {
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
         val attributesToRelease = new HashMap<String, List<Object>>();
-        getAllowedAttributes()
-            .stream()
-            .filter(resolvedAttributes::containsKey)
-            .forEach(attr -> {
+        getAllowedAttributes().forEach(attr -> {
+            if (resolvedAttributes.containsKey(attr)) {
                 LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attr);
                 attributesToRelease.put(attr, resolvedAttributes.get(attr));
-            });
+            } else {
+                val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(attr);
+                if (matcherInline.find()) {
+                    val inlineGroovy = matcherInline.group(1);
+                    try (val executableScript = new GroovyShellScript(inlineGroovy)) {
+                        val args = CollectionUtils.<String, Object>wrap(
+                            "context", context,
+                            "attributes", attributes,
+                            "logger", LOGGER);
+                        executableScript.setBinding(args);
+                        val scriptedAttributes = executableScript.execute(args.values().toArray(), Map.class);
+                        attributesToRelease.putAll(scriptedAttributes);
+                    }
+                }
+            }
+        });
         return attributesToRelease;
     }
 }

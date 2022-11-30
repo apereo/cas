@@ -34,8 +34,9 @@ public class LoggingUtils {
     static {
         LOG_MESSAGE_SUMMARIZER = ServiceLoader.load(LogMessageSummarizer.class)
             .findFirst()
-            .orElse(new DefaultLogMessageSummarizer());
+            .orElseGet(DefaultLogMessageSummarizer::new);
     }
+
     /**
      * Protocol message.
      *
@@ -152,7 +153,7 @@ public class LoggingUtils {
      * @param throwable Top level throwable
      * @return String containing first non-null exception message, or Throwable simple class name
      */
-    static String getMessage(final Throwable throwable) {
+    public static String getMessage(final Throwable throwable) {
         if (StringUtils.isEmpty(throwable.getMessage())) {
             val message = ExceptionUtils.getThrowableList(throwable)
                 .stream().map(Throwable::getMessage).filter(Objects::nonNull).findFirst();
