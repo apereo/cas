@@ -15,7 +15,7 @@ env:
   JDK_CURRENT: 17
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: "ldap.*" # Limit which test categories run
+  CATEGORY_REGEX: "ldaprepo.*" # Limit which test categories run
 
 ##########################################################################
 
