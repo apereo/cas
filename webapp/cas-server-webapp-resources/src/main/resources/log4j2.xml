@@ -129,8 +129,7 @@ or override log42.component.properties to turn off async
 
         <Logger name="org.springframework.ui" level="warn" />
         <Logger name="org.springframework.context" level="warn" />
-        <Logger name="org.springframework.context.support" level="debug" />
-
+        <Logger name="org.springframework.context.support" level="warn" />
         <Logger name="org.springframework.webflow" level="${sys:spring.webflow.log.level}"/>
         <Logger name="org.springframework.aop" level="warn" />
         <Logger name="org.springframework.session" level="warn"/>
