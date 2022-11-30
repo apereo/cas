@@ -18,4 +18,5 @@ dependencies {
     }
     runtimeOnly ("com.h2database:h2:$h2Version") {
     }
+    runtimeOnly("org.hibernate.orm:hibernate-community-dialects:$hibernateVersion") {}
 }
