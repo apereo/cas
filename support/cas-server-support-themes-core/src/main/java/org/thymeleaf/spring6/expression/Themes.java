@@ -25,17 +25,15 @@ public class Themes {
         this.locale = context.getLocale();
         IThymeleafRequestContext requestContext = SpringContextUtils.getRequestContext(context);
         this.theme = requestContext != null ? requestContext.getTheme() : null;
-        LOGGER.debug("Theme provided {}", theme);
     }
 
     public String code(final String code) {
-        LOGGER.debug("Theme name {}", theme.getName());
-        LOGGER.debug("Theme class {}, code {}", theme.getClass().getSimpleName(), code);
-        var defaultMsg = "This is a default message";
+        LOGGER.info("Theme name {}", theme.getName());
+        LOGGER.info("Theme class {}, code {}, locale {}", theme.getClass().getSimpleName(), code, this.locale);
         final MessageSource messageSource = theme.getMessageSource();
-        LOGGER.debug("Theme message source {}", messageSource.toString());
-        val message = messageSource.getMessage(code, null, defaultMsg, this.locale);
-        LOGGER.debug("Found value [{}] for code [{}]", message, code);
+        LOGGER.info("Theme message source {}", messageSource.toString());
+        val message = messageSource.getMessage(code, null, "*** Unknown ***", this.locale);
+        LOGGER.info("Found value [{}] for code [{}] and locale [{}]", message, code, this.locale);
         return message;
     }
 }
