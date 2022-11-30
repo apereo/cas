@@ -5,9 +5,6 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.audit.slf4j.use-single-line=true",
 
-    "--logging.level.org.apereo.cas=trace",
-    "--logging.level.org.thymeleaf.spring6=trace",
-
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
