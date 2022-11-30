@@ -4,6 +4,7 @@ import org.apereo.cas.util.DigestUtilsTests;
 import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.HttpUtilsTests;
 import org.apereo.cas.util.InetAddressUtilsTests;
+import org.apereo.cas.util.LoggingUtilsSummarizeTests;
 import org.apereo.cas.util.LoggingUtilsTests;
 import org.apereo.cas.util.SocketUtilsTests;
 import org.apereo.cas.util.cache.DistributedCacheManagerTests;
@@ -71,6 +72,7 @@ import org.junit.platform.suite.api.Suite;
     SimpleHttpClientFactoryBeanTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     LoggingUtilsTests.class,
+    LoggingUtilsSummarizeTests.class,
     SocketUtilsTests.class,
     BeanContainerTests.class,
     ApplicationContextProviderTests.class,
