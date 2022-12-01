@@ -91,7 +91,7 @@ function createPrimaryIndex() {
 
 echo "Running Couchbase docker image..."
 docker stop couchbase || true && docker rm couchbase || true
-docker run --rm  -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:7.1.1
+docker run --rm  -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:7.1.3
 echo "Waiting for Couchbase server to come online..."
 sleep 20
 until $(curl --output /dev/null --silent --head --fail http://localhost:8091); do
