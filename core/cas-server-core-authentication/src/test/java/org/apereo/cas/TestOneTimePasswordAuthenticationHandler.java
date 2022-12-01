@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -42,8 +41,7 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
         val otp = (OneTimePasswordCredential) credential;
         val valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(valueOnRecord)) {
-            return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(otp),
-                getPrincipalFactory().createPrincipal(otp.getId()));
+            return new DefaultAuthenticationHandlerExecutionResult(this, otp, getPrincipalFactory().createPrincipal(otp.getId()));
         }
         throw new FailedLoginException();
     }

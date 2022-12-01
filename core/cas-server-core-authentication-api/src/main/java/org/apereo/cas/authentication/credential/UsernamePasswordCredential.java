@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.credential;
 
-import org.apereo.cas.authentication.SurrogateCredential;
+import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -19,6 +19,7 @@ import org.springframework.binding.validation.ValidationContext;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serial;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -33,8 +34,8 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class UsernamePasswordCredential extends AbstractCredential implements SurrogateCredential {
+@EqualsAndHashCode(exclude = "password", callSuper = true)
+public class UsernamePasswordCredential extends AbstractCredential implements MutableCredential {
     /**
      * Authentication attribute name for password.
      **/
@@ -52,8 +53,6 @@ public class UsernamePasswordCredential extends AbstractCredential implements Su
 
     private Map<String, Object> customFields = new LinkedHashMap<>();
 
-    private String surrogateUsername;
-
     public UsernamePasswordCredential(final String username, final String password) {
         this.username = username;
         assignPassword(StringUtils.defaultString(password));
@@ -62,9 +61,9 @@ public class UsernamePasswordCredential extends AbstractCredential implements Su
     public UsernamePasswordCredential(final String username, final char[] password,
                                       final String source, final Map<String, Object> customFields) {
         this.username = username;
-        this.password = password;
+        this.password = password.clone();
         this.source = source;
-        this.customFields = customFields;
+        this.customFields = new HashMap<>(customFields);
     }
 
     @Override
@@ -75,16 +74,6 @@ public class UsernamePasswordCredential extends AbstractCredential implements Su
     @Override
     public void setId(final String id) {
         this.username = id;
-    }
-
-    @Override
-    public String getSurrogateUsername() {
-        return surrogateUsername;
-    }
-
-    @Override
-    public void setSurrogateUsername(final String surrogateUsername) {
-        this.surrogateUsername = surrogateUsername;
     }
 
     @Override
@@ -127,4 +116,6 @@ public class UsernamePasswordCredential extends AbstractCredential implements Su
             System.arraycopy(password.toCharArray(), 0, this.password, 0, password.length());
         }, p -> this.password = ArrayUtils.EMPTY_CHAR_ARRAY);
     }
+
+
 }

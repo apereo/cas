@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetch
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.RequiredArgsConstructor;
@@ -68,14 +69,12 @@ public class SurrogatePrincipalBuilder {
      * Build surrogate authentication result optional.
      *
      * @param authenticationResultBuilder the authentication result builder
-     * @param credential                  the credential
-     * @param surrogateTargetId           the surrogate target id
+     * @param mutableCredential           the mutable credential
      * @param registeredService           the registered service
      * @return the optional
      */
     public Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                                    final Credential credential,
-                                                                                    final String surrogateTargetId,
+                                                                                    final Credential mutableCredential,
                                                                                     final RegisteredService registeredService) {
         val currentAuthn = authenticationResultBuilder.getInitialAuthentication();
         if (currentAuthn.isPresent()) {
@@ -84,10 +83,15 @@ public class SurrogatePrincipalBuilder {
             if (authentication.getPrincipal() instanceof SurrogatePrincipal) {
                 principal = SurrogatePrincipal.class.cast(authentication.getPrincipal()).getPrimary();
             }
-            if (!surrogateAuthenticationService.canImpersonate(surrogateTargetId, principal, Optional.empty())) {
-                throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + surrogateTargetId);
+
+            val surrogateUsername = mutableCredential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
+                .map(SurrogateCredentialTrait::getSurrogateUsername)
+                .orElseThrow();
+
+            if (!surrogateAuthenticationService.canImpersonate(surrogateUsername, principal, Optional.empty())) {
+                throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + surrogateUsername);
             }
-            val surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, principal, registeredService);
+            val surrogatePrincipal = buildSurrogatePrincipal(surrogateUsername, principal, registeredService);
             val auth = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal).build();
             return Optional.of(authenticationResultBuilder.collect(auth));
         }

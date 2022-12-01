@@ -60,8 +60,8 @@ servlet container may need to downgrade the version of the Servlet specification
 be sorted out prior to the final GA release by the time Jetty `12` is released.
 
 <div class="alert alert-info"><strong>Usage Warning</strong><p>Remember that this is a major upgrade and may possibly
-be somewhat disruptive in the beginning. While most if not all CAS-specific configuration should remain exactlty the same, 
-you may encouter unexpected hiccups and mishaps along the way. We recommend that you start early by experimenting with 
+be somewhat disruptive in the beginning. While most if not all CAS-specific configuration should remain exactly the same, 
+you may encounter unexpected hiccups and mishaps along the way. We recommend that you start early by experimenting with 
 release candidates and/or follow-up snapshots.</p></div>
 
 ## Other Stuff

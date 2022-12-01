@@ -1,8 +1,7 @@
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata
 
-import javax.security.auth.login.AccountNotFoundException
 import javax.security.auth.login.FailedLoginException
 
 def authenticate(final Object... args) {
@@ -14,7 +13,7 @@ def authenticate(final Object... args) {
     if (credential.username == credential.toPassword()) {
         def principal = principalFactory.createPrincipal(credential.username)
         return new DefaultAuthenticationHandlerExecutionResult(authenticationHandler,
-                new BasicCredentialMetaData(credential),
+                new BasicCredentialMetadata(credential),
                 principal,
                 new ArrayList<>(0))
     }

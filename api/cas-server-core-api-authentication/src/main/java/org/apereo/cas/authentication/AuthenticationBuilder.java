@@ -38,7 +38,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @return the authentication builder
      * @since 4.2.0
      */
-    AuthenticationBuilder addCredentials(List<CredentialMetaData> credentials);
+    AuthenticationBuilder addCredentials(List<Credential> credentials);
 
     /**
      * Adds metadata about a credential presented for authentication.
@@ -46,7 +46,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param credential Credential metadata.
      * @return This builder instance.
      */
-    AuthenticationBuilder addCredential(CredentialMetaData credential);
+    AuthenticationBuilder addCredential(Credential credential);
 
     /**
      * Add warnings to authentication builder.
