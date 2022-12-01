@@ -100,9 +100,9 @@ public class PersonDirectoryPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         val resolver = new PersonDirectoryPrincipalResolver(context);
-        val p = resolver.resolve(null, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+        val principal = resolver.resolve(mock(Credential.class), Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
-        assertNull(p);
+        assertNull(principal);
     }
 
     @Test

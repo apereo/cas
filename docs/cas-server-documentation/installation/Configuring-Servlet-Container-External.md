@@ -8,7 +8,7 @@ category: Installation
 # External Servlet Container Configuration
 
 A CAS deployment may be deployed to any number of external servlet containers. The container **MUST** support
-the servlet specification `5.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
+the servlet specification `6.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
 may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}

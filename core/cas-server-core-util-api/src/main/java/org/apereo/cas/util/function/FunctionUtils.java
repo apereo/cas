@@ -210,6 +210,13 @@ public class FunctionUtils {
         }
     }
 
+    /**
+     * Do if null.
+     *
+     * @param <T>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     */
     public static <T> void doIfNull(final T input,
                                     final CheckedConsumer<T> trueFunction) {
         try {
