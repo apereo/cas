@@ -17,7 +17,7 @@ ext.libraries = [
                 dependencies.create("jakarta.xml.bind:jakarta.xml.bind-api:$jaxbApiVersion") {
                     transitive = false
                 },
-                dependencies.create("com.sun.xml.bind:jaxb-impl:$jaxbApiVersion") {
+                dependencies.create("com.sun.xml.bind:jaxb-impl:$jaxbImplVersion") {
                     transitive = false
                 },
                 dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$jaxbApiVersion") {

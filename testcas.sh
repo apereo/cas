@@ -350,6 +350,10 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/ldap/run-ad-server.sh true
                 task+="testActiveDirectory "
                 ;;
+            ldapservices)
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                task+="testLdapServices "
+                ;;
             ldaprepository|ldaprepo)
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
                 task+="testLdapRepository "
