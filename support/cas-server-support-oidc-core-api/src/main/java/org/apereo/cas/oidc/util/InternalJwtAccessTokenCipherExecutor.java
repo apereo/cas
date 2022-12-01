@@ -92,6 +92,8 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
         }
         cipher.setCommonHeaders(CollectionUtils.wrap(
             RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
+        val jwtSigningAlg = cipher.getJwtSigningAlg(registeredService);
+        jwtSigningAlg.ifPresent(s -> cipher.getSigningOpHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, s));
         return cipher;
     }
 
@@ -140,7 +142,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
                 }
                 val alg = StringUtils.defaultIfBlank(key.getAlgorithm(),
                     getSigningAlgorithmFor(key.getKey()));
-                getSigningOpHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
+                getSigningOpHeaders().putIfAbsent(JsonWebKey.ALGORITHM_PARAMETER, alg);
                 return super.signWith(value, alg, signingKey);
             })
             .orElseGet(() -> super.sign(value, signingKey));

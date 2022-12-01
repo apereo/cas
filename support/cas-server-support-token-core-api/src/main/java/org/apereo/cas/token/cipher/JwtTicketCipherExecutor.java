@@ -102,5 +102,30 @@ public class JwtTicketCipherExecutor extends BaseStringCipherExecutor {
         return RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_CIPHER_STRATEGY_TYPE;
     }
 
+    /**
+     * Gets jwt signing algorithm.
+     *
+     * @param registeredService the registered service
+     * @return the jwt signing algorithm
+     */
+    protected Optional<String> getJwtSigningAlg(final RegisteredService registeredService) {
+        val property = getJwtSigningAlgRegisteredServiceProperty(registeredService);
+        if (property.isAssignedTo(registeredService)) {
+            val alg = property.getPropertyValue(registeredService).value();
+            return Optional.of(alg);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Gets jwt signing algorithm registered service property.
+     *
+     * @param registeredService the registered service
+     * @return the jwt signing algorithm registered service property.
+     */
+    protected RegisteredServiceProperty.RegisteredServiceProperties getJwtSigningAlgRegisteredServiceProperty(final RegisteredService registeredService) {
+        return RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SIGNING_ALG;
+    }
+
 
 }

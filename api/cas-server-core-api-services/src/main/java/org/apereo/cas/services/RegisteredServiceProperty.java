@@ -188,6 +188,12 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Produce a JWT as a response when generating service tickets.
          **/
+        TOKEN_SIGNING_ALG("jwtSigningAlg", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_TOKENS, RegisteredServicePropertyTypes.STRING,
+            "The algorithm header value used to sign the access token."),
+        /**
+         * Produce a JWT as a response when generating service tickets.
+         **/
         TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket", "false",
             RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.BOOLEAN,
             "Produce a JWT as a response when generating service tickets."),

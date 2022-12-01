@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.util.CollectionUtils;
 
+import com.nimbusds.jose.HeaderParameterNames;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -91,6 +92,8 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
         val cipher = new JwtTicketCipherExecutor(encryptionKey, signingKey,
             StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
         cipher.getCommonHeaders().putAll(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
+        val jwtSigningAlg = cipher.getJwtSigningAlg(registeredService);
+        jwtSigningAlg.ifPresent(s -> cipher.getSigningOpHeaders().put(HeaderParameterNames.ALGORITHM, s));
         return cipher;
     }
 
