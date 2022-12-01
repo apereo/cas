@@ -44,11 +44,11 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
     @Test
     public void verifySurrogateCredentialsFound() throws Exception {
         val context = new MockRequestContext();
-        val c = new UsernamePasswordCredential();
-        c.setUsername("casuser");
-        c.assignPassword("Mellon");
-        c.setSurrogateUsername("cassurrogate");
-        WebUtils.putCredential(context, c);
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername("casuser");
+        credential.assignPassword("Mellon");
+        credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("cassurrogate"));
+        WebUtils.putCredential(context, credential);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertNull(initialAuthenticationAction.execute(context));
     }
@@ -100,7 +100,6 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
 
         val sc = WebUtils.getCredential(context, UsernamePasswordCredential.class);
         sc.setUsername("casuser");
-        sc.setSurrogateUsername(null);
         sc.assignPassword("Mellon");
         WebUtils.putCredential(context, sc);
         assertNull(initialAuthenticationAction.execute(context));
