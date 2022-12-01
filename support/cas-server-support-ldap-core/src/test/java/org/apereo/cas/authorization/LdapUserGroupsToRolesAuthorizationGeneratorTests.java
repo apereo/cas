@@ -61,7 +61,6 @@ public class LdapUserGroupsToRolesAuthorizationGeneratorTests {
         assertFalse(result.isEmpty());
         assertTrue(profile.getAttributes().isEmpty());
         assertTrue(profile.getRoles().isEmpty());
-        assertTrue(profile.getPermissions().isEmpty());
     }
 
     private static class Ldap extends AbstractLdapAuthenticationProperties {

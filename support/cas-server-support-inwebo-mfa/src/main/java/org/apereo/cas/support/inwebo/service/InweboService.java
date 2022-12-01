@@ -41,7 +41,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
      * @param response the response
      */
     static void retrieveDeviceName(final JsonNode json,
-                                             final InweboDeviceNameResponse response) {
+                                   final InweboDeviceNameResponse response) {
         if (response.isOk()) {
             val name = json.get("name");
             if (name != null) {
@@ -60,7 +60,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
         val loginSearchResult = consoleAdmin.loginSearch(login);
         val err = loginSearchResult.getErr();
         val response = (InweboLoginSearchResponse) buildResponse(new InweboLoginSearchResponse(),
-                "loginSearch(" + login + ')', err);
+            "loginSearch(" + login + ')', err);
         if (response.isOk()) {
             val count = loginSearchResult.getCount();
             response.setCount(count);

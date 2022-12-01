@@ -53,7 +53,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;

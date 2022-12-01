@@ -2,7 +2,7 @@
 <script type="text/javascript" th:src="@{#{webjars.dataTables.js}}"></script>
 
 <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.js.core.enabled'), 'true')}">
-    <span th:replace="fragments/includes :: javascript">
+    <span th:replace="~{fragments/includes :: javascript}">
         <a href="fragments/includes.html">Theme</a> fragment will go here
     </span>
 </span>
@@ -17,8 +17,8 @@
     }
     $(() => {
         typeof cssVars === "function" && cssVars({onlyLegacy: true});
-    })
+    });
     let trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
 </script>
 
-<script th:replace="fragments/googleanalytics :: ga"></script>
+<script th:replace="~{fragments/googleanalytics :: ga}"></script>

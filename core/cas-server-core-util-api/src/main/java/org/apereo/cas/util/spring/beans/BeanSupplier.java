@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
+
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;

@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class CasYamlHttpMessageConverter extends AbstractJackson2HttpMessageConverter {
     public CasYamlHttpMessageConverter() {
         super(JacksonObjectMapperFactory.builder().defaultTypingEnabled(true)
-            .jsonFactory(new YAMLFactory()).build().toObjectMapper(),
+                .jsonFactory(new YAMLFactory()).build().toObjectMapper(),
             new MediaType("application", "vnd.cas.services+yaml"));
         setPrettyPrint(true);
         setDefaultCharset(StandardCharsets.UTF_8);

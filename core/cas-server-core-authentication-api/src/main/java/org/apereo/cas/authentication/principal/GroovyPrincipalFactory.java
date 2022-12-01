@@ -21,6 +21,7 @@ import java.util.Map;
 public class GroovyPrincipalFactory extends DefaultPrincipalFactory {
     @Serial
     private static final long serialVersionUID = -3999695695604948495L;
+
     private final transient WatchableGroovyScriptResource watchableScript;
 
     public GroovyPrincipalFactory(final Resource groovyResource) {

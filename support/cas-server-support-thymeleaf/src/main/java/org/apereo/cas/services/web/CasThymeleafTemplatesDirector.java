@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -10,17 +11,38 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.context.WebEngineContext;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.Optional;
 
 /**
- * This is {@link CasThymeleafLoginFormDirector}.
+ * This is {@link CasThymeleafTemplatesDirector}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @RequiredArgsConstructor
-public class CasThymeleafLoginFormDirector {
+public class CasThymeleafTemplatesDirector {
     private final CasWebflowExecutionPlan webflowExecutionPlan;
+
+    /**
+     * Gets url external form.
+     *
+     * @param url the url
+     * @return the url external form
+     */
+    public String getUrlExternalForm(final URL url) {
+        return url.toExternalForm();
+    }
+
+    /**
+     * Gets exception class simple name.
+     *
+     * @param ex the ex
+     * @return the exception class simple name
+     */
+    public String getExceptionClassSimpleName(final Throwable ex) {
+        return ex.getClass().getSimpleName();
+    }
 
     /**
      * Is login form viewable?.
@@ -31,8 +53,8 @@ public class CasThymeleafLoginFormDirector {
     public boolean isLoginFormViewable(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();
         return context != null
-            && WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
-            && WebUtils.isCasLoginFormViewable(context);
+               && DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(context) == null
+               && WebUtils.isCasLoginFormViewable(context);
     }
 
     /**

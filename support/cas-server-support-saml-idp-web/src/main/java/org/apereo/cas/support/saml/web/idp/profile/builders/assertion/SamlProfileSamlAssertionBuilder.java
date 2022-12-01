@@ -12,7 +12,7 @@ import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;

@@ -134,11 +134,6 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
     }
 
     @Override
-    public Collection<String> getDescendantTickets() {
-        return this.descendantTickets;
-    }
-
-    @Override
     public void removeAllServices() {
     }
 
@@ -156,6 +151,11 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
     @Override
     public List<Authentication> getChainedAuthentications() {
         return new ArrayList<>(0);
+    }
+
+    @Override
+    public Collection<String> getDescendantTickets() {
+        return this.descendantTickets;
     }
 
     @Override

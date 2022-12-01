@@ -22,7 +22,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -30,6 +29,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,7 +61,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestExecutionListeners({
-    SpringBootDependencyInjectionTestExecutionListener.class,
+    DependencyInjectionTestExecutionListener.class,
     CouchbaseServiceRegistryTests.DisposingTestExecutionListener.class
 })
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {

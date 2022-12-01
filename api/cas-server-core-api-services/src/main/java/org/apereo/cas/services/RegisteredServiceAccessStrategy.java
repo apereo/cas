@@ -30,7 +30,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     default boolean isServiceAccessAllowed() {
         return true;
     }
-    
+
     /**
      * Assert that the service can participate in sso.
      *

@@ -40,6 +40,22 @@ public class ChainingPrincipalResolverTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    private static Principal mergeAndResolve(final Principal p1, final Credential credential,
+                                             final PrincipalResolver resolver1, final PrincipalResolver resolver2,
+                                             final PrincipalAttributesCoreProperties.MergingStrategyTypes mergerType) {
+        val props = new CasConfigurationProperties();
+        props
+            .getAuthn()
+            .getAttributeRepository()
+            .getCore()
+            .setMerger(mergerType);
+        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), props);
+        resolver.setChain(Arrays.asList(resolver1, resolver2));
+
+        return resolver.resolve(credential,
+            Optional.of(p1), Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+    }
+
     @Test
     public void examineSupports() {
         val credential = mock(Credential.class);
@@ -111,22 +127,6 @@ public class ChainingPrincipalResolverTests {
          */
         finalResult = mergeAndResolve(p1, credential, resolver1, resolver2, PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         assertTrue(finalResult.getAttributes().containsValue(List.of("Smith")));
-    }
-
-    private static Principal mergeAndResolve(final Principal p1, final Credential credential,
-                                      final PrincipalResolver resolver1, final PrincipalResolver resolver2,
-                                      final PrincipalAttributesCoreProperties.MergingStrategyTypes mergerType) {
-        val props = new CasConfigurationProperties();
-        props
-            .getAuthn()
-            .getAttributeRepository()
-            .getCore()
-            .setMerger(mergerType);
-        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), props);
-        resolver.setChain(Arrays.asList(resolver1, resolver2));
-
-        return resolver.resolve(credential,
-            Optional.of(p1), Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
     }
 
 }

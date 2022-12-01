@@ -32,7 +32,7 @@ public class WebflowActionBeanSupplier implements Supplier<Action> {
 
     @Builder.Default
     private final BeanCondition condition = BeanCondition.alwaysTrue();
-    
+
     private final Supplier<Action> action;
 
     private final String id;

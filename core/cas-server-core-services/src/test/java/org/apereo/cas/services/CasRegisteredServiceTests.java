@@ -48,50 +48,74 @@ public class CasRegisteredServiceTests {
                 newService(domainCatchallHttp),
                 "https://service.vt.edu/webapp?a=1",
                 true
-                     ),
+            ),
             arguments(
                 newService(domainCatchallHttp),
                 "http://test-01.service.vt.edu/webapp?a=1",
                 true
-                     ),
+            ),
             arguments(
                 newService(domainCatchallHttp),
                 "https://thepiratebay.se?service.vt.edu/webapp?a=1",
                 false
-                     ),
+            ),
             arguments(
                 newService(domainCatchallHttpImap),
                 "http://test_service.vt.edu/login",
                 true
-                     ),
+            ),
             arguments(
                 newService(domainCatchallHttpImap),
                 "imaps://imap-server-01.vt.edu/",
                 true
-                     ),
+            ),
             arguments(
                 newService(globalCatchallHttpImap),
                 "https://host-01.example.com/",
                 true
-                     ),
+            ),
             arguments(
                 newService(globalCatchallHttpImap),
                 "imap://host-02.example.edu/",
                 true
-                     ),
+            ),
             arguments(
                 newService(globalCatchallHttpImap),
                 null,
                 false
-                     )
-                        );
+            )
+        );
+    }
+
+    private static RegisteredService newService(final String id) {
+        val service = new CasRegisteredService();
+        service.setServiceId(id);
+        service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
+        service.setServiceTicketExpirationPolicy(
+            new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, "100"));
+        service.setProxyTicketExpirationPolicy(
+            new DefaultRegisteredServiceProxyTicketExpirationPolicy(100, "100"));
+        val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.addPolicies(Arrays.asList(
+            new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),
+            new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1)));
+        service.setSingleSignOnParticipationPolicy(policy);
+
+        val consent = new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("attr1", "attr2"),
+            CollectionUtils.wrapSet("ex-attr1", "ex-attr2"));
+        consent.setStatus(TriStateBoolean.TRUE);
+
+        val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
+        attrPolicy.setConsentPolicy(consent);
+        service.setAttributeReleasePolicy(attrPolicy);
+        return service;
     }
 
     @ParameterizedTest
     @MethodSource("getParameters")
     public void verifyMatches(final CasRegisteredService service,
-        final String serviceToMatch,
-        final boolean expectedResult) {
+                              final String serviceToMatch,
+                              final boolean expectedResult) {
         val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
         assertEquals(expectedResult, service.matches(testService));
     }
@@ -99,8 +123,8 @@ public class CasRegisteredServiceTests {
     @ParameterizedTest
     @MethodSource("getParameters")
     public void verifySerialization(final CasRegisteredService service,
-        final String serviceToMatch,
-        final boolean expectedResult) throws IOException {
+                                    final String serviceToMatch,
+                                    final boolean expectedResult) throws IOException {
         MAPPER.writeValue(JSON_FILE, service);
         val serviceRead = MAPPER.readValue(JSON_FILE, CasRegisteredService.class);
         assertEquals(service, serviceRead);
@@ -126,30 +150,6 @@ public class CasRegisteredServiceTests {
         assertNotNull(service.getDescription());
         assertNotNull(service.getFriendlyName());
         assertDoesNotThrow(service::initialize);
-    }
-
-    private static RegisteredService newService(final String id) {
-        val service = new CasRegisteredService();
-        service.setServiceId(id);
-        service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
-        service.setServiceTicketExpirationPolicy(
-            new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, "100"));
-        service.setProxyTicketExpirationPolicy(
-            new DefaultRegisteredServiceProxyTicketExpirationPolicy(100, "100"));
-        val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
-        policy.addPolicies(Arrays.asList(
-            new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),
-            new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1)));
-        service.setSingleSignOnParticipationPolicy(policy);
-
-        val consent = new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("attr1", "attr2"),
-            CollectionUtils.wrapSet("ex-attr1", "ex-attr2"));
-        consent.setStatus(TriStateBoolean.TRUE);
-
-        val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
-        attrPolicy.setConsentPolicy(consent);
-        service.setAttributeReleasePolicy(attrPolicy);
-        return service;
     }
 
 }

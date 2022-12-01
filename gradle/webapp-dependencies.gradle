@@ -45,6 +45,8 @@ dependencies {
     }
 
     implementation libraries.springcloudconfigclient
+    implementation libraries.hibernatevalidator
+    
     if (!rootProject.publishFlag) {
         runtimeOnly libraries.springbootdevtools
     }

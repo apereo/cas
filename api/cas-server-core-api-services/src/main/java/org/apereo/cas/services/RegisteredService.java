@@ -36,6 +36,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
 
     /**
      * Get the authentication policy assigned to this service.
+     *
      * @return the policy
      */
     RegisteredServiceAuthenticationPolicy getAuthenticationPolicy();
@@ -43,6 +44,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     /**
      * Get service matching strategy used to evaluate
      * given service identifiers against this service.
+     *
      * @return the strategy
      */
     RegisteredServiceMatchingStrategy getMatchingStrategy();
@@ -233,7 +235,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     default String getFriendlyName() {
         return this.getClass().getSimpleName();
     }
-    
+
     /**
      * Initialize the registered service instance by defaulting fields to specific
      * values or object instances, etc.

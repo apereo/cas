@@ -15,7 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private final ConfigurableApplicationContext applicationContext;
-    
+
     @Override
     public void authorize(final HttpServletRequest request, final Service service, final Assertion assertion) {
         val registeredService = this.servicesManager.findServiceBy(service);

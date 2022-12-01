@@ -23,13 +23,13 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 9042)
 @Getter
 @TestExecutionListeners({
-    SpringBootDependencyInjectionTestExecutionListener.class,
+    DependencyInjectionTestExecutionListener.class,
     CassandraServiceRegistryTests.DisposingTestExecutionListener.class
 })
 public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {

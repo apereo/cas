@@ -16,6 +16,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.TrustManagerFactorySpi;
 import javax.net.ssl.X509TrustManager;
+
 import java.io.Serial;
 import java.security.KeyStore;
 import java.security.Provider;
@@ -41,13 +42,27 @@ public interface CasSSLContext {
     static CasSSLContext system() {
         return new CasSSLContext() {
             @Override
-            public KeyManagerFactory getKeyManagerFactory() {
-                return Unchecked.supplier(() -> KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())).get();
+            public SSLContext getSslContext() {
+                return SSLContexts.createSystemDefault();
             }
 
             @Override
-            public SSLContext getSslContext() {
-                return SSLContexts.createSystemDefault();
+            public TrustManager[] getTrustManagers() {
+                return getTrustManagerFactory().getTrustManagers();
+            }
+
+            @Override
+            public KeyManager[] getKeyManagers() {
+                return Unchecked.supplier(() -> {
+                    val factory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                    factory.init(null, null);
+                    return factory.getKeyManagers();
+                }).get();
+            }
+
+            @Override
+            public HostnameVerifier getHostnameVerifier() {
+                return new DefaultHostnameVerifier();
             }
 
             @Override
@@ -60,22 +75,8 @@ public interface CasSSLContext {
             }
 
             @Override
-            public TrustManager[] getTrustManagers() {
-                return getTrustManagerFactory().getTrustManagers();
-            }
-
-            @Override
-            public HostnameVerifier getHostnameVerifier() {
-                return new DefaultHostnameVerifier();
-            }
-
-            @Override
-            public KeyManager[] getKeyManagers() {
-                return Unchecked.supplier(() -> {
-                    val factory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-                    factory.init(null, null);
-                    return factory.getKeyManagers();
-                }).get();
+            public KeyManagerFactory getKeyManagerFactory() {
+                return Unchecked.supplier(() -> KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())).get();
             }
         };
     }
@@ -137,16 +138,16 @@ public interface CasSSLContext {
         private static X509TrustManager getDisabledTrustedManager() {
             return new X509TrustManager() {
                 @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return ACCEPTED_ISSUERS;
-                }
-
-                @Override
                 public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
                 }
 
                 @Override
                 public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
+                }
+
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return ACCEPTED_ISSUERS;
                 }
             };
         }
@@ -161,8 +162,18 @@ public interface CasSSLContext {
         }
 
         @Override
-        public KeyManagerFactory getKeyManagerFactory() {
-            return Unchecked.supplier(() -> KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())).get();
+        public TrustManager[] getTrustManagers() {
+            return new TrustManager[]{getDisabledTrustedManager()};
+        }
+
+        @Override
+        public KeyManager[] getKeyManagers() {
+            return new KeyManager[0];
+        }
+
+        @Override
+        public HostnameVerifier getHostnameVerifier() {
+            return NoopHostnameVerifier.INSTANCE;
         }
 
         @Override
@@ -191,18 +202,8 @@ public interface CasSSLContext {
         }
 
         @Override
-        public TrustManager[] getTrustManagers() {
-            return new TrustManager[]{getDisabledTrustedManager()};
-        }
-
-        @Override
-        public KeyManager[] getKeyManagers() {
-            return new KeyManager[0];
-        }
-
-        @Override
-        public HostnameVerifier getHostnameVerifier() {
-            return NoopHostnameVerifier.INSTANCE;
+        public KeyManagerFactory getKeyManagerFactory() {
+            return Unchecked.supplier(() -> KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())).get();
         }
     }
 }

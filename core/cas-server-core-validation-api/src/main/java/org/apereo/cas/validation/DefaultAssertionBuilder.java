@@ -24,7 +24,9 @@ public class DefaultAssertionBuilder {
 
     @Builder.Default
     private final List<Authentication> authentications = new ArrayList<>(0);
+
     private final WebApplicationService service;
+
     private final boolean newLogin;
 
     private final RegisteredService registeredService;

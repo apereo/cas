@@ -24,15 +24,6 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
-        if (this.ticket == null) {
-            throw new IllegalArgumentException("No ticket to update");
-        }
-        addTicket(ticket);
-        return ticket;
-    }
-
-    @Override
     public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
         return (T) this.ticket;
     }
@@ -67,6 +58,15 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     @Override
     public Collection<? extends Ticket> getTickets() {
         throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public Ticket updateTicket(final Ticket ticket) {
+        if (this.ticket == null) {
+            throw new IllegalArgumentException("No ticket to update");
+        }
+        addTicket(ticket);
+        return ticket;
     }
 
     @Override

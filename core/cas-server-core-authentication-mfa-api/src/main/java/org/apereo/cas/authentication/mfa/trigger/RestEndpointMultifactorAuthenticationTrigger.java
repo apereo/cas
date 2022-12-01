@@ -29,8 +29,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -88,12 +89,6 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
     }
 
     /**
-     * The Rest endpoint entity passed along to the API.
-     */
-    public record RestEndpointEntity(String principalId, String serviceId) {
-    }
-
-    /**
      * Call rest endpoint for multifactor.
      *
      * @param principal       the principal
@@ -129,6 +124,12 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
             HttpUtils.close(response);
         }
         return null;
+    }
+
+    /**
+     * The Rest endpoint entity passed along to the API.
+     */
+    public record RestEndpointEntity(String principalId, String serviceId) {
     }
 
 }

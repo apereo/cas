@@ -9,9 +9,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ServiceLoader;
 
 /**
  * This is {@link LoggingUtils}.
@@ -25,6 +25,17 @@ public class LoggingUtils {
     private static final int CHAR_REPEAT_ACCOUNT = 60;
 
     private static final String LOGGER_NAME_PROTOCOL_MESSAGE = "PROTOCOL_MESSAGE";
+
+    private static final LogMessageSummarizer LOG_MESSAGE_SUMMARIZER;
+
+    /*
+     * Allow customization of whether this class will summarize stack traces when log level higher than debug.
+     */
+    static {
+        LOG_MESSAGE_SUMMARIZER = ServiceLoader.load(LogMessageSummarizer.class)
+            .findFirst()
+            .orElseGet(DefaultLogMessageSummarizer::new);
+    }
 
     /**
      * Protocol message.
@@ -94,9 +105,9 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void error(final Logger logger, final String msg, final Throwable throwable) {
-        FunctionUtils.doIf(logger.isDebugEnabled(),
+        FunctionUtils.doIf(LOG_MESSAGE_SUMMARIZER.shouldSummarize(logger),
                 __ -> logger.error(msg, throwable),
-                __ -> logger.error(summarizeStackTrace(msg, throwable)))
+                __ -> logger.error(LOG_MESSAGE_SUMMARIZER.summarizeStackTrace(msg, throwable)))
             .accept(throwable);
     }
 
@@ -107,7 +118,9 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void error(final Logger logger, final Throwable throwable) {
-        error(logger, getMessage(throwable), throwable);
+        if (throwable != null) {
+            error(logger, getMessage(throwable), throwable);
+        }
     }
 
     /**
@@ -128,19 +141,10 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void warn(final Logger logger, final String message, final Throwable throwable) {
-        FunctionUtils.doIf(logger.isDebugEnabled(),
+        FunctionUtils.doIf(LOG_MESSAGE_SUMMARIZER.shouldSummarize(logger),
                 __ -> logger.warn(message, throwable),
-                __ -> logger.warn(summarizeStackTrace(message, throwable)))
+                __ -> logger.warn(LOG_MESSAGE_SUMMARIZER.summarizeStackTrace(message, throwable)))
             .accept(throwable);
-    }
-
-    private static String summarizeStackTrace(final String message, final Throwable throwable) {
-        val builder = new StringBuilder(message).append('\n');
-        Arrays.stream(throwable.getStackTrace()).limit(3).forEach(trace -> {
-            val error = String.format("\t%s:%s:%s%n", trace.getFileName(), trace.getMethodName(), trace.getLineNumber());
-            builder.append(error);
-        });
-        return builder.toString();
     }
 
     /**
@@ -149,7 +153,7 @@ public class LoggingUtils {
      * @param throwable Top level throwable
      * @return String containing first non-null exception message, or Throwable simple class name
      */
-    static String getMessage(final Throwable throwable) {
+    public static String getMessage(final Throwable throwable) {
         if (StringUtils.isEmpty(throwable.getMessage())) {
             val message = ExceptionUtils.getThrowableList(throwable)
                 .stream().map(Throwable::getMessage).filter(Objects::nonNull).findFirst();

@@ -42,7 +42,7 @@ public class MultifactorAuthenticationCoreProperties implements Serializable {
      * define a failure mode and override the global.
      */
     private MultifactorAuthenticationProviderFailureModes globalFailureMode = MultifactorAuthenticationProviderFailureModes.CLOSED;
-    
+
     /**
      * Content-type that is expected to be specified by non-web clients such as curl, etc in the
      * event that the provider supports variations of non-browser based MFA.

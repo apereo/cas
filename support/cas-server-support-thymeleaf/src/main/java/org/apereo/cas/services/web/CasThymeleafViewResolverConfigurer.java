@@ -1,8 +1,8 @@
 package org.apereo.cas.services.web;
 
 import org.springframework.core.Ordered;
-import org.thymeleaf.spring5.view.AbstractThymeleafView;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.spring6.view.AbstractThymeleafView;
+import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 /**
  * Spring beans that implement this interface will be used to configure the base

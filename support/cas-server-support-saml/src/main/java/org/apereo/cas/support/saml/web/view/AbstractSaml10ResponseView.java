@@ -17,9 +17,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml1.core.Response;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -56,12 +57,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     @Override
     protected void renderMergedOutputModel(
-        @Nonnull
-        final Map<String, Object> model,
-        @Nonnull
-        final HttpServletRequest request,
-        @Nonnull
-        final HttpServletResponse response) throws Exception {
+        @Nonnull final Map<String, Object> model,
+        @Nonnull final HttpServletRequest request,
+        @Nonnull final HttpServletResponse response) throws Exception {
         try {
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             val service = this.samlArgumentExtractor.extractService(request);

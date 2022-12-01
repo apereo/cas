@@ -28,7 +28,7 @@ public class AddPropertiesToConfigurationCommandTests extends BaseCasShellComman
     }
 
     private void exportProperties(final File file) {
-        assertDoesNotThrow(() -> shell.evaluate(() -> "add-properties --file " + file + " --group cas.server"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "add-properties --file " + file + " --group cas.server"));
         assertTrue(file.exists());
         file.deleteOnExit();
     }

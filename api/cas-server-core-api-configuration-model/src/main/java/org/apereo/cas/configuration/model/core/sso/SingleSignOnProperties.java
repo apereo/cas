@@ -31,7 +31,7 @@ public class SingleSignOnProperties implements Serializable {
      * and supported globally for the server.
      */
     private boolean ssoEnabled = true;
-    
+
     /**
      * Flag that indicates whether to create SSO session on re-newed authentication event.
      */

@@ -42,22 +42,25 @@ public class RedisPersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
+    public IPersonAttributes getPerson(final String uid, final Set<IPersonAttributes> resolvedPeople,
+                                       final IPersonAttributeDaoFilter filter) {
         val attributes = redisTemplate.opsForHash().entries(uid);
         return new CaseInsensitiveNamedPersonImpl(uid, stuffAttributesIntoList(attributes));
     }
 
     @Override
-    public Set<IPersonAttributes> getPeople(final Map<String, Object> map, final IPersonAttributeDaoFilter filter) {
-        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map), filter);
+    public Set<IPersonAttributes> getPeople(final Map<String, Object> map, final IPersonAttributeDaoFilter filter,
+                                            final Set<IPersonAttributes> resolvedPeople) {
+        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map), filter, resolvedPeople);
     }
 
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map,
-                                                                     final IPersonAttributeDaoFilter filter) {
+                                                                     final IPersonAttributeDaoFilter filter,
+                                                                     final Set<IPersonAttributes> resolvedPeople) {
         val people = new LinkedHashSet<IPersonAttributes>();
         val username = this.usernameAttributeProvider.getUsernameFromQuery(map);
-        val person = this.getPerson(username, filter);
+        val person = this.getPerson(username, resolvedPeople, filter);
         if (person != null) {
             people.add(person);
         }

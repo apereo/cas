@@ -4,6 +4,7 @@ env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   TERM: xterm-256color
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}

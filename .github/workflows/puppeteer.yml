@@ -5,6 +5,7 @@ name: Puppeteer
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   DUO_SECURITY_ADMIN_SKEY: ${{ secrets.DUO_SECURITY_ADMIN_SKEY }}
@@ -30,7 +31,7 @@ env:
   NODE_CURRENT: '18'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 15
-  SCENARIO_REGEX: ".*" # Use this to limit which tests run
+  SCENARIO_REGEX: ".*"
 
 on:
   push:

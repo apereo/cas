@@ -44,7 +44,7 @@
                     <script type="text/javascript" th:inline="javascript">
                         /*<![CDATA[*/
                         $.ajax({
-                            url: [[${entry.key.logoutUrl.toExternalForm()}]],
+                            url: [[${@casThymeleafTemplatesDirector.getUrlExternalForm(entry.key.logoutUrl)}]],
                             dataType: 'jsonp',
                             async: true,
                             contentType: [[${entry.value.contentType}]]

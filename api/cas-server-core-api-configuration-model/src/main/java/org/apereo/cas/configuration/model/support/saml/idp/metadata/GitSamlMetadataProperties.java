@@ -36,7 +36,7 @@ public class GitSamlMetadataProperties extends BaseGitProperties {
      * are expected to be found in the database.
      */
     private boolean idpMetadataEnabled;
-    
+
     /**
      * Crypto settings that sign/encrypt the metadata records.
      */

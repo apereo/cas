@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -50,11 +51,11 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        WebUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
+        DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         WebUtils.putLogoutRedirectUrl(context, "https://google.com");
 
         val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder().status(200).build();
-        WebUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
+        DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
 
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
@@ -69,12 +70,12 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        WebUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
+        DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
         samlClient.getLogoutValidator().setPostLogoutURL("https://google.com");
         
         val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder().status(200).build();
-        WebUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
+        DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
         
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);

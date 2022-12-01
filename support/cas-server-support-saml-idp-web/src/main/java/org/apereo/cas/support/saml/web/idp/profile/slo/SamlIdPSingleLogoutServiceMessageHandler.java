@@ -27,7 +27,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+import net.shibboleth.shared.xml.SerializeSupport;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.velocity.app.VelocityEngine;

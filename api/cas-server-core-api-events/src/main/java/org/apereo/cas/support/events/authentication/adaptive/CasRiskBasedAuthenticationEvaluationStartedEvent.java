@@ -23,6 +23,7 @@ public class CasRiskBasedAuthenticationEvaluationStartedEvent extends AbstractCa
     private static final long serialVersionUID = 748568299766263298L;
 
     private final Authentication authentication;
+
     private final RegisteredService service;
 
     public CasRiskBasedAuthenticationEvaluationStartedEvent(final Object source,

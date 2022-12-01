@@ -254,7 +254,7 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private ShibbolethIdPProperties shibIdp = new ShibbolethIdPProperties();
-    
+
     /**
      * Trusted authentication.
      */

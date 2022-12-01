@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.net.URI;
 
@@ -35,7 +35,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
     private static final String DOCTYPE_AND_OPENING_FORM = DOCTYPE_AND_TITLE + TGT_CREATED_TITLE_CONTENT + CLOSE_TITLE_AND_OPEN_FORM;
 
     private static final String REST_OF_THE_FORM_AND_CLOSING_TAGS = "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input "
-        + "type=\"submit\" value=\"Submit\"></form></body></html>";
+                                                                    + "type=\"submit\" value=\"Submit\"></form></body></html>";
 
     private static String getResponse(final TicketGrantingTicket ticketGrantingTicket,
                                       final HttpServletRequest request, final URI ticketReference,
@@ -44,8 +44,8 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
             headers.setContentType(MediaType.TEXT_HTML);
             val tgtUrl = ticketReference.toString();
             return DOCTYPE_AND_OPENING_FORM
-                + tgtUrl
-                + REST_OF_THE_FORM_AND_CLOSING_TAGS;
+                   + tgtUrl
+                   + REST_OF_THE_FORM_AND_CLOSING_TAGS;
         }
         return ticketGrantingTicket.getId();
     }

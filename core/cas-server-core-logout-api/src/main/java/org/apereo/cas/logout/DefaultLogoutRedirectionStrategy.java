@@ -57,8 +57,8 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
                     WebUtils.putLogoutRedirectUrl(requestContext, service.getOriginalUrl());
                 } else {
                     LOGGER.debug("Cannot redirect to [{}] given the service is unauthorized to use CAS, "
-                        + "or following logout redirects is disabled in CAS settings. "
-                        + "Ensure the service is registered with CAS and is enabled to allow access", service);
+                                 + "or following logout redirects is disabled in CAS settings. "
+                                 + "Ensure the service is registered with CAS and is enabled to allow access", service);
                 }
             }, () -> {
                 val authorizedRedirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);

@@ -9,14 +9,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
+import net.shibboleth.shared.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Optional;
 
 /**
@@ -43,7 +44,7 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
                                                                                 final Class<? extends SignableSAMLObject> clazz) {
         FunctionUtils.doUnchecked(__ -> {
             LOGGER.trace("Received SAML profile request [{}]", request.getRequestURI());
-            decoder.setHttpServletRequest(request);
+            decoder.setHttpServletRequestSupplier(() -> request);
             decoder.setParserPool(this.parserPool);
             decoder.initialize();
             decoder.decode();

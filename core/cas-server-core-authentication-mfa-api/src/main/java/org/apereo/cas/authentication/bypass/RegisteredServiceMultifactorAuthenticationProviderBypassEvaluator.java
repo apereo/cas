@@ -4,7 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.Serial;
 
 /**
@@ -23,11 +24,11 @@ public class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator e
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                  final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider,
-                                                                  final HttpServletRequest request) {
+                                                                          final RegisteredService registeredService,
+                                                                          final MultifactorAuthenticationProvider provider,
+                                                                          final HttpServletRequest request) {
         return registeredService == null
-            || registeredService.getMultifactorAuthenticationPolicy() == null
-            || !registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled();
+               || registeredService.getMultifactorAuthenticationPolicy() == null
+               || !registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled();
     }
 }

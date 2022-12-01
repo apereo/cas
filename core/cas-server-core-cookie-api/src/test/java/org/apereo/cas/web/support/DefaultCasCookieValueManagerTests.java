@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,7 +34,7 @@ public class DefaultCasCookieValueManagerTests {
     private static final String VALUE = "cookieValue";
 
     private CookieValueManager cookieValueManager;
-    
+
     @Mock
     private Cookie cookie;
 
@@ -140,7 +140,7 @@ public class DefaultCasCookieValueManagerTests {
         val props = new TicketGrantingCookieProperties();
         val mgr = new DefaultCasCookieValueManager(CipherExecutor.noOp(), props);
         assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@"
-            + ClientInfoHolder.getClientInfo().getClientIpAddress() + "@agent", new MockHttpServletRequest()));
+                                                                               + ClientInfoHolder.getClientInfo().getClientIpAddress() + "@agent", new MockHttpServletRequest()));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class DefaultCasCookieValueManagerTests {
         val mgr = new DefaultCasCookieValueManager(CipherExecutor.noOp(), props);
         ClientInfoHolder.clear();
         assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@"
-                + CLIENT_IP + '@' + USER_AGENT, new MockHttpServletRequest()));
+                                                                               + CLIENT_IP + '@' + USER_AGENT, new MockHttpServletRequest()));
     }
 
 }

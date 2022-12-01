@@ -40,6 +40,14 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
     }
 
     @Override
+    public int hashCode() {
+        val builder = new HashCodeBuilder(11, 41);
+        builder.append(getClass().getName());
+        builder.append(getId());
+        return builder.toHashCode();
+    }
+
+    @Override
     public boolean equals(final Object other) {
         if (other == null) {
             return false;
@@ -55,14 +63,6 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         return builder.isEquals();
     }
 
-    @Override
-    public int hashCode() {
-        val builder = new HashCodeBuilder(11, 41);
-        builder.append(getClass().getName());
-        builder.append(getId());
-        return builder.toHashCode();
-    }
-    
     /**
      * Validate.
      *

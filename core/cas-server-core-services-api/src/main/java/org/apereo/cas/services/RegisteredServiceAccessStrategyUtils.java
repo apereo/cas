@@ -50,7 +50,7 @@ public class RegisteredServiceAccessStrategyUtils {
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             val msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry. You should "
-                + "review the service access strategy to evaluate the conditions and policies required for service access.", service);
+                                    + "review the service access strategy to evaluate the conditions and policies required for service access.", service);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!ensureServiceIsNotExpired(registeredService)) {

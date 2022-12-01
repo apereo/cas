@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link AlwaysExpiresExpirationPolicy}.
+ *
  * @author Misagh Moayyed
  * @since 3.0
  */
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AlwaysExpiresExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "alwaysExpiresExpirationPolicy.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

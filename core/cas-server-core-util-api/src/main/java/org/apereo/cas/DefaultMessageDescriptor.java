@@ -33,8 +33,7 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
     private final Serializable[] params;
 
     @JsonCreator
-    public DefaultMessageDescriptor(@JsonProperty("code")
-                                    final String code) {
+    public DefaultMessageDescriptor(@JsonProperty("code") final String code) {
         this(code, code, null);
     }
 }

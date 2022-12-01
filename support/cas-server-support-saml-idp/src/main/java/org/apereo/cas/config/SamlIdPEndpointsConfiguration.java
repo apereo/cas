@@ -246,7 +246,7 @@ public class SamlIdPEndpointsConfiguration {
         public HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders(
             final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSso();
-            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            val decoders = new HttpServletRequestXMLMessageDecodersMap();
             decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
             decoders.put(HttpMethod.POST, new HTTPPostDecoder());
             return decoders;
@@ -258,7 +258,7 @@ public class SamlIdPEndpointsConfiguration {
         public HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders(
             final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
-            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            val decoders = new HttpServletRequestXMLMessageDecodersMap();
             decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
             decoders.put(HttpMethod.POST, new HTTPPostSimpleSignDecoder());
             return decoders;
@@ -269,7 +269,7 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
-            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            val decoders = new HttpServletRequestXMLMessageDecodersMap();
             decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
             return decoders;
         }
@@ -279,7 +279,7 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "sloPostProfileHandlerDecoders")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpServletRequestXMLMessageDecodersMap sloPostProfileHandlerDecoders() {
-            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            val decoders = new HttpServletRequestXMLMessageDecodersMap();
             decoders.put(HttpMethod.POST, new HTTPPostDecoder());
             return decoders;
         }
@@ -456,7 +456,9 @@ public class SamlIdPEndpointsConfiguration {
 
                 @Override
                 public List<String> getIgnoredEndpoints() {
-                    return List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
+                    return List.of(
+                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_IDP, "/"),
+                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
                         StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
                 }
             };

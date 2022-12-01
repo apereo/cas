@@ -567,7 +567,6 @@ layout: null
     *   [Overview](/cas/{{ version }}/monitoring/Monitoring-Statistics.html)
     *   [Administration Server](/cas/{{ version }}/monitoring/Configuring-Monitoring-Administration.html)
     *   [JavaMelody](/cas/{{ version }}/monitoring/Configuring-Monitoring-JavaMelody.html)
-    *   [Distributed Tracing](/cas/{{ version }}/monitoring/Distributed-Tracing-Sleuth.html)
     *   [Metrics](#metricsoverview)
         *   [Overview](/cas/{{ version }}/monitoring/Configuring-Metrics.html)
         *   [Storage](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage.html)
@@ -666,7 +665,6 @@ layout: null
     *   [CAS Clients](/cas/{{ version }}/integration/CAS-Clients.html)
     *   [Swagger](/cas/{{ version }}/integration/Swagger-Integration.html)
     *   [JMX](/cas/{{ version }}/integration/JMX-Integration.html)
-    *   [Zipkin & Sleuth](/cas/{{ version }}/monitoring/Distributed-Tracing-Sleuth.html)
     *   [Shibboleth Identity Provider](/cas/{{ version }}/integration/Shibboleth.html)
     *   [JDBC Drivers](/cas/{{ version }}/installation/JDBC-Drivers.html)
 

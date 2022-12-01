@@ -50,6 +50,19 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
+    public void save(final Stream<RegisteredService> toSave) {
+        val resultingStream = toSave.peek(registeredService ->
+            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService)));
+        configurationContext.getServiceRegistry()
+            .save(resultingStream)
+            .forEach(r -> {
+                cacheRegisteredService(r);
+                saveInternal(r);
+                publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+            });
+    }
+
+    @Override
     public RegisteredService save(final RegisteredService registeredService) {
         return save(registeredService, true);
     }
@@ -82,19 +95,6 @@ public abstract class AbstractServicesManager implements ServicesManager {
             }
             return null;
         }, andThenConsume, countExclusive);
-    }
-
-    @Override
-    public void save(final Stream<RegisteredService> toSave) {
-        val resultingStream = toSave.peek(registeredService ->
-            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService)));
-        configurationContext.getServiceRegistry()
-            .save(resultingStream)
-            .forEach(r -> {
-                cacheRegisteredService(r);
-                saveInternal(r);
-                publishEvent(new CasRegisteredServiceSavedEvent(this, r));
-            });
     }
 
     @Override
@@ -354,6 +354,20 @@ public abstract class AbstractServicesManager implements ServicesManager {
     protected void loadInternal(final RegisteredService service) {
     }
 
+    /**
+     * Gets cacheable services stream.
+     *
+     * @return the cacheable services stream
+     */
+    protected Supplier<Stream<RegisteredService>> getCacheableServicesStream() {
+        configurationContext.getServicesCache().cleanUp();
+        val size = configurationContext.getServicesCache().estimatedSize();
+        if (size <= 0) {
+            return () -> (Stream<RegisteredService>) configurationContext.getServiceRegistry().getServicesStream();
+        }
+        return () -> configurationContext.getServicesCache().asMap().values().stream();
+    }
+
     private void cacheRegisteredService(final RegisteredService service) {
         if (configurationContext.getServicesCache().getIfPresent(service.getId()) == null) {
             configurationContext.getServicesCache().put(service.getId(), service);
@@ -434,19 +448,5 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .filter(filter)
             .findFirst()
             .orElse(null);
-    }
-
-    /**
-     * Gets cacheable services stream.
-     *
-     * @return the cacheable services stream
-     */
-    protected Supplier<Stream<RegisteredService>> getCacheableServicesStream() {
-        configurationContext.getServicesCache().cleanUp();
-        val size = configurationContext.getServicesCache().estimatedSize();
-        if (size <= 0) {
-            return () -> (Stream<RegisteredService>) configurationContext.getServiceRegistry().getServicesStream();
-        }
-        return () -> configurationContext.getServicesCache().asMap().values().stream();
     }
 }

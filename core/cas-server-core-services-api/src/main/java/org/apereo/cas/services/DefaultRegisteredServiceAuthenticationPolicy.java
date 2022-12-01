@@ -28,7 +28,7 @@ public class DefaultRegisteredServiceAuthenticationPolicy implements RegisteredS
     private static final long serialVersionUID = -6777133646772207331L;
 
     private Set<String> requiredAuthenticationHandlers = new HashSet<>();
-    
+
     private Set<String> excludedAuthenticationHandlers = new HashSet<>();
 
     private RegisteredServiceAuthenticationPolicyCriteria criteria;

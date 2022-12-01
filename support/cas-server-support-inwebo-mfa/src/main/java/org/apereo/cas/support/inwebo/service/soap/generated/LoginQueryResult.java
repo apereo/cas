@@ -1,10 +1,11 @@
 // CHECKSTYLE:OFF
 package org.apereo.cas.support.inwebo.service.soap.generated;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,76 +58,109 @@ public class LoginQueryResult {
 
     @XmlElement(required = true, nillable = true)
     protected String err;
+
     @XmlElement(required = true, nillable = true)
     protected String login;
+
     @XmlElement(required = true, nillable = true)
     protected String code;
+
     protected long status;
+
     protected long role;
+
     @XmlElement(required = true, nillable = true)
     protected String firstname;
+
     @XmlElement(required = true, nillable = true)
     protected String name;
+
     @XmlElement(required = true, nillable = true)
     protected String mail;
+
     @XmlElement(required = true, nillable = true)
     protected String phone;
+
     @XmlElement(required = true, nillable = true)
     protected String extrafields;
+
     protected long createdby;
+
     protected long lastauthdate;
+
     protected long nca;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> caid;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> castate;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> caname;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> cault;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> caalias;
+
     protected long nma;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> maid;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> mastate;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> maname;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> maalias;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> mapushenabled;
+
     protected long nmac;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> macid;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> macstate;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> macname;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> macalias;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> macpushenabled;
+
     protected long nva;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> vaid;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> vastate;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> vaname;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> vaalias;
+
     @XmlElement(required = true, nillable = true)
     protected String longcode;
 
     /**
      * Obtient la valeur de la propriété err.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getErr() {
         return err;
@@ -134,11 +168,9 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété err.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setErr(String value) {
         this.err = value;
@@ -146,11 +178,9 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété login.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLogin() {
         return login;
@@ -158,11 +188,9 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété login.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setLogin(String value) {
         this.login = value;
@@ -170,11 +198,9 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété code.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCode() {
         return code;
@@ -182,11 +208,9 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété code.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setCode(String value) {
         this.code = value;
@@ -194,7 +218,6 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété status.
-     * 
      */
     public long getStatus() {
         return status;
@@ -202,7 +225,6 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété status.
-     * 
      */
     public void setStatus(long value) {
         this.status = value;
@@ -210,7 +232,6 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété role.
-     * 
      */
     public long getRole() {
         return role;
@@ -218,7 +239,6 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété role.
-     * 
      */
     public void setRole(long value) {
         this.role = value;
@@ -226,11 +246,9 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété firstname.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getFirstname() {
         return firstname;
@@ -238,11 +256,9 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété firstname.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setFirstname(String value) {
         this.firstname = value;
@@ -250,11 +266,9 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété name.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -262,11 +276,9 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété name.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -274,11 +286,9 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété mail.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMail() {
         return mail;
@@ -286,11 +296,9 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété mail.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setMail(String value) {
         this.mail = value;
@@ -298,11 +306,9 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété phone.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPhone() {
         return phone;
@@ -310,11 +316,9 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété phone.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setPhone(String value) {
         this.phone = value;
@@ -322,11 +326,9 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété extrafields.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getExtrafields() {
         return extrafields;
@@ -334,11 +336,9 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété extrafields.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setExtrafields(String value) {
         this.extrafields = value;
@@ -346,7 +346,6 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété createdby.
-     * 
      */
     public long getCreatedby() {
         return createdby;
@@ -354,7 +353,6 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété createdby.
-     * 
      */
     public void setCreatedby(long value) {
         this.createdby = value;
@@ -362,7 +360,6 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété lastauthdate.
-     * 
      */
     public long getLastauthdate() {
         return lastauthdate;
@@ -370,7 +367,6 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété lastauthdate.
-     * 
      */
     public void setLastauthdate(long value) {
         this.lastauthdate = value;
@@ -378,7 +374,6 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété nca.
-     * 
      */
     public long getNca() {
         return nca;
@@ -386,7 +381,6 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété nca.
-     * 
      */
     public void setNca(long value) {
         this.nca = value;
@@ -394,25 +388,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the caid property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the caid property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCaid().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getCaid() {
         if (caid == null) {
@@ -423,25 +415,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the castate property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the castate property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCastate().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getCastate() {
         if (castate == null) {
@@ -452,25 +442,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the caname property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the caname property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCaname().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getCaname() {
         if (caname == null) {
@@ -481,25 +469,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the cault property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cault property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCault().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getCault() {
         if (cault == null) {
@@ -510,25 +496,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the caalias property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the caalias property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCaalias().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getCaalias() {
         if (caalias == null) {
@@ -539,7 +523,6 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété nma.
-     * 
      */
     public long getNma() {
         return nma;
@@ -547,7 +530,6 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété nma.
-     * 
      */
     public void setNma(long value) {
         this.nma = value;
@@ -555,25 +537,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the maid property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the maid property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMaid().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getMaid() {
         if (maid == null) {
@@ -584,25 +564,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the mastate property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mastate property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMastate().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getMastate() {
         if (mastate == null) {
@@ -613,25 +591,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the maname property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the maname property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getManame().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getManame() {
         if (maname == null) {
@@ -642,25 +618,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the maalias property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the maalias property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMaalias().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getMaalias() {
         if (maalias == null) {
@@ -671,25 +645,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the mapushenabled property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mapushenabled property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMapushenabled().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getMapushenabled() {
         if (mapushenabled == null) {
@@ -700,7 +672,6 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété nmac.
-     * 
      */
     public long getNmac() {
         return nmac;
@@ -708,7 +679,6 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété nmac.
-     * 
      */
     public void setNmac(long value) {
         this.nmac = value;
@@ -716,25 +686,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the macid property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the macid property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMacid().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getMacid() {
         if (macid == null) {
@@ -745,25 +713,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the macstate property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the macstate property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMacstate().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getMacstate() {
         if (macstate == null) {
@@ -774,25 +740,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the macname property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the macname property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMacname().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getMacname() {
         if (macname == null) {
@@ -803,25 +767,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the macalias property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the macalias property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMacalias().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getMacalias() {
         if (macalias == null) {
@@ -832,25 +794,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the macpushenabled property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the macpushenabled property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMacpushenabled().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getMacpushenabled() {
         if (macpushenabled == null) {
@@ -861,7 +821,6 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété nva.
-     * 
      */
     public long getNva() {
         return nva;
@@ -869,7 +828,6 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété nva.
-     * 
      */
     public void setNva(long value) {
         this.nva = value;
@@ -877,25 +835,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the vaid property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the vaid property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getVaid().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getVaid() {
         if (vaid == null) {
@@ -906,25 +862,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the vastate property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the vastate property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getVastate().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
-     * 
      */
     public List<Long> getVastate() {
         if (vastate == null) {
@@ -935,25 +889,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the vaname property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the vaname property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getVaname().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getVaname() {
         if (vaname == null) {
@@ -964,25 +916,23 @@ public class LoginQueryResult {
 
     /**
      * Gets the value of the vaalias property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the vaalias property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getVaalias().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
      */
     public List<String> getVaalias() {
         if (vaalias == null) {
@@ -993,11 +943,9 @@ public class LoginQueryResult {
 
     /**
      * Obtient la valeur de la propriété longcode.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLongcode() {
         return longcode;
@@ -1005,11 +953,9 @@ public class LoginQueryResult {
 
     /**
      * Définit la valeur de la propriété longcode.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setLongcode(String value) {
         this.longcode = value;

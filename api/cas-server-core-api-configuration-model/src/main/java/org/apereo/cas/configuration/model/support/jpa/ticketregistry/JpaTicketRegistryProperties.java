@@ -12,7 +12,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
+
 import java.io.Serial;
 
 /**
@@ -61,7 +62,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
      */
     @RequiredProperty
     private boolean enabled = true;
-    
+
     public JpaTicketRegistryProperties() {
         super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
         this.crypto.setEnabled(false);

@@ -25,6 +25,7 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
+    implementation libraries.hibernate
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-util")

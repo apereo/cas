@@ -2,7 +2,9 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.couchbase.core.DefaultCouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -14,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import org.springframework.context.support.StaticApplicationContext;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -58,22 +60,27 @@ public class CouchbaseAuthenticationHandlerTests {
 
     @Test
     public void verifyBadEncoding() {
+        val ctx = new StaticApplicationContext();
+        ctx.refresh();
+
         val props = casProperties.getAuthn().getCouchbase();
         val factory = new DefaultCouchbaseClientFactory(props);
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
-        handler.setPasswordEncoder(new SCryptPasswordEncoder());
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(new PasswordEncoderProperties().setType("SCRYPT"), ctx));
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         assertThrows(FailedLoginException.class, () -> handler.authenticate(c, mock(Service.class)));
     }
 
     @Test
     public void verifyBadRecord() {
+        val ctx = new StaticApplicationContext();
+        ctx.refresh();
         val props = casProperties.getAuthn().getCouchbase();
         val factory = new DefaultCouchbaseClientFactory(props);
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
-        handler.setPasswordEncoder(new SCryptPasswordEncoder());
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(new PasswordEncoderProperties().setType("SCRYPT"), ctx));
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nopsw", "Mellon");
         assertThrows(FailedLoginException.class, () -> handler.authenticate(c, mock(Service.class)));
     }

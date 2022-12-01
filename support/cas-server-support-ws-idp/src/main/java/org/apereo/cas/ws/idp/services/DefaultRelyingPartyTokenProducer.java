@@ -21,7 +21,7 @@ import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSUtils;
 import org.w3c.dom.Element;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;

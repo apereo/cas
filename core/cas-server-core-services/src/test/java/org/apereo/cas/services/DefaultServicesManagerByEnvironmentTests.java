@@ -18,21 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests<DefaultServicesManager> {
-    @Override
-    protected ServicesManager getServicesManagerInstance() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(serviceRegistry)
-            .applicationContext(applicationContext)
-            .environments(CollectionUtils.wrapSet("prod1", "qa1"))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-
-        return new DefaultServicesManager(context);
-    }
-
     @Test
     public void verifyServiceByEnvironment() {
         val r = new CasRegisteredService();
@@ -46,5 +31,20 @@ public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesMa
         r.setEnvironments(CollectionUtils.wrapHashSet("prod1"));
         servicesManager.save(r);
         assertNotNull(servicesManager.findServiceBy(2000));
+    }
+
+    @Override
+    protected ServicesManager getServicesManagerInstance() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(serviceRegistry)
+            .applicationContext(applicationContext)
+            .environments(CollectionUtils.wrapSet("prod1", "qa1"))
+            .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
+            .build();
+
+        return new DefaultServicesManager(context);
     }
 }

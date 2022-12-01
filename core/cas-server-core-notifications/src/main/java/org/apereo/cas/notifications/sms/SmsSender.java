@@ -14,6 +14,21 @@ public interface SmsSender {
     String BEAN_NAME = "smsSender";
 
     /**
+     * No op sms sender.
+     *
+     * @return the sms sender
+     */
+    static SmsSender noOp() {
+        return new SmsSender() {
+
+            @Override
+            public boolean canSend() {
+                return false;
+            }
+        };
+    }
+
+    /**
      * Send sms to phone number.
      *
      * @param from    the from
@@ -32,20 +47,5 @@ public interface SmsSender {
      */
     default boolean canSend() {
         return true;
-    }
-
-    /**
-     * No op sms sender.
-     *
-     * @return the sms sender
-     */
-    static SmsSender noOp() {
-        return new SmsSender() {
-
-            @Override
-            public boolean canSend() {
-                return false;
-            }
-        };
     }
 }

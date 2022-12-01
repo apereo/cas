@@ -128,6 +128,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         if (state instanceof EndState) {
             stateMap.put("isEndState", Boolean.TRUE);
         }
+
         if (state.isViewState()) {
             val viewState = (ViewState) state;
 
@@ -172,7 +173,6 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         }
 
         if (state instanceof TransitionableState stDef) {
-
             acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
                 .map(Object::toString)
                 .collect(Collectors.toList());

@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
 import javax.annotation.Nonnull;
+
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -119,8 +120,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
 
     @Override
     public void setApplicationEventPublisher(
-        @Nonnull
-        final ApplicationEventPublisher publisher) {
+        @Nonnull final ApplicationEventPublisher publisher) {
         this.applicationEventPublisher = publisher;
     }
 

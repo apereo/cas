@@ -31,7 +31,6 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.annotation.Persistent;
-import org.springframework.data.convert.JodaTimeConverters;
 import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
@@ -110,7 +109,6 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.BsonTimestampToDateConverter());
         converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
         converters.add(new BaseConverters.StringToZonedDateTimeConverter());
-        converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
 
         this.customConversions = new MongoCustomConversions(converters);

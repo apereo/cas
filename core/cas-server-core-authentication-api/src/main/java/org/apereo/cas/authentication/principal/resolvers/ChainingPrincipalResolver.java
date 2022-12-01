@@ -47,14 +47,14 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      **/
     private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 
+    private final PrincipalElectionStrategy principalElectionStrategy;
+
+    private final CasConfigurationProperties casProperties;
+
     /**
      * The chain of delegate resolvers that are invoked in order.
      */
     private List<PrincipalResolver> chain;
-
-    private final PrincipalElectionStrategy principalElectionStrategy;
-
-    private final CasConfigurationProperties casProperties;
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {

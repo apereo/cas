@@ -53,7 +53,7 @@ public class CasWebflowEventResolutionConfigurationContext {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
-    
+
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;

@@ -115,7 +115,6 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         }
 
         builder
-            .addAttribute("permissions", new LinkedHashSet<>(profile.getPermissions()))
             .addAttribute("roles", new LinkedHashSet<>(profile.getRoles()))
             .addAttribute(OAuth20Constants.SCOPE, scopes)
             .addAttribute(OAuth20Constants.STATE, state)

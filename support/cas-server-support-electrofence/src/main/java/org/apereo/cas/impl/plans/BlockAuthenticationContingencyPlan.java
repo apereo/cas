@@ -9,7 +9,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link BlockAuthenticationContingencyPlan}.

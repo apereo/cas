@@ -77,8 +77,6 @@ public class CasWebSecurityConfigurerAdapterWebTests {
 
     @Test
     public void verifyAccessToEndpoints() throws Exception {
-        mvc.perform(get("/cas/oidc/accessToken")).andExpect(status().isOk());
-        mvc.perform(post("/cas/oidc/accessToken")).andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/beans")).andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/info")
                 .with(httpBasic("casuser", "Mellon")))
@@ -91,13 +89,13 @@ public class CasWebSecurityConfigurerAdapterWebTests {
         mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "196.1.1.0"))
             .andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "10.0.0.9"))
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "172.16.55.9"))
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "200.0.0.123"))
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "192.168.0.1"))
-                .andExpect(status().isUnauthorized());
+            .andExpect(status().isUnauthorized());
 
         mvc.perform(get("/cas/actuator/health")).andExpect(status().isUnauthorized());
     }

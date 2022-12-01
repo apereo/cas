@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class DelegatedAuthenticationClientRetryAction extends BaseCasWebflowActi
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val clientName = WebUtils.getDelegatedAuthenticationClientName(requestContext);
+        val clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
         val client = clients.findClient(clientName).map(IndirectClient.class::cast).get();
         val config = providerConfigurationProducer.produce(requestContext, client).get();
 

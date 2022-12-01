@@ -1,5 +1,7 @@
 description = "Apereo CAS Web Application Themes Support"
 dependencies {
+    implementation libraries.thymeleaf
+
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")

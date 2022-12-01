@@ -6,7 +6,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Optional;
 
 /**
@@ -27,7 +28,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
                             final WebApplicationService singleLogoutService,
                             final Optional<HttpServletRequest> httpRequest) {
         return super.supports(registeredService, singleLogoutService, httpRequest)
-            && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME);
+               && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME);
     }
-    
+
 }

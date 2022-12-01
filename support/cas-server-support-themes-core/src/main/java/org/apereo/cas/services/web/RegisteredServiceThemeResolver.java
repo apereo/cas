@@ -28,9 +28,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -149,7 +149,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             .stream()
             .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(theme).concat(".properties"))
             .anyMatch(ResourceUtils::doesResourceExist)) {
-            LOGGER.trace("Found custom extrnal theme [{}] for service [{}]", theme, registeredService.getName());
+            LOGGER.trace("Found custom external theme [{}] for service [{}]", theme, registeredService.getName());
             return theme;
         }
 

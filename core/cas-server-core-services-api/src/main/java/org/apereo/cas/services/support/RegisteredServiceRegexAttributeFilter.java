@@ -46,6 +46,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     private Pattern compiledPattern;
 
     private String pattern;
+
     private int order;
 
     /**

@@ -15,18 +15,21 @@ public interface RandomStringGenerator {
 
     /**
      * Default length to use.
+     *
      * @return the default length as an int.
      */
     long getDefaultLength();
 
     /**
      * The algorithm used by the generator's SecureRandom instance.
+     *
      * @return the algorithm used by the generator's SecureRandom instance.
      */
     String getAlgorithm();
 
     /**
      * A new random string of specified initial size.
+     *
      * @param size length of random string before encoding
      * @return a new random string of specified initial size
      */
@@ -34,6 +37,7 @@ public interface RandomStringGenerator {
 
     /**
      * A new random string of specified default size.
+     *
      * @return a new random string of default initial size
      */
     String getNewString();

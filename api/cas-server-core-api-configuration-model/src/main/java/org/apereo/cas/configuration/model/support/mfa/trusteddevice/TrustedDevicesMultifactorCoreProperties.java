@@ -60,6 +60,7 @@ public class TrustedDevicesMultifactorCoreProperties implements Serializable {
         DEFAULT,
         /**
          * Deprecated. Uses a combination of the username, record date and device fingerprint to generate the device key.
+         *
          * @deprecated since 6.3.0
          */
         @Deprecated(since = "6.3.0")

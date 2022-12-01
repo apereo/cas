@@ -14,8 +14,9 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -105,7 +106,6 @@ public class CookieUtils {
             .maxAge(cookie.getMaxAge())
             .secure(cookie.isSecure())
             .domain(cookie.getDomain())
-            .comment(cookie.getComment())
             .sameSitePolicy(cookie.getSameSitePolicy())
             .httpOnly(cookie.isHttpOnly());
     }

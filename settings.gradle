@@ -23,6 +23,14 @@ dependencyResolutionManagement {
         mavenLocal()
         mavenCentral()
         maven {
+            url "https://build.shibboleth.net/nexus/content/repositories/snapshots"
+            mavenContent { snapshotsOnly() }
+            content {
+                includeGroupByRegex "org\\.opensaml.*"
+                includeGroupByRegex "net\\.shibboleth.*"
+            }
+        }
+        maven {
             url "https://build.shibboleth.net/maven/releases/"
             content {
                 includeGroupByRegex "org\\.opensaml.*"
@@ -46,21 +54,31 @@ dependencyResolutionManagement {
             content {
                 includeGroupByRegex ".*splunk.*"
             }
-            mavenContent { releasesOnly() }
+            mavenContent {releasesOnly() }
         }
-        maven {
-            url "https://repo.terracotta.org/maven2"
-            mavenContent { releasesOnly() }
-            content {
-                includeGroupByRegex "org.terracotta.*"
-            }
-        }
-        
         maven {
             url "https://repo.spring.io/milestone"
+            mavenContent {releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/snapshot"
+            mavenContent {snapshotsOnly() }
+        }
+        maven {
+            url "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
+            content {
+                includeGroupByRegex ".*netflix.*"
+            }
             mavenContent { releasesOnly() }
         }
-        
+        maven {
+            url "https://jitpack.io"
+            content {
+                includeGroupByRegex "com.github.mmoayyed.scim2"
+                includeGroupByRegex "com.github.mmoayyed.ws-wss4j"
+            }
+            mavenContent { releasesOnly() }
+        }
     }
 }
 
@@ -382,7 +400,6 @@ include "support:cas-server-support-shell"
 include "support:cas-server-support-shibboleth"
 include "support:cas-server-support-simple-mfa-core"
 include "support:cas-server-support-simple-mfa"
-include "support:cas-server-support-sleuth"
 include "support:cas-server-support-sms-aws-sns"
 include "support:cas-server-support-sms-clickatell"
 include "support:cas-server-support-sms-smsmode"

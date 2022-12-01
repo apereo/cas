@@ -9,13 +9,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -28,9 +29,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SingleSignOnSessionStatusEndpoint {
 
-    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+    private final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGeneratorProvider;
 
-    private final TicketRegistrySupport ticketRegistrySupport;
+    private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider;
 
     /**
      * Sso status response entity.
@@ -49,17 +50,19 @@ public class SingleSignOnSessionStatusEndpoint {
         final String tgc,
         final HttpServletRequest request) {
 
+        val ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGeneratorProvider.getObject();
         val tgtId = StringUtils.isNotBlank(tgc)
             ? ticketGrantingTicketCookieGenerator.getCasCookieValueManager().obtainCookieValue(tgc, request)
             : ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isBlank(tgtId)) {
             return ResponseEntity.badRequest().build();
         }
-        val auth = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
+        val ticketRegistrySupport = ticketRegistrySupportProvider.getObject();
+        val auth = ticketRegistrySupport.getAuthenticationFrom(tgtId);
         if (auth == null) {
             return ResponseEntity.badRequest().build();
         }
-        val ticketState = this.ticketRegistrySupport.getTicket(tgtId);
+        val ticketState = ticketRegistrySupport.getTicket(tgtId);
         val body = CollectionUtils.wrap("principal", auth.getPrincipal().getId(),
             "authenticationDate", auth.getAuthenticationDate(),
             "ticketGrantingTicketCreationTime", ticketState.getCreationTime(),

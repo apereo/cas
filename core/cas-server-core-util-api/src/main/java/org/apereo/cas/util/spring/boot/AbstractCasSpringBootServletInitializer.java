@@ -7,9 +7,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.core.metrics.ApplicationStartup;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.SessionTrackingMode;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.SessionTrackingMode;
+
 import java.util.List;
 import java.util.Set;
 

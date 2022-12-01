@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml;
 
-import net.shibboleth.utilities.java.support.xml.ParserPool;
+import net.shibboleth.shared.xml.ParserPool;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;

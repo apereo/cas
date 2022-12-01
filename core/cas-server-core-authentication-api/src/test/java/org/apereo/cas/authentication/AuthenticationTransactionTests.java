@@ -41,11 +41,6 @@ public class AuthenticationTransactionTests {
             private static final long serialVersionUID = -8503574003503719399L;
 
             @Override
-            public Collection<Authentication> getAuthentications() {
-                return List.of();
-            }
-
-            @Override
             public AuthenticationTransaction collect(final Collection<Authentication> authentications) {
                 return this;
             }
@@ -58,6 +53,11 @@ public class AuthenticationTransactionTests {
             @Override
             public Collection<Credential> getCredentials() {
                 return List.of(new TestCredentialType1());
+            }
+
+            @Override
+            public Collection<Authentication> getAuthentications() {
+                return List.of();
             }
         };
         assertNotNull(transaction.getPrimaryCredential());

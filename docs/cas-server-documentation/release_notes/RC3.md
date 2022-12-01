@@ -45,11 +45,31 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### Spring Boot 3
+
+The migration of the entire codebase to Spring Boot `3.0.0` and Jakarta APIs is now complete. This is a major change and upgrade across the board
+that affects almost every CAS module and dependency. As a result, a very large number of internal libraries are 
+also upgraded to remain compatible These include Spring Data, Spring Security, Spring Cloud, Spring Shell, Pac4j and many many more. 
+
+Switching to Spring Boot also means that CAS has now switched to support [Jakarta EE 10](https://jakarta.ee/release/10/) and 
+Servlet specification `6.0.0`. This change does impact supported servlet containers such as Apache Tomcat and Undertow, where 
+the minimum supported version is now required to be `10.1.x` and `2.3.x`, accordingly.
+
+Note that Jetty does not support Servlet specification `6.0.0` yet. Deployments that use an embedded Jetty 
+servlet container may need to downgrade the version of the Servlet specification manually to `5.0.0`. It is likely that this might 
+be sorted out prior to the final GA release by the time Jetty `12` is released.
+
+<div class="alert alert-info"><strong>Usage Warning</strong><p>Remember that this is a major upgrade and may possibly
+be somewhat disruptive in the beginning. While most if not all CAS-specific configuration should remain exactlty the same, 
+you may encouter unexpected hiccups and mishaps along the way. We recommend that you start early by experimenting with 
+release candidates and/or follow-up snapshots.</p></div>
+
 ## Other Stuff
         
 - Support for OpenID Connect `unmet_authentication_requirements` error code is now available.
 - Email templates and SMS notification messages for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) now have access to both 
   `token` and `tokenWithoutPrefix` variables. 
+- Negative skew values are now supported for SAML2 responses when skew values are defined for SAML2 registered services.
 
 ## Library Upgrades
 
