@@ -37,7 +37,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
 
     private boolean loadSurrogates(final RequestContext requestContext) {
         val credential = WebUtils.getCredential(requestContext, MutableCredential.class);
-        if (credential != null && credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent()) {
+        if (credential != null) {
             val username = credential.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
             val surrogates = surrogateService.getImpersonationAccounts(username)
@@ -55,7 +55,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
             }
             LOGGER.debug("No surrogate accounts could be located for [{}]", username);
         } else {
-            LOGGER.debug("Credential [{}] is not supported for surrogate authentication", credential);
+            LOGGER.debug("Credential is not supported for surrogate authentication");
         }
         return false;
     }
