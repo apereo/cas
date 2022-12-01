@@ -86,7 +86,7 @@ public class SurrogatePrincipalBuilder {
 
             val surrogateUsername = mutableCredential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
                 .map(SurrogateCredentialTrait::getSurrogateUsername)
-                .orElseThrow();
+                .orElseThrow(() -> new SurrogateAuthenticationException("Unable to locate surrogate credential"));
 
             if (!surrogateAuthenticationService.canImpersonate(surrogateUsername, principal, Optional.empty())) {
                 throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + surrogateUsername);

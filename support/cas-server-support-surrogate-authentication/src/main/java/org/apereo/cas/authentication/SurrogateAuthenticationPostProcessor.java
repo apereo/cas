@@ -54,7 +54,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
         val primaryPrincipal = SurrogatePrincipal.class.cast(principal);
         val surrogateUsername = primaryCredential.get().getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
             .map(SurrogateCredentialTrait::getSurrogateUsername)
-            .orElseThrow();
+            .orElseThrow(() -> new AuthenticationException("Unable to determine surrogate credential"));
 
         try {
             if (StringUtils.isBlank(surrogateUsername)) {
