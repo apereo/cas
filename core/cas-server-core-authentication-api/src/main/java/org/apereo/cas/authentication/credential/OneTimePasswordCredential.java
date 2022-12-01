@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.credential;
 
-import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.CredentialMetadata;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,7 +15,7 @@ import java.io.Serial;
  * The primary difference between this component and {@link UsernamePasswordCredential} is that the username/ID is optional
  * in the former and requisite in the latter.
  * <p>
- * This class implements {@link CredentialMetaData} since the one-time-password is safe for long-term storage after
+ * This class implements {@link CredentialMetadata} since the one-time-password is safe for long-term storage after
  * authentication. Note that metadata is stored only _after_ authentication, at which time the OTP has already
  * been consumed and by definition is no longer useful for authentication.
  *

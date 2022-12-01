@@ -57,9 +57,10 @@ public class SurrogatePrincipalBuilderTests {
         val resultBuilder = new DefaultAuthenticationResultBuilder();
         resultBuilder.collect(CoreAuthenticationTestUtils.getAuthentication(principal));
 
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         assertThrows(SurrogateAuthenticationException.class,
             () -> surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
-                resultBuilder, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                "surrogate", registeredService));
+                resultBuilder, credential,
+                registeredService));
     }
 }

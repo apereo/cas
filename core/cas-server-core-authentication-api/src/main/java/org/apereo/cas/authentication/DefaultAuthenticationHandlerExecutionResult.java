@@ -43,7 +43,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     /**
      * Credential meta data.
      */
-    private CredentialMetaData credentialMetaData;
+    private Credential credential;
 
     /**
      * Resolved principal for authenticated credential.
@@ -55,25 +55,25 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      */
     private List<MessageDescriptor> warnings = new ArrayList<>(0);
 
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
-        this(source, metaData, null, new ArrayList<>(0));
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential) {
+        this(source, credential, null, new ArrayList<>(0));
     }
 
 
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
                                                        final Principal p) {
-        this(source, metaData, p, new ArrayList<>(0));
+        this(source, credential, p, new ArrayList<>(0));
     }
 
 
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
                                                        final @NonNull List<MessageDescriptor> warnings) {
-        this(source, metaData, null, warnings);
+        this(source, credential, null, warnings);
     }
 
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
                                                        final Principal p, final @NonNull List<MessageDescriptor> warnings) {
-        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), metaData, p, warnings);
+        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), credential, p, warnings);
     }
 
     @Override

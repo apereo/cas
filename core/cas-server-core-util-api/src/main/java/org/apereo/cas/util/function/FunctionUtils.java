@@ -210,6 +210,17 @@ public class FunctionUtils {
         }
     }
 
+    public static <T> void doIfNull(final T input,
+                                    final CheckedConsumer<T> trueFunction) {
+        try {
+            if (input == null) {
+                trueFunction.accept(null);
+            }
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+    }
+
     /**
      * Supply if null supplier.
      *

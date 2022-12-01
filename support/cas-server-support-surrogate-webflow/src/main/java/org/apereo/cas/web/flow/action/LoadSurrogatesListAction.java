@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.action;
 
-import org.apereo.cas.authentication.SurrogateCredential;
+import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -35,8 +36,8 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
     private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
     private boolean loadSurrogates(final RequestContext requestContext) {
-        val credential = WebUtils.getCredential(requestContext);
-        if (credential instanceof SurrogateCredential) {
+        val credential = WebUtils.getCredential(requestContext, MutableCredential.class);
+        if (credential != null && credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent()) {
             val username = credential.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
             val surrogates = surrogateService.getImpersonationAccounts(username)
@@ -54,7 +55,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
             }
             LOGGER.debug("No surrogate accounts could be located for [{}]", username);
         } else {
-            LOGGER.debug("Current credential in the webflow is not one of [{}]", UsernamePasswordCredential.class.getName());
+            LOGGER.debug("Credential [{}] is not supported for surrogate authentication", credential);
         }
         return false;
     }
@@ -64,24 +65,17 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
         try {
             if (WebUtils.hasSurrogateAuthenticationRequest(requestContext)) {
                 WebUtils.removeSurrogateAuthenticationRequest(requestContext);
-                LOGGER.trace("Attempting to load surrogates...");
-                if (loadSurrogates(requestContext)) {
-                    val accounts = WebUtils.getSurrogateAuthenticationAccounts(requestContext);
-                    if (surrogateService.isWildcardedAccount(accounts)) {
-                        return new Event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_WILDCARD_VIEW);
-                    }
-                    return new Event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW);
-                }
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP_SURROGATE);
+                return loadSurrogateAccounts(requestContext);
             }
 
-            val currentCredential = WebUtils.getCredential(requestContext, SurrogateCredential.class);
-            if (currentCredential != null && currentCredential.getSurrogateUsername() != null) {
+            val currentCredential = WebUtils.getCredential(requestContext, MutableCredential.class);
+            if (currentCredential != null && currentCredential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
+                .stream()
+                .anyMatch(trait -> StringUtils.isNotBlank(trait.getSurrogateUsername()))) {
                 val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
                 val registeredService = WebUtils.getRegisteredService(requestContext);
                 val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
-                    authenticationResultBuilder, currentCredential,
-                        currentCredential.getSurrogateUsername(), registeredService);
+                    authenticationResultBuilder, currentCredential, registeredService);
                 result.ifPresent(builder -> WebUtils.putAuthenticationResultBuilder(builder, requestContext));
             }
             return success();
@@ -95,5 +89,18 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
             LoggingUtils.error(LOGGER, e);
             return error(e);
         }
+    }
+
+    protected Event loadSurrogateAccounts(final RequestContext requestContext) {
+        LOGGER.trace("Attempting to load surrogates...");
+        val eventFactorySupport = new EventFactorySupport();
+        if (loadSurrogates(requestContext)) {
+            val accounts = WebUtils.getSurrogateAuthenticationAccounts(requestContext);
+            if (surrogateService.isWildcardedAccount(accounts)) {
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_WILDCARD_VIEW);
+            }
+            return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW);
+        }
+        return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SKIP_SURROGATE);
     }
 }

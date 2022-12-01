@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal.resolvers;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -99,7 +100,7 @@ public class PersonDirectoryPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         val resolver = new PersonDirectoryPrincipalResolver(context);
-        val p = resolver.resolve(() -> null, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+        val p = resolver.resolve(null, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNull(p);
     }
@@ -180,7 +181,7 @@ public class PersonDirectoryPrincipalResolverTests {
             .build();
 
         val resolver = new PersonDirectoryPrincipalResolver(context);
-        val principal = resolver.resolve((Credential) () -> "a");
+        val principal = resolver.resolve(new BasicIdentifiableCredential("a"));
         assertTrue(principal.getAttributes().containsKey("a"));
     }
 

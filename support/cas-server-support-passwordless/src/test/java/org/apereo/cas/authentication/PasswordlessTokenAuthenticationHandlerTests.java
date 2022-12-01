@@ -37,7 +37,7 @@ public class PasswordlessTokenAuthenticationHandlerTests {
         assertThrows(FailedLoginException.class, () -> h.authenticate(new OneTimePasswordCredential("1", "2"), mock(Service.class)));
 
         assertTrue(h.supports(c));
-        assertTrue(h.supports(c.getCredentialClass()));
+        assertTrue(h.supports(c.getCredentialMetadata().getCredentialClass()));
         assertFalse(h.supports(new UsernamePasswordCredential()));
     }
 }

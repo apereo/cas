@@ -46,7 +46,7 @@ public class InweboAuthenticationHandlerTests {
         assertNotNull(result);
         assertNotNull(credential.getDeviceName());
         assertTrue(handler.supports(credential));
-        assertTrue(handler.supports(credential.getCredentialClass()));
+        assertTrue(handler.supports(credential.getCredentialMetadata().getCredentialClass()));
     }
 
     @Test

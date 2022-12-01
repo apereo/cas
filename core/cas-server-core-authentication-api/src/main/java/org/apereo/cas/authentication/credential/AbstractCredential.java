@@ -1,10 +1,13 @@
 package org.apereo.cas.authentication.credential;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.CredentialMetadata;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -22,17 +25,14 @@ import java.io.Serial;
  * @since 4.0.0
  */
 @ToString
+@Setter
+@Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public abstract class AbstractCredential implements Credential, CredentialMetaData {
-
+public abstract class AbstractCredential implements Credential {
     @Serial
     private static final long serialVersionUID = 8196868021183513898L;
 
-    @JsonIgnore
-    @Override
-    public Class<? extends Credential> getCredentialClass() {
-        return this.getClass();
-    }
+    private CredentialMetadata credentialMetadata = new BasicCredentialMetadata();
 
     @JsonIgnore
     public boolean isValid() {

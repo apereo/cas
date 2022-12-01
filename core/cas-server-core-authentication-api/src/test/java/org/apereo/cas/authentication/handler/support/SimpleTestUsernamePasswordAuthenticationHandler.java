@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -97,9 +96,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
             && (username.equals(password) || password.equals(StringUtils.reverse(username)))) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
             return new DefaultAuthenticationHandlerExecutionResult(this,
-                new BasicCredentialMetaData(credential),
-                this.principalFactory.createPrincipal(username),
-                this.warnings);
+                credential, principalFactory.createPrincipal(username), this.warnings);
         }
         LOGGER.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();
