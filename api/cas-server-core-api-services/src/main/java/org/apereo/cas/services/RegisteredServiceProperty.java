@@ -186,11 +186,11 @@ public interface RegisteredServiceProperty extends Serializable {
             RegisteredServicePropertyGroups.DELEGATED_AUTHN_WSFED, RegisteredServicePropertyTypes.STRING,
             "Used when delegating authentication to ADFS to indicate the relying party identifier."),
         /**
-         * Produce a JWT as a response when generating service tickets.
+         * The algorithm header value used to sign the JWT.
          **/
         TOKEN_SIGNING_ALG("jwtSigningAlg", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.JWT_TOKENS, RegisteredServicePropertyTypes.STRING,
-            "The algorithm header value used to sign the access token."),
+            "The algorithm header value used to sign the JWT."),
         /**
          * Produce a JWT as a response when generating service tickets.
          **/
