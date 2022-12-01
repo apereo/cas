@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * An immutable, serializable ticket validation assertion.
+ *
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @since 3.0.0

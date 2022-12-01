@@ -47,7 +47,7 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private FileSystemSamlMetadataProperties fileSystem = new FileSystemSamlMetadataProperties();
-    
+
     /**
      * Properties pertaining to mongo db saml metadata resolvers.
      */

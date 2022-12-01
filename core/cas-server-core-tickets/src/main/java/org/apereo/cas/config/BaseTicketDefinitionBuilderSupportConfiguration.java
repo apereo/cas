@@ -23,12 +23,12 @@ public abstract class BaseTicketDefinitionBuilderSupportConfiguration extends Ca
     private final CasTicketCatalogConfigurationValuesProvider configurationValuesProvider;
 
     private final ConfigurableApplicationContext applicationContext;
-    
+
     @Override
-    protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName(configurationValuesProvider.getServiceTicketStorageName().apply(casProperties));
-        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getServiceTicketStorageTimeout().apply(applicationContext));
-        super.buildAndRegisterServiceTicketDefinition(plan, metadata);
+    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+        metadata.getProperties().setStorageName(configurationValuesProvider.getProxyGrantingTicketStorageName().apply(casProperties));
+        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getProxyGrantingTicketStorageTimeout().apply(applicationContext));
+        super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
     }
 
     @Override
@@ -39,17 +39,17 @@ public abstract class BaseTicketDefinitionBuilderSupportConfiguration extends Ca
     }
 
     @Override
+    protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+        metadata.getProperties().setStorageName(configurationValuesProvider.getServiceTicketStorageName().apply(casProperties));
+        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getServiceTicketStorageTimeout().apply(applicationContext));
+        super.buildAndRegisterServiceTicketDefinition(plan, metadata);
+    }
+
+    @Override
     protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName(configurationValuesProvider.getTicketGrantingTicketStorageName().apply(casProperties));
         metadata.getProperties().setStorageTimeout(configurationValuesProvider.getTicketGrantingTicketStorageTimeout().apply(applicationContext));
         super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
-    }
-
-    @Override
-    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName(configurationValuesProvider.getProxyGrantingTicketStorageName().apply(casProperties));
-        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getProxyGrantingTicketStorageTimeout().apply(applicationContext));
-        super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
     }
 
     @Override

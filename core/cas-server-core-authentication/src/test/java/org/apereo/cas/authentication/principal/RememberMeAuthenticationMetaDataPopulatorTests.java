@@ -31,6 +31,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AuthenticationMetadata")
 public class RememberMeAuthenticationMetaDataPopulatorTests {
 
+    private static AuthenticationBuilder newBuilder(final Credential credential,
+                                                    final RememberMeAuthenticationProperties properties) {
+        val populator = new RememberMeAuthenticationMetaDataPopulator(properties);
+        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
+            .addCredential(meta)
+            .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
+
+        if (populator.supports(credential)) {
+            populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credential));
+        }
+        return builder;
+    }
+
     @Test
     public void verifyWithTrueRememberMeCredentials() {
         val c = new RememberMeUsernamePasswordCredential();
@@ -106,21 +121,6 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
         val auth = builder.build();
 
         assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
-    }
-
-    private static AuthenticationBuilder newBuilder(final Credential credential,
-                                                    final RememberMeAuthenticationProperties properties) {
-        val populator = new RememberMeAuthenticationMetaDataPopulator(properties);
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
-        val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
-            .addCredential(meta)
-            .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
-
-        if (populator.supports(credential)) {
-            populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credential));
-        }
-        return builder;
     }
 
 }

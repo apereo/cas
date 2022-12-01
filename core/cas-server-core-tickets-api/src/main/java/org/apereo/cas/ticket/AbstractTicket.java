@@ -94,14 +94,19 @@ public abstract class AbstractTicket implements Ticket, AuthenticationAwareTicke
     }
 
     @Override
-    public void update() {
-        updateTicketState();
-        updateTicketGrantingTicketState();
+    public boolean isExpired() {
+        return this.expirationPolicy.isExpired(this) || isExpiredInternal();
     }
 
     @Override
-    public boolean isExpired() {
-        return this.expirationPolicy.isExpired(this) || isExpiredInternal();
+    public void markTicketExpired() {
+        this.expired = Boolean.TRUE;
+    }
+
+    @Override
+    public void update() {
+        updateTicketState();
+        updateTicketGrantingTicketState();
     }
 
     @Override
@@ -125,11 +130,6 @@ public abstract class AbstractTicket implements Ticket, AuthenticationAwareTicke
     @Override
     public TicketGrantingTicket getTicketGrantingTicket() {
         return null;
-    }
-
-    @Override
-    public void markTicketExpired() {
-        this.expired = Boolean.TRUE;
     }
 
     /**

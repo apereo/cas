@@ -32,6 +32,7 @@ import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Authenticator for client credentials authentication.
@@ -58,8 +59,8 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final OAuth20ClientSecretValidator clientSecretValidator;
 
     @Override
-    public void validate(final Credentials credentials, final WebContext webContext,
-                         final SessionStore sessionStore) throws CredentialsException {
+    public Optional<Credentials> validate(final Credentials credentials, final WebContext webContext,
+                                          final SessionStore sessionStore) throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
         val upc = (UsernamePasswordCredentials) credentials;
         val id = upc.getUsername();
@@ -96,7 +97,9 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             profile.addAttributes((Map) attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);
+            return Optional.of(credentials);
         }
+        return Optional.empty();
     }
 
     /**

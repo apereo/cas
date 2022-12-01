@@ -7,6 +7,7 @@ import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -19,22 +20,28 @@ import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JpaResourceSetRepositoryTests}.
+ * This is {@link PostgresJpaResourceSetRepositoryTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("JDBC")
+@EnabledIfListeningOnPort(port = 5432)
+@Tag("Postgres")
 @Import({
     CasOAuthUmaJpaConfiguration.class,
     CasHibernateJpaConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.authn.oauth.uma.resource-set.jpa.url=jdbc:hsqldb:mem:cas-uma-resourceset",
-    "cas.jdbc.show-sql=false",
+    "cas.authn.oauth.uma.resource-set.jpa.user=postgres",
+    "cas.authn.oauth.uma.resource-set.jpa.password=password",
+    "cas.authn.oauth.uma.resource-set.jpa.driver-class=org.postgresql.Driver",
+    "cas.authn.oauth.uma.resource-set.jpa.url=jdbc:postgresql://localhost:5432/oauth",
+    "cas.authn.oauth.uma.resource-set.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect",
+    
+    "cas.jdbc.show-sql=true",
     "cas.authn.oauth.uma.resource-set.jpa.ddl-auto=create-drop"
 })
-public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
+public class PostgresJpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
 
     @Test
     public void verifyOperation() {

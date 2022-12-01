@@ -30,8 +30,8 @@ import org.opensaml.saml.saml1.core.StatusMessage;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.Serial;
 import java.time.ZoneOffset;
@@ -284,7 +284,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         val encoder = new CasHttpSoap11Encoder();
         val context = new MessageContext();
         context.setMessage(samlMessage);
-        encoder.setHttpServletResponse(httpResponse);
+        encoder.setHttpServletResponseSupplier(() -> httpResponse);
         encoder.setMessageContext(context);
         encoder.initialize();
         encoder.prepareContext();

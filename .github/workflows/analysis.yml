@@ -3,6 +3,7 @@ name: Code Analysis
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   TERM: xterm-256color
@@ -122,7 +123,6 @@ jobs:
         category:
           - checkstyleMain
           - checkstyleTest
-          - checkLicense
     name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v3

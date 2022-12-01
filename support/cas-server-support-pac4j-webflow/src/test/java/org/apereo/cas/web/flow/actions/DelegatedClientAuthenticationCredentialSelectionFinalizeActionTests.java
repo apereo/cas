@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -56,9 +56,9 @@ public class DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests
             .linkedId("casuser")
             .build();
         request.addParameter("key", profile.getKey());
-        WebUtils.putDelegatedClientAuthenticationResolvedCredentials(context, List.of(profile));
+        DelegationWebflowUtils.putDelegatedClientAuthenticationResolvedCredentials(context, List.of(profile));
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-        assertNotNull(WebUtils.getDelegatedClientAuthenticationCandidateProfile(context, DelegatedAuthenticationCandidateProfile.class));
+        assertNotNull(DelegationWebflowUtils.getDelegatedClientAuthenticationCandidateProfile(context, DelegatedAuthenticationCandidateProfile.class));
     }
 }

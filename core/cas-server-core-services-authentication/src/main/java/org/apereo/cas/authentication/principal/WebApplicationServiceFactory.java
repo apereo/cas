@@ -12,7 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.utils.URIBuilder;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,6 +38,39 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         CasProtocolConstants.PARAMETER_TARGET_SERVICE,
         CasProtocolConstants.PARAMETER_TICKET,
         CasProtocolConstants.PARAMETER_FORMAT);
+
+    private static AbstractWebApplicationService determineWebApplicationFormat(
+        final HttpServletRequest request,
+        final AbstractWebApplicationService webApplicationService) {
+        val format = Optional.ofNullable(request)
+            .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_FORMAT))
+            .orElse(StringUtils.EMPTY);
+        try {
+            if (StringUtils.isNotBlank(format)) {
+                val formatType = ValidationResponseType.valueOf(Objects.requireNonNull(format).toUpperCase());
+                webApplicationService.setFormat(formatType);
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Format specified in the request [{}] is not recognized", format);
+        }
+        return webApplicationService;
+    }
+
+    @Override
+    public WebApplicationService createService(final HttpServletRequest request) {
+        val serviceToUse = getRequestedService(request);
+        if (StringUtils.isBlank(serviceToUse)) {
+            LOGGER.trace("No service is specified in the request. Skipping service creation");
+            return null;
+        }
+        return newWebApplicationService(request, serviceToUse);
+    }
+
+    @Override
+    public WebApplicationService createService(final String id) {
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        return newWebApplicationService(request, id);
+    }
 
     protected AbstractWebApplicationService newWebApplicationService(
         final HttpServletRequest request, final String serviceToUse) {
@@ -82,39 +116,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             LOGGER.error("Unable to extract query parameters from [{}]: [{}]", originalUrl, e.getMessage());
         }
         return attributes;
-    }
-
-    private static AbstractWebApplicationService determineWebApplicationFormat(
-        final HttpServletRequest request,
-        final AbstractWebApplicationService webApplicationService) {
-        val format = Optional.ofNullable(request)
-            .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_FORMAT))
-            .orElse(StringUtils.EMPTY);
-        try {
-            if (StringUtils.isNotBlank(format)) {
-                val formatType = ValidationResponseType.valueOf(Objects.requireNonNull(format).toUpperCase());
-                webApplicationService.setFormat(formatType);
-            }
-        } catch (final Exception e) {
-            LOGGER.error("Format specified in the request [{}] is not recognized", format);
-        }
-        return webApplicationService;
-    }
-
-    @Override
-    public WebApplicationService createService(final HttpServletRequest request) {
-        val serviceToUse = getRequestedService(request);
-        if (StringUtils.isBlank(serviceToUse)) {
-            LOGGER.trace("No service is specified in the request. Skipping service creation");
-            return null;
-        }
-        return newWebApplicationService(request, serviceToUse);
-    }
-
-    @Override
-    public WebApplicationService createService(final String id) {
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        return newWebApplicationService(request, id);
     }
 
     protected String getRequestedService(final HttpServletRequest request) {

@@ -32,8 +32,7 @@ public class CasCloudBusEventsConfigEnvironmentConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasCloudBusConfigurationEventListener casCloudBusConfigurationEventListener(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("configurationPropertiesEnvironmentManager")
-        final CasConfigurationPropertiesEnvironmentManager manager) {
+        @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager manager) {
         return new DefaultCasCloudBusConfigurationEventListener(manager, applicationContext);
     }
 

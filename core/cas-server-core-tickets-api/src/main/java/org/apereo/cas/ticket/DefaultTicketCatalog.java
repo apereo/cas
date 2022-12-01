@@ -24,6 +24,23 @@ public class DefaultTicketCatalog implements TicketCatalog {
     private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>(0);
 
     @Override
+    public void register(final TicketDefinition ticketDefinition) {
+        LOGGER.trace("Registering/Updating ticket definition [{}]", ticketDefinition);
+        ticketMetadataMap.put(ticketDefinition.getPrefix(), ticketDefinition);
+    }
+
+    @Override
+    public void update(final TicketDefinition metadata) {
+        register(metadata);
+    }
+
+    @Override
+    public boolean contains(final String ticketId) {
+        LOGGER.trace("Locating ticket definition for [{}]", ticketId);
+        return ticketMetadataMap.containsKey(ticketId);
+    }
+
+    @Override
     public TicketDefinition find(final String ticketId) {
         val index = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
         val prefix = index == -1 ? ticketId : ticketId.substring(0, index);
@@ -65,23 +82,6 @@ public class DefaultTicketCatalog implements TicketCatalog {
             .sorted()
             .filter(t -> ticketClass.equals(t.getApiClass()))
             .findFirst();
-    }
-
-    @Override
-    public void register(final TicketDefinition ticketDefinition) {
-        LOGGER.trace("Registering/Updating ticket definition [{}]", ticketDefinition);
-        ticketMetadataMap.put(ticketDefinition.getPrefix(), ticketDefinition);
-    }
-
-    @Override
-    public void update(final TicketDefinition metadata) {
-        register(metadata);
-    }
-
-    @Override
-    public boolean contains(final String ticketId) {
-        LOGGER.trace("Locating ticket definition for [{}]", ticketId);
-        return ticketMetadataMap.containsKey(ticketId);
     }
 
     @Override

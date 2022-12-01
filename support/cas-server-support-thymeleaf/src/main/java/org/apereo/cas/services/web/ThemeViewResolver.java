@@ -15,7 +15,7 @@ import org.springframework.core.OrderComparator;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
-import org.thymeleaf.spring5.view.AbstractThymeleafView;
+import org.thymeleaf.spring6.view.AbstractThymeleafView;
 
 import javax.annotation.Nonnull;
 import java.util.List;

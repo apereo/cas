@@ -52,7 +52,7 @@ public class GrouperPrincipalAttributesProperties implements Serializable {
      * Accepted values are: {@code SUBJECT_IDENTIFIER}, {@code SUBJECT_ATTRIBUTE_NAME}, {@code SUBJECT_ID}.
      */
     private String subjectType = "SUBJECT_ID";
-    
+
     /**
      * The attribute name that would be used to look up and
      * determine the user id from the query map. The value

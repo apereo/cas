@@ -73,9 +73,9 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
     /**
      * Set item in the cache.
      *
-     * @param key        the key
-     * @param item       the item to store in the cache
-     * @param publish    the publish
+     * @param key     the key
+     * @param item    the item to store in the cache
+     * @param publish the publish
      * @return the distributed cache manager
      */
     @CanIgnoreReturnValue
@@ -87,9 +87,9 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
     /**
      * update key/item from the cache and overwrite.
      *
-     * @param key        the key
-     * @param item       the item
-     * @param publish    the publish
+     * @param key     the key
+     * @param item    the item
+     * @param publish the publish
      * @return the distributed cache manager
      */
     @CanIgnoreReturnValue
@@ -101,9 +101,9 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
     /**
      * Remove key/item from the cache.
      *
-     * @param key        the key
-     * @param item       the item
-     * @param publish    the publish
+     * @param key     the key
+     * @param item    the item
+     * @param publish the publish
      * @return the distributed cache manager
      */
     @CanIgnoreReturnValue

@@ -151,7 +151,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Used to specify number of rows to be fetched in a select query.
      */
     private int fetchSize = 100;
-    
+
     /**
      * Set the pool initialization failure timeout.
      * <ul>
@@ -204,7 +204,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Fully-qualified name of the class that can control the physical naming strategy of hibernate.
      */
     private String physicalNamingStrategyClassName = "org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy";
-    
+
     /**
      * Defines the isolation level for transactions.
      *

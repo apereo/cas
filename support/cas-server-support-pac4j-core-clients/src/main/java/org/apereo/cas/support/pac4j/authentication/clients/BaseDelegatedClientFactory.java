@@ -47,19 +47,18 @@ import org.pac4j.oauth.client.WindowsLiveClient;
 import org.pac4j.oauth.client.WordPressClient;
 import org.pac4j.oauth.client.YahooClient;
 import org.pac4j.oidc.client.AppleClient;
-import org.pac4j.oidc.client.AzureAdClient;
+import org.pac4j.oidc.client.AzureAd2Client;
 import org.pac4j.oidc.client.GoogleOidcClient;
 import org.pac4j.oidc.client.KeycloakOidcClient;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.AppleOidcConfiguration;
-import org.pac4j.oidc.config.AzureAdOidcConfiguration;
+import org.pac4j.oidc.config.AzureAd2OidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
 import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
-import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
 import org.pac4j.saml.store.EmptyStoreFactory;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
@@ -366,10 +365,10 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                                          final CasConfigurationProperties casProperties) {
         if (clientProperties.getAzure().isEnabled() && StringUtils.isNotBlank(clientProperties.getAzure().getId())) {
             LOGGER.debug("Building OpenID Connect client for Azure AD...");
-            val azure = getOidcConfigurationForClient(clientProperties.getAzure(), AzureAdOidcConfiguration.class);
+            val azure = getOidcConfigurationForClient(clientProperties.getAzure(), AzureAd2OidcConfiguration.class);
             azure.setTenant(clientProperties.getAzure().getTenant());
-            val cfg = new AzureAdOidcConfiguration(azure);
-            val azureClient = new AzureAdClient(cfg);
+            val cfg = new AzureAd2OidcConfiguration(azure);
+            val azureClient = new AzureAd2Client(cfg);
             configureClient(azureClient, clientProperties.getAzure(), casProperties);
             return azureClient;
         }
@@ -499,10 +498,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
-                val signer = FunctionUtils.doIf(StringUtils.equalsIgnoreCase(saml.getMetadataSignerStrategy(), "default"),
-                    () -> new DefaultSAML2MetadataSigner(cfg),
-                    () -> new XMLSecSAML2MetadataSigner(cfg)).get();
-                cfg.setMetadataSigner(signer);
+                cfg.setMetadataSigner(new DefaultSAML2MetadataSigner(cfg));
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
                 cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());

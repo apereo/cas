@@ -23,8 +23,8 @@ public abstract class BaseResourceBasedRegisteredServiceWatcher implements Consu
      */
     static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE =
         service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-            + "This will overwrite previous service definitions and is likely a configuration problem. "
-            + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
+                               + "This will overwrite previous service definitions and is likely a configuration problem. "
+                               + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
 
     /**
      * Service registry instance.

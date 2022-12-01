@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MetricsEndpointAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
-    
+
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,

@@ -43,7 +43,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.Assert;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 
-import javax.validation.MessageInterpolator;
+import jakarta.validation.MessageInterpolator;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -76,10 +77,8 @@ public class CasCoreUtilConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public InitializingBean casCoreUtilInitialization(
-            @Qualifier("casApplicationContextProvider")
-            final ApplicationContextProvider casApplicationContextProvider,
-            @Qualifier("zonedDateTimeToStringConverter")
-            final Converter<ZonedDateTime, String> zonedDateTimeToStringConverter) {
+            @Qualifier("casApplicationContextProvider") final ApplicationContextProvider casApplicationContextProvider,
+            @Qualifier("zonedDateTimeToStringConverter") final Converter<ZonedDateTime, String> zonedDateTimeToStringConverter) {
             return () -> {
                 Assert.notNull(casApplicationContextProvider, "Application context cannot be initialized");
                 Assert.notNull(ApplicationContextProvider.getConfigurableApplicationContext(), "Application context cannot be initialized");
@@ -145,10 +144,10 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")
         public MessageSanitationContributor defaultMessageSanitationContributor(
-            @Qualifier(TicketCatalog.BEAN_NAME)
-            final ObjectProvider<TicketCatalog> ticketCatalog) {
+            @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<TicketCatalog> ticketCatalog) {
             return new TicketCatalogMessageSanitationContributor(ticketCatalog);
         }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "proxyGrantingTicketIouMessageSanitationContributor")

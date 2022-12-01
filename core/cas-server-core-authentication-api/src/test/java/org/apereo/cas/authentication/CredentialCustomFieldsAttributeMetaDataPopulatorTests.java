@@ -31,7 +31,7 @@ public class CredentialCustomFieldsAttributeMetaDataPopulatorTests {
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
         assertTrue(populator.supports(credentials));
-        
+
         val auth = builder.build();
         assertNotNull(auth.getAttributes().get("field1"));
         assertNotNull(auth.getAttributes().get("field2"));

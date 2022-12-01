@@ -52,12 +52,9 @@ public class CasCoreTicketsSchedulingConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistryCleaner ticketRegistryCleaner(
         final CasConfigurationProperties casProperties,
-        @Qualifier(LockRepository.BEAN_NAME)
-        final LockRepository lockRepository,
-        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-        final LogoutManager logoutManager,
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry) {
+        @Qualifier(LockRepository.BEAN_NAME) final LockRepository lockRepository,
+        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME) final LogoutManager logoutManager,
+        @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
         val isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
             LOGGER.debug("Ticket registry cleaner is enabled.");
@@ -75,8 +72,7 @@ public class CasCoreTicketsSchedulingConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Cleanable ticketRegistryCleanerScheduler(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("ticketRegistryCleaner")
-        final TicketRegistryCleaner ticketRegistryCleaner) throws Exception {
+        @Qualifier("ticketRegistryCleaner") final TicketRegistryCleaner ticketRegistryCleaner) throws Exception {
         return BeanSupplier.of(Cleanable.class)
             .when(BeanCondition.on("cas.ticket.registry.cleaner.schedule.enabled").isTrue()
                 .evenIfMissing().given(applicationContext.getEnvironment()))

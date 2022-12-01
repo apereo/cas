@@ -12,6 +12,7 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -139,6 +140,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
             WebUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, determineDelegatedAuthenticationAction.execute(context).getId());
+            assertNotNull(request.getAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER));
         }
 
         @Test

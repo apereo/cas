@@ -20,7 +20,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -52,8 +52,9 @@ import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicAlgorithmPolicyConfiguration;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -270,9 +271,9 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
 
         val finalCredentials = new ArrayList<Credential>();
         credentials.stream()
-            .map(c -> getResolvedSigningCredential(c, privateKey, service))
+            .map(creds -> getResolvedSigningCredential(creds, privateKey, service))
             .filter(Objects::nonNull)
-            .filter(c -> doesCredentialFingerprintMatch(c, service))
+            .filter(creds -> doesCredentialFingerprintMatch(creds, service))
             .forEach(finalCredentials::add);
 
         if (finalCredentials.isEmpty()) {

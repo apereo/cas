@@ -50,10 +50,10 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
      */
     protected Conditions buildConditions(final SamlProfileBuilderContext context) throws SamlException {
         val currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
-        var skewAllowance = context.getRegisteredService().getSkewAllowance() > 0
+        var skewAllowance = context.getRegisteredService().getSkewAllowance() != 0
             ? context.getRegisteredService().getSkewAllowance()
             : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
-        if (skewAllowance <= 0) {
+        if (skewAllowance != 0) {
             skewAllowance = Beans.newDuration(casProperties.getSamlCore().getSkewAllowance()).toSeconds();
         }
 

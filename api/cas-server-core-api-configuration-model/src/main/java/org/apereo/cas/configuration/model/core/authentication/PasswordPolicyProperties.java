@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.LoginException;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;

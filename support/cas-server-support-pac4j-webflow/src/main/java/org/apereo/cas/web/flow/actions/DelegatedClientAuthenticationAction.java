@@ -14,6 +14,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnEvaluator;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -33,7 +34,8 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +92,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
             var service = (Service) null;
             val isSingleSignOnSessionActive = !isLogoutRequest(request)
-                                              && !WebUtils.hasDelegatedClientAuthenticationCandidateProfile(context)
+                                              && !DelegationWebflowUtils.hasDelegatedClientAuthenticationCandidateProfile(context)
                                               && ssoEvaluator.singleSignOnSessionExists(context)
                                               && StringUtils.isNotBlank(clientName);
             if (isSingleSignOnSessionActive) {
@@ -111,8 +113,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 throw new IllegalArgumentException("Delegated authentication has failed with client " + clientName);
             }
 
-            if (WebUtils.hasDelegatedClientAuthenticationCandidateProfile(context)) {
-                val profile = WebUtils.getDelegatedClientAuthenticationCandidateProfile(context, DelegatedAuthenticationCandidateProfile.class);
+            if (DelegationWebflowUtils.hasDelegatedClientAuthenticationCandidateProfile(context)) {
+                val profile = DelegationWebflowUtils.getDelegatedClientAuthenticationCandidateProfile(context, DelegatedAuthenticationCandidateProfile.class);
                 val up = profile.toUserProfile(clientName);
                 val clientCredential = new ClientCredential(clientName, up);
                 WebUtils.putCredential(context, clientCredential);
@@ -122,7 +124,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             if (StringUtils.isNotBlank(clientName)) {
                 service = Optional.ofNullable(service).orElseGet(() -> populateContextWithService(context, webContext, clientName));
                 val client = findDelegatedClientByName(context, clientName, service);
-                WebUtils.putDelegatedAuthenticationClientName(context, client.getName());
+                DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, client.getName());
                 val clientCredentials = populateContextWithClientCredential(client, webContext, context);
                 return finalizeDelegatedClientAuthentication(context, clientCredentials);
             }
@@ -156,7 +158,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         if (candidateMatches.isEmpty()) {
             return super.doExecute(context);
         }
-        WebUtils.putDelegatedClientAuthenticationResolvedCredentials(context, candidateMatches);
+        DelegationWebflowUtils.putDelegatedClientAuthenticationResolvedCredentials(context, candidateMatches);
         return new Event(this, CasWebflowConstants.TRANSITION_ID_SELECT);
     }
 

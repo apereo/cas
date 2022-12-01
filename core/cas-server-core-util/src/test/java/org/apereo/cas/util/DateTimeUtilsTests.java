@@ -61,6 +61,7 @@ public class DateTimeUtilsTests {
         assertNull(DateTimeUtils.zonedDateTimeOf(UUID.randomUUID().toString()));
         assertNull(DateTimeUtils.localDateTimeOf(UUID.randomUUID().toString()));
     }
+
     @Test
     public void verifyParsingCalendar() {
         val calendar = Calendar.getInstance();

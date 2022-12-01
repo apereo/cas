@@ -46,16 +46,6 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager {
     }
 
     @Override
-    protected void deleteInternal(final RegisteredService service) {
-        val domain = registeredServiceDomainExtractor.extract(service.getServiceId());
-        val entries = this.domains.get(domain);
-        entries.remove(service);
-        if (entries.isEmpty()) {
-            this.domains.remove(domain);
-        }
-    }
-
-    @Override
     protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
         val mappedDomain = StringUtils.isNotBlank(serviceId) ? registeredServiceDomainExtractor.extract(serviceId) : StringUtils.EMPTY;
         LOGGER.trace("Domain mapped to the service identifier is [{}]", mappedDomain);
@@ -69,6 +59,16 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager {
             return new ArrayList<>(0);
         }
         return registeredServices;
+    }
+
+    @Override
+    protected void deleteInternal(final RegisteredService service) {
+        val domain = registeredServiceDomainExtractor.extract(service.getServiceId());
+        val entries = this.domains.get(domain);
+        entries.remove(service);
+        if (entries.isEmpty()) {
+            this.domains.remove(domain);
+        }
     }
 
     @Override

@@ -211,6 +211,8 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
                 .collect(Collectors.toList());
             WebUtils.putAvailableAuthenticationHandleNames(context, availableHandlers);
         }
+        context.getFlowScope().put("httpRequestSecure", request.isSecure());
+        context.getFlowScope().put("httpRequestMethod", request.getMethod());
     }
 
     /**

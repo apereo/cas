@@ -13,7 +13,7 @@
 
     "--cas.authn.oidc.jwks.jpa.driver-class=org.postgresql.Driver",
     "--cas.authn.oidc.jwks.jpa.ddl-auto=update",
-    "--cas.authn.oidc.jwks.jpa.dialect=org.hibernate.dialect.PostgreSQL10Dialect",
+    "--cas.authn.oidc.jwks.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect",
     "--cas.authn.oidc.jwks.jpa.user=postgres",
     "--cas.authn.oidc.jwks.jpa.password=password",
     "--cas.authn.oidc.jwks.jpa.url=jdbc:postgresql://localhost:5432/oidc",

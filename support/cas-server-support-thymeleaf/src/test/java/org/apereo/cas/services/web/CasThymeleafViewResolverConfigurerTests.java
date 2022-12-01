@@ -18,8 +18,8 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-import org.thymeleaf.spring5.view.ThymeleafView;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.spring6.view.ThymeleafView;
+import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import java.util.Locale;
 import java.util.Map;

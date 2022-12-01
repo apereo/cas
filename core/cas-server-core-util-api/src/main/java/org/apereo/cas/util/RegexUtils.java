@@ -95,7 +95,7 @@ public class RegexUtils {
      * Matches the entire region for the string.
      *
      * @param pattern the pattern
-     * @param value  the string
+     * @param value   the string
      * @return true/false
      * @see Matcher#matches()
      */
@@ -124,7 +124,7 @@ public class RegexUtils {
      * Attempts to find the next sub-sequence of the input sequence that matches the pattern.
      *
      * @param pattern the pattern
-     * @param value  the string
+     * @param value   the string
      * @return true/false
      * @see Matcher#find()
      */
@@ -136,7 +136,7 @@ public class RegexUtils {
      * Attempts to find the next sub-sequence of the input sequence that matches the pattern.
      *
      * @param pattern the pattern
-     * @param value  the string
+     * @param value   the string
      * @return true/false
      */
     public static boolean find(final String pattern, final String value) {

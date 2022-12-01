@@ -20,7 +20,7 @@ import java.util.List;
 @Getter
 public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
     private final List<LogoutRedirectionStrategy> logoutRedirectionStrategies = new ArrayList<>(0);
-    
+
     private final List<LogoutPostProcessor> logoutPostProcessors = new ArrayList<>(0);
 
     private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>(0);

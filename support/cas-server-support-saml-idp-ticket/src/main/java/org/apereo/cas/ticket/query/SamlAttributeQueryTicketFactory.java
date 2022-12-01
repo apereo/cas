@@ -5,7 +5,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import org.opensaml.saml.common.SAMLObject;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Factory to create OAuth access tokens.

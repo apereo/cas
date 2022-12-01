@@ -58,7 +58,7 @@ public interface AuthenticationHandler extends Ordered {
      * </ol>
      *
      * @param credential The credential to authenticate.
-     * @param service the requesting service, if any.
+     * @param service    the requesting service, if any.
      * @return A result object containing metadata about a successful authentication event that includes at a minimum the name of the handler that
      * authenticated the credential and some credential metadata. The following data is optional:
      * <ul>

@@ -34,8 +34,7 @@ import java.util.Map;
 public class CasPersonDirectoryTestConfiguration {
     @Bean
     public List<IPersonAttributeDao> attributeRepositories(
-        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final IPersonAttributeDao attributeRepository) {
         return CollectionUtils.wrap(attributeRepository);
     }
 
@@ -64,8 +63,7 @@ public class CasPersonDirectoryTestConfiguration {
     @Bean
     public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
-        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final IPersonAttributeDao attributeRepository) {
         return plan -> {
             val personDirectory = casProperties.getPersonDirectory();
             val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),

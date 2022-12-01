@@ -19,7 +19,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +73,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyReturnAll() {
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
 
         val policy = new ReturnAllAttributeReleasePolicy();
@@ -155,7 +154,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyMismatchedKeyReturnAll() {
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
 
         val policy = new ReturnAllAttributeReleasePolicy();

@@ -36,10 +36,8 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer(
-        @Qualifier("acceptUsersAuthenticationHandler")
-        final AuthenticationHandler acceptUsersAuthenticationHandler,
-        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver,
+        @Qualifier("acceptUsersAuthenticationHandler") final AuthenticationHandler acceptUsersAuthenticationHandler,
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
         final CasConfigurationProperties casProperties) {
         return plan -> {
             val accept = casProperties.getAuthn().getAccept();

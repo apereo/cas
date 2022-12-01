@@ -19,7 +19,7 @@ public class SpringExpressionLanguageValueResolverTests {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
 
         assertNotNull(resolver.apply("HelloWorld"));
-        
+
         assertEquals("Hello World", resolver.resolve("${'Hello World'}"));
         assertEquals("Literal Value", resolver.resolve("Literal Value"));
         assertEquals("Hello World!", resolver.resolve("${'Hello World'.concat('!')}"));

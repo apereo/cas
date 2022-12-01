@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -53,7 +54,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         if (clientResult.isPresent()) {
             val client = clientResult.get();
             LOGGER.debug("Handling logout for delegated authentication client [{}]", client);
-            WebUtils.putDelegatedAuthenticationClientName(requestContext, client.getName());
+            DelegationWebflowUtils.putDelegatedAuthenticationClientName(requestContext, client.getName());
             sessionStore.set(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, client.getName());
         }
         return null;
@@ -81,7 +82,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
                 val action = (HttpAction) actionResult.get();
                 val logoutAction = DelegatedAuthenticationClientLogoutRequest.builder().status(action.getCode())
                     .message(action.getMessage()).build();
-                WebUtils.putDelegatedAuthenticationLogoutRequest(requestContext, logoutAction);
+                DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(requestContext, logoutAction);
                 LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
                 JEEHttpActionAdapter.INSTANCE.adapt(action, context);
             }

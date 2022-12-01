@@ -97,8 +97,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy(
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
             return new DefaultServiceTicketSessionTrackingPolicy(casProperties, ticketRegistry);
         }
@@ -107,8 +106,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistrySupport defaultTicketRegistrySupport(
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry) {
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             return new DefaultTicketRegistrySupport(ticketRegistry);
         }
     }
@@ -120,8 +118,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer ticketAuthenticationPolicyExecutionPlanConfigurer(
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
             return plan -> {
                 val policyProps = casProperties.getAuthn().getPolicy();
@@ -140,8 +137,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
-            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-            final ObjectProvider<LogoutManager> logoutManager,
+            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME) final ObjectProvider<LogoutManager> logoutManager,
             final CasConfigurationProperties casProperties) {
             LOGGER.info("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                         + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
@@ -224,8 +220,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultProxyGrantingTicketFactoryConfigurer(
-            @Qualifier("defaultProxyGrantingTicketFactory")
-            final ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory) {
+            @Qualifier("defaultProxyGrantingTicketFactory") final ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory) {
             return () -> defaultProxyGrantingTicketFactory;
         }
     }
@@ -237,8 +232,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultProxyTicketFactoryConfigurer(
-            @Qualifier("defaultProxyTicketFactory")
-            final ProxyTicketFactory defaultProxyTicketFactory) {
+            @Qualifier("defaultProxyTicketFactory") final ProxyTicketFactory defaultProxyTicketFactory) {
             return () -> defaultProxyTicketFactory;
         }
     }
@@ -250,8 +244,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultServiceTicketFactoryConfigurer(
-            @Qualifier("defaultServiceTicketFactory")
-            final ServiceTicketFactory defaultServiceTicketFactory) {
+            @Qualifier("defaultServiceTicketFactory") final ServiceTicketFactory defaultServiceTicketFactory) {
             return () -> defaultServiceTicketFactory;
         }
     }
@@ -263,8 +256,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultTransientSessionTicketFactoryConfigurer(
-            @Qualifier("defaultTransientSessionTicketFactory")
-            final TransientSessionTicketFactory defaultTransientSessionTicketFactory) {
+            @Qualifier("defaultTransientSessionTicketFactory") final TransientSessionTicketFactory defaultTransientSessionTicketFactory) {
             return () -> defaultTransientSessionTicketFactory;
         }
     }
@@ -276,8 +268,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultTicketGrantingTicketFactoryConfigurer(
-            @Qualifier("defaultTicketGrantingTicketFactory")
-            final TicketGrantingTicketFactory defaultTicketGrantingTicketFactory) {
+            @Qualifier("defaultTicketGrantingTicketFactory") final TicketGrantingTicketFactory defaultTicketGrantingTicketFactory) {
             return () -> defaultTicketGrantingTicketFactory;
         }
     }
@@ -289,14 +280,10 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory(
-            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY)
-            final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor protocolTicketCipherExecutor,
-            @Qualifier("ticketGrantingTicketUniqueIdGenerator")
-            final UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY) final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
+            @Qualifier("protocolTicketCipherExecutor") final CipherExecutor protocolTicketCipherExecutor,
+            @Qualifier("ticketGrantingTicketUniqueIdGenerator") final UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new DefaultTicketGrantingTicketFactory(ticketGrantingTicketUniqueIdGenerator,
                 grantingTicketExpirationPolicy, protocolTicketCipherExecutor, servicesManager);
         }
@@ -310,16 +297,11 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketFactory defaultServiceTicketFactory(
-            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor protocolTicketCipherExecutor,
-            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY)
-            final ExpirationPolicyBuilder serviceTicketExpirationPolicy,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier("uniqueIdGeneratorsMap")
-            final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap) {
+            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME) final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
+            @Qualifier("protocolTicketCipherExecutor") final CipherExecutor protocolTicketCipherExecutor,
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY) final ExpirationPolicyBuilder serviceTicketExpirationPolicy,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier("uniqueIdGeneratorsMap") final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap) {
             return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy,
                 uniqueIdGeneratorsMap, serviceTicketSessionTrackingPolicy,
                 protocolTicketCipherExecutor, servicesManager);
@@ -340,16 +322,11 @@ public class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public ProxyTicketFactory defaultProxyTicketFactory(
-            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
-            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor protocolTicketCipherExecutor,
-            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_PROXY_TICKET_EXPIRATION_POLICY)
-            final ExpirationPolicyBuilder proxyTicketExpirationPolicy,
-            @Qualifier("uniqueIdGeneratorsMap")
-            final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME) final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
+            @Qualifier("protocolTicketCipherExecutor") final CipherExecutor protocolTicketCipherExecutor,
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_PROXY_TICKET_EXPIRATION_POLICY) final ExpirationPolicyBuilder proxyTicketExpirationPolicy,
+            @Qualifier("uniqueIdGeneratorsMap") final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy, uniqueIdGeneratorsMap,
                 protocolTicketCipherExecutor, serviceTicketSessionTrackingPolicy, servicesManager);
         }
@@ -363,8 +340,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TransientSessionTicketFactory defaultTransientSessionTicketFactory(
-            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TRANSIENT_SESSION_TICKET_EXPIRATION_POLICY)
-            final ExpirationPolicyBuilder transientSessionTicketExpirationPolicy) {
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TRANSIENT_SESSION_TICKET_EXPIRATION_POLICY) final ExpirationPolicyBuilder transientSessionTicketExpirationPolicy) {
             return new DefaultTransientSessionTicketFactory(transientSessionTicketExpirationPolicy);
         }
     }
@@ -376,14 +352,10 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory(
-            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_PROXY_GRANTING_TICKET_EXPIRATION_POLICY)
-            final ExpirationPolicyBuilder proxyGrantingTicketExpirationPolicy,
-            @Qualifier("proxyGrantingTicketUniqueIdGenerator")
-            final UniqueTicketIdGenerator proxyGrantingTicketUniqueIdGenerator,
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor protocolTicketCipherExecutor,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_PROXY_GRANTING_TICKET_EXPIRATION_POLICY) final ExpirationPolicyBuilder proxyGrantingTicketExpirationPolicy,
+            @Qualifier("proxyGrantingTicketUniqueIdGenerator") final UniqueTicketIdGenerator proxyGrantingTicketUniqueIdGenerator,
+            @Qualifier("protocolTicketCipherExecutor") final CipherExecutor protocolTicketCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new DefaultProxyGrantingTicketFactory(
                 proxyGrantingTicketUniqueIdGenerator,
                 proxyGrantingTicketExpirationPolicy,

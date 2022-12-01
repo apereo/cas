@@ -15,6 +15,7 @@ public interface AuditTrailExecutionPlanConfigurer {
      * @param plan the plan
      */
     void configureAuditTrailExecutionPlan(AuditTrailExecutionPlan plan);
+
     /**
      * Gets name.
      *

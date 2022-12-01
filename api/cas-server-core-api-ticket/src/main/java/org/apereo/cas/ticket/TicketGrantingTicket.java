@@ -41,7 +41,7 @@ public interface TicketGrantingTicket extends TicketGrantingTicketAwareTicket {
                                      ExpirationPolicy expirationPolicy,
                                      boolean credentialProvided,
                                      ServiceTicketSessionTrackingPolicy trackingPolicy);
-    
+
     /**
      * Gets proxy granting tickets created by this TGT.
      *

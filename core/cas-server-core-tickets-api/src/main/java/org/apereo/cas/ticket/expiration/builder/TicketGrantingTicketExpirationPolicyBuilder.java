@@ -47,6 +47,22 @@ public record TicketGrantingTicketExpirationPolicyBuilder(CasConfigurationProper
     }
 
     /**
+     * To remember-me ticket expiration policy.
+     *
+     * @return the expiration policy
+     */
+    public ExpirationPolicy toRememberMeTicketExpirationPolicy() {
+        val tgt = casProperties.getTicket().getTgt();
+        LOGGER.debug("Remember me expiration policy is being configured based on hard timeout of [{}] seconds",
+            tgt.getRememberMe().getTimeToKillInSeconds());
+        val rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
+        val p = new RememberMeDelegatingExpirationPolicy();
+        p.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME, rememberMePolicy);
+        p.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, toTicketGrantingTicketExpirationPolicy());
+        return p;
+    }
+
+    /**
      * To ticket-granting ticket expiration policy.
      *
      * @return the expiration policy
@@ -92,21 +108,5 @@ public record TicketGrantingTicketExpirationPolicyBuilder(CasConfigurationProper
         val ttlPrimarySeconds = Beans.newDuration(tgt.getPrimary().getTimeToKillInSeconds()).toSeconds();
         LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of [{}]/[{}] seconds", maxTimePrimarySeconds, ttlPrimarySeconds);
         return new TicketGrantingTicketExpirationPolicy(maxTimePrimarySeconds, ttlPrimarySeconds);
-    }
-
-    /**
-     * To remember-me ticket expiration policy.
-     *
-     * @return the expiration policy
-     */
-    public ExpirationPolicy toRememberMeTicketExpirationPolicy() {
-        val tgt = casProperties.getTicket().getTgt();
-        LOGGER.debug("Remember me expiration policy is being configured based on hard timeout of [{}] seconds",
-            tgt.getRememberMe().getTimeToKillInSeconds());
-        val rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
-        val p = new RememberMeDelegatingExpirationPolicy();
-        p.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME, rememberMePolicy);
-        p.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, toTicketGrantingTicketExpirationPolicy());
-        return p;
     }
 }

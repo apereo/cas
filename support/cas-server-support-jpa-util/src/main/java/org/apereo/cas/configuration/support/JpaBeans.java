@@ -41,7 +41,7 @@ public class JpaBeans {
      * @return the data source
      */
     public DataSource newDataSource(final String driverClass, final String username,
-                                           final String password, final String url) {
+                                    final String password, final String url) {
         return FunctionUtils.doUnchecked(() -> {
             val ds = new SimpleDriverDataSource();
             ds.setDriverClass((Class<Driver>) Class.forName(driverClass));

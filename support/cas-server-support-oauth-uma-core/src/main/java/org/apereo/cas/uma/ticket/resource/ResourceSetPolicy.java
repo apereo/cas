@@ -5,21 +5,23 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is {@link ResourceSetPolicy}.
@@ -45,9 +47,9 @@ public class ResourceSetPolicy implements Serializable {
     @Id
     private long id;
 
-    @Lob
-    @Column(length = Integer.MAX_VALUE)
-    private HashSet<ResourceSetPolicyPermission> permissions = new HashSet<>(0);
+    @Column(columnDefinition = "json")
+    @Type(JsonType.class)
+    private Set<ResourceSetPolicyPermission> permissions = new HashSet<>(0);
 
     /**
      * As json string.

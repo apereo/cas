@@ -81,6 +81,10 @@ public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAu
      */
     private BrowserAuthenticatorTypes browserAuthenticator = BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR;
 
+    public InweboMultifactorAuthenticationProperties() {
+        setId(DEFAULT_IDENTIFIER);
+    }
+
     /**
      * Browser authenticator types.
      */
@@ -97,9 +101,5 @@ public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAu
          * mAccessWeb browser authentication.
          */
         M_ACCESS_WEB
-    }
-
-    public InweboMultifactorAuthenticationProperties() {
-        setId(DEFAULT_IDENTIFIER);
     }
 }

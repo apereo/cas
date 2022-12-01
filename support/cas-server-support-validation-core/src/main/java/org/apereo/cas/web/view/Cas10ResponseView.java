@@ -12,9 +12,10 @@ import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import lombok.val;
 import org.springframework.http.MediaType;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Map;

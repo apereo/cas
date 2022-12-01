@@ -27,7 +27,7 @@ public class GroovyScriptResourceCacheManagerTests {
         val resource = new WatchableGroovyScriptResource(new FileSystemResource(file));
 
         val cache = new GroovyScriptResourceCacheManager();
-        
+
         val id = UUID.randomUUID().toString();
         assertNull(cache.get(id));
 

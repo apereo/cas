@@ -32,7 +32,7 @@ import java.time.temporal.ChronoUnit;
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Serial
     private static final long serialVersionUID = -5704993954986738308L;
-    
+
     @JsonProperty("timeToLive")
     private long timeToKillInSeconds;
 

@@ -46,6 +46,6 @@ public class GeoLocationRequest implements Serializable {
      */
     public boolean isValid() {
         return StringUtils.isNotBlank(this.latitude) && StringUtils.isNotBlank(this.longitude)
-            && StringUtils.isNotBlank(this.accuracy) && StringUtils.isNotBlank(this.timestamp);
+               && StringUtils.isNotBlank(this.accuracy) && StringUtils.isNotBlank(this.timestamp);
     }
 }

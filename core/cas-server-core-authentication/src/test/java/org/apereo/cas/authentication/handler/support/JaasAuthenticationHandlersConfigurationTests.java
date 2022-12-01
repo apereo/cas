@@ -109,7 +109,7 @@ public class JaasAuthenticationHandlersConfigurationTests {
         public IPersonAttributeDao attributeRepository() {
             return new StubPersonAttributeDao();
         }
-        
+
         @Bean
         @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {

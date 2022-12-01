@@ -36,6 +36,59 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
+    private static AuditableExecutionResult executeAccessStrategy(final CasConfigurationProperties properties, final AuditableContext context) {
+        return new RegisteredServiceAccessStrategyAuditableEnforcer(properties).execute(context);
+    }
+
+    private static AuditableExecutionResult executeAccessStrategy(final AuditableContext context) {
+        return executeAccessStrategy(new CasConfigurationProperties(), context);
+    }
+
+    private static RegisteredService createRegisteredService(final boolean enabled) {
+        val service = new CasRegisteredService();
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+        accessStrategy.setEnabled(enabled);
+        service.setAccessStrategy(accessStrategy);
+        return service;
+    }
+
+    private static Service createService() {
+        return CoreAuthenticationTestUtils.getService("serviceid");
+    }
+
+    private static Authentication createAuthentication() {
+        val attributes = CoreAuthenticationTestUtils.getAttributes();
+        attributes.put("attribute", "value");
+        return CoreAuthenticationTestUtils.getAuthentication("principal", attributes);
+    }
+
+    private static TicketGrantingTicket createTicketGrantingTicket() {
+        val mock = Mockito.mock(TicketGrantingTicket.class);
+        val authentication = createAuthentication();
+        when(mock.getAuthentication()).thenReturn(authentication);
+        when(mock.isRoot()).thenReturn(true);
+        when(mock.getRoot()).thenReturn(mock);
+        return mock;
+    }
+
+    private static ServiceTicket createServiceTicket() {
+        val mock = mock(ServiceTicket.class);
+        val service = createService();
+        when(mock.getService()).thenReturn(service);
+        return mock;
+    }
+
+    private static AuthenticationResult createAuthenticationResult() {
+        val authentication = createAuthentication();
+        return CoreAuthenticationTestUtils.getAuthenticationResult(authentication);
+    }
+
+    private static Map<String, Set<String>> reject(final boolean fail) {
+        val reject = new HashMap<String, Set<String>>();
+        reject.put("attribute", Set.of(fail ? "other_value" : "value"));
+        return reject;
+    }
+
     @Test
     public void verifyGroovyScriptAccessStrategy() {
         val service = createRegisteredService(true);
@@ -54,14 +107,6 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         val result = executeAccessStrategy(context);
         assertFalse(result.isExecutionFailure());
         assertFalse(result.getException().isPresent());
-    }
-
-    private static AuditableExecutionResult executeAccessStrategy(final CasConfigurationProperties properties, final AuditableContext context) {
-        return new RegisteredServiceAccessStrategyAuditableEnforcer(properties).execute(context);
-    }
-
-    private static AuditableExecutionResult executeAccessStrategy(final AuditableContext context) {
-        return executeAccessStrategy(new CasConfigurationProperties(), context);
     }
 
     @Test
@@ -265,50 +310,5 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         val result = executeAccessStrategy(context);
         assertTrue(result.isExecutionFailure());
         assertTrue(result.getException().isPresent());
-    }
-
-    private static RegisteredService createRegisteredService(final boolean enabled) {
-        val service = new CasRegisteredService();
-        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        accessStrategy.setEnabled(enabled);
-        service.setAccessStrategy(accessStrategy);
-        return service;
-    }
-
-    private static Service createService() {
-        return CoreAuthenticationTestUtils.getService("serviceid");
-    }
-
-    private static Authentication createAuthentication() {
-        val attributes = CoreAuthenticationTestUtils.getAttributes();
-        attributes.put("attribute", "value");
-        return CoreAuthenticationTestUtils.getAuthentication("principal", attributes);
-    }
-
-    private static TicketGrantingTicket createTicketGrantingTicket() {
-        val mock = Mockito.mock(TicketGrantingTicket.class);
-        val authentication = createAuthentication();
-        when(mock.getAuthentication()).thenReturn(authentication);
-        when(mock.isRoot()).thenReturn(true);
-        when(mock.getRoot()).thenReturn(mock);
-        return mock;
-    }
-
-    private static ServiceTicket createServiceTicket() {
-        val mock = mock(ServiceTicket.class);
-        val service = createService();
-        when(mock.getService()).thenReturn(service);
-        return mock;
-    }
-
-    private static AuthenticationResult createAuthenticationResult() {
-        val authentication = createAuthentication();
-        return CoreAuthenticationTestUtils.getAuthenticationResult(authentication);
-    }
-
-    private static Map<String, Set<String>> reject(final boolean fail) {
-        val reject = new HashMap<String, Set<String>>();
-        reject.put("attribute", Set.of(fail ? "other_value" : "value"));
-        return reject;
     }
 }

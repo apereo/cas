@@ -36,7 +36,7 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordl
         if (user.isRequestPassword()) {
             WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             val isDelegationActive = isDelegatedAuthenticationActiveFor(requestContext, user);
-            WebUtils.putDelegatedAuthenticationDisabled(requestContext, !isDelegationActive);
+            DelegationWebflowUtils.putDelegatedAuthenticationDisabled(requestContext, !isDelegationActive);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
         }
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);

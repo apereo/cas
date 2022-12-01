@@ -28,6 +28,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class DelegatedSaml2ClientMetadataController {
 
+    /**
+     * Base endpoint url.
+     */
+    public static final String BASE_ENDPOINT_SERVICE_PROVIDER = "/sp";
+
     private final Clients builtClients;
 
     private final OpenSamlConfigBean openSamlConfigBean;
@@ -49,7 +54,7 @@ public class DelegatedSaml2ClientMetadataController {
      *
      * @return the first service provider metadata
      */
-    @GetMapping("/sp/metadata")
+    @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/metadata")
     public ResponseEntity<String> getFirstServiceProviderMetadata() {
         val saml2Client = builtClients.getClients().stream()
             .filter(client -> client instanceof SAML2Client)
@@ -64,7 +69,7 @@ public class DelegatedSaml2ClientMetadataController {
      * @param force the force
      * @return the first service provider metadata
      */
-    @GetMapping("/sp/idp/metadata")
+    @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/idp/metadata")
     public ResponseEntity<String> getFirstIdentityProviderMetadata(
         @RequestParam(value = "force", defaultValue = "false", required = false)
         final boolean force) {
@@ -81,7 +86,7 @@ public class DelegatedSaml2ClientMetadataController {
      * @param client the client
      * @return the service provider metadata by name
      */
-    @GetMapping("/sp/{client}/metadata")
+    @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/{client}/metadata")
     public ResponseEntity<String> getServiceProviderMetadataByName(
         @PathVariable("client")
         final String client) {
@@ -97,7 +102,7 @@ public class DelegatedSaml2ClientMetadataController {
      * @param force  the force
      * @return the service provider metadata by name
      */
-    @GetMapping("/sp/{client}/idp/metadata")
+    @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/{client}/idp/metadata")
     public ResponseEntity<String> getIdentityProviderMetadataByName(
         @PathVariable("client")
         final String client,

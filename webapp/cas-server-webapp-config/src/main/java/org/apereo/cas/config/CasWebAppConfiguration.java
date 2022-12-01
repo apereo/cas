@@ -29,9 +29,10 @@ import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.CookieGenerator;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Optional;
@@ -86,8 +87,7 @@ public class CasWebAppConfiguration {
 
     @Bean
     public SimpleUrlHandlerMapping handlerMapping(
-        @Qualifier("rootController")
-        final Controller rootController) {
+        @Qualifier("rootController") final Controller rootController) {
         val mapping = new SimpleUrlHandlerMapping();
 
         mapping.setOrder(1);
@@ -102,13 +102,11 @@ public class CasWebAppConfiguration {
 
     @Bean
     public WebMvcConfigurer casWebAppWebMvcConfigurer(
-        @Qualifier("localeChangeInterceptor")
-        final ObjectProvider<LocaleChangeInterceptor> localeChangeInterceptor) {
+        @Qualifier("localeChangeInterceptor") final ObjectProvider<LocaleChangeInterceptor> localeChangeInterceptor) {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(
-                @Nonnull
-                final InterceptorRegistry registry) {
+                @Nonnull final InterceptorRegistry registry) {
                 registry.addInterceptor(new RefreshableHandlerInterceptor(localeChangeInterceptor)).addPathPatterns("/**");
             }
         };
@@ -120,10 +118,8 @@ public class CasWebAppConfiguration {
         return new ParameterizableViewController() {
             @Override
             protected ModelAndView handleRequestInternal(
-                @Nonnull
-                final HttpServletRequest request,
-                @Nonnull
-                final HttpServletResponse response) {
+                @Nonnull final HttpServletRequest request,
+                @Nonnull final HttpServletResponse response) {
                 val queryString = request.getQueryString();
                 val url = request.getContextPath() + "/login"
                           + Optional.ofNullable(queryString).map(value -> '?' + value).orElse(StringUtils.EMPTY);

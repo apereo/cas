@@ -17,7 +17,8 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
-import javax.persistence.PostLoad;
+import jakarta.persistence.PostLoad;
+
 import java.io.Serial;
 import java.util.Locale;
 import java.util.Optional;
@@ -67,6 +68,15 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
         return encryptedId;
     }
 
+    /**
+     * Initializes the registered service with default values
+     * for fields that are unspecified. Only triggered by JPA.
+     */
+    @PostLoad
+    public void initialize() {
+        setCanonicalizationMode(CaseCanonicalizationMode.NONE.name());
+    }
+
     protected String removePatternFromUsernameIfNecessary(final String username) {
         return FunctionUtils.doIfNotNull(removePattern, () -> RegExUtils.removePattern(username, removePattern), () -> username).get();
     }
@@ -88,15 +98,6 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val cipher = applicationContext.getBean(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, RegisteredServiceCipherExecutor.class);
         return cipher.encode(username, Optional.of(registeredService));
-    }
-
-    /**
-     * Initializes the registered service with default values
-     * for fields that are unspecified. Only triggered by JPA.
-     */
-    @PostLoad
-    public void initialize() {
-        setCanonicalizationMode(CaseCanonicalizationMode.NONE.name());
     }
 
     /**
