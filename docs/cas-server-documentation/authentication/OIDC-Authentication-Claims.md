@@ -116,7 +116,7 @@ These such as `displayName` above, get bundled into a `custom` scope which
 can be used and requested by services and clients.
 
 <div class="alert alert-info"><strong>Usage</strong><p>All user-defined custom scopes as well any custom claims
-that would be mapped to those scopes must always be advertised via OpenID Connect dioscvery document and specified
+that would be mapped to those scopes must always be advertised via OpenID Connect discovery document and specified
 in CAS settings for scopes and claims to be recognized as valid during claim processing.</p>
 </div>
 
