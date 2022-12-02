@@ -80,9 +80,7 @@ public class CasRestConfiguration {
             final CentralAuthenticationService centralAuthenticationService) {
             return plan -> plan.registerFactory(new CasProtocolServiceTicketResourceEntityResponseFactory(centralAuthenticationService));
         }
-
     }
-
     @Configuration(value = "CasRestResponseFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasRestResponseFactoryConfiguration {
@@ -92,7 +90,7 @@ public class CasRestConfiguration {
         public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory(
             final List<ServiceTicketResourceEntityResponseFactoryConfigurer> configurers) {
             val plan = new DefaultServiceTicketResourceEntityResponseFactoryPlan();
-            configurers.forEach(c -> c.configureEntityResponseFactory(plan));
+            configurers.forEach(config -> config.configureEntityResponseFactory(plan));
             return new CompositeServiceTicketResourceEntityResponseFactory(plan.getFactories());
         }
 

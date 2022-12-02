@@ -32,7 +32,18 @@ public abstract class AbstractCredential implements Credential {
     @Serial
     private static final long serialVersionUID = 8196868021183513898L;
 
-    private CredentialMetadata credentialMetadata = new BasicCredentialMetadata();
+    private CredentialMetadata credentialMetadata;
+
+    /**
+     * Gets credential metadata. Will initialize if metadata is null.
+     * @return current credential metadata
+     */
+    public CredentialMetadata getCredentialMetadata() {
+        if (credentialMetadata == null) {
+            this.credentialMetadata = new BasicCredentialMetadata(this);
+        }
+        return this.credentialMetadata;
+    }
 
     @JsonIgnore
     public boolean isValid() {
