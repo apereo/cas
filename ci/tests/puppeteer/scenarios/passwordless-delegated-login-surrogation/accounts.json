@@ -1,0 +1,28 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "casuser-server" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casuser-server",
+    "email": "cas@example.org",
+    "phoneNumber": "1234567890",
+    "name" : "CAS",
+    "delegatedAuthenticationEligible": "TRUE"
+  },
+  "casuser-none" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casuser-none",
+    "email": "cas@example.org",
+    "phoneNumber": "1234567890",
+    "name" : "CAS",
+    "delegatedAuthenticationEligible": "TRUE"
+  },
+  "casuser-client" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casuser-client",
+    "email": "cas@example.org",
+    "phoneNumber": "1234567890",
+    "name" : "CAS",
+    "delegatedAuthenticationEligible": "TRUE"
+  }
+}
+
