@@ -11,11 +11,11 @@ or override log42.component.properties to turn off async
         
         <Property name="cas.log.level">${main:\--logging.level.org.apereo.cas:-info}</Property>
         <Property name="spring.webflow.log.level">${main:\--logging.level.org.springframework.webflow:-warn}</Property>
-        <Property name="spring.security.log.level">info</Property>
-        <Property name="thymeleaf.log.level">warn</Property>
-        <Property name="spring.cloud.log.level">warn</Property>
+        <Property name="spring.security.log.level">${main:\--logging.level.org.springframework.security:-warn}</Property>
+        <Property name="thymeleaf.log.level">${main:\--logging.level.org.thymeleaf-warn}</Property>
+        <Property name="spring.cloud.log.level">${main:\--logging.level.org.springframework.cloud:-warn}</Property>
         <Property name="spring.web.log.level">${main:\--logging.level.org.springframework.web:-warn}</Property>
-        <Property name="spring.boot.log.level">warn</Property>
+        <Property name="spring.boot.log.level">${main:\--logging.level.org.springframework.boot:-warn}</Property>
         <Property name="ldap.log.level">${main:\--logging.level.org.ldaptive:-warn}</Property>
         <Property name="pac4j.log.level">${main:\--logging.level.org.pac4j:-warn}</Property>
         <Property name="opensaml.log.level">${main:\--logging.level.org.opensaml:-warn}</Property>
@@ -155,7 +155,6 @@ or override log42.component.properties to turn off async
         <Logger name="org.quartz" level="warn"/>
 
         <Logger name="org.thymeleaf" level="${sys:thymeleaf.log.level}" />
-        <Logger name="org.thymeleaf.spring6.expression.Themes" level="trace" />
 
         <Logger name="org.pac4j" level="${sys:pac4j.log.level}"/>
 
