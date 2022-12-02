@@ -28,14 +28,7 @@ public class SurrogateInitialAuthenticationAction extends BaseCasWebflowAction {
         val credential = WebUtils.getCredential(context, MutableCredential.class);
         if (credential == null) {
             LOGGER.debug("Provided credentials cannot be found");
-            return null;
-        }
-        val surrogateTrait = credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class);
-        if (surrogateTrait.isPresent()) {
-            LOGGER.debug("Provided credentials already contains a surrogate [{}]", surrogateTrait.get().getSurrogateUsername());
-            return null;
-        }
-        if (credential.getId().contains(separator)) {
+        } else if (credential.getId().contains(separator)) {
             LOGGER.debug("Credential identifier includes the separator [{}]. Converting to surrogate...", separator);
             addSurrogateInformation(context, credential);
         } else {
