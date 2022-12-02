@@ -267,7 +267,7 @@ subprojects {
                     if (isWarPluginApplied) {
                         logger.info "Project ${project.name} should be published as a WAR"
                         mavenWeb(MavenPublication) {
-                            from components.web
+                            from components.java
                             pom {
                                 createPom(it, project)
                             }

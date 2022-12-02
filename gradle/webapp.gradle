@@ -1,11 +1,9 @@
-
 apply plugin: "war"
 ext {
     mainClassName = "org.apereo.cas.web.CasWebApplication"
     casWebApplication = true
 }
 description = "Apereo CAS Web Application"
-
 
 sourceSets {
     main {
