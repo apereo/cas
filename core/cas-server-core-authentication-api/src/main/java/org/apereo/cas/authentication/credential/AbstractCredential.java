@@ -38,6 +38,7 @@ public abstract class AbstractCredential implements Credential {
      * Gets credential metadata. Will initialize if metadata is null.
      * @return current credential metadata
      */
+    @Override
     public CredentialMetadata getCredentialMetadata() {
         if (credentialMetadata == null) {
             this.credentialMetadata = new BasicCredentialMetadata(this);
