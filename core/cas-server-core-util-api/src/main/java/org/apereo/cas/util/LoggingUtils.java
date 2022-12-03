@@ -30,7 +30,7 @@ public class LoggingUtils {
     static {
         LOG_MESSAGE_SUMMARIZER = ServiceLoader.load(LogMessageSummarizer.class)
                 .findFirst()
-                .orElse(new DefaultLogMessageSummarizer());
+                .orElseGet(DefaultLogMessageSummarizer::new);
     }
 
     private static final int CHAR_REPEAT_ACCOUNT = 60;
