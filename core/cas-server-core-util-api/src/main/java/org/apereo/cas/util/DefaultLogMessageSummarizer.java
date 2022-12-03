@@ -14,7 +14,7 @@ public class DefaultLogMessageSummarizer implements LogMessageSummarizer {
 
     @Override
     public boolean shouldSummarize(final Logger logger) {
-        return logger.isDebugEnabled();
+        return !logger.isDebugEnabled();
     }
 
     @Override
