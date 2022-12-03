@@ -1,6 +1,5 @@
 package org.apereo.cas.impl.account;
 
-import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -36,16 +35,5 @@ public class GroovyPasswordlessUserAccountStoreTests extends BasePasswordlessUse
         passwordlessUserAccountStore.reload();
         val user = passwordlessUserAccountStore.findUser("casuser");
         assertTrue(user.isPresent());
-    }
-
-    @Test
-    public void verifyAcct() throws Exception {
-        var user = PasswordlessUserAccount.builder().username("user1").build();
-        assertNotNull(user.getId());
-        user.setId("cas2");
-        assertEquals("cas2", user.getId());
-
-        val json = MAPPER.writeValueAsString(user);
-        assertFalse(json.contains("\"id\""));
     }
 }

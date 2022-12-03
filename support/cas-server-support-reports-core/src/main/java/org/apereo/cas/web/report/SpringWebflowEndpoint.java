@@ -26,6 +26,7 @@ import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
@@ -129,6 +130,17 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             stateMap.put("isEndState", Boolean.TRUE);
         }
 
+        if (state instanceof SubflowState subflowState) {
+            var field = ReflectionUtils.findField(subflowState.getClass(), "subflow");
+            ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
+            val subflowExpr = (Expression) ReflectionUtils.getField(field, subflowState);
+            field = ReflectionUtils.findField(subflowExpr.getClass(), "subflowId");
+            ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
+            val subflowId = (String) ReflectionUtils.getField(field, subflowExpr);
+            stateMap.put("subflowId", subflowId);
+            stateMap.put("isSubflowState", Boolean.TRUE);
+        }
+
         if (state.isViewState()) {
             val viewState = (ViewState) state;
 
@@ -155,15 +167,13 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             if (field != null) {
                 ReflectionUtils.makeAccessible(field);
                 val exp = (Expression) ReflectionUtils.getField(field, viewState.getViewFactory());
-                stateMap.put("viewId",
-                    StringUtils.defaultIfBlank(Objects.requireNonNull(exp).getExpressionString(), exp.getValue(null).toString()));
+                stateMap.put("viewId", StringUtils.defaultIfBlank(Objects.requireNonNull(exp).getExpressionString(), exp.getValue(null).toString()));
             } else if (viewState.getViewFactory() instanceof ActionExecutingViewFactory factory) {
                 if (factory.getAction() instanceof ExternalRedirectAction redirect) {
                     val uri = ReflectionUtils.findField(redirect.getClass(), "resourceUri");
                     ReflectionUtils.makeAccessible(Objects.requireNonNull(uri));
                     val exp = (Expression) ReflectionUtils.getField(uri, redirect);
-                    stateMap.put("viewId",
-                        "externalRedirect -> #{" + Objects.requireNonNull(exp).getExpressionString() + '}');
+                    stateMap.put("viewId", "externalRedirect -> #{" + Objects.requireNonNull(exp).getExpressionString() + '}');
                 } else {
                     stateMap.put("viewId", factory.getAction().toString());
                 }

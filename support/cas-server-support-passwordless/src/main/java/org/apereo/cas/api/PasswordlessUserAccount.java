@@ -1,20 +1,20 @@
 package org.apereo.cas.api;
 
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.util.model.TriStateBoolean;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,12 +29,12 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Builder
-public class PasswordlessUserAccount extends BasicIdentifiableCredential {
+@SuperBuilder
+@With
+public class PasswordlessUserAccount implements Serializable {
     @Serial
     private static final long serialVersionUID = 5783908770607793373L;
 
@@ -68,16 +68,4 @@ public class PasswordlessUserAccount extends BasicIdentifiableCredential {
 
     @JsonProperty("requestPassword")
     private boolean requestPassword;
-
-    @Override
-    @JsonIgnore
-    public String getId() {
-        return getUsername();
-    }
-
-    @Override
-    @JsonIgnore
-    public void setId(final String id) {
-        setUsername(id);
-    }
 }
