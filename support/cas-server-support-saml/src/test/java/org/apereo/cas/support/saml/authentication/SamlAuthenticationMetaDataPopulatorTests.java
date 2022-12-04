@@ -2,8 +2,10 @@ package org.apereo.cas.support.saml.authentication;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,6 +77,11 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         @Override
         public String getId() {
             return "nobody";
+        }
+
+        @Override
+        public CredentialMetadata getCredentialMetadata() {
+            return new BasicCredentialMetadata(this);
         }
     }
 

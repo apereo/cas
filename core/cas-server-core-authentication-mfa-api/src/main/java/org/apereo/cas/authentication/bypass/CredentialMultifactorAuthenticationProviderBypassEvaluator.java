@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.Serial;
+import java.util.Objects;
 
 /**
  * Multifactor Bypass provider based on Credentials.
@@ -42,7 +43,8 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends 
     protected static boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
         return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials()
             .stream()
-            .anyMatch(e -> e.getCredentialClass().getName().matches(credentialClassType));
+            .anyMatch(e -> Objects.nonNull(e.getCredentialMetadata())
+                           && e.getCredentialMetadata().getCredentialClass().getName().matches(credentialClassType));
     }
 
     @Override

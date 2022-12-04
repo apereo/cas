@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
@@ -118,7 +117,7 @@ public class DefaultAuthenticationManagerTests {
         when(mock.getState()).thenCallRealMethod();
         if (success) {
             val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("nobody");
-            val metadata = new BasicCredentialMetaData(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("nobody"));
+            val metadata = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("nobody");
             val result = new DefaultAuthenticationHandlerExecutionResult(mock, metadata, p);
             when(mock.authenticate(any(Credential.class), any(Service.class))).thenReturn(result);
         } else if (!error) {

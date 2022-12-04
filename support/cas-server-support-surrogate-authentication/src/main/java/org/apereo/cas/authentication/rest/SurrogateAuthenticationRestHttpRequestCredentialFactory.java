@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.rest;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
-import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,11 +13,11 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 
 /**
@@ -57,41 +57,35 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
             return credentials;
         }
         val surrogateAccounts = surrogateAuthenticationService.getImpersonationAccounts(credential.getId());
-        if (!surrogateAccounts.contains(credential.getSurrogateUsername())) {
+        val surrogateUsername = credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
+            .map(SurrogateCredentialTrait::getSurrogateUsername)
+            .orElseThrow();
+        if (!surrogateAccounts.contains(surrogateUsername)) {
             throw new SurrogateAuthenticationException(
-                "Unable to authorize surrogate authentication request for " + credential.getSurrogateUsername());
+                "Unable to authorize surrogate authentication request for " + surrogateUsername);
         }
         return CollectionUtils.wrapList(credential);
     }
 
-    /**
-     * Extract credential surrogate username password.
-     *
-     * @param request     the request
-     * @param credentials the credentials
-     * @return the surrogate username password credential
-     * @throws Exception the exception
-     */
-    protected SurrogateUsernamePasswordCredential extractCredential(final HttpServletRequest request,
-                                                                    final List<Credential> credentials) throws Exception {
-        val sc = new SurrogateUsernamePasswordCredential();
-        val credential = UsernamePasswordCredential.class.cast(credentials.get(0));
-        BeanUtils.copyProperties(sc, credential);
+    protected Credential extractCredential(final HttpServletRequest request,
+                                           final List<Credential> credentials) throws Exception {
+        val credential = (MutableCredential) credentials.get(0);
+        if (credential != null) {
+            var surrogateUsername = request.getHeader(REQUEST_HEADER_SURROGATE_PRINCIPAL);
+            if (StringUtils.isNotBlank(surrogateUsername)) {
+                LOGGER.debug("Request surrogate principal [{}]", surrogateUsername);
+                credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
+                return credential;
+            }
 
-        val surrogatePrincipal = request.getHeader(REQUEST_HEADER_SURROGATE_PRINCIPAL);
-        if (StringUtils.isNotBlank(surrogatePrincipal)) {
-            LOGGER.debug("Request surrogate principal [{}]", surrogatePrincipal);
-            sc.setSurrogateUsername(surrogatePrincipal);
-            return sc;
-        }
-        val username = credential.getUsername();
-        if (username.contains(properties.getSeparator())) {
-            val surrogateUsername = username.substring(0, username.indexOf(properties.getSeparator()));
-            val realUsername = username.substring(username.indexOf(properties.getSeparator()) + properties.getSeparator().length());
-            sc.setUsername(realUsername);
-            sc.setSurrogateUsername(surrogateUsername);
-            sc.assignPassword(credential.toPassword());
-            return sc;
+            val username = credential.getId();
+            if (username.contains(properties.getSeparator())) {
+                surrogateUsername = username.substring(0, username.indexOf(properties.getSeparator()));
+                val realUsername = username.substring(username.indexOf(properties.getSeparator()) + properties.getSeparator().length());
+                credential.setId(realUsername);
+                credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
+                return credential;
+            }
         }
         return null;
     }

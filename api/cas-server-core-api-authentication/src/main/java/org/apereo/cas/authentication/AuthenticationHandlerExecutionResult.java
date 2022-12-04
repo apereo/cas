@@ -28,7 +28,7 @@ public interface AuthenticationHandlerExecutionResult extends Serializable {
      *
      * @return the credential meta data
      */
-    CredentialMetaData getCredentialMetaData();
+    Credential getCredential();
 
     /**
      * Gets principal.

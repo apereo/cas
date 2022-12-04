@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.configuration.model.core.ticket.RememberMeAuthenticationProperties;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -33,8 +32,8 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     private static AuthenticationBuilder newBuilder(final Credential credential,
                                                     final RememberMeAuthenticationProperties properties) {
+        val meta = new UsernamePasswordCredential();
         val populator = new RememberMeAuthenticationMetaDataPopulator(properties);
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
             .addCredential(meta)

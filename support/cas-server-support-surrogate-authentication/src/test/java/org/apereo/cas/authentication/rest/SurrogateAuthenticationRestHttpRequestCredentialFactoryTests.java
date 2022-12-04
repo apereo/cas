@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication.rest;
 
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
-import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -64,10 +63,10 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
         assertTrue(factory.getOrder() > 0);
         val results = factory.fromRequest(request, requestBody);
         assertFalse(results.isEmpty());
-        val credential = (SurrogateUsernamePasswordCredential) results.get(0);
+        val credential = results.get(0);
         assertNotNull(credential);
-        assertEquals("surrogate", credential.getSurrogateUsername());
-        assertEquals("test", credential.getUsername());
+        assertEquals("surrogate", credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).get().getSurrogateUsername());
+        assertEquals("test", credential.getId());
     }
 
     @Test
@@ -90,10 +89,10 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
         val factory = new SurrogateAuthenticationRestHttpRequestCredentialFactory(service, casProperties.getAuthn().getSurrogate());
         val results = factory.fromRequest(request, requestBody);
         assertFalse(results.isEmpty());
-        val credential = (SurrogateUsernamePasswordCredential) results.get(0);
+        val credential = results.get(0);
         assertNotNull(credential);
-        assertEquals("surrogate", credential.getSurrogateUsername());
-        assertEquals("test", credential.getUsername());
+        assertEquals("surrogate", credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).get().getSurrogateUsername());
+        assertEquals("test", credential.getId());
     }
 
     @Test
@@ -107,10 +106,9 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
         val factory = new SurrogateAuthenticationRestHttpRequestCredentialFactory(service, casProperties.getAuthn().getSurrogate());
         val results = factory.fromRequest(request, requestBody);
         assertFalse(results.isEmpty());
-        assertFalse(results.get(0) instanceof SurrogateUsernamePasswordCredential);
-        assertTrue(results.get(0) instanceof UsernamePasswordCredential);
-        val credential = (UsernamePasswordCredential) results.get(0);
+        val credential = results.get(0);
         assertNotNull(credential);
-        assertEquals("test", credential.getUsername());
+        assertTrue(credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isEmpty());
+        assertEquals("test", credential.getId());
     }
 }
