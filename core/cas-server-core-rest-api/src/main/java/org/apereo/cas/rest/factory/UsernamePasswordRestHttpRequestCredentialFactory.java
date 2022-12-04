@@ -2,6 +2,7 @@ package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
@@ -40,7 +41,8 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
             LOGGER.debug("Invalid payload; missing required fields.");
             return new ArrayList<>(0);
         }
-        val c = new UsernamePasswordCredential(username, password);
-        return CollectionUtils.wrap(c);
+        val credential = new UsernamePasswordCredential(username, password);
+        credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
+        return CollectionUtils.wrap(credential);
     }
 }

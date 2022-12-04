@@ -610,5 +610,3 @@ boolean projectRequiresLombok(Project project) {
     return !["api", "core", "docs", "support", "webapp"].contains(project.name)
             && !project.getPath().contains("cas-server-documentation")
 }
-
-

@@ -206,7 +206,7 @@ for a change is made available. If you would like to see a change or feature in 
 to discuss and contribute or fund someone else's time and make it worth their while to do that for you.
 
 <div class="alert alert-info"><strong>The Hitchhiker's Guide to the CAS Galaxy</strong><p>A <i>problem</i> is 
-only a problem, if  and when something is done about the problem. Otherwise and by definition, there is no problem.</p></div>
+only a problem, if and when you do something about the problem. Otherwise and by definition, there is no problem.</p></div>
 
 ## How often are changes released?
 
