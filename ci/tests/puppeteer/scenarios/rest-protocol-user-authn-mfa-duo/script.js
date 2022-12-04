@@ -18,6 +18,7 @@ const cas = require('../../cas.js');
     assert(result.authentication.successes["STATIC"].principal.id === "casuser");
     assert(result.authentication.successes["STATIC"].credential.credentialMetaData.credentialClass.includes("UsernamePasswordCredential"));
 
-    assert(result.authentication.successes["DuoSecurityAuthenticationHandler"].credentialMetaData.credentialClass.includes("DuoSecurityPasscodeCredential"));
-    assert(result.authentication.successes["DuoSecurityAuthenticationHandler"].principal.id === "casuser");
+    const handler = result.authentication.successes["DuoSecurityAuthenticationHandler"];
+    assert(handler.credentialMetaData.credentialClass.includes("DuoSecurityPasscodeCredential"));
+    assert(handler.principal.id === "casuser");
 })();
