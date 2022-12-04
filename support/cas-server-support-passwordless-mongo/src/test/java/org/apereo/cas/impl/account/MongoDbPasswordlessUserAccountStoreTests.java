@@ -64,7 +64,7 @@ public class MongoDbPasswordlessUserAccountStoreTests extends BasePasswordlessUs
             .attributes(Map.of("lastName", List.of("Smith")))
             .build();
         val mongo = casProperties.getAuthn().getPasswordless().getAccounts().getMongo();
-        this.mongoDbTemplate.save(account, mongo.getCollection());
+        mongoDbTemplate.save(account, mongo.getCollection());
 
         val user = passwordlessUserAccountStore.findUser("passwordlessuser");
         assertTrue(user.isPresent());

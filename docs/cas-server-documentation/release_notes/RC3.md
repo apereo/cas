@@ -64,12 +64,19 @@ be somewhat disruptive in the beginning. While most if not all CAS-specific conf
 you may encounter unexpected hiccups and mishaps along the way. We recommend that you start early by experimenting with 
 release candidates and/or follow-up snapshots.</p></div>
 
+## CAS Intializr UI
+
+The [CAS Initializr](https://casinit.herokuapp.com/ui) project is now provides a user interface:
+
+<img width="1600" alt="image" src="https://user-images.githubusercontent.com/1205228/205378501-a0e6ad1b-bf81-42ea-8a69-5ad13c0dde39.png">
+
 ## Other Stuff
         
 - Support for OpenID Connect `unmet_authentication_requirements` error code is now available.
 - Email templates and SMS notification messages for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) now have access to both 
   `token` and `tokenWithoutPrefix` variables. 
 - Negative skew values are now supported for SAML2 responses when skew values are defined for SAML2 registered services.
+- The [Return Allowed](../integration/Attribute-Release-Policy-ReturnAllowed.html) attribute release policy is now able to support inline Groovy scripts.
 
 ## Library Upgrades
 
@@ -79,8 +86,14 @@ release candidates and/or follow-up snapshots.</p></div>
 - Spring Data
 - Apache Tomcat
 - Spring Integration
+- Spring Shell
+- Spring Retry
+- Spring Cloud
 - Jetty
 - Undertow
 - Jakarta Servlet API
 - Pac4j
-
+- Hibernate
+- Hibernate Validator
+- OpenSAML
+- Apache CXF

@@ -201,7 +201,9 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(double[].class);
         kryo.register(float[].class);
         kryo.register(long[].class);
+        kryo.register(char[].class);
         kryo.register(int[].class);
+        kryo.register(short[].class);
         kryo.register(byte[].class);
         kryo.register(ByteBuffer.class);
 

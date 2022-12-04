@@ -20,7 +20,7 @@ public class PrepareForPasswordlessAuthenticationAction extends BasePasswordless
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         WebUtils.putPasswordlessAuthenticationEnabled(requestContext, Boolean.TRUE);
         if (!WebUtils.hasPasswordlessAuthenticationAccount(requestContext) && isLoginFlowActive(requestContext)) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID);
