@@ -53,6 +53,9 @@ import org.apereo.cas.web.flow.authentication.DefaultCasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GroovyCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.decorator.GroovyLoginWebflowDecorator;
+import org.apereo.cas.web.flow.decorator.RestfulLoginWebflowDecorator;
+import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
@@ -91,6 +94,7 @@ import java.util.List;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @AutoConfiguration(after = CasCoreServicesConfiguration.class)
 public class CasCoreWebflowConfiguration {
+
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreWebflowEventResolutionConfiguration {
@@ -414,6 +418,48 @@ public class CasCoreWebflowConfiguration {
             @Qualifier("requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy) {
             return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy);
+        }
+    }
+
+    @Configuration(value = "CasCoreWebflowDecoratorsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreWebflowDecoratorsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "groovyLoginWebflowDecorator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebflowDecorator groovyLoginWebflowDecorator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(WebflowDecorator.class)
+                .when(BeanCondition.on("cas.webflow.login-decorator.groovy.location")
+                    .exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val decorator = casProperties.getWebflow().getLoginDecorator();
+                    val groovyScript = decorator.getGroovy().getLocation();
+                    LOGGER.trace("Decorating login webflow using [{}]", groovyScript);
+                    return new GroovyLoginWebflowDecorator(groovyScript);
+                })
+                .otherwiseProxy()
+                .get();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "restfulLoginWebflowDecorator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebflowDecorator restfulLoginWebflowDecorator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(WebflowDecorator.class)
+                .when(BeanCondition.on("cas.webflow.login-decorator.rest.url")
+                    .isUrl().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val decorator = casProperties.getWebflow().getLoginDecorator();
+                    LOGGER.trace("Decorating login webflow REST endpoint [{}]", decorator.getRest().getUrl());
+                    return new RestfulLoginWebflowDecorator(decorator.getRest());
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 }

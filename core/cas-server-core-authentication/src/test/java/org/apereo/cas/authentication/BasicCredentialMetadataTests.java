@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0
  */
 @Tag("AuthenticationMetadata")
-public class BasicCredentialMetaDataTests {
+public class BasicCredentialMetadataTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "basicCredentialMetaData.json");
 
@@ -28,9 +28,9 @@ public class BasicCredentialMetaDataTests {
 
     @Test
     public void verifySerializeABasicCredentialMetaDataToJson() throws Exception {
-        val credentialMetaDataWritten = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val credentialMetaDataWritten = new BasicCredentialMetadata(new UsernamePasswordCredential());
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
-        val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetaData.class);
+        val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetadata.class);
         assertEquals(credentialMetaDataWritten, credentialMetaDataRead);
     }
 }

@@ -67,7 +67,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
         if (!this.httpClient.isValidEndPoint(callbackUrl)) {
             throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");
         }
-        return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, this.principalFactory.createPrincipal(httpCredential.getId()));
+        return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, principalFactory.createPrincipal(httpCredential.getId()));
     }
 
     @Override

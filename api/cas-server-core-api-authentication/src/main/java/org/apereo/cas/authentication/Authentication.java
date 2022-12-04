@@ -79,7 +79,7 @@ public interface Authentication extends Serializable {
      * The order of items in the returned list SHOULD be the same as the order in which the source credentials
      * were presented and subsequently processed.
      */
-    List<CredentialMetaData> getCredentials();
+    List<Credential> getCredentials();
 
     /**
      * Get a list of authentication warnings that may be considered global

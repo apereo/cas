@@ -54,7 +54,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * List of metadata about credentials presented at authentication.
      */
-    private List<CredentialMetaData> credentials = new ArrayList<>();
+    private List<Credential> credentials = new ArrayList<>();
 
     /**
      * Authentication metadata attributes.

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -44,6 +46,18 @@ public class SurrogatePrincipalBuilderTests {
     }
 
     @Test
+    public void verifyOperationWithoutAuthn() {
+        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(
+            PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
+            new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        assertTrue(surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(resultBuilder, credential, registeredService).isEmpty());
+    }
+
+
+    @Test
     public void verifyOperationWithSurrogate() {
         val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
@@ -57,9 +71,34 @@ public class SurrogatePrincipalBuilderTests {
         val resultBuilder = new DefaultAuthenticationResultBuilder();
         resultBuilder.collect(CoreAuthenticationTestUtils.getAuthentication(principal));
 
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         assertThrows(SurrogateAuthenticationException.class,
-            () -> surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
-                resultBuilder, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                "surrogate", registeredService));
+            () -> surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(resultBuilder, credential, registeredService));
+
+        credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(UUID.randomUUID().toString()));
+        assertThrows(SurrogateAuthenticationException.class,
+            () -> surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(resultBuilder, credential, registeredService));
+    }
+
+    @Test
+    public void verifyOperationWithSurrogateSuccess() {
+        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(
+            PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
+            new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(new DenyAllAttributeReleasePolicy());
+
+        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate",
+            CoreAuthenticationTestUtils.getPrincipal("test"), registeredService);
+
+        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        resultBuilder.collect(CoreAuthenticationTestUtils.getAuthentication(principal));
+
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        assertThrows(SurrogateAuthenticationException.class,
+            () -> surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(resultBuilder, credential, registeredService));
+
+        credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("surrogate"));
+        assertTrue(surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(resultBuilder, credential, registeredService).isPresent());
     }
 }

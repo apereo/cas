@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
@@ -69,6 +70,11 @@ public class AuthenticationTransactionTests {
     public abstract static class BaseTestCredential implements Credential {
         @Serial
         private static final long serialVersionUID = -6933725969701066361L;
+
+        @Override
+        public CredentialMetadata getCredentialMetadata() {
+            return new BasicCredentialMetadata(this);
+        }
     }
 
     public static class TestCredentialType1 extends BaseTestCredential {
@@ -88,6 +94,11 @@ public class AuthenticationTransactionTests {
         @Override
         public String getId() {
             return null;
+        }
+
+        @Override
+        public CredentialMetadata getCredentialMetadata() {
+            return new BasicCredentialMetadata(this);
         }
     }
 }

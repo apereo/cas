@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.credential;
 
+import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +19,7 @@ import org.springframework.binding.validation.ValidationContext;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serial;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -33,9 +34,8 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class UsernamePasswordCredential extends AbstractCredential {
+@EqualsAndHashCode(exclude = "password", callSuper = true)
+public class UsernamePasswordCredential extends AbstractCredential implements MutableCredential {
     /**
      * Authentication attribute name for password.
      **/
@@ -58,9 +58,22 @@ public class UsernamePasswordCredential extends AbstractCredential {
         assignPassword(StringUtils.defaultString(password));
     }
 
+    public UsernamePasswordCredential(final String username, final char[] password,
+                                      final String source, final Map<String, Object> customFields) {
+        this.username = username;
+        this.password = password.clone();
+        this.source = source;
+        this.customFields = new HashMap<>(customFields);
+    }
+
     @Override
     public String getId() {
         return this.username;
+    }
+
+    @Override
+    public void setId(final String id) {
+        this.username = id;
     }
 
     @Override
@@ -103,4 +116,6 @@ public class UsernamePasswordCredential extends AbstractCredential {
             System.arraycopy(password.toCharArray(), 0, this.password, 0, password.length());
         }, p -> this.password = ArrayUtils.EMPTY_CHAR_ARRAY);
     }
+
+
 }
