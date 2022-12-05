@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
@@ -65,7 +66,7 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
         context.setCurrentEvent(new Event(this, "processing"));
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("username", "casuser");
+        request.addParameter(PasswordlessRequestParser.PARAMETER_USERNAME, "casuser");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
             displayBeforePasswordlessAuthenticationAction.execute(context).getId());
     }
@@ -84,7 +85,7 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, "processing"));
         val request = new MockHttpServletRequest();
-        request.addParameter("username", "unknown");
+        request.addParameter(PasswordlessRequestParser.PARAMETER_USERNAME, "unknown");
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertThrows(UnauthorizedServiceException.class, () -> displayBeforePasswordlessAuthenticationAction.execute(context));
     }

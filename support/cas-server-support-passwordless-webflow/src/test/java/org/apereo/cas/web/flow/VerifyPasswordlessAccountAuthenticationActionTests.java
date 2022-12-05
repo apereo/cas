@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -80,7 +81,7 @@ public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePass
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = mock(RequestContext.class);
         when(context.getRequestParameters()).thenReturn(
-            new MockParameterMap().put("username", username));
+            new MockParameterMap().put(PasswordlessRequestParser.PARAMETER_USERNAME, username));
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
