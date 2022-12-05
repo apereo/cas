@@ -247,7 +247,7 @@ public class CoreAuthenticationUtilsTests {
         val personDirectory = new PersonDirectoryPrincipalResolverProperties();
         val principalResolutionContext = CoreAuthenticationUtils.buildPrincipalResolutionContext(
             PrincipalFactoryUtils.newPrincipalFactory(),
-            new StubPersonAttributeDao(Collections.EMPTY_MAP),
+            new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
             CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
             principal, personDirectory);
         assertFalse(principalResolutionContext.isUseCurrentPrincipalId());
@@ -264,7 +264,7 @@ public class CoreAuthenticationUtilsTests {
         personDirectory.setPrincipalAttribute("principalAttribute");
         val principalResolutionContext2 = CoreAuthenticationUtils.buildPrincipalResolutionContext(
             PrincipalFactoryUtils.newPrincipalFactory(),
-            new StubPersonAttributeDao(Collections.EMPTY_MAP),
+            new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
             CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
             principal, personDirectory);
         assertTrue(principalResolutionContext2.isUseCurrentPrincipalId());
@@ -281,7 +281,7 @@ public class CoreAuthenticationUtilsTests {
         principal.setPrincipalAttribute("principalAttribute2");
         val principalResolutionContext3 = CoreAuthenticationUtils.buildPrincipalResolutionContext(
             PrincipalFactoryUtils.newPrincipalFactory(),
-            new StubPersonAttributeDao(Collections.EMPTY_MAP),
+            new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
             CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
             principal, personDirectory);
         assertFalse(principalResolutionContext3.isUseCurrentPrincipalId());
@@ -292,7 +292,7 @@ public class CoreAuthenticationUtilsTests {
 
         val principalResolutionContext4 = CoreAuthenticationUtils.buildPrincipalResolutionContext(
             PrincipalFactoryUtils.newPrincipalFactory(),
-            new StubPersonAttributeDao(Collections.EMPTY_MAP),
+            new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
             CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
             personDirectory);
         assertTrue(principalResolutionContext4.isUseCurrentPrincipalId());
