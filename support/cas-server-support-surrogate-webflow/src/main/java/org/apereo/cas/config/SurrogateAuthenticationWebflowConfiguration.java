@@ -3,7 +3,9 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
+import org.apereo.cas.authentication.surrogate.DefaultSurrogateCredentialParser;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialParser;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -86,9 +88,17 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = SurrogateCredentialParser.BEAN_NAME)
+        public SurrogateCredentialParser surrogateCredentialParser(final CasConfigurationProperties casProperties) {
+            return new DefaultSurrogateCredentialParser(casProperties.getAuthn().getSurrogate());
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION)
-        public Action surrogateInitialAuthenticationAction(final CasConfigurationProperties casProperties) {
-            return new SurrogateInitialAuthenticationAction(casProperties.getAuthn().getSurrogate().getSeparator());
+        public Action surrogateInitialAuthenticationAction(
+            @Qualifier(SurrogateCredentialParser.BEAN_NAME) final SurrogateCredentialParser surrogateCredentialParser) {
+            return new SurrogateInitialAuthenticationAction(surrogateCredentialParser);
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK)

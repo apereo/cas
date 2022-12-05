@@ -15,8 +15,10 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-audit-api")
+    
     implementation project(":support:cas-server-support-surrogate-authentication")
     implementation project(":support:cas-server-support-surrogate-api")
+    implementation project(":support:cas-server-support-surrogate-core")
 
     testImplementation project(":support:cas-server-support-themes")
 

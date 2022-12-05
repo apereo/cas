@@ -385,7 +385,7 @@ public class CoreAuthenticationUtils {
                 .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
                 .filter(p -> !p.isEmpty())
                 .findFirst()
-                .orElse(Collections.EMPTY_SET))
+                .orElse(Collections.<String>emptySet()))
             .build();
     }
 

@@ -154,10 +154,12 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
 
         ImmutableMultimapSerializer.registerSerializers(kryo);
 
-        kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
-        kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
-        kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
-
+        //CHECKSTYLE:OFF
+        kryo.register(Collections.emptyList().getClass(), new CollectionsEmptyListSerializer());
+        kryo.register(Collections.emptyMap().getClass(), new CollectionsEmptyMapSerializer());
+        kryo.register(Collections.emptySet().getClass(), new CollectionsEmptySetSerializer());
+        //CHECKSTYLE:ON
+        
         /*
          * Can't directly access Collections classes (private class),
          * so instantiate one and do a getClass().

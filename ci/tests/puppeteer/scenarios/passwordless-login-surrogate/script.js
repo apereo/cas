@@ -7,15 +7,10 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     
     await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(1000);
 
     let pswd = await page.$('#password');
     assert(pswd == null);
-
-    let uid = await page.$('#username');
-    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")));
-    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")));
-    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
 
     await cas.type(page,'#username', "user3+casuser");
     await page.keyboard.press('Enter');
