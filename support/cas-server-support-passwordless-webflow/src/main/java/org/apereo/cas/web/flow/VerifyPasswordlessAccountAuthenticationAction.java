@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
@@ -17,17 +18,21 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordlessCasWebflowAction {
     private final PasswordlessUserAccountStore passwordlessUserAccountStore;
+    private final PasswordlessRequestParser passwordlessRequestParser;
 
     public VerifyPasswordlessAccountAuthenticationAction(final CasConfigurationProperties casProperties,
-                                                         final PasswordlessUserAccountStore passwordlessUserAccountStore) {
+                                                         final PasswordlessUserAccountStore passwordlessUserAccountStore,
+                                                         final PasswordlessRequestParser passwordlessRequestParser) {
         super(casProperties);
         this.passwordlessUserAccountStore = passwordlessUserAccountStore;
+        this.passwordlessRequestParser = passwordlessRequestParser;
     }
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        val username = requestContext.getRequestParameters().getRequired("username");
-        val account = passwordlessUserAccountStore.findUser(username);
+        val username = requestContext.getRequestParameters().getRequired(PasswordlessRequestParser.PARAMETER_USERNAME);
+        val passwordlessRequest = passwordlessRequestParser.parse(username);
+        val account = passwordlessUserAccountStore.findUser(passwordlessRequest.getUsername());
         if (account.isEmpty()) {
             WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.unknown.user");
             return error();

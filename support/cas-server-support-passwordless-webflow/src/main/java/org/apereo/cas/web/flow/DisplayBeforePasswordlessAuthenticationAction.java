@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
@@ -38,14 +39,18 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
 
     private final CommunicationsManager communicationsManager;
 
+    private final PasswordlessRequestParser passwordlessRequestParser;
+
     public DisplayBeforePasswordlessAuthenticationAction(final CasConfigurationProperties casProperties,
                                                          final PasswordlessTokenRepository passwordlessTokenRepository,
                                                          final PasswordlessUserAccountStore passwordlessUserAccountStore,
-                                                         final CommunicationsManager communicationsManager) {
+                                                         final CommunicationsManager communicationsManager,
+                                                         final PasswordlessRequestParser passwordlessRequestParser) {
         super(casProperties);
         this.passwordlessTokenRepository = passwordlessTokenRepository;
         this.passwordlessUserAccountStore = passwordlessUserAccountStore;
         this.communicationsManager = communicationsManager;
+        this.passwordlessRequestParser = passwordlessRequestParser;
     }
 
     @Override
@@ -58,11 +63,12 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
             WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             return success();
         }
-        val username = requestContext.getRequestParameters().get("username");
+        val username = requestContext.getRequestParameters().get(PasswordlessRequestParser.PARAMETER_USERNAME);
         if (StringUtils.isBlank(username)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
-        val account = passwordlessUserAccountStore.findUser(username);
+        val passwordlessRequest = passwordlessRequestParser.parse(username);
+        val account = passwordlessUserAccountStore.findUser(passwordlessRequest.getUsername());
         if (account.isEmpty()) {
             LOGGER.error("Unable to locate passwordless user account for [{}]", username);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
