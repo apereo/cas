@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.api.PasswordlessAuthenticationPreProcessor;
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialParser;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -39,9 +40,11 @@ public class SurrogateAuthenticationPasswordlessConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "surrogatePasswordlessAuthenticationPreProcessor")
     public PasswordlessAuthenticationPreProcessor surrogatePasswordlessAuthenticationPreProcessor(
+        @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
+        final SurrogateAuthenticationService surrogateAuthenticationService,
         @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
         @Qualifier("surrogatePrincipalBuilder") final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
-        return new SurrogatePasswordlessAuthenticationPreProcessor(servicesManager, surrogatePrincipalBuilder);
+        return new SurrogatePasswordlessAuthenticationPreProcessor(servicesManager, surrogatePrincipalBuilder, surrogateAuthenticationService);
     }
 
     @Bean
