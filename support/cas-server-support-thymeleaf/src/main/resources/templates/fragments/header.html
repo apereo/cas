@@ -162,14 +162,6 @@
                         header.attachNotificationToggle(dialog);
                     }
                 },
-                checkCaps: ev => {
-                    let s = String.fromCharCode(ev.which);
-                    if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                        ev.target.parentElement.classList.add('caps-on');
-                    } else {
-                        ev.target.parentElement.classList.remove('caps-on');
-                    }
-                },
                 attachDrawerToggle: drawer => {
                     let appBar = document.getElementById('app-bar');
                     if (appBar != null) {
