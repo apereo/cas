@@ -45,6 +45,16 @@ public class GroovyRegisteredServiceUsernameProviderTests {
     }
 
     @Test
+    public void verifyUsernameProviderNoWatch() {
+        val p = new GroovyRegisteredServiceUsernameProvider();
+        p.setGroovyScript("file:///src/test/resources/uid.groovy");
+        p.setWatchResource(false);
+        val id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getRegisteredService());
+        assertEquals("test", id);
+    }
+
+    @Test
     public void verifyUsernameProviderInline() {
         val p = new GroovyRegisteredServiceUsernameProvider();
         p.setGroovyScript("groovy { return attributes['uid'] + '123456789' }");
