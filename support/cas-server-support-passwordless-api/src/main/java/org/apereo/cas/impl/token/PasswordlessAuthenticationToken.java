@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.springframework.data.annotation.Id;
@@ -45,6 +46,7 @@ import java.util.Map;
 @EqualsAndHashCode
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
+@With
 public class PasswordlessAuthenticationToken implements Serializable {
     @Serial
     private static final long serialVersionUID = 3810773120720229099L;

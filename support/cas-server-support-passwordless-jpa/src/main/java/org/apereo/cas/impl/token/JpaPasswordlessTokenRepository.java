@@ -28,9 +28,9 @@ import java.util.Optional;
 @Slf4j
 public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
 
-    private static final String SELECT_QUERY = "SELECT t FROM JpaPasswordlessAuthenticationToken t ";
+    private static final String SELECT_QUERY = String.format("SELECT t FROM %s t ", JpaPasswordlessAuthenticationEntity.class.getSimpleName());
 
-    private static final String DELETE_QUERY = "DELETE FROM JpaPasswordlessAuthenticationToken t ";
+    private static final String DELETE_QUERY = String.format("DELETE FROM %s t ", JpaPasswordlessAuthenticationEntity.class.getSimpleName());
 
     private static final String QUERY_PARAM_USERNAME = "username";
 
@@ -71,10 +71,10 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
 
     @Override
     public void deleteToken(final PasswordlessAuthenticationToken token) {
-        val query = DELETE_QUERY.concat(" WHERE t.username = :username AND t.token = :token");
+        val query = DELETE_QUERY.concat(" WHERE t.username = :username AND t.id = :id");
         entityManager.createQuery(query)
             .setParameter(QUERY_PARAM_USERNAME, token.getUsername())
-            .setParameter("token", encodeToken(token))
+            .setParameter("id", token.getId())
             .executeUpdate();
     }
 
@@ -85,11 +85,11 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
         return FunctionUtils.doUnchecked(() -> {
             val record = JpaPasswordlessAuthenticationEntity.builder()
                 .username(authnToken.getUsername())
-                .token(authnToken.getUsername())
+                .token(encodeToken(authnToken))
                 .build();
             LOGGER.debug("Saving token [{}]", record);
-            entityManager.merge(record);
-            return authnToken;
+            val result = entityManager.merge(record);
+            return authnToken.withId(result.getId());
         });
     }
 
