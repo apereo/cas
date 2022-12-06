@@ -22,7 +22,7 @@ public interface PasswordlessTokenRepository {
      * @param username the username
      * @return the string
      */
-    PasswordlessAuthenticationToken createToken(PasswordlessUserAccount username, PasswordlessRequest passwordlessRequest);
+    PasswordlessAuthenticationToken createToken(PasswordlessUserAccount username, PasswordlessAuthenticationRequest passwordlessRequest);
 
     /**
      * Find token string.
@@ -64,7 +64,7 @@ public interface PasswordlessTokenRepository {
      * @return the passwordless authentication token
      */
     PasswordlessAuthenticationToken saveToken(PasswordlessUserAccount passwordlessAccount,
-                                              PasswordlessRequest passwordlessRequest,
+                                              PasswordlessAuthenticationRequest passwordlessRequest,
                                               PasswordlessAuthenticationToken token);
 
     /**

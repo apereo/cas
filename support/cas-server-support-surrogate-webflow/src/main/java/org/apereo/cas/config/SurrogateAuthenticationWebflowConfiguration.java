@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
-import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
+import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.surrogate.DefaultSurrogateCredentialParser;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialParser;
@@ -75,8 +75,8 @@ public class SurrogateAuthenticationWebflowConfiguration {
         public Action selectSurrogateAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("surrogatePrincipalBuilder")
-            final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
+            @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
+            final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -126,8 +126,8 @@ public class SurrogateAuthenticationWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
             final SurrogateAuthenticationService surrogateAuthenticationService,
-            @Qualifier("surrogatePrincipalBuilder")
-            final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
+            @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
+            final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)

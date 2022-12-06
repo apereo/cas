@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationRestTokensProperties;
 import org.apereo.cas.util.HttpUtils;
@@ -104,7 +104,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
 
     @Override
     public PasswordlessAuthenticationToken saveToken(final PasswordlessUserAccount passwordlessAccount,
-                                                     final PasswordlessRequest passwordlessRequest,
+                                                     final PasswordlessAuthenticationRequest passwordlessRequest,
                                                      final PasswordlessAuthenticationToken authnToken) {
         HttpResponse response = null;
         try {

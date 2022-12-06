@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.services.RegisteredService;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
@@ -15,26 +17,24 @@ import java.util.HashSet;
 import java.util.Optional;
 
 /**
- * This is {@link SurrogatePrincipalBuilder}.
+ * This is {@link SurrogateAuthenticationPrincipalBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @RequiredArgsConstructor
-public class SurrogatePrincipalBuilder {
+@Getter
+@Slf4j
+public class DefaultSurrogateAuthenticationPrincipalBuilder implements SurrogateAuthenticationPrincipalBuilder {
 
     private final PrincipalFactory principalFactory;
+
     private final IPersonAttributeDao attributeRepository;
+
     private final SurrogateAuthenticationService surrogateAuthenticationService;
 
-    /**
-     * Build principal.
-     *
-     * @param surrogate         the surrogate
-     * @param primaryPrincipal  the primary principal
-     * @param registeredService the registered service
-     * @return the principal
-     */
+
+    @Override
     public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal, final RegisteredService registeredService) {
         val repositories = new HashSet<String>(0);
         if (registeredService != null) {
@@ -49,30 +49,13 @@ public class SurrogatePrincipalBuilder {
             .build()
             .retrieve();
 
-        val principal = principalFactory.createPrincipal(surrogate, attributes);
-        return new SurrogatePrincipal(primaryPrincipal, principal);
-    }
-
-    /**
-     * Build surrogate principal.
-     *
-     * @param surrogate        the surrogate
-     * @param primaryPrincipal the primary principal
-     * @return the principal
-     */
-    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal) {
-        return buildSurrogatePrincipal(surrogate, primaryPrincipal, null);
+        val surrogatePrincipal = principalFactory.createPrincipal(surrogate, attributes);
+        LOGGER.debug("Built surrgate principal [{}] with primary principal [{}]", surrogatePrincipal, primaryPrincipal);
+        return new SurrogatePrincipal(primaryPrincipal, surrogatePrincipal);
     }
 
 
-    /**
-     * Build surrogate authentication result optional.
-     *
-     * @param authenticationResultBuilder the authentication result builder
-     * @param mutableCredential           the mutable credential
-     * @param registeredService           the registered service
-     * @return the optional
-     */
+    @Override
     public Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(final AuthenticationResultBuilder authenticationResultBuilder,
                                                                                     final Credential mutableCredential,
                                                                                     final RegisteredService registeredService) {

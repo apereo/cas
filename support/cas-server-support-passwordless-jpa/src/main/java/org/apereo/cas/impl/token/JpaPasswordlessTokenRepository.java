@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -80,7 +80,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
 
     @Override
     public PasswordlessAuthenticationToken saveToken(final PasswordlessUserAccount passwordlessAccount,
-                                                     final PasswordlessRequest passwordlessRequest,
+                                                     final PasswordlessAuthenticationRequest passwordlessRequest,
                                                      final PasswordlessAuthenticationToken authnToken) {
         return FunctionUtils.doUnchecked(() -> {
             val record = JpaPasswordlessAuthenticationEntity.builder()

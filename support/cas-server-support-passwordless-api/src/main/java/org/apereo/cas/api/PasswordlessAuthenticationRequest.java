@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link PasswordlessRequest}.
+ * This is {@link PasswordlessAuthenticationRequest}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -27,7 +27,7 @@ import java.util.Map;
 @NoArgsConstructor(force = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
-public class PasswordlessRequest implements Serializable {
+public class PasswordlessAuthenticationRequest implements Serializable {
     @Serial
     private static final long serialVersionUID = -1992873518520202699L;
 

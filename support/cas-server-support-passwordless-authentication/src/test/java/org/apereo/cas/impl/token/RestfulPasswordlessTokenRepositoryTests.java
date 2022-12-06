@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -44,7 +44,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
     private PasswordlessAuthenticationToken createToken(final String uid) {
         return passwordlessTokenRepository.createToken(
             PasswordlessUserAccount.builder().username(uid).build(),
-            PasswordlessRequest.builder().username(uid).build());
+            PasswordlessAuthenticationRequest.builder().username(uid).build());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
 
             val uid = UUID.randomUUID().toString();
             val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
-            val passwordlessRequest = PasswordlessRequest.builder().username(uid).build();
+            val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();
             val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
             passwordless.saveToken(passwordlessUserAccount, passwordlessRequest, token);
         }

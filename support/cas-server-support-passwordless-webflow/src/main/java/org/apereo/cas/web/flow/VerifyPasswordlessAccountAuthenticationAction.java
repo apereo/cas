@@ -45,6 +45,7 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordl
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
         }
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+        WebUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
         return success();
     }
 }

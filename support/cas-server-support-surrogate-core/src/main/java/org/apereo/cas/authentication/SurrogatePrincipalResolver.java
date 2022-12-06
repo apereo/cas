@@ -26,7 +26,7 @@ import java.util.Optional;
 @Setter
 @Accessors(chain = true)
 public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver {
-    private SurrogatePrincipalBuilder surrogatePrincipalBuilder;
+    private SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
 
     public SurrogatePrincipalResolver(final PrincipalResolutionContext context) {
         super(context);

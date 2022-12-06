@@ -73,9 +73,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
 
         val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects((Map) user.getAttributes());
         val principal = passwordlessPrincipalFactory.createPrincipal(user.getUsername(), attributes);
-        val auth = DefaultAuthenticationBuilder.newInstance()
-            .setPrincipal(principal)
-            .build();
+        val auth = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
         val service = WebUtils.getService(requestContext);
 
         val result = resolveMultifactorAuthenticationProvider(requestContext, auth, service);

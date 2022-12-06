@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.delegation;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -26,10 +27,13 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributor
 
     @Override
     public Map<String, ? extends Serializable> store(final RequestContext requestContext,
-                                                     final WebContext webContext, final Client client) {
+                                                     final WebContext webContext,
+                                                     final Client client) {
         val account = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val passwordlessRequest = WebUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class);
         return Optional.ofNullable(account)
-            .map(acct -> Map.of(PasswordlessUserAccount.class.getName(), account))
+            .map(acct -> Map.of(PasswordlessUserAccount.class.getName(), account,
+                PasswordlessAuthenticationRequest.class.getName(), passwordlessRequest))
             .orElseGet(Map::of);
     }
 
@@ -40,6 +44,10 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributor
             .map(ticket -> {
                 val account = ticket.getProperty(PasswordlessUserAccount.class.getName(), PasswordlessUserAccount.class);
                 WebUtils.putPasswordlessAuthenticationAccount(requestContext, account);
+
+                val passwordlessRequest = ticket.getProperty(PasswordlessAuthenticationRequest.class.getName(), PasswordlessAuthenticationRequest.class);
+                WebUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
+                
                 return ticket.getService();
             })
             .orElse(null);

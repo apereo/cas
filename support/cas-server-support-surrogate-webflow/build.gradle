@@ -20,6 +20,10 @@ dependencies {
     implementation project(":support:cas-server-support-surrogate-api")
     implementation project(":support:cas-server-support-surrogate-core")
 
+    compileOnly project(":support:cas-server-support-pac4j-api")
+    compileOnly project(":support:cas-server-support-pac4j-core")
+    compileOnly project(":support:cas-server-support-pac4j-webflow")
+
     compileOnly project(":support:cas-server-support-passwordless-api")
     compileOnly project(":support:cas-server-support-passwordless-webflow")
 
@@ -37,6 +41,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
+
+    testImplementation project(":support:cas-server-support-pac4j")
+    testImplementation project(":support:cas-server-support-pac4j-webflow")
+    testImplementation project(":support:cas-server-support-pac4j-api")
     testImplementation project(":support:cas-server-support-passwordless-api")
 
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")

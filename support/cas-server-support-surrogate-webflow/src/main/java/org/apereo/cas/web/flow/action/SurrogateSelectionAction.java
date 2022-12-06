@@ -5,7 +5,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.MutableCredential;
-import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
+import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -35,7 +35,7 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
      */
     public static final String PARAMETER_NAME_SURROGATE_TARGET = "surrogateTarget";
 
-    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
+    private final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
 
     @Audit(action = AuditableActions.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION,
         actionResolverName = AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER,

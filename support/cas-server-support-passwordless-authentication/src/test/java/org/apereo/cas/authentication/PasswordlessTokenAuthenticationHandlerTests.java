@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -36,7 +36,7 @@ public class PasswordlessTokenAuthenticationHandlerTests {
 
         val uid = UUID.randomUUID().toString();
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
-        val passwordlessRequest = PasswordlessRequest.builder().username(uid).build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();
         var token = repository.createToken(passwordlessUserAccount, passwordlessRequest);
         token = repository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
         val handler = new PasswordlessTokenAuthenticationHandler(null,

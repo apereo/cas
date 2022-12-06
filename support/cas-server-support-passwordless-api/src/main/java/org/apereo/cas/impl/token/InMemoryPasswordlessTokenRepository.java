@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -51,7 +51,7 @@ public class InMemoryPasswordlessTokenRepository extends BasePasswordlessTokenRe
 
     @Override
     public PasswordlessAuthenticationToken saveToken(final PasswordlessUserAccount passwordlessAccount,
-                                                     final PasswordlessRequest passwordlessRequest,
+                                                     final PasswordlessAuthenticationRequest passwordlessRequest,
                                                      final PasswordlessAuthenticationToken token) {
         storage.put(passwordlessAccount.getUsername(), encodeToken(token));
         return token;

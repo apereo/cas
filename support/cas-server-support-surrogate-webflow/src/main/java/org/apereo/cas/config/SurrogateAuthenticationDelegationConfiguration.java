@@ -1,17 +1,16 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.api.PasswordlessAuthenticationPreProcessor;
-import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
+import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
+import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-import org.apereo.cas.authentication.surrogate.SurrogateCredentialParser;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationPreProcessor;
-import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationRequestParser;
+import org.apereo.cas.web.flow.pac4j.SurrogateDelegatedAuthenticationCredentialExtractor;
+import org.apereo.cas.web.flow.pac4j.SurrogateDelegatedAuthenticationPreProcessor;
 
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -22,36 +21,35 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link SurrogateAuthenticationPasswordlessConfiguration}.
+ * This is {@link SurrogateAuthenticationDelegationConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = {
-    CasFeatureModule.FeatureCatalog.PasswordlessAuthn,
+    CasFeatureModule.FeatureCatalog.DelegatedAuthentication,
     CasFeatureModule.FeatureCatalog.SurrogateAuthentication
 })
-@ConditionalOnClass(PasswordlessAuthenticationWebflowConfiguration.class)
+@ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
 @AutoConfiguration
-public class SurrogateAuthenticationPasswordlessConfiguration {
-
+public class SurrogateAuthenticationDelegationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "surrogatePasswordlessAuthenticationPreProcessor")
-    public PasswordlessAuthenticationPreProcessor surrogatePasswordlessAuthenticationPreProcessor(
+    @ConditionalOnMissingBean(name = "surrogateDelegatedAuthenticationPreProcessor")
+    public DelegatedAuthenticationPreProcessor surrogateDelegatedAuthenticationPreProcessor(
         @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
         final SurrogateAuthenticationService surrogateAuthenticationService,
-        @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
         @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME) final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder) {
-        return new SurrogatePasswordlessAuthenticationPreProcessor(servicesManager, surrogatePrincipalBuilder, surrogateAuthenticationService);
+        return new SurrogateDelegatedAuthenticationPreProcessor(surrogateAuthenticationService, surrogatePrincipalBuilder);
     }
 
-    @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "surrogatePasswordlessRequestParser")
-    public PasswordlessRequestParser passwordlessRequestParser(
-        @Qualifier(SurrogateCredentialParser.BEAN_NAME) final SurrogateCredentialParser surrogateCredentialParser) {
-        return new SurrogatePasswordlessAuthenticationRequestParser(surrogateCredentialParser);
+    @Bean
+    @ConditionalOnMissingBean(name = "surrogateDelegatedAuthenticationCredentialExtractor")
+    public DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor(
+        @Qualifier("delegatedClientDistributedSessionStore")
+        final SessionStore delegatedClientDistributedSessionStore) {
+        return new SurrogateDelegatedAuthenticationCredentialExtractor(delegatedClientDistributedSessionStore);
     }
 }
