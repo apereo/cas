@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.BasePasswordlessCasWebflowAction;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");
             return error();

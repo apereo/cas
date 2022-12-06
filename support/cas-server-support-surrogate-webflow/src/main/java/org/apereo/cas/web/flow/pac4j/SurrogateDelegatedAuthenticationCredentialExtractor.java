@@ -4,8 +4,8 @@ import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DefaultDelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationRequestParser;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
@@ -29,7 +29,7 @@ public class SurrogateDelegatedAuthenticationCredentialExtractor extends Default
     @Override
     protected ClientCredential buildClientCredential(final BaseClient client, final RequestContext requestContext, final Credentials credential) {
         val cc = super.buildClientCredential(client, requestContext, credential);
-        val passwordlessRequest = WebUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class);
+        val passwordlessRequest = PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class);
         Optional.ofNullable(passwordlessRequest).ifPresent(request -> {
             if (passwordlessRequest.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME)) {
                 val surrogateUsername = passwordlessRequest.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME);
