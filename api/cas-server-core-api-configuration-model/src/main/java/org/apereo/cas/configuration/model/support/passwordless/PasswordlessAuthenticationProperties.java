@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiresModule(name = "cas-server-support-passwordless")
+@RequiresModule(name = "cas-server-support-passwordless-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)

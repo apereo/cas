@@ -69,7 +69,7 @@ import java.util.List;
 public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(name = "passwordlessRequestParser")
+    @ConditionalOnMissingBean(name = PasswordlessRequestParser.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordlessRequestParser passwordlessRequestParser() {
         return PasswordlessRequestParser.defaultParser();
@@ -79,7 +79,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action verifyPasswordlessAccountAuthenticationAction(
-        @Qualifier("passwordlessRequestParser")
+        @Qualifier(PasswordlessRequestParser.BEAN_NAME)
         final PasswordlessRequestParser passwordlessRequestParser,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
@@ -141,7 +141,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
             .withProperties(casProperties)
             .withAction(() -> new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
-                passwordlessTokenRepository, authenticationSystemSupport, passwordlessUserAccountStore))
+                passwordlessTokenRepository, authenticationSystemSupport, passwordlessUserAccountStore,
+                applicationContext))
             .withId(CasWebflowConstants.ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN)
             .build()
             .get();
@@ -151,7 +152,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action displayBeforePasswordlessAuthenticationAction(
-        @Qualifier("passwordlessRequestParser")
+        @Qualifier(PasswordlessRequestParser.BEAN_NAME)
         final PasswordlessRequestParser passwordlessRequestParser,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,

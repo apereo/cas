@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.web.flow.SurrogatePasswordlessRequestParserTests;
 import org.apereo.cas.web.flow.action.LoadSurrogatesListActionTests;
 import org.apereo.cas.web.flow.action.SurrogateAuthorizationActionTests;
 import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationActionTests;
@@ -15,6 +16,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 5.3.0
  */
 @SelectClasses({
+    SurrogatePasswordlessRequestParserTests.class,
     SurrogateInitialAuthenticationActionTests.class,
     SurrogateSelectionActionTests.class,
     SurrogateAuthorizationActionTests.class,

@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.impl.token.JpaPasswordlessTokenRepository;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -114,14 +115,16 @@ public class JpaPasswordlessAuthenticationConfiguration {
     @Configuration(value = "JpaPasswordlessAuthenticationRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaPasswordlessAuthenticationRepositoryConfiguration {
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PasswordlessTokenRepository passwordlessTokenRepository(final CasConfigurationProperties casProperties) {
+        public PasswordlessTokenRepository passwordlessTokenRepository(
+            @Qualifier("passwordlessCipherExecutor")
+            final CipherExecutor passwordlessCipherExecutor,
+            final CasConfigurationProperties casProperties) {
             val tokens = casProperties.getAuthn()
                 .getPasswordless()
                 .getTokens();
-            return new JpaPasswordlessTokenRepository(tokens.getExpireInSeconds());
+            return new JpaPasswordlessTokenRepository(tokens.getExpireInSeconds(), passwordlessCipherExecutor);
         }
     }
 

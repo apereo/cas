@@ -109,7 +109,7 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
             val localizedName = String.format("%s_%s.%s", FilenameUtils.getBaseName(originalFile.getName()),
                 loc.getLanguage(), FilenameUtils.getExtension(originalFile.getName()));
             val localizedFile = new File(originalFile.getParentFile(), localizedName);
-            LOGGER.debug("Checking for localized email template file at [{}]", localizedFile.getPath());
+            LOGGER.trace("Checking for localized email template file at [{}]", localizedFile.getPath());
             if (ResourceUtils.doesResourceExist(localizedFile.getPath())) {
                 val templateResource = ResourceUtils.getRawResourceFrom(localizedFile.getPath());
                 return templateResource.getFile();

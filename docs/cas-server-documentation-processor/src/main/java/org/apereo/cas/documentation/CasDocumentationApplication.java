@@ -340,20 +340,22 @@ public class CasDocumentationApplication {
         subTypes.forEach(clazz -> {
             var features = clazz.getAnnotationsByType(ConditionalOnFeatureEnabled.class);
             Arrays.stream(features).forEach(feature -> {
-                var propName = feature.feature().toProperty(feature.module());
-                if (!allToggleProps.contains(propName)) {
-                    allToggleProps.add(propName);
+                for (var featureDefn : feature.feature()) {
+                    var propName = featureDefn.toProperty(feature.module());
+                    if (!allToggleProps.contains(propName)) {
+                        allToggleProps.add(propName);
 
-                    var map = new LinkedHashMap<>();
-                    map.put("type", clazz.getName());
-                    map.put("feature", feature.feature());
-                    if (StringUtils.isNotBlank(feature.module())) {
-                        map.put("module", feature.module());
+                        var map = new LinkedHashMap<>();
+                        map.put("type", clazz.getName());
+                        map.put("feature", feature.feature());
+                        if (StringUtils.isNotBlank(feature.module())) {
+                            map.put("module", feature.module());
+                        }
+                        map.put("enabledByDefault", feature.enabledByDefault());
+
+                        map.put("property", propName);
+                        properties.add(map);
                     }
-                    map.put("enabledByDefault", feature.enabledByDefault());
-
-                    map.put("property", propName);
-                    properties.add(map);
                 }
             });
         });

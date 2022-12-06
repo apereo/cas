@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.api.PasswordlessAuthenticationPreProcessor;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -41,8 +42,10 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 
 /**
  * This is {@link BasePasswordlessAuthenticationActionTests}.
@@ -94,4 +97,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class BasePasswordlessAuthenticationActionTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
+
+    @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
+    public static class TestAuthenticationConfiguration {
+        @Bean
+        public PasswordlessAuthenticationPreProcessor testPasswordlessAuthenticationPreProcessor() {
+            return (builder, principal, service, credential, token) -> builder;
+        }
+    }
 }
