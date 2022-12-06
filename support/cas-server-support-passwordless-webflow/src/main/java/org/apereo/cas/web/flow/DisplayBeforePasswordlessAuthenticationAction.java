@@ -59,8 +59,8 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
         if (attributes.contains(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             val error = attributes.get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
             requestContext.getFlowScope().put(CasWebflowConstants.TRANSITION_ID_ERROR, error);
-            val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
-            WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+            val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             return success();
         }
         val username = requestContext.getRequestParameters().get(PasswordlessRequestParser.PARAMETER_USERNAME);
@@ -74,7 +74,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         val user = account.get();
-        WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
         val token = passwordlessTokenRepository.createToken(user, passwordlessRequest);
 
         communicationsManager.validate();

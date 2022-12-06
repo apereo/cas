@@ -5,7 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.client.authz.BaseDelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,7 +27,7 @@ public class PasswordlessDelegatedClientIdentityProviderAuthorizer extends BaseD
     @Override
     public boolean isDelegatedClientAuthorizedFor(final String clientName, final Service service,
                                                   final RequestContext requestContext) {
-        val account = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         return account != null
                && super.isDelegatedClientAuthorizedFor(clientName, service, requestContext)
                && (account.getAllowedDelegatedClients().isEmpty() || account.getAllowedDelegatedClients().contains(clientName));

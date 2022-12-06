@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -46,16 +45,16 @@ public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePass
     public void verifyAction() throws Exception {
         val context = getRequestContext("casuser");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
-        val account = WebUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
+        val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
         assertNotNull(account);
-        assertNotNull(WebUtils.getPasswordlessAuthenticationRequest(context, PasswordlessAuthenticationRequest.class));
+        assertNotNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(context, PasswordlessAuthenticationRequest.class));
     }
 
     @Test
     public void verifyNoUserInfoAction() throws Exception {
         val context = getRequestContext("nouserinfo");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
-        val account = WebUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
+        val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
         assertNotNull(account);
     }
 

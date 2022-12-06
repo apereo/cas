@@ -50,7 +50,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");
             return error();

@@ -29,6 +29,7 @@ import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationAct
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PasswordlessCasWebflowLoginContextProvider;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.VerifyPasswordlessAccountAuthenticationAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
@@ -283,11 +284,11 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public DelegatedClientWebflowCustomizer surrogateCasMultifactorWebflowCustomizer() {
+        public DelegatedClientWebflowCustomizer passwordlessMultifactorWebflowCustomizer() {
             return new DelegatedClientWebflowCustomizer() {
                 @Override
                 public List<String> getWebflowAttributeMappings() {
-                    return List.of("passwordlessAccount");
+                    return PasswordlessWebflowUtils.WEBFLOW_ATTRIBUTE_MAPPINGS;
                 }
             };
         }
