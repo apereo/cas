@@ -14,7 +14,8 @@ dependencies {
 
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
-    implementation project(":support:cas-server-support-passwordless")
+    implementation project(":support:cas-server-support-passwordless-authentication")
+    implementation project(":support:cas-server-support-passwordless-api")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-jpa-hibernate")
     
@@ -41,5 +42,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-passwordless", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-passwordless-authentication", configuration: "tests")
 }

@@ -57,8 +57,8 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
     protected Event doExecute(final RequestContext requestContext) {
         val attributes = requestContext.getCurrentEvent().getAttributes();
         if (attributes.contains(CasWebflowConstants.TRANSITION_ID_ERROR)) {
-            val e = attributes.get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
-            requestContext.getFlowScope().put(CasWebflowConstants.TRANSITION_ID_ERROR, e);
+            val error = attributes.get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
+            requestContext.getFlowScope().put(CasWebflowConstants.TRANSITION_ID_ERROR, error);
             val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
             WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             return success();
@@ -75,7 +75,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
         }
         val user = account.get();
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
-        val token = passwordlessTokenRepository.createToken(user.getUsername());
+        val token = passwordlessTokenRepository.createToken(user, passwordlessRequest);
 
         communicationsManager.validate();
         val passwordlessProperties = casProperties.getAuthn().getPasswordless();
@@ -87,8 +87,11 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
             val body = EmailMessageBodyBuilder.builder()
                 .properties(mail)
                 .locale(locale)
-                .parameters(Map.of("token", token)).build().get();
-            val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
+                .parameters(Map.of("token", token.getToken()))
+                .build()
+                .get();
+            val emailRequest = EmailMessageRequest.builder()
+                .emailProperties(mail)
                 .locale(locale.orElseGet(Locale::getDefault))
                 .to(List.of(user.getEmail())).body(body).build();
             communicationsManager.email(emailRequest);
@@ -102,7 +105,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
             communicationsManager.sms(smsRequest);
         }
         passwordlessTokenRepository.deleteTokens(user.getUsername());
-        passwordlessTokenRepository.saveToken(user.getUsername(), token);
+        passwordlessTokenRepository.saveToken(user, passwordlessRequest, token);
         return success();
     }
 }

@@ -15,9 +15,27 @@ const cas = require('../../cas.js');
     await cas.type(page,'#username', "user3+casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(3000);
     await cas.assertInnerText(page, "#login h3", "Provide Token");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
     await cas.assertVisibility(page, '#token');
+    await page.waitForTimeout(1000);
+    
+    const page2 = await browser.newPage();
+    await page2.goto("http://localhost:8282");
+    await page2.waitForTimeout(1000);
+    await cas.click(page2, "table tbody td a");
+    await page2.waitForTimeout(1000);
+    let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
+    await page2.close();
+
+    await page.bringToFront();
+    await cas.type(page, "#token", code);
+    await cas.submitForm(page, "#fm1");
+    await page.waitForTimeout(1000);
+
+    await cas.assertCookie(page);
+    await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
+    
     await browser.close();
 })();

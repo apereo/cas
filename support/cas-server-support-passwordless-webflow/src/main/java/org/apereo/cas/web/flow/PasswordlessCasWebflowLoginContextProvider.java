@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;

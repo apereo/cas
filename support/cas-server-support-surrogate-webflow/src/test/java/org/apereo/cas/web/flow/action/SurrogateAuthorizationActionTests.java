@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -33,7 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthenticationActionTests {
+@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+public class SurrogateAuthorizationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK)
     private Action surrogateAuthorizationCheck;

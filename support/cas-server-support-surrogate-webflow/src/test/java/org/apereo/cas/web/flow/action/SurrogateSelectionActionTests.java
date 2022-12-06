@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -30,12 +31,12 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-public class SurrogateSelectionActionTests extends BaseSurrogateInitialAuthenticationActionTests {
-
+@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+public class SurrogateSelectionActionTests {
     @Autowired
     @Qualifier("selectSurrogateAction")
     private Action selectSurrogateAction;
-
     @Test
     public void verifyFails() throws Exception {
         val context = new MockRequestContext();

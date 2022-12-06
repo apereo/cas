@@ -27,7 +27,7 @@ public @interface ConditionalOnFeatureEnabled {
      *
      * @return the feature ref from the catalog
      */
-    CasFeatureModule.FeatureCatalog feature();
+    CasFeatureModule.FeatureCatalog[] feature();
 
     /**
      * Module identifier.
