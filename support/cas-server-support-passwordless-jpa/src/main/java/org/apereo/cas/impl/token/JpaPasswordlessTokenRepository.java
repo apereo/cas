@@ -86,6 +86,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
             val record = JpaPasswordlessAuthenticationEntity.builder()
                 .username(authnToken.getUsername())
                 .token(encodeToken(authnToken))
+                .expirationDate(authnToken.getExpirationDate())
                 .build();
             LOGGER.debug("Saving token [{}]", record);
             val result = entityManager.merge(record);
