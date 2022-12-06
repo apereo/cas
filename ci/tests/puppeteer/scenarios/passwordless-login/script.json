@@ -19,5 +19,6 @@
     "--cas.authn.passwordless.tokens.mail.subject=Passwordless AuthN",
     
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }

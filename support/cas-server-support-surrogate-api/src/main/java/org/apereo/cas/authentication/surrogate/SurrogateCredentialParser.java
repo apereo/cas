@@ -13,6 +13,9 @@ import java.util.Optional;
 @FunctionalInterface
 public interface SurrogateCredentialParser {
 
+    /**
+     * Default implementation bean name.
+     */
     String BEAN_NAME = "surrogateCredentialParser";
 
     /**
