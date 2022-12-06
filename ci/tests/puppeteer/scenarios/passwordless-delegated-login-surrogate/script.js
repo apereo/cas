@@ -3,19 +3,22 @@ const assert = require('assert');
 const cas = require('../../cas.js');
 
 async function startAuthFlow(page, username) {
+    console.log("Removing previous sessions and logging out");
+    await cas.goto(page, "https://localhost:8443/cas/logut");
     console.log(`Starting authentication flow for ${username}`);
     await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
     let pswd = await page.$('#password');
     assert(pswd == null);
     await cas.type(page, '#username', username);
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(1000);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
-    const url = await page.url();
-    console.log(`Page url: ${url}`);
-    assert(url.startsWith("https://github.com/"));
+    console.log(`Page url: ${await page.url()}`);
+
+    await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(5000);
+    console.log(`Page url: ${await page.url()}`);
 }
 
 (async () => {
@@ -23,8 +26,8 @@ async function startAuthFlow(page, username) {
     const page = await cas.newPage(browser);
 
     await startAuthFlow(page, "user3+casuser-server");
-    await startAuthFlow(page, "user3+casuser-none");
-    await startAuthFlow(page, "user3+casuser-client");
+    // await startAuthFlow(page, "user3+casuser-none");
+    // await startAuthFlow(page, "user3+casuser-client");
 
     await browser.close();
 })();

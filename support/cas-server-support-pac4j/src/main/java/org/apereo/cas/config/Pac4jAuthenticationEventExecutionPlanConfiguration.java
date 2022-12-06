@@ -158,12 +158,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             val pac4j = casProperties.getAuthn().getPac4j().getCore();
-            val h = new DelegatedClientAuthenticationHandler(pac4j.getName(), pac4j.getOrder(),
+            val handler = new DelegatedClientAuthenticationHandler(pac4j.getName(), pac4j.getOrder(),
                 servicesManager, clientPrincipalFactory, builtClients, clientUserProfileProvisioner,
                 delegatedClientDistributedSessionStore);
-            h.setTypedIdUsed(pac4j.isTypedIdUsed());
-            h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
-            return h;
+            handler.setTypedIdUsed(pac4j.isTypedIdUsed());
+            handler.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
+            return handler;
         }
 
     }
