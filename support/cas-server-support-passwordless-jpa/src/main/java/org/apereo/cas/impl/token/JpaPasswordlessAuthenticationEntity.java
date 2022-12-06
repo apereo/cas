@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link JpaPasswordlessAuthenticationEntity}.
@@ -33,8 +34,11 @@ public class JpaPasswordlessAuthenticationEntity implements Serializable {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false, length = 1024)
+    @Column(nullable = false, length = 2048)
     private String token;
+
+    @Column(name = "EXP_DATE", length = Integer.MAX_VALUE, nullable = false)
+    private ZonedDateTime expirationDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")

@@ -16,14 +16,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.springframework.data.annotation.Id;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Transient;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZoneOffset;
@@ -37,7 +29,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@MappedSuperclass
 @ToString
 @Getter
 @Setter
@@ -52,25 +43,17 @@ public class PasswordlessAuthenticationToken implements Serializable {
     private static final long serialVersionUID = 3810773120720229099L;
 
     @Id
-    @Transient
     @JsonProperty
     private long id;
 
-    @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
     private String token;
 
-    @Column(name = "EXP_DATE", length = Integer.MAX_VALUE, nullable = false)
     private ZonedDateTime expirationDate;
 
     @JsonProperty("properties")
     @Builder.Default
-    @ElementCollection
-    @MapKeyColumn(name = "name")
-    @Column(name = "value")
-    @CollectionTable(name = "passwordless_token_properties", joinColumns = @JoinColumn(name = "id"))
     private Map<String, String> properties = new HashMap<>();
     
     /**
