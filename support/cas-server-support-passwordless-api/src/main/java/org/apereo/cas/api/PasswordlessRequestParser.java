@@ -14,7 +14,7 @@ public interface PasswordlessRequestParser {
     String BEAN_NAME = "passwordlessRequestParser";
 
     /**
-     * Username parameter received from the rwqeuest.
+     * Username parameter received from the request.
      */
     String PARAMETER_USERNAME = "username";
 
@@ -24,7 +24,7 @@ public interface PasswordlessRequestParser {
      * @param username the username
      * @return the passwordless request
      */
-    PasswordlessRequest parse(String username);
+    PasswordlessAuthenticationRequest parse(String username);
 
     /**
      * Default asswordless request parser.
@@ -32,6 +32,6 @@ public interface PasswordlessRequestParser {
      * @return the passwordless request parser
      */
     static PasswordlessRequestParser defaultParser() {
-        return username -> PasswordlessRequest.builder().username(username).build();
+        return username -> PasswordlessAuthenticationRequest.builder().username(username).build();
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.delegation;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -11,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +47,14 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTes
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         WebUtils.putPasswordlessAuthenticationAccount(context, account);
+
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username("casuser").build();
+        WebUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);
+        
         val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val stored = contributor.store(context, webContext, client);
         assertTrue(stored.containsKey(PasswordlessUserAccount.class.getName()));
+        assertTrue(stored.containsKey(PasswordlessAuthenticationRequest.class.getName()));
     }
 
     @Test
@@ -57,8 +64,11 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTes
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         val sessionTicket = mock(TransientSessionTicket.class);
         val service = RegisteredServiceTestUtils.getService();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username("casuser").build();
+
         when(sessionTicket.getService()).thenReturn(service);
-        when(sessionTicket.getProperty(anyString(), any())).thenReturn(account);
+        when(sessionTicket.getProperty(ArgumentMatchers.eq(PasswordlessUserAccount.class.getName()), any())).thenReturn(account);
+        when(sessionTicket.getProperty(ArgumentMatchers.eq(PasswordlessAuthenticationRequest.class.getName()), any())).thenReturn(passwordlessRequest);
 
         val stored = contributor.restore(context,
             new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()),

@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
@@ -47,7 +47,7 @@ public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAcc
         val uid = UUID.randomUUID().toString();
 
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
-        val passwordlessRequest = PasswordlessRequest.builder().username(uid).build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();
         val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
 
         assertTrue(passwordlessTokenRepository.findToken(uid).isEmpty());
@@ -64,7 +64,7 @@ public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAcc
     public void verifyCleaner() {
         val uid = UUID.randomUUID().toString();
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
-        val passwordlessRequest = PasswordlessRequest.builder().username(uid).build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();
         val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
 
         passwordlessTokenRepository.saveToken(passwordlessUserAccount, passwordlessRequest, token);

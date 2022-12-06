@@ -1,10 +1,11 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.passwordless;
 
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.config.SurrogateAuthenticationPasswordlessConfiguration;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SurrogatePasswordlessRequestParserTests}.
+ * This is {@link SurrogatePasswordlessAuthenticationRequestParserTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -23,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-public class SurrogatePasswordlessRequestParserTests extends BaseSurrogateAuthenticationTests {
+@Tag("Delegation")
+public class SurrogatePasswordlessAuthenticationRequestParserTests extends BaseSurrogateAuthenticationTests {
     @Autowired
     @Qualifier(PasswordlessRequestParser.BEAN_NAME)
     private PasswordlessRequestParser passwordlessRequestParser;

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.web.support.WebUtils;
@@ -47,6 +48,7 @@ public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePass
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
         val account = WebUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
         assertNotNull(account);
+        assertNotNull(WebUtils.getPasswordlessAuthenticationRequest(context, PasswordlessAuthenticationRequest.class));
     }
 
     @Test

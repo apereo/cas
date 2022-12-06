@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.passwordless;
 
 import org.apereo.cas.api.PasswordlessAuthenticationPreProcessor;
 import org.apereo.cas.api.PasswordlessUserAccount;
@@ -14,6 +14,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+@Tag("Delegation")
 public class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogateAuthenticationTests {
 
     @Autowired

@@ -4,11 +4,12 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.DefaultSurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.SurrogateAuthenticationExpirationPolicyBuilder;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
+import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.SurrogateMultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.event.DefaultSurrogateAuthenticationEventListener;
@@ -185,18 +186,18 @@ public class SurrogateAuthenticationConfiguration {
     @Configuration(value = "SurrogateAuthenticationPrincipalBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationPrincipalBuilderConfiguration {
-
-        @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
+        @ConditionalOnMissingBean(name = SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SurrogatePrincipalBuilder surrogatePrincipalBuilder(
+        public SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder(
             @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
             final SurrogateAuthenticationService surrogateAuthenticationService,
             @Qualifier("surrogatePrincipalFactory")
             final PrincipalFactory surrogatePrincipalFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository) throws Exception {
-            return new SurrogatePrincipalBuilder(surrogatePrincipalFactory, attributeRepository, surrogateAuthenticationService);
+            return new DefaultSurrogateAuthenticationPrincipalBuilder(surrogatePrincipalFactory,
+                attributeRepository, surrogateAuthenticationService);
         }
     }
 
@@ -212,8 +213,8 @@ public class SurrogateAuthenticationConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("surrogatePrincipalFactory")
             final PrincipalFactory surrogatePrincipalFactory,
-            @Qualifier("surrogatePrincipalBuilder")
-            final SurrogatePrincipalBuilder surrogatePrincipalBuilder,
+            @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
+            final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository) {
             val principal = casProperties.getAuthn().getSurrogate().getPrincipal();

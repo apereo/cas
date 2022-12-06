@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
@@ -216,28 +215,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     protected ClientCredential populateContextWithClientCredential(final BaseClient client, final JEEContext webContext,
                                                                    final RequestContext requestContext) {
-        LOGGER.debug("Fetching credentials from delegated client [{}]", client);
-        val credentials = getCredentialsFromDelegatedClient(webContext, client);
-        val clientCredential = new ClientCredential(credentials, client.getName());
-        LOGGER.info("Credentials are successfully authenticated using the delegated client [{}]", client.getName());
-        WebUtils.putCredential(requestContext, clientCredential);
-        return clientCredential;
-    }
-
-    /**
-     * Gets credentials from delegated client.
-     *
-     * @param webContext the web context
-     * @param client     the client
-     * @return the credentials from delegated client
-     */
-    protected Credentials getCredentialsFromDelegatedClient(final JEEContext webContext, final BaseClient client) {
-        val credentials = client.getCredentials(webContext, configContext.getSessionStore());
-        LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
-        if (credentials.isEmpty()) {
-            throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
-        }
-        return credentials.get();
+        return configContext.getCredentialExtractor().extract(client, requestContext);
     }
 
     protected BaseClient findDelegatedClientByName(final RequestContext requestContext,

@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.passwordless;
 
 import org.apereo.cas.api.PasswordlessAuthenticationPreProcessor;
 import org.apereo.cas.api.PasswordlessUserAccount;
@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MutableCredential;
-import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
+import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
@@ -30,7 +30,7 @@ import java.util.Optional;
 public class SurrogatePasswordlessAuthenticationPreProcessor implements PasswordlessAuthenticationPreProcessor {
     private final ServicesManager servicesManager;
 
-    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
+    private final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
 
     private final SurrogateAuthenticationService surrogateAuthenticationService;
     
@@ -41,9 +41,9 @@ public class SurrogatePasswordlessAuthenticationPreProcessor implements Password
                                                final Credential credential,
                                                final PasswordlessAuthenticationToken token) {
         LOGGER.debug("Evaluating passwordless authentication token [{}] issued for [{}]", token, passwordlessUserAccount);
-        if (token.getProperties().containsKey(SurrogatePasswordlessRequestParser.PROPORTY_SURROGATE_USERNAME)
+        if (token.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME)
             && credential instanceof MutableCredential mutableCredential) {
-            val surrogateUsername = token.getProperties().get(SurrogatePasswordlessRequestParser.PROPORTY_SURROGATE_USERNAME);
+            val surrogateUsername = token.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME);
             val principal = resultBuilder.getInitialAuthentication().map(Authentication::getPrincipal).orElseThrow();
             LOGGER.debug("Evaluating principal [{}] authorization to impersonate [{}]", principal, surrogateUsername);
             if (surrogateAuthenticationService.canImpersonate(surrogateUsername, principal, Optional.ofNullable(service))) {

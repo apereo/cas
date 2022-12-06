@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
@@ -62,7 +62,7 @@ public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordles
 
     private PasswordlessAuthenticationToken createToken() {
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username("casuser").build();
-        val passwordlessRequest = PasswordlessRequest.builder().username("casuser").build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username("casuser").build();
         val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
         passwordlessTokenRepository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
         return token;

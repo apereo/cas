@@ -1,6 +1,6 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.passwordless;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialParser;
@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
- * This is {@link SurrogatePasswordlessRequestParser}.
+ * This is {@link SurrogatePasswordlessAuthenticationRequestParser}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class SurrogatePasswordlessRequestParser implements PasswordlessRequestParser {
+public class SurrogatePasswordlessAuthenticationRequestParser implements PasswordlessRequestParser {
 
     /**
      * Request property that indicates the surrogate username, if any.
@@ -26,16 +26,16 @@ public class SurrogatePasswordlessRequestParser implements PasswordlessRequestPa
     private final SurrogateCredentialParser surrogateCredentialParser;
 
     @Override
-    public PasswordlessRequest parse(final String username) {
+    public PasswordlessAuthenticationRequest parse(final String username) {
         val credential = new BasicIdentifiableCredential(username);
         val result = surrogateCredentialParser.parse(credential);
         if (result.isPresent()) {
             val sr = result.get();
-            return PasswordlessRequest.builder()
+            return PasswordlessAuthenticationRequest.builder()
                 .username(sr.getUsername())
                 .properties(CollectionUtils.wrap(PROPORTY_SURROGATE_USERNAME, sr.getSurrogateUsername()))
                 .build();
         }
-        return PasswordlessRequest.builder().username(username).build();
+        return PasswordlessAuthenticationRequest.builder().username(username).build();
     }
 }

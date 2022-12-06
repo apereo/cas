@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -42,7 +42,7 @@ public abstract class BasePasswordlessTokenRepository implements PasswordlessTok
 
     @Override
     public PasswordlessAuthenticationToken createToken(final PasswordlessUserAccount passwordlessAccount,
-                                                       final PasswordlessRequest passwordlessRequest) {
+                                                       final PasswordlessAuthenticationRequest passwordlessRequest) {
         val properties = new HashMap<>(passwordlessRequest.getProperties());
         properties.put("passwordlessRequestUsername", passwordlessRequest.getUsername());
         return PasswordlessAuthenticationToken.builder()

@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.api.PasswordlessRequest;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
@@ -32,7 +32,7 @@ public class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUs
         passwordlessTokenRepository.clean();
 
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(CAS_USER).build();
-        val passwordlessRequest = PasswordlessRequest.builder().username(CAS_USER).build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(CAS_USER).build();
         val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
         assertTrue(passwordlessTokenRepository.findToken(CAS_USER).isEmpty());
 

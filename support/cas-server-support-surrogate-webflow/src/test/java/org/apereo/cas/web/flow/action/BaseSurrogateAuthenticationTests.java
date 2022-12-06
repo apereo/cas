@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.action;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -65,6 +66,7 @@ public class BaseSurrogateAuthenticationTests {
         CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreAuditConfiguration.class,
         SurrogateAuthenticationAuditConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,

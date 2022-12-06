@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.action;
 
 import org.apereo.cas.authentication.MutableCredential;
-import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
+import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.util.LoggingUtils;
@@ -33,7 +33,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
 
     private final SurrogateAuthenticationService surrogateService;
 
-    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
+    private final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
 
     private boolean loadSurrogates(final RequestContext requestContext) {
         val credential = WebUtils.getCredential(requestContext, MutableCredential.class);

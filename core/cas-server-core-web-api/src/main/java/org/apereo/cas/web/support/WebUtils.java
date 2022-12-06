@@ -1089,6 +1089,28 @@ public class WebUtils {
     }
 
     /**
+     * Put passwordless authentication request.
+     *
+     * @param requestContext      the request context
+     * @param passwordlessRequest the passwordless request
+     */
+    public static void putPasswordlessAuthenticationRequest(final RequestContext requestContext, final Serializable passwordlessRequest) {
+        requestContext.getFlowScope().put("passwordlessAuthenticationRequest", passwordlessRequest);
+    }
+
+    /**
+     * Gets passwordless authentication request.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the passwordless authentication request
+     */
+    public static <T> T getPasswordlessAuthenticationRequest(final RequestContext requestContext, final Class<T> clazz) {
+        return requestContext.getFlowScope().get("passwordlessAuthenticationRequest", clazz);
+    }
+
+    /**
      * Put passwordless authentication account.
      *
      * @param requestContext the request context
@@ -1893,5 +1915,6 @@ public class WebUtils {
     public List getMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
     }
+
 
 }
