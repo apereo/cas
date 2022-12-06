@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.token;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -38,5 +39,6 @@ public class JpaPasswordlessAuthenticationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
+    @Builder.Default
     private long id = -1;
 }
