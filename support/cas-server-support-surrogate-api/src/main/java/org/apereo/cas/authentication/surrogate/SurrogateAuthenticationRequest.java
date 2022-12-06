@@ -37,6 +37,11 @@ public class SurrogateAuthenticationRequest implements Serializable {
 
     private final String surrogateUsername;
 
+    /**
+     * Has surrogate username?.
+     *
+     * @return the boolean
+     */
     public boolean hasSurrogateUsername() {
         return StringUtils.isBlank(this.surrogateUsername);
     }
