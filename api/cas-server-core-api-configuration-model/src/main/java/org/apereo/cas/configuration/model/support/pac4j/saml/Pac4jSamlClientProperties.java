@@ -140,6 +140,14 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     private boolean forceKeystoreGeneration;
 
     /**
+     * The SAML2 response binding type to use when generating metadata.
+     * This ultimately controls the binding type of the assertion consumer
+     * service in the metadata.
+     * Default value is typically {@code urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST}.
+     */
+    private String responseBindingType;
+    
+    /**
      * Define the validity period for the certificate
      * in number of days. The end-date of the certificate
      * is controlled by this setting, when defined as a value

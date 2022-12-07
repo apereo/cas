@@ -11,6 +11,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,22 +63,42 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
             LOGGER.trace("CAS is unable to send surrogate-authentication SMS messages given no settings are defined to account for servers, etc");
         }
         if (communicationsManager.isMailSenderDefined()) {
-            val mail = casProperties.getAuthn().getSurrogate().getMail();
-            val emailAttribute = mail.getAttributeName();
-            val to = principal.getAttributes().get(emailAttribute);
-            if (to != null) {
-                CollectionUtils.firstElement(to).ifPresent(address -> {
-                    val body = EmailMessageBodyBuilder.builder().properties(mail)
-                        .parameters(Map.of("event", eventDetails)).build().get();
-                    val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
-                        .to(List.of(address.toString())).body(body).build();
-                    communicationsManager.email(emailRequest);
-                });
-            } else {
-                LOGGER.trace("The principal has no [{}] attribute, cannot send email notification", emailAttribute);
-            }
+            val emailAttributes = casProperties.getAuthn().getSurrogate().getMail().getAttributeName();
+            emailAttributes.forEach(attribute -> sendEmail(principal, attribute, eventDetails));
         } else {
             LOGGER.trace("CAS is unable to send surrogate-authentication email messages given no settings are defined to account for servers, etc");
+        }
+    }
+
+    /**
+     * Send email.
+     *
+     * @param principal      the principal
+     * @param emailAttribute the email attribute
+     * @param eventDetails   the event details
+     */
+    protected void sendEmail(final Principal principal, final String emailAttribute, final String eventDetails) {
+        val mail = casProperties.getAuthn().getSurrogate().getMail();
+
+        val resolvedAttribute = SpringExpressionLanguageValueResolver.getInstance().resolve(emailAttribute);
+        val to = principal.getAttributes().get(resolvedAttribute);
+        if (to != null) {
+            CollectionUtils.firstElement(to).ifPresent(address -> {
+                val body = EmailMessageBodyBuilder.builder()
+                    .properties(mail)
+                    .parameters(Map.of("event", eventDetails))
+                    .build()
+                    .get();
+
+                val emailRequest = EmailMessageRequest.builder()
+                    .emailProperties(mail)
+                    .to(List.of(address.toString()))
+                    .body(body)
+                    .build();
+                communicationsManager.email(emailRequest);
+            });
+        } else {
+            LOGGER.trace("The principal has no [{}] attribute, cannot send email notification", resolvedAttribute);
         }
     }
 }

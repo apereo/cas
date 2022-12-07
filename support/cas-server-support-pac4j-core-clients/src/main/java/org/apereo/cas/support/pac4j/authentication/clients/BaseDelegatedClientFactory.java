@@ -487,6 +487,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 if (saml.getCertificateExpirationDays() > 0) {
                     cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()));
                 }
+                FunctionUtils.doIfNotNull(saml.getResponseBindingType(), cfg::setResponseBindingType);
                 FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg);
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());

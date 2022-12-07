@@ -9,6 +9,7 @@ import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -62,7 +63,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val email = findAttribute(query, List.of(properties.getReset().getMail().getAttributeName()),
+        val email = findAttribute(query, properties.getReset().getMail().getAttributeName(),
             CollectionUtils.wrap(query.getUsername()));
         if (EmailValidator.getInstance().isValid(email)) {
             LOGGER.debug("Email address [{}] for [{}] appears valid", email, query.getUsername());
@@ -199,6 +200,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 LOGGER.debug("Found LDAP entry [{}] to use", entry);
                 return attributeNames
                     .stream()
+                    .map(attributeName -> SpringExpressionLanguageValueResolver.getInstance().resolve(attributeName))
                     .map(attributeName -> {
                         val attr = entry.getAttribute(attributeName);
                         if (attr != null) {

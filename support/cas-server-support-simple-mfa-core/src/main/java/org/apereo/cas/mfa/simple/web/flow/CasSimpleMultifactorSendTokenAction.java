@@ -16,6 +16,7 @@ import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -31,9 +32,11 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasSimpleMultifactorSendTokenAction}.
@@ -66,10 +69,10 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             val token = tokenTicket.getId();
             val tokenWithoutPrefix = token.substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
             val smsText = StringUtils.isNotBlank(smsProperties.getText())
-                    ? SmsBodyBuilder.builder().properties(smsProperties).parameters(
-                            Map.of("token", token, "tokenWithoutPrefix", tokenWithoutPrefix))
-                    .build().get()
-                    : token;
+                ? SmsBodyBuilder.builder().properties(smsProperties).parameters(
+                    Map.of("token", token, "tokenWithoutPrefix", tokenWithoutPrefix))
+                .build().get()
+                : token;
 
             val smsRequest = SmsRequest.builder().from(smsProperties.getFrom())
                 .principal(principal).attribute(smsProperties.getAttributeName())
@@ -79,20 +82,10 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         return false;
     }
 
-    /**
-     * Send an email.
-     *
-     * @param communicationsManager the communication manager
-     * @param properties            the properties
-     * @param principal             the principal
-     * @param tokenTicket           the token
-     * @param requestContext        the request context
-     * @return whether the email has been sent.
-     */
-    protected EmailCommunicationResult isMailSent(final CommunicationsManager communicationsManager,
-                                                  final CasSimpleMultifactorAuthenticationProperties properties,
-                                                  final Principal principal, final Ticket tokenTicket,
-                                                  final RequestContext requestContext) {
+    protected List<EmailCommunicationResult> isMailSent(final CommunicationsManager communicationsManager,
+                                                        final CasSimpleMultifactorAuthenticationProperties properties,
+                                                        final Principal principal, final Ticket tokenTicket,
+                                                        final RequestContext requestContext) {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -111,13 +104,22 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                 .parameters(parameters)
                 .build()
                 .get();
-            val emailRequest = EmailMessageRequest.builder().emailProperties(mailProperties)
-                .locale(locale.orElseGet(Locale::getDefault))
-                .principal(principal).attribute(mailProperties.getAttributeName())
-                .body(body).build();
-            return communicationsManager.email(emailRequest);
+
+            return mailProperties.getAttributeName()
+                .stream()
+                .map(attribute -> {
+                    val emailRequest = EmailMessageRequest.builder()
+                        .emailProperties(mailProperties)
+                        .locale(locale.orElseGet(Locale::getDefault))
+                        .principal(principal)
+                        .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
+                        .body(body)
+                        .build();
+                    return communicationsManager.email(emailRequest);
+                })
+                .collect(Collectors.toList());
         }
-        return EmailCommunicationResult.builder().build();
+        return List.of(EmailCommunicationResult.builder().success(false).build());
     }
 
     protected boolean isNotificationSent(final CommunicationsManager communicationsManager,
@@ -148,7 +150,8 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                       && isSmsSent(communicationsManager, properties, principal, token, requestContext);
 
         val emailSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.EMAIL)
-                        && isMailSent(communicationsManager, properties, principal, token, requestContext).isSuccess();
+                        && isMailSent(communicationsManager, properties, principal, token, requestContext)
+                            .stream().allMatch(EmailCommunicationResult::isSuccess);
 
         val notificationSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.NOTIFICATION)
                                && isNotificationSent(communicationsManager, principal, token);
