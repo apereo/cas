@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
 
-import org.apereo.cas.config.OidcJwksMongoDbConfiguration;
+import org.apereo.cas.oidc.jwks.generator.OidcMongoDbJsonWebKeystoreGeneratorServiceTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -12,7 +12,7 @@ import org.junit.platform.suite.api.Suite;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@SelectClasses(OidcJwksMongoDbConfiguration.class)
+@SelectClasses(OidcMongoDbJsonWebKeystoreGeneratorServiceTests.class)
 @Suite
 public class OidMongoDbTestsSuite {
 }
