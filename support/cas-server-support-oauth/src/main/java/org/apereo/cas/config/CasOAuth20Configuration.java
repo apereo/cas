@@ -712,7 +712,7 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20RequestParameterResolver oauthRequestParameterResolver(
             @Qualifier("oauthSecConfig")
-            final Config oauthSecConfig,
+            final ObjectProvider<Config> oauthSecConfig,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
             return new DefaultOAuth20RequestParameterResolver(accessTokenJwtBuilder, oauthSecConfig);
