@@ -48,7 +48,7 @@ public class PasswordlessCasWebflowLoginContextProviderTests extends BasePasswor
         assertFalse(results.isEmpty());
         assertEquals(account.getUsername(), results.get());
 
-        assertFalse(passwordlessCasWebflowLoginContextProvider.isLoginFormUsernameInputDisabled(context));
+        assertTrue(passwordlessCasWebflowLoginContextProvider.isLoginFormUsernameInputDisabled(context));
         assertFalse(passwordlessCasWebflowLoginContextProvider.isLoginFormUsernameInputVisible(context));
     }
 

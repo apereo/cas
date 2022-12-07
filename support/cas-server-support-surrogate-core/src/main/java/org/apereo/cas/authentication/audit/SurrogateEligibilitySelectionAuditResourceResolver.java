@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.audit;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -23,8 +24,11 @@ public class SurrogateEligibilitySelectionAuditResourceResolver extends ReturnVa
         Objects.requireNonNull(returnValue, "Event must not be null");
         val resultEvent = Event.class.cast(returnValue);
         val resultAttributeName = new EventFactorySupport().getResultAttributeName();
-        val values = new HashMap<String, Object>(resultEvent.getAttributes().get(resultAttributeName, Map.class));
-        values.put("status", resultEvent.getId());
-        return new String[]{auditFormat.serialize(values)};
+        if (resultEvent.getAttributes().contains(resultAttributeName)) {
+            val values = new HashMap<String, Object>(resultEvent.getAttributes().get(resultAttributeName, Map.class));
+            values.put("status", resultEvent.getId());
+            return new String[]{auditFormat.serialize(values)};
+        }
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 }

@@ -166,7 +166,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
         val emailSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.EMAIL)
                         && isMailSent(communicationsManager, properties, principal, token, requestContext)
-                            .stream().allMatch(EmailCommunicationResult::isSuccess);
+                            .stream().anyMatch(EmailCommunicationResult::isSuccess);
 
         val notificationSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.NOTIFICATION)
                                && isNotificationSent(communicationsManager, principal, token);
