@@ -64,14 +64,14 @@ public class CasThymeleafTemplatesDirector {
      */
     public boolean isLoginFormUsernameInputVisible(final WebEngineContext vars) {
         val requestContext = RequestContextHolder.getRequestContext();
-        return requestContext != null && WebUtils.isCasLoginFormViewable(requestContext)
-               && webflowExecutionPlan.getWebflowLoginContextProviders()
-                   .stream()
-                   .anyMatch(provider -> provider.isLoginFormUsernameInputVisible(requestContext));
+        val providers = webflowExecutionPlan.getWebflowLoginContextProviders();
+        return requestContext != null
+               && (WebUtils.isCasLoginFormViewable(requestContext) || providers.isEmpty()
+                   || providers.stream().anyMatch(provider -> provider.isLoginFormUsernameInputVisible(requestContext)));
     }
 
     /**
-     * Is login form username input disabled boolean.
+     * Is login form username input disabled.
      *
      * @param vars the vars
      * @return true/false

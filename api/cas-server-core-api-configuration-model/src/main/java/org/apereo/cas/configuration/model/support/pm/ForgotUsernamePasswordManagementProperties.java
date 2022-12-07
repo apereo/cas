@@ -46,7 +46,6 @@ public class ForgotUsernamePasswordManagementProperties implements Serializable 
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
 
     public ForgotUsernamePasswordManagementProperties() {
-        this.mail.setAttributeName("mail");
         this.mail.setText("Your current username is: ${username}");
         this.mail.setSubject("Forgot Username");
     }
