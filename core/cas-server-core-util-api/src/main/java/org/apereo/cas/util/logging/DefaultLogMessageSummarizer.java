@@ -1,4 +1,6 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.logging;
+
+import org.apereo.cas.util.LogMessageSummarizer;
 
 import lombok.val;
 import org.slf4j.Logger;
@@ -12,6 +14,8 @@ import java.util.Arrays;
  */
 public class DefaultLogMessageSummarizer implements LogMessageSummarizer {
 
+    private static final int LINES_TO_SUMMARIZE = 3;
+
     @Override
     public boolean shouldSummarize(final Logger logger) {
         return !logger.isDebugEnabled();
@@ -20,7 +24,7 @@ public class DefaultLogMessageSummarizer implements LogMessageSummarizer {
     @Override
     public String summarizeStackTrace(final String message, final Throwable throwable) {
         val builder = new StringBuilder(message).append('\n');
-        Arrays.stream(throwable.getStackTrace()).limit(3).forEach(trace -> {
+        Arrays.stream(throwable.getStackTrace()).limit(LINES_TO_SUMMARIZE).forEach(trace -> {
             val error = String.format("\t%s:%s:%s%n", trace.getFileName(), trace.getMethodName(), trace.getLineNumber());
             builder.append(error);
         });

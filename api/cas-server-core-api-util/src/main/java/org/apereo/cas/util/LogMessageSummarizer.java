@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 /**
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
  * @author Hal Deadman
  * @since 6.6.0
  */
+@FunctionalInterface
 public interface LogMessageSummarizer {
 
     /**
@@ -23,5 +25,7 @@ public interface LogMessageSummarizer {
      * @param throwable Throwable to summarize
      * @return Summarized Message
      */
-    String summarizeStackTrace(String message, Throwable throwable);
+    default String summarizeStackTrace(final String message, final Throwable throwable) {
+        return StringUtils.EMPTY;
+    }
 }
