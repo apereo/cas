@@ -26,25 +26,25 @@ public class GroovyScriptResourceCacheManagerTests {
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
         val resource = new WatchableGroovyScriptResource(new FileSystemResource(file));
 
-        val cache = new GroovyScriptResourceCacheManager();
+        try (val cache = new GroovyScriptResourceCacheManager()) {
+            val id = UUID.randomUUID().toString();
+            assertNull(cache.get(id));
 
-        val id = UUID.randomUUID().toString();
-        assertNull(cache.get(id));
+            assertFalse(cache.containsKey(id));
 
-        assertFalse(cache.containsKey(id));
+            cache.put(id, resource);
+            cache.put(id, resource);
+            assertTrue(cache.containsKey(id));
+            assertNotNull(cache.get(id));
 
-        cache.put(id, resource);
-        cache.put(id, resource);
-        assertTrue(cache.containsKey(id));
-        assertNotNull(cache.get(id));
+            cache.remove(id);
+            assertFalse(cache.containsKey(id));
 
-        cache.remove(id);
-        assertFalse(cache.containsKey(id));
-
-        cache.put(id, resource);
-        cache.clear();
-        assertTrue(cache.isEmpty());
-        cache.destroy();
+            cache.put(id, resource);
+            cache.clear();
+            assertTrue(cache.isEmpty());
+            cache.destroy();
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.logging.DefaultLogMessageSummarizer;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
