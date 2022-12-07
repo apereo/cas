@@ -8,6 +8,7 @@ import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -40,7 +41,7 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new JEEContext(request, response);
-        val credentials = client.getCredentials(webContext, this.sessionStore);
+        val credentials = client.getCredentials(webContext, this.sessionStore, ProfileManagerFactory.DEFAULT);
         LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
         if (credentials.isEmpty()) {
             throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());

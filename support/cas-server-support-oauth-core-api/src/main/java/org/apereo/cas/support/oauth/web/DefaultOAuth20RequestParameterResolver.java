@@ -21,6 +21,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.utils.URIBuilder;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
+import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -50,6 +51,8 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         .singleArrayElementUnwrapped(true).build().toObjectMapper();
 
     private final JwtBuilder jwtBuilder;
+
+    private final Config securityConfiguration;
 
     @Override
     public OAuth20ResponseTypes resolveResponseType(final WebContext context) {
@@ -203,7 +206,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public Pair<String, String> resolveClientIdAndClientSecret(final WebContext webContext,
                                                                final SessionStore sessionStore) {
         val extractor = new BasicAuthExtractor();
-        val upcResult = extractor.extract(webContext, sessionStore);
+        val upcResult = extractor.extract(webContext, sessionStore, securityConfiguration.getProfileManagerFactory());
         if (upcResult.isPresent()) {
             val upc = (UsernamePasswordCredentials) upcResult.get();
             return Pair.of(upc.getUsername(), upc.getPassword());

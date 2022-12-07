@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.context.WebEngineContext;
 
-import java.io.Serializable;
 import java.net.URL;
 import java.util.Optional;
 
@@ -64,9 +63,11 @@ public class CasThymeleafTemplatesDirector {
      * @return true/false
      */
     public boolean isLoginFormUsernameInputVisible(final WebEngineContext vars) {
-        val context = RequestContextHolder.getRequestContext();
-        return context != null && WebUtils.isCasLoginFormViewable(context)
-            && WebUtils.getPasswordlessAuthenticationAccount(context, Serializable.class) == null;
+        val requestContext = RequestContextHolder.getRequestContext();
+        return requestContext != null && WebUtils.isCasLoginFormViewable(requestContext)
+               && webflowExecutionPlan.getWebflowLoginContextProviders()
+                   .stream()
+                   .anyMatch(provider -> provider.isLoginFormUsernameInputVisible(requestContext));
     }
 
     /**
@@ -76,10 +77,12 @@ public class CasThymeleafTemplatesDirector {
      * @return true/false
      */
     public boolean isLoginFormUsernameInputDisabled(final WebEngineContext vars) {
-        val context = RequestContextHolder.getRequestContext();
-        return context == null || !WebUtils.isCasLoginFormViewable(context)
-            || WebUtils.isGraphicalUserAuthenticationEnabled(context)
-            || WebUtils.getPasswordlessAuthenticationAccount(context, Serializable.class) != null;
+        val requestContext = RequestContextHolder.getRequestContext();
+        return requestContext == null || !WebUtils.isCasLoginFormViewable(requestContext)
+               || WebUtils.isGraphicalUserAuthenticationEnabled(requestContext)
+               || webflowExecutionPlan.getWebflowLoginContextProviders()
+                   .stream()
+                   .anyMatch(provider -> provider.isLoginFormUsernameInputDisabled(requestContext));
     }
 
     /**

@@ -4,7 +4,6 @@ import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -101,7 +100,7 @@ public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordles
             .username("casuser")
             .name("casuser")
             .build();
-        WebUtils.putPasswordlessAuthenticationAccount(context, account);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
         return account;
     }
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -43,11 +42,14 @@ public class PasswordlessCasWebflowLoginContextProviderTests extends BasePasswor
 
         val account = new PasswordlessUserAccount();
         account.setUsername(UUID.randomUUID().toString());
-        WebUtils.putPasswordlessAuthenticationAccount(context, account);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
 
         val results = passwordlessCasWebflowLoginContextProvider.getCandidateUsername(context);
         assertFalse(results.isEmpty());
         assertEquals(account.getUsername(), results.get());
+
+        assertFalse(passwordlessCasWebflowLoginContextProvider.isLoginFormUsernameInputDisabled(context));
+        assertFalse(passwordlessCasWebflowLoginContextProvider.isLoginFormUsernameInputVisible(context));
     }
 
 }

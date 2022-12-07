@@ -6,7 +6,7 @@ import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -63,7 +63,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .username("casuser")
                 .name("casuser")
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineDelegatedAuthenticationAction.execute(context).getId());
         }
@@ -104,7 +104,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .username("casuser")
                 .name("casuser")
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, determineDelegatedAuthenticationAction.execute(context).getId());
         }
@@ -120,7 +120,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .username("unknown")
                 .name("unknown")
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineDelegatedAuthenticationAction.execute(context).getId());
         }
@@ -137,7 +137,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .username("casuser")
                 .name("casuser")
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, determineDelegatedAuthenticationAction.execute(context).getId());
             assertNotNull(request.getAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER));
@@ -156,7 +156,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .username("casuser")
                 .name("casuser")
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineDelegatedAuthenticationAction.execute(context).getId());
         }
@@ -173,7 +173,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .name("casuser")
                 .delegatedAuthenticationEligible(TriStateBoolean.FALSE)
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineDelegatedAuthenticationAction.execute(context).getId());
         }

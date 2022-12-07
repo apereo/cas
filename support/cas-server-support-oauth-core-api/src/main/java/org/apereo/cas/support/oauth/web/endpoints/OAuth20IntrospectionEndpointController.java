@@ -104,7 +104,8 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             val authExtractor = new BasicAuthExtractor();
 
             val context = new JEEContext(request, response);
-            val credentialsResult = authExtractor.extract(context, getConfigurationContext().getSessionStore());
+            val credentialsResult = authExtractor.extract(context, getConfigurationContext().getSessionStore(),
+                getConfigurationContext().getOauthConfig().getProfileManagerFactory());
 
             if (credentialsResult.isEmpty()) {
                 LOGGER.warn("Unable to locate and extract credentials from the request");

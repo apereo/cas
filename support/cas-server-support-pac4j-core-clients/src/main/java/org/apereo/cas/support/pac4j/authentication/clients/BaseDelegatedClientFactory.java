@@ -309,7 +309,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 client.setKey(oauth.getId());
                 client.setSecret(oauth.getSecret());
                 client.setProfileAttrs(oauth.getProfileAttrs());
-                client.setProfileNodePath(oauth.getProfilePath());
                 client.setProfileUrl(oauth.getProfileUrl());
                 client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase()));
                 client.setTokenUrl(oauth.getTokenUrl());
@@ -535,9 +534,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 if (!saml.getAuthnContextClassRef().isEmpty()) {
                     cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
                     cfg.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
-                }
-                if (StringUtils.isNotBlank(saml.getKeystoreAlias())) {
-                    cfg.setKeystoreAlias(saml.getKeystoreAlias());
                 }
                 if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
                     cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
