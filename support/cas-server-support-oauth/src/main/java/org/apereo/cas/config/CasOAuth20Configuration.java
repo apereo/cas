@@ -711,9 +711,11 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20RequestParameterResolver oauthRequestParameterResolver(
+            @Qualifier("oauthSecConfig")
+            final Config oauthSecConfig,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
-            return new DefaultOAuth20RequestParameterResolver(accessTokenJwtBuilder);
+            return new DefaultOAuth20RequestParameterResolver(accessTokenJwtBuilder, oauthSecConfig);
         }
 
         @ConditionalOnMissingBean(name = "oauthPrincipalFactory")

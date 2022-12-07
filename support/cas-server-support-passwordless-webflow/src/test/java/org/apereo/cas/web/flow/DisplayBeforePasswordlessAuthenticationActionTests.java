@@ -6,7 +6,6 @@ import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -97,7 +96,7 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
         context.setCurrentEvent(new Event(this, "processing", attributes));
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        WebUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser("casuser").get());
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser("casuser").get());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
             displayBeforePasswordlessAuthenticationAction.execute(context).getId());
     }

@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationDelegationConfiguration;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
 import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationRequestParser;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -66,14 +66,14 @@ public class SurrogateDelegatedAuthenticationCredentialExtractorTests {
         val passwordlessRequest = PasswordlessAuthenticationRequest.builder()
             .properties(Map.of(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME, "cassurrogate"))
             .username(uid).build();
-        WebUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);
         
-        when(client.getCredentials(any(), any())).thenReturn(Optional.of(new TokenCredentials(uid)));
+        when(client.getCredentials(any(), any(), any())).thenReturn(Optional.of(new TokenCredentials(uid)));
         val cc = delegatedAuthenticationCredentialExtractor.extract(client, context);
         assertNotNull(cc);
         assertTrue(cc.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent());
         
-        when(client.getCredentials(any(), any())).thenReturn(Optional.empty());
+        when(client.getCredentials(any(), any(), any())).thenReturn(Optional.empty());
         assertThrows(IllegalArgumentException.class, () -> delegatedAuthenticationCredentialExtractor.extract(client, context));
     }
 }

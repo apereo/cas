@@ -17,6 +17,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oidc.client.OidcClient;
@@ -71,7 +72,7 @@ public class DelegatedAuthenticationClientsTestConfiguration {
 
         val facebookClient = new FacebookClient() {
             @Override
-            public Optional<Credentials> retrieveCredentials(final WebContext context, final SessionStore sessionStore) {
+            public Optional<Credentials> retrieveCredentials(final WebContext context, final SessionStore sessionStore, final ProfileManagerFactory profileManagerFactory) {
                 return Optional.of(new OAuth20Credentials("fakeVerifier"));
             }
         };
@@ -89,7 +90,8 @@ public class DelegatedAuthenticationClientsTestConfiguration {
 
         val mockClientNoCredentials = mock(BaseClient.class);
         when(mockClientNoCredentials.getName()).thenReturn("MockClientNoCredentials");
-        when(mockClientNoCredentials.getCredentials(any(), any())).thenThrow(new OkAction(StringUtils.EMPTY));
+        when(mockClientNoCredentials.getCredentials(any(WebContext.class), any(SessionStore.class), any(ProfileManagerFactory.class)))
+            .thenThrow(new OkAction(StringUtils.EMPTY));
         when(mockClientNoCredentials.isInitialized()).thenReturn(true);
 
         val failingClient = mock(IndirectClient.class);

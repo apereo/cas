@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import java.util.Arrays;
 
 /**
- * Default implementation of LogMessageSummarizer summarizes throwable if log level higher than debug.
- * @author Misagh Moayyed
+ * Default implementation of {@link LogMessageSummarizer} summarizes throwable if log level higher than debug.
+ * @author Hal Deadman
  * @since 6.6.0
  */
 public class DefaultLogMessageSummarizer implements LogMessageSummarizer {
