@@ -18,7 +18,7 @@ const cas = require('../../cas.js');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    // await page.waitForTimeout(8000)
+    await page.waitForTimeout(4000);
 
     await cas.assertInvisibility(page, '#username');
     await cas.assertVisibility(page, '#password');
@@ -27,7 +27,7 @@ const cas = require('../../cas.js');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    // await page.waitForTimeout(10000)
+    await page.waitForTimeout(4000);
 
     await cas.assertCookie(page);
     

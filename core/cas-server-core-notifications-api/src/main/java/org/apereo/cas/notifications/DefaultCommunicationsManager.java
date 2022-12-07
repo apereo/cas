@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link DefaultCommunicationsManager}.
@@ -52,11 +53,12 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
 
     @Override
     public EmailCommunicationResult email(final EmailMessageRequest emailRequest) {
-        val recipients = emailRequest.getRecipients();
+        val recipients = Objects.requireNonNull(emailRequest.getRecipients(), "Email recipients cannot be undefined");
         try {
             LOGGER.trace("Attempting to send email [{}] to [{}]", emailRequest.getBody(), recipients);
             if (!isMailSenderDefined() || emailRequest.getEmailProperties().isUndefined() || recipients.isEmpty()) {
-                throw new IllegalAccessException("Could not send email; from/to/subject/text or email settings are undefined.");
+                val message = String.format("Could not send email to %s; from/to/subject/text or email settings are undefined.", recipients);
+                throw new IllegalAccessException(message);
             }
             return emailSender.send(emailRequest);
         } catch (final Exception ex) {

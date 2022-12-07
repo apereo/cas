@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -72,6 +73,6 @@ public class EmailMessageRequest {
                 return CollectionUtils.toCollection(value.get(), ArrayList.class);
             }
         }
-        return getTo();
+        return ObjectUtils.defaultIfNull(getTo(), List.of());
     }
 }
