@@ -7,11 +7,12 @@ import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.notifications.sms.SmsSender;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 
 import java.util.Map;
 import java.util.Objects;
@@ -54,18 +55,11 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
     @Override
     public EmailCommunicationResult email(final EmailMessageRequest emailRequest) {
         val recipients = Objects.requireNonNull(emailRequest.getRecipients(), "Email recipients cannot be undefined");
-        try {
-            LOGGER.trace("Attempting to send email [{}] to [{}]", emailRequest.getBody(), recipients);
-            if (!isMailSenderDefined() || emailRequest.getEmailProperties().isUndefined() || recipients.isEmpty()) {
-                val message = String.format("Could not send email to %s; from/to/subject/text or email settings are undefined.", recipients);
-                throw new IllegalAccessException(message);
-            }
-            return emailSender.send(emailRequest);
-        } catch (final Exception ex) {
-            LoggingUtils.error(LOGGER, ex);
-        }
-        return EmailCommunicationResult.builder().success(false)
-            .to(recipients).body(emailRequest.getBody()).build();
+        LOGGER.trace("Attempting to send email [{}] to [{}]", emailRequest.getBody(), recipients);
+        return FunctionUtils.doIf(isMailSenderDefined() && emailRequest.getEmailProperties().isDefined() && !recipients.isEmpty(),
+            Unchecked.supplier(() -> emailSender.send(emailRequest)),
+            () -> EmailCommunicationResult.builder().success(false)
+                .to(recipients).body(emailRequest.getBody()).build()).get();
     }
 
     @Override

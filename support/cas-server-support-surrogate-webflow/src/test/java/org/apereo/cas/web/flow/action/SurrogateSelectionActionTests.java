@@ -37,6 +37,7 @@ public class SurrogateSelectionActionTests {
     @Autowired
     @Qualifier("selectSurrogateAction")
     private Action selectSurrogateAction;
+
     @Test
     public void verifyFails() throws Exception {
         val context = new MockRequestContext();

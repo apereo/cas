@@ -72,7 +72,7 @@ The collection of end-to-end browser tests based on Puppeteer continue to grow t
 and scenarios. At the moment, total number of jobs stands at approximately `374` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
-## CAS Intializr UI
+### CAS Intializr UI
 
 The [CAS Initializr](https://casinit.herokuapp.com/ui) project now provides a user interface:
 
@@ -80,7 +80,7 @@ The [CAS Initializr](https://casinit.herokuapp.com/ui) project now provides a us
 
 Note that CAS Initializr is now updated to support generating projects based on JDK `17` and CAS `v7`.
      
-## Passwordless Authentication
+### Passwordless Authentication
 
 A significant amount of work has been done to allow the [passwordless authentication](../authentication/Passwordless-Authentication.html)
 to support impersonation, via its own token-based traditional flow as well as delegation authentication flows. Puppeteer tests are made available
