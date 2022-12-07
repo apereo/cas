@@ -23,7 +23,7 @@ public class PasswordlessCasWebflowLoginContextProvider implements CasWebflowLog
 
     @Override
     public boolean isLoginFormUsernameInputDisabled(final RequestContext requestContext) {
-        return PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, Serializable.class) == null;
+        return PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, Serializable.class) != null;
     }
 
     @Override
