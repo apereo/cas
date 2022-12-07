@@ -55,27 +55,45 @@ Switching to Spring Boot also means that CAS has now switched to support [Jakart
 Servlet specification `6.0.0`. This change does impact supported servlet containers such as Apache Tomcat and Undertow, where 
 the minimum supported version is now required to be `10.1.x` and `2.3.x`, accordingly.
 
-Note that Jetty does not support Servlet specification `6.0.0` yet. Deployments that use an embedded Jetty 
+- Jetty does not support the servlet specification `6.0.0` yet. Deployments that use an embedded Jetty 
 servlet container may need to downgrade the version of the Servlet specification manually to `5.0.0`. It is likely that this might 
 be sorted out prior to the final GA release by the time Jetty `12` is released.
+  
+- Apache BVal has been replaced with as the primary layer for bean validation. The former provides no support for Jakarta APIs, yet.
 
 <div class="alert alert-info"><strong>Usage Warning</strong><p>Remember that this is a major upgrade and may possibly
 be somewhat disruptive in the beginning. While most if not all CAS-specific configuration should remain exactly the same, 
 you may encounter unexpected hiccups and mishaps along the way. We recommend that you start early by experimenting with 
-release candidates and/or follow-up snapshots.</p></div>
+release candidates and/or follow-up snapshots. For additional warranties, please see the project license.</p></div>
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `374` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
 
 ## CAS Intializr UI
 
-The [CAS Initializr](https://casinit.herokuapp.com/ui) project is now provides a user interface:
+The [CAS Initializr](https://casinit.herokuapp.com/ui) project now provides a user interface:
 
 <img width="1600" alt="image" src="https://user-images.githubusercontent.com/1205228/205378501-a0e6ad1b-bf81-42ea-8a69-5ad13c0dde39.png">
+
+Note that CAS Initializr is now updated to support generating projects based on JDK `17` and CAS `v7`.
+     
+## Passwordless Authentication
+
+A significant amount of work has been done to allow the [passwordless authentication](../authentication/Passwordless-Authentication.html)
+to support impersonation, via its own token-based traditional flow as well as delegation authentication flows. Puppeteer tests are made available
+to cover quite a number of scenarios and use cases.
 
 ## Other Stuff
         
 - Support for OpenID Connect `unmet_authentication_requirements` error code is now available.
 - Email templates and SMS notification messages for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) now have access to both 
   `token` and `tokenWithoutPrefix` variables. 
+- Additional options to control [logging stacktraces in summary mode](../logging/Logging.html) are now available.
 - Negative skew values are now supported for SAML2 responses when skew values are defined for SAML2 registered services.
+- Multiple email attribute names can now be specified in the configuration, when locating email addresses for principals.
 - The [Return Allowed](../integration/Attribute-Release-Policy-ReturnAllowed.html) attribute release policy is now able to support inline Groovy scripts.
 
 ## Library Upgrades
@@ -97,3 +115,7 @@ The [CAS Initializr](https://casinit.herokuapp.com/ui) project is now provides a
 - Hibernate Validator
 - OpenSAML
 - Apache CXF
+- Nimbus
+- Person Directory
+- Spring Webflow
+- Inspektr
