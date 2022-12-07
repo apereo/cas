@@ -26,6 +26,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
     private final JwtBuilder jwtBuilder;
 
-    private final Config securityConfiguration;
+    private final ObjectProvider<Config> securityConfiguration;
 
     @Override
     public OAuth20ResponseTypes resolveResponseType(final WebContext context) {
@@ -206,7 +207,8 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public Pair<String, String> resolveClientIdAndClientSecret(final WebContext webContext,
                                                                final SessionStore sessionStore) {
         val extractor = new BasicAuthExtractor();
-        val upcResult = extractor.extract(webContext, sessionStore, securityConfiguration.getProfileManagerFactory());
+        val upcResult = extractor.extract(webContext, sessionStore,
+            securityConfiguration.getObject().getProfileManagerFactory());
         if (upcResult.isPresent()) {
             val upc = (UsernamePasswordCredentials) upcResult.get();
             return Pair.of(upc.getUsername(), upc.getPassword());

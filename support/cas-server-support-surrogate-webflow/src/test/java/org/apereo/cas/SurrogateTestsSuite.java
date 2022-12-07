@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationActionTests;
 import org.apereo.cas.web.flow.action.SurrogateSelectionActionTests;
 import org.apereo.cas.web.flow.pac4j.SurrogateDelegatedAuthenticationCredentialExtractorTests;
 import org.apereo.cas.web.flow.pac4j.SurrogateDelegatedAuthenticationPreProcessorTests;
+import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationPreProcessorTests;
 import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationRequestParserTests;
 
 import org.junit.platform.suite.api.SelectClasses;
@@ -20,6 +21,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     SurrogatePasswordlessAuthenticationRequestParserTests.class,
     SurrogateInitialAuthenticationActionTests.class,
+    SurrogatePasswordlessAuthenticationPreProcessorTests.class,
     SurrogateDelegatedAuthenticationCredentialExtractorTests.class,
     SurrogateDelegatedAuthenticationPreProcessorTests.class,
     SurrogateSelectionActionTests.class,

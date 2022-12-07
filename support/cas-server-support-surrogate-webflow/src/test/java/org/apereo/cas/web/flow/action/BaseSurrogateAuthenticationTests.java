@@ -49,7 +49,7 @@ import org.springframework.context.annotation.Import;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class BaseSurrogateAuthenticationTests {
+public abstract class BaseSurrogateAuthenticationTests {
 
     @ImportAutoConfiguration({
         WebMvcAutoConfiguration.class,
