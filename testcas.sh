@@ -380,6 +380,10 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/couchbase/run-couchbase-server.sh
                 task+="testCouchbase "
                 ;;
+            mongomfa)
+                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
+                task+="testMongoDbMFA "
+                ;;
             mongo|mongodb)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDb "
