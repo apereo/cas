@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 )
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
-@Tag("JDBC")
+@Tag("JDBCMFA")
 @Getter
 public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired

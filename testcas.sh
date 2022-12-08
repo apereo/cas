@@ -237,7 +237,13 @@ while (( "$#" )); do
             groovy|script)
                 task+="testGroovy "
                 ;;
-            jdbc|jpa|database|db|hibernate|rdbms|hsql)
+            hibernate)
+                task+="testHibernate "
+                ;;
+            jdbcmfa)
+                task+="testJDBCMFA "
+                ;;
+            jdbc|jpa|database|db|rdbms|hsql)
                 task+="testJDBC "
                 ;;
             jdbcauthentication|jdbcauthn)
