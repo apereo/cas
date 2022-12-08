@@ -492,10 +492,12 @@ ext.libraries = [
         caffein                    : [
                 dependencies.create("com.github.ben-manes.caffeine:caffeine:$caffeineVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                 },
                 dependencies.create("com.github.ben-manes.caffeine:guava:$caffeineVersion") {
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                 }
         ],
         websockets                 : [
@@ -526,6 +528,7 @@ ext.libraries = [
         guava                      : [
                 dependencies.create("com.google.guava:guava:$guavaVersion") {
                     exclude(group: "com.google.errorprone", module: "error_prone_annotations")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                 },
                 dependencies.create("de.cronn:reflection-util:$reflectionUtilVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2251,6 +2254,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
@@ -2282,6 +2286,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "com.h2database", module: "h2")
@@ -2300,6 +2305,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                 },
                 dependencies.create("org.springframework.boot:spring-boot-properties-migrator:$springBootVersion") {
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
@@ -2338,6 +2344,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-validation:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
@@ -2362,6 +2369,7 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                 },
                 dependencies.create("org.springframework.boot:spring-boot-actuator:$springBootVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
@@ -2375,6 +2383,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                 }
         ],
         springboottomcat           : [
