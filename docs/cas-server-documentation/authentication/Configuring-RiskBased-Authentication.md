@@ -99,7 +99,7 @@ Support is enabled by including the following dependency in the overlay:
 
 ### Messaging & Notifications
 
-{% include_cached casproperties.html properties="cas.authn.adaptive.risk.response", includes=".mail,.sms" %}
+{% include_cached casproperties.html properties="cas.authn.adaptive.risk.response" includes=".mail,.sms" %}
 
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html).
