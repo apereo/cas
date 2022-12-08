@@ -35,23 +35,12 @@ public class GroovyRegisteredServiceUsernameProviderTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyUsernameProvider() throws IOException {
+    public void verifyUsernameProvider() {
         val p = new GroovyRegisteredServiceUsernameProvider();
-        val file = new File("./src/test/resources/uid.groovy");
-        p.setGroovyScript("file:" + file.getCanonicalPath());
+        p.setGroovyScript("classpath:uid.groovy");
         val id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService());
         assertEquals("fromscript", id);
-    }
-
-    @Test
-    public void verifyUsernameProviderNoWatch() {
-        val p = new GroovyRegisteredServiceUsernameProvider();
-        p.setGroovyScript("file:///src/test/resources/uid.groovy");
-        p.setWatchResource(false);
-        val id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService());
-        assertEquals("test", id);
     }
 
     @Test

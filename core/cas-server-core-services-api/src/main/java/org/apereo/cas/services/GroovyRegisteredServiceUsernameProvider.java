@@ -43,23 +43,18 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     private static String fetchAttributeValue(final Principal principal,
-                                                                final Service service,
-                                                                final RegisteredService registeredService,
-                                                                final String groovyScript) {
+                                              final Service service,
+                                              final RegisteredService registeredService,
+                                              final String groovyScript) {
 
-        var username = ApplicationContextProvider.getScriptResourceCacheManager()
+        return ApplicationContextProvider.getScriptResourceCacheManager()
             .map(cacheMgr -> {
                 val script = cacheMgr.resolveScriptableResource(groovyScript, registeredService.getServiceId(), groovyScript);
                 return fetchAttributeValueFromScript(script, principal, service);
-            });
-
-        if (username.isPresent()) {
-            return username.get().toString();
-        } else {
-            throw new RuntimeException("No groovy script cache manager is available to execute username provider");
-        }
+            })
+            .map(result -> result.toString())
+            .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute username provider"));
     }
-
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
