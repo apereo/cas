@@ -1,5 +1,5 @@
 {
-  "dependencies": "oidc,jpa-hibernate",
+  "dependencies": "oidc,oidc-jpa",
   "conditions": {
     "docker": "true"
   },

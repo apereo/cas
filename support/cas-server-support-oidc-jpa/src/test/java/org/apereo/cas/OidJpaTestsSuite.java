@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.OidcJwksJpaConfiguration;
+import org.apereo.cas.oidc.jwks.generator.OidcJpaJsonWebKeystoreGeneratorServiceTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -11,7 +11,7 @@ import org.junit.platform.suite.api.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SelectClasses(OidcJwksJpaConfiguration.class)
+@SelectClasses(OidcJpaJsonWebKeystoreGeneratorServiceTests.class)
 @Suite
 public class OidJpaTestsSuite {
 }

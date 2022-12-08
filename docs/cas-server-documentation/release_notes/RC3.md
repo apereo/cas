@@ -32,11 +32,7 @@ maintenance and release planning, especially when it comes to addressing critica
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
 
-## New & Noteworthy
-
-The following items are new improvements and enhancements presented in this release.
-
-### JDK Requirement
+## System Requirements
 
 The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
@@ -58,8 +54,11 @@ the minimum supported version is now required to be `10.1.x` and `2.3.x`, accord
 - Jetty does not support the servlet specification `6.0.0` yet. Deployments that use an embedded Jetty 
 servlet container may need to downgrade the version of the Servlet specification manually to `5.0.0`. It is likely that this might 
 be sorted out prior to the final GA release by the time Jetty `12` is released.
-  
-- Apache BVal has been replaced with as the primary layer for bean validation. The former provides no support for Jakarta APIs, yet.
+- A handful dependencies and libraries (i.e. OpenSAML) have yet to provide a final release version compatible with Spring Boot `3` and/or Jakarta APIs. These 
+  should hopefully finalize and publish a GA release in the next few release candidates.  
+- Apache BVal has been replaced with Hibernate Validator as the primary libary for bean validation. The former provides no support for Jakarta APIs, yet.
+- Support for Spring Cloud Sleuth has been removed, and will later on be replaced with Micrometer Tracing.
+- The [SCIM 2](https://github.com/pingidentity/scim2) library is replaced with an alternative that supports Jakarta APIs.  
 
 <div class="alert alert-info"><strong>Usage Warning</strong><p>Remember that this is a major upgrade and may possibly
 be somewhat disruptive in the beginning. While most if not all CAS-specific configuration should remain exactly the same, 
@@ -71,6 +70,20 @@ release candidates and/or follow-up snapshots. For additional warranties, please
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
 and scenarios. At the moment, total number of jobs stands at approximately `374` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
+
+### Docker Integration Tests
+
+Several Docker images that are used for integration tests are now updated to use more recent versions. Those are:
+
+- MongoDb
+- Apache Cassandra
+- AWS Localstack
+- DynamoDb
+- InfluxDb
+- MariaDb
+- MySQL
+- CAS Server
+- SCIM Server
 
 ### CAS Intializr UI
 
@@ -85,6 +98,11 @@ Note that CAS Initializr is now updated to support generating projects based on 
 A significant amount of work has been done to allow the [passwordless authentication](../authentication/Passwordless-Authentication.html)
 to support impersonation, via its own token-based traditional flow as well as delegation authentication flows. Puppeteer tests are made available
 to cover quite a number of scenarios and use cases.
+  
+### OpenID Connect JWKS
+
+The ability to manage and store [OpenID Connect JWKS](../authentication/OIDC-Authentication-JWKS-Storage.html) resources is now split
+to support relational databases and MongoDb separately via dedicated extension modules.
 
 ## Other Stuff
         
