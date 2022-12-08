@@ -1,6 +1,5 @@
 package org.apereo.cas.impl.token;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -9,9 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -41,8 +40,7 @@ public class JpaPasswordlessAuthenticationEntity implements Serializable {
     private ZonedDateTime expirationDate;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    @Builder.Default
-    private long id = -1;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String id;
 }

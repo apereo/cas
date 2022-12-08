@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.passwordless;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationJpaTokensProperties;
+import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationMongoDbTokensProperties;
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationRestTokensProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -55,6 +56,12 @@ public class PasswordlessAuthenticationTokensProperties implements Serializable 
      */
     @NestedConfigurationProperty
     private PasswordlessAuthenticationJpaTokensProperties jpa = new PasswordlessAuthenticationJpaTokensProperties();
+
+    /**
+     * Passwordless authentication settings via MongoDb.
+     */
+    @NestedConfigurationProperty
+    private PasswordlessAuthenticationMongoDbTokensProperties mongo = new PasswordlessAuthenticationMongoDbTokensProperties();
 
     /**
      * Email settings for notifications.
