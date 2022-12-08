@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -8,6 +9,8 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Groovy")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
 public class GroovyRegisteredServiceUsernameProviderTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceUsernameProviderTests.json");
 
@@ -31,10 +38,10 @@ public class GroovyRegisteredServiceUsernameProviderTests {
     @Test
     public void verifyUsernameProvider() {
         val p = new GroovyRegisteredServiceUsernameProvider();
-        p.setGroovyScript("file:///src/test/resources/uid.groovy");
+        p.setGroovyScript("classpath:uid.groovy");
         val id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService());
-        assertEquals("test", id);
+        assertEquals("fromscript", id);
     }
 
     @Test
