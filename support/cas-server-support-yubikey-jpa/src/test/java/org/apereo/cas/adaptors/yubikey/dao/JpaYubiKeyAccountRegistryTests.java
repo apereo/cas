@@ -31,7 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     "cas.jdbc.show-sql=false",
     "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop"
 })
-@Tag("JDBC")
+@Tag("JDBCMFA")
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JpaYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasHibernateJpaConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("JDBC")
+@Tag("Hibernate")
 @EnableTransactionManagement(proxyTargetClass = false)
 public class CasHibernateJpaBeanFactoryTests {
     @Autowired
