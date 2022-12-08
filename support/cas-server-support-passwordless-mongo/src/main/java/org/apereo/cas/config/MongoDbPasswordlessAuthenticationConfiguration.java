@@ -39,7 +39,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn, module = "mongo")
 @AutoConfiguration
 public class MongoDbPasswordlessAuthenticationConfiguration {
-
     @Configuration(value = "MongoDbPasswordlessAuthenticationAccountsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class MongoDbPasswordlessAuthenticationAccountsConfiguration {
@@ -68,7 +67,6 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
             return new MongoDbPasswordlessUserAccountStore(mongoDbPasswordlessAuthenticationTemplate, accounts.getMongo());
         }
     }
-
     @Configuration(value = "MongoDbPasswordlessAuthenticationRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class MongoDbPasswordlessAuthenticationRepositoryConfiguration {
@@ -96,7 +94,7 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
             final CipherExecutor passwordlessCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val tokens = casProperties.getAuthn().getPasswordless().getTokens();
-            return new MongoDbPasswordlessTokenRepository(tokens.getMongo(), tokens.getExpireInSeconds(),
+            return new MongoDbPasswordlessTokenRepository(tokens.getMongo(), tokens.getCore().getExpireInSeconds(),
                 passwordlessCipherExecutor, mongoDbPasswordlessAuthenticationTokensTemplate);
         }
     }

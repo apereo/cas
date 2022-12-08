@@ -62,7 +62,7 @@ using CAS settings and are activated depending on the presence of configuration 
 
 The following strategies define how issued tokens may be managed by CAS. 
 
-{% include_cached casproperties.html properties="cas.authn.passwordless.accounts" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.tokens" includes=".core,.crypto" %}
 
 ### Memory
 
@@ -73,11 +73,12 @@ to synchronize and replicate tokens across CAS nodes.
 
 ### Others
 
-| Option | Description                                                              |
-|--------|--------------------------------------------------------------------------|
-| JPA    | Please [see this guide](Passwordless-Authentication-Tokens-JPA.html).    |
-| REST   | Please [see this guide](Passwordless-Authentication-Tokens-Rest.html).   |
-| Custom | Please [see this guide](Passwordless-Authentication-Tokens-Custom.html). |
+| Option  | Description                                                               |
+|---------|---------------------------------------------------------------------------|
+| MongoDb | Please [see this guide](Passwordless-Authentication-Tokens-MongoDb.html). |
+| JPA     | Please [see this guide](Passwordless-Authentication-Tokens-JPA.html).     |
+| REST    | Please [see this guide](Passwordless-Authentication-Tokens-Rest.html).    |
+| Custom  | Please [see this guide](Passwordless-Authentication-Tokens-Custom.html).  |
 
 ### Messaging & Notifications
                                      
