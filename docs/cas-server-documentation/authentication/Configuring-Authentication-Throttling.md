@@ -52,7 +52,7 @@ Enable the following module in your configuration overlay:
 
 ## Configuration
 
-{% include_cached casproperties.html properties="cas.authn.throttle.core,cas.authn.throttle.schedule,cas.authn.throttle.failure" %}
+{% include_cached casproperties.html properties="cas.authn.throttle" includes=".core,.schedule,.failure" %}
 
 ### Actuator Endpoints
 

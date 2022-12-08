@@ -41,7 +41,7 @@ The following endpoints are provided by CAS:
 
 ## Settings
 
-{% include_cached casproperties.html properties="cas.authn.mfa.trusted.core,cas.authn.mfa.trusted.crypto" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.trusted" includes=".core,.crypto" %}
 
 ## Authentication Context
 

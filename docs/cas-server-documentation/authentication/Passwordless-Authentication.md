@@ -82,7 +82,7 @@ to synchronize and replicate tokens across CAS nodes.
 
 ### Messaging & Notifications
                                      
-{% include_cached casproperties.html properties="cas.authn.passwordless.tokens.mail,cas.authn.passwordless.tokens.sms" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.tokens" includes=".mail,.sms" %}
 
 Users may be notified of tokens via text messages, mail, etc.
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
