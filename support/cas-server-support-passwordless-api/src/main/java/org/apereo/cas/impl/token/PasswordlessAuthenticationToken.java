@@ -44,7 +44,7 @@ public class PasswordlessAuthenticationToken implements Serializable {
 
     @Id
     @JsonProperty
-    private long id;
+    private String id;
 
     private String username;
 
