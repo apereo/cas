@@ -115,9 +115,9 @@ public class PasswordlessAuthenticationConfiguration {
                                                                    final CipherExecutor passwordlessCipherExecutor) {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
         if (StringUtils.isNotBlank(tokens.getRest().getUrl())) {
-            return new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor);
+            return new RestfulPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor);
         }
-        return new InMemoryPasswordlessTokenRepository(tokens.getExpireInSeconds(), passwordlessCipherExecutor);
+        return new InMemoryPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(), passwordlessCipherExecutor);
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")

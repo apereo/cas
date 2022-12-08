@@ -117,7 +117,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
             final CipherExecutor passwordlessCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val tokens = casProperties.getAuthn().getPasswordless().getTokens();
-            return new JpaPasswordlessTokenRepository(tokens.getExpireInSeconds(), passwordlessCipherExecutor);
+            return new JpaPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(), passwordlessCipherExecutor);
         }
     }
 

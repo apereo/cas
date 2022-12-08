@@ -51,7 +51,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
     public void verifyFindToken() {
         val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
         tokens.getRest().setUrl("http://localhost:9306");
-        val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(),
+        val passwordless = new RestfulPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(),
             tokens.getRest(), passwordlessCipherExecutor);
         
         val token = createToken("casuser");
@@ -72,7 +72,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
             webServer.start();
             val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
             tokens.getRest().setUrl("http://localhost:9306");
-            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(),
+            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(),
                 tokens.getRest(), passwordlessCipherExecutor);
             val foundToken = passwordless.findToken("casuser");
             assertTrue(foundToken.isEmpty());
@@ -87,7 +87,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
             webServer.start();
             val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
             tokens.getRest().setUrl("http://localhost:9307");
-            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(),
+            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(),
                 tokens.getRest(), passwordlessCipherExecutor);
 
             val uid = UUID.randomUUID().toString();
