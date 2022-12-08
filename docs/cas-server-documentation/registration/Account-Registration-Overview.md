@@ -92,7 +92,7 @@ to remain valid for a configurable period of time.
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html), or [this guide](../notifications/Notifications-Configuration.html).
 
-{% include_cached casproperties.html properties="cas.account-registration.mail,cas.account-registration.sms" %}
+{% include_cached casproperties.html properties="cas.account-registration" includes=".mail,.sms" %}
    
 ## Username Validations
       

@@ -98,7 +98,7 @@ SERVER IP ADDRESS: 127.0.0.1
 
 Additionally, failure and success events may also communicated via SMS and/or email messages to relevant parties. 
      
-{% include_cached casproperties.html properties="cas.authn.surrogate.mail,cas.authn.surrogate.sms" %}
+{% include_cached casproperties.html properties="cas.authn.surrogate" includes=".mail,.sms" %}
 
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
 or [this guide](../notifications/Sending-Email-Configuration.html).
