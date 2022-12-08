@@ -28,7 +28,7 @@ import java.util.Optional;
 public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
     private final PasswordlessAuthenticationRestTokensProperties restProperties;
     
-    public RestfulPasswordlessTokenRepository(final int tokenExpirationInSeconds,
+    public RestfulPasswordlessTokenRepository(final long tokenExpirationInSeconds,
                                               final PasswordlessAuthenticationRestTokensProperties restProperties,
                                               final CipherExecutor<Serializable, String> cipherExecutor) {
         super(tokenExpirationInSeconds, cipherExecutor);

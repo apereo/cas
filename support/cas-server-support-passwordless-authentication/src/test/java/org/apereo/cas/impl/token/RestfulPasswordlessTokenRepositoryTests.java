@@ -4,6 +4,7 @@ import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationTokensProperties;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -51,9 +52,8 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
     public void verifyFindToken() {
         val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
         tokens.getRest().setUrl("http://localhost:9306");
-        val passwordless = new RestfulPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(),
-            tokens.getRest(), passwordlessCipherExecutor);
-        
+        val passwordless = getRepository(tokens);
+
         val token = createToken("casuser");
         val data = passwordless.encodeToken(token);
         try (val webServer = new MockWebServer(9306,
@@ -72,8 +72,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
             webServer.start();
             val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
             tokens.getRest().setUrl("http://localhost:9306");
-            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(),
-                tokens.getRest(), passwordlessCipherExecutor);
+            val passwordless = getRepository(tokens);
             val foundToken = passwordless.findToken("casuser");
             assertTrue(foundToken.isEmpty());
         }
@@ -87,8 +86,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
             webServer.start();
             val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
             tokens.getRest().setUrl("http://localhost:9307");
-            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(),
-                tokens.getRest(), passwordlessCipherExecutor);
+            val passwordless = getRepository(tokens);
 
             val uid = UUID.randomUUID().toString();
             val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
@@ -96,6 +94,10 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
             val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
             passwordless.saveToken(passwordlessUserAccount, passwordlessRequest, token);
         }
+    }
+
+    private RestfulPasswordlessTokenRepository getRepository(final PasswordlessAuthenticationTokensProperties tokens) {
+        return new RestfulPasswordlessTokenRepository(5, tokens.getRest(), passwordlessCipherExecutor);
     }
 
     @Test

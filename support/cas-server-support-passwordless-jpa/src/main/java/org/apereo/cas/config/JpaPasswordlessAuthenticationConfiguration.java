@@ -4,6 +4,7 @@ import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.impl.token.JpaPasswordlessAuthenticationEntity;
 import org.apereo.cas.impl.token.JpaPasswordlessTokenRepository;
@@ -117,7 +118,8 @@ public class JpaPasswordlessAuthenticationConfiguration {
             final CipherExecutor passwordlessCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val tokens = casProperties.getAuthn().getPasswordless().getTokens();
-            return new JpaPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(), passwordlessCipherExecutor);
+            val expiration = Beans.newDuration(tokens.getCore().getExpiration()).toSeconds();
+            return new JpaPasswordlessTokenRepository(expiration, passwordlessCipherExecutor);
         }
     }
 

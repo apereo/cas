@@ -5,6 +5,7 @@ import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.impl.account.MongoDbPasswordlessUserAccountStore;
 import org.apereo.cas.impl.token.MongoDbPasswordlessTokenRepository;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -94,7 +95,8 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
             final CipherExecutor passwordlessCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val tokens = casProperties.getAuthn().getPasswordless().getTokens();
-            return new MongoDbPasswordlessTokenRepository(tokens.getMongo(), tokens.getCore().getExpireInSeconds(),
+            val expiration = Beans.newDuration(tokens.getCore().getExpiration()).toSeconds();
+            return new MongoDbPasswordlessTokenRepository(tokens.getMongo(), expiration,
                 passwordlessCipherExecutor, mongoDbPasswordlessAuthenticationTokensTemplate);
         }
     }

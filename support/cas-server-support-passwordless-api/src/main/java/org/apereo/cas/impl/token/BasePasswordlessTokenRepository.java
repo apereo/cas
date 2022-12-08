@@ -36,7 +36,7 @@ public abstract class BasePasswordlessTokenRepository implements PasswordlessTok
 
     private final RandomStringGenerator tokenGenerator = new DefaultRandomNumberGenerator(TOKEN_LENGTH);
 
-    private final int tokenExpirationInSeconds;
+    private final long tokenExpirationInSeconds;
 
     private final CipherExecutor<Serializable, String> cipherExecutor;
 
