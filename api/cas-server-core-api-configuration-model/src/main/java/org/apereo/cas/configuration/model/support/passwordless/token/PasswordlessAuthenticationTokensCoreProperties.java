@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.passwordless.token;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -29,5 +30,6 @@ public class PasswordlessAuthenticationTokensCoreProperties implements Serializa
     /**
      * Indicate how long should the token be considered valid.
      */
-    private int expireInSeconds = 180;
+    @DurationCapable
+    private String expiration = "PT180S";
 }

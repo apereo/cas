@@ -40,7 +40,7 @@ public class MongoDbPasswordlessTokenRepository extends BasePasswordlessTokenRep
     private final PasswordlessAuthenticationMongoDbTokensProperties properties;
 
     public MongoDbPasswordlessTokenRepository(final PasswordlessAuthenticationMongoDbTokensProperties properties,
-                                              final int tokenExpirationInSeconds,
+                                              final long tokenExpirationInSeconds,
                                               final CipherExecutor cipherExecutor,
                                               final MongoOperations mongoTemplate) {
         super(tokenExpirationInSeconds, cipherExecutor);

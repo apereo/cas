@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.JsonPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
@@ -114,10 +115,12 @@ public class PasswordlessAuthenticationConfiguration {
                                                                    @Qualifier("passwordlessCipherExecutor")
                                                                    final CipherExecutor passwordlessCipherExecutor) {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
+        val expiration = Beans.newDuration(tokens.getCore().getExpiration()).toSeconds();
+
         if (StringUtils.isNotBlank(tokens.getRest().getUrl())) {
-            return new RestfulPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor);
+            return new RestfulPasswordlessTokenRepository(expiration, tokens.getRest(), passwordlessCipherExecutor);
         }
-        return new InMemoryPasswordlessTokenRepository(tokens.getCore().getExpireInSeconds(), passwordlessCipherExecutor);
+        return new InMemoryPasswordlessTokenRepository(expiration, passwordlessCipherExecutor);
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")

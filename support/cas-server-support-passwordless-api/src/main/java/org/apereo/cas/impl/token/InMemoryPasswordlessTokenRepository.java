@@ -23,7 +23,7 @@ public class InMemoryPasswordlessTokenRepository extends BasePasswordlessTokenRe
 
     private final Cache<String, String> storage;
 
-    public InMemoryPasswordlessTokenRepository(final int tokenExpirationInSeconds,
+    public InMemoryPasswordlessTokenRepository(final long tokenExpirationInSeconds,
                                                final CipherExecutor cipherExecutor) {
         super(tokenExpirationInSeconds, cipherExecutor);
         storage = Caffeine.newBuilder()

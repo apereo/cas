@@ -37,7 +37,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
     @PersistenceContext(unitName = "jpaPasswordlessAuthNContext")
     private EntityManager entityManager;
 
-    public JpaPasswordlessTokenRepository(final int tokenExpirationInSeconds,
+    public JpaPasswordlessTokenRepository(final long tokenExpirationInSeconds,
                                           final CipherExecutor cipherExecutor) {
         super(tokenExpirationInSeconds, cipherExecutor);
     }
