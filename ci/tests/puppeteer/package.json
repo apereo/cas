@@ -1,16 +1,16 @@
 {
   "dependencies": {
     "@stomp/stompjs": "^6.1.2",
-    "axios": "^0.27.2",
+    "axios": "^1.2.1",
     "colors": "1.4.0",
     "crypto-js": "^4.1.1",
-    "dpop": "^1.0.0",
-    "express": "^4.18.1",
+    "dpop": "^1.1.0",
+    "express": "^4.18.2",
     "figlet": "^1.5.2",
     "http-cas-client": "^0.4.3",
     "imgur": "^2.2.0",
-    "jimp": "^0.16.1",
-    "jose": "^4.8.3",
+    "jimp": "^0.16.2",
+    "jose": "^4.11.1",
     "jsonpath-plus": "^6.0.1",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.5",
@@ -19,13 +19,13 @@
     "perf_hooks": "^0.0.1",
     "properties-reader": "^2.2.0",
     "ps-node": "^0.1.6",
-    "puppeteer": "^19.3.0",
+    "puppeteer": "^19.4.0",
     "puppeteer-loadtest": "^2.2.1",
-    "puppeteer-screen-recorder": "^2.0.2",
+    "puppeteer-screen-recorder": "^2.1.2",
     "qrcode-reader": "^1.0.4",
     "request": "^2.88.2",
     "sockjs-client": "^1.6.1",
     "wait-on": "^6.0.1",
-    "yaml": "^1.10.2"
+    "yaml": "^2.1.3"
   }
 }
