@@ -172,4 +172,5 @@ configurations.all {
     exclude(group: "javax.annotation", module: "javax.annotation-api")
     exclude(group: "javax.activation", module: "activation")
     exclude(group: "commons-logging", module: "commons-logging")
+    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
 }
