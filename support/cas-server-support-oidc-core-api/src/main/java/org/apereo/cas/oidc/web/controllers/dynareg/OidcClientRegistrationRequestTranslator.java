@@ -105,9 +105,9 @@ public class OidcClientRegistrationRequestTranslator {
                 registeredService.setJwks(jwks.toJson());
             }
         }
-        if (StringUtils.isNotBlank(registrationRequest.getTokenEndpointAuthMethod())) {
-            registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod());
-        }
+
+        FunctionUtils.doIfNotBlank(registrationRequest.getTokenEndpointAuthMethod(),
+            __ -> registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod()));
 
         if (StringUtils.isBlank(registeredService.getClientId())) {
             registeredService.setClientId(context.getClientIdGenerator().getNewString());
@@ -120,15 +120,12 @@ public class OidcClientRegistrationRequestTranslator {
             registrationRequest.getPostLogoutRedirectUris());
         registeredService.setLogoutUrl(urls);
 
-        if (StringUtils.isNotBlank(registrationRequest.getLogo())) {
-            registeredService.setLogo(registrationRequest.getLogo());
-        }
-        if (StringUtils.isNotBlank(registrationRequest.getPolicyUri())) {
-            registeredService.setInformationUrl(registrationRequest.getPolicyUri());
-        }
-        if (StringUtils.isNotBlank(registrationRequest.getTermsOfUseUri())) {
-            registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri());
-        }
+
+        FunctionUtils.doIfNotBlank(registrationRequest.getLogo(), __ -> registeredService.setLogo(registrationRequest.getLogo()));
+
+        FunctionUtils.doIfNotBlank(registrationRequest.getPolicyUri(), __ -> registeredService.setInformationUrl(registrationRequest.getPolicyUri()));
+
+        FunctionUtils.doIfNotBlank(registrationRequest.getTermsOfUseUri(), __ -> registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri()));
 
         if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedReponseAlg())) {
             registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());

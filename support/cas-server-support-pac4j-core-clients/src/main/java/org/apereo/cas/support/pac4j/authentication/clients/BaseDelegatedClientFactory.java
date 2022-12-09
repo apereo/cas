@@ -195,13 +195,11 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (fb.isEnabled() && StringUtils.isNotBlank(fb.getId()) && StringUtils.isNotBlank(fb.getSecret())) {
             val client = new FacebookClient(fb.getId(), fb.getSecret());
             configureClient(client, fb, casProperties);
-            if (StringUtils.isNotBlank(fb.getScope())) {
-                client.setScope(fb.getScope());
-            }
 
-            if (StringUtils.isNotBlank(fb.getFields())) {
-                client.setFields(fb.getFields());
-            }
+            FunctionUtils.doIfNotBlank(fb.getScope(), __ -> client.setScope(fb.getScope()));
+
+
+            FunctionUtils.doIfNotBlank(fb.getFields(), __ -> client.setFields(fb.getFields()));
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(client);
         }
@@ -214,9 +212,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (ln.isEnabled() && StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
             val client = new LinkedIn2Client(ln.getId(), ln.getSecret());
             configureClient(client, ln, casProperties);
-            if (StringUtils.isNotBlank(ln.getScope())) {
-                client.setScope(ln.getScope());
-            }
+
+            FunctionUtils.doIfNotBlank(ln.getScope(), __ -> client.setScope(ln.getScope()));
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(client);
         }
@@ -230,9 +227,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (github.isEnabled() && StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             val client = new GitHubClient(github.getId(), github.getSecret());
             configureClient(client, github, casProperties);
-            if (StringUtils.isNotBlank(github.getScope())) {
-                client.setScope(github.getScope());
-            }
+
+            FunctionUtils.doIfNotBlank(github.getScope(), __ -> client.setScope(github.getScope()));
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(client);
         }

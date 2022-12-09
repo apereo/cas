@@ -164,6 +164,7 @@ jobs:
         check:
           - CheckAsyncAnnotationInInterface
           - CheckDuplicateGradleConfiguration
+          - CheckFunctionalConditionUsage
           - CheckDuplicateTestConfiguration
           - CheckMissingClassInTestsSuite
           - CheckMissingTestsSuiteClassAnnotation

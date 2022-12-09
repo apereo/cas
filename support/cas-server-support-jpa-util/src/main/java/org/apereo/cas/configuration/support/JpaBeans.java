@@ -129,9 +129,8 @@ public class JpaBeans {
         if (config.getPersistenceProvider() != null) {
             bean.setPersistenceProvider(config.getPersistenceProvider());
         }
-        if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
-            bean.setPersistenceUnitName(config.getPersistenceUnitName());
-        }
+
+        FunctionUtils.doIfNotBlank(config.getPersistenceUnitName(), __ -> bean.setPersistenceUnitName(config.getPersistenceUnitName()));
         if (!config.getPackagesToScan().isEmpty()) {
             bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         }
