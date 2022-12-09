@@ -13,23 +13,6 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                 }
         ],
-        jaxb                       : [
-                dependencies.create("jakarta.xml.bind:jakarta.xml.bind-api:$jaxbApiVersion") {
-                    transitive = false
-                },
-                dependencies.create("com.sun.xml.bind:jaxb-impl:$jaxbImplVersion") {
-                    transitive = false
-                },
-                dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$jaxbApiVersion") {
-                    transitive = false
-                },
-                dependencies.create("com.sun.xml.ws:jaxws-rt:$jaxbApiVersion") {
-                    transitive = false
-                },
-                dependencies.create("jakarta.xml.soap:jakarta.xml.soap-api:$jakartaSoapApiVersion") {
-                    transitive = false
-                }
-        ],
         firebaseadmin              : [
                 dependencies.create("com.google.api-client:google-api-client:$googleApiClientVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -40,12 +23,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "commons-codec", module: "commons-codec")
-                }
-        ],
-        jakartael                  : [
-                dependencies.create("jakarta.el:jakarta.el-api:$jakartaElVersion") {
-                },
-                dependencies.create("org.glassfish.expressly:expressly:$jakartaElImplVersion") {
                 }
         ],
         aspectj                    : [
@@ -926,6 +903,22 @@ ext.libraries = [
                 }
         ],
         jakarta                    : [
+                dependencies.create("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion"),
+                dependencies.create("jakarta.xml.bind:jakarta.xml.bind-api:$jaxbApiVersion") {
+                    transitive = false
+                },
+                dependencies.create("com.sun.xml.bind:jaxb-impl:$jaxbImplVersion") {
+                    transitive = false
+                },
+                dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$jaxbApiVersion") {
+                    transitive = false
+                },
+                dependencies.create("com.sun.xml.ws:jaxws-rt:$jaxbApiVersion") {
+                    transitive = false
+                },
+                dependencies.create("jakarta.xml.soap:jakarta.xml.soap-api:$jakartaSoapApiVersion") {
+                    transitive = false
+                },
                 dependencies.create("jakarta.servlet:jakarta.servlet-api:$jakartaServletVersion") {
                 },
                 dependencies.create("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApiVersion") {
@@ -936,7 +929,11 @@ ext.libraries = [
                     exclude(group: "xml-apis", module: "xml-apis")
                 },
                 dependencies.create("jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:$jakartaJstlVersion"),
-                dependencies.create("jakarta.transaction:jakarta.transaction-api:$jtaVersion")
+                dependencies.create("jakarta.transaction:jakarta.transaction-api:$jtaVersion"),
+                dependencies.create("jakarta.el:jakarta.el-api:$jakartaElVersion") {
+                },
+                dependencies.create("org.glassfish.expressly:expressly:$jakartaElImplVersion") {
+                }
         ],
         springamqp                 : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-amqp:$springBootVersion") {
@@ -3338,7 +3335,6 @@ ext.libraries = [
                     exclude(group: "jakarta.xml.bind", module: "jakarta.xml.bind-api")
                 }
         ],
-        validationapi              : dependencies.create("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion"),
         yubicoapi                  :
                 dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
