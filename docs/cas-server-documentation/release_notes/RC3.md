@@ -71,6 +71,11 @@ The collection of end-to-end browser tests based on Puppeteer continue to grow t
 and scenarios. At the moment, total number of jobs stands at approximately `374` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
+### Apache Http Client 5
+
+The migration of the entire codebase to Apache Http Client `5.2.x` is now complete. While this upgrade should remain largely visible,
+it is a major change that affects all CAS components that deal with the HTTP layer or support and interact with REST APIs. 
+
 ### Docker Integration Tests
 
 Several Docker images that are used for integration tests are now updated to use more recent versions. Those are:
@@ -129,6 +134,7 @@ to support relational databases and MongoDb separately via dedicated extension m
 - Undertow
 - Jakarta Servlet API
 - Pac4j
+- Apache Http Client
 - Hibernate
 - Hibernate Validator
 - OpenSAML

@@ -13,7 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -67,7 +68,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
-            val statusCode = response.getStatusLine().getStatusCode();
+            val statusCode = response.getCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);
@@ -90,9 +91,9 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 .parameters(CollectionUtils.wrap("username", principal.getId()))
                 .build();
             response = HttpUtils.execute(exec);
-            val statusCode = response.getStatusLine().getStatusCode();
+            val statusCode = response.getCode();
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
                 return Optional.ofNullable(terms);
             }

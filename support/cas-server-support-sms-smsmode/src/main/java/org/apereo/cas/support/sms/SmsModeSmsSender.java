@@ -10,7 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -53,11 +54,11 @@ public record SmsModeSmsSender(SmsModeProperties properties) implements SmsSende
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+            val status = HttpStatus.valueOf(response.getCode());
             if (status.is2xxSuccessful()) {
-                val entity = response.getEntity();
+                val entity = ((HttpEntityContainer) response).getEntity();
                 val charset = entity.getContentEncoding() != null
-                    ? Charset.forName(entity.getContentEncoding().getValue())
+                    ? Charset.forName(entity.getContentEncoding())
                     : StandardCharsets.ISO_8859_1;
                 val resp = IOUtils.toString(entity.getContent(), charset);
                 LOGGER.debug("Response from SmsMode: [{}]", resp);

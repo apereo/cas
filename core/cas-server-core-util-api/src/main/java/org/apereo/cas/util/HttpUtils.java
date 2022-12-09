@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpClientFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.Builder;
@@ -12,22 +13,30 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicHttpResponse;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
+import org.apache.hc.core5.pool.PoolReusePolicy;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
@@ -39,6 +48,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -50,15 +60,10 @@ import java.util.Optional;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
-    private static final int MAX_CONNECTIONS = 200;
-
-    private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
-
     private static final int CONNECT_TIMEOUT_IN_MILLISECONDS = 500;
 
     private static final int CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = 5 * 1000;
 
-    private static final int SOCKET_TIMEOUT_IN_MILLISECONDS = 10 * 1000;
 
     /**
      * Execute http request and produce a response.
@@ -83,8 +88,7 @@ public class HttpUtils {
             val sanitizedUrl = FunctionUtils.doUnchecked(
                 () -> new URIBuilder(execution.getUrl()).removeQuery().clearParameters().build().toASCIIString());
             LoggingUtils.error(LOGGER, "SSL error accessing: [" + sanitizedUrl + ']', e);
-            return new BasicHttpResponse(new BasicStatusLine(request.getProtocolVersion(),
-                HttpStatus.SC_INTERNAL_SERVER_ERROR, sanitizedUrl));
+            return new BasicHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, sanitizedUrl);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -95,7 +99,7 @@ public class HttpUtils {
         val builder = getHttpClientBuilder(execution);
         if (StringUtils.isNotBlank(execution.getProxyUrl())) {
             val proxyEndpoint = new URL(execution.getProxyUrl());
-            val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort(), proxyEndpoint.getProtocol());
+            val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort());
             builder.setProxy(proxy);
         }
         return builder.build();
@@ -194,24 +198,41 @@ public class HttpUtils {
 
     private HttpClientBuilder getHttpClientBuilder(final HttpExecutionRequest execution) {
         val requestConfig = RequestConfig.custom();
-        requestConfig.setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS);
-        requestConfig.setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS);
-        requestConfig.setSocketTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS);
+        requestConfig.setConnectTimeout(Timeout.ofMilliseconds(CONNECT_TIMEOUT_IN_MILLISECONDS));
+        requestConfig.setConnectionRequestTimeout(Timeout.ofMilliseconds(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS));
 
-        val builder = HttpClientBuilder
+        val builder =HttpClientBuilder
             .create()
             .useSystemProperties()
-            .setMaxConnTotal(MAX_CONNECTIONS)
-            .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE)
             .setDefaultRequestConfig(requestConfig.build());
-        Optional.ofNullable(execution.getHttpClient())
-            .ifPresent(client -> {
-                val httpClientFactory = client.httpClientFactory();
-                builder.setSSLHostnameVerifier(httpClientFactory.getHostnameVerifier());
-                builder.setSSLContext(httpClientFactory.getSslContext());
-                builder.setSSLSocketFactory(httpClientFactory.getSslSocketFactory());
-            });
+        
+        val socketFactory = Optional.ofNullable(execution.getHttpClient())
+            .map(HttpClient::httpClientFactory)
+            .filter(factory -> Objects.nonNull(factory.getSslSocketFactory()))
+            .map(HttpClientFactory::getSslSocketFactory)
+            .orElseGet(() -> getSslConnectionSocketFactory(execution));
+
+        val connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+            .setSSLSocketFactory(socketFactory)
+            .setDefaultSocketConfig(SocketConfig.custom()
+                .setSoTimeout(Timeout.ofMilliseconds(CONNECT_TIMEOUT_IN_MILLISECONDS)).build())
+            .setPoolConcurrencyPolicy(PoolConcurrencyPolicy.STRICT)
+            .setConnPoolPolicy(PoolReusePolicy.LIFO)
+            .setConnectionTimeToLive(Timeout.ofMilliseconds(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS))
+            .build();
+        builder.setConnectionManager(connectionManager);
         return builder;
+    }
+
+    private static SSLConnectionSocketFactory getSslConnectionSocketFactory(final HttpExecutionRequest execution) {
+        val builder = SSLConnectionSocketFactoryBuilder.create().useSystemProperties();
+        Optional.ofNullable(execution.getHttpClient())
+            .map(HttpClient::httpClientFactory)
+            .ifPresentOrElse(factory -> {
+                builder.setHostnameVerifier(factory.getHostnameVerifier());
+                builder.setSslContext(factory.getSslContext());
+            }, () -> builder.setSslContext(SSLContexts.createDefault()).setHostnameVerifier(new DefaultHostnameVerifier()));
+        return builder.build();
     }
 
     @SuperBuilder

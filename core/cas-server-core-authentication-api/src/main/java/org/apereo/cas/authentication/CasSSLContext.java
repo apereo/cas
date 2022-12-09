@@ -2,9 +2,9 @@ package org.apereo.cas.authentication;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.jooq.lambda.Unchecked;
 
 import javax.net.ssl.HostnameVerifier;

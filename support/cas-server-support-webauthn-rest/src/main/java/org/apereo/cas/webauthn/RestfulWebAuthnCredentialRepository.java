@@ -13,7 +13,8 @@ import com.yubico.data.CredentialRegistration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,8 +53,8 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
-            if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                val result = getCipherExecutor().decode(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8));
+            if (Objects.requireNonNull(response).getCode() == HttpStatus.OK.value()) {
+                val result = getCipherExecutor().decode(IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8));
                 return WebAuthnUtils.getObjectMapper().readValue(result, new TypeReference<List<CredentialRegistration>>() {
                 });
             }
@@ -77,8 +78,8 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .url(restProperties.getUrl())
                 .build();
             response = HttpUtils.execute(exec);
-            if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                val result = getCipherExecutor().decode(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8));
+            if (Objects.requireNonNull(response).getCode()== HttpStatus.OK.value()) {
+                val result = getCipherExecutor().decode(IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8));
                 val records = WebAuthnUtils.getObjectMapper().readValue(result, new TypeReference<List<CredentialRegistration>>() {
                 });
                 return records.stream();

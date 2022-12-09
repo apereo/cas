@@ -5,7 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.val;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -47,7 +47,7 @@ public record RestfulSmsSender(RestfulSmsProperties restProperties) implements S
 
             response = HttpUtils.execute(exec);
             if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                val status = HttpStatus.valueOf(response.getCode());
                 return status.is2xxSuccessful();
             }
         } finally {

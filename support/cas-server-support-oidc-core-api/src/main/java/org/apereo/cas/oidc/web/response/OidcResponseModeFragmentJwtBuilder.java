@@ -6,7 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.ModelAndView;

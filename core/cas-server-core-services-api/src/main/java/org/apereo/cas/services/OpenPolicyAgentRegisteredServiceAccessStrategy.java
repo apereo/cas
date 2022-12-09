@@ -22,7 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -93,8 +94,8 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
                 .build();
             LOGGER.debug("Submitting authorization request to [{}] for [{}]", opaUrl, checkEntity);
             response = HttpUtils.execute(exec);
-            if (HttpStatus.resolve(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-                val results = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
+                val results = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.trace("Received response from endpoint [{}] as [{}]", url, results);
                 val payload = MAPPER.readValue(results, Map.class);
                 return (Boolean) payload.getOrDefault("result", Boolean.FALSE);
