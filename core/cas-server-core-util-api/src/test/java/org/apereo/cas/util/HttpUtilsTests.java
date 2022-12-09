@@ -3,7 +3,7 @@ package org.apereo.cas.util;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
 import lombok.val;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -84,7 +84,8 @@ public class HttpUtilsTests {
             .build();
         val response = HttpUtils.execute(exec);
         assertNotNull(response);
-        assertTrue(HttpStatus.resolve(response.getStatusLine().getStatusCode()).is5xxServerError());
-        assertTrue(response.getStatusLine().getReasonPhrase().contains("https://untrusted-root.badssl.com/endpoint"));
+
+        assertTrue(HttpStatus.valueOf(response.getCode()).is5xxServerError());
+        assertTrue(response.getReasonPhrase().contains("https://untrusted-root.badssl.com/endpoint"));
     }
 }

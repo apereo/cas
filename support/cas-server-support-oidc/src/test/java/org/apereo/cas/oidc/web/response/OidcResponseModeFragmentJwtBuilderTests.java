@@ -5,7 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

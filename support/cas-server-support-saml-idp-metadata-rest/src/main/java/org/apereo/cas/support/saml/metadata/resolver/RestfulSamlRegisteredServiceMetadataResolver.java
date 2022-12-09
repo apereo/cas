@@ -19,8 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.hjson.JsonValue;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -67,8 +68,8 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response != null && response.getCode() == HttpStatus.SC_OK) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 val doc = MAPPER.readValue(JsonValue.readHjson(result).toString(), SamlMetadataDocument.class);
                 val resolver = buildMetadataResolverFrom(service, doc);
                 return CollectionUtils.wrapList(resolver);

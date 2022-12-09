@@ -670,12 +670,14 @@ ext.libraries = [
                 }
         ],
         httpclient                 : [
-                dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
+                dependencies.create("org.apache.httpcomponents.client5:httpclient5:$httpclientVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.apache.httpcomponents", module: "httpcore")
+                    exclude(group: "org.apache.httpcomponents.core5", module: "httpcore5")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.apache.httpcomponents:httpcore:$httpCoreVersion") {
+                dependencies.create("org.apache.httpcomponents.core5:httpcore5:$httpCoreVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         awsclouddirectory          : [

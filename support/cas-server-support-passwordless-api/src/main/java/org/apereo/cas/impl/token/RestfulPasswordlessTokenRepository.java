@@ -10,7 +10,8 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 
 import java.io.Serializable;
@@ -50,8 +51,8 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 .build();
 
             response = HttpUtils.execute(exec);
-            if (response != null && response.getEntity() != null) {
-                val token = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response != null && ((HttpEntityContainer) response).getEntity() != null) {
+                val token = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 val result = decodePasswordlessAuthenticationToken(token);
                 return Optional.of(result);
             }
