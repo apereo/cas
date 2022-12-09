@@ -88,9 +88,8 @@ public class JpaBeans {
         }
 
         val bean = new HikariDataSource();
-        if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
-            bean.setDriverClassName(jpaProperties.getDriverClass());
-        }
+        FunctionUtils.doIfNotBlank(jpaProperties.getDriverClass(), __ -> bean.setDriverClassName(jpaProperties.getDriverClass()));
+
         val url = SpringExpressionLanguageValueResolver.getInstance().resolve(jpaProperties.getUrl());
         bean.setJdbcUrl(url);
         bean.setUsername(jpaProperties.getUser());
