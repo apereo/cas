@@ -448,9 +448,7 @@ subprojects {
     dependencies {
 
         implementation libraries.aspectj
-        implementation libraries.validationapi
 
-        api libraries.jaxb
         api libraries.swaggerannotations
         api libraries.slf4j
         api libraries.guava
@@ -468,7 +466,6 @@ subprojects {
         api libraries.springsecurity
         api libraries.springintegration
         api libraries.springwebflow
-        api libraries.jakartael
         api libraries.jakarta
 
         annotationProcessor libraries.springindexer

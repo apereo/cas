@@ -333,9 +333,9 @@ while (( "$#" )); do
             spnego)
                 task+="testSpnego "
                 ;;
-            cosmosdb|cosmos)
+            azure|cosmosdb)
                 isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
-                task+="testCosmosDb "
+                task+="testAzure "
                 ;;
             simple|unit)
                 task+="testSimple "
