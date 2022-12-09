@@ -134,8 +134,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         }
         val customProperties = client.getCustomProperties();
         customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, clientProperties.getAutoRedirectType());
-        if (StringUtils.isNotBlank(clientProperties.getPrincipalAttributeId())) {
-            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalAttributeId());
+        if (StringUtils.isNotBlank(clientProperties.getPrincipalIdAttribute())) {
+            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalIdAttribute());
         }
         if (StringUtils.isNotBlank(clientProperties.getCssClass())) {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, clientProperties.getCssClass());
@@ -304,8 +304,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                              && StringUtils.isNotBlank(oauth.getSecret()))
             .map(oauth -> {
                 val client = new GenericOAuth20Client();
-                client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalAttributeId(),
-                    pac4jProperties.getCore().getPrincipalAttributeId()));
+                client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalIdAttribute(), pac4jProperties.getCore().getPrincipalIdAttribute()));
                 client.setKey(oauth.getId());
                 client.setSecret(oauth.getSecret());
                 client.setProfileAttrs(oauth.getProfileAttrs());
@@ -435,9 +434,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
     private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
                                                                                  final Class<T> clazz) {
         val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
-        if (StringUtils.isNotBlank(oidc.getScope())) {
-            cfg.setScope(oidc.getScope());
-        }
+        FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(oidc.getScope()));
+        
         cfg.setUseNonce(oidc.isUseNonce());
         cfg.setDisablePkce(oidc.isDisablePkce());
         cfg.setSecret(oidc.getSecret());
@@ -458,12 +456,9 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
         }
 
-        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
-            cfg.setResponseMode(oidc.getResponseMode());
-        }
-        if (StringUtils.isNotBlank(oidc.getResponseType())) {
-            cfg.setResponseType(oidc.getResponseType());
-        }
+        FunctionUtils.doIfNotBlank(oidc.getResponseMode(), __ -> cfg.setResponseMode(oidc.getResponseMode()));
+        FunctionUtils.doIfNotBlank(oidc.getResponseType(), __ -> cfg.setResponseType(oidc.getResponseType()));
+
         if (!oidc.getMappedClaims().isEmpty()) {
             cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
         }
@@ -484,9 +479,9 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
-                if (saml.getCertificateExpirationDays() > 0) {
-                    cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()));
-                }
+
+                FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
+                    __ -> cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays())));
                 FunctionUtils.doIfNotNull(saml.getResponseBindingType(), cfg::setResponseBindingType);
                 FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg);
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
@@ -505,9 +500,9 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
                 cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
 
-                if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
-                    cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
-                }
+                FunctionUtils.doIfNotBlank(saml.getPrincipalIdAttribute(), __ -> cfg.setAttributeAsId(saml.getPrincipalIdAttribute()));
+                FunctionUtils.doIfNotBlank(saml.getNameIdAttribute(), __ -> cfg.setNameIdAttribute(saml.getNameIdAttribute()));
+
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
                 cfg.setWantsResponsesSigned(saml.isWantsResponsesSigned());
                 cfg.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
@@ -529,16 +524,15 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                         }
                     });
 
-                if (saml.getAssertionConsumerServiceIndex() >= 0) {
-                    cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex());
-                }
+                FunctionUtils.doIf(saml.getAssertionConsumerServiceIndex() >= 0,
+                    __ -> cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex()));
+
                 if (!saml.getAuthnContextClassRef().isEmpty()) {
                     cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
                     cfg.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
                 }
-                if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
-                    cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
-                }
+
+                FunctionUtils.doIfNotBlank(saml.getNameIdPolicyFormat(), __ -> cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat()));
 
                 if (!saml.getRequestedAttributes().isEmpty()) {
                     saml.getRequestedAttributes().stream()
@@ -556,9 +550,9 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 if (!saml.getSignatureReferenceDigestMethods().isEmpty()) {
                     cfg.setSignatureReferenceDigestMethods(saml.getSignatureReferenceDigestMethods());
                 }
-                if (!StringUtils.isNotBlank(saml.getSignatureCanonicalizationAlgorithm())) {
-                    cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm());
-                }
+
+                FunctionUtils.doIfNotBlank(saml.getSignatureCanonicalizationAlgorithm(),
+                    __ -> cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm()));
                 cfg.setProviderName(saml.getProviderName());
                 cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 

@@ -145,7 +145,7 @@ public class DefaultDelegatedClientFactoryTests {
     @TestPropertySource(properties = {
         "cas.authn.pac4j.cas[0].login-url=https://login.example.org/login",
         "cas.authn.pac4j.cas[0].protocol=SAML",
-        "cas.authn.pac4j.cas[0].principal-attribute-id=uid",
+        "cas.authn.pac4j.cas[0].principal-id-attribute=uid",
         "cas.authn.pac4j.cas[0].css-class=cssClass",
         "cas.authn.pac4j.cas[0].display-name=My CAS",
         "cas.authn.pac4j.core.lazy-init=true"

@@ -217,13 +217,6 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     private boolean useNameQualifier = true;
 
     /**
-     * The attribute found in the saml response
-     * that may be used to establish the authenticated
-     * user and build a profile for CAS.
-     */
-    private String principalIdAttribute;
-
-    /**
      * Whether or not SAML SP metadata should be signed when generated.
      */
     private boolean signServiceProviderMetadata;
@@ -263,6 +256,13 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * The signing signature canonicalization algorithm, if any, to override the global defaults.
      */
     private String signatureCanonicalizationAlgorithm;
+
+    /**
+     * The attribute name that should be used and extracted from the SAML2
+     * response to identify and build a NameID value, when the response
+     * is processed and consumed.
+     */
+    private String nameIdAttribute;
 
     /**
      * Provider name set for the saml authentication request.

@@ -165,7 +165,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                 servicesManager, clientPrincipalFactory, builtClients, clientUserProfileProvisioner,
                 delegatedClientDistributedSessionStore, applicationContext);
             handler.setTypedIdUsed(pac4j.isTypedIdUsed());
-            handler.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
+            handler.setPrincipalAttributeId(pac4j.getPrincipalIdAttribute());
             return handler;
         }
 
