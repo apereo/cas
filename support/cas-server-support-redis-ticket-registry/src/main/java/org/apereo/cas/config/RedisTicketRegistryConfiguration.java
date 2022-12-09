@@ -17,6 +17,7 @@ import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.sub.DefaultRedisTicketRegistryMessageListener;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.lock.DefaultLockRepository;
 import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -25,7 +26,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -90,9 +90,8 @@ public class RedisTicketRegistryConfiguration {
             final CasConfigurationProperties casProperties) {
             val bean = new PublisherIdentifier();
             val redis = casProperties.getTicket().getRegistry().getRedis();
-            if (StringUtils.isNotBlank(redis.getQueueIdentifier())) {
-                bean.setId(redis.getQueueIdentifier());
-            }
+
+            FunctionUtils.doIfNotBlank(redis.getQueueIdentifier(), __ -> bean.setId(redis.getQueueIdentifier()));
             return bean;
         }
 

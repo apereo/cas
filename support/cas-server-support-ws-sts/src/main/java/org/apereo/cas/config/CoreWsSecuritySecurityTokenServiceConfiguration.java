@@ -23,6 +23,7 @@ import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
@@ -182,9 +183,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
                                                             @Qualifier("securityTokenServiceRealms") final Map<String, RealmProperties> securityTokenServiceRealms) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
             val s = new DefaultSubjectProvider();
-            if (StringUtils.isNotBlank(wsfed.getSubjectNameQualifier())) {
-                s.setSubjectNameQualifier(wsfed.getSubjectNameQualifier());
-            }
+
+            FunctionUtils.doIfNotBlank(wsfed.getSubjectNameQualifier(), __ -> s.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
             switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
                 case "email" -> s.setSubjectNameIDFormat(NameIDType.EMAIL);
                 case "entity" -> s.setSubjectNameIDFormat(NameIDType.ENTITY);
