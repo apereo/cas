@@ -484,6 +484,8 @@ subprojects {
         if (!ci) {
             testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
         }
+
+        runtimeOnly libraries.httpclient4
     }
 }
 
