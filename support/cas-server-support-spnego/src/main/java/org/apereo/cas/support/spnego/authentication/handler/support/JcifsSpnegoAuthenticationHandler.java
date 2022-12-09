@@ -69,12 +69,15 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         try {
             LOGGER.debug("Waiting for connection to validate SPNEGO Token");
             val authentications = authenticationsPool.poll(this.poolTimeoutInMilliseconds, TimeUnit.MILLISECONDS);
-            try {
-                return doInternalAuthentication(authentications, spnegoCredential, service);
-            } finally {
-                authenticationsPool.add(authentications);
-                LOGGER.debug("Returned connection to pool");
+            if (authentications != null) {
+                try {
+                    return doInternalAuthentication(authentications, spnegoCredential, service);
+                } finally {
+                    authenticationsPool.add(authentications);
+                    LOGGER.debug("Returned connection to pool");
+                }
             }
+            throw new FailedLoginException("Cannot get connection from pool to validate SPNEGO Token");
         } catch (final InterruptedException e) {
             throw new FailedLoginException("Thread interrupted while waiting for connection to validate SPNEGO Token");
         }
