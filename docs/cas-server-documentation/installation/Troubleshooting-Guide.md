@@ -34,9 +34,9 @@ you may also want to look into your `catalina.out` and `localhost-X-Y-Z.log` log
 
 ## Deployment Problem; Configuration Issue X. Can You Help?
 
-[Study this](#review-logs).
+Yes. [Study this](#review-logs).
 
-## How do I tune/extend MongoDb, MySQL, Spring Webflow, etc?
+## How do I tune/extend MongoDb, MySQL, Hazelcas, Docker, etc?
 
 If you have a question about tuning and configuration of external components utilized by CAS
 and you have a need to achieve more advanced use cases other than what the CAS defaults offer, your question is best
@@ -59,7 +59,7 @@ Typical questions in this category that are best answered elsewhere are:
 It is quite possible that the problem you are trying to resolve has already been solved by the next patch release.
 A patch release is a conservative incremental improvement that includes bug fixes and small enhancements and 
 is absolutely backward compatible with previous PATCH releases of the same MINOR release. For example, if you are currently
-on CAS version `6.5.1` and have run into a possible issue, you should consider upgrading to `6.5.2`, and 6.5.3` and so on
+on CAS version `6.5.1` and have run into a possible issue, you should consider upgrading to `6.5.2`, and `6.5.3` and so on
 to investigate further, assuming releases are of course available and published.
 
 The project release schedule is [available here](https://github.com/apereo/cas/milestones), and you can always
