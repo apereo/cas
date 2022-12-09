@@ -1,6 +1,7 @@
 package org.apereo.cas.notifications.mail;
 
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
@@ -44,9 +45,7 @@ public class DefaultEmailSender implements EmailSender {
         helper.setSubject(subject);
 
         helper.setFrom(emailRequest.getEmailProperties().getFrom());
-        if (StringUtils.isNotBlank(emailRequest.getEmailProperties().getReplyTo())) {
-            helper.setReplyTo(emailRequest.getEmailProperties().getReplyTo());
-        }
+        FunctionUtils.doIfNotBlank(emailRequest.getEmailProperties().getReplyTo(), __ -> helper.setReplyTo(emailRequest.getEmailProperties().getReplyTo()));
         helper.setValidateAddresses(emailRequest.getEmailProperties().isValidateAddresses());
         helper.setPriority(emailRequest.getEmailProperties().getPriority());
         helper.setCc(emailRequest.getEmailProperties().getCc().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
