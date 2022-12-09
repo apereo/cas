@@ -110,7 +110,8 @@ The ability to manage and store [OpenID Connect JWKS](../authentication/OIDC-Aut
 to support relational databases and MongoDb separately via dedicated extension modules.
 
 ## Other Stuff
-        
+              
+- The [Groovy username provider](../integration/Attribute-Release-PrincipalId-Groovy.html) is now able to support better caching techniques. 
 - Support for OpenID Connect `unmet_authentication_requirements` error code is now available.
 - Email templates and SMS notification messages for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) now have access to both 
   `token` and `tokenWithoutPrefix` variables. 
@@ -143,3 +144,4 @@ to support relational databases and MongoDb separately via dedicated extension m
 - Person Directory
 - Spring Webflow
 - Inspektr
+- Amazon SDK
