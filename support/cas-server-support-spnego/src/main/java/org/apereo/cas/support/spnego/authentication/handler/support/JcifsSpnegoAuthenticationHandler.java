@@ -21,6 +21,8 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -37,20 +39,23 @@ import java.util.regex.Pattern;
 @Slf4j
 public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private final List<Authentication> authentications;
+    private final BlockingQueue<List<Authentication>> authenticationsPool;
 
     private final boolean principalWithDomainName;
 
     private final boolean ntlmAllowed;
 
+    private final long poolTimeoutInMilliseconds;
+
     public JcifsSpnegoAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                            final PrincipalFactory principalFactory, final List<Authentication> authentications,
+                                            final PrincipalFactory principalFactory, final BlockingQueue<List<Authentication>> authenticationsPool,
                                             final boolean principalWithDomainName, final boolean ntlmAllowed,
-                                            final Integer order) {
+                                            final Integer order, final long poolTimeoutInMilliseconds) {
         super(name, servicesManager, principalFactory, order);
-        this.authentications = authentications;
+        this.authenticationsPool = authenticationsPool;
         this.principalWithDomainName = principalWithDomainName;
         this.ntlmAllowed = ntlmAllowed;
+        this.poolTimeoutInMilliseconds = poolTimeoutInMilliseconds;
     }
 
     @Override
@@ -61,9 +66,25 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
             throw new FailedLoginException("NTLM not allowed");
         }
 
+        try {
+            LOGGER.debug("Waiting for connection to validate SPNEGO Token");
+            val authentications = authenticationsPool.poll(this.poolTimeoutInMilliseconds, TimeUnit.MILLISECONDS);
+            try {
+                return doInternalAuthentication(authentications, spnegoCredential, service);
+            } finally {
+                authenticationsPool.add(authentications);
+                LOGGER.debug("Returned connection to pool");
+            }
+        } catch (final InterruptedException e) {
+            throw new FailedLoginException("Thread interrupted while waiting for connection to validate SPNEGO Token");
+        }
+    }
+
+    protected AuthenticationHandlerExecutionResult doInternalAuthentication(final List<Authentication> authentications,
+                             final SpnegoCredential spnegoCredential, final Service service) throws GeneralSecurityException {
         var principal = (java.security.Principal) null;
         var nextToken = (byte[]) null;
-        val it = this.authentications.iterator();
+        val it = authentications.iterator();
         while (nextToken == null && it.hasNext()) {
             try {
                 val authentication = it.next();
@@ -99,7 +120,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         if (!success) {
             throw new FailedLoginException("Principal is null, the processing of the SPNEGO Token failed");
         }
-        return new DefaultAuthenticationHandlerExecutionResult(this, credential, spnegoCredential.getPrincipal());
+        return new DefaultAuthenticationHandlerExecutionResult(this, spnegoCredential, spnegoCredential.getPrincipal());
     }
 
     @Override

@@ -143,4 +143,14 @@ public class SpnegoProperties implements Serializable {
     @NestedConfigurationProperty
     private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(100);
 
+    /**
+     * The size of the pool.
+     */
+    private int poolSize = 10;
+
+    /**
+     * The timeout of the pool.
+     */
+    @DurationCapable
+    private String poolTimeout = "PT2S";
 }
