@@ -176,6 +176,9 @@
 {% assign textAreaRequiredProperties = blank %}
 {% assign textAreaOptionalProperties = blank %}
 {% assign textAreaCryptoProperties = blank %}
+{% assign textAreaPrincipalTransformationProperties = blank %}
+{% assign textAreaPasswordPolicyProperties = blank %}
+{% assign textAreaPasswordEncoderProperties = blank %}
 
 <div class='tab-content clearfix' id="casPropertiesTabContent{{casPropertiesRandomNumber}}">
 
@@ -237,12 +240,15 @@
                                 {% assign authnPredicateSettingsFound = true %}
                             {% endif %}
 
+                            {% assign passwordEncoderSettingsFound = false %}
                             {% if config.name contains ".password-encoder" %}
                                 {% assign passwordEncoderSettingsFound = true %}
                             {% endif %}
+                            {% assign principalTransformationSettingsFound = false %}
                             {% if config.name contains ".principal-transformation" %}
                                 {% assign principalTransformationSettingsFound = true %}
                             {% endif %}
+                            {% assign passwordPolicySettingsFound = false %}
                             {% if config.name contains ".password-policy" %}
                                 {% assign passwordPolicySettingsFound = true %}
                             {% endif %}
@@ -274,6 +280,16 @@
                                 {% if signingEncryptionCollected == true %}
                                 {% assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties %}
                                 {% endif %}
+                                {% if passwordEncoderSettingsFound == true %}
+                                {% assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties %}
+                                {% endif %}
+                                {% if principalTransformationSettingsFound == true %}
+                                {% assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties %}
+                                {% endif %}
+                                {% if passwordPolicySettingsFound == true %}
+                                {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
+                                {% endif %}
+                                
                         {% endunless %}
                     {% endif %}
                 {% endfor %}
@@ -327,12 +343,15 @@
                                 {% if config.name contains ".credential-criteria" %}
                                     {% assign authnPredicateSettingsFound = true %}
                                 {% endif %}
+                                {% assign passwordEncoderSettingsFound = false %}
                                 {% if config.name contains ".password-encoder" %}
                                     {% assign passwordEncoderSettingsFound = true %}
                                 {% endif %}
+                                {% assign principalTransformationSettingsFound = false %}
                                 {% if config.name contains ".principal-transformation" %}
                                     {% assign principalTransformationSettingsFound = true %}
                                 {% endif %}
+                                {% assign passwordPolicySettingsFound = false %}
                                 {% if config.name contains ".password-policy" %}
                                     {% assign passwordPolicySettingsFound = true %}
                                 {% endif %}
@@ -364,6 +383,12 @@
                                     {% endif %}
                                     {% if passwordPolicySettingsFound == true %}
                                     {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
+                                    {% endif %}
+                                    {% if passwordEncoderSettingsFound == true %}
+                                    {% assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties %}
+                                    {% endif %}
+                                    {% if principalTransformationSettingsFound == true %}
+                                    {% assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties %}
                                     {% endif %}
                             {% endunless %}
 
@@ -440,12 +465,15 @@
                             {% if config.name contains ".credential-criteria" %}
                                 {% assign authnPredicateSettingsFound = true %}
                             {% endif %}
+                            {% assign passwordEncoderSettingsFound = false %}
                             {% if config.name contains ".password-encoder." %}
                                 {% assign passwordEncoderSettingsFound = true %}
                             {% endif %}
+                            {% assign principalTransformationSettingsFound = false %}
                             {% if config.name contains ".principal-transformation." %}
                                 {% assign principalTransformationSettingsFound = true %}
                             {% endif %}
+                            {% assign passwordPolicySettingsFound = false %}
                             {% if config.name contains ".password-policy." %}
                                 {% assign passwordPolicySettingsFound = true %}
                             {% endif %}
@@ -476,6 +504,12 @@
                             {% endif %}
                             {% if passwordPolicySettingsFound == true %}
                             {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
+                            {% endif %}
+                            {% if passwordEncoderSettingsFound == true %}
+                            {% assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties %}
+                            {% endif %}
+                            {% if principalTransformationSettingsFound == true %}
+                            {% assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties %}
                             {% endif %}
                         {% endunless %}
 
@@ -532,12 +566,15 @@
                                     {% if config.name contains ".credential-criteria" %}
                                         {% assign authnPredicateSettingsFound = true %}
                                     {% endif %}
+                                    {% assign passwordEncoderSettingsFound = false %}
                                     {% if config.name contains ".password-encoder" %}
                                         {% assign passwordEncoderSettingsFound = true %}
                                     {% endif %}
+                                    {% assign principalTransformationSettingsFound = false %}
                                     {% if config.name contains ".principal-transformation" %}
                                         {% assign principalTransformationSettingsFound = true %}
                                     {% endif %}
+                                    {% assign passwordPolicySettingsFound = false %}
                                     {% if config.name contains ".password-policy" %}
                                         {% assign passwordPolicySettingsFound = true %}
                                     {% endif %}
@@ -568,6 +605,12 @@
                                     {% endif %}
                                     {% if passwordPolicySettingsFound == true %}
                                     {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
+                                    {% endif %}
+                                    {% if passwordEncoderSettingsFound == true %}
+                                    {% assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties %}
+                                    {% endif %}
+                                    {% if principalTransformationSettingsFound == true %}
+                                    {% assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties %}
                                     {% endif %}
                                 {% endunless %}
                             {% endunless %}
@@ -640,16 +683,21 @@
 {% endif %}
 
 
-{% if passwordEncoderSettingsFound == true %}
+{% unless textAreaPasswordEncoderProperties == blank %}
 <div class='tab-pane properties-tab fade in' id='passwordEncoderProperties{{ casPropertiesRandomNumber }}'>
+    <table class="cas-datatable properties"
+           id='tablePasswordEncoderProperties{{ casPropertiesRandomNumber }}'>
+        <thead><tr><th></th></tr></thead>
+        <tbody>{{ textAreaPasswordEncoderProperties }} </tbody>
+    </table>
+
     {% capture passwordEncoderConfig %}{% include {{ version }}/password-encoding-configuration.md %}{% endcapture %}
     {{ passwordEncoderConfig | markdownify }}
 </div>
-{% endif %}
+{% endunless %}
 
-{% if passwordPolicySettingsFound == true %}
+{% unless textAreaPasswordPolicyProperties == blank %}
 <div class='tab-pane properties-tab fade in' id='passwordPolicyProperties{{ casPropertiesRandomNumber }}'>
-    <p>
     <table class="cas-datatable properties"
            id='tablePasswordPolicyProperties{{ casPropertiesRandomNumber }}'>
         <thead><tr><th></th></tr></thead>
@@ -659,15 +707,20 @@
     {% capture passwordPolicyConfig %}{% include {{ version }}/password-policy-configuration.md %}{% endcapture %}
     {{ passwordPolicyConfig | markdownify }}
 </div>
-{% endif %}
+{% endunless %}
 
-{% if principalTransformationSettingsFound == true %}
+{% unless textAreaPrincipalTransformationProperties == blank %}
 <div class='tab-pane properties-tab fade in' id='principalTransformationProperties{{ casPropertiesRandomNumber }}'>
+    <table class="cas-datatable properties"
+           id='tablePrincipalTransformationProperties{{ casPropertiesRandomNumber }}'>
+        <thead><tr><th></th></tr></thead>
+        <tbody>{{ textAreaPrincipalTransformationProperties }} </tbody>
+    </table>
+
     {% capture principalTransformationConfig %}{% include {{ version }}/principal-transformation-configuration.md %}{% endcapture %}
     {{ principalTransformationConfig | markdownify }}
 </div>
-{% endif %}
-
+{% endunless %}
 
 {% if authnPredicateSettingsFound == true %}
 <div class="tab-pane properties-tab fade in" id="authnPredicateProperties{{ casPropertiesRandomNumber }}">
@@ -702,15 +755,15 @@
         {% unless requiredSettingsFound %}
             $("#linkRequiredProperties{{ casPropertiesRandomNumber }}").remove()
         {% endunless %}
-        {% unless passwordPolicySettingsFound %}
+        {% if textAreaPasswordPolicyProperties == blank or textAreaPasswordPolicyProperties == '' %}
             $("#linkPasswordPolicy{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
-        {% unless principalTransformationSettingsFound %}
+        {% endif %}
+        {% if textAreaPrincipalTransformationProperties == blank or textAreaPrincipalTransformationProperties == '' %}
             $("#linkPrincipalTransformation{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
-        {% unless passwordEncoderSettingsFound %}
+        {% endif %}
+        {% if textAreaPasswordEncoderProperties == blank or textAreaPasswordEncoderProperties == '' %}
             $("#linkPasswordEncoder{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
+        {% endif %}
         {% unless authnPredicateSettingsFound %}
             $("#linkAuthnPredicate{{ casPropertiesRandomNumber }}").remove()
         {% endunless %}

@@ -27,20 +27,20 @@ public class ChainingPrincipalAttributesRepository implements RegisteredServiceP
     private final List<RegisteredServicePrincipalAttributesRepository> repositories;
 
     @Override
+    public Map<String, List<Object>> getAttributes(final Principal principal,
+                                                   final RegisteredService registeredService) {
+        val results = new LinkedHashMap<String, List<Object>>();
+        repositories.forEach(repo -> results.putAll(repo.getAttributes(principal, registeredService)));
+        return results;
+    }
+
+    @Override
     public Set<String> getAttributeRepositoryIds() {
         return repositories.stream()
             .map(RegisteredServicePrincipalAttributesRepository::getAttributeRepositoryIds)
             .filter(Objects::nonNull)
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Map<String, List<Object>> getAttributes(final Principal principal,
-                                                   final RegisteredService registeredService) {
-        val results = new LinkedHashMap<String, List<Object>>();
-        repositories.forEach(repo -> results.putAll(repo.getAttributes(principal, registeredService)));
-        return results;
     }
 
     @Override

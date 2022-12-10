@@ -32,11 +32,10 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
 
     @Override
     public void store(final GoogleAuthenticatorToken token) {
-        val gauthToken = (GoogleAuthenticatorToken) token;
-        val redisKey = getGoogleAuthenticatorTokenRedisKey(gauthToken);
+        val redisKey = getGoogleAuthenticatorTokenRedisKey(token);
         LOGGER.trace("Saving token [{}] using key [{}]", token, redisKey);
         val ops = this.template.boundValueOps(redisKey);
-        ops.set(gauthToken);
+        ops.set(token);
         ops.expire(Duration.ofSeconds(this.expireTokensInSeconds));
         LOGGER.trace("Saved token [{}]", token);
     }
@@ -115,19 +114,19 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     private Stream<String> getGoogleAuthenticatorTokenKeys() {
         val key = getPatternGoogleAuthenticatorTokenRedisKey();
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return template.keys(key, this.scanCount);
+        return template.scan(key, this.scanCount);
     }
 
     private Stream<String> getGoogleAuthenticatorTokenKeys(final String username) {
         val key = getGoogleAuthenticatorTokenRedisKey(username);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, username);
-        return template.keys(key, this.scanCount);
+        return template.scan(key, this.scanCount);
     }
 
     private Stream<String> getGoogleAuthenticatorTokenKeys(final Integer otp) {
         val key = getGoogleAuthenticatorTokenRedisKey(otp);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, otp);
-        return template.keys(key, this.scanCount);
+        return template.scan(key, this.scanCount);
     }
 
     @Override

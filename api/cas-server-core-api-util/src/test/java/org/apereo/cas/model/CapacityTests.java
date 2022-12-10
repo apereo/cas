@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Metrics")
 public class CapacityTests {
+    private static void verify(final String... values) {
+        Arrays.stream(values).forEach(v -> assertNotNull(Capacity.parse(v)));
+    }
+
     @Test
     public void verifyOperation() {
         verify("1B", "1b", "1 b", "100 B", "12.5mb", "123.564 GB", "66.66Kb", "43.12 TB");
-    }
-
-    private static void verify(final String... values) {
-        Arrays.stream(values).forEach(v -> assertNotNull(Capacity.parse(v)));
     }
 }

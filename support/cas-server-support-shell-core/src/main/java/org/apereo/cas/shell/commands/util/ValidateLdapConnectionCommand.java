@@ -15,7 +15,6 @@ import javax.naming.Context;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
-
 import java.util.Arrays;
 import java.util.Hashtable;
 
@@ -46,22 +45,29 @@ public class ValidateLdapConnectionCommand {
     @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
     public static boolean validateLdap(
         @ShellOption(value = {"url", "--url"},
-            help = "LDAP URL to test, comma-separated.") final String url,
+            help = "LDAP URL to test, comma-separated.")
+        final String url,
         @ShellOption(value = {"bindDn", "--bindDn"},
-            help = "bindDn to use when testing the LDAP server") final String bindDn,
+            help = "bindDn to use when testing the LDAP server")
+        final String bindDn,
         @ShellOption(value = {"bindCredential", "--bindCredential"},
-            help = "bindCredential to use when testing the LDAP server") final String bindCredential,
+            help = "bindCredential to use when testing the LDAP server")
+        final String bindCredential,
         @ShellOption(value = {"baseDn", "--baseDn"},
-            help = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)") final String baseDn,
+            help = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)")
+        final String baseDn,
         @ShellOption(value = {"searchFilter", "--searchFilter"},
             help = "Filter to use when searching for accounts (i.e. (&(objectClass=*) (sAMAccountName=user)))",
-            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY) final String searchFilter,
+            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY)
+        final String searchFilter,
         @ShellOption(value = {"userPassword", "--userPassword"},
             help = "Password for the user found in the search result, to attempt authentication",
-            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY) final String userPassword,
+            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY)
+        final String userPassword,
         @ShellOption(value = {"userAttributes", "--userAttributes"},
             help = "User attributes, comma-separated, to fetch for the user found in the search result",
-            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY) final String userAttributes) {
+            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY)
+        final String userAttributes) {
         try {
             return connect(url, bindDn, bindCredential, baseDn, searchFilter, userAttributes, userPassword);
         } catch (final Exception e) {

@@ -49,6 +49,30 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     private static final String CN = "cn";
 
+    private static Map<String, Set<String>> getRequiredAttributes() {
+        val map = new HashMap<String, Set<String>>();
+        map.put(CN, Stream.of(CAS, "SSO").collect(Collectors.toSet()));
+        map.put(GIVEN_NAME, Stream.of("CAS", KAZ).collect(Collectors.toSet()));
+        map.put(PHONE, Collections.singleton("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
+        return map;
+    }
+
+    private static Map<String, Set<String>> getRejectedAttributes() {
+        val map = new HashMap<String, Set<String>>();
+        map.put("address", Collections.singleton(".+"));
+        map.put("role", Collections.singleton("staff"));
+        return map;
+    }
+
+    private static Map getPrincipalAttributes() {
+        val map = new HashMap<String, Object>();
+        map.put(CN, CAS);
+        map.put(GIVEN_NAME, Arrays.asList(CAS, KAZ));
+        map.put("sn", "surname");
+        map.put(PHONE, "123-456-7890");
+        return map;
+    }
+
     @Test
     public void checkLoad() {
         val authz = new DefaultRegisteredServiceAccessStrategy(getRequiredAttributes(), getRejectedAttributes());
@@ -328,29 +352,5 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .principalId(TEST).attributes(Map.of(CN, List.of(CAS))).build();
         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(request));
-    }
-
-    private static Map<String, Set<String>> getRequiredAttributes() {
-        val map = new HashMap<String, Set<String>>();
-        map.put(CN, Stream.of(CAS, "SSO").collect(Collectors.toSet()));
-        map.put(GIVEN_NAME, Stream.of("CAS", KAZ).collect(Collectors.toSet()));
-        map.put(PHONE, Collections.singleton("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
-        return map;
-    }
-
-    private static Map<String, Set<String>> getRejectedAttributes() {
-        val map = new HashMap<String, Set<String>>();
-        map.put("address", Collections.singleton(".+"));
-        map.put("role", Collections.singleton("staff"));
-        return map;
-    }
-
-    private static Map getPrincipalAttributes() {
-        val map = new HashMap<String, Object>();
-        map.put(CN, CAS);
-        map.put(GIVEN_NAME, Arrays.asList(CAS, KAZ));
-        map.put("sn", "surname");
-        map.put(PHONE, "123-456-7890");
-        return map;
     }
 }

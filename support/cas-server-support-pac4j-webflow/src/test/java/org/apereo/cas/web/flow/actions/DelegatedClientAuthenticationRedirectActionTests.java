@@ -69,6 +69,7 @@ public class DelegatedClientAuthenticationRedirectActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         val external = (MockExternalContext) context.getExternalContext();
         assertFalse(external.getExternalRedirectRequested());
+        assertTrue(external.isResponseComplete());
         val response = (MockHttpServletResponse) WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         assertTrue(MediaType.parseMediaType(response.getContentType()).equalsTypeAndSubtype(MediaType.TEXT_HTML));
         assertNotNull(response.getContentAsString());

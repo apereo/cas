@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
 import lombok.val;
-import org.apache.http.auth.BasicUserPrincipal;
+import org.apache.hc.client5.http.auth.BasicUserPrincipal;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -10,6 +10,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+
 import java.util.Map;
 
 /**
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 public class MockLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
+
     private Subject subject;
 
     @Override

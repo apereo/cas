@@ -3,7 +3,9 @@ package org.apereo.cas.configuration.model.support.passwordless;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationJpaTokensProperties;
+import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationMongoDbTokensProperties;
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationRestTokensProperties;
+import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationTokensCoreProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -23,7 +25,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiresModule(name = "cas-server-support-passwordless")
+@RequiresModule(name = "cas-server-support-passwordless-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -34,12 +36,13 @@ public class PasswordlessAuthenticationTokensProperties implements Serializable 
     private static final long serialVersionUID = 8371063350377031703L;
 
     /**
-     * Indicate how long should the token be considered valid.
+     * Core settings on passwordless authn.
      */
-    private int expireInSeconds = 180;
+    @NestedConfigurationProperty
+    private PasswordlessAuthenticationTokensCoreProperties core = new PasswordlessAuthenticationTokensCoreProperties();
 
     /**
-     * Crypto settings on how to reset the password.
+     * Crypto settings for passwordless authn.
      */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
@@ -55,6 +58,12 @@ public class PasswordlessAuthenticationTokensProperties implements Serializable 
      */
     @NestedConfigurationProperty
     private PasswordlessAuthenticationJpaTokensProperties jpa = new PasswordlessAuthenticationJpaTokensProperties();
+
+    /**
+     * Passwordless authentication settings via MongoDb.
+     */
+    @NestedConfigurationProperty
+    private PasswordlessAuthenticationMongoDbTokensProperties mongo = new PasswordlessAuthenticationMongoDbTokensProperties();
 
     /**
      * Email settings for notifications.

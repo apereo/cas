@@ -15,6 +15,7 @@ public interface ServiceTicketValidationAuthorizerConfigurer {
      * @param plan the plan
      */
     void configureAuthorizersExecutionPlan(ServiceTicketValidationAuthorizersExecutionPlan plan);
+
     /**
      * Gets name.
      *

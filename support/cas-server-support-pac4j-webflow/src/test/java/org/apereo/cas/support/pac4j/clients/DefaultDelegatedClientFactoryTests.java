@@ -9,7 +9,6 @@ import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
-import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -146,7 +145,7 @@ public class DefaultDelegatedClientFactoryTests {
     @TestPropertySource(properties = {
         "cas.authn.pac4j.cas[0].login-url=https://login.example.org/login",
         "cas.authn.pac4j.cas[0].protocol=SAML",
-        "cas.authn.pac4j.cas[0].principal-attribute-id=uid",
+        "cas.authn.pac4j.cas[0].principal-id-attribute=uid",
         "cas.authn.pac4j.cas[0].css-class=cssClass",
         "cas.authn.pac4j.cas[0].display-name=My CAS",
         "cas.authn.pac4j.core.lazy-init=true"
@@ -248,28 +247,6 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.saml[0].identity-provider-metadata-path=classpath:idp-metadata.xml",
         "cas.authn.pac4j.saml[0].service-provider-metadata-path=file:/tmp/sp.xml",
         "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
-        "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
-        "cas.authn.pac4j.core.lazy-init=true"
-    })
-    public class Saml2ClientsWithMetadatSigner extends BaseDelegatedClientFactoryTests {
-        @Test
-        public void verifyClient() {
-            val clients = delegatedClientFactory.build();
-            assertEquals(1, clients.size());
-            val client = SAML2Client.class.cast(clients.iterator().next());
-            assertTrue(client.getConfiguration().getMetadataSigner() instanceof XMLSecSAML2MetadataSigner);
-        }
-    }
-
-    @Nested
-    @SuppressWarnings("ClassCanBeStatic")
-    @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
-        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
-        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-        "cas.authn.pac4j.saml[0].identity-provider-metadata-path=classpath:idp-metadata.xml",
-        "cas.authn.pac4j.saml[0].service-provider-metadata-path=file:/tmp/sp.xml",
-        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
         "cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.unknown",
         "cas.authn.pac4j.core.lazy-init=true"
     })
@@ -350,7 +327,6 @@ public class DefaultDelegatedClientFactoryTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
-        "cas.authn.pac4j.saml[0].keystore-alias=alias1",
         "cas.authn.pac4j.saml[0].callback-url-type=NONE",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
         "cas.authn.pac4j.saml[0].private-key-password=1234567890",

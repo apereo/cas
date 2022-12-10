@@ -31,7 +31,7 @@ public class SurrogatePrincipalElectionStrategyTests {
     private static Principal buildSurrogatePrincipal(final String surrogateId,
                                                      final Authentication primaryAuth,
                                                      final IPersonAttributeDao attributeRepository) {
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(), attributeRepository,
+        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(), attributeRepository,
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")),
                 mock(ServicesManager.class)));
         return surrogatePrincipalBuilder.buildSurrogatePrincipal(surrogateId,

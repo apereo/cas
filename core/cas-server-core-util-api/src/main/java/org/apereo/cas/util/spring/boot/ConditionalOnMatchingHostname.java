@@ -1,6 +1,7 @@
 package org.apereo.cas.util.spring.boot;
 
 import org.springframework.context.annotation.Conditional;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

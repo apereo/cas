@@ -109,19 +109,19 @@ public class DuoSecuritySurrogateWebflowConfigurerTests {
         private CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer;
 
         @Autowired
-        @Qualifier("surrogateCasMultifactorWebflowCustomizer")
-        private CasMultifactorWebflowCustomizer surrogateCasMultifactorWebflowCustomizer;
+        @Qualifier("surrogateDuoSecurityMultifactorWebflowCustomizer")
+        private CasMultifactorWebflowCustomizer surrogateDuoSecurityMultifactorWebflowCustomizer;
 
         @Test
         public void verifyOperation() {
             assertNotNull(surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer);
-            assertNotNull(surrogateCasMultifactorWebflowCustomizer);
+            assertNotNull(surrogateDuoSecurityMultifactorWebflowCustomizer);
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
             var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());
 
-            val mappings = surrogateCasMultifactorWebflowCustomizer.getWebflowAttributeMappings();
+            val mappings = surrogateDuoSecurityMultifactorWebflowCustomizer.getWebflowAttributeMappings();
             assertTrue(mappings.contains(WebUtils.REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE));
         }
     }

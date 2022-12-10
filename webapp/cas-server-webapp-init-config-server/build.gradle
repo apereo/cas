@@ -5,7 +5,8 @@ dependencies {
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
     implementation libraries.springcloudconfigserver
-    
+    implementation libraries.hibernatevalidator
+
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-logging")
 

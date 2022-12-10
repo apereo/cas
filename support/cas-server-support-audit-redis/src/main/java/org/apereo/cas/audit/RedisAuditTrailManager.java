@@ -83,10 +83,10 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     private Stream<String> getAuditRedisKeys() {
-        return redisTemplate.keys(getPatternAuditRedisKey(), this.scanCount);
+        return redisTemplate.scan(getPatternAuditRedisKey(), this.scanCount);
     }
 
     private Stream<String> getAuditRedisKeys(final String principal) {
-        return redisTemplate.keys(getPatternAuditRedisKey("*", principal), this.scanCount);
+        return redisTemplate.scan(getPatternAuditRedisKey("*", principal), this.scanCount);
     }
 }

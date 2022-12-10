@@ -64,7 +64,7 @@ public class ResponseHeadersEnforcementFilterTests {
         assertNotNull(servletResponse.getHeaderValue("X-Content-Type-Options"));
         assertNotNull(servletResponse.getHeaderValue("Strict-Transport-Security"));
     }
-    
+
     @Test
     public void verifyNoCacheParamJpeg() {
         filter.init(filterConfig);

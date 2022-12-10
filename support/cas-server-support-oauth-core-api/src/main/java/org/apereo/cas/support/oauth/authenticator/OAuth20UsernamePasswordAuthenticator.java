@@ -27,6 +27,7 @@ import org.pac4j.core.profile.CommonProfile;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Authenticator for user credentials authentication.
@@ -52,8 +53,8 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
     private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     @Override
-    public void validate(final Credentials credentials, final WebContext webContext,
-                         final SessionStore sessionStore) throws CredentialsException {
+    public Optional<Credentials> validate(final Credentials credentials, final WebContext webContext,
+                                          final SessionStore sessionStore) throws CredentialsException {
         try {
             val upc = (UsernamePasswordCredentials) credentials;
             val casCredential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
@@ -84,7 +85,6 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             }
             val authentication = authenticationResult.getAuthentication();
             val principal = authentication.getPrincipal();
-
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(registeredService)
                 .service(service)
@@ -104,6 +104,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
 
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);
+            return Optional.of(credentials);
         } catch (final Exception e) {
             throw new CredentialsException("Cannot login user using CAS internal authentication", e);
         }

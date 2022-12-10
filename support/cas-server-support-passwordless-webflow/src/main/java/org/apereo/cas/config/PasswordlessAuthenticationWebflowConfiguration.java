@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
@@ -28,6 +29,7 @@ import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationAct
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PasswordlessCasWebflowLoginContextProvider;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.VerifyPasswordlessAccountAuthenticationAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
@@ -68,9 +70,18 @@ import java.util.List;
 public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(name = PasswordlessRequestParser.BEAN_NAME)
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public PasswordlessRequestParser passwordlessRequestParser() {
+        return PasswordlessRequestParser.defaultParser();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action verifyPasswordlessAccountAuthenticationAction(
+        @Qualifier(PasswordlessRequestParser.BEAN_NAME)
+        final PasswordlessRequestParser passwordlessRequestParser,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
@@ -78,7 +89,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
             .withProperties(casProperties)
-            .withAction(() -> new VerifyPasswordlessAccountAuthenticationAction(casProperties, passwordlessUserAccountStore))
+            .withAction(() -> new VerifyPasswordlessAccountAuthenticationAction(casProperties,
+                passwordlessUserAccountStore, passwordlessRequestParser))
             .withId(CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN)
             .build()
             .get();
@@ -130,7 +142,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
             .withProperties(casProperties)
             .withAction(() -> new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
-                passwordlessTokenRepository, authenticationSystemSupport, passwordlessUserAccountStore))
+                passwordlessTokenRepository, authenticationSystemSupport, passwordlessUserAccountStore,
+                applicationContext))
             .withId(CasWebflowConstants.ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN)
             .build()
             .get();
@@ -140,6 +153,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action displayBeforePasswordlessAuthenticationAction(
+        @Qualifier(PasswordlessRequestParser.BEAN_NAME)
+        final PasswordlessRequestParser passwordlessRequestParser,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(CommunicationsManager.BEAN_NAME)
@@ -153,7 +168,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
             .withProperties(casProperties)
             .withAction(() -> new DisplayBeforePasswordlessAuthenticationAction(
                 casProperties, passwordlessTokenRepository,
-                passwordlessUserAccountStore, communicationsManager))
+                passwordlessUserAccountStore, communicationsManager, passwordlessRequestParser))
             .withId(CasWebflowConstants.ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN)
             .build()
             .get();
@@ -269,11 +284,11 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public DelegatedClientWebflowCustomizer surrogateCasMultifactorWebflowCustomizer() {
+        public DelegatedClientWebflowCustomizer passwordlessMultifactorWebflowCustomizer() {
             return new DelegatedClientWebflowCustomizer() {
                 @Override
                 public List<String> getWebflowAttributeMappings() {
-                    return List.of("passwordlessAccount");
+                    return PasswordlessWebflowUtils.WEBFLOW_ATTRIBUTE_MAPPINGS;
                 }
             };
         }

@@ -41,7 +41,7 @@ public class JpaBeans {
      * @return the data source
      */
     public DataSource newDataSource(final String driverClass, final String username,
-                                           final String password, final String url) {
+                                    final String password, final String url) {
         return FunctionUtils.doUnchecked(() -> {
             val ds = new SimpleDriverDataSource();
             ds.setDriverClass((Class<Driver>) Class.forName(driverClass));
@@ -88,9 +88,8 @@ public class JpaBeans {
         }
 
         val bean = new HikariDataSource();
-        if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
-            bean.setDriverClassName(jpaProperties.getDriverClass());
-        }
+        FunctionUtils.doIfNotBlank(jpaProperties.getDriverClass(), __ -> bean.setDriverClassName(jpaProperties.getDriverClass()));
+
         val url = SpringExpressionLanguageValueResolver.getInstance().resolve(jpaProperties.getUrl());
         bean.setJdbcUrl(url);
         bean.setUsername(jpaProperties.getUser());
@@ -130,9 +129,8 @@ public class JpaBeans {
         if (config.getPersistenceProvider() != null) {
             bean.setPersistenceProvider(config.getPersistenceProvider());
         }
-        if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
-            bean.setPersistenceUnitName(config.getPersistenceUnitName());
-        }
+
+        FunctionUtils.doIfNotBlank(config.getPersistenceUnitName(), __ -> bean.setPersistenceUnitName(config.getPersistenceUnitName()));
         if (!config.getPackagesToScan().isEmpty()) {
             bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         }

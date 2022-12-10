@@ -14,8 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -42,22 +43,6 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
     protected final UrlValidator urlValidator;
 
     @Override
-    public boolean supports(final RegisteredService registeredService,
-                            final WebApplicationService singleLogoutService,
-                            final Optional<HttpServletRequest> httpRequest) {
-        return registeredService != null && singleLogoutService != null
-               && registeredService.getAccessStrategy().isServiceAccessAllowed();
-    }
-
-    @Override
-    public boolean isServiceAuthorized(final WebApplicationService service,
-                                       final Optional<HttpServletRequest> request,
-                                       final Optional<HttpServletResponse> response) {
-        val registeredService = servicesManager.findServiceBy(service);
-        return supports(registeredService, service, request);
-    }
-
-    @Override
     public Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService,
                                                           final WebApplicationService singleLogoutService,
                                                           final Optional<HttpServletRequest> httpRequest) {
@@ -75,5 +60,21 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
         }
         LOGGER.debug("Logout request will not be sent; The URL [{}] for service [{}] is not valid", originalUrl, singleLogoutService);
         return new ArrayList<>(0);
+    }
+
+    @Override
+    public boolean supports(final RegisteredService registeredService,
+                            final WebApplicationService singleLogoutService,
+                            final Optional<HttpServletRequest> httpRequest) {
+        return registeredService != null && singleLogoutService != null
+               && registeredService.getAccessStrategy().isServiceAccessAllowed();
+    }
+
+    @Override
+    public boolean isServiceAuthorized(final WebApplicationService service,
+                                       final Optional<HttpServletRequest> request,
+                                       final Optional<HttpServletResponse> response) {
+        val registeredService = servicesManager.findServiceBy(service);
+        return supports(registeredService, service, request);
     }
 }

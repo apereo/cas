@@ -51,7 +51,7 @@
                             </section>
 
                             <span class="mdc-card__actions_actions p-4" th:if="${recaptchaForgotUsernameEnabled}">
-                                <div th:replace="fragments/recaptcha :: recaptchaToken" />
+                                <div th:replace="~{fragments/recaptcha :: recaptchaToken}" />
                             </span>
 
                             <div class="mdc-card__actions_actions p-4">

@@ -18,8 +18,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Optional;
 
 /**
@@ -34,9 +35,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RegisteredServiceMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+
     private final ConfigurableApplicationContext applicationContext;
-    
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
@@ -62,7 +65,7 @@ public class RegisteredServiceMultifactorAuthenticationTrigger implements Multif
                 registeredService.getServiceId());
             return Optional.empty();
         }
-                                                    
+
         val principal = authentication.getPrincipal();
         val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext);
         if (providers != null && !providers.isEmpty()) {

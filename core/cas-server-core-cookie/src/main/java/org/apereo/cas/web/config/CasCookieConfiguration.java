@@ -46,8 +46,7 @@ public class CasCookieConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager cookieValueManager(
             final CasConfigurationProperties casProperties,
-            @Qualifier("cookieCipherExecutor")
-            final CipherExecutor cookieCipherExecutor) {
+            @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
             if (casProperties.getTgc().getCrypto().isEnabled()) {
                 return new DefaultCasCookieValueManager(cookieCipherExecutor, casProperties.getTgc());
             }
@@ -94,8 +93,7 @@ public class CasCookieConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder ticketGrantingTicketCookieGenerator(
             final CasConfigurationProperties casProperties,
-            @Qualifier("cookieValueManager")
-            final CookieValueManager cookieValueManager) {
+            @Qualifier("cookieValueManager") final CookieValueManager cookieValueManager) {
             val context = CookieUtils.buildCookieGenerationContext(casProperties.getTgc());
             return new TicketGrantingCookieRetrievingCookieGenerator(context, cookieValueManager);
         }

@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -37,7 +37,7 @@ public class DelegatedAuthenticationErrorViewResolver extends DefaultErrorViewRe
                                          final HttpStatus status, final Map<String, Object> map) {
 
         val mv = failureEvaluator.evaluate(request, status.value());
-        val exception = request.getAttribute("javax.servlet.error.exception");
+        val exception = request.getAttribute("jakarta.servlet.error.exception");
         if (exception != null) {
             val cause = ((Throwable) exception).getCause();
             if (cause instanceof UnauthorizedServiceException) {

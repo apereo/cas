@@ -68,7 +68,6 @@ public class AccountManagementRegistrationProperties implements Serializable {
     private AccountManagementRegistrationProvisioningProperties provisioning = new AccountManagementRegistrationProvisioningProperties();
 
     public AccountManagementRegistrationProperties() {
-        mail.setAttributeName("mail");
         mail.setText("Activate your account registration via this link: ${url}");
         sms.setText("Activate your account registration via this link: ${url}");
         mail.setSubject("Account Registration");

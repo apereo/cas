@@ -10,6 +10,7 @@ import java.io.Serial;
 
 /**
  * This is {@link CnEdipiPrincipalResolverProperties}.
+ *
  * @since 6.0.0
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")

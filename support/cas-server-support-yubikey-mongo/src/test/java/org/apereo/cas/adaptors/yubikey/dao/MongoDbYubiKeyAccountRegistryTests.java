@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("MongoDb")
+@Tag("MongoDbMFA")
 @SpringBootTest(classes = {
     MongoDbYubiKeyConfiguration.class,
     BaseYubiKeyTests.SharedTestConfiguration.class

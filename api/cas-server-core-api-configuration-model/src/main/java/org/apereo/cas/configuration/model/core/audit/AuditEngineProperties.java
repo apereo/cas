@@ -80,7 +80,7 @@ public class AuditEngineProperties implements Serializable {
      * this option allows one to query DNS to look up the server address of the CAS server processing requests.
      */
     private boolean useServerHostAddress;
-    
+
     /**
      * Indicates whether catastrophic audit failures should be logged
      * or whether errors should bubble up and thrown back.

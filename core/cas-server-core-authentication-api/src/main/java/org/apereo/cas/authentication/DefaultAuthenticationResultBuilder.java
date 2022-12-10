@@ -36,12 +36,10 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     @Serial
     private static final long serialVersionUID = 6180465589526463843L;
-    
+
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>(0));
 
     private final List<Credential> providedCredentials = new ArrayList<>(0);
-
-    private final List<CredentialMetaData> providedCredentialMetadata = new ArrayList<>(0);
 
     /**
      * Principal id is and must be enforced to be the same for all authentications.
@@ -66,6 +64,14 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
+    public Optional<Credential> getInitialCredential() {
+        if (this.providedCredentials.isEmpty()) {
+            LOGGER.warn("Provided credentials chain is empty as no credentials have been collected");
+        }
+        return this.providedCredentials.stream().findFirst();
+    }
+
+    @Override
     @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final Authentication authentication) {
         Optional.ofNullable(authentication).ifPresent(authentications::add);
@@ -81,24 +87,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationResultBuilder collect(final CredentialMetaData credential) {
-        Optional.ofNullable(credential).ifPresent(providedCredentialMetadata::add);
-        return this;
-    }
-
-    @Override
-    @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final Credential credential) {
         Optional.ofNullable(credential).ifPresent(providedCredentials::add);
         return this;
-    }
-
-    @Override
-    public Optional<Credential> getInitialCredential() {
-        if (this.providedCredentials.isEmpty()) {
-            LOGGER.warn("Provided credentials chain is empty as no credentials have been collected");
-        }
-        return this.providedCredentials.stream().findFirst();
     }
 
     @Override
@@ -167,8 +158,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                 .addSuccesses(authn.getSuccesses())
                 .addFailures(authn.getFailures())
                 .addWarnings(authn.getWarnings())
-                .addCredentials(authn.getCredentials())
-                .addCredentials(this.providedCredentialMetadata);
+                .addCredentials(authn.getCredentials());
         });
     }
 

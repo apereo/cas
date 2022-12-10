@@ -41,19 +41,22 @@
         },
         checkCaps: ev => {
             let s = String.fromCharCode(ev.which);
-            let el = ev.target.parentElement.nextElementSibling.nextElementSibling;
-            if (el != null) {
-                if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                    // console.log('CAPSLOCK is on');
-                    el.classList.remove("caps-warn");
-                    el.classList.add('caps-on');
+            const parentElement = ev.target.parentElement;
+            if (parentElement != null && parentElement.nextElementSibling != null) {
+                let el = parentElement.nextElementSibling.nextElementSibling;
+                if (el == null) {
+                    console.log("Unable to locate element for CAPSLOCK")
                 } else {
-                    // console.log('CAPSLOCK is off')
-                    el.classList.remove("caps-on");
-                    el.classList.add('caps-warn');
+                    if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
+                        // console.log('CAPSLOCK is on');
+                        el.classList.remove("caps-warn");
+                        el.classList.add('caps-on');
+                    } else {
+                        // console.log('CAPSLOCK is off')
+                        el.classList.remove("caps-on");
+                        el.classList.add('caps-warn');
+                    }
                 }
-            } else {
-                console.log("Unable to locate element for CAPSLOCK")
             }
         }
     };

@@ -15,7 +15,7 @@ You **DO NOT** need to, but can if you want to, configure and deploy to an exter
 ## Configuration
 
 {% include_cached casproperties.html 
-thirdPartyStartsWith="server.port,server.ssl,server.servlet,server.max-http-header-size,server.use-forward-headers,server.connection-timeout" %}
+thirdPartyStartsWith="server.port,server.ssl,server.servlet,server.use-forward-headers,server.connection-timeout" %}
 
 ## Execution
 

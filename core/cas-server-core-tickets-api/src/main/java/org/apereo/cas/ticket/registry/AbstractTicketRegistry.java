@@ -49,23 +49,24 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected CipherExecutor cipherExecutor;
 
+    /**
+     * Gets principal id from ticket.
+     *
+     * @param ticket the ticket
+     * @return the principal id from
+     */
+    protected static String getPrincipalIdFrom(final Ticket ticket) {
+        return ticket instanceof AuthenticationAwareTicket
+            ? Optional.ofNullable(((AuthenticationAwareTicket) ticket).getAuthentication())
+            .map(auth -> auth.getPrincipal().getId()).orElse(StringUtils.EMPTY)
+            : StringUtils.EMPTY;
+    }
+
     @Override
     public void addTicket(final Ticket ticket) throws Exception {
         if (ticket != null && !ticket.isExpired()) {
             addTicketInternal(ticket);
         }
-    }
-
-    @Override
-    public Ticket getTicket(final String ticketId) {
-        return getTicket(ticketId, ticket -> {
-            if (ticket == null || ticket.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticketId);
-                deleteSingleTicket(ticketId);
-                return false;
-            }
-            return true;
-        });
     }
 
     @Override
@@ -83,37 +84,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public long sessionCount() {
-        try (val tgtStream = stream().filter(TicketGrantingTicket.class::isInstance)) {
-            return tgtStream.count();
-        } catch (final Exception t) {
-            LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
-                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
-            return Long.MIN_VALUE;
-        }
-    }
-
-    @Override
-    public long countSessionsFor(final String principalId) {
-        val ticketPredicate = (Predicate<Ticket>) t -> {
-            if (t instanceof TicketGrantingTicket) {
-                val ticket = TicketGrantingTicket.class.cast(t);
-                return ticket.getAuthentication().getPrincipal().getId().equalsIgnoreCase(principalId);
+    public Ticket getTicket(final String ticketId) {
+        return getTicket(ticketId, ticket -> {
+            if (ticket == null || ticket.isExpired()) {
+                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticketId);
+                deleteSingleTicket(ticketId);
+                return false;
             }
-            return false;
-        };
-        return getTickets(ticketPredicate).count();
-    }
-
-    @Override
-    public long serviceTicketCount() {
-        try (val stStream = stream().filter(ServiceTicket.class::isInstance)) {
-            return stStream.count();
-        } catch (final Exception t) {
-            LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
-                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
-            return Long.MIN_VALUE;
-        }
+            return true;
+        });
     }
 
     @Override
@@ -144,8 +123,41 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
         count.getAndAdd(deleteSingleTicket(ticket.getId()));
-        val finalCount = count.intValue();
-        return finalCount;
+        return count.intValue();
+    }
+
+    @Override
+    public long sessionCount() {
+        try (val tgtStream = stream().filter(TicketGrantingTicket.class::isInstance)) {
+            return tgtStream.count();
+        } catch (final Exception t) {
+            LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
+                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+            return Long.MIN_VALUE;
+        }
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        try (val stStream = stream().filter(ServiceTicket.class::isInstance)) {
+            return stStream.count();
+        } catch (final Exception t) {
+            LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
+                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+            return Long.MIN_VALUE;
+        }
+    }
+
+    @Override
+    public long countSessionsFor(final String principalId) {
+        val ticketPredicate = (Predicate<Ticket>) t -> {
+            if (t instanceof TicketGrantingTicket) {
+                val ticket = TicketGrantingTicket.class.cast(t);
+                return ticket.getAuthentication().getPrincipal().getId().equalsIgnoreCase(principalId);
+            }
+            return false;
+        };
+        return getTickets(ticketPredicate).count();
     }
 
     /**
@@ -304,19 +316,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return items;
         }
         return items.map(this::decodeTicket);
-    }
-
-    /**
-     * Gets principal id from ticket.
-     *
-     * @param ticket the ticket
-     * @return the principal id from
-     */
-    protected static String getPrincipalIdFrom(final Ticket ticket) {
-        return ticket instanceof AuthenticationAwareTicket
-            ? Optional.ofNullable(((AuthenticationAwareTicket) ticket).getAuthentication())
-            .map(auth -> auth.getPrincipal().getId()).orElse(StringUtils.EMPTY)
-            : StringUtils.EMPTY;
     }
 
     protected boolean isCipherExecutorEnabled() {

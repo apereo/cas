@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalResolutionExecutionPlan;
@@ -8,6 +9,7 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -48,7 +50,7 @@ public class SurrogatePrincipalResolverTests {
     @Test
     public void verifySupports() {
         val context = getPrincipalResolutionContext(StringUtils.EMPTY, CoreAuthenticationTestUtils.getAttributeRepository());
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
+        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
         val resolver = new SurrogatePrincipalResolver(context);
@@ -56,8 +58,8 @@ public class SurrogatePrincipalResolverTests {
         val upc = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         assertFalse(resolver.supports(upc));
 
-        val credential = new SurrogateUsernamePasswordCredential();
-        credential.setSurrogateUsername("surrogate");
+        val credential = new UsernamePasswordCredential();
+        credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("surrogate"));
         credential.setUsername("username");
         assertTrue(resolver.supports(credential));
     }
@@ -65,7 +67,7 @@ public class SurrogatePrincipalResolverTests {
     @Test
     public void verifyResolverDefault() {
         val context = getPrincipalResolutionContext(StringUtils.EMPTY, CoreAuthenticationTestUtils.getAttributeRepository());
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
+        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
         val resolver = new SurrogatePrincipalResolver(context);
@@ -79,24 +81,25 @@ public class SurrogatePrincipalResolverTests {
     @Test
     public void verifyResolverWithNoAttributes() {
         val context = getPrincipalResolutionContext(StringUtils.EMPTY, mock(IPersonAttributeDao.class));
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
+        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             context.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
         val resolver = new SurrogatePrincipalResolver(context);
         resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
-        val credential = new SurrogateUsernamePasswordCredential();
-        credential.setSurrogateUsername("surrogate");
+        val credential = new UsernamePasswordCredential();
+        val surrogateTrait = new SurrogateCredentialTrait("surrogate");
+        credential.getCredentialMetadata().addTrait(surrogateTrait);
         credential.setUsername("test");
         val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("test")),
             Optional.of(mock(AuthenticationHandler.class)));
         assertTrue(p instanceof SurrogatePrincipal);
-        assertEquals(p.getId(), credential.getSurrogateUsername());
+        assertEquals(p.getId(), surrogateTrait.getSurrogateUsername());
     }
 
     @Test
     public void verifyResolverAttribute() {
         val context = getPrincipalResolutionContext("cn", CoreAuthenticationTestUtils.getAttributeRepository());
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
+        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
         val resolver = new SurrogatePrincipalResolver(context);
@@ -109,30 +112,30 @@ public class SurrogatePrincipalResolverTests {
 
     @Test
     public void verifyResolverSurrogateWithoutPrincipal() {
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
+        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
 
         val context = getPrincipalResolutionContext("cn", CoreAuthenticationTestUtils.getAttributeRepository());
         val resolver = new SurrogatePrincipalResolver(context);
         resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
-        val credential = new SurrogateUsernamePasswordCredential();
+        val credential = new UsernamePasswordCredential();
         credential.setUsername("something");
-        credential.setSurrogateUsername("something2");
+        credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("something2"));
         assertThrows(IllegalArgumentException.class, () -> resolver.resolve(credential));
     }
 
     @Test
     public void verifyResolverSurrogate() {
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
+        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
 
         val context = getPrincipalResolutionContext(StringUtils.EMPTY, CoreAuthenticationTestUtils.getAttributeRepository());
         val resolver = new SurrogatePrincipalResolver(context);
         resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
-        val credential = new SurrogateUsernamePasswordCredential();
-        credential.setSurrogateUsername("surrogate");
+        val credential = new UsernamePasswordCredential();
+        credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("surrogate"));
         credential.setUsername("username");
         val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
@@ -142,13 +145,13 @@ public class SurrogatePrincipalResolverTests {
 
     @Test
     public void verifyPrincipalResolutionPlan() {
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
+        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
         val upc = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
 
-        val surrogateCreds = new SurrogateUsernamePasswordCredential();
-        surrogateCreds.setSurrogateUsername("surrogate");
+        val surrogateCreds = new UsernamePasswordCredential();
+        surrogateCreds.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("surrogate"));
         surrogateCreds.setUsername(upc.getUsername());
 
         val plan = new DefaultPrincipalResolutionExecutionPlan();

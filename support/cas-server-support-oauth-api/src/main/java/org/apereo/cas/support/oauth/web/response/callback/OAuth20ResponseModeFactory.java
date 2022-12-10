@@ -22,7 +22,7 @@ public interface OAuth20ResponseModeFactory {
      *
      * @param registeredService the registered service
      * @param responseType      the response type
-     * @return the boolean
+     * @return true/false
      */
     static boolean isResponseModeTypeFormPostJwt(final OAuthRegisteredService registeredService,
                                               final OAuth20ResponseModeTypes responseType) {
@@ -36,7 +36,7 @@ public interface OAuth20ResponseModeFactory {
      *
      * @param registeredService the registered service
      * @param responseType      the response type
-     * @return the boolean
+     * @return true/false
      */
     static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService,
                                               final OAuth20ResponseModeTypes responseType) {
@@ -51,7 +51,7 @@ public interface OAuth20ResponseModeFactory {
      *
      * @param registeredService the registered service
      * @param responseType      the response type
-     * @return the boolean
+     * @return true/false
      */
     static boolean isResponseModeTypeFragment(final OAuthRegisteredService registeredService,
                                               final OAuth20ResponseModeTypes responseType) {
@@ -65,7 +65,7 @@ public interface OAuth20ResponseModeFactory {
      *
      * @param registeredService the registered service
      * @param responseType      the response type
-     * @return the boolean
+     * @return true/false
      */
     static boolean isResponseModeTypeFragmentJwt(final OAuthRegisteredService registeredService,
                                                  final OAuth20ResponseModeTypes responseType) {
@@ -79,7 +79,7 @@ public interface OAuth20ResponseModeFactory {
      *
      * @param registeredService the registered service
      * @param responseType      the response type
-     * @return the boolean
+     * @return true/false
      */
     static boolean isResponseModeTypeQueryJwt(final OAuthRegisteredService registeredService,
                                               final OAuth20ResponseModeTypes responseType) {

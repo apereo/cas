@@ -82,7 +82,7 @@ public class HttpHeadersRequestProperties implements Serializable {
      * Multiple directives are separated with a semicolon.
      */
     private String contentSecurityPolicy;
-    
+
     /**
      * Files with these extensions are considered static, so they will be cached by browsers. The value is part of a RegEx.
      */

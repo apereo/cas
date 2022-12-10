@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -33,7 +34,23 @@ public class RedisTicketRegistryProperties extends BaseRedisProperties {
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+    /**
+     * Control second-level cache settings
+     * that keeps ticket in memory.
+     */
+    @NestedConfigurationProperty
+    private SimpleCacheProperties cache = new SimpleCacheProperties();
+
+    /**
+     * Identifier for this CAS server node
+     * that tags the sender/receiver in the queue
+     * and avoid processing of inbound calls.
+     * If left blank, an identifier is generated automatically
+     * and kept in memory.
+     */
+    private String queueIdentifier;
+
     public RedisTicketRegistryProperties() {
-        this.crypto.setEnabled(false);
+        crypto.setEnabled(false);
     }
 }

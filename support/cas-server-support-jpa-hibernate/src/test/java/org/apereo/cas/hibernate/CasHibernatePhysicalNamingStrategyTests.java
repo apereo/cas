@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
     "cas.jdbc.physicalTableNames.GroovyTable=classpath:GroovyHibernatePhysicalNaming.groovy"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("JDBC")
+@Tag("Hibernate")
 public class CasHibernatePhysicalNamingStrategyTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

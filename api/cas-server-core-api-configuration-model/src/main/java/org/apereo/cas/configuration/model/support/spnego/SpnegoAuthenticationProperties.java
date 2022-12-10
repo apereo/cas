@@ -26,6 +26,7 @@ import java.io.Serializable;
 public class SpnegoAuthenticationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 4513529663377430783L;
+
     /**
      * Jcifs Netbios cache policy.
      */

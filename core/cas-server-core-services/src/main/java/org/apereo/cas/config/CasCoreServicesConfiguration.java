@@ -49,7 +49,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
@@ -116,10 +115,8 @@ public class CasCoreServicesConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RegisteredServicesEventListener registeredServicesEventListener(
             final CasConfigurationProperties casProperties,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(CommunicationsManager.BEAN_NAME)
-            final CommunicationsManager communicationsManager) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(CommunicationsManager.BEAN_NAME) final CommunicationsManager communicationsManager) {
             return new DefaultRegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
         }
     }
@@ -131,10 +128,8 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(UrlValidator.BEAN_NAME)
-            final UrlValidator urlValidator) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(UrlValidator.BEAN_NAME) final UrlValidator urlValidator) {
             return new WebApplicationServiceResponseBuilder(servicesManager, urlValidator);
         }
     }
@@ -235,8 +230,7 @@ public class CasCoreServicesConfiguration {
         public ChainingServiceRegistry serviceRegistry(
             final ConfigurableApplicationContext applicationContext,
             final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
-            @Qualifier("serviceRegistryExecutionPlan")
-            final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan) throws Exception {
+            @Qualifier("serviceRegistryExecutionPlan") final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan) throws Exception {
             val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
             val chainingRegistry = new DefaultChainingServiceRegistry(applicationContext);
             if (serviceRegistryExecutionPlan.find(filter).isEmpty()) {
@@ -259,10 +253,8 @@ public class CasCoreServicesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
-            @Qualifier(ServiceRegistry.BEAN_NAME)
-            final ChainingServiceRegistry serviceRegistry,
-            @Qualifier("servicesManagerCache")
-            final Cache<Long, RegisteredService> servicesManagerCache,
+            @Qualifier(ServiceRegistry.BEAN_NAME) final ChainingServiceRegistry serviceRegistry,
+            @Qualifier("servicesManagerCache") final Cache<Long, RegisteredService> servicesManagerCache,
             final List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators,
             final Environment environment,
             final ConfigurableApplicationContext applicationContext) {
@@ -282,8 +274,7 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
         public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
-            @Qualifier("servicesManagerConfigurationContext")
-            final ServicesManagerConfigurationContext configurationContext) throws Exception {
+            @Qualifier("servicesManagerConfigurationContext") final ServicesManagerConfigurationContext configurationContext) throws Exception {
             return BeanSupplier.of(ServicesManagerExecutionPlanConfigurer.class)
                 .alwaysMatch()
                 .supply(() -> {
@@ -324,13 +315,8 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "servicesManagerCache")
         public Cache<Long, RegisteredService> servicesManagerCache(final CasConfigurationProperties casProperties) {
             val cacheProperties = casProperties.getServiceRegistry().getCache();
-            val builder = Caffeine.newBuilder();
             val duration = Beans.newDuration(cacheProperties.getDuration());
-            return builder
-                .initialCapacity(cacheProperties.getInitialCapacity())
-                .maximumSize(cacheProperties.getCacheSize())
-                .expireAfterWrite(duration)
-                .build();
+            return Beans.newCache(casProperties.getServiceRegistry().getCache(), duration);
         }
 
         @EventListener
@@ -349,11 +335,9 @@ public class CasCoreServicesConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Runnable servicesManagerScheduledLoader(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("serviceRegistryExecutionPlan")
-            final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan,
+            @Qualifier("serviceRegistryExecutionPlan") final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan,
             final CasConfigurationProperties casProperties,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) throws Exception {
 
             return BeanSupplier.of(Runnable.class)
                 .when(BeanCondition.on("cas.service-registry.schedule.enabled").isTrue().evenIfMissing()

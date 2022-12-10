@@ -181,7 +181,6 @@ public class OidcJwksConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @SuppressWarnings("unchecked")
         @ConditionalOnMissingBean(name = "restOidcJsonWebKeystoreGeneratorService")
         public Supplier<OidcJsonWebKeystoreGeneratorService> restOidcJsonWebKeystoreGeneratorService(
             final CasConfigurationProperties casProperties,

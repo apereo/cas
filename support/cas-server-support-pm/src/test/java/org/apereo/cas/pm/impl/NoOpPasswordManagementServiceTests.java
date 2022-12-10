@@ -36,7 +36,6 @@ public class NoOpPasswordManagementServiceTests {
         assertFalse(service.changeInternal(new PasswordChangeRequest()));
     }
 
-
     @Test
     public void verifyTokenParsing() {
         val request = new MockHttpServletRequest();

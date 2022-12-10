@@ -58,7 +58,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         public void beforeEach() {
             this.context = new MockRequestContext();
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.EMPTY_MAP));
+            WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
 
             val request = new MockHttpServletRequest();
             request.setRemoteAddr("223.456.789.000");
@@ -100,7 +100,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         public void beforeEach() {
             this.context = new MockRequestContext();
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.EMPTY_MAP));
+            WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
 
             val request = new MockHttpServletRequest();
             request.setRemoteAddr("123.456.789.000");

@@ -1,3 +1,4 @@
 org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration
 org.apereo.cas.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration
 org.apereo.cas.config.DelegatedAuthenticationSAMLConfiguration
+org.apereo.cas.config.DelegatedAuthenticationProfileSelectionConfiguration

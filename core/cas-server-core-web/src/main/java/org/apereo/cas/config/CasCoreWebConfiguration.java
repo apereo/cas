@@ -86,8 +86,7 @@ public class CasCoreWebConfiguration {
         @Bean
         public HierarchicalMessageSource messageSource(
             final CasConfigurationProperties casProperties,
-            @Qualifier("casCommonMessages")
-            final Properties casCommonMessages) {
+            @Qualifier("casCommonMessages") final Properties casCommonMessages) {
             val bean = new CasReloadableMessageBundle();
             val mb = casProperties.getMessageBundle();
             bean.setDefaultEncoding(mb.getEncoding());

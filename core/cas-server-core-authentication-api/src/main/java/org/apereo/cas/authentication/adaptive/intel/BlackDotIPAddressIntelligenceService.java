@@ -10,7 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -63,11 +64,11 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
                 .url(url)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
+            if (response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");
                 return bannedResponse;
             }
-            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("Received payload result after examining IP address [{}] as [{}]", clientIpAddress, result);
 
             val json = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);

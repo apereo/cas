@@ -30,8 +30,7 @@ public class CasCoreConfigurationWatchConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public InitializingBean casConfigurationWatchService(
-        @Qualifier("configurationPropertiesEnvironmentManager")
-        final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
+        @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
         final ConfigurableApplicationContext applicationContext) throws Exception {
         return BeanSupplier.of(InitializingBean.class)
             .when(BeanCondition.on("cas.events.core.track-configuration-modifications").isTrue().given(applicationContext.getEnvironment()))

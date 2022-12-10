@@ -214,97 +214,6 @@ public class ConfigurationMetadataGenerator {
         }
     }
 
-    /**
-     * Execute.
-     *
-     * @throws Exception the exception
-     */
-    private void adjustConfigurationMetadata() throws Exception {
-        val jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
-        if (!jsonFile.exists()) {
-            throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
-        }
-        val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
-        };
-        final Map<String, Set> jsonMap = (Map) MAPPER.readValue(jsonFile, values);
-        final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
-        final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
-
-        processMappableProperties(properties, groups);
-        processNestedTypes(properties, groups);
-
-        val hints = processHints(properties, groups);
-        processNestedEnumProperties(properties, groups);
-        processDeprecatedProperties(properties);
-        processTopLevelEnumTypes(properties);
-
-        removeNestedConfigurationPropertyGroups(properties, groups);
-
-        jsonMap.put("properties", properties);
-        jsonMap.put("groups", groups);
-        jsonMap.put("hints", hints);
-
-        LOGGER.info("Final results is written to [{}]", jsonFile.getAbsolutePath());
-        MAPPER.writeValue(jsonFile, jsonMap);
-        val copy = new File(buildDir, jsonFile.getName());
-        LOGGER.info("A copy of the results is written to [{}]", copy.getAbsolutePath());
-        MAPPER.writeValue(copy, jsonMap);
-    }
-
-    private void processTopLevelEnumTypes(final Set<ConfigurationMetadataProperty> properties) throws Exception {
-        for (val property : properties) {
-            val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
-            val typeFile = new File(typePath);
-            if (typeFile.exists()) {
-                val cu = StaticJavaParser.parse(new File(typePath));
-                for (val type : cu.getTypes()) {
-                    if (type.isEnumDeclaration()) {
-                        val enumMem = type.asEnumDeclaration();
-                        val builder = ConfigurationMetadataPropertyCreator.collectJavadocsEnumFields(property, enumMem);
-                        property.setDescription(builder.toString());
-                    }
-                }
-            }
-        }
-    }
-
-    private void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
-        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
-        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
-        LOGGER.trace("Processing nested configuration types...");
-        properties
-            .forEach(Unchecked.consumer(p -> {
-                var indexBrackets = false;
-                var typeName = StringUtils.EMPTY;
-
-                if (NESTED_TYPE_PATTERN1.matcher(p.getType()).matches()) {
-                    val matcher = NESTED_TYPE_PATTERN1.matcher(p.getType());
-                    indexBrackets = matcher.matches();
-                    typeName = matcher.group(1);
-                } else if (NESTED_TYPE_PATTERN2.matcher(p.getType()).matches()) {
-                    val matcher = NESTED_TYPE_PATTERN2.matcher(p.getType());
-                    indexBrackets = matcher.matches();
-                    typeName = matcher.group(2);
-
-                    val result = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
-                    if (result.isPresent()) {
-                        typeName = result.get().getName();
-                    }
-
-                }
-
-                if (!typeName.isEmpty()) {
-                    val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
-                    LOGGER.debug("Matched Type [{}], Property [{}], Type: [{}], Path [{}]", typeName, p.getName(), p.getType(), typePath);
-                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
-                    parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
-                }
-            }));
-
-        properties.addAll(collectedProps);
-        groups.addAll(collectedGroups);
-    }
-
     protected void processMappableProperties(final Set<ConfigurationMetadataProperty> properties,
                                              final Set<ConfigurationMetadataProperty> groups) {
         val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
@@ -441,5 +350,96 @@ public class ConfigurationMetadataGenerator {
                 throw new RuntimeException(ex);
             }
         }
+    }
+
+    /**
+     * Execute.
+     *
+     * @throws Exception the exception
+     */
+    private void adjustConfigurationMetadata() throws Exception {
+        val jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
+        if (!jsonFile.exists()) {
+            throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
+        }
+        val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
+        };
+        final Map<String, Set> jsonMap = (Map) MAPPER.readValue(jsonFile, values);
+        final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
+        final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
+
+        processMappableProperties(properties, groups);
+        processNestedTypes(properties, groups);
+
+        val hints = processHints(properties, groups);
+        processNestedEnumProperties(properties, groups);
+        processDeprecatedProperties(properties);
+        processTopLevelEnumTypes(properties);
+
+        removeNestedConfigurationPropertyGroups(properties, groups);
+
+        jsonMap.put("properties", properties);
+        jsonMap.put("groups", groups);
+        jsonMap.put("hints", hints);
+
+        LOGGER.info("Final results is written to [{}]", jsonFile.getAbsolutePath());
+        MAPPER.writeValue(jsonFile, jsonMap);
+        val copy = new File(buildDir, jsonFile.getName());
+        LOGGER.info("A copy of the results is written to [{}]", copy.getAbsolutePath());
+        MAPPER.writeValue(copy, jsonMap);
+    }
+
+    private void processTopLevelEnumTypes(final Set<ConfigurationMetadataProperty> properties) throws Exception {
+        for (val property : properties) {
+            val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
+            val typeFile = new File(typePath);
+            if (typeFile.exists()) {
+                val cu = StaticJavaParser.parse(new File(typePath));
+                for (val type : cu.getTypes()) {
+                    if (type.isEnumDeclaration()) {
+                        val enumMem = type.asEnumDeclaration();
+                        val builder = ConfigurationMetadataPropertyCreator.collectJavadocsEnumFields(property, enumMem);
+                        property.setDescription(builder.toString());
+                    }
+                }
+            }
+        }
+    }
+
+    private void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
+        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
+        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
+        LOGGER.trace("Processing nested configuration types...");
+        properties
+            .forEach(Unchecked.consumer(p -> {
+                var indexBrackets = false;
+                var typeName = StringUtils.EMPTY;
+
+                if (NESTED_TYPE_PATTERN1.matcher(p.getType()).matches()) {
+                    val matcher = NESTED_TYPE_PATTERN1.matcher(p.getType());
+                    indexBrackets = matcher.matches();
+                    typeName = matcher.group(1);
+                } else if (NESTED_TYPE_PATTERN2.matcher(p.getType()).matches()) {
+                    val matcher = NESTED_TYPE_PATTERN2.matcher(p.getType());
+                    indexBrackets = matcher.matches();
+                    typeName = matcher.group(2);
+
+                    val result = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
+                    if (result.isPresent()) {
+                        typeName = result.get().getName();
+                    }
+
+                }
+
+                if (!typeName.isEmpty()) {
+                    val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
+                    LOGGER.debug("Matched Type [{}], Property [{}], Type: [{}], Path [{}]", typeName, p.getName(), p.getType(), typePath);
+                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                    parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
+                }
+            }));
+
+        properties.addAll(collectedProps);
+        groups.addAll(collectedGroups);
     }
 }

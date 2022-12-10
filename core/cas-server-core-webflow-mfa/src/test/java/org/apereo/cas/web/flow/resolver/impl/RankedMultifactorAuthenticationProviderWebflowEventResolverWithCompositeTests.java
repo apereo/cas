@@ -80,7 +80,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverWithComp
         val transition = new Transition(new DefaultTransitionCriteria(
             new LiteralExpression(CasWebflowConstants.STATE_ID_MFA_COMPOSITE)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
-        
+
         assertEquals(CasWebflowConstants.STATE_ID_MFA_COMPOSITE, resolver.resolveSingle(context).getId());
     }
 

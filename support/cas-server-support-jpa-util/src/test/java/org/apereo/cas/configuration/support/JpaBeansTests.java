@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("JDBC")
+@Tag("Hibernate")
 public class JpaBeansTests {
     @Test
     public void verifyConnectionValidity() throws Exception {

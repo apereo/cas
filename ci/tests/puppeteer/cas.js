@@ -1,6 +1,7 @@
 const assert = require('assert');
 const axios = require('axios');
 const https = require('https');
+const http = require('http');
 const {spawn} = require('child_process');
 const waitOn = require('wait-on');
 const JwtOps = require('jsonwebtoken');
@@ -127,7 +128,7 @@ exports.loginWith = async (page, user, password,
     await this.type(page, usernameField, user);
 
     await page.waitForSelector(passwordField, {visible: true});
-    await this.type(page, passwordField, password);
+    await this.type(page, passwordField, password, true);
 
     await page.keyboard.press('Enter');
     return await page.waitForNavigation();
@@ -155,7 +156,7 @@ exports.assertVisibility = async (page, selector) => {
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
     let result = element == null || await element.boundingBox() == null;
-    console.log(`Checking element invisibility for ${selector} while on page ${page.url()}:${result}`);
+    console.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
     assert(result);
 };
 
@@ -189,7 +190,8 @@ exports.submitForm = async (page, selector, predicate = undefined) => {
     }
     return await Promise.all([
         page.waitForResponse(predicate),
-        page.$eval(selector, form => form.submit())
+        page.$eval(selector, form => form.submit()),
+        page.waitForTimeout(3000)
     ]);
 };
 
@@ -264,6 +266,8 @@ exports.doRequest = async (url, method = "GET", headers = {},
             rejectUnauthorized: false,
             headers: headers
         };
+        options.agent = new https.Agent( options );
+
         console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
         const handler = (res) => {
             console.log(`Response status code: ${colors.green(res.statusCode)}`);
@@ -300,11 +304,14 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
     if (responseType !== undefined) {
         config["responseType"] = responseType
     }
+    console.log(`Sending GET request to ${url}`);
     await instance
         .get(url, config)
         .then(res => {
             if (responseType !== "blob" && responseType !== "stream") {
-                console.log(res.data);
+                // let json = JSON.parse(body)
+                console.dir(res.data, {depth: null, colors: true});
+                // console.log(res.data);
             }
             successHandler(res);
         })
@@ -528,8 +535,6 @@ exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
         });
     return JSON.parse(response)["mfa-duo"];
 };
-
-exports.fetchDuoSecurityBypassCode = async (user = "casuser") => await this.fetchDuoSecurityBypassCode(user)[0];
 
 exports.base64Decode = async (data) => {
     let buff = Buffer.from(data, 'base64');

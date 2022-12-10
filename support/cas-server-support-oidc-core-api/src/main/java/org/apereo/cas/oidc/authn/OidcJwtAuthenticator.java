@@ -124,15 +124,15 @@ public class OidcJwtAuthenticator implements Authenticator {
     }
 
     @Override
-    public void validate(final Credentials creds,
-                         final WebContext webContext,
-                         final SessionStore sessionStore) {
+    public Optional<Credentials> validate(final Credentials creds,
+                                          final WebContext webContext,
+                                          final SessionStore sessionStore) {
 
         val credentials = (UsernamePasswordCredentials) creds;
         val registeredService = verifyCredentials(credentials, webContext);
         if (registeredService == null) {
             LOGGER.warn("Unable to verify credentials");
-            return;
+            return Optional.empty();
         }
 
         val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
@@ -150,6 +150,7 @@ public class OidcJwtAuthenticator implements Authenticator {
                         .build();
                     determineUserProfile(credentials, consumer);
                 }))));
+        return Optional.of(credentials);
     }
 
 

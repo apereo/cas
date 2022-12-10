@@ -50,7 +50,7 @@ Keystore generation can be outsourced to an external relational database, such a
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-hibernate" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oidc-jpa" %}
 
 To learn how to configure database drivers and JPA implementation options, please [review this guide](../installation/JDBC-Drivers.html).
 
@@ -62,7 +62,7 @@ Keystore generation can be outsourced to an external MongoDb instance.
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-core" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oidc-mongo" %}
 
 {% include_cached casproperties.html properties="cas.authn.oidc.jwks.mongo" %}
 

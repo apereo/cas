@@ -43,7 +43,7 @@ public class DelegatedAuthenticationErrorViewResolverTests {
         
         val request = new MockHttpServletRequest();
         request.addParameter("templates/error", "failure");
-        request.setAttribute("javax.servlet.error.exception", new RuntimeException(new UnauthorizedServiceException("templates/error")));
+        request.setAttribute("jakarta.servlet.error.exception", new RuntimeException(new UnauthorizedServiceException("templates/error")));
         val mv = resolver.resolveErrorView(request, HttpStatus.FORBIDDEN, Map.of());
         assertEquals(HttpStatus.FORBIDDEN, mv.getStatus());
         assertEquals(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW, mv.getViewName());

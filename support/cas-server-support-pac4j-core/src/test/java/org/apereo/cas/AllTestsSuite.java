@@ -11,6 +11,7 @@ import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationA
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactoryTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnParticipationStrategyTests;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationRequestCustomizerTests;
+import org.apereo.cas.web.flow.DelegationWebflowUtilsTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -22,6 +23,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    DelegationWebflowUtilsTests.class,
     DefaultDelegatedClientIdentityProviderRedirectionStrategyTests.class,
     DelegatedClientAuthenticationRequestCustomizerTests.class,
     GroovyDelegatedClientIdentityProviderRedirectionStrategyTests.class,

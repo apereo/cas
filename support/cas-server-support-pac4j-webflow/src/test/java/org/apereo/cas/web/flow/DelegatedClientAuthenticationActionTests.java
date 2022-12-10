@@ -68,7 +68,7 @@ public class DelegatedClientAuthenticationActionTests {
     public static class CredentialTestConfiguration {
         @Bean
         public DelegatedClientAuthenticationCredentialResolver testDelegatedCredentialResolver(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
             final DelegatedClientAuthenticationConfigurationContext configurationContext) {
             return new TestBaseDelegatedClientAuthenticationCredentialResolver(configurationContext);
         }
@@ -122,7 +122,7 @@ public class DelegatedClientAuthenticationActionTests {
                 .key(UUID.randomUUID().toString())
                 .linkedId("casuser-linked")
                 .build();
-            WebUtils.putDelegatedClientAuthenticationCandidateProfile(context, p1);
+            DelegationWebflowUtils.putDelegatedClientAuthenticationCandidateProfile(context, p1);
             val event = delegatedAuthenticationAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         }

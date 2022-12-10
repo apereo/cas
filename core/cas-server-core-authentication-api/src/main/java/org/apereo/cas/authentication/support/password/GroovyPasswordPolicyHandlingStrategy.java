@@ -24,6 +24,7 @@ public class GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse> implem
     AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext> {
 
     private final transient WatchableGroovyScriptResource watchableScript;
+
     private final transient ApplicationContext applicationContext;
 
     public GroovyPasswordPolicyHandlingStrategy(final Resource groovyScript, final ApplicationContext applicationContext) {

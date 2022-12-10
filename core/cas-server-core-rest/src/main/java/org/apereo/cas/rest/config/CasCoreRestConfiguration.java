@@ -48,18 +48,12 @@ public class CasCoreRestConfiguration {
         @ConditionalOnMissingBean(name = RestAuthenticationService.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RestAuthenticationService restAuthenticationService(
-            @Qualifier("restHttpRequestCredentialFactory")
-            final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
-            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
-            final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier("requestedContextValidator")
-            final RequestedAuthenticationContextValidator requestedContextValidator) {
+            @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
+            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME) final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier("requestedContextValidator") final RequestedAuthenticationContextValidator requestedContextValidator) {
             return new DefaultRestAuthenticationService(
                 authenticationSystemSupport, restHttpRequestCredentialFactory,
                 webApplicationServiceFactory, multifactorTriggerSelectionStrategy,

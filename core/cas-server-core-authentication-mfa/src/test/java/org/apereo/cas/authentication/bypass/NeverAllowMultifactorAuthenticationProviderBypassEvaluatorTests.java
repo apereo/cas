@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 @Tag("MFATrigger")
 public class NeverAllowMultifactorAuthenticationProviderBypassEvaluatorTests {
-    
+
     @Test
     public void verifyOperation() {
         val applicationContext = new StaticApplicationContext();

@@ -1,3 +1,5 @@
+<!-- fragment:keep -->
+
 <p/>
 
 #### Configuration Metadata

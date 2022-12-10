@@ -6,6 +6,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +19,7 @@ import java.util.List;
 public class CommaSeparatedStringToThrowablesConverter implements Converter<String, List<Class<? extends Throwable>>> {
     @Override
     public List<Class<? extends Throwable>> convert(
-        @Nonnull
-        final String source) {
+        @Nonnull final String source) {
         try {
             val strings = StringUtils.commaDelimitedListToStringArray(source);
             val classes = new ArrayList<Class<? extends Throwable>>(strings.length);

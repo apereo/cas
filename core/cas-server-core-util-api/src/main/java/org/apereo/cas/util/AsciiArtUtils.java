@@ -22,7 +22,7 @@ public class AsciiArtUtils {
     private static final String ANSI_RESET = "\u001B[0m";
 
     private static final String ANSI_CYAN = "\u001B[36m";
-    
+
     /**
      * Print ascii art.
      *

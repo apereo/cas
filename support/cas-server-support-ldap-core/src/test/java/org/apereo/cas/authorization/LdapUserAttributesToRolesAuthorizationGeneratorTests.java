@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @EnabledIfListeningOnPort(port = 10389)
-@Tag("Ldap")
+@Tag("LdapAttributes")
 public class LdapUserAttributesToRolesAuthorizationGeneratorTests {
 
     @BeforeAll
@@ -59,7 +59,6 @@ public class LdapUserAttributesToRolesAuthorizationGeneratorTests {
             assertFalse(result.isEmpty());
             assertTrue(profile.getAttributes().isEmpty());
             assertTrue(profile.getRoles().isEmpty());
-            assertTrue(profile.getPermissions().isEmpty());
         });
     }
 

@@ -62,11 +62,11 @@ public class DynamoDbTicketRegistryConfiguration {
             @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog) {
             val db = casProperties.getTicket().getRegistry().getDynamoDb();
-            val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbTicketRegistryClient);
+            val facilitator = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbTicketRegistryClient);
             if (!db.isPreventTableCreationOnStartup()) {
-                f.createTicketTables(db.isDropTablesOnStartup());
+                facilitator.createTicketTables(db.isDropTablesOnStartup());
             }
-            return f;
+            return facilitator;
         }
 
     }

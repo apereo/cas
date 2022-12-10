@@ -120,19 +120,13 @@ public interface BeanContainer<T> {
         private final List<T> items;
 
         @Override
-        public T first() {
-            return items.get(0);
-        }
-
-        @Override
-        public BeanContainer<T> forEach(final Consumer<T> o) {
-            items.forEach(o);
-            return null;
-        }
-
-        @Override
         public List<T> toList() {
             return this.items;
+        }
+
+        @Override
+        public Set<T> toSet() {
+            return new LinkedHashSet<>(this.items);
         }
 
         @Override
@@ -148,8 +142,14 @@ public interface BeanContainer<T> {
         }
 
         @Override
-        public Set<T> toSet() {
-            return new LinkedHashSet<>(this.items);
+        public T first() {
+            return items.get(0);
+        }
+
+        @Override
+        public BeanContainer<T> forEach(final Consumer<T> o) {
+            items.forEach(o);
+            return null;
         }
     }
 }

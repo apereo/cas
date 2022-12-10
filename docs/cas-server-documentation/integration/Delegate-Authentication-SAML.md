@@ -11,12 +11,12 @@ category: Authentication
 In the event that CAS is configured to delegate authentication to an external identity provider, the service provider (CAS) 
 metadata as well as the identity provider metadata automatically become available at the following endpoints:
 
-| Endpoint                        | Description                                           |
-|---------------------------------|----------------------------------------------------------------------------|
-| `/sp/metadata`                  | Displays the service provider (CAS) metadata. Works well if there is only one SAML2 IdP is defined.         |
+| Endpoint                        | Description                                                                                                                                                                 |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `/sp/metadata`                  | Displays the service provider (CAS) metadata. Works well if there is only one SAML2 IdP is defined.                                                                         |
 | `/sp/idp/metadata`              | Displays the identity provider metadata. Works well if there is only one SAML2 IdP is defined. Accepts a `force=true` parameter to reload the identity provider's metadata. |
-| `/sp/{clientName}/metadata`     | Displays the service provider metadata for the requested client name.    |
-| `/sp/{clientName}/idp/metadata` | Displays the identity provider metadata for the requested client name. Accepts a `force=true` parameter to reload the identity provider's metadata               |
+| `/sp/{clientName}/metadata`     | Displays the service provider metadata for the requested client name.                                                                                                       |
+| `/sp/{clientName}/idp/metadata` | Displays the identity provider metadata for the requested client name. Accepts a `force=true` parameter to reload the identity provider's metadata                          |
 
 Note that you can use more than one external identity provider with CAS, where each integration may be done 
 with a different set of metadata and keys for CAS acting as the service provider. Each integration (referred to as a client, 
@@ -61,6 +61,22 @@ A sample JSON file follows:
 ```
        
 See [registered service properties](../services/Configuring-Service-Custom-Properties.html) for more details.
+
+## Troubleshooting
+
+To enable additional logging, modify the logging configuration file to add the following:
+
+```xml
+<Logger name="org.opensaml" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+
+<Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+```
 
 ## Identity Provider Discovery Service
 

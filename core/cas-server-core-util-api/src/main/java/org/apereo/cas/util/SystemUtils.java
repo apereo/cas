@@ -12,6 +12,8 @@ import org.springframework.core.SpringVersion;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
+import jakarta.servlet.http.HttpServlet;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
@@ -70,6 +72,7 @@ public class SystemUtils {
         info.put("Java Home", properties.get("java.home"));
         info.put("Java Vendor", properties.get("java.vendor"));
         info.put("Java Version", properties.get("java.version"));
+        info.put("Servlet Version", HttpServlet.class.getPackage().getImplementationVersion());
 
         val runtime = Runtime.getRuntime();
         info.put("JVM Free Memory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));

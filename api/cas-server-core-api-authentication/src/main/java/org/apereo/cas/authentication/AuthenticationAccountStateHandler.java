@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import javax.security.auth.login.LoginException;
+
 import java.util.List;
 
 /**

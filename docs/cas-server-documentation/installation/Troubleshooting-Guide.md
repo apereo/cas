@@ -29,15 +29,14 @@ Note that the above configuration block only addresses logging behavior of CAS c
 upon which CAS depends. Consult the log4j configuration and turn on appropriate `DEBUG` logs for each relevant component.
 Those are usually your best data source for diagnostics and troubleshooting.
 
-If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-9.0-doc/logging.html), 
-you may also want to look into your `catalina.out`
-and `localhost-X-Y-Z.log` log files to learn more about source of issues. 
+If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-10.1-doc/logging.html), 
+you may also want to look into your `catalina.out` and `localhost-X-Y-Z.log` log files to learn more about source of issues. 
 
 ## Deployment Problem; Configuration Issue X. Can You Help?
 
-[Study this](#review-logs).
+Yes. [Study this](#review-logs).
 
-## How do I tune/extend MongoDb, MySQL, Spring Webflow, etc?
+## How do I tune/extend MongoDb, MySQL, Hazelcas, Docker, etc?
 
 If you have a question about tuning and configuration of external components utilized by CAS
 and you have a need to achieve more advanced use cases other than what the CAS defaults offer, your question is best
@@ -60,7 +59,7 @@ Typical questions in this category that are best answered elsewhere are:
 It is quite possible that the problem you are trying to resolve has already been solved by the next patch release.
 A patch release is a conservative incremental improvement that includes bug fixes and small enhancements and 
 is absolutely backward compatible with previous PATCH releases of the same MINOR release. For example, if you are currently
-on CAS version `6.5.1` and have run into a possible issue, you should consider upgrading to `6.5.2`, and 6.5.3` and so on
+on CAS version `6.5.1` and have run into a possible issue, you should consider upgrading to `6.5.2`, and `6.5.3` and so on
 to investigate further, assuming releases are of course available and published.
 
 The project release schedule is [available here](https://github.com/apereo/cas/milestones), and you can always
@@ -78,7 +77,7 @@ You might be running CAS inside a [servlet container](Configuring-Servlet-Contai
 
 With this setup, the CAS login screen may still warn you about a non-secure connection. There is no setting in CAS that would allow you to control/adjust this, as this is entirely controlled by the container itself. All CAS cares about is whether the incoming connection request identifies itself as a secure connection. So to remove the warning, you will need to look into your container's configuration and docs to see how the connection may be secured between the proxy and CAS. 
 
-For [Apache Tomcat](https://tomcat.apache.org/tomcat-9.0-doc/config/http.html), you may be able to adjust the connector that talks to the proxy with a `secure=true` attribute.
+For [Apache Tomcat](https://tomcat.apache.org/tomcat-10.1-doc/config/http.html), you may be able to adjust the connector that talks to the proxy with a `secure=true` attribute.
 
 ## Application X "redirected you too many times" 
 

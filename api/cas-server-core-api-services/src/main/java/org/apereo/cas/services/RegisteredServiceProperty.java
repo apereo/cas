@@ -314,6 +314,7 @@ public interface RegisteredServiceProperty extends Serializable {
             "Determine whether secrets are Base64 encoded."),
         /**
          * Whether interrupt notifications should be skipped.
+         *
          * @deprecated Since 6.5.0
          **/
         @Deprecated(since = "6.5.0")
@@ -405,15 +406,15 @@ public interface RegisteredServiceProperty extends Serializable {
         CORS_ALLOWED_HEADERS("corsAllowedHeaders", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.CORS, RegisteredServicePropertyTypes.STRING,
             "Define exposed headers in the response for CORS requests. Set the list of headers that a pre-flight "
-                + "request can list as allowed for use during an actual request. The special value "
-                + "`*` allows actual requests to send any header."),
+            + "request can list as allowed for use during an actual request. The special value "
+            + "`*` allows actual requests to send any header."),
         /**
          * Define exposed headers in the response for CORS requests.
          */
         CORS_EXPOSED_HEADERS("corsExposedHeaders", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.CORS, RegisteredServicePropertyTypes.STRING,
             "List of response headers that a response might have and can be exposed. "
-                + "The special value `*` allows all headers to be exposed for non-credentialed requests."),
+            + "The special value `*` allows all headers to be exposed for non-credentialed requests."),
         /**
          * Indicate binding type, when using delegated authentication to saml2 identity providers.
          */
@@ -605,7 +606,7 @@ public interface RegisteredServiceProperty extends Serializable {
                     .entrySet()
                     .stream()
                     .filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
-                        && StringUtils.isNotBlank(entry.getValue().value()))
+                                     && StringUtils.isNotBlank(entry.getValue().value()))
                     .distinct()
                     .findFirst();
                 if (property.isPresent()) {
@@ -744,8 +745,8 @@ public interface RegisteredServiceProperty extends Serializable {
             return service != null && service.getProperties().entrySet()
                 .stream()
                 .anyMatch(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
-                    && StringUtils.isNotBlank(entry.getValue().value())
-                    && valueFilter.test(entry.getValue().value()));
+                                   && StringUtils.isNotBlank(entry.getValue().value())
+                                   && valueFilter.test(entry.getValue().value()));
         }
 
         /**

@@ -43,15 +43,10 @@ public class RelaxedPropertyNames implements Iterable<String> {
         for (int i = 0; i < name.length(); i++) {
             char c = name.charAt(i);
             result.append(Character.isUpperCase(c) && result.length() > 0
-                && result.charAt(result.length() - 1) != '-'
+                          && result.charAt(result.length() - 1) != '-'
                 ? "-" + Character.toLowerCase(c) : c);
         }
         return new RelaxedPropertyNames(result.toString());
-    }
-
-    @Override
-    public Iterator<String> iterator() {
-        return this.values.iterator();
     }
 
     private static void initialize(final String name, final Set<String> values) {
@@ -67,6 +62,11 @@ public class RelaxedPropertyNames implements Iterable<String> {
                 initialize(result, values);
             }
         }
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return this.values.iterator();
     }
 
     /**
@@ -195,9 +195,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
         };
 
-        private static final char[] SUFFIXES = new char[]{'_', '-', '.'};
-
-        public abstract String apply(String value);
+        private static final char[] SUFFIXES = {'_', '-', '.'};
 
         private static String separatedToCamelCase(final String value, final boolean caseInsensitive) {
             if (value.isEmpty()) {
@@ -217,6 +215,8 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
             return builder.toString();
         }
+
+        public abstract String apply(String value);
     }
 
 }

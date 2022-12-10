@@ -65,6 +65,7 @@ public class CasServerProperties implements Serializable {
     public CasServerProperties() {
         setPrefix(StringUtils.appendIfMissing(getName(), "/").concat("cas"));
     }
+
     @JsonIgnore
     public String getLoginUrl() {
         return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGIN);

@@ -18,7 +18,7 @@
     "--cas.monitor.endpoints.jdbc.role-prefix=ROLE_",
     "--cas.monitor.endpoints.jdbc.driver-class=org.postgresql.Driver",
     "--cas.monitor.endpoints.jdbc.ddl-auto=update",
-    "--cas.monitor.endpoints.jdbc.dialect=org.hibernate.dialect.PostgreSQL10Dialect",
+    "--cas.monitor.endpoints.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
     "--cas.monitor.endpoints.jdbc.user=postgres",
     "--cas.monitor.endpoints.jdbc.password=password",
     "--cas.monitor.endpoints.jdbc.url=jdbc:postgresql://localhost:5432/webapp",

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("MongoDb")
+@Tag("MongoDbMFA")
 @Import(MongoDbMultifactorAuthenticationTrustConfiguration.class)
 @TestPropertySource(
     properties = {

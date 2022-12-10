@@ -73,7 +73,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         val ctx = context.getMessageContext().getSubcontext(SOAP11Context.class, true);
         Objects.requireNonNull(ctx).setEnvelope(envelope);
         val encoder = new HTTPSOAP11Encoder();
-        encoder.setHttpServletResponse(context.getHttpResponse());
+        encoder.setHttpServletResponseSupplier(context::getHttpResponse);
         encoder.setMessageContext(context.getMessageContext());
         encoder.initialize();
         encoder.encode();

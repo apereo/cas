@@ -26,7 +26,7 @@ the lifecycle status of the assigned key. The following values are accepted life
 | Value | Description                                                                            |
 |-------|----------------------------------------------------------------------------------------|
 | `0`   | The key is active and current, used for required operations.                           |
-| `1`   | The key is will be the next key used during key rotation.                              |
+| `1`   | The key will be the next key used during key rotation.                                 |
 | `2`   | The key is no longer used and active, and will be removed after revocation operations. |
 
 CAS always signs with only one signing key at a time, typically the *very first key* listed and loaded from the keystore,

@@ -17,8 +17,8 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * OAuth callback authorize controller based on the pac4j callback controller.
@@ -58,6 +58,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
             }
         }
         callback.perform(context, getConfigurationContext().getSessionStore(),
+            getConfigurationContext().getOauthConfig().getProfileManagerFactory(),
             getConfigurationContext().getOauthConfig(), (object, ctx) -> Boolean.FALSE,
                 defaultUrl, Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT);
         val url = callback.getRedirectUrl();

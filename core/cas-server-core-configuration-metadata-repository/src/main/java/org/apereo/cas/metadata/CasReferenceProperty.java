@@ -27,7 +27,7 @@ public class CasReferenceProperty implements Serializable, Comparable<CasReferen
     private final boolean expressionLanguage;
 
     private final boolean duration;
-    
+
     private final boolean required;
 
     private final String module;
@@ -35,8 +35,6 @@ public class CasReferenceProperty implements Serializable, Comparable<CasReferen
     private final String owner;
 
     private final String type;
-
-    private String description;
 
     private final String shortDescription;
 
@@ -51,6 +49,8 @@ public class CasReferenceProperty implements Serializable, Comparable<CasReferen
     private final String deprecationReplacement;
 
     private final String sourceType;
+
+    private String description;
 
     @Override
     public int compareTo(final CasReferenceProperty o) {

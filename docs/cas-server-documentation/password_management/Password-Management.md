@@ -43,7 +43,7 @@ CAS may also allow individual end-users to update certain aspects of their accou
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
 or [this guide](../notifications/Sending-Email-Configuration.html). 
 
-{% include_cached casproperties.html properties="cas.authn.pm.core,cas.authn.pm.webflow" %}
+{% include_cached casproperties.html properties="cas.authn.pm" includes=".core,.webflow" %}
 
 ### Password Reset
 

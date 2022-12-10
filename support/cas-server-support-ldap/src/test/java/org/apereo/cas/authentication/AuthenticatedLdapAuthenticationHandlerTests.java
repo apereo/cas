@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.ldap[0].principal-attribute-list=description,cn"
 })
 @EnabledIfListeningOnPort(port = 10389)
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 public class AuthenticatedLdapAuthenticationHandlerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
