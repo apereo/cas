@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -74,27 +75,4 @@ public class SamlIdPCoreProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
-
-    /**
-     * Define session storage types.
-     */
-    public enum SessionStorageTypes {
-        /**
-         * Saml requests, and other session data collected as part of SAML flows and requests
-         * are kept in the http servlet session that is local to the server.
-         */
-        HTTP,
-        /**
-         * Saml requests, and other session data collected as part of SAML flows and requests
-         * are kept in the client browser's session storage, signed and encrypted. SAML2 interactions
-         * require client-side read/write operations to restore the session from the browser.
-         */
-        BROWSER_SESSION_STORAGE,
-        /**
-         * Saml requests, and other session data collected as part of SAML flows and requests
-         * are tracked as CAS tickets in the registry and replicated across the entire cluster
-         * as tickets.
-         */
-        TICKET_REGISTRY
-    }
 }
