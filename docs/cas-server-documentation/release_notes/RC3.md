@@ -45,7 +45,7 @@ The following items are new improvements and enhancements presented in this rele
 
 The migration of the entire codebase to Spring Boot `3.0.0` and Jakarta APIs is now complete. This is a major change and upgrade across the board
 that affects almost every CAS module and dependency. As a result, a very large number of internal libraries are 
-also upgraded to remain compatible These include Spring Data, Spring Security, Spring Cloud, Spring Shell, Pac4j and many many more. 
+also upgraded to remain compatible. These include Spring Data, Spring Security, Spring Cloud, Spring Shell, Pac4j and many many more. 
 
 Switching to Spring Boot also means that CAS has now switched to support [Jakarta EE 10](https://jakarta.ee/release/10/) and 
 Servlet specification `6.0.0`. This change does impact supported servlet containers such as Apache Tomcat and Undertow, where 
