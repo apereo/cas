@@ -110,6 +110,7 @@ public class CasCoreHttpConfiguration {
             if (StringUtils.isNotBlank(httpClient.getProxyHost()) && httpClient.getProxyPort() > 0) {
                 client.setProxy(new HttpHost(httpClient.getProxyHost(), httpClient.getProxyPort()));
             }
+            client.setSslContext(casSslContext.getSslContext());
             client.setSslSocketFactory(trustStoreSslSocketFactory);
             client.setTrustManagers(casSslContext.getTrustManagers());
             val defaultHeaders = new ArrayList<Header>();
