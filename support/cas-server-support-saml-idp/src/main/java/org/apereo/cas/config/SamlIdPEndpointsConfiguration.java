@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
+import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -486,11 +486,11 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-            if (type == SamlIdPCoreProperties.SessionStorageTypes.TICKET_REGISTRY) {
+            if (type == SessionStorageTypes.TICKET_REGISTRY) {
                 return new DistributedJEESessionStore(ticketRegistry,
                     ticketFactory, samlIdPDistributedSessionCookieGenerator);
             }
-            if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
+            if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE) {
                 return new BrowserWebStorageSessionStore(webflowCipherExecutor);
             }
             return JEESessionStore.INSTANCE;
