@@ -20,6 +20,7 @@ import org.pac4j.core.profile.CommonProfile;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -47,7 +48,7 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
     }
 
     @Override
-    public void validate(final Credentials credentials, final WebContext webContext, final SessionStore sessionStore) {
+    public Optional<Credentials> validate(final Credentials credentials, final WebContext webContext, final SessionStore sessionStore) {
         val tokenCredentials = (TokenCredentials) credentials;
         val token = extractAccessTokenFrom(tokenCredentials);
         LOGGER.trace("Received access token [{}] for authentication", token);
@@ -55,19 +56,21 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
         val accessToken = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
         if (accessToken == null || accessToken.isExpired()) {
             LOGGER.error("Provided access token [{}] is either not found in the ticket registry or has expired", token);
-            return;
+            return Optional.empty();
         }
 
         if (!requiredScopes.isEmpty() && !accessToken.getScopes().containsAll(requiredScopes)) {
             LOGGER.error("Unable to authenticate access token without required scopes [{}]", requiredScopes);
-            return;
+            return Optional.empty();
         }
 
         val profile = buildUserProfile(tokenCredentials, webContext, accessToken);
         if (profile != null) {
             LOGGER.trace("Final user profile based on access token [{}] is [{}]", accessToken, profile);
             tokenCredentials.setUserProfile(profile);
+            return Optional.of(tokenCredentials);
         }
+        return Optional.empty();
     }
 
     /**

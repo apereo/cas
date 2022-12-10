@@ -46,6 +46,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected final CentralAuthenticationServiceContext configurationContext;
 
+    @Override
+    public TicketFactory getTicketFactory() {
+        return this.configurationContext.getTicketFactory();
+    }
+
     /**
      * Publish CAS events.
      *
@@ -133,10 +138,5 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             LoggingUtils.warn(LOGGER, e);
         }
         return false;
-    }
-
-    @Override
-    public TicketFactory getTicketFactory() {
-        return this.configurationContext.getTicketFactory();
     }
 }

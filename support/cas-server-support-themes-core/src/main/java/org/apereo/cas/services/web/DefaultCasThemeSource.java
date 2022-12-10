@@ -12,7 +12,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
+
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -30,8 +32,7 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
     @Nonnull
     @Override
     protected MessageSource createMessageSource(
-        @Nonnull
-        final String basename) {
+        @Nonnull final String basename) {
         return casProperties.getView().getTemplatePrefixes()
             .stream()
             .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(basename).concat(".properties"))
@@ -42,10 +43,11 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
                     val source = new StaticMessageSource();
                     val properties = new Properties();
                     properties.load(is);
-                    properties.forEach((key, value) -> {
-                        LOGGER.trace("Loading theme property [{}] from [{}]", key, path);
-                        source.addMessage(key.toString(), Locale.getDefault(), value.toString());
-                    });
+                    properties.forEach((key, value) ->
+                        List.of(Locale.US, Locale.CANADA, Locale.ENGLISH).forEach(locale -> {
+                            LOGGER.trace("Adding theme property [{}] with value [{}] from [{}] for locale [{}]", key, value, path, locale);
+                            source.addMessage(key.toString(), locale, value.toString());
+                        }));
                     return source;
                 }
             }))

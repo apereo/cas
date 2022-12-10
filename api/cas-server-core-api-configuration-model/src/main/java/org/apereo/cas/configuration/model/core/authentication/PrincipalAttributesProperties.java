@@ -48,7 +48,7 @@ public class PrincipalAttributesProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -4515569588579072890L;
-    
+
     /**
      * Attribute resolution core/common settings.
      */
@@ -95,7 +95,7 @@ public class PrincipalAttributesProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CouchbasePrincipalAttributesProperties couchbase = new CouchbasePrincipalAttributesProperties();
-    
+
     /**
      * Use stubbed attribute definitions as the underlying attribute repository source.
      * Static attributes that need to be mapped to a hardcoded value belong here.

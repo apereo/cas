@@ -13,6 +13,8 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
  *
@@ -45,7 +47,6 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     @Override
     public int cleanTicket(final Ticket ticket) {
-
         return lockRepository.execute(ticket.getId(), Unchecked.supplier(() -> {
             if (ticket instanceof TicketGrantingTicket) {
                 LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
@@ -57,12 +58,10 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
             return ticketRegistry.deleteTicket(ticket);
         })).orElseThrow();
     }
-    
+
     protected int cleanInternal() {
-        try (val expiredTickets = ticketRegistry.stream().filter(Ticket::isExpired)) {
-            val ticketsDeleted = expiredTickets
-                .mapToInt(this::cleanTicket)
-                .sum();
+        try (val expiredTickets = ticketRegistry.stream().filter(Objects::nonNull).filter(Ticket::isExpired)) {
+            val ticketsDeleted = expiredTickets.mapToInt(this::cleanTicket).sum();
             LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
             return ticketsDeleted;
         }

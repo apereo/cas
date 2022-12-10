@@ -12,14 +12,14 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -62,7 +62,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
         LOGGER.trace("Attempting to pre-handle OIDC request at [{}] with parameters [{}]",
             request.getRequestURI(), request.getParameterMap().keySet());
         if (casProperties.getAuthn().getOidc().getDiscovery().isRequirePushedAuthorizationRequests()
-            && HttpMethod.valueOf(request.getMethod()) != HttpMethod.POST
+            && !HttpMethod.valueOf(request.getMethod()).equals(HttpMethod.POST)
             && StringUtils.isBlank(request.getParameter(OidcConstants.REQUEST_URI))
             && isAuthorizationRequest(request, response)) {
             LOGGER.warn("CAS is configured to only accept pushed authorization requests and this is not a POST");

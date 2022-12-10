@@ -51,7 +51,7 @@ public class SchedulingProperties implements Serializable {
     private String startDelay = "PT15S";
 
     /**
-     * String representation of a repeat interval of re-loading data for an data store implementation.
+     * String representation of a repeat interval of re-loading data for a data store implementation.
      * This is the timeout between consecutive job’s executions.
      */
     @DurationCapable

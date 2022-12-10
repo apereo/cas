@@ -32,6 +32,7 @@ import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointControlle
 import org.apereo.cas.oidc.web.flow.OidcCasWebflowLoginContextProvider;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
+import org.apereo.cas.oidc.web.flow.OidcUnmetAuthenticationRequirementWebflowExceptionHandler;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
@@ -47,6 +48,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -141,10 +143,9 @@ public class OidcEndpointsConfiguration {
         public HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor(
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            val interceptor = new SecurityInterceptor(oauthSecConfig,
+            return new SecurityInterceptor(oauthSecConfig,
                 Authenticators.CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN,
                 DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
-            return interceptor;
         }
 
         @Bean
@@ -153,9 +154,8 @@ public class OidcEndpointsConfiguration {
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
             val clients = String.join(",", OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
-            val interceptor = new SecurityInterceptor(oauthSecConfig, clients, DefaultAuthorizers.IS_FULLY_AUTHENTICATED,
+            return new SecurityInterceptor(oauthSecConfig, clients, DefaultAuthorizers.IS_FULLY_AUTHENTICATED,
                     DefaultMatchers.SECURITYHEADERS);
-            return interceptor;
         }
 
         @Bean
@@ -405,6 +405,15 @@ public class OidcEndpointsConfiguration {
     @Configuration(value = "OidcEndpointsWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcEndpointsWebflowConfiguration {
+
+        @ConditionalOnMissingBean(name = "oidcUnmetAuthenticationRequirementWebflowExceptionHandler")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowExceptionHandler oidcUnmetAuthenticationRequirementWebflowExceptionHandler(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final OidcConfigurationContext oidcConfigurationContext) {
+            return new OidcUnmetAuthenticationRequirementWebflowExceptionHandler(oidcConfigurationContext);
+        }
 
         @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
         @Bean

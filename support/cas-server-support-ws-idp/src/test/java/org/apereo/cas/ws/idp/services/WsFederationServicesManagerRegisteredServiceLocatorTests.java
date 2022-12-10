@@ -13,7 +13,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

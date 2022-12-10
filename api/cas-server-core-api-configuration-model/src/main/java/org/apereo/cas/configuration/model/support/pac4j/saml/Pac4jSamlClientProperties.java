@@ -140,6 +140,14 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     private boolean forceKeystoreGeneration;
 
     /**
+     * The SAML2 response binding type to use when generating metadata.
+     * This ultimately controls the binding type of the assertion consumer
+     * service in the metadata.
+     * Default value is typically {@code urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST}.
+     */
+    private String responseBindingType;
+    
+    /**
      * Define the validity period for the certificate
      * in number of days. The end-date of the certificate
      * is controlled by this setting, when defined as a value
@@ -152,11 +160,6 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * when generating the certificate.
      */
     private String certificateSignatureAlg = "SHA1WithRSA";
-
-    /**
-     * The key alias used in the keystore.
-     */
-    private String keystoreAlias;
 
     /**
      * A name to append to signing certificates generated.
@@ -214,13 +217,6 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     private boolean useNameQualifier = true;
 
     /**
-     * The attribute found in the saml response
-     * that may be used to establish the authenticated
-     * user and build a profile for CAS.
-     */
-    private String principalIdAttribute;
-
-    /**
      * Whether or not SAML SP metadata should be signed when generated.
      */
     private boolean signServiceProviderMetadata;
@@ -262,6 +258,13 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     private String signatureCanonicalizationAlgorithm;
 
     /**
+     * The attribute name that should be used and extracted from the SAML2
+     * response to identify and build a NameID value, when the response
+     * is processed and consumed.
+     */
+    private String nameIdAttribute;
+
+    /**
      * Provider name set for the saml authentication request.
      * Sets the human-readable name of the requester for use by
      * the presenter's user agent or the identity provider.
@@ -292,20 +295,13 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     /**
      * Controls the way SAML2 attributes are converted from the authentication response into pac4j attributes.
      * By default, values of complex types are serialized into a single attribute. To change this behaviour, a
-     * converter class implementing the {@code AttributeConverter} interface.
-     * @see <a href="https://www.pac4j.org/docs/clients/saml.html">Pac4j documentation for SAML clients</a>
+     * converter class implementing the {@code
+     * AttributeConverter
+     * } interface.
+     *
+     * @see <a href="https://www.pac4j.org/docs/clients/saml.html">Pac4j</a>
      */
     private String saml2AttributeConverter;
-
-    /**
-     * Indicate the strategy that should be used to sign the generated metadata.
-     * <ul>
-     *     <li>{@code Default}: Uses a signing strategy using the XMLSecTool tool.</li>
-     *     <li>{@code XMLSec}: Uses a signing strategy using the OpenSAML library.</li>
-     * </ul>
-     * The strategy name can be defined in a case-insensitive way.
-     */
-    private String metadataSignerStrategy = "default";
 
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter

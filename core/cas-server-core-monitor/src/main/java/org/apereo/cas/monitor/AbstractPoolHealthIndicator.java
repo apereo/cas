@@ -34,6 +34,15 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
      */
     private final ExecutorService executor;
 
+    /**
+     * Shuts down the thread pool. Subclasses whose wish to override this method
+     * must call super.destroy().
+     */
+    @Override
+    public void destroy() {
+        executor.shutdown();
+    }
+
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         var poolBuilder = builder.up();
@@ -56,15 +65,6 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
             .withDetail("name", getClass().getSimpleName())
             .withDetail("activeCount", getActiveCount())
             .withDetail("idleCount", getIdleCount());
-    }
-
-    /**
-     * Shuts down the thread pool. Subclasses whose wish to override this method
-     * must call super.destroy().
-     */
-    @Override
-    public void destroy() {
-        executor.shutdown();
     }
 
     /**

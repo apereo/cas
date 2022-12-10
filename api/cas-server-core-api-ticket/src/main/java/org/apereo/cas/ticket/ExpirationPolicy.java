@@ -71,6 +71,7 @@ public interface ExpirationPolicy extends Serializable {
     /**
      * Gets maximum expiration time for this ticket.
      * The ticket will expire at the calculated time.
+     *
      * @param ticketState the ticket state
      * @return the maximum expiration time
      */

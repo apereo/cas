@@ -17,7 +17,7 @@ import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
@@ -162,6 +162,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         LOGGER.debug("Rendering dynamic content [{}] for client [{}]", view.html(), client.getName());
         view.render(Map.of(), request, response);
+        requestContext.getExternalContext().recordResponseComplete();
     }
 
     protected void handleIdentityProviderWithExternalRedirect(final RequestContext requestContext,

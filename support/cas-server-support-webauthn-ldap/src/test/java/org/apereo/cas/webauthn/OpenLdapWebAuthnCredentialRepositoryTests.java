@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets;
         "cas.authn.mfa.web-authn.ldap.bind-credential=P@ssw0rd",
         "cas.authn.mfa.web-authn.ldap.trust-manager=ANY"
     })
-@Tag("Ldap")
+@Tag("LdapRepository")
 @EnabledIfListeningOnPort(port = 11636)
 @Getter
 @Import(LdapWebAuthnConfiguration.class)

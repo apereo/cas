@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.net.URLBuilder;
+import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
@@ -58,8 +58,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -291,7 +292,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val builder = new URLBuilder(configurationContext.getCallbackService().getId());
 
         builder.getQueryParams().add(
-            new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
+            new net.shibboleth.shared.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
                 SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
         storeAuthenticationRequest(request, response, pair);
         val url = builder.buildURL();
@@ -590,7 +591,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             public MessageContext get() throws Throwable {
                 val decoder = new HTTPSOAP11Decoder();
                 decoder.setParserPool(configurationContext.getOpenSamlConfigBean().getParserPool());
-                decoder.setHttpServletRequest(request);
+                decoder.setHttpServletRequestSupplier(() -> request);
 
                 val binding = new BindingDescriptor();
                 binding.setId(getClass().getName());

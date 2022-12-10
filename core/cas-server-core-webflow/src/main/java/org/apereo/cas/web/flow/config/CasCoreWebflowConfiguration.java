@@ -53,6 +53,9 @@ import org.apereo.cas.web.flow.authentication.DefaultCasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GroovyCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.decorator.GroovyLoginWebflowDecorator;
+import org.apereo.cas.web.flow.decorator.RestfulLoginWebflowDecorator;
+import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
@@ -77,6 +80,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.util.List;
 
 /**
@@ -90,6 +94,7 @@ import java.util.List;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @AutoConfiguration(after = CasCoreServicesConfiguration.class)
 public class CasCoreWebflowConfiguration {
+
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreWebflowEventResolutionConfiguration {
@@ -97,8 +102,7 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver(
-            @Qualifier("casWebflowConfigurationContext")
-            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            @Qualifier("casWebflowConfigurationContext") final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return new ServiceTicketRequestWebflowEventResolver(casWebflowConfigurationContext);
         }
 
@@ -138,30 +142,18 @@ public class CasCoreWebflowConfiguration {
         public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier(MultifactorAuthenticationContextValidator.BEAN_NAME)
-            final MultifactorAuthenticationContextValidator authenticationContextValidator,
-            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier("warnCookieGenerator")
-            final CasCookieBuilder warnCookieGenerator,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
-            final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
-            final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
+            @Qualifier(TicketRegistrySupport.BEAN_NAME) final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(MultifactorAuthenticationContextValidator.BEAN_NAME) final MultifactorAuthenticationContextValidator authenticationContextValidator,
+            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME) final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier("warnCookieGenerator") final CasCookieBuilder warnCookieGenerator,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME) final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
             return CasWebflowEventResolutionConfigurationContext.builder()
                 .authenticationContextValidator(authenticationContextValidator)
                 .authenticationSystemSupport(authenticationSystemSupport)
@@ -219,8 +211,7 @@ public class CasCoreWebflowConfiguration {
         public Action renewAuthenticationRequestCheckAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
-            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy) {
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME) final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -236,8 +227,7 @@ public class CasCoreWebflowConfiguration {
         public Action redirectToServiceAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("webApplicationResponseBuilderLocator")
-            final ResponseBuilderLocator responseBuilderLocator) {
+            @Qualifier("webApplicationResponseBuilderLocator") final ResponseBuilderLocator responseBuilderLocator) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -253,8 +243,7 @@ public class CasCoreWebflowConfiguration {
         public Action injectResponseHeadersAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("webApplicationResponseBuilderLocator")
-            final ResponseBuilderLocator responseBuilderLocator) {
+            @Qualifier("webApplicationResponseBuilderLocator") final ResponseBuilderLocator responseBuilderLocator) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -303,8 +292,7 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExceptionHandler<AuthenticationException> defaultCasWebflowAuthenticationExceptionHandler(
-            @Qualifier("handledAuthenticationExceptions")
-            final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
+            @Qualifier("handledAuthenticationExceptions") final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
             return new DefaultCasWebflowAuthenticationExceptionHandler(
                 handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         }
@@ -313,8 +301,7 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExceptionHandler<AbstractTicketException> defaultCasWebflowAbstractTicketExceptionHandler(
-            @Qualifier("handledAuthenticationExceptions")
-            final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
+            @Qualifier("handledAuthenticationExceptions") final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
             return new DefaultCasWebflowAbstractTicketExceptionHandler(
                 handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         }
@@ -323,8 +310,7 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExceptionHandler genericCasWebflowExceptionHandler(
-            @Qualifier("handledAuthenticationExceptions")
-            final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
+            @Qualifier("handledAuthenticationExceptions") final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
             return new GenericCasWebflowExceptionHandler(
                 handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         }
@@ -394,12 +380,9 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategy")
         public SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy(
             final CasConfigurationProperties casProperties,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-            @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME) final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new DefaultSingleSignOnParticipationStrategy(servicesManager,
                 casProperties.getSso(),
                 ticketRegistrySupport,
@@ -410,8 +393,7 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategyConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleSignOnParticipationStrategyConfigurer defaultSingleSignOnParticipationStrategyConfigurer(
-            @Qualifier("defaultSingleSignOnParticipationStrategy")
-            final SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy) {
+            @Qualifier("defaultSingleSignOnParticipationStrategy") final SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy) {
             return chain -> chain.addStrategy(defaultSingleSignOnParticipationStrategy);
         }
 
@@ -420,14 +402,10 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
         public SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME) final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME) final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
             return new RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy(servicesManager,
                 ticketRegistrySupport, authenticationServiceSelectionPlan,
                 authenticationEventExecutionPlan, applicationContext);
@@ -440,6 +418,48 @@ public class CasCoreWebflowConfiguration {
             @Qualifier("requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy) {
             return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy);
+        }
+    }
+
+    @Configuration(value = "CasCoreWebflowDecoratorsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreWebflowDecoratorsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "groovyLoginWebflowDecorator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebflowDecorator groovyLoginWebflowDecorator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(WebflowDecorator.class)
+                .when(BeanCondition.on("cas.webflow.login-decorator.groovy.location")
+                    .exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val decorator = casProperties.getWebflow().getLoginDecorator();
+                    val groovyScript = decorator.getGroovy().getLocation();
+                    LOGGER.trace("Decorating login webflow using [{}]", groovyScript);
+                    return new GroovyLoginWebflowDecorator(groovyScript);
+                })
+                .otherwiseProxy()
+                .get();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "restfulLoginWebflowDecorator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebflowDecorator restfulLoginWebflowDecorator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(WebflowDecorator.class)
+                .when(BeanCondition.on("cas.webflow.login-decorator.rest.url")
+                    .isUrl().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val decorator = casProperties.getWebflow().getLoginDecorator();
+                    LOGGER.trace("Decorating login webflow REST endpoint [{}]", decorator.getRest().getUrl());
+                    return new RestfulLoginWebflowDecorator(decorator.getRest());
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 }

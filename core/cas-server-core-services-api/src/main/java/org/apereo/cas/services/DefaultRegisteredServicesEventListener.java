@@ -42,7 +42,7 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
     public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
         servicesManager.load();
     }
-    
+
     @Override
     public void handleRegisteredServiceExpiredEvent(final CasRegisteredServiceExpiredEvent event) {
         val registeredService = event.getRegisteredService();

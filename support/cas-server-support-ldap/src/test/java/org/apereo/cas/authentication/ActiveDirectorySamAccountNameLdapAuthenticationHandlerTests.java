@@ -33,7 +33,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].hostname-verifier=default"
 })
 @EnabledIfListeningOnPort(port = 10390)
-@Tag("Ldap")
+@Tag("ActiveDirectory")
 public class ActiveDirectorySamAccountNameLdapAuthenticationHandlerTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     /**

@@ -20,8 +20,9 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.persistence.PostLoad;
-import javax.persistence.Transient;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.Transient;
+
 import java.io.Serial;
 
 /**
@@ -57,6 +58,12 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements 
         return getGroovyAttributeValue(request);
     }
 
+    protected Boolean getGroovyAttributeValue(final RegisteredServiceAccessStrategyRequest request) {
+        val args = CollectionUtils.wrap("accessRequest", request, "logger", LOGGER);
+        executableScript.setBinding(args);
+        return executableScript.execute(args.values().toArray(), Boolean.class);
+    }
+
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
         val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(groovyScript);
@@ -69,11 +76,5 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements 
         if (matcherInline.find()) {
             this.executableScript = new GroovyShellScript(matcherInline.group(1));
         }
-    }
-
-    protected Boolean getGroovyAttributeValue(final RegisteredServiceAccessStrategyRequest request) {
-        val args = CollectionUtils.wrap("accessRequest", request, "logger", LOGGER);
-        executableScript.setBinding(args);
-        return executableScript.execute(args.values().toArray(), Boolean.class);
     }
 }

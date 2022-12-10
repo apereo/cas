@@ -58,7 +58,7 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      * Default value is {@code yyyy-MM-dd 00:00:00.000000}.
      */
     private String dateFormatterPattern;
-    
+
     /**
      * Scheduler settings to indicate how often the cleaner is reloaded.
      */

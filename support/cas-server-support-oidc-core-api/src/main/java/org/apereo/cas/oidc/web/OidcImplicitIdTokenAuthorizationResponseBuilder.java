@@ -13,8 +13,8 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;

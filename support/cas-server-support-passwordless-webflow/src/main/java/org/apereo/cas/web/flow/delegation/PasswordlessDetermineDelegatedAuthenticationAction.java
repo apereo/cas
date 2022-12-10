@@ -7,10 +7,13 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.flow.BasePasswordlessCasWebflowAction;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -48,7 +51,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");
             return error();
@@ -63,15 +66,17 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
             LOGGER.debug("User [{}] is not activated to use CAS delegated authentication to external identity providers. "
                          + "You may wish to re-examine your CAS configuration to enable and allow for delegated authentication to be "
                          + "combined with passwordless authentication", user);
-            WebUtils.putDelegatedAuthenticationDisabled(requestContext, true);
+            DelegationWebflowUtils.putDelegatedAuthenticationDisabled(requestContext, true);
             return success();
         }
-        WebUtils.putDelegatedAuthenticationDisabled(requestContext, false);
+        DelegationWebflowUtils.putDelegatedAuthenticationDisabled(requestContext, false);
         val providerResult = determineDelegatedIdentityProviderConfiguration(requestContext, user, clients);
         if (providerResult.isPresent()) {
             val clientConfig = providerResult.get();
-            if (clientConfig instanceof DelegatedClientIdentityProviderConfiguration) {
-                WebUtils.putDelegatedAuthenticationProviderPrimary(requestContext, clientConfig);
+            if (clientConfig instanceof DelegatedClientIdentityProviderConfiguration client) {
+                DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(requestContext, client);
+                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
             }
         }

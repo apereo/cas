@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.actions.logout;
 
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -46,7 +47,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);
 
-        var clientName = WebUtils.getDelegatedAuthenticationClientName(requestContext);
+        var clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
         if (clientName == null) {
             clientName = requestContext.getRequestParameters().get(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
             if (StringUtils.isNotBlank(clientName)) {
@@ -72,7 +73,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                 .filter(client -> client instanceof SAML2Client)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {
-                    val logoutRequest = WebUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
+                    val logoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
                         DelegatedAuthenticationClientLogoutRequest.class);
                     Optional.ofNullable(logoutRequest)
                         .filter(r -> StringUtils.isNotBlank(logoutRedirect))

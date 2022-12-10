@@ -53,6 +53,21 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
     public void build() throws FlowModelBuilderException {
     }
 
+    @Override
+    public void dispose() throws FlowModelBuilderException {
+        this.flowModel = null;
+    }
+
+    @Override
+    public Resource getFlowModelResource() {
+        return new ClassPathResource("src/main/resources");
+    }
+
+    @Override
+    public boolean hasFlowModelResourceChanged() {
+        return false;
+    }
+
     /**
      * Sets on start actions.
      *
@@ -96,20 +111,5 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
      */
     public void setStates(final List<AbstractStateModel> states) {
         this.flowModel.setStates(new LinkedList<>(states));
-    }
-
-    @Override
-    public void dispose() throws FlowModelBuilderException {
-        this.flowModel = null;
-    }
-
-    @Override
-    public Resource getFlowModelResource() {
-        return new ClassPathResource("src/main/resources");
-    }
-
-    @Override
-    public boolean hasFlowModelResourceChanged() {
-        return false;
     }
 }

@@ -23,7 +23,7 @@ public class MultifactorAuthenticationRequiredException extends AuthenticationEx
     private static final long serialVersionUID = 5909155188558680032L;
 
     private static final String CODE = "MULTIFACTOR_AUTHN_REQUIRED";
-    
+
     private final RegisteredService service;
 
     private final Principal principal;

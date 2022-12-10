@@ -30,8 +30,7 @@ import java.nio.file.Files;
 import java.util.Objects;
 import java.util.jar.JarFile;
 
-import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
-import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
+import static org.springframework.util.ResourceUtils.*;
 
 /**
  * Utility class to assist with resource operations.
@@ -93,6 +92,7 @@ public class ResourceUtils {
      * <p>
      * On Windows, reading one byte from a directory does not return length greater than zero so an explicit directory
      * check is needed.
+     *
      * @param res the res
      * @return true/false
      */

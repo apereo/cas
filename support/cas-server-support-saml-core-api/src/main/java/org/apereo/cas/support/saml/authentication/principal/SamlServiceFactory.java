@@ -13,7 +13,7 @@ import org.jdom2.Namespace;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 
 /**

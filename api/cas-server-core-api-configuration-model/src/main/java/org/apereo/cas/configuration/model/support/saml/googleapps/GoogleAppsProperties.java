@@ -29,6 +29,7 @@ public class GoogleAppsProperties implements Serializable {
 
     /**
      * The public key location that is also shared with google apps.
+     *
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")
@@ -37,6 +38,7 @@ public class GoogleAppsProperties implements Serializable {
 
     /**
      * The private key location that is used to sign responses, etc.
+     *
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")
@@ -45,6 +47,7 @@ public class GoogleAppsProperties implements Serializable {
 
     /**
      * Signature algorithm used to generate keys.
+     *
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")

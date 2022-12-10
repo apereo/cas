@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * This should be run last using a high order number
  * to allow for all other tests to pass. Successful execution
  * of this test class would terminate the runtime.
+ *
  * @author Misagh Moayyed
  * @since 6.4.0
  */
@@ -20,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Order(Order.DEFAULT + 1)
 public class ExitCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() {
-        shell.evaluate(() -> "quit");
+    public void verifyOperation() throws Exception {
+        runShellCommand(() -> () -> "quit");
         fail("Shell should have quit but did not");
     }
 }

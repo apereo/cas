@@ -89,8 +89,8 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
                 val handler = it.next();
                 val handlerName = handler.getName();
                 val removeHandler = !(handler instanceof MultifactorAuthenticationHandler)
-                    && !(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler)
-                    && !requiredHandlers.contains(handlerName);
+                                    && !(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler)
+                                    && !requiredHandlers.contains(handlerName);
                 if (removeHandler) {
                     it.remove();
                     LOGGER.debug("Authentication handler [{}] is removed", handlerName);
@@ -123,7 +123,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
             }
             val authenticationPolicy = registeredService.getAuthenticationPolicy();
             return !authenticationPolicy.getRequiredAuthenticationHandlers().isEmpty()
-                || !authenticationPolicy.getExcludedAuthenticationHandlers().isEmpty();
+                   || !authenticationPolicy.getExcludedAuthenticationHandlers().isEmpty();
         }
         return false;
     }

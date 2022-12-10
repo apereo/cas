@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @WebAppConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 @EnabledIfListeningOnPort(port = 10389)
 public class CasWebSecurityConfigurerAdapterTests {
 

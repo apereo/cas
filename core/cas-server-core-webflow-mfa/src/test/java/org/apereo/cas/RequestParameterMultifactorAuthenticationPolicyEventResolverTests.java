@@ -72,7 +72,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolverTests e
     public static class RequestParameterMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
-           return new TestMultifactorAuthenticationProvider();
+            return new TestMultifactorAuthenticationProvider();
         }
     }
 }

@@ -64,8 +64,7 @@ public class CasCoreEnvironmentConfiguration {
         @ConditionalOnMissingBean(name = "configurationPropertiesLoaderFactory")
         @Bean
         public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
-            @Qualifier("casConfigurationCipherExecutor")
-            final CipherExecutor<String, String> casConfigurationCipherExecutor,
+            @Qualifier("casConfigurationCipherExecutor") final CipherExecutor<String, String> casConfigurationCipherExecutor,
             final Environment environment) {
             return new ConfigurationPropertiesLoaderFactory(casConfigurationCipherExecutor, environment);
         }
@@ -77,10 +76,8 @@ public class CasCoreEnvironmentConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
         public CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(
-            @Qualifier("configurationPropertiesEnvironmentManager")
-            final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
-            @Qualifier("configurationPropertiesLoaderFactory")
-            final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
+            @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
+            @Qualifier("configurationPropertiesLoaderFactory") final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
             return new StandaloneConfigurationFilePropertiesSourceLocator(
                 configurationPropertiesEnvironmentManager, configurationPropertiesLoaderFactory);
         }

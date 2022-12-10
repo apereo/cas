@@ -193,10 +193,9 @@ public class CasOAuthUmaConfiguration {
             headerClient.setName(clientName);
             val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
             val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
-            config.setSessionStore(oauthDistributedSessionStore);
-            val interceptor = new SecurityInterceptor(config, clients, DefaultAuthorizers.IS_FULLY_AUTHENTICATED,
+            config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
+            return new SecurityInterceptor(config, clients, DefaultAuthorizers.IS_FULLY_AUTHENTICATED,
                     DefaultMatchers.SECURITYHEADERS);
-            return interceptor;
         }
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

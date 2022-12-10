@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.authentication.principal.DefaultDelegatedAuthenticationCredentialExtractor;
+import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -146,6 +148,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
         public AuthenticationHandler clientAuthenticationHandler(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("clientPrincipalFactory")
             final PrincipalFactory clientPrincipalFactory,
@@ -158,12 +161,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             val pac4j = casProperties.getAuthn().getPac4j().getCore();
-            val h = new DelegatedClientAuthenticationHandler(pac4j.getName(), pac4j.getOrder(),
+            val handler = new DelegatedClientAuthenticationHandler(pac4j, 
                 servicesManager, clientPrincipalFactory, builtClients, clientUserProfileProvisioner,
-                delegatedClientDistributedSessionStore);
-            h.setTypedIdUsed(pac4j.isTypedIdUsed());
-            h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
-            return h;
+                delegatedClientDistributedSessionStore, applicationContext);
+            handler.setTypedIdUsed(pac4j.isTypedIdUsed());
+            handler.setPrincipalAttributeId(pac4j.getPrincipalIdAttribute());
+            return handler;
         }
 
     }
@@ -268,6 +271,15 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jAuthenticationEventExecutionPlanClientConfiguration {
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "delegatedAuthenticationCredentialExtractor")
+        public DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor(
+            @Qualifier("delegatedClientDistributedSessionStore")
+            final SessionStore delegatedClientDistributedSessionStore) {
+            return new DefaultDelegatedAuthenticationCredentialExtractor(delegatedClientDistributedSessionStore);
+        }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean

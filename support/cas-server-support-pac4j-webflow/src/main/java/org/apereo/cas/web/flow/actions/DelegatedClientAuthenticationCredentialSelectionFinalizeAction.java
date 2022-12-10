@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +23,12 @@ public class DelegatedClientAuthenticationCredentialSelectionFinalizeAction exte
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        if (!WebUtils.hasDelegatedClientAuthenticationCandidateProfile(requestContext)) {
+        if (!DelegationWebflowUtils.hasDelegatedClientAuthenticationCandidateProfile(requestContext)) {
             val key = requestContext.getRequestParameters().getRequired("key");
-            val candidates = WebUtils.getDelegatedClientAuthenticationResolvedCredentials(requestContext, DelegatedAuthenticationCandidateProfile.class);
+            val candidates = DelegationWebflowUtils.getDelegatedClientAuthenticationResolvedCredentials(requestContext, DelegatedAuthenticationCandidateProfile.class);
             val credential = candidates.stream().filter(candidate -> candidate.getKey().equals(key))
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Unable to locate selected profile for " + key));
-            WebUtils.putDelegatedClientAuthenticationCandidateProfile(requestContext, credential);
+            DelegationWebflowUtils.putDelegatedClientAuthenticationCandidateProfile(requestContext, credential);
         }
         return success();
     }

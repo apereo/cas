@@ -8,9 +8,9 @@ import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.spi.PersistenceProvider;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Query;
+import jakarta.persistence.spi.PersistenceProvider;
 import java.io.Serializable;
 import java.util.stream.Stream;
 

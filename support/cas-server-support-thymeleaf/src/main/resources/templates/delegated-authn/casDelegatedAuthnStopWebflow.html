@@ -21,7 +21,9 @@
 
                 <p>
                     <i class="mdi mdi-alert fas fa-exclamation-triangle me-2"></i>
-                    <span th:if="${rootCauseException}" th:text="#{${'screen.pac4j.authn.' + rootCauseException.class.simpleName}}">
+                    <span th:if="${rootCauseException}"
+                          th:with="simpleName=${@casThymeleafTemplatesDirector.getExceptionClassSimpleName(rootCauseException)}"
+                          th:text="#{${'screen.pac4j.authn.' + simpleName}}">
                       Authentication response provided to CAS by the external identity provider cannot be accepted.</span>
                     <span th:unless="${rootCauseException}" th:text="#{screen.pac4j.authn.unknown}">
                       Authentication response provided to CAS by the external identity provider cannot be accepted.</span>

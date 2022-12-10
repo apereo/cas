@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -16,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.NonNull;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
                                                                        final @NonNull Principal principal,
                                                                        final @NonNull List<MessageDescriptor> warnings) {
-        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+        return new DefaultAuthenticationHandlerExecutionResult(this, credential, principal, warnings);
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      */
     protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
                                                                        final @NonNull Principal principal) {
-        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
+        return new DefaultAuthenticationHandlerExecutionResult(this, credential,
             principal, new ArrayList<>(0));
     }
 }

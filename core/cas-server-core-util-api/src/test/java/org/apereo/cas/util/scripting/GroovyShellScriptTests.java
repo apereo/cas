@@ -21,7 +21,7 @@ public class GroovyShellScriptTests {
         val shell = new GroovyShellScript("println 'test'");
         assertNotNull(shell.getGroovyScript());
         assertNotNull(shell.getScript());
-        
+
         assertDoesNotThrow(() -> shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY));
         assertNotNull(shell.toString());
     }

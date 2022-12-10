@@ -50,7 +50,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
      * Flag to try all credentials before policy is satisfied.
      */
     private boolean tryAll;
-    
+
     protected BaseAuthenticationHandlerAuthenticationPolicy(final String requiredHandlerNames) {
         this(StringUtils.commaDelimitedListToSet(requiredHandlerNames), false);
     }
@@ -68,7 +68,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
 
         if (!credsOk) {
             LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]. "
-                + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
+                        + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
             return AuthenticationPolicyExecutionResult.failure();
         }
 

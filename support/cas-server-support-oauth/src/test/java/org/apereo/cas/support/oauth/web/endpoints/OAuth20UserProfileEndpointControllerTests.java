@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -60,7 +59,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
     private OAuth20UserProfileEndpointController oAuth20ProfileController;
 
     protected static Authentication getAuthentication(final Principal principal) {
-        val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(principal.getId()));
+        val metadata = new BasicIdentifiableCredential(principal.getId());
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
             metadata, principal, new ArrayList<>());
 

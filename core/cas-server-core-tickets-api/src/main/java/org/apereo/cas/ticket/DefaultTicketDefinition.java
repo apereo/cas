@@ -21,7 +21,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 public class DefaultTicketDefinition implements TicketDefinition {
 
     private final Class<? extends Ticket> implementationClass;
-    
+
     private final Class<? extends Ticket> apiClass;
 
     private final String prefix;

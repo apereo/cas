@@ -22,14 +22,14 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHandler<Exception> {
-    private int order = Integer.MAX_VALUE;
-
     private final CasWebflowExceptionCatalog errors;
 
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
      */
     private final String messageBundlePrefix;
+
+    private int order = Integer.MAX_VALUE;
 
     @Override
     public Event handle(final Exception exception, final RequestContext requestContext) {
@@ -39,6 +39,11 @@ public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHan
         val message = buildErrorMessageResolver(exception, requestContext);
         messageContext.addMessage(message);
         return new EventFactorySupport().event(this, CasWebflowExceptionHandler.UNKNOWN);
+    }
+
+    @Override
+    public boolean supports(final Exception exception, final RequestContext requestContext) {
+        return exception != null;
     }
 
     /**
@@ -54,10 +59,5 @@ public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHan
             .error()
             .code(messageCode)
             .build();
-    }
-
-    @Override
-    public boolean supports(final Exception exception, final RequestContext requestContext) {
-        return exception != null;
     }
 }

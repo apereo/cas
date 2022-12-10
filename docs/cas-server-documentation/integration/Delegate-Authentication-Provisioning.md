@@ -63,7 +63,7 @@ Provisioning tasks can be carried out using an external REST endpoint expected t
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.provisioning.scim" %}
 
-Provisioning tasks can be carried out using the CAS [SCIM integration](../integration/SCIM-Integration.html).
+Provisioning tasks can be carried out using the CAS [SCIM Provisioning](../integration/SCIM-Provisioning.html).
 Once enabled and configured, authenticated profiles established from the external identity provider may be
 provisioned via SCIM to other systems.
 

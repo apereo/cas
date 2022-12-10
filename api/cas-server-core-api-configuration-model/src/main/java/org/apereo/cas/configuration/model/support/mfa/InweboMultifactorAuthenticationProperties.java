@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
 
@@ -35,13 +36,11 @@ public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAu
     /**
      * The service API url.
      */
-    @RequiredProperty
     private String serviceApiUrl = "https://api.myinwebo.com/FS?";
 
     /**
      * Console admin API url.
      */
-    @RequiredProperty
     private String consoleAdminUrl = "https://api.myinwebo.com/v2/services/ConsoleAdmin";
 
     /**
@@ -53,7 +52,7 @@ public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAu
     /**
      * The client certificate.
      */
-    @RequiredProperty
+    @NestedConfigurationProperty
     private ClientCertificateProperties clientCertificate = new ClientCertificateProperties();
 
     /**
@@ -82,6 +81,10 @@ public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAu
      */
     private BrowserAuthenticatorTypes browserAuthenticator = BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR;
 
+    public InweboMultifactorAuthenticationProperties() {
+        setId(DEFAULT_IDENTIFIER);
+    }
+
     /**
      * Browser authenticator types.
      */
@@ -98,9 +101,5 @@ public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAu
          * mAccessWeb browser authentication.
          */
         M_ACCESS_WEB
-    }
-
-    public InweboMultifactorAuthenticationProperties() {
-        setId(DEFAULT_IDENTIFIER);
     }
 }

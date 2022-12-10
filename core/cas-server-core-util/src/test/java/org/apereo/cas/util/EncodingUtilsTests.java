@@ -30,6 +30,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 public class EncodingUtilsTests {
 
+    @SneakyThrows
+    private static PrivateKey getPrivateKey() {
+        val factory = new PrivateKeyFactoryBean();
+        factory.setAlgorithm(RsaKeyUtil.RSA);
+        factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
+        factory.setSingleton(false);
+        assertSame(PrivateKey.class, factory.getObjectType());
+        return factory.getObject();
+    }
+
+    @SneakyThrows
+    private static PublicKey getPublicKey() {
+        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/RSA2048Public.key"), RsaKeyUtil.RSA);
+        factory.setSingleton(false);
+        assertSame(PublicKey.class, factory.getObjectType());
+        return factory.getObject();
+    }
+
     @Test
     public void verifyAesKeyForJwtSigning() {
         val secret = EncodingUtils.generateJsonWebKey(512);
@@ -83,30 +101,12 @@ public class EncodingUtilsTests {
     @Test
     public void verifyEncoding() {
         assertNull(EncodingUtils.urlDecode(null));
-        
+
         assertTrue(EncodingUtils.encodeBase64(ArrayUtils.EMPTY_BYTE_ARRAY, true).isEmpty());
         assertFalse(EncodingUtils.encodeBase64("one".getBytes(StandardCharsets.UTF_8), true).isEmpty());
 
         assertFalse(EncodingUtils.encodeBase32("one".getBytes(StandardCharsets.UTF_8), true).isEmpty());
         assertFalse(EncodingUtils.encodeBase32("one".getBytes(StandardCharsets.UTF_8), false).isEmpty());
         assertFalse(EncodingUtils.encodeBase64("one".getBytes(StandardCharsets.UTF_8), false).isEmpty());
-    }
-
-    @SneakyThrows
-    private static PrivateKey getPrivateKey() {
-        val factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
-        factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
-        factory.setSingleton(false);
-        assertSame(PrivateKey.class, factory.getObjectType());
-        return factory.getObject();
-    }
-
-    @SneakyThrows
-    private static PublicKey getPublicKey() {
-        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/RSA2048Public.key"), RsaKeyUtil.RSA);
-        factory.setSingleton(false);
-        assertSame(PublicKey.class, factory.getObjectType());
-        return factory.getObject();
     }
 }

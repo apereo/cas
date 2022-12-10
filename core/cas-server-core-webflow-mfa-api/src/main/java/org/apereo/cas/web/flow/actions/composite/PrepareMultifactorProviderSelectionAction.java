@@ -35,7 +35,7 @@ public class PrepareMultifactorProviderSelectionAction extends BaseCasWebflowAct
         val mfaProviders = mfaProvider.getMultifactorAuthenticationProviders()
             .stream()
             .filter(p -> p.isAvailable(registeredService)
-                && p.getBypassEvaluator().shouldMultifactorAuthenticationProviderExecute(
+                         && p.getBypassEvaluator().shouldMultifactorAuthenticationProviderExecute(
                 authn, registeredService, p, request))
             .map(MultifactorAuthenticationProvider::getId)
             .collect(Collectors.toList());

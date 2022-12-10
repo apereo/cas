@@ -266,9 +266,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
         if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
-                    + "While CAS tries to be forgiving as much as possible, it's recommended "
-                    + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
-                    + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
+                        + "While CAS tries to be forgiving as much as possible, it's recommended "
+                        + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
+                        + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                 fileName, this.serviceFileNamePattern.pattern());
         }
 
@@ -314,29 +314,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     @Override
     public void destroy() {
         this.serviceRegistryWatcherService.close();
-    }
-
-    private void initializeRegistry(final Path configDirectory,
-                                    final Collection<StringSerializer<RegisteredService>> serializers,
-                                    final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                                    final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
-                                    final WatcherService serviceRegistryConfigWatcher) {
-        this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
-            new NoOpRegisteredServiceReplicationStrategy());
-        this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
-        this.registeredServiceSerializers = serializers;
-
-        this.serviceFileNamePattern = resourceNamingStrategy.buildNamingPattern(getExtensions());
-        LOGGER.trace("Constructed service name file pattern [{}]", serviceFileNamePattern.pattern());
-
-        this.serviceRegistryDirectory = configDirectory;
-        val file = this.serviceRegistryDirectory.toFile();
-        Assert.isTrue(file.exists(), this.serviceRegistryDirectory + " does not exist");
-        Assert.isTrue(file.isDirectory(), this.serviceRegistryDirectory + " is not a directory");
-        LOGGER.trace("Service registry directory is specified at [{}]", file);
-
-        this.serviceRegistryWatcherService = serviceRegistryConfigWatcher;
-        this.serviceRegistryWatcherService.start(getClass().getSimpleName());
     }
 
     /**
@@ -401,5 +378,28 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @return the extension
      */
     protected abstract String[] getExtensions();
+
+    private void initializeRegistry(final Path configDirectory,
+                                    final Collection<StringSerializer<RegisteredService>> serializers,
+                                    final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
+                                    final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
+                                    final WatcherService serviceRegistryConfigWatcher) {
+        this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
+            new NoOpRegisteredServiceReplicationStrategy());
+        this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
+        this.registeredServiceSerializers = serializers;
+
+        this.serviceFileNamePattern = resourceNamingStrategy.buildNamingPattern(getExtensions());
+        LOGGER.trace("Constructed service name file pattern [{}]", serviceFileNamePattern.pattern());
+
+        this.serviceRegistryDirectory = configDirectory;
+        val file = this.serviceRegistryDirectory.toFile();
+        Assert.isTrue(file.exists(), this.serviceRegistryDirectory + " does not exist");
+        Assert.isTrue(file.isDirectory(), this.serviceRegistryDirectory + " is not a directory");
+        LOGGER.trace("Service registry directory is specified at [{}]", file);
+
+        this.serviceRegistryWatcherService = serviceRegistryConfigWatcher;
+        this.serviceRegistryWatcherService.start(getClass().getSimpleName());
+    }
 
 }

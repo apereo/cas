@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.web-authn.crypto.encryption.key=8W_Z0NGvZd094MJAS-XfepaCtRXnrqTFrlp90GXG8Ok",
     "cas.jdbc.show-sql=false"
 })
-@Tag("JDBC")
+@Tag("JDBCMFA")
 @Import({JpaWebAuthnConfiguration.class, CasHibernateJpaConfiguration.class})
 public class JpaWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 }

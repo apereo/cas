@@ -13,7 +13,6 @@ public class CasConfigurationServerBanner extends AbstractCasBanner {
     @Override
     public String getTitle() {
         return """
-
                ____    _    ____     ____             __ _         ____                          \s
               / ___|  / \\  / ___|   / ___|___  _ __  / _(_) __ _  / ___|  ___ _ ____   _____ _ __\s
              | |     / _ \\ \\___ \\  | |   / _ \\| '_ \\| |_| |/ _` | \\___ \\ / _ \\ '__\\ \\ / / _ \\ '__|

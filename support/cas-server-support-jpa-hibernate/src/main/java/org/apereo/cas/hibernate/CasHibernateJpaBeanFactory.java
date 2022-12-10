@@ -23,8 +23,8 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceProvider;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
@@ -99,7 +99,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
     }
 
     @Override
-    public Stream<? extends Serializable> streamQuery(final javax.persistence.Query query) {
+    public Stream<? extends Serializable> streamQuery(final jakarta.persistence.Query query) {
         val hibernateQuery = Query.class.cast(query);
         return hibernateQuery.stream();
     }

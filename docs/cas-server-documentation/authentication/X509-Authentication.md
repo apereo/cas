@@ -12,7 +12,7 @@ the SSL/TLS handshake process. The X.509 components require configuration outsid
 SSL handshake happens outside the servlet layer where the CAS application resides. There is no particular requirement
 on deployment architecture (i.e. Apache reverse proxy, load balancer SSL termination) other than any client
 certificate presented in the SSL handshake be accessible to the servlet container as a request attribute named
-`javax.servlet.request.X509Certificate`. This happens naturally for configurations that terminate SSL connections
+`jakarta.servlet.request.X509Certificate`. This happens naturally for configurations that terminate SSL connections
 directly at the servlet container and when using `Apache/mod_jk`; for other architectures it may be necessary to do
 additional work.
 
@@ -185,7 +185,7 @@ login option in the user interface to trigger the browser for X.509.
 
 ### External Apache Tomcat
 
-Anything said here extends the [Apache Tomcat reference for SSL](https://tomcat.apache.org/tomcat-9.0-doc/ssl-howto.html).
+Anything said here extends the [Apache Tomcat reference for SSL](https://tomcat.apache.org/tomcat-10.1-doc/ssl-howto.html).
 
 The Tomcat server is configured in `$CATALINA_HOME/conf/server.xml` with one or more `<Connector>` elements. Each of these elements 
 defines one port number on which Tomcat will listen for requests. Connectors that support SSL are configured with one or two files 

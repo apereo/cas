@@ -34,8 +34,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -100,7 +100,8 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
             LOGGER.warn("Dynamic client registration mode is not configured as protected.");
             return getBadRequestResponseEntity(HttpStatus.NOT_ACCEPTABLE);
         }
-        val results = accessTokenClient.getCredentials(webContext, getConfigurationContext().getSessionStore());
+        val results = accessTokenClient.getCredentials(webContext, getConfigurationContext().getSessionStore(),
+            getConfigurationContext().getOauthConfig().getProfileManagerFactory());
         return results.map(profile -> {
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(profile.getUserProfile().getId());
             val service = getConfigurationContext().getWebApplicationServiceServiceFactory()

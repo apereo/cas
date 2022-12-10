@@ -6,6 +6,8 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ import java.util.Map;
  */
 @SuperBuilder
 @Getter
+@RequiredArgsConstructor
+@With
 public class AttributeDefinitionResolutionContext {
     @Builder.Default
     private final List<Object> attributeValues = new ArrayList<>();

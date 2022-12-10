@@ -35,7 +35,7 @@ public class SamlIdPProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SamlIdPCoreProperties core = new SamlIdPCoreProperties();
-    
+
     /**
      * Settings related to SAML2 responses.
      */

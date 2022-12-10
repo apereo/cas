@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.expiration;
 
 
-
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 

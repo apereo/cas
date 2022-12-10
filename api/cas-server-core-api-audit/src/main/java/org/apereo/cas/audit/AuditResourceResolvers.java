@@ -11,7 +11,7 @@ public interface AuditResourceResolvers {
      * Resource resolver id {@code SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER}.
      */
     String SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER = "SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER";
-    
+
     /**
      * Resource resolver id {@code REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER}.
      */
@@ -26,7 +26,7 @@ public interface AuditResourceResolvers {
      * Resource resolver id {@code SAVE_CONSENT_RESOURCE_RESOLVER}.
      */
     String SAVE_CONSENT_RESOURCE_RESOLVER = "SAVE_CONSENT_RESOURCE_RESOLVER";
-    
+
     /**
      * Resource resolver id {@code AUP_VERIFY_RESOURCE_RESOLVER}.
      */
@@ -35,7 +35,7 @@ public interface AuditResourceResolvers {
      * Resource resolver id {@code AUP_SUBMIT_RESOURCE_RESOLVER}.
      */
     String AUP_SUBMIT_RESOURCE_RESOLVER = "AUP_SUBMIT_RESOURCE_RESOLVER";
-    
+
     /**
      * Resource resolver id {@code CHANGE_PASSWORD_RESOURCE_RESOLVER}.
      */
@@ -45,7 +45,7 @@ public interface AuditResourceResolvers {
      * Resource resolver id {@code REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER}.
      */
     String REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER = "REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER";
-    
+
     /**
      * Resource resolver id {@code REST_API_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER}.
      */
@@ -54,7 +54,7 @@ public interface AuditResourceResolvers {
      * Resource resolver id {@code REST_API_SERVICE_TICKET_RESOURCE_RESOLVER}.
      */
     String REST_API_SERVICE_TICKET_RESOURCE_RESOLVER = "REST_API_SERVICE_TICKET_RESOURCE_RESOLVER";
-    
+
     /**
      * Resource resolver id {@code SAML2_RESPONSE_RESOURCE_RESOLVER}.
      */

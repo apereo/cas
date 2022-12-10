@@ -29,14 +29,12 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     private final TicketRegistry ticketRegistry;
 
     @Override
-    public Ticket getTicket(final String ticketId) {
-        if (StringUtils.isBlank(ticketId)) {
+    public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) {
+        if (StringUtils.isBlank(ticketGrantingTicketId)) {
             return null;
         }
-        return FunctionUtils.doAndHandle(() -> {
-            val state = ticketRegistry.getTicket(ticketId, Ticket.class);
-            return state == null || state.isExpired() ? null : state;
-        });
+        val tgt = getTicketGrantingTicket(ticketGrantingTicketId);
+        return Optional.ofNullable(tgt).map(TicketGrantingTicket::getAuthentication).orElse(null);
     }
 
     @Override
@@ -49,12 +47,14 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     }
 
     @Override
-    public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) {
-        if (StringUtils.isBlank(ticketGrantingTicketId)) {
+    public Ticket getTicket(final String ticketId) {
+        if (StringUtils.isBlank(ticketId)) {
             return null;
         }
-        val tgt = getTicketGrantingTicket(ticketGrantingTicketId);
-        return Optional.ofNullable(tgt).map(TicketGrantingTicket::getAuthentication).orElse(null);
+        return FunctionUtils.doAndHandle(() -> {
+            val state = ticketRegistry.getTicket(ticketId, Ticket.class);
+            return state == null || state.isExpired() ? null : state;
+        });
     }
 
     @Override

@@ -33,8 +33,7 @@ public class CasCoreEventsConfigEnvironmentConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasConfigurationEventListener casConfigurationEventListener(
-        @Qualifier("configurationPropertiesEnvironmentManager")
-        final CasConfigurationPropertiesEnvironmentManager manager,
+        @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager manager,
         final ConfigurationPropertiesBindingPostProcessor binder,
         final ContextRefresher contextRefresher,
         final ConfigurableApplicationContext applicationContext) {

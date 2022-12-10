@@ -106,6 +106,27 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         initialize();
     }
 
+    @Override
+    public String encode(final Serializable value, final Object[] parameters) {
+        if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
+            return encryptAndSign(value, getEncryptionKey(), getSigningKey());
+        }
+        return signAndEncrypt(value, getEncryptionKey(), getSigningKey());
+    }
+
+    @Override
+    public String decode(final Serializable value, final Object[] parameters) {
+        return decode(value, parameters, getEncryptionKey(), getSigningKey());
+    }
+
+    protected String decode(final Serializable value, final Object[] parameters,
+                            final Key encKey, final Key signingKey) {
+        if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
+            return verifyAndDecrypt(value, encKey, signingKey);
+        }
+        return decryptAndVerify(value, encKey, signingKey);
+    }
+
     protected void initialize() {
         if (!initialized) {
             if (this.encryptionEnabled) {
@@ -124,33 +145,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
     @Override
-    public String encode(final Serializable value, final Object[] parameters) {
-        if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
-            return encryptAndSign(value, getEncryptionKey(), getSigningKey());
-        }
-        return signAndEncrypt(value, getEncryptionKey(), getSigningKey());
-    }
-
-    @Override
-    public String decode(final Serializable value, final Object[] parameters) {
-        return decode(value, parameters, getEncryptionKey(), getSigningKey());
-    }
-
-    /**
-     * Decode value.
-     *
-     * @param value      the value
-     * @param parameters the parameters
-     * @param encKey     the encryption key
-     * @param signingKey the signing key
-     * @return the string
-     */
-    protected String decode(final Serializable value, final Object[] parameters,
-                            final Key encKey, final Key signingKey) {
-        if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
-            return verifyAndDecrypt(value, encKey, signingKey);
-        }
-        return decryptAndVerify(value, encKey, signingKey);
+    public boolean isEnabled() {
+        return super.isEnabled() || isEncryptionPossible(this.encryptionKey);
     }
 
     /**
@@ -163,11 +159,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
         setEncryptionKey(object);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return super.isEnabled() || isEncryptionPossible(this.encryptionKey);
     }
 
     /**
@@ -198,18 +189,16 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return "N/A";
     }
 
-    /**
-     * Define the order of cipher operations.
-     */
-    public enum CipherOperationsStrategyType {
-        /**
-         * Encrypt the value first, and then sign.
-         */
-        ENCRYPT_AND_SIGN,
-        /**
-         * Sign the value first, and then encrypt.
-         */
-        SIGN_AND_ENCRYPT
+    protected String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
+        val headers = new LinkedHashMap<>(getCommonHeaders());
+        headers.putAll(getEncryptionOpHeaders());
+        return JsonWebTokenEncryptor.builder()
+            .key(encryptionKey)
+            .algorithm(encryptionAlgorithm)
+            .encryptionMethod(contentEncryptionAlgorithmIdentifier)
+            .headers(headers)
+            .build()
+            .encrypt(value);
     }
 
     private void configureSigningParameters(final String secretKeySigning) {
@@ -348,15 +337,17 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             () -> encoded).get();
     }
 
-    protected String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
-        val headers = new LinkedHashMap<>(getCommonHeaders());
-        headers.putAll(getEncryptionOpHeaders());
-        return JsonWebTokenEncryptor.builder()
-            .key(encryptionKey)
-            .algorithm(encryptionAlgorithm)
-            .encryptionMethod(contentEncryptionAlgorithmIdentifier)
-            .headers(headers)
-            .build()
-            .encrypt(value);
+    /**
+     * Define the order of cipher operations.
+     */
+    public enum CipherOperationsStrategyType {
+        /**
+         * Encrypt the value first, and then sign.
+         */
+        ENCRYPT_AND_SIGN,
+        /**
+         * Sign the value first, and then encrypt.
+         */
+        SIGN_AND_ENCRYPT
     }
 }

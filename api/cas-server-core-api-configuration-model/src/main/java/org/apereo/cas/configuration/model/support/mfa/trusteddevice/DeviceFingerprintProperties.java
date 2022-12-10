@@ -133,6 +133,7 @@ public class DeviceFingerprintProperties implements Serializable {
     public static class GeoLocation extends BaseDeviceFingerprintComponentProperties {
         @Serial
         private static final long serialVersionUID = -4125531035180836136L;
+
         /**
          * Default Order for GeoLocation component.
          */

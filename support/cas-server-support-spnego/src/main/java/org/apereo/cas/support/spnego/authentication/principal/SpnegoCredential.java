@@ -1,6 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -28,8 +28,8 @@ import java.util.stream.IntStream;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"initToken", "nextToken", "principal"})
-public class SpnegoCredential implements Credential {
+@EqualsAndHashCode(of = {"initToken", "nextToken", "principal"}, callSuper = false)
+public class SpnegoCredential extends AbstractCredential {
 
     @Serial
     private static final long serialVersionUID = 84084596791289548L;

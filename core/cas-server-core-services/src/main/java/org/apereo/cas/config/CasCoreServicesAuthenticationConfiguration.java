@@ -41,12 +41,9 @@ public class CasCoreServicesAuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public ProtocolAttributeEncoder casAttributeEncoder(
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("cacheCredentialsCipherExecutor")
-        final CipherExecutor cacheCredentialsCipherExecutor,
-        @Qualifier(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
-        final RegisteredServiceCipherExecutor registeredServiceCipherExecutor) {
+        @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+        @Qualifier("cacheCredentialsCipherExecutor") final CipherExecutor cacheCredentialsCipherExecutor,
+        @Qualifier(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME) final RegisteredServiceCipherExecutor registeredServiceCipherExecutor) {
         return new DefaultCasProtocolAttributeEncoder(servicesManager, registeredServiceCipherExecutor, cacheCredentialsCipherExecutor);
     }
 }

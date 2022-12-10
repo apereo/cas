@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
+import org.jooq.lambda.Unchecked;
 
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -28,6 +30,20 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         return this.dbTableService.getSessionsFor(encodeTicketId(principalId));
+    }
+
+    @Override
+    public void addTicket(final Stream<? extends Ticket> toSave) throws Exception {
+        try {
+            val toPut = toSave.map(Unchecked.function(ticket -> {
+                val encTicket = encodeTicket(ticket);
+                val principal = encodeTicketId(getPrincipalIdFrom(ticket));
+                return Triple.<Ticket, Ticket, String>of(ticket, encTicket, principal);
+            }));
+            dbTableService.put(toPut);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
     }
 
     @Override
@@ -60,12 +76,17 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        return this.dbTableService.deleteAll();
+        return dbTableService.deleteAll();
     }
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        return decodeTickets(this.dbTableService.getAll());
+        return decodeTickets(dbTableService.getAll());
+    }
+
+    @Override
+    public Stream<? extends Ticket> stream() {
+        return dbTableService.stream().map(this::decodeTicket);
     }
 
     @Override

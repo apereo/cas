@@ -46,13 +46,13 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        val keys = redisTemplate.keys(buildRedisKeyForRecord(username), this.scanCount);
+        val keys = redisTemplate.scan(buildRedisKeyForRecord(username), this.scanCount);
         return toCredentialRegistrationsAsStream(keys).collect(Collectors.toSet());
     }
 
     @Override
     public Stream<CredentialRegistration> stream() {
-        val keys = redisTemplate.keys(getPatternRedisKey(), this.scanCount);
+        val keys = redisTemplate.scan(getPatternRedisKey(), this.scanCount);
         return toCredentialRegistrationsAsStream(keys);
     }
 

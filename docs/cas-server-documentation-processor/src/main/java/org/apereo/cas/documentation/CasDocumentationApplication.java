@@ -33,7 +33,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.boot.actuate.endpoint.web.annotation.WebEndpoint;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -48,8 +48,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -277,12 +277,11 @@ public class CasDocumentationApplication {
                     for (var i = 0; i < parameterAnnotations.length; i++) {
                         for (var j = 0; j < parameterAnnotations[i].length; j++) {
                             var ann = (ShellOption) parameterAnnotations[i][j];
-                            var option = (ShellOption) ann;
                             cmd.parameters.add(Map.of(
-                                "name", String.join(",", option.value()),
-                                "help", String.valueOf(option.help()),
-                                "optOut", String.valueOf(option.optOut()),
-                                "defaultValue", option.defaultValue()));
+                                "name", String.join(",", ann.value()),
+                                "help", String.valueOf(ann.help()),
+                                "optOut", String.valueOf(ann.optOut()),
+                                "defaultValue", ann.defaultValue()));
                         }
                     }
 
@@ -341,20 +340,22 @@ public class CasDocumentationApplication {
         subTypes.forEach(clazz -> {
             var features = clazz.getAnnotationsByType(ConditionalOnFeatureEnabled.class);
             Arrays.stream(features).forEach(feature -> {
-                var propName = feature.feature().toProperty(feature.module());
-                if (!allToggleProps.contains(propName)) {
-                    allToggleProps.add(propName);
+                for (var featureDefn : feature.feature()) {
+                    var propName = featureDefn.toProperty(feature.module());
+                    if (!allToggleProps.contains(propName)) {
+                        allToggleProps.add(propName);
 
-                    var map = new LinkedHashMap<>();
-                    map.put("type", clazz.getName());
-                    map.put("feature", feature.feature());
-                    if (StringUtils.isNotBlank(feature.module())) {
-                        map.put("module", feature.module());
+                        var map = new LinkedHashMap<>();
+                        map.put("type", clazz.getName());
+                        map.put("feature", feature.feature());
+                        if (StringUtils.isNotBlank(feature.module())) {
+                            map.put("module", feature.module());
+                        }
+                        map.put("enabledByDefault", feature.enabledByDefault());
+
+                        map.put("property", propName);
+                        properties.add(map);
                     }
-                    map.put("enabledByDefault", feature.enabledByDefault());
-
-                    map.put("property", propName);
-                    properties.add(map);
                 }
             });
         });
@@ -662,7 +663,7 @@ public class CasDocumentationApplication {
 
         var paramNames = ArrayUtils.EMPTY_STRING_ARRAY;
         try {
-            paramNames = new LocalVariableTableParameterNameDiscoverer().getParameterNames(method);
+            paramNames = new StandardReflectionParameterNameDiscoverer().getParameterNames(method);
         } catch (final Throwable e) {
             LOGGER.error(e.getMessage());
         }

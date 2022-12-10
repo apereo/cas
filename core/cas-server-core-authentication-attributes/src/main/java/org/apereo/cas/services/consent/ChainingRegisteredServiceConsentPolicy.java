@@ -75,6 +75,17 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
         return TriStateBoolean.UNDEFINED;
     }
 
+    @Override
+    @JsonIgnore
+    public Set<String> getExcludedServices() {
+        return this.policies
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .map(RegisteredServiceConsentPolicy::getExcludedServices)
+            .flatMap(Set::stream)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     @JsonIgnore
     @Override
     public Set<String> getExcludedAttributes() {
@@ -86,17 +97,6 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    }
-
-    @Override
-    @JsonIgnore
-    public Set<String> getExcludedServices() {
-        return this.policies
-            .stream()
-            .filter(BeanSupplier::isNotProxy)
-            .map(RegisteredServiceConsentPolicy::getExcludedServices)
-            .flatMap(Set::stream)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override

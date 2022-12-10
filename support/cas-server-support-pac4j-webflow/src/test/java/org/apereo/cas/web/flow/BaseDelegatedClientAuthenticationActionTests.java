@@ -137,7 +137,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
         assertEquals(locale, request.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(HttpMethod.POST.name(), request.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         val urls = (Set<DelegatedClientIdentityProviderConfiguration>)
-            WebUtils.getDelegatedAuthenticationProviderConfigurations(requestContext);
+            DelegationWebflowUtils.getDelegatedAuthenticationProviderConfigurations(requestContext);
 
         assertFalse(urls.isEmpty());
         urls.stream()

@@ -23,7 +23,6 @@ import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.Oracle12cDialect;
 import org.hibernate.dialect.Oracle8iDialect;
 import org.hibernate.dialect.Oracle9iDialect;
-import org.hibernate.dialect.PostgreSQL10Dialect;
 import org.hibernate.dialect.PostgreSQL91Dialect;
 import org.hibernate.dialect.PostgreSQL92Dialect;
 import org.hibernate.dialect.PostgreSQL93Dialect;
@@ -41,8 +40,9 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Entity;
+import jakarta.persistence.MappedSuperclass;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +68,6 @@ public class GenerateDdlCommand {
         DIALECTS_MAP.put("MYSQL5", MySQL5Dialect.class.getName());
         DIALECTS_MAP.put("MYSQL8", MySQL8Dialect.class.getName());
 
-        DIALECTS_MAP.put("PG10", PostgreSQL10Dialect.class.getName());
         DIALECTS_MAP.put("PG95", PostgreSQL95Dialect.class.getName());
         DIALECTS_MAP.put("PG94", PostgreSQL94Dialect.class.getName());
         DIALECTS_MAP.put("PG93", PostgreSQL93Dialect.class.getName());
@@ -126,41 +125,49 @@ public class GenerateDdlCommand {
     public String generate(
         @ShellOption(value = {"file", "--file"},
             help = "DDL file to contain to generated script",
-            defaultValue = "/etc/cas/config/cas-db-schema.sql") final String file,
+            defaultValue = "/etc/cas/config/cas-db-schema.sql")
+        final String file,
         @ShellOption(value = {"dialect", "--dialect"},
             help = "Database dialect class",
-            defaultValue = "HSQL") final String dialect,
+            defaultValue = "HSQL")
+        final String dialect,
         @ShellOption(value = {"url", "--url"},
             help = "JDBC database connection URL",
-            defaultValue = "jdbc:hsqldb:mem:cas") final String jdbcUrl,
+            defaultValue = "jdbc:hsqldb:mem:cas")
+        final String jdbcUrl,
         @ShellOption(value = {"delimiter", "--delimiter"},
             help = "Delimiter to use for separation of statements when generating SQL",
-            defaultValue = ";") final String delimiter,
+            defaultValue = ";")
+        final String delimiter,
         @ShellOption(value = {"pretty", "--pretty"},
             help = "Format DDL scripts and pretty-print the output",
-            defaultValue = "false") final Boolean pretty,
+            defaultValue = "false")
+        final Boolean pretty,
         @ShellOption(value = {"dropSchema", "--dropSchema"},
             help = "Generate DROP SQL statements in the DDL",
-            defaultValue = "false") final Boolean dropSchema,
+            defaultValue = "false")
+        final Boolean dropSchema,
         @ShellOption(value = {"createSchema", "--createSchema"},
             help = "Generate DROP SQL statements in the DDL",
-            defaultValue = "false") final Boolean createSchema,
+            defaultValue = "false")
+        final Boolean createSchema,
         @ShellOption(value = {"haltOnError", "--haltOnError"},
             help = "Halt if an error occurs during the generation process",
-            defaultValue = "false") final Boolean haltOnError) {
+            defaultValue = "false")
+        final Boolean haltOnError) {
 
         LOGGER.info("Requested database dialect type [{}]", dialect);
         val dialectName = DIALECTS_MAP.getOrDefault(dialect.trim(), dialect);
         LOGGER.info("Using database dialect class [{}]", dialectName);
         if (!dialectName.contains(".")) {
             LOGGER.warn("Dialect name must be a fully qualified class name. Supported dialects by default are [{}] "
-                + "or you may specify the dialect class directly", DIALECTS_MAP.keySet());
+                        + "or you may specify the dialect class directly", DIALECTS_MAP.keySet());
             return null;
         }
 
         val svcRegistry = new StandardServiceRegistryBuilder();
 
-        val settings = new HashMap<String, String>();
+        val settings = new HashMap<String, Object>();
         settings.put(AvailableSettings.DIALECT, dialectName);
         settings.put(AvailableSettings.URL, jdbcUrl);
         settings.put(AvailableSettings.HBM2DDL_AUTO, "none");

@@ -210,4 +210,4 @@ http <cas-initializr-url> Accept:application/json | jq
 
 CAS Initializr is set to use the [CAS BOM](BOM-Dependency-Management.html) for dependency management.
 
-[initializr]: https://casinit.herokuapp.com/
+[initializr]: https://casinit.herokuapp.com/ui

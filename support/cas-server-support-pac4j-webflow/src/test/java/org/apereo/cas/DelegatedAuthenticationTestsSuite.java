@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolverTests;
 import org.apereo.cas.authentication.principal.GroovyDelegatedClientAuthenticationCredentialResolverTests;
+import org.apereo.cas.authentication.principal.ldap.LdapDelegatedClientAuthenticationCredentialResolverTests;
 import org.apereo.cas.support.pac4j.RefreshableDelegatedClientsTests;
 import org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests;
 import org.apereo.cas.support.pac4j.clients.DelegatedClientsEndpointTests;
@@ -50,6 +51,7 @@ import org.junit.platform.suite.api.Suite;
     GroovyDelegatedClientAuthenticationCredentialResolverTests.class,
     DelegatedClientAuthenticationCredentialResolverTests.class,
     RestfulDelegatedClientFactoryTests.class,
+    LdapDelegatedClientAuthenticationCredentialResolverTests.class,
     DelegatedClientAuthenticationStoreWebflowStateActionTests.class,
     DelegatedClientAuthenticationFailureActionTests.class,
     GroovyDelegatedClientAuthenticationRequestCustomizerTests.class,

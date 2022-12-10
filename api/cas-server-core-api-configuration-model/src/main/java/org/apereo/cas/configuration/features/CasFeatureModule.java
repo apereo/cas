@@ -351,6 +351,10 @@ public interface CasFeatureModule {
 
         private static final Set<String> PRESENT_FEATURES = Collections.synchronizedSet(new TreeSet<>());
 
+        public static Set<String> getRegisteredFeatures() {
+            return Set.copyOf(PRESENT_FEATURES);
+        }
+
         /**
          * Register and keep track of features that are present at runtime.
          */
@@ -369,10 +373,6 @@ public interface CasFeatureModule {
                 featureName += '.' + module;
             }
             PRESENT_FEATURES.add(featureName);
-        }
-
-        public static Set<String> getRegisteredFeatures() {
-            return Set.copyOf(PRESENT_FEATURES);
         }
 
         /**

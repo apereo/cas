@@ -11,8 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-                                                                                               
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,13 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
     }
 
     @Override
+    public boolean isMultifactorAuthenticationBypassed(final Authentication authentication, final String requestedContext) {
+        return multifactorAuthenticationProviderBypassEvaluators
+            .stream()
+            .allMatch(bypass -> bypass.isMultifactorAuthenticationBypassed(authentication, requestedContext));
+    }
+
+    @Override
     public void forgetBypass(final Authentication authentication) {
         multifactorAuthenticationProviderBypassEvaluators
             .forEach(bypass -> bypass.forgetBypass(authentication));
@@ -61,10 +69,23 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
     }
 
     @Override
-    public boolean isMultifactorAuthenticationBypassed(final Authentication authentication, final String requestedContext) {
-        return multifactorAuthenticationProviderBypassEvaluators
-            .stream()
-            .allMatch(bypass -> bypass.isMultifactorAuthenticationBypassed(authentication, requestedContext));
+    public String getProviderId() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String getId() {
+        return getProviderId();
+    }
+
+    @Override
+    public int size() {
+        return multifactorAuthenticationProviderBypassEvaluators.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return multifactorAuthenticationProviderBypassEvaluators.isEmpty();
     }
 
     @Override
@@ -73,16 +94,6 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
             .stream()
             .filter(bypass -> bypass.belongsToMultifactorAuthenticationProvider(providerId).isPresent())
             .findFirst();
-    }
-
-    @Override
-    public String getProviderId() {
-        return this.getClass().getSimpleName();
-    }
-
-    @Override
-    public String getId() {
-        return getProviderId();
     }
 
     /**
@@ -95,16 +106,6 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
         if (!bypass.isEmpty()) {
             this.multifactorAuthenticationProviderBypassEvaluators.add(bypass);
         }
-    }
-
-    @Override
-    public int size() {
-        return multifactorAuthenticationProviderBypassEvaluators.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return multifactorAuthenticationProviderBypassEvaluators.isEmpty();
     }
 
     @Override

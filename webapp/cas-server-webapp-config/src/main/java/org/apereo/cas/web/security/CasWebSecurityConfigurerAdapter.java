@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -55,11 +56,29 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     private final SecurityProperties securityProperties;
 
+    private final WebEndpointProperties webEndpointProperties;
+
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
     private final List<ProtocolEndpointWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
 
     private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
+
+    private static List<String> prepareProtocolEndpoint(final String endpoint) {
+        val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
+        return List.of(baseEndpoint.concat("**"), StringUtils.appendIfMissing(endpoint, "/").concat("**"));
+    }
+
+    private static void configureJaasAuthenticationProvider(final HttpSecurity http,
+                                                            final JaasSecurityActuatorEndpointsMonitorProperties jaas)
+        throws Exception {
+        val p = new JaasAuthenticationProvider();
+        p.setLoginConfig(jaas.getLoginConfig());
+        p.setLoginContextName(jaas.getLoginContextName());
+        p.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
+        p.afterPropertiesSet();
+        http.authenticationProvider(p);
+    }
 
     @Override
     public void destroy() {
@@ -77,23 +96,24 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
-            .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
+            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
+            .flatMap(List::stream)
             .collect(Collectors.toList());
-
         patterns.add("/webjars/**");
+        patterns.add("/themes/**");
         patterns.add("/js/**");
         patterns.add("/css/**");
         patterns.add("/images/**");
         patterns.add("/static/**");
         patterns.add("/error");
         patterns.add("/favicon.ico");
-
+        patterns.add("/");
+        patterns.add(webEndpointProperties.getBasePath());
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
         web.debug(LOGGER.isDebugEnabled())
             .ignoring()
-            .antMatchers(patterns.toArray(String[]::new));
+            .requestMatchers(patterns.toArray(String[]::new));
     }
-
 
     /**
      * Configure http security.
@@ -120,10 +140,12 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
-            .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
+            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
+            .flatMap(List::stream)
             .collect(Collectors.toList());
 
         patterns.add("/webjars/**");
+        patterns.add("/themes/**");
         patterns.add("/js/**");
         patterns.add("/css/**");
         patterns.add("/images/**");
@@ -131,8 +153,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         patterns.add("/error");
         patterns.add("/favicon.ico");
 
-        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
-        requests.antMatchers(patterns.toArray(String[]::new))
+        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
+        requests.requestMatchers(patterns.toArray(String[]::new))
             .permitAll()
             .and()
             .securityContext()
@@ -193,7 +215,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         });
     }
 
-
     /**
      * Configure endpoint access for static resources.
      *
@@ -204,9 +225,9 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
             .permitAll();
         requests
-            .antMatchers("/resources/**")
+            .requestMatchers("/resources/**")
             .permitAll()
-            .antMatchers("/static/**")
+            .requestMatchers("/static/**")
             .permitAll();
     }
 
@@ -251,24 +272,24 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     }
 
     protected void configureEndpointAccessPermitAll(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests,
-                                                  final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests.requestMatchers(endpoint).permitAll();
     }
 
     protected void configureEndpointAccessToDenyAll(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests,
-                                                  final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests.requestMatchers(endpoint).denyAll();
     }
 
     protected void configureEndpointAccessAnonymously(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                      final EndpointRequest.EndpointRequestMatcher endpoint) {
 
         requests.requestMatchers(endpoint).permitAll();
     }
 
     protected void configureEndpointAccessByIpAddress(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests,
-                                                    final ActuatorEndpointProperties properties,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                      final ActuatorEndpointProperties properties,
+                                                      final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests
             .requestMatchers(endpoint)
             .access((authentication, context) -> {
@@ -277,17 +298,17 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
                     context.getRequest().getRemoteAddr());
 
                 val addresses = properties.getRequiredIpAddresses()
-                        .stream()
-                        .filter(addr -> FunctionUtils.doAndHandle(() -> {
-                            val ipAddressMatcher = new IpAddressMatcher(addr);
-                            LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addr);
-                            return ipAddressMatcher.matches(remoteAddr);
-                        }, e -> {
-                            val matcher = RegexUtils.createPattern(addr, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
-                            LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addr);
-                            return matcher.matches();
-                        }).get())
-                        .findFirst();
+                    .stream()
+                    .filter(addr -> FunctionUtils.doAndHandle(() -> {
+                        val ipAddressMatcher = new IpAddressMatcher(addr);
+                        LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addr);
+                        return ipAddressMatcher.matches(remoteAddr);
+                    }, e -> {
+                        val matcher = RegexUtils.createPattern(addr, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
+                        LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addr);
+                        return matcher.matches();
+                    }).get())
+                    .findFirst();
                 val granted = addresses.isPresent();
                 if (!granted) {
                     LOGGER.warn("Provided regular expression or IP/netmask [{}] does not match [{}]", properties.getRequiredIpAddresses(), remoteAddr);
@@ -335,17 +356,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
                && StringUtils.isNotBlank(ldap.getSearchFilter())
                && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
                    || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
-    }
-
-    private static void configureJaasAuthenticationProvider(final HttpSecurity http,
-                                                            final JaasSecurityActuatorEndpointsMonitorProperties jaas)
-        throws Exception {
-        val p = new JaasAuthenticationProvider();
-        p.setLoginConfig(jaas.getLoginConfig());
-        p.setLoginContextName(jaas.getLoginContextName());
-        p.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
-        p.afterPropertiesSet();
-        http.authenticationProvider(p);
     }
 
     private void configureLdapAuthenticationProvider(final HttpSecurity http,

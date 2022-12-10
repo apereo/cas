@@ -139,7 +139,7 @@ public class OidcIdTokenGeneratorServiceTests {
             request.setAttribute(Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            val phoneValues = List.of("123456789", "4805553241");
+            val phoneValues = List.of("\\\\123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
                 OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
                 OIDC_CLAIM_PHONE_NUMBER, phoneValues,

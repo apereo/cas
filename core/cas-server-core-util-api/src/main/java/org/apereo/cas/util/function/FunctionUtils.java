@@ -145,6 +145,24 @@ public class FunctionUtils {
         };
     }
 
+
+    /**
+     * Do if not blank.
+     *
+     * @param input        the input
+     * @param trueFunction the true function
+     */
+    public static void doIfNotBlank(final CharSequence input,
+                                    final CheckedConsumer<CharSequence> trueFunction) {
+        try {
+            if (StringUtils.isNotBlank(input)) {
+                trueFunction.accept(input);
+            }
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+    }
+
     /**
      * Supply if not null supplier.
      *
@@ -169,6 +187,7 @@ public class FunctionUtils {
             }
         };
     }
+
 
     /**
      * Do if not null.
@@ -204,6 +223,24 @@ public class FunctionUtils {
                 trueFunction.accept(input);
             } else {
                 elseFunction.accept(null);
+            }
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+    }
+
+    /**
+     * Do if null.
+     *
+     * @param <T>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     */
+    public static <T> void doIfNull(final T input,
+                                    final CheckedConsumer<T> trueFunction) {
+        try {
+            if (input == null) {
+                trueFunction.accept(null);
             }
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);

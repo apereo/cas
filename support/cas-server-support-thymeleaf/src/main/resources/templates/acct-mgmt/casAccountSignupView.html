@@ -71,7 +71,7 @@
             </section>
             
             <span th:if="${accountRegistrationCaptchaEnabled}">
-                <div th:replace="fragments/recaptcha :: recaptchaToken" />
+                <div th:replace="~{fragments/recaptcha :: recaptchaToken}" />
             </span>
             
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>

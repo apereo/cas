@@ -17,8 +17,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Optional;
 
 /**
@@ -55,6 +56,23 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         }
         LOGGER.trace("Resolved registered service from request can not be located");
         return null;
+    }
+
+    /**
+     * Check if the service is configured to include/not include the specified header.
+     *
+     * @param registeredService the service linked to this request, if any.
+     * @param property          the registered service property
+     * @return Optional(true / false value of property); empty() if property not set
+     */
+    private static Optional<Boolean> shouldHttpHeaderBeInjectedIntoResponse(final Optional<Object> registeredService,
+                                                                            final RegisteredServiceProperties property) {
+
+        val propValue = getStringProperty(registeredService, property);
+        if (propValue != null) {
+            return Optional.of(BooleanUtils.toBoolean(propValue));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -174,23 +192,6 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         } else {
             super.decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest, result);
         }
-    }
-
-    /**
-     * Check if the service is configured to include/not include the specified header.
-     *
-     * @param registeredService the service linked to this request, if any.
-     * @param property          the registered service property
-     * @return Optional(true / false value of property); empty() if property not set
-     */
-    private static Optional<Boolean> shouldHttpHeaderBeInjectedIntoResponse(final Optional<Object> registeredService,
-                                                                            final RegisteredServiceProperties property) {
-
-        val propValue = getStringProperty(registeredService, property);
-        if (propValue != null) {
-            return Optional.of(BooleanUtils.toBoolean(propValue));
-        }
-        return Optional.empty();
     }
 
     /**

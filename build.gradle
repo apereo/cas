@@ -12,12 +12,15 @@ buildscript {
             url "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
         }
+        maven {
+            url "https://repo.spring.io/snapshot"
+            mavenContent { snapshotsOnly() }
+        }
     }
 
     dependencies {
 //        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
         classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
-        classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
@@ -442,26 +445,10 @@ subprojects {
         }
     }
 
-
-    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("checkLicense") }) {
-        apply plugin: "com.github.jk1.dependency-license-report"
-        licenseReport {
-            outputDir = "$projectDir/build/licenses"
-            projects = project
-            excludeOwnGroup = true
-            configurations = ['runtimeClasspath']
-            filters = [new com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter()]
-            allowedLicensesFile = new File("$rootProject.projectDir/etc/allowed-licenses.json")
-        }
-        checkLicense.finalizedBy outputDependenciesWithoutLicense
-    }
-
     dependencies {
 
         implementation libraries.aspectj
-        implementation libraries.validationapi
 
-        api libraries.jaxb
         api libraries.swaggerannotations
         api libraries.slf4j
         api libraries.guava
@@ -472,7 +459,6 @@ subprojects {
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.bvalidator
         api libraries.groovy
         api libraries.caffein
         api libraries.springcloud
@@ -480,20 +466,23 @@ subprojects {
         api libraries.springsecurity
         api libraries.springintegration
         api libraries.springwebflow
-        api libraries.javaxel
-        api libraries.javax
+        api libraries.jakarta
 
         annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
         }
+        
         testImplementation libraries.tests
         testImplementation libraries.log4j
+        testImplementation libraries.hibernatevalidator
 
         if (!ci) {
             testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
         }
+
+        runtimeOnly libraries.httpclient4
     }
 }
 

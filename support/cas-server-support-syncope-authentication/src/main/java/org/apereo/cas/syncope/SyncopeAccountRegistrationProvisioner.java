@@ -16,8 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -75,9 +76,9 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
                 .entity(entity)
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
-            if (!HttpStatus.valueOf(response.getStatusLine().getStatusCode()).isError()) {
-                val result = EntityUtils.toString(response.getEntity());
+            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+            if (!HttpStatus.valueOf(response.getCode()).isError()) {
+                val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
                 LOGGER.debug("Received user object as [{}]", result);
                 val responseJson = MAPPER.readValue(result, new TypeReference<Map<String, Object>>() {
                 });

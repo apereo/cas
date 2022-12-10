@@ -29,9 +29,9 @@ The following endpoints are provided:
 
 {% include_cached actuators.html endpoints="loggingConfig,loggers,logfile" %}
 
-## CAS Custom Log4j2 plugins
+## CAS Plugins
 
-The log4j2.xml file use by CAS includes custom Log4j2 plugins:
+The `log4j2.xml` file use by CAS includes custom Log4j2 plugins:
 
 - `CasAppender`: The CasAppender wraps another regular appender and removes sensitive values from the log entries
 such as Ticket Granting Tickets or Proxy Granting Tickets.
@@ -212,3 +212,21 @@ SERVER IP ADDRESS: ...
 
 Certain number of characters are left at the trailing end of the ticket id to assist with troubleshooting and diagnostics.
 
+      
+## Log Message Summaries
+
+By default, logged stacktraces are summarized and only the first few lines of the stacktrace
+are displayed in the output to reduce noise. If you wish to see the full stacktrace and disable the summary mode, you can consider changing the log level
+for the appropriate package to `DEBUG`. This behavior can be replaced and customized via your implementatation of the `LogMessageSummarizer`, 
+that should be registered with CAS using the Java ServiceLoader API. In doing so and at a minimum, you need to 
+create a `src/main/resources/META-INF/services/org.apereo.cas.util.LogMessageSummarizer` file with the following contents:
+
+```
+org.sso.example.MyLogMessageSummarizer
+```
+ 
+If you need to disable summary mode altogether, the following contents should be used instead in the above file:
+
+```bash
+org.apereo.cas.util.logging.DisabledLogMessageSummarizer
+```

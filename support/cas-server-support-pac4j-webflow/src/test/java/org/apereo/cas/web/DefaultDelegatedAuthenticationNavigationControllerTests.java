@@ -4,7 +4,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.controller.DefaultDelegatedAuthenticationNavigationController;
 
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;

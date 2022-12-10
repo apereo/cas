@@ -43,7 +43,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
         val key = registeredService.getId() + '@' + registeredService.getName();
         return DigestUtils.sha512(key);
     }
-    
+
     private static Cache<String, Map<String, List<Object>>> initializeCache(
         final RegisteredServicePrincipalAttributesRepository repository) {
         val cachedRepository = CachingPrincipalAttributesRepository.class.cast(repository);

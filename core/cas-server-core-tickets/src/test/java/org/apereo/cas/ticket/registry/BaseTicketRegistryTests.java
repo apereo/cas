@@ -590,6 +590,20 @@ public abstract class BaseTicketRegistryTests {
         return true;
     }
 
+    protected CipherExecutor setupCipherExecutor() {
+        return CoreTicketUtils.newTicketRegistryCipherExecutor(
+            new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
+    }
+
+    private void setUpEncryption() {
+        var registry = (AbstractTicketRegistry) AopTestUtils.getTargetObject(ticketRegistry);
+        if (this.useEncryption) {
+            registry.setCipherExecutor(setupCipherExecutor());
+        } else {
+            registry.setCipherExecutor(CipherExecutor.noOp());
+        }
+    }
+
     @ImportAutoConfiguration(RefreshAutoConfiguration.class)
     @SpringBootConfiguration
     @Import({
@@ -618,19 +632,5 @@ public abstract class BaseTicketRegistryTests {
         CasWebApplicationServiceFactoryConfiguration.class
     })
     static class SharedTestConfiguration {
-    }
-
-    private void setUpEncryption() {
-        var registry = (AbstractTicketRegistry) AopTestUtils.getTargetObject(ticketRegistry);
-        if (this.useEncryption) {
-            registry.setCipherExecutor(setupCipherExecutor());
-        } else {
-            registry.setCipherExecutor(CipherExecutor.noOp());
-        }
-    }
-
-    protected CipherExecutor setupCipherExecutor() {
-        return CoreTicketUtils.newTicketRegistryCipherExecutor(
-            new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
     }
 }

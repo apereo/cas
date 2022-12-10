@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author leeyc0
  * @since 6.2.0
  */
-@Tag("JDBC")
+@Tag("Hibernate")
 @SuppressWarnings("JdkObsolete")
 public class JdbcServletContextListenerTests {
 

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,17 +30,26 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
     @Override
     public void publish() {
         val mail = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
-
         val principal = authentication.getPrincipal();
-        if (!principal.getAttributes().containsKey(mail.getAttributeName())) {
-            LOGGER.debug("Could not send email to [{}]. Either no addresses could be found or email settings are not configured.", principal.getId());
-            return;
-        }
-        val addresses = (List) principal.getAttributes().get(mail.getAttributeName());
-        val body = EmailMessageBodyBuilder.builder().properties(mail).build().get();
-        val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
-            .to(addresses).body(body).build();
-        addresses.forEach(address -> this.communicationsManager.email(emailRequest));
+        mail.getAttributeName().forEach(attributeName -> {
+            val resolvedAttribute = SpringExpressionLanguageValueResolver.getInstance().resolve(attributeName);
+            if (principal.getAttributes().containsKey(resolvedAttribute)) {
+                val addresses = (List) principal.getAttributes().get(resolvedAttribute);
+                val body = EmailMessageBodyBuilder.builder()
+                    .properties(mail)
+                    .build()
+                    .get();
+                val emailRequest = EmailMessageRequest.builder()
+                    .emailProperties(mail)
+                    .to(addresses)
+                    .body(body)
+                    .build();
+                addresses.forEach(address -> communicationsManager.email(emailRequest));
+            } else {
+                LOGGER.debug("Could not send email to [{}]. No email found for [{}] or email settings are not configured.",
+                    principal.getId(), resolvedAttribute);
+            }
+        });
 
     }
 }
