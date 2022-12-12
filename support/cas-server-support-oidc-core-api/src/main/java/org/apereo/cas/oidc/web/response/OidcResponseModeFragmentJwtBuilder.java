@@ -6,11 +6,11 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 
@@ -36,9 +36,7 @@ public class OidcResponseModeFragmentJwtBuilder extends BaseOAuth20JwtResponseMo
             .stream()
             .map(Unchecked.function(ctx -> {
                 val token = buildJwtResponse(registeredService, parameters);
-                val url = new URIBuilder(redirectUrl)
-                    .setFragment("response=" + token)
-                    .build().toURL().toExternalForm();
+                val url = UriComponentsBuilder.fromUriString(redirectUrl).fragment("response=" + token).build().toUriString();
                 LOGGER.debug("Redirecting to [{}]", url);
                 return new ModelAndView(new RedirectView(url));
             }))
