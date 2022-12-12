@@ -145,7 +145,7 @@ public class SpnegoProperties implements Serializable {
 
     /**
      * The size of the pool used to validate SPNEGO tokens.
-     * A pool is used to provider better performance than what was previously offered by the simple Lombok {@code}Synchronized{@code} annotation.
+     * A pool is used to provider better performance than what was previously offered by the simple Lombok {@code Synchronized} annotation.
      */
     private int poolSize = 10;
 
