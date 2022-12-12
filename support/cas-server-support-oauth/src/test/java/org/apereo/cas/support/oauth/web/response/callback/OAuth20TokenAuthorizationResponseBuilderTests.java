@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -102,7 +104,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
         assertTrue(modelAndView.getModel().isEmpty());
 
         val redirectUrl = ((RedirectView) modelAndView.getView()).getUrl();
-        val params = splitQuery(new URIBuilder(redirectUrl).getFragment());
+        val params = splitQuery(redirectUrl.substring(redirectUrl.indexOf('#') + 1));
 
         verifyParam(params, OAuth20Constants.STATE, STATE);
         verifyParam(params, OAuth20Constants.NONCE, NONCE);
