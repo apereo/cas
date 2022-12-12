@@ -219,7 +219,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     protected BaseClient findDelegatedClientByName(final RequestContext requestContext,
-                                                   final String clientName, final Service service) {
+                                                   final String clientName,
+                                                   final Service service) {
         val clientResult = configContext.getClients().findClient(clientName);
         if (clientResult.isEmpty()) {
             LOGGER.warn("Delegated client [{}] can not be located", clientName);
@@ -229,7 +230,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         LOGGER.debug("Delegated authentication client is [{}] with service [{}]", client, service);
         if (service != null) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         }
         if (!isDelegatedClientAuthorizedForService(client, service, requestContext)) {
             LOGGER.warn("Delegated client [{}] is not authorized by service [{}]", client, service);
