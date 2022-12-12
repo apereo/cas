@@ -22,6 +22,8 @@ import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
@@ -32,6 +34,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
@@ -48,6 +51,7 @@ import java.util.stream.Collectors;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn)
 @AutoConfiguration
 public class PasswordlessAuthenticationConfiguration {
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.passwordless.core.enabled").isTrue().evenIfMissing();
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -59,13 +63,19 @@ public class PasswordlessAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "passwordlessTokenAuthenticationHandler")
     public AuthenticationHandler passwordlessTokenAuthenticationHandler(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("passwordlessPrincipalFactory")
         final PrincipalFactory passwordlessPrincipalFactory,
         @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
         final PasswordlessTokenRepository passwordlessTokenRepository,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
-        return new PasswordlessTokenAuthenticationHandler(null, servicesManager, passwordlessPrincipalFactory, null, passwordlessTokenRepository);
+        return BeanSupplier.of(AuthenticationHandler.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new PasswordlessTokenAuthenticationHandler(null, servicesManager,
+                        passwordlessPrincipalFactory, null, passwordlessTokenRepository))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
@@ -127,10 +137,15 @@ public class PasswordlessAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("passwordlessTokenAuthenticationHandler")
         final AuthenticationHandler passwordlessTokenAuthenticationHandler,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(passwordlessTokenAuthenticationHandler, defaultPrincipalResolver);
+        return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(passwordlessTokenAuthenticationHandler, defaultPrincipalResolver))
+            .otherwiseProxy()
+            .get();
     }
 }
