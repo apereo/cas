@@ -70,15 +70,11 @@ public abstract class BaseConsentRepositoryTests {
     protected static final Map<String, List<Object>> ATTR = CollectionUtils.wrap("attribute", List.of("value"));
 
     public abstract ConsentRepository getRepository();
-
-    public ConsentRepository getRepository(final String testName) {
-        return getRepository();
-    }
-
+    
     @Test
     public void verifyConsentDecisionIsNotFound() throws Exception {
         val user = getUser();
-        val repo = getRepository("verifyConsentDecisionIsNotFound");
+        val repo = getRepository();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(1);
         assertNotNull(repo.storeConsentDecision(decision));
@@ -91,7 +87,7 @@ public abstract class BaseConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionIsFound() throws Exception {
         val user = getUser();
-        val repo = getRepository("verifyConsentDecisionIsFound");
+        val repo = getRepository();
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(100);
         decision = repo.storeConsentDecision(decision);
@@ -112,7 +108,7 @@ public abstract class BaseConsentRepositoryTests {
     @Test
     public void verifyDeleteRecordsForPrincipal() throws Exception {
         val user = getUser();
-        val repo = getRepository("verifyDeleteRecordsForPrincipal");
+        val repo = getRepository();
         repo.deleteAll();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
 

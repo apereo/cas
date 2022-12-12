@@ -206,9 +206,9 @@ public class OidcConfiguration {
             final SecurityLogic oidcAuthorizationSecurityLogic,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            return SecurityInterceptor.build(oauthSecConfig, Authenticators.CAS_OAUTH_CLIENT,
-                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS,
-                oidcAuthorizationSecurityLogic);
+            return new SecurityInterceptor(oauthSecConfig.withSecurityLogic(oidcAuthorizationSecurityLogic),
+                Authenticators.CAS_OAUTH_CLIENT,
+                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
         }
     }
 

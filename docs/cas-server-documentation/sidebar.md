@@ -20,6 +20,7 @@ layout: null
     *   [WAR Overlays](#waroverlaysreview)
         *   [Overview](/cas/{{ version }}/installation/WAR-Overlay-Installation.html)
         *   [Bill of Materials](/cas/{{ version }}/installation/BOM-Dependency-Management.html)
+        *   [Dependency Versions](/cas/{{ version }}/installation/Dependency-Management-Versions.html)
         *   [CAS Initializr](/cas/{{ version }}/installation/WAR-Overlay-Initializr.html)
     *   [Command-line Shell](/cas/{{ version }}/installation/Configuring-Commandline-Shell.html)
     *   [Docker Deployment](/cas/{{ version }}/installation/Docker-Installation.html)

@@ -119,6 +119,7 @@ to support relational databases and MongoDb separately via dedicated extension m
 - Negative skew values are now supported for SAML2 responses when skew values are defined for SAML2 registered services.
 - Multiple email attribute names can now be specified in the configuration, when locating email addresses for principals.
 - The [Return Allowed](../integration/Attribute-Release-Policy-ReturnAllowed.html) attribute release policy is now able to support inline Groovy scripts.
+- Dependency and module versions used by CAS [are now documented](../installation/Dependency-Management-Versions.html). 
 
 ## Library Upgrades
 

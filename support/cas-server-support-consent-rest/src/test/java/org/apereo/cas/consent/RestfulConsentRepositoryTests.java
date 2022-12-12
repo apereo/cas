@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.awaitility.Awaitility.*;
+
 /**
  * This is {@link RestfulConsentRepositoryTests}.
  *
@@ -46,9 +48,9 @@ import java.util.stream.Collectors;
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 }, properties = {
     "spring.main.allow-bean-definition-overriding=true",
-    "server.port=8733",
-    "cas.consent.rest.url=http://localhost:8733"
-}, 
+    "server.port=9988",
+    "cas.consent.rest.url=http://localhost:9988"
+},
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Getter
 @EnableAutoConfiguration
@@ -93,7 +95,7 @@ public class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
             @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
             @SneakyThrows
             public ResponseEntity<String> find(@RequestHeader(value = "principal", required = false) final String principal,
-                                       @RequestHeader(value = "service", required = false) final String service) {
+                                               @RequestHeader(value = "service", required = false) final String service) {
                 if (StringUtils.isNotBlank(principal) && StringUtils.isNotBlank(service)) {
                     val results = storage.getRecords().get(principal)
                         .stream()
@@ -130,7 +132,7 @@ public class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
 
             @DeleteMapping(path = "/{decisionId}", produces = MediaType.APPLICATION_JSON_VALUE)
             public ResponseEntity delete(@RequestHeader("principal") final String principal,
-                                     @PathVariable final long decisionId) {
+                                         @PathVariable final long decisionId) {
                 if (storage.getRecords().containsKey(principal)) {
                     val decisions = storage.getRecords().get(principal);
                     decisions.removeIf(d -> d.getId() == decisionId);

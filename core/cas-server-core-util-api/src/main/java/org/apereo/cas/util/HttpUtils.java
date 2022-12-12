@@ -60,7 +60,7 @@ import java.util.Optional;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
-    private static final int CONNECT_TIMEOUT_IN_MILLISECONDS = 500;
+    private static final int CONNECT_TIMEOUT_IN_MILLISECONDS = 5000;
 
     private static final int CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = 5 * 1000;
 
