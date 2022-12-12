@@ -144,12 +144,13 @@ public class SpnegoProperties implements Serializable {
     private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(100);
 
     /**
-     * The size of the pool.
+     * The size of the pool used to validate SPNEGO tokens.
+     * A pool is used to provider better performance than what was previously offered by the simple Lombok {@code}Synchronized{@code} annotation.
      */
     private int poolSize = 10;
 
     /**
-     * The timeout of the pool.
+     * The timeout of the pool used to validate SPNEGO tokens.
      */
     @DurationCapable
     private String poolTimeout = "PT2S";

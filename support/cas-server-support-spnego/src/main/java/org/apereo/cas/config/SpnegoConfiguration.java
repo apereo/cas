@@ -15,6 +15,7 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoA
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import jcifs.spnego.Authentication;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * This is {@link SpnegoConfiguration}.
@@ -46,7 +48,7 @@ import java.util.stream.Collectors;
 @AutoConfiguration
 public class SpnegoConfiguration {
 
-    private List<Authentication> buildSpnegoAuthentications(
+    private BeanContainer<Authentication> buildSpnegoAuthentications(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
         val spnegoSystem = casProperties.getAuthn().getSpnego().getSystem();
@@ -64,7 +66,7 @@ public class SpnegoConfiguration {
         JcifsConfig.SystemSettings.setUseSubjectCredsOnly(spnegoSystem.isUseSubjectCredsOnly());
 
         val props = casProperties.getAuthn().getSpnego().getProperties();
-        return props.stream()
+        return BeanContainer.of(props.stream()
                 .map(p -> {
                     val c = new JcifsConfig();
                     val jcifsSettings = c.getJcifsSettings();
@@ -79,7 +81,7 @@ public class SpnegoConfiguration {
                     jcifsSettings.setJcifsUsername(p.getJcifsUsername());
                     return new Authentication(jcifsSettings.getProperties());
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -91,10 +93,7 @@ public class SpnegoConfiguration {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val poolSize = spnegoProperties.getPoolSize();
         val spnegoAuthenticationPool = new ArrayBlockingQueue<List<Authentication>>(poolSize);
-        for (int i = 0; i < poolSize; i++) {
-            val list = buildSpnegoAuthentications(casProperties, applicationContext);
-            spnegoAuthenticationPool.add(list);
-        }
+        IntStream.range(0, poolSize).forEach(i -> spnegoAuthenticationPool.add(buildSpnegoAuthentications(casProperties, applicationContext).toList()));
         return spnegoAuthenticationPool;
     }
 
@@ -110,11 +109,8 @@ public class SpnegoConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        val poolTimeout = Beans.newDuration(spnegoProperties.getPoolTimeout()).toMillis();
-        return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(),
-            servicesManager, spnegoPrincipalFactory, spnegoAuthenticationsPool,
-            spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed(),
-            spnegoProperties.getOrder(), poolTimeout);
+        return new JcifsSpnegoAuthenticationHandler(spnegoProperties,
+            servicesManager, spnegoPrincipalFactory, spnegoAuthenticationsPool);
     }
 
     @Bean

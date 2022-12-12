@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 
@@ -47,15 +49,13 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
 
     private final long poolTimeoutInMilliseconds;
 
-    public JcifsSpnegoAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                            final PrincipalFactory principalFactory, final BlockingQueue<List<Authentication>> authenticationsPool,
-                                            final boolean principalWithDomainName, final boolean ntlmAllowed,
-                                            final Integer order, final long poolTimeoutInMilliseconds) {
-        super(name, servicesManager, principalFactory, order);
+    public JcifsSpnegoAuthenticationHandler(final SpnegoProperties spnegoProperties, final ServicesManager servicesManager,
+                                            final PrincipalFactory principalFactory, final BlockingQueue<List<Authentication>> authenticationsPool) {
+        super(spnegoProperties.getName(), servicesManager, principalFactory, spnegoProperties.getOrder());
         this.authenticationsPool = authenticationsPool;
-        this.principalWithDomainName = principalWithDomainName;
-        this.ntlmAllowed = ntlmAllowed;
-        this.poolTimeoutInMilliseconds = poolTimeoutInMilliseconds;
+        this.principalWithDomainName = spnegoProperties.isPrincipalWithDomainName();
+        this.ntlmAllowed = spnegoProperties.isNtlmAllowed();
+        this.poolTimeoutInMilliseconds = Beans.newDuration(spnegoProperties.getPoolTimeout()).toMillis();
     }
 
     @Override
