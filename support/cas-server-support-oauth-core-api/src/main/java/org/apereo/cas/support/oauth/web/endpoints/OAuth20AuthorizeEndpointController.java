@@ -251,7 +251,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 Map.of("Service", service.getId(), "Client ID", payload.getClientId(),
                     "Response Mode", payload.getResponseMode(), "Response Type", payload.getResponseType(),
                     "Redirect URI", payload.getRedirectUri()),
-                JsonUtils.render(result.getModel()));
+                result.getModel().isEmpty() ? StringUtils.EMPTY : JsonUtils.render(result.getModel()));
         }
         return result;
     }
