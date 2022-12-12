@@ -63,7 +63,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
                     val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, ConsentDecision.class);
                     return MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
@@ -93,7 +93,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
                     val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, ConsentDecision.class);
                     return MAPPER.readValue(result, expectedType);
@@ -126,7 +126,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
                     val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     return MAPPER.readValue(result, ConsentDecision.class);
                 }
@@ -184,7 +184,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+                return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
             } finally {
                 HttpUtils.close(response);
             }
@@ -231,7 +231,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+                return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
             } finally {
                 HttpUtils.close(response);
             }

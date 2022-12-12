@@ -9,7 +9,7 @@ clear
 find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 
 dockerPlatform="unknown"
-type docker &> /dev/null
+docker ps &> /dev/null
 if [[ $? -ne 0 ]] ; then
   echo "Docker engine is not available."
 else
