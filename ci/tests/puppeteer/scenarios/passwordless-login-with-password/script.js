@@ -7,9 +7,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     
-    await cas.goto(page, "https://localhost:8443/cas/login");
-
-    // await page.waitForTimeout(2000)
+    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
 
     let pswd = await page.$('#password');
     assert(pswd == null);
@@ -18,7 +16,7 @@ const cas = require('../../cas.js');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    await page.waitForTimeout(4000);
+    await page.waitForTimeout(2000);
 
     await cas.assertInvisibility(page, '#username');
     await cas.assertVisibility(page, '#password');
@@ -27,9 +25,19 @@ const cas = require('../../cas.js');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    await page.waitForTimeout(4000);
+    await page.waitForTimeout(2000);
 
     await cas.assertCookie(page);
-    
+    await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
+
+    await cas.click(page, "#auth-tab");
+    let surrogateEnabled = await page.$('#surrogateEnabled');
+    assert(surrogateEnabled == null);
+    let surrogatePrincipal = await page.$('#surrogatePrincipal');
+    assert(surrogatePrincipal == null);
+    let surrogateUser = await page.$('#surrogateUser');
+    assert(surrogateUser == null);
+    await page.waitForTimeout(1000);
+
     await browser.close();
 })();
