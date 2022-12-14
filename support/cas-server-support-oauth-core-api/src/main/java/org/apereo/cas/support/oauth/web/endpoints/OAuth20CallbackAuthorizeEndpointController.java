@@ -58,7 +58,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
             }
         }
         callback.perform(getConfigurationContext().getOauthConfig(),
-            defaultUrl, Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT);
+            defaultUrl, Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT, request, response);
         val url = callback.getRedirectUrl();
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
         LOGGER.trace("OAuth callback URL is [{}]", url);
