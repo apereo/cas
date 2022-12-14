@@ -57,7 +57,11 @@ public class PrepareAccountProfileViewActionTests extends AbstractWebflowActions
     @Test
     public void verifyOperation() throws Exception {
         val registeredService1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
+        registeredService1.setEvaluationOrder(200);
+        val registeredService2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
+        registeredService2.setEvaluationOrder(100);
         getServicesManager().save(registeredService1);
+        getServicesManager().save(registeredService2);
 
         val context = new MockRequestContext();
         val tgt = new TicketGrantingTicketImpl(RandomUtils.randomAlphabetic(8),
@@ -75,6 +79,7 @@ public class PrepareAccountProfileViewActionTests extends AbstractWebflowActions
         assertNotNull(WebUtils.getSingleSignOnSessions(context));
         val list = WebUtils.getAuthorizedServices(context);
         assertFalse(list.isEmpty());
+        assertTrue(list.indexOf(registeredService1) > list.indexOf(registeredService2));
         assertNotNull(WebUtils.getAuthentication(context));
 
         val session = (PrepareAccountProfileViewAction.SingleSignOnSession) WebUtils.getSingleSignOnSessions(context).get(0);
