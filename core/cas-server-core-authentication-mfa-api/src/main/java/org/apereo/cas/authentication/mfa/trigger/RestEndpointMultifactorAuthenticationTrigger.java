@@ -22,7 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
@@ -115,9 +116,9 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
                 .entity(MAPPER.writeValueAsString(entity))
                 .build();
             response = HttpUtils.execute(exec);
-            val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+            val status = HttpStatus.valueOf(response.getCode());
             if (status.is2xxSuccessful()) {
-                val content = response.getEntity().getContent();
+                val content = ((HttpEntityContainer) response).getEntity().getContent();
                 return IOUtils.toString(content, StandardCharsets.UTF_8);
             }
         } finally {

@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -97,7 +97,7 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
                 .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
-            val statusCode = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+            val statusCode = HttpStatus.valueOf(response.getCode());
             if (statusCode != HttpStatus.OK) {
                 val ex = handleResponseStatusCode(statusCode, principal);
                 throw new GeneralSecurityException(ex);

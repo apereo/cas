@@ -80,7 +80,8 @@ public class LoggingUtils {
                 builder.append(String.format("%s\n", message));
                 builder.append(StringUtils.repeat('=', CHAR_REPEAT_ACCOUNT));
             }
-            LoggerFactory.getLogger(LOGGER_NAME_PROTOCOL_MESSAGE).info(builder.toString());
+            val result = builder.toString();
+            LoggerFactory.getLogger(LOGGER_NAME_PROTOCOL_MESSAGE).info(result);
         }
     }
 

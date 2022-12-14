@@ -45,7 +45,7 @@ The following items are new improvements and enhancements presented in this rele
 
 The migration of the entire codebase to Spring Boot `3.0.0` and Jakarta APIs is now complete. This is a major change and upgrade across the board
 that affects almost every CAS module and dependency. As a result, a very large number of internal libraries are 
-also upgraded to remain compatible These include Spring Data, Spring Security, Spring Cloud, Spring Shell, Pac4j and many many more. 
+also upgraded to remain compatible. These include Spring Data, Spring Security, Spring Cloud, Spring Shell, Pac4j and many many more. 
 
 Switching to Spring Boot also means that CAS has now switched to support [Jakarta EE 10](https://jakarta.ee/release/10/) and 
 Servlet specification `6.0.0`. This change does impact supported servlet containers such as Apache Tomcat and Undertow, where 
@@ -70,6 +70,11 @@ release candidates and/or follow-up snapshots. For additional warranties, please
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
 and scenarios. At the moment, total number of jobs stands at approximately `374` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
+
+### Apache Http Client 5
+
+The migration of the entire codebase to Apache Http Client `5.2.x` is now complete. While this upgrade should remain largely visible,
+it is a major change that affects all CAS components that deal with the HTTP layer or support and interact with REST APIs. 
 
 ### Docker Integration Tests
 
@@ -105,7 +110,8 @@ The ability to manage and store [OpenID Connect JWKS](../authentication/OIDC-Aut
 to support relational databases and MongoDb separately via dedicated extension modules.
 
 ## Other Stuff
-        
+              
+- The [Groovy username provider](../integration/Attribute-Release-PrincipalId-Groovy.html) is now able to support better caching techniques. 
 - Support for OpenID Connect `unmet_authentication_requirements` error code is now available.
 - Email templates and SMS notification messages for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) now have access to both 
   `token` and `tokenWithoutPrefix` variables. 
@@ -113,6 +119,7 @@ to support relational databases and MongoDb separately via dedicated extension m
 - Negative skew values are now supported for SAML2 responses when skew values are defined for SAML2 registered services.
 - Multiple email attribute names can now be specified in the configuration, when locating email addresses for principals.
 - The [Return Allowed](../integration/Attribute-Release-Policy-ReturnAllowed.html) attribute release policy is now able to support inline Groovy scripts.
+- Dependency and module versions used by CAS [are now documented](../installation/Dependency-Management-Versions.html). 
 
 ## Library Upgrades
 
@@ -129,6 +136,7 @@ to support relational databases and MongoDb separately via dedicated extension m
 - Undertow
 - Jakarta Servlet API
 - Pac4j
+- Apache Http Client
 - Hibernate
 - Hibernate Validator
 - OpenSAML
@@ -137,3 +145,4 @@ to support relational databases and MongoDb separately via dedicated extension m
 - Person Directory
 - Spring Webflow
 - Inspektr
+- Amazon SDK

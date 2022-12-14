@@ -16,8 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -83,10 +84,10 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
                 .entity(entity)
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
-            val result = EntityUtils.toString(response.getEntity());
+            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+            val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
             LOGGER.debug("Received response payload as [{}]", result);
-            return HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+            return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);
         }
@@ -118,11 +119,11 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
                 .entity(entity)
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
-            val result = EntityUtils.toString(response.getEntity());
+            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+            val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
             LOGGER.debug("Received response payload as [{}]", result);
 
-            return HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+            return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);
         }

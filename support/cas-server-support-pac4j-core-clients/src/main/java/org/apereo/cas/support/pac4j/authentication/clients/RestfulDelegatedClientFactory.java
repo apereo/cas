@@ -11,6 +11,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
 import org.hjson.JsonValue;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.IndirectClient;
@@ -65,8 +66,8 @@ public class RestfulDelegatedClientFactory extends BaseDelegatedClientFactory {
         return FunctionUtils.doAndRetry(callback -> {
             val response = HttpUtils.execute(exec);
             try {
-                if (response != null && HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                    val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     if ("cas".equalsIgnoreCase(restProperties.getType())) {
                         return buildClientsBasedCasProperties(result);
                     }

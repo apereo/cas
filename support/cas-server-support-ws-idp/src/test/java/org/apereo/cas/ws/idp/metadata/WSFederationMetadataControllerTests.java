@@ -3,7 +3,7 @@ package org.apereo.cas.ws.idp.metadata;
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
 
 import lombok.val;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -28,6 +28,11 @@ public class PasswordlessAuthenticationCoreProperties implements Serializable {
     private static final long serialVersionUID = 6726382874579042117L;
 
     /**
+     * Flag to indicate if paswordless authentication is enabled.
+     */
+    private boolean enabled = true;
+
+    /**
      * Allow passwordless authentication to skip its own flow
      * in favor of multifactor authentication providers that may be available
      * and defined in CAS.

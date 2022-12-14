@@ -1,51 +1,49 @@
 package org.apereo.cas.util.http;
 
-import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.Header;
-import org.apache.http.HttpHost;
-import org.apache.http.client.AuthenticationStrategy;
-import org.apache.http.client.ConnectionBackoffStrategy;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.RedirectStrategy;
-import org.apache.http.client.ServiceUnavailableRetryStrategy;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultBackoffStrategy;
-import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
-import org.apache.http.impl.client.FutureRequestExecutionService;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.client.ProxyAuthenticationStrategy;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.hc.client5.http.AuthenticationStrategy;
+import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.classic.ConnectionBackoffStrategy;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.cookie.CookieStore;
+import org.apache.hc.client5.http.impl.DefaultAuthenticationStrategy;
+import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
+import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.DefaultBackoffStrategy;
+import org.apache.hc.client5.http.impl.classic.FutureRequestExecutionService;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.protocol.RedirectStrategy;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.ConnectionReuseStrategy;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.util.Timeout;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -80,7 +78,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     /**
      * The default status codes we accept.
      */
-    private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[]{HttpURLConnection.HTTP_OK,
+    private static final int[] DEFAULT_ACCEPTABLE_CODES = {HttpURLConnection.HTTP_OK,
         HttpURLConnection.HTTP_NOT_MODIFIED, HttpURLConnection.HTTP_MOVED_TEMP,
         HttpURLConnection.HTTP_MOVED_PERM, HttpURLConnection.HTTP_ACCEPTED,
         HttpURLConnection.HTTP_NO_CONTENT};
@@ -117,7 +115,6 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
 
     private long connectionTimeout = DEFAULT_TIMEOUT;
 
-    private int readTimeout = DEFAULT_TIMEOUT;
 
     /**
      * The redirection strategy by default, using http status codes.
@@ -127,7 +124,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     /**
      * The socket factory to be used when verifying the validity of the endpoint.
      */
-    private LayeredConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
+    private LayeredConnectionSocketFactory sslSocketFactory;
 
     /**
      * The hostname verifier to be used when verifying the validity of the endpoint.
@@ -176,12 +173,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
      * Strategy interface that allows API users to plug in their own logic to control whether or not a retry
      * should automatically be done, how many times it should be retried and so on.
      */
-    private ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy = new DefaultServiceUnavailableRetryStrategy();
-
-    /**
-     * Design a retry strategy for http requests. Default appears to be 3 retries.
-     */
-    private HttpRequestRetryHandler httpRequestRetryHandler = new DefaultHttpRequestRetryHandler();
+    private HttpRequestRetryStrategy retryStrategy = new DefaultHttpRequestRetryStrategy();
 
     /**
      * Default headers to be sent.
@@ -191,7 +183,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     /**
      * Default strategy implementation for proxy host authentication.
      **/
-    private AuthenticationStrategy proxyAuthenticationStrategy = new ProxyAuthenticationStrategy();
+    private AuthenticationStrategy proxyAuthenticationStrategy = new DefaultAuthenticationStrategy();
 
     /**
      * Determines whether circular redirects (redirects to the same location) should be allowed.
@@ -252,25 +244,25 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
      */
     @SuppressWarnings("java:S2095")
     private CloseableHttpClient buildHttpClient() {
+        val sslFactory = Optional.ofNullable(this.sslSocketFactory)
+            .orElseGet(() -> new SSLConnectionSocketFactory(
+                ObjectUtils.defaultIfNull(this.sslContext, SSLContexts.createDefault()),
+                ObjectUtils.defaultIfNull(this.hostnameVerifier, new DefaultHostnameVerifier())));
+        
         val plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
         val registry = RegistryBuilder.<ConnectionSocketFactory>create()
             .register("http", plainSocketFactory)
-            .register("https", this.sslSocketFactory)
+            .register("https", sslFactory)
             .build();
-
+        
         val connectionManager = new PoolingHttpClientConnectionManager(registry);
         connectionManager.setMaxTotal(this.maxPooledConnections);
         connectionManager.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
-        connectionManager.setValidateAfterInactivity(DEFAULT_TIMEOUT);
-
-        val httpHost = FunctionUtils.doUnchecked(() -> new HttpHost(InetAddress.getLocalHost()));
-        val httpRoute = new HttpRoute(httpHost);
-        connectionManager.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
+        connectionManager.setValidateAfterInactivity(Timeout.ofMilliseconds(DEFAULT_TIMEOUT));
 
         val requestConfig = RequestConfig.custom()
-            .setSocketTimeout(this.readTimeout)
-            .setConnectTimeout((int) this.connectionTimeout)
-            .setConnectionRequestTimeout((int) this.connectionTimeout)
+            .setConnectTimeout(Timeout.ofMilliseconds(this.connectionTimeout))
+            .setConnectionRequestTimeout(Timeout.ofMilliseconds(this.connectionTimeout))
             .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
             .setRedirectsEnabled(this.redirectsEnabled)
             .setAuthenticationEnabled(this.authenticationEnabled)
@@ -279,19 +271,16 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
         val builder = HttpClients.custom()
             .setConnectionManager(connectionManager)
             .setDefaultRequestConfig(requestConfig)
-            .setSSLSocketFactory(this.sslSocketFactory)
-            .setSSLHostnameVerifier(this.hostnameVerifier)
             .setRedirectStrategy(this.redirectionStrategy)
             .setDefaultCredentialsProvider(this.credentialsProvider)
             .setDefaultCookieStore(this.cookieStore)
             .setConnectionReuseStrategy(this.connectionReuseStrategy)
             .setKeepAliveStrategy(this.connectionKeepAliveStrategy)
             .setConnectionBackoffStrategy(this.connectionBackoffStrategy)
-            .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
+            .setRetryStrategy(this.retryStrategy)
             .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
             .setDefaultHeaders(this.defaultHeaders)
             .setProxy(this.proxy)
-            .setRetryHandler(this.httpRequestRetryHandler)
             .useSystemProperties();
         return builder.build();
     }
