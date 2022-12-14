@@ -97,6 +97,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
                 () -> RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService, ticket.getAuthentication().getPrincipal().getId(), authzAttributes),
                 throwable -> false).get())
+            .sorted()
             .collect(Collectors.toList());
         WebUtils.putAuthorizedServices(requestContext, authorizedServices);
     }
