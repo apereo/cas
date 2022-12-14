@@ -131,12 +131,11 @@ configurations.all {
                 } else if (requested.group.startsWith("jakarta.servlet"))  {
                     details.useVersion("${jakartaServletVersion}")
                 }
-                if (requested.group == "org.apache.httpcomponents")  {
-                    if (details.requested.name == "httpcore") {
-                        details.useVersion("${httpCoreVersion}")
-                    } else {
-                        details.useVersion("${httpclientVersion}")
-                    }
+                if (requested.group == "org.apache.httpcomponents.client5") {
+                    details.useVersion("${httpclientVersion}")
+                }
+                if (requested.group == "org.apache.httpcomponents.core5") {
+                    details.useVersion("${httpCoreVersion}")
                 }
                 if (requested.group.startsWith("com.fasterxml.jackson"))  {
                     details.useVersion("${jacksonVersion}")

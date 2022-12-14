@@ -195,7 +195,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
         };
 
-        private static final char[] SUFFIXES = new char[]{'_', '-', '.'};
+        private static final char[] SUFFIXES = {'_', '-', '.'};
 
         private static String separatedToCamelCase(final String value, final boolean caseInsensitive) {
             if (value.isEmpty()) {

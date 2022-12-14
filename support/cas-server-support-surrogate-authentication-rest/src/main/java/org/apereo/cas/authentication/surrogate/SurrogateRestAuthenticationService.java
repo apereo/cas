@@ -13,7 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -55,7 +56,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
                 .parameters(CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()))
                 .build();
             response = HttpUtils.execute(exec);
-            val statusCode = response.getStatusLine().getStatusCode();
+            val statusCode = response.getCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);
@@ -74,7 +75,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
                 .parameters(CollectionUtils.wrap("principal", username))
                 .build();
             response = HttpUtils.execute(exec);
-            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
             val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
             return MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
         } catch (final Exception e) {

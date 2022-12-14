@@ -41,7 +41,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
     /**
      * File extension of registered service YAML files.
      */
-    private static final String[] FILE_EXTENSIONS = new String[]{"yml", "yaml"};
+    private static final String[] FILE_EXTENSIONS = {"yml", "yaml"};
 
     public YamlServiceRegistry(final Resource configDirectory,
                                final WatcherService serviceRegistryConfigWatcher,

@@ -34,7 +34,7 @@ public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionId() throws Exception {
         val user = UUID.randomUUID().toString();
-        val repo = getRepository("verifyConsentDecisionId");
+        val repo = getRepository();
         val decision = repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, user, ATTR));
         assertNotNull(decision);
         assertTrue(decision.getId() > 0);

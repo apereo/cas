@@ -17,8 +17,9 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpMethod;
@@ -60,13 +61,13 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
 
     @Override
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response, final File backupFile) throws Exception {
-        if (!HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+        if (!HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
             if (Files.exists(backupFile.toPath())) {
                 return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
             }
             throw new SamlException("Unable to get entity from MDQ server and a backup file does not exist.");
         }
-        val entity = response.getEntity();
+        val entity = ((HttpEntityContainer) response).getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
         val path = backupFile.toPath();
         LOGGER.trace("Writing metadata to file at [{}]", path);

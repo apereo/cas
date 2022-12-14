@@ -15,8 +15,9 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
@@ -160,9 +161,9 @@ public class SyncopeUtils {
                 .headers(requestHeaders)
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
-            if (HttpStatus.resolve(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-                val entity = response.getEntity();
+            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+            if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
+                val entity = ((HttpEntityContainer) response).getEntity();
                 return FunctionUtils.doUnchecked(() -> {
                     val result = EntityUtils.toString(entity);
                     LOGGER.debug("Received user entity as [{}]", result);

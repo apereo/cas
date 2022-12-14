@@ -12,7 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -62,8 +63,8 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                    val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, ConsentDecision.class);
                     return MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
                 }
@@ -92,8 +93,8 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                    val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, ConsentDecision.class);
                     return MAPPER.readValue(result, expectedType);
                 }
@@ -125,8 +126,8 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                    val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     return MAPPER.readValue(result, ConsentDecision.class);
                 }
             } finally {
@@ -155,7 +156,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .entity(MAPPER.writeValueAsString(decision))
                     .build();
                 response = HttpUtils.execute(exec);
-                if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+                if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
                     return decision;
                 }
             } finally {
@@ -183,7 +184,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                return HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+                return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
             } finally {
                 HttpUtils.close(response);
             }
@@ -230,7 +231,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
-                return HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+                return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
             } finally {
                 HttpUtils.close(response);
             }

@@ -37,12 +37,6 @@ public class HttpClientProperties implements Serializable {
     private String connectionTimeout = "PT5S";
 
     /**
-     * Read timeout for all operations that reach out to URL endpoints.
-     */
-    @DurationCapable
-    private String readTimeout = "PT5S";
-
-    /**
      * Indicates timeout for async operations.
      */
     @DurationCapable

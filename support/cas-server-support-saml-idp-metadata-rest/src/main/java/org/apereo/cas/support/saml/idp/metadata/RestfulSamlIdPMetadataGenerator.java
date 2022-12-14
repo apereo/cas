@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -71,7 +71,7 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                val status = HttpStatus.valueOf(response.getCode());
                 if (status.is2xxSuccessful()) {
                     return doc;
                 }

@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("AuthenticationHandler")
+@Tag("Azure")
 public class AzureActiveDirectoryAuthenticationTests {
 
     @TestPropertySource(properties = {

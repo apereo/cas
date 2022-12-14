@@ -9,7 +9,8 @@ category: Acceptable Usage Policy
 # REST Acceptable Usage Policy
 
 CAS can be configured to use a REST API as the storage mechanism. Upon accepting the policy,
-the API is contacted passing along a `username` parameter who has accepted the policy. The expected response status code is `200`.
+the API is contacted passing along a `username` parameter who has accepted the policy along with the active `locale`. A `service` parameter
+is also passed as the indicator of the target application, if one is available. The expected response status code is `200`.
 
 Furthermore, the API endpoint at `${endpoint}/policy` will be invoked by CAS to fetch the appropriate policy terms.
 The API is contacted passing along `username` and `locale` parameters and the expected response status code is `200`. The response

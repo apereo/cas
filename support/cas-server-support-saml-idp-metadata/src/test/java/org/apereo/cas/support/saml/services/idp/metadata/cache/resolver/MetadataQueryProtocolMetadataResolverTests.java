@@ -42,7 +42,7 @@ public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServi
         val service = new SamlRegisteredService();
         service.setId(100);
         service.setName("Dynamic");
-        service.setMetadataLocation("http://mdq-preview.incommon.org/entities/{0}");
+        service.setMetadataLocation("http://mdq.incommon.org/entities/{0}");
         service.setServiceId("https://webauth.cmc.edu/idp/shibboleth");
         val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
