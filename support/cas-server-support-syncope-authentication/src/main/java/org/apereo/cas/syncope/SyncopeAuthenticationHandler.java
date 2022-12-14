@@ -17,9 +17,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 
 import javax.security.auth.login.FailedLoginException;
@@ -84,9 +85,9 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 .headers(CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain))
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                val result = EntityUtils.toString(response.getEntity());
+            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+            if (response.getCode() == HttpStatus.SC_OK) {
+                val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
                 LOGGER.debug("Received user object as [{}]", result);
                 return Optional.of(MAPPER.readTree(result));
             }

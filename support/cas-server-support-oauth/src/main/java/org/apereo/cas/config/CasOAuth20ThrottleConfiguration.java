@@ -40,6 +40,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Nonnull;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,13 +64,11 @@ public class CasOAuth20ThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
-            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME) final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(
-                    @Nonnull
-                    final InterceptorRegistry registry) {
+                    @Nonnull final InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
                         val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
                         registry.addInterceptor(handler)
@@ -80,6 +79,7 @@ public class CasOAuth20ThrottleConfiguration {
             };
         }
     }
+
     @Configuration(value = "CasOAuth20ThrottleMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ThrottleMvcConfiguration {
@@ -88,18 +88,13 @@ public class CasOAuth20ThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oauthHandlerInterceptorAdapter(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
-            @Qualifier("requiresAuthenticationAuthorizeInterceptor")
-            final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
-            @Qualifier("requiresAuthenticationAccessTokenInterceptor")
-            final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
+            @Qualifier("requiresAuthenticationAuthorizeInterceptor") final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
+            @Qualifier("requiresAuthenticationAccessTokenInterceptor") final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
             final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
-            @Qualifier("oauthDistributedSessionStore")
-            final ObjectProvider<SessionStore> oauthDistributedSessionStore,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ObjectProvider<ServicesManager> servicesManager) {
+            @Qualifier("oauthDistributedSessionStore") final ObjectProvider<SessionStore> oauthDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager) {
             return new OAuth20HandlerInterceptorAdapter(
                 requiresAuthenticationAccessTokenInterceptor,
                 requiresAuthenticationAuthorizeInterceptor,
@@ -114,13 +109,11 @@ public class CasOAuth20ThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oauthWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebMvcConfigurer oauthWebMvcConfigurer(
-            @Qualifier("oauthHandlerInterceptorAdapter")
-            final ObjectProvider<HandlerInterceptor> oauthHandlerInterceptorAdapter) {
+            @Qualifier("oauthHandlerInterceptorAdapter") final ObjectProvider<HandlerInterceptor> oauthHandlerInterceptorAdapter) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(
-                    @Nonnull
-                    final InterceptorRegistry registry) {
+                    @Nonnull final InterceptorRegistry registry) {
                     val handler = new RefreshableHandlerInterceptor(oauthHandlerInterceptorAdapter);
                     registry
                         .addInterceptor(handler)
@@ -130,6 +123,7 @@ public class CasOAuth20ThrottleConfiguration {
             };
         }
     }
+
     @Configuration(value = "CasOAuth20ThrottleInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ThrottleInterceptorConfiguration {
@@ -137,38 +131,32 @@ public class CasOAuth20ThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor(
-            @Qualifier("oauthSecConfig")
-            final Config oauthSecConfig,
-            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
-            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry) {
-            val interceptor = new SecurityInterceptor(oauthSecConfig, Authenticators.CAS_OAUTH_CLIENT,
-                    DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
-
+            @Qualifier("oauthSecConfig") final Config oauthSecConfig,
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-            interceptor.setSecurityLogic(logic);
+            val interceptor = new SecurityInterceptor(oauthSecConfig.withSecurityLogic(logic),
+                Authenticators.CAS_OAUTH_CLIENT,
+                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
             return interceptor;
         }
+
         @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationAccessTokenInterceptor(
-            @Qualifier("oauthSecConfig")
-            final Config oauthSecConfig) {
+            @Qualifier("oauthSecConfig") final Config oauthSecConfig) {
             val clients = oauthSecConfig.getClients()
                 .findAllClients()
                 .stream()
                 .filter(client -> client instanceof DirectClient)
                 .map(Client::getName)
                 .collect(Collectors.joining(","));
-            val interceptor = new SecurityInterceptor(oauthSecConfig, clients,
-                    DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
 
             val logic = new DefaultSecurityLogic();
             logic.setLoadProfilesFromSession(false);
-            interceptor.setSecurityLogic(logic);
-            return interceptor;
+            return new SecurityInterceptor(oauthSecConfig.withSecurityLogic(logic), clients,
+                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
         }
     }
 }

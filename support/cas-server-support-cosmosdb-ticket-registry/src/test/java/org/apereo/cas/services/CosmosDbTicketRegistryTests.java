@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("CosmosDb")
+@Tag("Azure")
 @Import({
     CosmosDbTicketRegistryConfiguration.class,
     CosmosDbTicketRegistryTicketCatalogConfiguration.class

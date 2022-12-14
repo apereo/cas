@@ -6,7 +6,7 @@ import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

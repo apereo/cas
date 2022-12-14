@@ -1,7 +1,7 @@
 package org.apereo.cas.util.http;
 
-import org.apache.http.HttpHost;
-import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
+import org.apache.hc.core5.http.HttpHost;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 

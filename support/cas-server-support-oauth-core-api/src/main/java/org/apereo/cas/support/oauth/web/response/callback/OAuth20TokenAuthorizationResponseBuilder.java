@@ -17,10 +17,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.http.NameValuePair;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -68,7 +68,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
-        val builder = new URIBuilder(holder.getRedirectUri());
+        val builder = UriComponentsBuilder.fromUriString(holder.getRedirectUri());
         val stringBuilder = new StringBuilder();
 
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
@@ -117,8 +117,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
                 .append('=')
                 .append(nonce);
         }
-        builder.setFragment(stringBuilder.toString());
-        val url = builder.toString();
+        val url = builder.fragment(stringBuilder.toString()).build().toUriString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(

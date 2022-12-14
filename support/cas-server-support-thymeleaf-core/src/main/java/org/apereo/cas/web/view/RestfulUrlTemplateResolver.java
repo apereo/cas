@@ -9,7 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ThemeResolver;
@@ -68,9 +69,9 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            val statusCode = response.getStatusLine().getStatusCode();
+            val statusCode = response.getCode();
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 return new StringTemplateResource(result);
             }
         } catch (final Exception e) {

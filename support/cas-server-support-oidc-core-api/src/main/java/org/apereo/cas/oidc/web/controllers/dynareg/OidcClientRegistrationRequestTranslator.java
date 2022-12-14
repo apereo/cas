@@ -21,8 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 
@@ -203,8 +204,8 @@ public class OidcClientRegistrationRequestTranslator {
                     .url(registeredService.getSectorIdentifierUri())
                     .build();
                 sectorResponse = HttpUtils.execute(exec);
-                if (sectorResponse != null && sectorResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    val result = IOUtils.toString(sectorResponse.getEntity().getContent(), StandardCharsets.UTF_8);
+                if (sectorResponse != null && sectorResponse.getCode() == HttpStatus.SC_OK) {
+                    val result = IOUtils.toString(((HttpEntityContainer) sectorResponse).getEntity().getContent(), StandardCharsets.UTF_8);
                     val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
                     val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
                     if (!urls.equals(registrationRequest.getRedirectUris())) {
