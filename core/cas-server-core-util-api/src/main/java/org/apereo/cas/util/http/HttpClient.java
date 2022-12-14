@@ -61,7 +61,7 @@ public interface HttpClient {
      *
      * @return the wrapped http client
      */
-    org.apache.http.client.HttpClient wrappedHttpClient();
+    org.apache.hc.client5.http.classic.HttpClient wrappedHttpClient();
 
     /**
      * Gets http client factory.

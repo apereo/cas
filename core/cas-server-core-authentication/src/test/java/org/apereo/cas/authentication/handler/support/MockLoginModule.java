@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
 import lombok.val;
-import org.apache.http.auth.BasicUserPrincipal;
+import org.apache.hc.client5.http.auth.BasicUserPrincipal;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;

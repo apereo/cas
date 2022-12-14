@@ -49,7 +49,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
         return ApplicationContextProvider.getScriptResourceCacheManager()
             .map(cacheMgr -> {
-                val script = cacheMgr.resolveScriptableResource(groovyScript, registeredService.getServiceId(), groovyScript);
+                val script = cacheMgr.resolveScriptableResource(groovyScript, registeredService.getServiceId(), registeredService.getName());
                 return fetchAttributeValueFromScript(script, principal, service);
             })
             .map(Object::toString)

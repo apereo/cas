@@ -15,9 +15,10 @@ import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.JEEContextFactory;
 import org.pac4j.jee.context.session.JEESessionStore;
+import org.pac4j.jee.context.session.JEESessionStoreFactory;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -59,11 +60,15 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, profile, false);
 
-        val result = (UserProfile) logic.perform(context, JEESessionStore.INSTANCE,
-            ProfileManagerFactory.DEFAULT, new Config(mockClient),
+        val config = new Config(mockClient);
+        config.setSessionStoreFactory(JEESessionStoreFactory.INSTANCE);
+        config.setHttpActionAdapter(JEEHttpActionAdapter.INSTANCE);
+        config.setWebContextFactory(JEEContextFactory.INSTANCE);
+        
+        val result = (UserProfile) logic.perform(config,
             (webContext, sessionStore, collection, objects) -> collection.iterator().next(),
-            JEEHttpActionAdapter.INSTANCE, "MockIndirectClient",
-            DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
+            "MockIndirectClient",
+            DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS, request, response);
         assertNotNull(result);
         assertEquals(1, profileManager.getProfiles().size());
     }

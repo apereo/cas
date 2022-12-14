@@ -131,7 +131,7 @@ while (("$#")); do
     dependencyVersions=$2
     shift 2
     ;;
-  --features|--feat)
+  --features|--feat|--ft)
     buildFeatures=$2
     shift 2
     ;;

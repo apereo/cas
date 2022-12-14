@@ -13,7 +13,7 @@ import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogou
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;

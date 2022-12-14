@@ -24,7 +24,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;

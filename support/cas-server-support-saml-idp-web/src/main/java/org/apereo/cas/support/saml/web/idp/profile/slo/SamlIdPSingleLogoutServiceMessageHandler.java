@@ -29,7 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.xml.SerializeSupport;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -143,8 +144,8 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                     .build();
                 response = HttpUtils.execute(exec);
             }
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response != null && response.getCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.trace("Received logout response as [{}]", result);
                 return true;
             }

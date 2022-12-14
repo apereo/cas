@@ -1,8 +1,7 @@
 name: Tests - Ubuntu
 
 env:
-  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
-  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  JAVA_OPTS: "-Xms512m -Xmx8048m -Xss512m -XX:ReservedCodeCacheSize=512m -server"
   TERM: xterm-256color
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}

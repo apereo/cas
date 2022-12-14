@@ -7,7 +7,7 @@ import org.apereo.cas.util.ssl.CompositeX509TrustManager;
 
 import lombok.Getter;
 import lombok.val;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 

@@ -154,7 +154,9 @@ import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.JEEContextFactory;
 import org.pac4j.jee.context.session.JEESessionStore;
+import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -582,6 +584,8 @@ public class CasOAuth20Configuration {
             final CasConfigurationProperties casProperties) {
             val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
             val config = new Config(callbackUrl, oauthSecConfigClients.toList());
+            config.setHttpActionAdapter(JEEHttpActionAdapter.INSTANCE);
+            config.setWebContextFactory(JEEContextFactory.INSTANCE);
             config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
             config.setMatcher(oauthSecCsrfTokenMatcher);
             config.setProfileManagerFactory((webContext, sessionStore) ->

@@ -39,7 +39,6 @@ public class Cas20ProxyHandlerTests {
     public void initialize() {
         val factory = new SimpleHttpClientFactoryBean();
         factory.setConnectionTimeout(10000);
-        factory.setReadTimeout(10000);
         this.handler = new Cas20ProxyHandler(factory.getObject(), new DefaultUniqueTicketIdGenerator());
         when(this.proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
     }

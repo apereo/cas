@@ -248,9 +248,9 @@ public class DelegatedClientAuthenticationActionTests {
             assertEquals("theme", request.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
             assertEquals(Locale.getDefault().getCountry(), request.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
             assertEquals(HttpMethod.POST.name(), request.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
-            assertEquals(service.getId(), request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
+            assertEquals(service.getId(), ((Service) request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE)).getId());
             val flowScope = context.getFlowScope();
-            assertEquals(service.getId(), ((Service) flowScope.get(CasProtocolConstants.PARAMETER_SERVICE)).getId());
+            assertEquals(service.getId(), flowScope.get(CasProtocolConstants.PARAMETER_SERVICE, Service.class).getId());
             val credential = flowScope.get(CasWebflowConstants.VAR_ID_CREDENTIAL, ClientCredential.class);
             assertNotNull(credential);
             assertEquals("casuser", credential.getId());
