@@ -17,6 +17,7 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.JEEContextFactory;
+import org.pac4j.jee.context.JEEFrameworkParameters;
 import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.jee.context.session.JEESessionStoreFactory;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
@@ -68,7 +69,8 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         val result = (UserProfile) logic.perform(config,
             (webContext, sessionStore, collection, objects) -> collection.iterator().next(),
             "MockIndirectClient",
-            DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS, request, response);
+            DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS,
+            new JEEFrameworkParameters(request, response));
         assertNotNull(result);
         assertEquals(1, profileManager.getProfiles().size());
     }

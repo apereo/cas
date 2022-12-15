@@ -98,7 +98,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         stopwatch.stop();
         val time = stopwatch.getTime(TimeUnit.MILLISECONDS);
         LOGGER.info("[{}]: [{}]ms", name, time);
-        assertTrue(time <= 2000);
+        assertTrue(time <= 5000);
     }
 
     @RepeatedTest(2)

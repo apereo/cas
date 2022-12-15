@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.LinkedHashMap;
@@ -31,6 +33,7 @@ public class OAuth20ResponseModeFormPostBuilder implements OAuth20ResponseModeBu
         model.put("originalUrl", redirectUrl);
         model.put("parameters", parameters);
         val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
+        mv.setStatus(HttpStatusCode.valueOf(HttpStatus.OK.value()));
         LOGGER.debug("Redirecting to [{}] with model [{}]", mv.getViewName(), mv.getModel());
         return mv;
     }
