@@ -42,3 +42,6 @@ The following libraries and modules are used by CAS:
 	</tbody>
 </table>
 </div>
+
+You may not immediately see all the listed artifacts and libraries in your deployment. Depending on which CAS feature module is included in the final build,
+the above libraries and dependencies will be pulled into the final web application artifact. 
