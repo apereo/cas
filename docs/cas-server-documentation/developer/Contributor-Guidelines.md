@@ -123,7 +123,7 @@ you for longer prosperity. Be not afraid; the worst that could happen is someone
 
 ## How do I know who's working on what?
 
-- Follow the *WIP Pattern* and submit [early pull requests](https://ben.straub.cc/2015/04/02/wip-pull-request/). This is the recommended strategy from Github:
+- Follow the *WIP Pattern* and submit an early pull requests in Draft status. This is the recommended strategy from Github:
 
 > Pull Requests are a great way to start a conversation of a feature, so start one as soon as possible- 
 > even before you are finished with the code. Your team can comment on the feature as it evolves, 
