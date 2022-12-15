@@ -57,7 +57,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(
     properties = {
         "cas.jdbc.show-sql=false",
-        "cas.ticket.registry.jpa.ddl-auto=create-drop"
+        "cas.ticket.registry.jpa.ddl-auto=create-drop",
+        "cas.logout.remove-descendant-tickets=true"
     })
 @Tag("JDBC")
 @Getter

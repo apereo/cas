@@ -19,6 +19,7 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -164,6 +165,7 @@ public class JpaTicketRegistryConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = TicketRegistry.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
             final ConfigurableApplicationContext applicationContext,

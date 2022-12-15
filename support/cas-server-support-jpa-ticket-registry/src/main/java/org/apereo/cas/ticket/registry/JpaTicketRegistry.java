@@ -5,6 +5,7 @@ import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
@@ -24,6 +25,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -234,12 +236,42 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     protected int deleteTicketGrantingTickets(final String ticketId) {
         return transactionTemplate.execute(status -> {
-            val factory = getJpaTicketEntityFactory();
-            var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", factory.getEntityName());
-            LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
-            var query = entityManager.createQuery(sql);
-            query.setParameter("id", ticketId);
-            return query.executeUpdate();
+        	val factory = getJpaTicketEntityFactory();
+            if (!casProperties.getLogout().isRemoveDescendantTickets()) {
+                val selectSql = String.format("SELECT t FROM %s t WHERE t.parentId = :id", factory.getEntityName());
+                var selectQuery = entityManager.createQuery(selectSql);
+                selectQuery.setParameter("id", ticketId);
+                var selectedTickets = jpaBeanFactory
+                    .streamQuery(selectQuery)
+                    .map(BaseTicketEntity.class::cast)
+                    .map(factory::toTicket)
+                    .map(this::decodeTicket)
+                    .filter(t -> {
+                        return ticketCatalog.find(t.getId()).getProperties().isExcludeFromCascade();
+                    }).map(t -> {
+                    	return encodeTicketId(t.getId());
+                    }).collect(Collectors.toUnmodifiableList());
+                var delChildSql = String.format("DELETE FROM %s t WHERE t.id IN (:ids)", factory.getEntityName());
+                LOGGER.trace("Creating delete query [{}] for ticket ids [{}]", delChildSql, selectedTickets);
+                var delChildQuery = entityManager.createQuery(delChildSql);
+                delChildQuery.setParameter("ids", selectedTickets);
+                var delChilds = delChildQuery.executeUpdate();
+
+                var sql = String.format("DELETE FROM %s t WHERE t.id = :id", factory.getEntityName());
+                LOGGER.trace("Creating delete query [{}] for parent-ticket id [{}]", sql, ticketId);
+                var query = entityManager.createQuery(sql);
+                query.setParameter("id", ticketId);
+                var delParent = query.executeUpdate();
+
+                return delChilds + delParent;
+            }
+            else {
+                var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", factory.getEntityName());
+                LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
+                var query = entityManager.createQuery(sql);
+                query.setParameter("id", ticketId);
+                return query.executeUpdate();
+            }
         });
     }
 }
