@@ -21,8 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.NameValuePair;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
@@ -86,7 +87,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 .url(properties.getUri())
                 .build();
             response = HttpUtils.execute(exec);
-            val status = HttpStatus.resolve(Objects.requireNonNull(response).getStatusLine().getStatusCode());
+            val status = HttpStatus.resolve(Objects.requireNonNull(response).getCode());
             return switch (Objects.requireNonNull(status)) {
                 case OK -> buildPrincipalFromResponse(credential, response);
                 case FORBIDDEN -> throw new AccountDisabledException("Could not authenticate forbidden account for " + credential.getUsername());
@@ -114,7 +115,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final UsernamePasswordCredential credential,
         final HttpResponse response) throws GeneralSecurityException {
         try {
-            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("REST authentication response received: [{}]", result);
             val principalFromRest = MAPPER.readValue(result, Principal.class);
             val principal = principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());

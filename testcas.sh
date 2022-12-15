@@ -9,7 +9,7 @@ clear
 find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 
 dockerPlatform="unknown"
-type docker &> /dev/null
+docker ps &> /dev/null
 if [[ $? -ne 0 ]] ; then
   echo "Docker engine is not available."
 else
@@ -333,9 +333,9 @@ while (( "$#" )); do
             spnego)
                 task+="testSpnego "
                 ;;
-            cosmosdb|cosmos)
+            azure|cosmosdb)
                 isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
-                task+="testCosmosDb "
+                task+="testAzure "
                 ;;
             simple|unit)
                 task+="testSimple "

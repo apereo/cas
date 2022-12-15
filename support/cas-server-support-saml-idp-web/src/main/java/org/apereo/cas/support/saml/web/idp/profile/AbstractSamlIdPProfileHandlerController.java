@@ -5,7 +5,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
+import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -251,7 +251,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
 
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
+        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE) {
             val context = new JEEContext(request, response);
             val sessionStorage = configurationContext.getSessionStore()
                 .getTrackableSession(context).map(BrowserSessionStorage.class::cast)
@@ -616,7 +616,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val casProperties = configurationContext.getCasProperties();
         val core = casProperties.getAuthn().getSamlIdp().getCore();
         val sessionStorageType = core.getSessionStorageType();
-        if (sessionStorageType == SamlIdPCoreProperties.SessionStorageTypes.TICKET_REGISTRY
+        if (sessionStorageType == SessionStorageTypes.TICKET_REGISTRY
             && core.getSessionReplication().getCookie().isAutoConfigureCookiePath()) {
 
             val contextPath = request.getContextPath();

@@ -17,7 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -77,8 +78,8 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && response.getEntity() != null) {
-                val content = response.getEntity().getContent();
+            if (response != null && ((HttpEntityContainer) response).getEntity() != null) {
+                val content = ((HttpEntityContainer) response).getEntity().getContent();
                 val result = IOUtils.toString(content, StandardCharsets.UTF_8);
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), InterruptResponse.class);
             }

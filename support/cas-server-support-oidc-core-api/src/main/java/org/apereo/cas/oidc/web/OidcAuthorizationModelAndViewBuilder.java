@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.web.response.callback.DefaultOAuth20Authoriz
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 
 import java.util.Map;
 import java.util.Optional;
