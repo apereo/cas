@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
@@ -17,8 +19,14 @@ import java.util.Optional;
 public class PasswordlessCasWebflowLoginContextProvider implements CasWebflowLoginContextProvider {
     @Override
     public Optional<String> getCandidateUsername(final RequestContext context) {
-        val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
-        return Optional.ofNullable(account).map(PasswordlessUserAccount::getUsername);
+        val passwordlessRequest = PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(context, PasswordlessAuthenticationRequest.class);
+        return Optional.ofNullable(passwordlessRequest)
+            .map(PasswordlessAuthenticationRequest::getProvidedUsername)
+            .filter(StringUtils::isNotBlank)
+            .or(() -> {
+                val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
+                return Optional.ofNullable(account).map(PasswordlessUserAccount::getUsername);
+            });
     }
 
     @Override
