@@ -31,6 +31,11 @@ const cas = require('../../cas.js');
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
 
     await cas.click(page, "#auth-tab");
+    await page.waitForTimeout(1000);
+    await cas.type(page, "#attribute-tab-1 input[type=search]", "surrogate");
+    await page.waitForTimeout(1000);
+    await cas.screenshot(page);
+    
     let surrogateEnabled = await page.$('#surrogateEnabled');
     assert(surrogateEnabled == null);
     let surrogatePrincipal = await page.$('#surrogatePrincipal');
