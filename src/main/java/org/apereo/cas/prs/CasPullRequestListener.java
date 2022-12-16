@@ -78,6 +78,9 @@ public class CasPullRequestListener implements PullRequestListener {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_USER_INTERFACE_THEMES);
                 } else if (filename.endsWith(".md")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_DOCUMENTATION);
+                } else if (filename.contains("script.js") || filename.contains("script.json")) {
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_UNIT_INTEGRATION_TESTS);
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_PUPPETEER);
                 }
             });
     }
