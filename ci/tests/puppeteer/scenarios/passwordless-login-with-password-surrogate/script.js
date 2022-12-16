@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
     let pswd = await page.$('#password');
     assert(pswd == null);
 
-    await cas.type(page,'#username', "casuser");
+    await cas.type(page,'#username', "user3+casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
@@ -28,7 +28,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000);
 
     await cas.assertCookie(page);
-    await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
+    await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
 
     await cas.click(page, "#auth-tab");
     await page.waitForTimeout(1000);
@@ -36,12 +36,9 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
     
-    let surrogateEnabled = await page.$('#surrogateEnabled');
-    assert(surrogateEnabled == null);
-    let surrogatePrincipal = await page.$('#surrogatePrincipal');
-    assert(surrogatePrincipal == null);
-    let surrogateUser = await page.$('#surrogateUser');
-    assert(surrogateUser == null);
+    await cas.assertInnerTextStartsWith(page, "#surrogateEnabled td code kbd", "[true]");
+    await cas.assertInnerTextStartsWith(page, "#surrogatePrincipal td code kbd", "[casuser]");
+    await cas.assertInnerTextStartsWith(page, "#surrogateUser td code kbd", "[user3]");
     await page.waitForTimeout(1000);
 
     await browser.close();
