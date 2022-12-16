@@ -32,7 +32,8 @@ public class PasswordlessAuthenticationRequest implements Serializable {
     private static final long serialVersionUID = -1992873518520202699L;
 
     private final String username;
-    
+    private final String providedUsername;
+
     @Builder.Default
     private Map<String, String> properties = new HashMap<>();
 }
