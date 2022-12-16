@@ -73,7 +73,7 @@ test coverage of the CAS codebase is approximately `94%`.
 
 ### Apache Http Client 5
 
-The migration of the entire codebase to Apache Http Client `5.2.x` is now complete. While this upgrade should remain largely visible,
+The migration of the entire codebase to Apache Http Client `5.2.x` is now complete. While this upgrade should remain largely invisible,
 it is a major change that affects all CAS components that deal with the HTTP layer or support and interact with REST APIs. 
 
 ### Docker Integration Tests
