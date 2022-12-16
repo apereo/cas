@@ -48,7 +48,7 @@ import java.util.stream.IntStream;
 @AutoConfiguration
 public class SpnegoConfiguration {
 
-    private BeanContainer<Authentication> buildSpnegoAuthentications(
+    private static BeanContainer<Authentication> buildSpnegoAuthentications(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
         val spnegoSystem = casProperties.getAuthn().getSpnego().getSystem();
