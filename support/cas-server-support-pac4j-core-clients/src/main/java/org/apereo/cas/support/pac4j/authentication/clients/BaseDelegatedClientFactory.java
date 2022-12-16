@@ -477,9 +477,18 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
-                    __ -> cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays())));
+                    __ -> cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
                 FunctionUtils.doIfNotNull(saml.getResponseBindingType(), cfg::setResponseBindingType);
                 FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg);
+
+                cfg.setPartialLogoutTreatedAsSuccess(saml.isPartialLogoutAsSuccess());
+                cfg.setResponseDestinationAttributeMandatory(saml.isResponseDestinationMandatory());
+                cfg.setSupportedProtocols(saml.getSupportedProtocols());
+
+                FunctionUtils.doIfNotBlank(saml.getRequestInitiatorUrl(), __ -> cfg.setRequestInitiatorUrl(saml.getRequestInitiatorUrl()));
+                FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), __ -> cfg.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()));
+                FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), __ -> cfg.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()));
+
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
@@ -521,7 +530,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                     });
 
                 FunctionUtils.doIf(saml.getAssertionConsumerServiceIndex() >= 0,
-                    __ -> cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex()));
+                    __ -> cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex())).accept(saml);
 
                 if (!saml.getAuthnContextClassRef().isEmpty()) {
                     cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
