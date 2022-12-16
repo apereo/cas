@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.monitor.SessionHealthIndicatorJpaTests;
+import org.apereo.cas.ticket.registry.JpaTicketRegistryRemoveCascadeTests;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.MySQLJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.OracleJpaTicketRegistryTests;
@@ -20,6 +21,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     SessionHealthIndicatorJpaTests.class,
     PostgresJpaTicketRegistryTests.class,
+	JpaTicketRegistryRemoveCascadeTests.class,
     JpaTicketRegistryTests.class,
     MySQLJpaTicketRegistryCleanerTests.class,
     MySQLJpaTicketRegistryTests.class,
