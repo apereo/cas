@@ -74,7 +74,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
     @Override
     public AttributeStatement build(final SamlProfileBuilderContext context) throws Exception {
-        val attributes = new HashMap<>(context.getAuthenticatedAssertion().getAttributes());
+        val attributes = new HashMap<>(context.getAuthenticatedAssertion().get().getAttributes());
         val webApplicationService = serviceFactory.createService(context.getAdaptor().getEntityId(), WebApplicationService.class);
         val encodedAttrs = ProtocolAttributeEncoder.decodeAttributes(attributes, context.getRegisteredService(), webApplicationService);
 

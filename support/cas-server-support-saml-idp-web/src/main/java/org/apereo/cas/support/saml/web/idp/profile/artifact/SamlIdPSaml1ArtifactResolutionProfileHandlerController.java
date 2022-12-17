@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPSaml1ArtifactResolutionProfileHandlerController}.
@@ -73,7 +74,7 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
                 .samlRequest(artifactMsg)
                 .httpRequest(request)
                 .httpResponse(response)
-                .authenticatedAssertion(casAssertion)
+                .authenticatedAssertion(Optional.of(casAssertion))
                 .registeredService(registeredService)
                 .adaptor(facade)
                 .binding(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)

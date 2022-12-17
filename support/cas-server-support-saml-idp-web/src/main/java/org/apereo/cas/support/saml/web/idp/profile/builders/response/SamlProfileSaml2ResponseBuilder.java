@@ -23,9 +23,11 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeQuery;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
@@ -33,6 +35,7 @@ import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SamlProfileSaml2ResponseBuilder}.
@@ -50,7 +53,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     }
 
     @Override
-    public Response buildResponse(final Assertion assertion,
+    public Response buildResponse(final Optional<Assertion> assertion,
                                   final SamlProfileBuilderContext context) throws Exception {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
         val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), context.getSamlRequest().getID(), null);
@@ -80,18 +83,17 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         }
 
         val finalAssertion = encryptAssertion(assertion, context);
-
-        if (finalAssertion instanceof EncryptedAssertion) {
-            LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
-            samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(finalAssertion));
-        } else {
-            LOGGER.trace("Built assertion is not encrypted, so the response will add it to the assertions collection");
-            samlResponse.getAssertions().add(Assertion.class.cast(finalAssertion));
+        if (finalAssertion.isPresent()) {
+            if (finalAssertion.get() instanceof EncryptedAssertion) {
+                LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
+                samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(finalAssertion));
+            } else {
+                LOGGER.trace("Built assertion is not encrypted, so the response will add it to the assertions collection");
+                samlResponse.getAssertions().add(Assertion.class.cast(finalAssertion.get()));
+            }
         }
 
-        val status = newStatus(StatusCode.SUCCESS, null);
-        samlResponse.setStatus(status);
-
+        samlResponse.setStatus(determineResponseStatus(context));
         openSamlConfigBean.logObject(samlResponse);
 
         if (context.getRegisteredService().getSignResponses().isTrue()) {
@@ -104,6 +106,21 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         }
 
         return samlResponse;
+    }
+
+    private Status determineResponseStatus(final SamlProfileBuilderContext context) {
+        if (context.getAuthenticatedAssertion().isEmpty()) {
+            if (context.getSamlRequest() instanceof AuthnRequest authnRequest && authnRequest.isPassive()) {
+                val message = """
+                    SAML2 authentication request from %s indicated a passive authentication request, \
+                    but the identity provider is unable to satify and support this requirement, likely because \
+                    no existing single sign-on session is available to build the SAML2 response.
+                    """.formatted(context.getAdaptor().getEntityId()).stripIndent().trim();
+                return newStatus(StatusCode.NO_PASSIVE, message);
+            }
+            return newStatus(StatusCode.AUTHN_FAILED, null);
+        }
+        return newStatus(StatusCode.SUCCESS, null);
     }
 
     @Override
@@ -129,17 +146,17 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         return encoder.encode(context.getSamlRequest(), samlResponse, relayState, context.getMessageContext());
     }
 
-    private void storeAttributeQueryTicketInRegistry(final Assertion assertion, final SamlProfileBuilderContext context)
+    private void storeAttributeQueryTicketInRegistry(final Optional<Assertion> assertion, final SamlProfileBuilderContext context)
         throws Exception {
         val existingQuery = context.getHttpRequest().getAttribute(AttributeQuery.class.getSimpleName());
-        if (existingQuery == null) {
+        if (existingQuery == null && assertion.isPresent()) {
             val nameId = (String) context.getHttpRequest().getAttribute(NameID.class.getName());
             val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
                 getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
                 getConfigurationContext().getTicketRegistry(), context.getHttpRequest());
 
             val samlAttributeQueryTicketFactory = (SamlAttributeQueryTicketFactory) getConfigurationContext().getTicketFactory().get(SamlAttributeQueryTicket.class);
-            val ticket = samlAttributeQueryTicketFactory.create(nameId, assertion, context.getAdaptor().getEntityId(), ticketGrantingTicket);
+            val ticket = samlAttributeQueryTicketFactory.create(nameId, assertion.get(), context.getAdaptor().getEntityId(), ticketGrantingTicket);
             getConfigurationContext().getTicketRegistry().addTicket(ticket);
             context.getHttpRequest().setAttribute(SamlAttributeQueryTicket.class.getName(), ticket);
         }

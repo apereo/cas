@@ -31,6 +31,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -110,7 +111,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
 
             LOGGER.trace("CAS assertion to use for building ECP SAML2 response is [{}]", casAssertion);
             buildSamlResponse(context.getHttpResponse(), context.getHttpRequest(),
-                authenticationContext, casAssertion, context.getBinding());
+                authenticationContext, Optional.of(casAssertion), context.getBinding());
         } catch (final AuthenticationException e) {
             LoggingUtils.error(LOGGER, e);
             val error = e.getHandlerErrors().values()

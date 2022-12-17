@@ -15,6 +15,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +49,7 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
             .samlRequest(authnRequest)
             .httpRequest(request)
             .httpResponse(response)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -78,7 +79,7 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
             .samlRequest(authnRequest)
             .httpRequest(request)
             .httpResponse(response)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -112,7 +113,7 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
             .samlRequest(authnRequest)
             .httpRequest(request)
             .httpResponse(response)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)

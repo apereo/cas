@@ -16,13 +16,15 @@ $config = [
       'saml:SP',
       'privatekey' => 'saml.pem',
       'certificate' => 'saml.crt',
-      'idp' => $_ENV['IDP_ENTITYID']
+      'idp' => $_ENV['IDP_ENTITYID'],
+      'IsPassive' => ($_ENV['SP_PASSIVE_AUTHN'] === 'true')
  ],
   'signed-sp' => [
        'saml:SP',
        'privatekey' => 'saml.pem',
        'certificate' => 'saml.crt',
        'idp' => $_ENV['IDP_ENTITYID'],
-       'sign.authnrequest' => true
-  ],
+       'sign.authnrequest' => true,
+       'IsPassive' => ($_ENV['SP_PASSIVE_AUTHN'] === 'true')
+  ]
 ];
