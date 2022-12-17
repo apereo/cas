@@ -49,6 +49,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SSOSamlIdPPostProfileHandlerEndpoint}.
@@ -172,7 +173,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
                         .samlRequest(authnRequest)
                         .httpRequest(request)
                         .httpResponse(response)
-                        .authenticatedAssertion(assertion)
+                        .authenticatedAssertion(Optional.of(assertion))
                         .registeredService(loadedService)
                         .adaptor(adaptor)
                         .binding(SAMLConstants.SAML2_POST_BINDING_URI)

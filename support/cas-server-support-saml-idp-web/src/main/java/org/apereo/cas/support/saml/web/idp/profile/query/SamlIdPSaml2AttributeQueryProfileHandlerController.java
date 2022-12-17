@@ -32,6 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPSaml2AttributeQueryProfileHandlerController}.
@@ -111,7 +112,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .samlRequest(query)
                 .httpRequest(request)
                 .httpResponse(response)
-                .authenticatedAssertion(casAssertion)
+                .authenticatedAssertion(Optional.of(casAssertion))
                 .registeredService(registeredService)
                 .adaptor(facade)
                 .binding(SAMLConstants.SAML2_SOAP11_BINDING_URI)

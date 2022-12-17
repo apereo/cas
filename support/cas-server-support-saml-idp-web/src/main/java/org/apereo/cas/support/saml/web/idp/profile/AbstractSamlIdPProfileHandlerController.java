@@ -40,6 +40,7 @@ import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
@@ -368,24 +369,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val st = factory.create(ticketGrantingTicket, service, false, ServiceTicket.class);
         getConfigurationContext().getTicketRegistry().addTicket(st);
         getConfigurationContext().getTicketRegistry().updateTicket(ticketGrantingTicket);
-        buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        buildSamlResponse(response, request, authenticationContext, Optional.of(assertion), binding);
     }
 
-    /**
-     * Build saml response.
-     *
-     * @param response              the response
-     * @param request               the request
-     * @param authenticationContext the authentication context
-     * @param casAssertion          the cas assertion
-     * @param binding               the binding
-     * @throws Exception the exception
-     */
-    protected void buildSamlResponse(final HttpServletResponse response,
-                                     final HttpServletRequest request,
-                                     final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
-                                     final AuthenticatedAssertionContext casAssertion,
-                                     final String binding) throws Exception {
+
+    protected XMLObject buildSamlResponse(final HttpServletResponse response,
+                                          final HttpServletRequest request,
+                                          final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
+                                          final Optional<AuthenticatedAssertionContext> casAssertion,
+                                          final String binding) throws Exception {
         val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
         val pair = getRegisteredServiceAndFacade(authnRequest);
 
@@ -401,8 +393,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .binding(binding)
             .messageContext(authenticationContext.getValue())
             .build();
-        configurationContext.getResponseBuilder().build(buildContext);
+        val samlResponse = configurationContext.getResponseBuilder().build(buildContext);
         LOGGER.info("Built the SAML2 response for [{}]", entityId);
+        return samlResponse;
     }
 
     /**
@@ -634,14 +627,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }
     }
 
-    /**
-     * Handle profile request.
-     *
-     * @param response the response
-     * @param request  the request
-     * @param decoder  the decoder
-     * @return the model and view
-     */
     protected ModelAndView handleSsoPostProfileRequest(final HttpServletResponse response,
                                                        final HttpServletRequest request,
                                                        final BaseHttpServletRequestXMLMessageDecoder decoder) {
@@ -654,13 +639,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }, WebUtils::produceErrorView).get();
     }
 
-    /**
-     * Retrieve authentication request.
-     *
-     * @param response the response
-     * @param request  the request
-     * @return the authn request
-     */
     @Synchronized
     protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(final HttpServletResponse response,
                                                                                                       final HttpServletRequest request) {
@@ -671,14 +649,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
     }
 
-    /**
-     * Store authentication request.
-     *
-     * @param request  the request
-     * @param response the response
-     * @param context  the pair
-     * @throws Exception the exception
-     */
     @Synchronized
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
                                               final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
@@ -687,12 +657,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             configurationContext.getSessionStore(), context);
     }
 
-    /**
-     * Determine profile binding.
-     *
-     * @param authenticationContext the authentication context
-     * @return the string
-     */
     protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext) {
         val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
         val pair = getRegisteredServiceAndFacade(authnRequest);

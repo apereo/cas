@@ -18,7 +18,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.Response;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SSOSamlIdPProfileCallbackHandlerController}, which handles
@@ -91,7 +94,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val authnContext = retrieveAuthenticationRequest(response, request);
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        if (StringUtils.isBlank(ticket)) {
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof AuthnRequest authnRequest && !authnRequest.isPassive()) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to handle SAML request"));
         }
@@ -103,17 +106,23 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
             LOGGER.error("Unable to determine profile binding");
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to determine profile binding"));
         }
-        buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        val resultObject = buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        request.setAttribute(Response.class.getName(), resultObject);
         return null;
     }
 
-    private AuthenticatedAssertionContext validateRequestAndBuildCasAssertion(
+    protected Optional<AuthenticatedAssertionContext> validateRequestAndBuildCasAssertion(
         final HttpServletResponse response,
         final HttpServletRequest request,
         final Pair<? extends RequestAbstractType, MessageContext> authnContext)
         throws Exception {
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof AuthnRequest authnRequest && authnRequest.isPassive()) {
+            LOGGER.info("Unable to establish authentication context for passive authentication request");
+            return Optional.empty();
+        }
+
         val validator = getConfigurationContext().getTicketValidator();
         val serviceUrl = constructServiceUrl(request, response, authnContext);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
@@ -122,10 +131,10 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
         val asserted = (Assertion) assertion.getContext().get(Assertion.class.getName());
         Objects.requireNonNull(asserted, "Validation assertion cannot be null");
-        return AuthenticatedAssertionContext.builder()
+        return Optional.of(AuthenticatedAssertionContext.builder()
             .name(assertion.getPrincipal().getId())
             .authenticationDate(DateTimeUtils.zonedDateTimeOf(asserted.primaryAuthentication().getAuthenticationDate()))
             .attributes(CollectionUtils.merge(assertion.getAttributes(), assertion.getPrincipal().getAttributes()))
-            .build();
+            .build());
     }
 }

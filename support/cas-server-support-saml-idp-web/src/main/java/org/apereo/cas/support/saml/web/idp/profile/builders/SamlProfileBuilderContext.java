@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Optional;
+
 /**
  * This is {@link SamlProfileBuilderContext}.
  *
@@ -31,7 +33,7 @@ public class SamlProfileBuilderContext {
 
     private final HttpServletResponse httpResponse;
 
-    private final AuthenticatedAssertionContext authenticatedAssertion;
+    private final Optional<AuthenticatedAssertionContext> authenticatedAssertion;
 
     @NotNull
     private final SamlRegisteredService registeredService;

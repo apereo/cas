@@ -69,7 +69,7 @@ release candidates and/or follow-up snapshots. For additional warranties, please
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `374` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `375` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Apache Http Client 5
@@ -97,7 +97,7 @@ The [CAS Initializr](https://casinit.herokuapp.com/ui) project now provides a us
 
 <img width="1600" alt="image" src="https://user-images.githubusercontent.com/1205228/205378501-a0e6ad1b-bf81-42ea-8a69-5ad13c0dde39.png">
 
-Note that CAS Initializr is now updated to support generating projects based on JDK `17` and CAS `v7`.
+Note that CAS Initializr is now updated to support generating projects based on JDK `17` and CAS `7`.
      
 ### Passwordless Authentication
 

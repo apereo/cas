@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +50,7 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseS
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service2)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -73,7 +74,7 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseS
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -96,7 +97,7 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseS
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -119,7 +120,7 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseS
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -142,7 +143,7 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseS
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
