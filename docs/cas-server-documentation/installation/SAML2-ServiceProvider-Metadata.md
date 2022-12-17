@@ -81,6 +81,15 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
 CAS may attempt to reuse the metadata from a previously-downloaded backup file on disk if the metadata file is still seen as valid. 
 This capability will require the forceful fetching of the metadata over HTTP to be disabled.
 
+<div class="alert alert-info"><strong>Usage</strong>
+<p>
+SAML2 metadata should generally be signed for integrity and authenticity, especially if it’s provided and shared with 
+participants using a URL. Participants and consumers are strongly encouraged to verify the XML signature on the metadata 
+file before use; failure to do so will seriously compromise the security of the SAML deployment. A trusted metadata process <strong>MUST</strong> 
+verify the XML signature of the metadata. It is not sufficient to request the metadata via a TLS-protected HTTP connection.
+</p>
+</div>
+
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.http" %}
 
 {% endtab %}
