@@ -172,3 +172,20 @@ The service providers are registered with the CAS service registry as such:
 <div class="alert alert-info"><strong>Metadata Location</strong><p>The metadata location 
 in the registration record above needs to be specified as <code>json://</code> to signal 
 to CAS that SAML metadata for registered service provider must be fetched from the designated JSON file.</p></div>
+
+### Advanced
+
+Service provider metadata can also be managed using any one of the following strategies.
+
+| Storage                 | Description                                                        |
+|-------------------------|--------------------------------------------------------------------|
+| Metadata Query Protocol | [See this guide](Configuring-SAML2-DynamicMetadata-MDQ.html).      |
+| HTTP/HTTPS              | [See this guide](Configuring-SAML2-DynamicMetadata-HTTP.html).     |
+| REST                    | [See this guide](Configuring-SAML2-DynamicMetadata-REST.html).     |
+| Git                     | [See this guide](Configuring-SAML2-DynamicMetadata-Git.html).      |
+| MongoDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html).  |
+| Redis                   | [See this guide](Configuring-SAML2-DynamicMetadata-Redis.html).    |
+| JPA                     | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).      |
+| CouchDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-CouchDb.html).  |
+| Groovy                  | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).   |
+| Amazon S3               | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html). |
