@@ -38,7 +38,14 @@ The metadata location in the registration record above needs to be specified as 
 SAML metadata for registered service provider must be fetched from Git repositories defined in CAS configuration. 
 </p></div>
 
-{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.git" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.git" excludes=".schedule" %}
+                                                                                                     
+### Reloading Service Provider Metadata
+   
+By default, SAML2 service provider metadata is pulled from git repositories when there is a need to resolve and fetch metadata.
+You could also configure CAS to activate and turn on a background job to pull metadata periodically using a background scheduler. 
+
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.git.schedule" %}
 
 ## Identity Provider Metadata
 

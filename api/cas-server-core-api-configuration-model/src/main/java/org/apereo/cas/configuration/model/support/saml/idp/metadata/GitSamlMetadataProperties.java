@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -42,6 +43,12 @@ public class GitSamlMetadataProperties extends BaseGitProperties {
      */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
+    /**
+     * Scheduler settings to indicate how often the git repository is instructed to pull.
+     */
+    @NestedConfigurationProperty
+    private SchedulingProperties schedule = new SchedulingProperties();
 
     public GitSamlMetadataProperties() {
         getCloneDirectory().setLocation(new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-saml-metadata")));
